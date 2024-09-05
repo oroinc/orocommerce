@@ -313,9 +313,9 @@ class Order implements
     #[ORM\OneToMany(mappedBy: 'parent', targetEntity: Order::class, cascade: ['all'], orphanRemoval: true)]
     protected ?Collection $subOrders = null;
 
-    /**
-     * Constructor
-     */
+    #[ORM\Column(name: 'is_external', type: Types::BOOLEAN, options: ['default' => false])]
+    private bool $external = false;
+
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
@@ -1256,5 +1256,21 @@ class Order implements
         }
 
         return $this;
+    }
+
+    /**
+     * Indicates whether the order is loaded externally.
+     */
+    public function isExternal(): bool
+    {
+        return $this->external;
+    }
+
+    /**
+     * Sets a flag indicates whether the order is loaded externally.
+     */
+    public function setExternal(bool $external): void
+    {
+        $this->external = $external;
     }
 }

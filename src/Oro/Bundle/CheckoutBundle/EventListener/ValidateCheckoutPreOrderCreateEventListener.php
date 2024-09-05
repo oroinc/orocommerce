@@ -7,7 +7,6 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -45,12 +44,7 @@ class ValidateCheckoutPreOrderCreateEventListener
 
     public function onPreOrderCreate(ExtendableConditionEvent $event): void
     {
-        $context = $event->getContext();
-        if (!$context instanceof WorkflowItem) {
-            return;
-        }
-
-        $entity = $context->getEntity();
+        $entity = $event->getContext()?->offsetGet('checkout');
         if (!$entity instanceof Checkout) {
             return;
         }

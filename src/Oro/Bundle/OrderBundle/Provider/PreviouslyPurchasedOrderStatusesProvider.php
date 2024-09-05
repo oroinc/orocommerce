@@ -2,24 +2,19 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
+/**
+ * Provides supported internal order statuses for previously purchased feature.
+ */
 class PreviouslyPurchasedOrderStatusesProvider implements OrderStatusesProviderInterface
 {
     /**
-     * Statuses available for previously purchased feature
-     * @var array
+     * {@inheritDoc}
      */
-    protected $previouslyPurchasedOrderStatuses = [
-        OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-    ];
-
-    /**
-     * @return array
-     */
-    public function getAvailableStatuses()
+    public function getAvailableStatuses(): array
     {
-        return $this->previouslyPurchasedOrderStatuses;
+        return [
+            self::INTERNAL_STATUS_OPEN,
+            self::INTERNAL_STATUS_CLOSED
+        ];
     }
 }

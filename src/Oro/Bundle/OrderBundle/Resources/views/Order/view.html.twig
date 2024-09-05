@@ -15,10 +15,31 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
+{% block stats %}
+    {{ parent() }}
+    {% if totals.total is defined %}
+        <li>
+            <div class="label label-success">
+                {{ 'oro.order.order_total.label'|trans }}:
+                <b>{{ totals.total.amount|oro_format_currency({'currency': totals.total.currency}) }}</b>
+            </div>
+        </li>
+    {% endif %}
+{% endblock stats %}
+
 {% block breadcrumbs %}
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {{ parent() }}
+    <span class="page-title__internalStatus">
+        {%- set internalStatusBadgeClass = 'info' %}
+        {%- if entity.internalStatus.id == 'closed' %}
+            {%- set internalStatusBadgeClass = 'disabled' %}
+        {%- elseif entity.internalStatus.id == 'cancelled' %}
+            {%- set internalStatusBadgeClass = 'danger' %}
+        {%- endif %}
+        {{ UI.badge(entity.internalStatus.name, internalStatusBadgeClass) }}
+    </span>
     {% if oro_config_value('oro_order.order_enable_external_status_management') and entity.status %}
         <span class="page-title__status">
             {{ UI.badge(entity.status.name, 'info') }}

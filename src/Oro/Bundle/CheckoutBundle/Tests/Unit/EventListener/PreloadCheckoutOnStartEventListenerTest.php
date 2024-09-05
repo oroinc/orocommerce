@@ -21,70 +21,14 @@ class PreloadCheckoutOnStartEventListenerTest extends TestCase
 
     private PreloadCheckoutOnStartEventListener $listener;
 
-    private array $fieldsToPreload = [
-        'product' => [
-            'backOrder' => [],
-            'category' => [
-                'backOrder' => [],
-                'decrementQuantity' => [],
-                'highlightLowInventory' => [],
-                'inventoryThreshold' => [],
-                'isUpcoming' => [],
-                'lowInventoryThreshold' => [],
-                'manageInventory' => [],
-                'maximumQuantityToOrder' => [],
-                'minimumQuantityToOrder' => [],
-            ],
-            'decrementQuantity' => [],
-            'highlightLowInventory' => [],
-            'inventoryThreshold' => [],
-            'isUpcoming' => [],
-            'lowInventoryThreshold' => [],
-            'manageInventory' => [],
-            'maximumQuantityToOrder' => [],
-            'minimumQuantityToOrder' => [],
-            'unitPrecisions' => [],
-        ],
-        'kitItemLineItems' => [
-            'kitItem' => [
-                'labels' => [],
-                'productUnit' => [],
-            ],
-            'product' => [
-                'names' => [],
-                'images' => [
-                    'image' => [
-                        'digitalAsset' => [
-                            'titles' => [],
-                            'sourceFile' => [
-                                'digitalAsset' => [],
-                            ],
-                        ],
-                    ],
-                    'types' => [],
-                ],
-                'unitPrecisions' => [],
-            ],
-            'productUnit' => [],
-        ],
-    ];
+    private array $fieldsToPreload = ['product' =>  []];
 
     protected function setUp(): void
     {
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
         $this->listener = new PreloadCheckoutOnStartEventListener($this->preloadingManager);
-    }
-
-    public function testOnStartWhenContextNotActionData(): void
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->preloadingManager
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $this->listener->onStart($event);
+        $this->listener->setFieldsToPreload($this->fieldsToPreload);
     }
 
     public function testOnStartWhenEntityNotCheckout(): void

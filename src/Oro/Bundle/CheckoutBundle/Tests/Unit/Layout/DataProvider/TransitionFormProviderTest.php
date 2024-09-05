@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Event\EventDispatcher;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
@@ -43,7 +44,7 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
         $workflowItem->setData($workflowData);
         $optionsResolver = $this->createMock(TransitionOptionsResolver::class);
 
-        $continueTransition = new Transition($optionsResolver);
+        $continueTransition = new Transition($optionsResolver, $this->createMock(EventDispatcher::class));
         $continueTransition->setName('transition3');
         $continueTransition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $continueTransition->setFormType('transition_type');
@@ -83,7 +84,7 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
         $workflowItem->setData($workflowData);
         $optionsResolver = $this->createMock(TransitionOptionsResolver::class);
 
-        $transition = new Transition($optionsResolver);
+        $transition = new Transition($optionsResolver, $this->createMock(EventDispatcher::class));
         $transition->setName('transition3');
         $transition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $transition->setFormType('transition_type');
@@ -109,7 +110,10 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetTransitionFormByTransitionWhenNoForm(): void
     {
-        $transition = new Transition($this->createMock(TransitionOptionsResolver::class));
+        $transition = new Transition(
+            $this->createMock(TransitionOptionsResolver::class),
+            $this->createMock(EventDispatcher::class)
+        );
         $transition->setName('transition3');
 
         $this->formFactory

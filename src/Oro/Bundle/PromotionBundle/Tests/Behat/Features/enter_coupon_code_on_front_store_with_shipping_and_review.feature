@@ -54,7 +54,7 @@ Feature: Enter coupon code on Front Store with shipping and review
     Given I proceed as the Admin
     When I go to Sales / Orders
     And click "edit" on first row in grid
-    And I click "Order Totals"
+    And I click "Totals"
     Then I see next subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $20.00 |
@@ -63,7 +63,7 @@ Feature: Enter coupon code on Front Store with shipping and review
       | Total             | $21.00 |
     When I click "Shipping Information"
     And I click on "Backend Flat Rate2 Shipping Method"
-    And I click "Order Totals"
+    And I click "Totals"
     Then I see next subtotals for "Backend Order":
       | Subtotal          | Amount |
       | Subtotal          | $20.00 |

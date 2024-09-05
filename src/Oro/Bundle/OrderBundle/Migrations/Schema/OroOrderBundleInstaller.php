@@ -8,6 +8,7 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
@@ -40,7 +41,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_21';
+        return 'v1_22';
     }
 
     /**
@@ -67,7 +68,11 @@ class OroOrderBundleInstaller implements
         $this->addOrderInternalStatusField($schema);
         $this->addOrderStatusField($schema);
 
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_order');
+        $this->paymentTermExtension->addPaymentTermAssociation(
+            $schema,
+            'oro_order',
+            ['datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN, 'show_filter' => false]]
+        );
     }
 
     /**
@@ -148,6 +153,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('is_external', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['created_at'], 'oro_order_created_at_index');
         $table->addUniqueIndex(['identifier'], 'uniq_oro_order_identifier');

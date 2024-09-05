@@ -25,9 +25,6 @@
         <div class="responsive-block">
             {{ UI.renderProperty('oro.order.identifier.label'|trans, order.identifier, null, null, {'dir': 'ltr'}) }}
             {{ UI.renderProperty('oro.order.po_number.label'|trans, order.poNumber, null, null, {'dir': 'ltr'}) }}
-            {{ UI.renderProperty('oro.order.currency.label'|trans, order.currency) }}
-            {{ UI.renderProperty('oro.order.subtotal.label'|trans, order.subtotal|oro_format_currency({'currency': order.currency})) }}
-            {{ currency.convert_to_base_currency(order.subtotalObject, '', order, 'subtotal') }}
 
             {{ UI.renderHtmlProperty(
                 'oro.order.customer.label'|trans,
@@ -39,8 +36,6 @@
                 UI.entityViewLink(order.customerUser, order.customerUser|oro_format_name, 'oro_customer_customer_user_view')
             ) }}
 
-            {{ UI.renderProperty('oro.order.internal_status.label'|trans, order.internalStatus.name|default('')) }}
-            {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
             {{ UI.renderHtmlProperty('oro.order.source_document.label'|trans, sourceEntityBlock) }}
 
             {{ UI.renderHtmlProperty(
@@ -54,13 +49,14 @@
                     UI.entityViewLink(order.parent, '#' ~ order.parent.identifier, 'oro_order_view')
                 ) }}
             {% endif %}
+            {{ UI.renderProperty('oro.order.customer_notes.label'|trans, order.customerNotes) }}
+            {{ entityConfig.renderDynamicFields(order) }}
         </div>
 
         <div class="responsive-block">
             {{ UI.renderHtmlProperty('oro.order.billing_address.label'|trans, address.renderAddress(order.billingAddress, true)) }}
             {{ UI.renderHtmlProperty('oro.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress, true)) }}
-            {{ UI.renderProperty('oro.order.customer_notes.label'|trans, order.customerNotes) }}
-            {{ entityConfig.renderDynamicFields(order) }}
+            {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
         </div>
     </div>
 </div>

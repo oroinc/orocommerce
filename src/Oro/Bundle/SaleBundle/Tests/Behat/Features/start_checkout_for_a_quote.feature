@@ -1,5 +1,9 @@
 @ticket-BB-7459
 @automatically-ticket-tagged
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroSaleBundle:QuoteOrder.yml
 Feature: Start checkout for a quote
   In order to provide customers with ability to quote products

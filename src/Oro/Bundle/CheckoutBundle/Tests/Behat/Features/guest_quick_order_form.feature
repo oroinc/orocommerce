@@ -141,6 +141,7 @@ Feature: Guest quick order form
   Scenario: Check guest orders in management console and disable checkout feature
     Given I proceed as the Admin
     When I go to Sales/ Orders
+    And I show column Customer User in grid
     Then I should see "Tester Testerson" in grid with following data:
       | Customer      | Tester Testerson |
       | Customer User | Tester Testerson |

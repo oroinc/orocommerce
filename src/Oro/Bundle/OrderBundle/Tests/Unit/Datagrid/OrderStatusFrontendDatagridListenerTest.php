@@ -109,14 +109,13 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
                 ],
                 'columns' => [
                     'identifier'    => ['label' => 'identifier'],
-                    'total'         => ['label' => 'total'],
                     'statusName'    => ['label' => 'oro.frontend.order.order_status.label'],
+                    'total'         => ['label' => 'total'],
                     'paymentStatus' => ['label' => 'payment_status']
                 ],
                 'filters' => [
                     'columns' => [
                         'identifier'    => ['data_name' => 'order1.identifier'],
-                        'total'         => ['data_name' => 'order1.total'],
                         'statusName'    => [
                             'type'      => 'choice',
                             'data_name' => 'statusId',
@@ -128,6 +127,7 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
                                 ]
                             ]
                         ],
+                        'total'         => ['data_name' => 'order1.total'],
                         'paymentStatus' => ['data_name' => 'payment_status']
                     ]
                 ],
@@ -219,14 +219,13 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
                 ],
                 'columns' => [
                     'identifier'    => ['label' => 'identifier'],
-                    'total'         => ['label' => 'total'],
                     'statusName'    => ['label' => 'oro.frontend.order.order_status.label'],
+                    'total'         => ['label' => 'total'],
                     'paymentStatus' => ['label' => 'payment_status']
                 ],
                 'filters' => [
                     'columns' => [
                         'identifier'    => ['data_name' => 'order1.identifier'],
-                        'total'         => ['data_name' => 'order1.total'],
                         'statusName'    => [
                             'type'      => 'choice',
                             'data_name' => 'statusId',
@@ -238,6 +237,7 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
                                 ]
                             ]
                         ],
+                        'total'         => ['data_name' => 'order1.total'],
                         'paymentStatus' => ['data_name' => 'payment_status']
                     ]
                 ],

@@ -51,8 +51,6 @@ workflows:
                 type: bool
             additional_data:
                 type: string
-            state_token:
-                type: string
             order:
                 type: entity
                 options:
@@ -70,4 +68,6 @@ workflows:
                 options:
                     class: Doctrine\Common\Collections\ArrayCollection
             consents_available:
+                type: boolean
+            shipping_data_ready:
                 type: boolean

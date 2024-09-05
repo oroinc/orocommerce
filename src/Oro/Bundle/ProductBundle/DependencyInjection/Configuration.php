@@ -89,6 +89,13 @@ class Configuration implements ConfigurationInterface
     public const DISPLAY_PRICE_TIERS_AS = 'product_details_display_price_tiers_as'; // BB-23597
     public const DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE = 'multi-unit-table'; // BB-23597
 
+    // Inventory filter
+    public const INVENTORY_FILTER_ENABLE_FOR_GUESTS = 'inventory_filter_enable_for_guests';
+    public const INVENTORY_FILTER_TYPE = 'inventory_filter_type';
+    public const INVENTORY_FILTER_TYPE_SIMPLE = 'inventory-switcher';
+    public const INVENTORY_FILTER_IN_STOCK_STATUSES_FOR_SIMPLE_FILTER =
+        'inventory_filter_in_stock_statuses_for_simple_filter';
+
     /**
      * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
@@ -222,7 +229,20 @@ class Configuration implements ConfigurationInterface
                 static::DISPLAY_PRICE_TIERS_AS => [ // BB-23597
                     'type' => 'string',
                     'value' => static::DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE
-                ]
+                ],
+                static::INVENTORY_FILTER_ENABLE_FOR_GUESTS => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                static::INVENTORY_FILTER_TYPE => [
+                    'type' => 'string',
+                    'value' => static::INVENTORY_FILTER_TYPE_SIMPLE,
+                ],
+                static::INVENTORY_FILTER_IN_STOCK_STATUSES_FOR_SIMPLE_FILTER => [
+                    'value' => [
+                        Product::INVENTORY_STATUS_IN_STOCK,
+                    ],
+                ],
             ]
         );
 

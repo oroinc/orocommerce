@@ -1,5 +1,6 @@
 aliases:
     jquery-elevatezoom$: '@oroinc/elevatezoom/jquery.elevatezoom'
+    oro/filter/inventory-switcher-filter$: oroproduct/js/app/views/frontend-inventory-switcher-filter
 configs:
     oroproduct/js/app/datagrid/backend-grid: {}
     oroproduct/js/app/datagrid/frontend-product-process-options-builder: {}
@@ -25,6 +26,7 @@ dynamic-imports:
         - oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder
         - oroproduct/js/app/datagrid/frontend-product-process-options-builder
         - oroproduct/js/app/datagrid/grid-sidebar-filters-builder
+        - oro/filter/inventory-switcher-filter
     oroproduct:
         - jquery-elevatezoom
         - oroproduct/js/app/components/breadcrumbs-navigation-block

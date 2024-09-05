@@ -30,3 +30,19 @@ oro_permissions:
             - 'Oro\Bundle\OrderBundle\Entity\Order'
         group_names:
             - 'default'
+
+    CANCEL_ORDERS:
+        label: oro.order.permission.cancel_orders.label
+        apply_to_all: false
+        apply_to_entities:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        group_names:
+            - 'default'
+
+    CLOSE_ORDERS:
+        label: oro.order.permission.close_orders.label
+        apply_to_all: false
+        apply_to_entities:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        group_names:
+            - 'default'

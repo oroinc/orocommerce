@@ -8,7 +8,7 @@ Feature: Order Addresses
   Scenario: Check Order Billing and Shipping Address Labels
     Given I login as administrator
     And go to Sales/ Orders
-    And click edit PO1 in grid
+    And click edit order1 in grid
     When click "Billing Address"
     Then I should see "Order Billing Address Select" with options:
       | Value                                                 | Type   |

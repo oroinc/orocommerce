@@ -11,7 +11,6 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\AbstractDateFilterType;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartScaleProvider;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartWidgetProvider;
-use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Component\PhpUtils\ArrayUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,13 +21,9 @@ class SalesOrdersChartWidgetProviderTest extends TestCase
     private const WIDGET_NAME = 'widget_name';
 
     private SalesOrdersChartDataProvider|MockObject $salesOrdersChartDataProvider;
-
     private SalesOrdersChartScaleProvider $chartScaleProvider;
-
     private ChartViewBuilderFactory|MockObject $chartViewBuilderFactory;
-
     private WidgetConfigs|MockObject $widgetConfigs;
-
     private SalesOrdersChartWidgetProvider $salesOrdersChartWidgetProvider;
 
     protected function setUp(): void
@@ -54,20 +49,13 @@ class SalesOrdersChartWidgetProviderTest extends TestCase
      */
     public function testGetChartWidget(array $dateRanges, array $salesOrdersVolumeData, array $expected): void
     {
-        $defaultIncludedOrderStatuses = [
-            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-            OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-            OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-            OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED
-        ];
-
         $widgetOptions = [
-            'includedOrderStatuses' => $defaultIncludedOrderStatuses,
+            'includedOrderStatuses' => ['open', 'closed'],
             'includeSubOrders' => true,
         ];
         $dateRangeNumber = 1;
         foreach ($dateRanges as $dateRange) {
-            $widgetOptions["dateRange$dateRangeNumber"] = $dateRange;
+            $widgetOptions['dateRange' . $dateRangeNumber] = $dateRange;
             $dateRangeNumber++;
         }
         $widgetOptions = new WidgetOptionBag($widgetOptions);
@@ -90,7 +78,7 @@ class SalesOrdersChartWidgetProviderTest extends TestCase
                     // ...
                 ],
                 'includedOrderStatuses' => [
-                    'value' => 'Open; Shipped; Closed; Archived',
+                    'value' => 'Open; Closed',
                     // ...
                 ],
                 'includedSubOrders' => [

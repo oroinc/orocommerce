@@ -98,8 +98,8 @@ Feature: Create Order with Product Kits
     When click "Calculate Shipping Button"
     And I save and close form
     Then I should see Order with:
-      | Subtotal   | $382.57  |
       | Created By | John Doe |
+    And I should see "Order Total: $382.57"
     And I should see following "BackendOrderLineItemsGrid" grid:
       | SKU            | Product                                                                                                             | Quantity | Product Unit Code | Price   |
       | product-kit-01 | Product Kit 01 Mandatory Item [piece x 1] $1.23 Simple Product 01                                                   | 1        | piece             | $124.69 |

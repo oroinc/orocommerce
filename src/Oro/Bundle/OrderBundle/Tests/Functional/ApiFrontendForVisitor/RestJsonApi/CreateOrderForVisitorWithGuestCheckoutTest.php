@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi\OrderResponseTrait;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
@@ -25,6 +26,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCase
 {
     use RolePermissionExtension;
+    use OrderResponseTrait;
 
     private ?bool $originalGuestCheckoutOptionValue;
 
@@ -113,11 +115,11 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     {
         $data['data']['relationships']['customerUser']['data'] = [
             'type' => 'customerusers',
-            'id'   => 'guest'
+            'id' => 'guest'
         ];
         $data['included'][] = [
-            'type'       => 'customerusers',
-            'id'         => 'guest',
+            'type' => 'customerusers',
+            'id' => 'guest',
             'attributes' => [
                 'email' => 'test2341@test.com'
             ]
@@ -130,7 +132,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     {
         $response = $this->post(['entity' => 'orders'], 'create_order_guest_checkout.yml');
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -146,7 +148,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
         unset($data['included'][5]);
         $response = $this->post(['entity' => 'orders'], $data);
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         unset($responseContent['included'][5]);
         $this->assertResponseContains($responseContent, $response);
 
@@ -167,7 +169,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'access granted constraint',
+                'title' => 'access granted constraint',
                 'detail' => 'No access to the entity.',
                 'source' => ['pointer' => '/data/relationships/customerUser/data']
             ],
@@ -189,7 +191,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'access granted constraint',
+                'title' => 'access granted constraint',
                 'detail' => 'No access to the entity.',
                 'source' => ['pointer' => '/data/relationships/customerUser/data']
             ],
@@ -205,7 +207,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not blank constraint',
+                'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
                 'source' => ['pointer' => '/data/relationships/customer/data']
             ],
@@ -222,7 +224,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not blank constraint',
+                'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
                 'source' => ['pointer' => '/data/relationships/customer/data']
             ],
@@ -238,7 +240,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not blank constraint',
+                'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
                 'source' => ['pointer' => '/included/5/attributes/email']
             ],
@@ -254,7 +256,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'email constraint',
+                'title' => 'email constraint',
                 'detail' => 'This value is not a valid email address.',
                 'source' => ['pointer' => '/included/5/attributes/email']
             ],
@@ -268,7 +270,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['data']['relationships']['customer'] = ['data' => ['type' => 'customers', 'id' => '1']];
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -279,7 +281,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         unset($data['included'][0]['relationships']['product']);
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -291,7 +293,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'line item product constraint',
+                'title' => 'line item product constraint',
                 'detail' => 'Please choose Product.',
                 'source' => ['pointer' => '/included/0/relationships/product/data']
             ],
@@ -308,7 +310,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'line item product constraint',
+                'title' => 'line item product constraint',
                 'detail' => 'Please choose Product.',
                 'source' => ['pointer' => '/included/0/relationships/product/data']
             ],
@@ -324,7 +326,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not blank constraint',
+                'title' => 'not blank constraint',
                 'detail' => 'The product unit does not exist for the product.',
                 'source' => ['pointer' => '/included/0/relationships/productUnit/data']
             ],
@@ -341,7 +343,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'product unit exists constraint',
+                'title' => 'product unit exists constraint',
                 'detail' => 'The product unit does not exist for the product.',
                 'source' => ['pointer' => '/included/0/relationships/productUnit/data']
             ],
@@ -358,7 +360,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'product unit exists constraint',
+                'title' => 'product unit exists constraint',
                 'detail' => 'The product unit does not exist for the product.',
                 'source' => ['pointer' => '/included/0/relationships/productUnit/data']
             ],
@@ -375,7 +377,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'quantity unit precision constraint',
+                'title' => 'quantity unit precision constraint',
                 'detail' => 'The precision for the unit "item" is not valid.',
                 'source' => ['pointer' => '/included/0/attributes/quantity']
             ],
@@ -391,7 +393,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'not blank constraint',
+                'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
                 'source' => ['pointer' => '/included/0/attributes/quantity']
             ],
@@ -407,7 +409,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'greater than constraint',
+                'title' => 'greater than constraint',
                 'detail' => 'This value should be greater than 0.',
                 'source' => ['pointer' => '/included/0/attributes/quantity']
             ],
@@ -424,7 +426,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'payment method constraint',
+                'title' => 'payment method constraint',
                 'detail' => 'No payment methods are available, please contact us to complete the order submission.'
             ],
             $response
@@ -437,7 +439,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['data']['attributes']['currency'] = 'EUR';
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -447,7 +449,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['included'][0]['attributes']['currency'] = null;
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -459,7 +461,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'currency match constraint',
+                'title' => 'currency match constraint',
                 'detail' => 'The specified currency must be equal to "USD".',
                 'source' => ['pointer' => '/included/0/attributes/currency']
             ],
@@ -473,7 +475,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['included'][0]['attributes']['price'] = null;
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -485,7 +487,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'price match constraint',
+                'title' => 'price match constraint',
                 'detail' => 'The specified price must be equal to 1.01.',
                 'source' => ['pointer' => '/included/0/attributes/price']
             ],
@@ -501,7 +503,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'price not found constraint',
+                'title' => 'price not found constraint',
                 'detail' => 'No matching price found.',
                 'source' => ['pointer' => '/included/0/attributes/price']
             ],
@@ -514,13 +516,13 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['included'][1]['relationships']['customerUserAddress']['data'] = [
             'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
+            'id' => '<toString(@customer_user_address->id)>'
         ];
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseContainsValidationError(
             [
-                'title'  => 'order address constraint',
+                'title' => 'order address constraint',
                 'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
                 'source' => ['pointer' => '/included/1']
             ],
@@ -533,13 +535,13 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data = $this->getRequestData('create_order_guest_checkout.yml');
         $data['included'][2]['relationships']['customerUserAddress']['data'] = [
             'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
+            'id' => '<toString(@customer_user_address->id)>'
         ];
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseContainsValidationError(
             [
-                'title'  => 'order address constraint',
+                'title' => 'order address constraint',
                 'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
                 'source' => ['pointer' => '/included/2']
             ],
@@ -554,13 +556,13 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         unset($data['included'][1]['relationships']['customerAddress']);
         $data['included'][1]['relationships']['customerUserAddress']['data'] = [
             'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
+            'id' => '<toString(@customer_user_address->id)>'
         ];
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseContainsValidationError(
             [
-                'title'  => 'order address constraint',
+                'title' => 'order address constraint',
                 'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
                 'source' => ['pointer' => '/included/1']
             ],
@@ -575,13 +577,13 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         unset($data['included'][2]['relationships']['customerAddress']);
         $data['included'][2]['relationships']['customerUserAddress']['data'] = [
             'type' => 'customeruseraddresses',
-            'id'   => '<toString(@customer_user_address->id)>'
+            'id' => '<toString(@customer_user_address->id)>'
         ];
         $response = $this->post(['entity' => 'orders'], $data, [], false);
 
         $this->assertResponseContainsValidationError(
             [
-                'title'  => 'order address constraint',
+                'title' => 'order address constraint',
                 'detail' => 'Only order address fields, a customer user address or a customer address can be set.',
                 'source' => ['pointer' => '/included/2']
             ],
@@ -600,12 +602,12 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'not blank constraint',
+                    'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/relationships/billingAddress/data']
                 ],
                 [
-                    'title'  => 'not blank constraint',
+                    'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/relationships/shippingAddress/data']
                 ]
@@ -623,12 +625,12 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'not blank constraint',
+                    'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/included/2/relationships/country/data']
                 ],
                 [
-                    'title'  => 'not blank constraint',
+                    'title' => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/included/1/relationships/country/data']
                 ]
@@ -646,12 +648,12 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $this->assertResponseContainsValidationErrors(
             [
                 [
-                    'title'  => 'customer or user address granted constraint',
+                    'title' => 'customer or user address granted constraint',
                     'detail' => 'It is not allowed to use this address for the order.',
                     'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
                 ],
                 [
-                    'title'  => 'customer or user address granted constraint',
+                    'title' => 'customer or user address granted constraint',
                     'detail' => 'It is not allowed to use this address for the order.',
                     'source' => ['pointer' => '/included/2/relationships/customerUserAddress/data']
                 ],
@@ -671,12 +673,12 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'customer or user address granted constraint',
+                    'title' => 'customer or user address granted constraint',
                     'detail' => 'It is not allowed to use this address for the order.',
                     'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
                 ],
                 [
-                    'title'  => 'customer or user address granted constraint',
+                    'title' => 'customer or user address granted constraint',
                     'detail' => 'It is not allowed to use this address for the order.',
                     'source' => ['pointer' => '/included/2/relationships/customerUserAddress/data']
                 ]
@@ -694,7 +696,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseContainsValidationError(
             [
-                'title'  => 'form constraint',
+                'title' => 'form constraint',
                 'detail' => 'The entity does not exist.',
                 'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
             ],
@@ -710,7 +712,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
         $this->assertResponseContainsValidationError(
             [
-                'title'  => 'form constraint',
+                'title' => 'form constraint',
                 'detail' => 'The entity does not exist.',
                 'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
             ],
@@ -736,7 +738,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $response = $this->post(['entity' => 'orders'], $data, [], false);
         $this->assertResponseValidationError(
             [
-                'title'  => 'customer or user address granted constraint',
+                'title' => 'customer or user address granted constraint',
                 'detail' => 'It is not allowed to use this address for the order.',
                 'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
             ],
@@ -762,7 +764,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $response = $this->post(['entity' => 'orders'], $data, [], false);
         $this->assertResponseValidationError(
             [
-                'title'  => 'customer or user address granted constraint',
+                'title' => 'customer or user address granted constraint',
                 'detail' => 'It is not allowed to use this address for the order.',
                 'source' => ['pointer' => '/included/2/relationships/customerUserAddress/data']
             ],
@@ -799,26 +801,26 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
             ]
         ];
         $response = $this->post(['entity' => 'orders'], $data);
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         unset($responseContent['included'][5]);
         $responseContent['included'][1]['attributes'] = [
-            'phone'        => $customerUserAddressData['attributes']['phone'],
-            'label'        => $customerUserAddressData['attributes']['label'],
-            'street'       => $customerUserAddressData['attributes']['street'],
-            'street2'      => $customerUserAddressData['attributes']['street2'],
-            'city'         => $customerUserAddressData['attributes']['city'],
-            'postalCode'   => $customerUserAddressData['attributes']['postalCode'],
+            'phone' => $customerUserAddressData['attributes']['phone'],
+            'label' => $customerUserAddressData['attributes']['label'],
+            'street' => $customerUserAddressData['attributes']['street'],
+            'street2' => $customerUserAddressData['attributes']['street2'],
+            'city' => $customerUserAddressData['attributes']['city'],
+            'postalCode' => $customerUserAddressData['attributes']['postalCode'],
             'organization' => $customerUserAddressData['attributes']['organization'],
             'customRegion' => $customerUserAddressData['attributes']['customRegion'],
-            'namePrefix'   => $customerUserAddressData['attributes']['namePrefix'],
-            'firstName'    => $customerUserAddressData['attributes']['firstName'],
-            'middleName'   => $customerUserAddressData['attributes']['middleName'],
-            'lastName'     => $customerUserAddressData['attributes']['lastName'],
-            'nameSuffix'   => $customerUserAddressData['attributes']['nameSuffix']
+            'namePrefix' => $customerUserAddressData['attributes']['namePrefix'],
+            'firstName' => $customerUserAddressData['attributes']['firstName'],
+            'middleName' => $customerUserAddressData['attributes']['middleName'],
+            'lastName' => $customerUserAddressData['attributes']['lastName'],
+            'nameSuffix' => $customerUserAddressData['attributes']['nameSuffix']
         ];
         $responseContent['included'][1]['relationships']['customerUserAddress']['data'] = [
             'type' => 'customeruseraddresses',
-            'id'   => (string)$customerUserAddressId
+            'id' => (string)$customerUserAddressId
         ];
         $responseContent['included'][1]['relationships']['country']['data'] =
             $customerUserAddressData['relationships']['country']['data'];
@@ -856,26 +858,26 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
             ]
         ];
         $response = $this->post(['entity' => 'orders'], $data);
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         unset($responseContent['included'][5]);
         $responseContent['included'][2]['attributes'] = [
-            'phone'        => $customerUserAddressData['attributes']['phone'],
-            'label'        => $customerUserAddressData['attributes']['label'],
-            'street'       => $customerUserAddressData['attributes']['street'],
-            'street2'      => $customerUserAddressData['attributes']['street2'],
-            'city'         => $customerUserAddressData['attributes']['city'],
-            'postalCode'   => $customerUserAddressData['attributes']['postalCode'],
+            'phone' => $customerUserAddressData['attributes']['phone'],
+            'label' => $customerUserAddressData['attributes']['label'],
+            'street' => $customerUserAddressData['attributes']['street'],
+            'street2' => $customerUserAddressData['attributes']['street2'],
+            'city' => $customerUserAddressData['attributes']['city'],
+            'postalCode' => $customerUserAddressData['attributes']['postalCode'],
             'organization' => $customerUserAddressData['attributes']['organization'],
             'customRegion' => $customerUserAddressData['attributes']['customRegion'],
-            'namePrefix'   => $customerUserAddressData['attributes']['namePrefix'],
-            'firstName'    => $customerUserAddressData['attributes']['firstName'],
-            'middleName'   => $customerUserAddressData['attributes']['middleName'],
-            'lastName'     => $customerUserAddressData['attributes']['lastName'],
-            'nameSuffix'   => $customerUserAddressData['attributes']['nameSuffix']
+            'namePrefix' => $customerUserAddressData['attributes']['namePrefix'],
+            'firstName' => $customerUserAddressData['attributes']['firstName'],
+            'middleName' => $customerUserAddressData['attributes']['middleName'],
+            'lastName' => $customerUserAddressData['attributes']['lastName'],
+            'nameSuffix' => $customerUserAddressData['attributes']['nameSuffix']
         ];
         $responseContent['included'][2]['relationships']['customerUserAddress']['data'] = [
             'type' => 'customeruseraddresses',
-            'id'   => (string)$customerUserAddressId
+            'id' => (string)$customerUserAddressId
         ];
         $responseContent['included'][2]['relationships']['country']['data'] =
             $customerUserAddressData['relationships']['country']['data'];
@@ -902,7 +904,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $response = $this->post(['entity' => 'orders'], $data, [], false);
         $this->assertResponseValidationError(
             [
-                'title'  => 'customer or user address granted constraint',
+                'title' => 'customer or user address granted constraint',
                 'detail' => 'It is not allowed to use this address for the order.',
                 'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
             ],
@@ -928,7 +930,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $response = $this->post(['entity' => 'orders'], $data, [], false);
         $this->assertResponseValidationError(
             [
-                'title'  => 'customer or user address granted constraint',
+                'title' => 'customer or user address granted constraint',
                 'detail' => 'It is not allowed to use this address for the order.',
                 'source' => ['pointer' => '/included/2/relationships/customerUserAddress/data']
             ],
@@ -966,7 +968,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $response = $this->post(['entity' => 'orders'], $data, [], false);
         $this->assertResponseValidationError(
             [
-                'title'  => 'customer or user address granted constraint',
+                'title' => 'customer or user address granted constraint',
                 'detail' => 'It is not allowed to use this address for the order.',
                 'source' => ['pointer' => '/included/1/relationships/customerUserAddress/data']
             ],
@@ -1004,7 +1006,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $response = $this->post(['entity' => 'orders'], $data, [], false);
         $this->assertResponseValidationError(
             [
-                'title'  => 'customer or user address granted constraint',
+                'title' => 'customer or user address granted constraint',
                 'detail' => 'It is not allowed to use this address for the order.',
                 'source' => ['pointer' => '/included/2/relationships/customerUserAddress/data']
             ],

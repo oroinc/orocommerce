@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrganizationBundle\Provider\OrganizationRestrictionProviderInterface;
 use Oro\Bundle\PlatformBundle\Provider\UsageStats\AbstractUsageStatsProvider;
 
@@ -13,14 +12,14 @@ use Oro\Bundle\PlatformBundle\Provider\UsageStats\AbstractUsageStatsProvider;
  */
 class OrdersNumberUsageStatsProvider extends AbstractUsageStatsProvider
 {
-    private ObjectManager $objectManager;
+    private ManagerRegistry $doctrine;
     private OrganizationRestrictionProviderInterface $organizationRestrictionProvider;
 
     public function __construct(
-        ObjectManager $objectManager,
+        ManagerRegistry $doctrine,
         OrganizationRestrictionProviderInterface $organizationRestrictionProvider
     ) {
-        $this->objectManager = $objectManager;
+        $this->doctrine = $doctrine;
         $this->organizationRestrictionProvider = $organizationRestrictionProvider;
     }
 
@@ -36,29 +35,16 @@ class OrdersNumberUsageStatsProvider extends AbstractUsageStatsProvider
 
     public function getValue(): ?string
     {
-        /** @var OrderRepository $orderRepository */
-        $orderRepository = $this->objectManager->getRepository(Order::class);
-        $queryBuilder = $orderRepository->getSalesOrdersNumberQueryBuilder(
+        $queryBuilder = $this->doctrine->getRepository(Order::class)->getSalesOrdersNumberQueryBuilder(
             new \DateTime(date('Y-1-1'), new \DateTimeZone('UTC')),
-            new \DateTime('now', new \DateTimeZone('UTC')),
-            [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
-            ],
+            null,
+            null,
             false,
             'year'
         );
+        $this->organizationRestrictionProvider->applyOrganizationRestrictions($queryBuilder);
 
-        $this->organizationRestrictionProvider->applyOrganizationRestrictions(
-            $queryBuilder
-        );
-
-        $result = $queryBuilder
-            ->getQuery()
-            ->getResult();
+        $result = $queryBuilder->getQuery()->getResult();
 
         return (string)($result[0]['number'] ?? 0);
     }

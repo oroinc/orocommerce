@@ -1,0 +1,9 @@
+.two-columns-text-and-button-call-to-action {
+    --grid-gap: 0 64px;
+}
+
+@media screen and (max-width: 767px) {
+    .two-columns-text-and-button-call-to-action {
+        --grid-gap: 0;
+    }
+}

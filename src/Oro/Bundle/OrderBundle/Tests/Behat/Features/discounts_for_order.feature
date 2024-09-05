@@ -14,13 +14,15 @@ Feature: Discounts for Order
     And I click "Save" in modal window
 
   Scenario: Add special discount from Order view page
-    When click "Add Special Discount"
+    When I click "More actions"
+    And click "Add Special Discount"
     And I type "2" in "Discount Value"
     And I type "Amount" in "Discount Description"
     Then I should see "$2.00 (4%)"
     And I click "Apply"
 
-    When I click "Add Special Discount"
+    When I click "More actions"
+    And click "Add Special Discount"
     And I type "3" in "Discount Value"
     And I type "<script>alert(1)</script>" in "Discount Description"
     Then I should see "$3.00 (6%)"
@@ -40,7 +42,6 @@ Feature: Discounts for Order
   Scenario: Check whether the discounts have affected the total amount
     Given go to Sales/Orders
     Then I should see SimpleOrder in grid with following data:
-      | Currency  | USD    |
       | Total     | $45.00 |
       | Total ($) | $45.00 |
 

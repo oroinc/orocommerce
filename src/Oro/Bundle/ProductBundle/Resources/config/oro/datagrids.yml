@@ -1187,28 +1187,43 @@ datagrids:
             query:
                 select:
                     - text.sku as sku
-                    - text.names_LOCALIZATION_ID as names
-                    - text.inv_status as inventoryStatus
+                    - text.names_LOCALIZATION_ID as name
+                    - text.inv_status as inventory_status
                 from:
                     - oro_product_WEBSITE_ID
         columns:
-            inventoryStatus:
+            sku:
+                label: oro.product.sku.label
+            name:
+                label: oro.product.names.label
+            inventory_status:
                 label: oro.product.inventory_status.label
                 frontend_type: select
                 choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
                 translatable_options: false
-                order: 10
         filters:
             columns:
-                inventoryStatus:
+                sku:
+                    type: string
+                    data_name: text.sku
+                    force_like: true
+                name:
+                    type: string
+                    data_name: text.names_LOCALIZATION_ID
+                    force_like: true
+                inventory_status:
                     type: enum
-                    data_name: inv_status
+                    data_name: text.inv_status
                     enum_code: prod_inventory_status
-        properties:
-            id: ~
         sorters:
             columns:
-                inventoryStatus:
+                sku:
+                    data_name: sku
+                name:
+                    data_name: name
+                inventory_status:
                     data_name: inventory_status
             toolbar_sorting: true
             disable_default_sorting: true
+        properties:
+            id: ~

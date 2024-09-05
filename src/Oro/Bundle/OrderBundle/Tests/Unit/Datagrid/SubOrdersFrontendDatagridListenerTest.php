@@ -81,7 +81,8 @@ class SubOrdersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
                                 'field_options' => [
                                     'choices' => ['primary_order' => 1, 'sub_order' => 2]
                                 ]
-                            ]
+                            ],
+                            'renderable' => false
                         ]
                     ]
                 ],

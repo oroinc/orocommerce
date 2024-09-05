@@ -5,9 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroup;
-use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartQuickOrderCheckoutInterface;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
 use Oro\Bundle\ProductBundle\Model\Mapping\ProductMapperInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -18,6 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Processor\QuickAddCheckoutProcessor;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface;
@@ -30,38 +29,34 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ShoppingListLineItemHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ShoppingListLineItemHandler|MockObject */
     private $shoppingListLineItemHandler;
 
-    /** @var ProductMapperInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ProductMapperInterface|MockObject */
     private $productMapper;
 
-    /** @var MessageGenerator|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var MessageGenerator|MockObject */
     private $messageGenerator;
 
-    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ShoppingListManager|MockObject */
     private $shoppingListManager;
 
-    /** @var ShoppingListLimitManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ShoppingListLimitManager|MockObject */
     private $shoppingListLimitManager;
 
-    /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CurrentShoppingListManager|MockObject */
     private $currentShoppingListManager;
 
-    /** @var ActionGroupRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $actionGroupRegistry;
-
-    /** @var ActionGroup|\PHPUnit\Framework\MockObject\MockObject */
-    private $actionGroup;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var TranslatorInterface|MockObject */
     private $translator;
 
-    /** @var DateTimeFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var DateTimeFormatterInterface|MockObject */
     private $dateFormatter;
 
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var EntityManagerInterface|MockObject */
     private $em;
+
+    private StartQuickOrderCheckoutInterface|MockObject $startQuickOrderCheckout;
 
     /** @var QuickAddCheckoutProcessor */
     private $processor;
@@ -74,11 +69,10 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
-        $this->actionGroupRegistry = $this->createMock(ActionGroupRegistry::class);
-        $this->actionGroup = $this->createMock(ActionGroup::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->dateFormatter = $this->createMock(DateTimeFormatterInterface::class);
         $this->em = $this->createMock(EntityManagerInterface::class);
+        $this->startQuickOrderCheckout = $this->createMock(StartQuickOrderCheckoutInterface::class);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects(self::any())
@@ -93,10 +87,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             $this->shoppingListManager,
             $this->shoppingListLimitManager,
             $this->currentShoppingListManager,
-            $this->actionGroupRegistry,
             $this->translator,
             $this->dateFormatter,
-            'start_shoppinglist_checkout'
+            $this->startQuickOrderCheckout
         );
     }
 
@@ -105,25 +98,8 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->shoppingListLineItemHandler->expects(self::once())
             ->method('isAllowed')
             ->willReturn(true);
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn($this->actionGroup);
 
         self::assertTrue($this->processor->isAllowed());
-    }
-
-    public function testIsAllowedAndNoActionGroup(): void
-    {
-        $this->shoppingListLineItemHandler->expects(self::once())
-            ->method('isAllowed')
-            ->willReturn(true);
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn(null);
-
-        self::assertFalse($this->processor->isAllowed());
     }
 
     /**
@@ -192,21 +168,16 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
         $redirectUrl = '/customer/shoppingList/123';
-        $actionData = new ActionData([
-            'shoppingList' => $shoppingList,
+        $startResult = [
             'redirectUrl' => $redirectUrl
-        ]);
+        ];
 
         $this->expectsMapProducts($productMap);
 
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn($this->actionGroup);
-
-        $this->actionGroup->expects(self::once())
+        $this->startQuickOrderCheckout->expects(self::once())
             ->method('execute')
-            ->willReturn($actionData);
+            ->with($shoppingList, 'start_transition')
+            ->willReturn($startResult);
 
         $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
@@ -264,21 +235,17 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
         $redirectUrl = '/customer/shoppingList/123';
-        $actionData = new ActionData([
+        $startResult = [
             'shoppingList' => $shoppingList,
             'redirectUrl' => $redirectUrl
-        ]);
+        ];
 
         $this->expectsMapProducts($productMap);
 
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn($this->actionGroup);
-
-        $this->actionGroup->expects(self::once())
+        $this->startQuickOrderCheckout->expects(self::once())
             ->method('execute')
-            ->willReturn($actionData);
+            ->with($shoppingList, 'start_transition')
+            ->willReturn($startResult);
 
         $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
@@ -337,19 +304,15 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
         $this->expectsMapProducts($productMap);
 
         $redirectUrl = 'some/url';
-        $actionData = new ActionData([
+        $startResult = [
             'shoppingList' => $shoppingList,
             'redirectUrl' => $redirectUrl
-        ]);
+        ];
 
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn($this->actionGroup);
-
-        $this->actionGroup->expects(self::once())
+        $this->startQuickOrderCheckout->expects(self::once())
             ->method('execute')
-            ->willReturn($actionData);
+            ->with($shoppingList, 'start_transition')
+            ->willReturn($startResult);
 
         $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
@@ -389,22 +352,18 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
-        $actionData = new ActionData([
+        $startResult = [
             'shoppingList' => $shoppingList,
             'redirectUrl' => null,
             'errors' => []
-        ]);
+        ];
 
         $this->expectsMapProducts($productMap);
 
-        $this->actionGroupRegistry->expects(self::once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn($this->actionGroup);
-
-        $this->actionGroup->expects(self::once())
+        $this->startQuickOrderCheckout->expects(self::once())
             ->method('execute')
-            ->willReturn($actionData);
+            ->with($shoppingList, 'start_transition')
+            ->willReturn($startResult);
 
         $this->shoppingListLineItemHandler->expects(self::once())
             ->method('createForShoppingList')
@@ -536,6 +495,9 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
 
     private function getProductData(array $data): array
     {
-        return [ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $data];
+        return [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => $data,
+            ProductDataStorage::TRANSITION_NAME_KEY => 'start_transition'
+        ];
     }
 }

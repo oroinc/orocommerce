@@ -13,30 +13,65 @@ Feature: Operations permissions on order view page
     When I click view SimpleOrder in grid
     Then I should see following buttons:
       | Shipping Tracking    |
-      | Mark as Shipped      |
       | Add Special Discount |
       | Add Coupon Code      |
       | Cancel               |
       | Close                |
       | Edit                 |
 
-  Scenario: Change Administrator order permission
-    Given I go to System/User Management/Roles
+  Scenario: Check order operation without 'update' permission
+    When I go to System/User Management/Roles
     And click edit "Administrator" in grid
     And select following permissions:
       | Order | Edit:None |
-    When I save and close form
+    And I save and close form
     Then I should see "Role saved" flash message
-
-  Scenario: Check order operation without 'update' permission
-    Given I go to Sales/Orders
-    When I click view SimpleOrder in grid
+    When I go to Sales/Orders
+    And I click view SimpleOrder in grid
     Then I should not see following buttons:
       | Shipping Tracking    |
-      | Mark as Shipped      |
+      | Add Special Discount |
+      | Add Coupon Code      |
+    # The "edit" button is not unique on the order view page.
+    And should not see a "Backend View Order Edit Action Button" element
+    And I should see following buttons:
+      | Cancel |
+      | Close  |
+
+  Scenario: Check order operation without 'cancel orders' permission
+    When I go to System/User Management/Roles
+    And click edit "Administrator" in grid
+    And select following permissions:
+      | Order | Edit:Global        |
+      | Order | Cancel Orders:None |
+    And I save and close form
+    Then I should see "Role saved" flash message
+    When I go to Sales/Orders
+    And I click view SimpleOrder in grid
+    Then I should not see following buttons:
+      | Cancel |
+    And I should see following buttons:
+      | Shipping Tracking    |
+      | Add Special Discount |
+      | Add Coupon Code      |
+      | Close                |
+      | Edit                 |
+
+  Scenario: Check order operation without 'close orders' permission
+    When I go to System/User Management/Roles
+    And click edit "Administrator" in grid
+    And select following permissions:
+      | Order | Cancel Orders:Global |
+      | Order | Close Orders:None    |
+    And I save and close form
+    Then I should see "Role saved" flash message
+    When I go to Sales/Orders
+    And I click view SimpleOrder in grid
+    Then I should not see following buttons:
+      | Close |
+    And I should see following buttons:
+      | Shipping Tracking    |
       | Add Special Discount |
       | Add Coupon Code      |
       | Cancel               |
-      | Close                |
-    # The "edit" button is not unique on the order view page.
-    And should not see a "Backend View Order Edit Action Button" element
+      | Edit                 |

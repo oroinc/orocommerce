@@ -27,8 +27,7 @@ Feature: Order External Statuses
       | SecondOrder  | Wait For Approval   | Open            |
       | SimpleOrder  |                     | Open            |
     When I click view SecondOrder in grid
-    Then I should see Order with:
-      | Internal Status | Open |
+    Then I should see that order internal status is "Open"
     And I should see a "Wait For Approval Order Status Badge" element
     When I click "Edit"
     Then I should see a "Wait For Approval Order Status Badge" element

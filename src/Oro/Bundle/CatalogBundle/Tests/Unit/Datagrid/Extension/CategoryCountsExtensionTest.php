@@ -14,7 +14,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\MetadataObject;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Datagrid\Manager;
+use Oro\Bundle\DataGridBundle\Datagrid\ManagerInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Tools\DatagridParametersHelper;
 use Oro\Bundle\FilterBundle\Grid\Extension\AbstractFilterExtension;
@@ -30,7 +30,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
     private const CATEGORY_ID = 42;
     private const GRID_NAME = 'grid1';
 
-    /** @var Manager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $datagridManager;
 
     /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
@@ -84,7 +84,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $this->datagridManager = $this->createMock(Manager::class);
+        $this->datagridManager = $this->createMock(ManagerInterface::class);
         $this->categoryRepository = $this->createMock(CategoryRepository::class);
         $this->productSearchRepository = $this->createMock(ProductRepository::class);
         $this->cache = $this->createMock(CategoryCountsCache::class);

@@ -46,9 +46,9 @@ dashboards:
                     converter_attributes:
                         default_selected:
                             - open
-                            - shipped
+                            - shipped # kept to be able to see shipped orders created in previous application versions
                             - closed
-                            - archived
+                            - archived # kept to be able to see archived orders created in previous application versions
                     show_on_widget: true
                 includeSubOrders:
                     type: Oro\Bundle\DashboardBundle\Form\Type\WidgetChoiceType
@@ -120,9 +120,9 @@ dashboards:
                     converter_attributes:
                         default_selected:
                             - open
-                            - shipped
+                            - shipped # kept to be able to see shipped orders created in previous application versions
                             - closed
-                            - archived
+                            - archived # kept to be able to see archived orders created in previous application versions
                     show_on_widget: true
                 includeSubOrders:
                     type: Oro\Bundle\DashboardBundle\Form\Type\WidgetChoiceType

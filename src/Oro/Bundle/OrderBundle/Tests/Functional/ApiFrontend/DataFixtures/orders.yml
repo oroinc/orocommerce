@@ -491,7 +491,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         billingAddress: '@order1_billing_address'
         shippingAddress: '@order1_shipping_address'
         status: '@order_status.wait_for_approval'
-        internal_status: '@order_internal_status.archived'
+        internal_status: '@order_internal_status.cancelled'
     order2:
         identifier: order2
         currency: 'EUR'
@@ -535,6 +535,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order4_billing_address'
         shippingAddress: '@order4_shipping_address'
+        external: false
     order5:
         identifier: order5
         currency: 'USD'
@@ -549,6 +550,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         organization: '@organization'
         billingAddress: '@order5_billing_address'
         shippingAddress: '@order5_shipping_address'
+        external: true
     another_order:
         identifier: another_order
         currency: 'USD'

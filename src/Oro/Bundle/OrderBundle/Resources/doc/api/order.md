@@ -165,13 +165,17 @@ Delete a collection of order records.
 
 ### createdBy
 
-#### create, get
+#### update
 
-Represents a back-office user which created the Order
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
+### external
 
 #### update
 
-Represents a back-office user which created the Order
+{@inheritdoc}
 
 **The read-only field. A passed value will be ignored.**
 
@@ -300,12 +304,6 @@ Retrieve a record of a back-office user which created the Order.
 #### get_relationship
 
 Retrieve ID of a back-office user which created the Order.
-
-#### update_relationship
-
-Back-office user which created the Order.
-
-**The read-only field. A passed value will be ignored.**
 
 ### customerUser
 

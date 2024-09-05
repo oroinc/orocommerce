@@ -129,7 +129,9 @@ Feature: Previously purchased products
     Given I proceed as the Admin
     And go to Sales / Orders
     And click View "SimpleOrder" in grid
+    And I click "More actions"
     And click "Cancel"
+    And I click "Yes" in confirmation dialogue
     And I proceed as the Buyer
     And I click "Account Dropdown"
     And I click "Previously Purchased"

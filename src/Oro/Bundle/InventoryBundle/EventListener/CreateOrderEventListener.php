@@ -10,9 +10,8 @@ use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
+use Oro\Component\Action\Model\AbstractStorage;
 
 /**
  * Decrements the inventory levels of the products after a checkout is finished.
@@ -39,11 +38,11 @@ class CreateOrderEventListener
     public function onCreateOrder(ExtendableActionEvent $event): void
     {
         $context = $event->getContext();
-        if (!$context instanceof WorkflowItem || !$this->isCorrectOrderData($context->getData())) {
+        if (!$context || !$this->isSupportedData($context)) {
             return;
         }
 
-        $orderLineItems = $this->checkoutLineItemsManager->getData($context->getEntity());
+        $orderLineItems = $this->checkoutLineItemsManager->getData($context->offsetGet('checkout'));
         foreach ($orderLineItems as $lineItem) {
             if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
@@ -65,11 +64,10 @@ class CreateOrderEventListener
             ->getLevelByProductAndProductUnit($product, $productUnit);
     }
 
-    private function isCorrectOrderData(mixed $data): bool
+    private function isSupportedData(AbstractStorage $data): bool
     {
-        return
-            $data instanceof WorkflowData
-            && $data->has('order')
-            && $data->get('order') instanceof Order;
+        return $data->offsetExists('checkout')
+            && $data->offsetExists('order')
+            && $data->offsetGet('order') instanceof Order;
     }
 }

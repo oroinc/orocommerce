@@ -19,7 +19,6 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
-            - { name: container.service_subscriber, id: oro_checkout.helper.check_compare }
 
     Oro\Bundle\OrderBundle\Controller\Frontend\ProductsController:
         calls:

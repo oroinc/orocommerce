@@ -130,10 +130,9 @@ services:
             - '@oro_shopping_list.manager.shopping_list'
             - '@oro_shopping_list.manager.shopping_list_limit'
             - '@oro_shopping_list.manager.current_shopping_list'
-            - '@oro_action.action_group_registry'
             - '@translator'
             - '@oro_locale.formatter.date_time'
-            - 'start_quickorder_checkout'
+            - '@oro_checkout.action_group.start_quick_order_checkout'
         tags:
             - { name: oro_product.quick_add_processor, processor_name: oro_shopping_list_to_checkout_quick_add_processor }
 

@@ -3,13 +3,17 @@
 @fixture-OroSaleBundle:GuestLinkQuotesFixtures.yml
 @fixture-OroUserBundle:user.yml
 @fixture-OroCustomerBundle:BuyerCustomerFixture.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 
 Feature: Quote for guest
   In order to provide possibility create quotes for non authorized users
   As an Administrator
   I should be able to manage Quotes for Guests
   As an Guest User
-  I want to be abble to accept Quote without registration o website and log in
+  I want to be able to accept Quote without registration o website and log in
 
   Scenario: Create different window session
     Given sessions active:

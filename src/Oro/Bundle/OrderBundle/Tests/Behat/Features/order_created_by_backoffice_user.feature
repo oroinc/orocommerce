@@ -44,7 +44,8 @@ Feature: Created by is saved in order on checkout in impersonation mode
       | Order1CreatedBy | John Doe | John Doe     |
 
   Scenario: Filter by Created By
-    When filter Created By as is equal to "Phil Collins"
+    When I show filter "Created By" in grid
+    And filter Created By as is equal to "Phil Collins"
     Then I should see following grid:
       | Order Number    | Owner    | Created By   |
       | Order2CreatedBy | John Doe | Phil Collins |

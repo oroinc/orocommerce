@@ -16,7 +16,6 @@ Feature: Order with shipping method
     And I save and close form
     Then go to Sales/Orders
     And I should see SimpleOrder in grid with following data:
-      | Currency  | USD    |
       | Total     | $53.00 |
       | Total ($) | $53.00 |
 
@@ -26,7 +25,6 @@ Feature: Order with shipping method
     And I save and close form
     Then go to Sales/Orders
     And I should see SimpleOrder in grid with following data:
-      | Currency  | USD    |
       | Total     | $55.00 |
       | Total ($) | $55.00 |
 
@@ -36,6 +34,5 @@ Feature: Order with shipping method
     And I save and close form
     Then go to Sales/Orders
     And I should see SimpleOrder in grid with following data:
-      | Currency  | USD    |
       | Total     | $50.00 |
       | Total ($) | $50.00 |

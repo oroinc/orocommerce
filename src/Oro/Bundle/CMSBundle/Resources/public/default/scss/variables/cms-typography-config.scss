@@ -28,10 +28,20 @@ $cms-typography-blockquote-icon-height-mobile: 40px !default;
 $cms-typography-blockquote-icon-width-mobile: 40px !default;
 $cms-typography-blockquote-icon-offset-mobile: -16px !default;
 
+// Blockquote Size Base
+$cms-typography-blockquote-base-offset: 0 !default;
+$cms-typography-blockquote-base-inner-offset: 24px 58px !default;
+$cms-typography-blockquote-base-icon-height: 16px !default;
+$cms-typography-blockquote-base-icon-width: 18px !default;
+$cms-typography-blockquote-base-icon-offset: 24px !default;
+$cms-typography-blockquote-base-icon-gap: 24px !default;
+$cms-typography-blockquote-base-font-style: italic !default;
+$cms-typography-blockquote-base-font-weight: font-weight('bold') !default;
+
 // Images
 $cms-typography-img-max-width: 100% !default;
 $cms-typography-img-offset: 0 !default;
-$cms-typography-img-border: 1px solid get-color('neutral', 'grey1') !default;
+$cms-typography-img-background-color: get-color('neutral', 'grey1') !default;
 
 // Figure
 $cms-typography-figure-display: grid !default;
@@ -98,8 +108,9 @@ $cms-typography-sup-vertical-align: super !default;
 $cms-typography-small-font-size: $base-font-size--xs !default;
 $cms-typography-small-line-height: 1.5 !default;
 
-// Secondary text
+// Secondary texts
 $cms-typography-extra-text-color: get-color('text', 'secondary') !default;
+$cms-typography-extra-dark-text-color: get-color('text', 'primary') !default;
 
 // Address
 $cms-typography-address-font-style: normal !default;

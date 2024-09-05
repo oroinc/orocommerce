@@ -139,7 +139,7 @@ Feature: Product attribute select
       | Product Views | No Matrix Form |
     And I save form
     Then I should see "Configuration saved" flash message
-#
+
   Scenario: Check configurable product in frontstore to check available options of new attribute are correct
     Given I proceed as the Buyer
     When I type "Product Conf" in "search"

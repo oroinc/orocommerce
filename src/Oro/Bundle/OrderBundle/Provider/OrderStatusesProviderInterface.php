@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
+/**
+ * Represents a service that provides available internal order statuses.
+ */
 interface OrderStatusesProviderInterface
 {
-    const INTERNAL_STATUS_OPEN = 'open';
-    const INTERNAL_STATUS_CANCELLED = 'cancelled';
-    const INTERNAL_STATUS_CLOSED = 'closed';
-    const INTERNAL_STATUS_ARCHIVED = 'archived';
-    const INTERNAL_STATUS_SHIPPED = 'shipped';
+    public const INTERNAL_STATUS_OPEN = 'open';
+    public const INTERNAL_STATUS_CANCELLED = 'cancelled';
+    public const INTERNAL_STATUS_CLOSED = 'closed';
 
     /**
-     * @return array
+     * @return string[]
      */
-    public function getAvailableStatuses();
+    public function getAvailableStatuses(): array;
 }

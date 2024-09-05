@@ -1,0 +1,123 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    locvalue1:
+        string: 'Product 1'
+    locvalue2:
+        string: 'Product 2'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    localNewCategory:
+        string: 'NewCategory'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    product_precision_0:
+        unit: '@item'
+        precision: '0'
+    product_precision_1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'PSKU1'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@product_precision_1'
+        attributeFamily: '@defaultProductFamily'
+        unitPrecisions: [ '@product_precision_1' ]
+        minimumQuantityToOrder: '@minimumQuantityToOrder'
+        __calls:
+            - addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+
+    product2:
+        sku: 'NEWPSKU2'
+        status: 'enabled'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@product_precision_0'
+        attributeFamily: '@defaultProductFamily'
+        unitPrecisions: [ '@product_precision_0' ]
+        minimumQuantityToOrder: '@minimumQuantityToOrder'
+        __calls:
+            - addName: [ '@locvalue2' ]
+        inventoryStatus: '@enumInventoryStatuses'
+
+Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
+    minimumQuantityToOrder:
+        scalarValue: 0
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    categoryLightingProducts:
+        organization: '@organization'
+        __calls:
+            - addTitle: ['@localNewCategory']
+            - setParentCategory: ['@root_category']
+            - addProduct: ['@product1']
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 20
+        unit: '@item'
+        value: 80
+    price2:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 10
+        unit: '@item'
+        value: 100
+    price4:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 20
+        unit: '@item'
+        value: 30
+    price5:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 10
+        unit: '@item'
+        value: 40
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+    priceRelation2:
+        product: '@product2'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'Shopping List 1'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+    lineitem2:
+        product: '@product2'
+        quantity: '3'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'

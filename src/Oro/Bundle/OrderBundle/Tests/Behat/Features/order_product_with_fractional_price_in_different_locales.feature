@@ -38,8 +38,7 @@ Feature: Order product with fractional price in different locales
     When I click "Save and Close"
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
-    And I should see Order with:
-      | Subtotal  | 6.495,00 $ |
+    And I should see "Order Total: 6.495,00 $"
 
     When I click "Line Items"
     Then I should see following "Backend Order Line Items Grid" grid:
@@ -87,7 +86,8 @@ Feature: Order product with fractional price in different locales
       | Total                          | 5.371,55 $  |
 
   Scenario: Discount on the view page
-    When I click "Add Special Discount"
+    When I click "More actions"
+    And I click "Add Special Discount"
     And I type "1678,90" in "Discount Value"
     And I type "Additional discounts" in "Discount Description"
     Then I should see "1.678,90 $ (25,85%)"

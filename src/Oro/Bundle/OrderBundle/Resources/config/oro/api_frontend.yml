@@ -16,6 +16,8 @@ api:
                     exclude: true
                 totalDiscountsAmount:
                     exclude: true
+                external:
+                    exclude: true
                 lineItems:
                     max_results: -1
                 discounts:

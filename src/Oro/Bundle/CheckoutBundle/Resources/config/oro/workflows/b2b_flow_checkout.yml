@@ -1,11 +1,7 @@
 imports:
-    - { resource: 'includes/attributes.yml' }
     - { resource: 'b2b_flow_checkout/attributes.yml' }
     - { resource: 'b2b_flow_checkout/steps.yml' }
-    - { resource: 'includes/base_transitions.yml' }
-    - { resource: 'includes/base_transition_definitions.yml' }
     - { resource: 'b2b_flow_checkout/transitions.yml' }
-    - { resource: 'b2b_flow_checkout/transition_definitions.yml' }
 
 workflows:
     b2b_flow_checkout:
@@ -15,6 +11,15 @@ workflows:
 
         defaults:
             active: true
+
+        metadata:
+            is_checkout_workflow: true
+            is_single_page_checkout: false
+            guest_checkout:
+                return_to_login_transition: 'back_to_enter_credentials'
+            checkout_state_config:
+                enable_state_protection: true
+                additionally_update_state_after: ['paid_partially']
 
         applications: ['commerce']
 

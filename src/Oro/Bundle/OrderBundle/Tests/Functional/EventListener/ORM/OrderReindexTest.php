@@ -65,7 +65,7 @@ class OrderReindexTest extends FrontendWebTestCase
     public function testReindexWhenOrderChangeStatusNotApplicable()
     {
         $order = $this->getReference(LoadOrders::ORDER_5);
-        $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED);
+        $this->changeOrderStatus($order, OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED);
 
         $messages = self::getSentMessagesByTopic(WebsiteSearchReindexTopic::getName());
 
