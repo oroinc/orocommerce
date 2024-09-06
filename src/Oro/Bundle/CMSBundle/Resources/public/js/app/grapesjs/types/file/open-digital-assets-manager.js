@@ -11,7 +11,6 @@ const openDigitalAssetsManager = model => {
                 const {
                     url,
                     title = '',
-                    filename = '',
                     target = '_self'
                 } = digitalAssetModel.get('previewMetadata');
                 const traitText = model.getTrait('text');
@@ -24,11 +23,11 @@ const openDigitalAssetsManager = model => {
 
                 model.components([{
                     type: 'textnode',
-                    content: filename
+                    content: title
                 }]);
 
                 if (traitText) {
-                    traitText.set('value', filename);
+                    traitText.set('value', title);
                 }
             }
         }
