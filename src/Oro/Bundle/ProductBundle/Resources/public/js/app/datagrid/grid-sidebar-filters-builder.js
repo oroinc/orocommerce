@@ -22,6 +22,7 @@ export default {
             renderMode: 'toggle-mode',
             autoClose: false,
             enableMultiselectWidget: true,
+            closeFilterManagerOnOutClick: false,
             template: filtersContainerTemplate,
             fullscreenTemplate: filtersContainerFullscreenTemplate,
             defaultFiltersViewMode: FiltersManager.MANAGE_VIEW_MODE,

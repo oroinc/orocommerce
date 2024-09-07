@@ -23,12 +23,12 @@
     &.in-sticky {
         z-index: 101;
         max-height: calc(100vh - var(--sticky-page-header-element-height));
+    }
 
-        &.scroll-down {
-            transform: translateY(calc(var(--group-offset-y, 0) * -1));
+    &.scroll-down {
+        transform: translateY(calc(var(--group-offset-y, 0) * -1));
 
-            max-height: 100vh;
-        }
+        max-height: 100vh;
     }
 
     .filter-items-container {
