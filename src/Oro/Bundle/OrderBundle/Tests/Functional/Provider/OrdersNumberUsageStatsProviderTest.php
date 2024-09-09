@@ -9,18 +9,14 @@ class OrdersNumberUsageStatsProviderTest extends WebTestCase
 {
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
 
-        $this->loadFixtures(
-            [
-                LoadOrders::class,
-            ]
-        );
+        $this->loadFixtures([LoadOrders::class]);
     }
 
     public function testGetOrdersNumberUsageStatsValue(): void
     {
-        $provider = $this->getContainer()->get('oro_order.provider.orders_number_usage_stats_provider');
+        $provider = self::getContainer()->get('oro_order.provider.orders_number_usage_stats_provider');
 
         self::assertSame('7', $provider->getValue());
     }

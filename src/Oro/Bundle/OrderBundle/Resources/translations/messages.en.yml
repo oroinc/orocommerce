@@ -173,6 +173,9 @@ oro:
         warehouse:
             label:                        Warehouse
             description:                  The products are stored in warehouse(s), and the product inventory levels are defined per warehouse to indicate the quantity of the proucts that may be shipped from a particular warehouse. Based on the warehouse shipping origin, different taxes may apply or the calculated shipping cost may vary.
+        external:
+            label:                        Is External
+            description:                  Indicates whether the order is loaded externally.
 
         payment_term_7c4f1e8e:
             label:                        'Payment term'
@@ -518,7 +521,6 @@ oro:
         sections:
             general: General
             additional: Additional
-            subtotals: Order Totals
             payment_history: Payment History
             sub_orders_payment_history: Sub-Orders Payment History
             order_line_items: 'Line Items'
@@ -566,6 +568,8 @@ oro:
         subtotals:
             shipping_cost: Shipping
             discount: Discount
+
+        order_total.label: Order Total
 
         sales_orders.label: 'Sales Orders'
 
@@ -616,6 +620,8 @@ oro:
                 label: '%translatedMethodType%'
 
         permission:
+            cancel_orders.label: 'Cancel Orders'
+            close_orders.label: 'Close Orders'
             view_payment_history.label: 'View Payment History'
             charge_authorized_payments.label: 'Charge Authorized Payments'
             cancel_payments.label: 'Cancel Payments'
@@ -649,14 +655,10 @@ oro:
             order:
                 cancel: 'Cancel'
                 close: 'Close'
-                archive: 'Archive'
-                mark_as_shipped: 'Mark as Shipped'
             message:
                 order:
                     cancel.success: 'Order #%id% has been cancelled.'
                     close.success: 'Order #%id% has been closed.'
-                    archive.success: 'Order #%id% has been archived.'
-                    mark_as_shipped.success: 'Order #%id% has been marked as shipped.'
             note_message:
                 label: Notes
 

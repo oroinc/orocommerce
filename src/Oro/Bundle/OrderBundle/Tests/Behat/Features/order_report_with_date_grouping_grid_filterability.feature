@@ -45,11 +45,11 @@ Feature: Order report with date grouping grid filterability
       | 1-2-2016    | 90        | OID9         | Open            |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
-      | 1-5-2016    | 120       | OID12        | Archived        |
+      | 1-5-2016    | 120       | OID12        | Closed          |
       | 1-6-2016    | 130       | OID13        | Cancelled       |
       | 1-6-2016    | 140       | OID14        | Closed          |
       | 1-1-2017    | 150       | OID15        | Open            |
-      | 1-1-2017    | 160       | OID16        | Shipped         |
+      | 1-1-2017    | 160       | OID16        | Open            |
 
     When I filter Time Period as between "Feb 1, 2016 12:00 AM" and "Jan 1, 2018 12:00 AM"
     Then there are 8 records in grid
@@ -58,28 +58,30 @@ Feature: Order report with date grouping grid filterability
       | 1-2-2016    | 90        | OID9         | Open            |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
-      | 1-5-2016    | 120       | OID12        | Archived        |
+      | 1-5-2016    | 120       | OID12        | Closed          |
       | 1-6-2016    | 130       | OID13        | Cancelled       |
       | 1-6-2016    | 140       | OID14        | Closed          |
       | 1-1-2017    | 150       | OID15        | Open            |
-      | 1-1-2017    | 160       | OID16        | Shipped         |
+      | 1-1-2017    | 160       | OID16        | Open            |
 
     When I choose filter for Internal Status as Is Any Of "Open"
-    Then there are 4 records in grid
+    Then there are 5 records in grid
     And I should see following grid:
       | Time Period | Total ($) | Order Number | Internal Status |
       | 1-2-2016    | 90        | OID9         | Open            |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
       | 1-1-2017    | 150       | OID15        | Open            |
+      | 1-1-2017    | 160       | OID16        | Open            |
 
     When I filter "Total ($)" as more than "99"
-    Then there are 3 records in grid
+    Then there are 4 records in grid
     And I should see following grid:
       | Time Period | Total ($) | Order Number | Internal Status |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
       | 1-1-2017    | 150       | OID15        | Open            |
+      | 1-1-2017    | 160       | OID16        | Open            |
 
   Scenario: Add aggregation filter to the report
     Given I click "Edit"
@@ -104,11 +106,11 @@ Feature: Order report with date grouping grid filterability
       | 1-2-2016    | 90        | OID9         | Open            |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
-      | 1-5-2016    | 120       | OID12        | Archived        |
+      | 1-5-2016    | 120       | OID12        | Closed          |
       | 1-6-2016    | 130       | OID13        | Cancelled       |
       | 1-6-2016    | 140       | OID14        | Closed          |
       | 1-1-2017    | 150       | OID15        | Open            |
-      | 1-1-2017    | 160       | OID16        | Shipped         |
+      | 1-1-2017    | 160       | OID16        | Open            |
 
     When I filter Time Period as between "Feb 1, 2016 12:00 AM" and "Jan 1, 2018 12:00 AM"
     Then there are 8 records in grid
@@ -117,25 +119,27 @@ Feature: Order report with date grouping grid filterability
       | 1-2-2016    | 90        | OID9         | Open            |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
-      | 1-5-2016    | 120       | OID12        | Archived        |
+      | 1-5-2016    | 120       | OID12        | Closed          |
       | 1-6-2016    | 130       | OID13        | Cancelled       |
       | 1-6-2016    | 140       | OID14        | Closed          |
       | 1-1-2017    | 150       | OID15        | Open            |
-      | 1-1-2017    | 160       | OID16        | Shipped         |
+      | 1-1-2017    | 160       | OID16        | Open            |
 
     When I choose filter for Internal Status as Is Any Of "Open"
-    Then there are 4 records in grid
+    Then there are 5 records in grid
     And I should see following grid:
       | Time Period | Total ($) | Order Number | Internal Status |
       | 1-2-2016    | 90        | OID9         | Open            |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
       | 1-1-2017    | 150       | OID15        | Open            |
+      | 1-1-2017    | 160       | OID16        | Open            |
 
     When I filter "Total ($)" as more than "99"
-    Then there are 3 records in grid
+    Then there are 4 records in grid
     And I should see following grid:
       | Time Period | Total ($) | Order Number | Internal Status |
       | 1-2-2016    | 100       | OID10        | Open            |
       | 1-5-2016    | 110       | OID11        | Open            |
       | 1-1-2017    | 150       | OID15        | Open            |
+      | 1-1-2017    | 160       | OID16        | Open            |

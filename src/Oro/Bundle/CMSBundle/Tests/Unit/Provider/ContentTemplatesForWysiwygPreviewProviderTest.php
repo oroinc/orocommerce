@@ -3,13 +3,14 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Provider\PictureSourcesProviderInterface;
-use Oro\Bundle\AttachmentBundle\Tests\Unit\Fixtures\TestFile;
 use Oro\Bundle\CMSBundle\Entity\ContentTemplate;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentTemplateRepository;
 use Oro\Bundle\CMSBundle\Provider\ContentTemplatesForWysiwygPreviewProvider;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ContentTemplateStub;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
+use Oro\Component\Testing\ReflectionUtil;
 
 class ContentTemplatesForWysiwygPreviewProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -36,9 +37,7 @@ class ContentTemplatesForWysiwygPreviewProviderTest extends \PHPUnit\Framework\T
     private const PLACEHOLDER = 'placeholder/image.png';
 
     private PictureSourcesProviderInterface|\PHPUnit\Framework\MockObject\MockObject $pictureSourcesProvider;
-
     private ContentTemplateRepository|\PHPUnit\Framework\MockObject\MockObject $contentTemplateRepository;
-
     private ContentTemplatesForWysiwygPreviewProvider $provider;
 
     protected function setUp(): void
@@ -80,7 +79,8 @@ class ContentTemplatesForWysiwygPreviewProviderTest extends \PHPUnit\Framework\T
 
     public function testGetContentTemplatesList(): void
     {
-        $previewImageFoo = (new TestFile())->setId(1001);
+        $previewImageFoo = new File();
+        ReflectionUtil::setId($previewImageFoo, 1001);
 
         $this->pictureSourcesProvider->expects(self::exactly(4))
             ->method('getFilteredPictureSources')

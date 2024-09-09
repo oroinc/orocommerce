@@ -18,17 +18,12 @@ abstract class AbstractBasicSalesOrdersChartDataProviderTest extends WebTestCase
 {
     protected const DEFAULT_INCLUDED_ORDER_STATUSES = [
         OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED
+        OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
     ];
 
     protected FilterDateRangeConverter $filterDateRangeConverter;
-
     protected DateTimeFormatterInterface $dateTimeFormatter;
-
     protected SalesOrdersChartScaleProvider $chartScaleProvider;
-
     protected ?SalesOrdersChartDataProvider $salesOrdersChartDataProvider = null;
 
     protected function setUp(): void

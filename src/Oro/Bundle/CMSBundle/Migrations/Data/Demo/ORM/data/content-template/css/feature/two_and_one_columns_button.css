@@ -1,0 +1,19 @@
+.two-and-one-columns-button-feature {
+    --grid-gap: 24px;
+}
+
+.two-and-one-columns-button-feature .grid-two-columns {
+    gap: 24px 64px;
+}
+
+@media screen and (max-width: 1366px) {
+    .two-and-one-columns-button-feature .grid-two-columns {
+        gap: 24px 48px;
+    }
+}
+
+@media screen and (max-width: 1279px) {
+    .two-and-one-columns-button-feature .grid-two-columns {
+        gap: 40px 0;
+    }
+}

@@ -1,0 +1,11 @@
+.seven-columns-large-images-team {
+    --grid-gap: 24px;
+}
+.seven-columns-large-images-team .grid-team {
+    --grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.seven-columns-large-images-team .picture-wrapper {
+    min-height: 200px;
+    display: flex;
+}

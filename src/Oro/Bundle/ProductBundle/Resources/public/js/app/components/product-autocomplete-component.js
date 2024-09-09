@@ -70,7 +70,7 @@ define(function(require) {
                 if (invalid && this.$el && this.$el.val().length > 0) {
                     // updates SKU validation message in case product name is not empty
                     this.$row
-                        .find('.fields-row-error [id*=productSku].validation-failed [role="alert"] span:last-child')
+                        .find('.fields-row-error [id*=productSku].validation-failed span:last-child')
                         .text(_.escape(_.__('oro.product.validation.sku.not_found')));
                 }
                 _.defer(() => {

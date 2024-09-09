@@ -125,5 +125,4 @@ Feature: Order with Product Kits Validation
     And the "Price" field should be readonly in form "Order Form"
     And click "Calculate Shipping Button"
     And I save and close form
-    Then I should see Order with:
-      | Subtotal | $123.46 |
+    Then I should see "Order Total: $123.46"

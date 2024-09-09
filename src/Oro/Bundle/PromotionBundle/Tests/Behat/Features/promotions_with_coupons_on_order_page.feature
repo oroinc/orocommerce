@@ -59,6 +59,7 @@ Feature: Promotions with coupons on Order page
   Scenario: Coupon applying on order view page
     When go to Sales / Orders
     And click view SimpleOrder in grid
+    And I click "More actions"
     And I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element
@@ -80,12 +81,12 @@ Feature: Promotions with coupons on Order page
   Scenario: Check whether the promotion coupon have affected the total amount
     Given go to Sales/Orders
     Then I should see SimpleOrder in grid with following data:
-      | Currency  | USD    |
       | Total     | $40.00 |
       | Total ($) | $40.00 |
 
   Scenario: "Cancel" button do not save selected coupons
     When click view SecondOrder in grid
+    And I click "More actions"
     And I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element

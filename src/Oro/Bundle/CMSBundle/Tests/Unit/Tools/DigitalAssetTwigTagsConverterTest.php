@@ -7,10 +7,10 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Entity\Repository\FileRepository;
 use Oro\Bundle\AttachmentBundle\Provider\FileUrlProviderInterface;
-use Oro\Bundle\AttachmentBundle\Tests\Unit\Fixtures\TestFile;
 use Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\DigitalAssetBundle\Entity\Repository\DigitalAssetRepository;
+use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Yaml\Yaml;
 
 class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
@@ -20,9 +20,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     private static array $fixturesData = [];
 
     private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $managerRegistry;
-
     private FileUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject $fileUrlProvider;
-
     private DigitalAssetTwigTagsConverter $converter;
 
     protected function setUp(): void
@@ -35,8 +33,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             ->onlyMethods(['generateUuid'])
             ->getMock();
 
-        $this->converter
-            ->expects(self::any())
+        $this->converter->expects(self::any())
             ->method('generateUuid')
             ->willReturnCallback(static fn () => self::NEW_UUID);
     }
@@ -55,13 +52,20 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
         return self::$fixturesData[$name] ?? [];
     }
 
+    private static function getFile(int $id): File
+    {
+        $file = new File();
+        ReflectionUtil::setId($file, $id);
+
+        return $file;
+    }
+
     /**
      * @dataProvider convertToUrlsDataProvider
      */
     public function testConvertToUrls(string $contentWithTwigTags, string $expected): void
     {
-        $this->fileUrlProvider
-            ->expects(self::any())
+        $this->fileUrlProvider->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(
                 function (File $file, string $filterName, string $format) {
@@ -76,8 +80,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->fileUrlProvider
-            ->expects(self::any())
+        $this->fileUrlProvider->expects(self::any())
             ->method('getFileUrl')
             ->willReturnCallback(
                 function (File $file, string $actionName) {
@@ -89,18 +92,14 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
 
         $fileRepository = $this->createMock(FileRepository::class);
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
-        $this->managerRegistry
-            ->expects(self::any())
+        $this->managerRegistry->expects(self::any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    [File::class, null, $fileRepository],
-                    [DigitalAsset::class, null, $digitalAssetRepository],
-                ]
-            );
+            ->willReturnMap([
+                [File::class, null, $fileRepository],
+                [DigitalAsset::class, null, $digitalAssetRepository],
+            ]);
 
-        $fileRepository
-            ->expects(self::any())
+        $fileRepository->expects(self::any())
             ->method('findBy')
             ->willReturnCallback(
                 static function (array $criteria) {
@@ -111,12 +110,11 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                         return [];
                     }
 
-                    return [(new TestFile())->setId(explode('-', $uuid)[1])];
+                    return [self::getFile(explode('-', $uuid)[1])];
                 }
             );
 
-        $digitalAssetRepository
-            ->expects(self::any())
+        $digitalAssetRepository->expects(self::any())
             ->method('findSourceFile')
             ->willReturnCallback(
                 static function (int $digitalAssetId) {
@@ -125,7 +123,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                         return null;
                     }
 
-                    return (new TestFile())->setId($digitalAssetId * 10);
+                    return self::getFile($digitalAssetId * 10);
                 }
             );
 
@@ -150,8 +148,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
      */
     public function testConvertToUrlsWhenNoFile(string $contentWithTwigTags, string $expected): void
     {
-        $this->fileUrlProvider
-            ->expects(self::any())
+        $this->fileUrlProvider->expects(self::any())
             ->method('getFilteredImageUrl')
             ->willReturnCallback(
                 function (File $file, string $filterName, string $format) {
@@ -166,8 +163,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                 }
             );
 
-        $this->fileUrlProvider
-            ->expects(self::any())
+        $this->fileUrlProvider->expects(self::any())
             ->method('getFileUrl')
             ->willReturnCallback(
                 function (File $file, string $actionName) {
@@ -180,23 +176,18 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
         $fileRepository = $this->createMock(FileRepository::class);
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
 
-        $this->managerRegistry
-            ->expects(self::any())
+        $this->managerRegistry->expects(self::any())
             ->method('getRepository')
-            ->willReturnMap(
-                [
-                    [File::class, null, $fileRepository],
-                    [DigitalAsset::class, null, $digitalAssetRepository],
-                ]
-            );
+            ->willReturnMap([
+                [File::class, null, $fileRepository],
+                [DigitalAsset::class, null, $digitalAssetRepository],
+            ]);
 
-        $fileRepository
-            ->expects(self::atLeastOnce())
+        $fileRepository->expects(self::atLeastOnce())
             ->method('findBy')
             ->willReturn([]);
 
-        $digitalAssetRepository
-            ->expects(self::any())
+        $digitalAssetRepository->expects(self::any())
             ->method('findSourceFile')
             ->willReturnCallback(
                 static function (int $digitalAssetId) {
@@ -205,7 +196,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
                         throw new NoResultException();
                     }
 
-                    return (new TestFile())->setId($digitalAssetId * 10);
+                    return self::getFile($digitalAssetId * 10);
                 }
             );
 
@@ -223,8 +214,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     public function testConvertToTwigTags(string $contentWithUrls, string $expected): void
     {
         $digitalAssetRepository = $this->createMock(DigitalAssetRepository::class);
-        $this->managerRegistry
-            ->expects(self::any())
+        $this->managerRegistry->expects(self::any())
             ->method('getRepository')
             ->with(DigitalAsset::class)
             ->willReturn($digitalAssetRepository);
@@ -235,8 +225,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
             'fieldName' => 'content',
         ];
 
-        $digitalAssetRepository
-            ->expects(self::any())
+        $digitalAssetRepository->expects(self::any())
             ->method('getFileDataForTwigTag')
             ->willReturnCallback(
                 static function (int $fileId) use ($context) {

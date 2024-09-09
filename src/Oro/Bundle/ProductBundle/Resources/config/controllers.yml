@@ -20,6 +20,7 @@ services:
             - { name: container.service_subscriber, id: oro_product.provider.product_variant_availability_provider, key: Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider }
             - { name: container.service_subscriber, id: oro_product.provider.page_template_provider, key: Oro\Bundle\ProductBundle\Provider\PageTemplateProvider }
             - { name: container.service_subscriber, id: oro_product.provider.product_autocomplete, key: Oro\Bundle\ProductBundle\Provider\ProductAutocompleteProvider }
+            - { name: container.service_subscriber, id: oro_theme.provider.theme_configuration, key: Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider }
 
     Oro\Bundle\ProductBundle\Controller\BrandController:
         calls:

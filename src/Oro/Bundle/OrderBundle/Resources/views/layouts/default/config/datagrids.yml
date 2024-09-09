@@ -62,44 +62,22 @@ datagrids:
         columns:
             identifier:
                 label: oro.order.identifier.label
+            poNumber:
+                label: oro.order.po_number.label
+                renderable: false
             createdAt:
                 label: oro.ui.created_at
                 frontend_type: datetime
-            shippingAddress:
-                label: oro.order.shipping_address.label
-                type: twig
-                template: '@OroOrder/Order/Datagrid/frontendShippingAddress.html.twig'
-                frontend_type: html
-            total:
-                label: oro.order.total.label
-                frontend_type: multi-currency
-                type: callback
-                callable: [ '@oro_currency.converter.currency_to_string', 'convert' ]
-                multicurrency_config:
-                    currency_field: currency
-            paymentMethods:
-                label: oro.order.payment_method.label
-                type: twig
-                template: '@OroOrder/Order/Datagrid/paymentMethod.html.twig'
-                frontend_type: html
-            paymentStatus:
-                label: oro.order.payment_status.label
-                type: twig
-                frontend_type: html
-                template: '@OroOrder/Order/Datagrid/frontendPaymentStatus.html.twig'
+            updatedAt:
+                label: oro.ui.updated_at
+                frontend_type: datetime
+                renderable: false
             createdBySeller:
                 label: oro.order.created_by_seller.label
                 frontend_type: select
                 choices:
                     oro.order.created_by_seller.yes.label: 1
                     oro.order.created_by_seller.no.label: 2
-            #Hidden fields goes next
-            poNumber:
-                label: oro.order.po_number.label
-                renderable: false
-            shipUntil:
-                label: oro.order.ship_until.label
-                frontend_type: date
                 renderable: false
             currency:
                 label: oro.order.currency.label
@@ -112,76 +90,78 @@ datagrids:
                 multicurrency_config:
                     currency_field: currency
                 renderable: false
+            total:
+                label: oro.order.total.label
+                frontend_type: multi-currency
+                type: callback
+                callable: [ '@oro_currency.converter.currency_to_string', 'convert' ]
+                multicurrency_config:
+                    currency_field: currency
+            paymentStatus:
+                label: oro.order.payment_status.label
+                type: twig
+                frontend_type: html
+                template: '@OroOrder/Order/Datagrid/frontendPaymentStatus.html.twig'
+            paymentMethods:
+                label: oro.order.payment_method.label
+                type: twig
+                template: '@OroOrder/Order/Datagrid/paymentMethod.html.twig'
+                frontend_type: html
+                renderable: false
             shippingMethod:
                 label: oro.order.shipping_method.label
                 type: twig
                 frontend_type: html
                 template: '@OroOrder/Order/Datagrid/frontendShippingMethodFull.html.twig'
                 renderable: false
-            updatedAt:
-                label: oro.ui.updated_at
-                frontend_type: datetime
+            shippingAddress:
+                label: oro.order.shipping_address.label
+                type: twig
+                template: '@OroOrder/Order/Datagrid/frontendShippingAddress.html.twig'
+                frontend_type: html
+                renderable: false
+            shipUntil:
+                label: oro.order.ship_until.label
+                frontend_type: date
                 renderable: false
         sorters:
             columns:
+                identifier:
+                    data_name: order1.identifier
                 poNumber:
                     data_name: order1.poNumber
-                shipUntil:
-                    data_name: order1.shipUntil
                 createdAt:
                     data_name: order1.createdAt
                 updatedAt:
                     data_name: order1.updatedAt
-                identifier:
-                    data_name: order1.identifier
+                createdBySeller:
+                    data_name: createdBySeller
                 currency:
                     data_name: order1.currency
                 subtotal:
                     data_name: subtotal
                 total:
                     data_name: total
-                createdBySeller:
-                    data_name: createdBySeller
+                shipUntil:
+                    data_name: order1.shipUntil
             default:
                 createdAt: DESC
         filters:
             columns:
+                identifier:
+                    type: string
+                    data_name: order1.identifier
                 poNumber:
                     type: string
                     data_name: order1.poNumber
-                shipUntil:
-                    type: date
-                    data_name: order1.shipUntil
+                    renderable: false
                 createdAt:
                     type: datetime
                     data_name: order1.createdAt
                 updatedAt:
                     type: datetime
                     data_name: order1.updatedAt
-                paymentStatus:
-                    type: choice
-                    data_name: paymentStatus
-                    options:
-                        field_options:
-                            choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
-                            translatable_options: false
-                identifier:
-                    type: string
-                    data_name: order1.identifier
-                currency:
-                    type: choice
-                    data_name: order1.currency
-                    options:
-                        field_options:
-                            choices: "@oro_currency.config.currency->getCurrencies"
-                            translatable_options: false
-                subtotal:
-                    type: currency
-                    data_name: subtotal
                     renderable: false
-                total:
-                    type: currency
-                    data_name: total
                 createdBySeller:
                     type: single_choice
                     data_name: createdBySeller
@@ -190,6 +170,33 @@ datagrids:
                             choices:
                                 oro.order.created_by_seller.yes.label: 1
                                 oro.order.created_by_seller.no.label: 2
+                    renderable: false
+                currency:
+                    type: choice
+                    data_name: order1.currency
+                    options:
+                        field_options:
+                            choices: "@oro_currency.config.currency->getCurrencies"
+                            translatable_options: false
+                    renderable: false
+                subtotal:
+                    type: currency
+                    data_name: subtotal
+                    renderable: false
+                total:
+                    type: currency
+                    data_name: total
+                paymentStatus:
+                    type: choice
+                    data_name: paymentStatus
+                    options:
+                        field_options:
+                            choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
+                            translatable_options: false
+                shipUntil:
+                    type: date
+                    data_name: order1.shipUntil
+                    renderable: false
         properties:
             id: ~
             view_link:

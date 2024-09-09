@@ -167,17 +167,17 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
     {
         return [
             'Test that order status changed from available to unavailable status'   => [
-                'oldStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
+                'oldStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
                 'newStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
                 'reindexExpected' => true
             ],
             'Test that order status changed from unavailable to available status'   => [
                 'oldStatusId'     => null,
-                'newStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
+                'newStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
                 'reindexExpected' => true
             ],
             'Test that order status changed from available to available status'     => [
-                'oldStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
+                'oldStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
                 'newStatusId'     => OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
                 'reindexExpected' => false
             ],

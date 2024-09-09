@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrganizationBundle\Provider\OrganizationRestrictionProviderInterface;
 use Oro\Bundle\PlatformBundle\Provider\UsageStats\AbstractUsageStatsProvider;
 
@@ -15,18 +14,18 @@ use Oro\Bundle\PlatformBundle\Provider\UsageStats\AbstractUsageStatsProvider;
  */
 class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
 {
-    private ObjectManager $objectManager;
+    private ManagerRegistry $doctrine;
     private OrganizationRestrictionProviderInterface $organizationRestrictionProvider;
     private CurrencyProviderInterface $currencyProvider;
     private NumberFormatter $numberFormatter;
 
     public function __construct(
-        ObjectManager $objectManager,
+        ManagerRegistry $doctrine,
         OrganizationRestrictionProviderInterface $organizationRestrictionProvider,
         CurrencyProviderInterface $currencyProvider,
         NumberFormatter $numberFormatter
     ) {
-        $this->objectManager = $objectManager;
+        $this->doctrine = $doctrine;
         $this->organizationRestrictionProvider = $organizationRestrictionProvider;
         $this->currencyProvider = $currencyProvider;
         $this->numberFormatter = $numberFormatter;
@@ -44,39 +43,24 @@ class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
 
     public function isApplicable(): bool
     {
-        return count($this->currencyProvider->getCurrencyList()) === 1;
+        return \count($this->currencyProvider->getCurrencyList()) === 1;
     }
 
     public function getValue(): ?string
     {
-        /** @var OrderRepository $orderRepository */
-        $orderRepository = $this->objectManager->getRepository(Order::class);
-        $queryBuilder = $orderRepository->getSalesOrdersVolumeQueryBuilder(
+        $queryBuilder = $this->doctrine->getRepository(Order::class)->getSalesOrdersVolumeQueryBuilder(
             new \DateTime(date('Y-1-1'), new \DateTimeZone('UTC')),
-            new \DateTime('now', new \DateTimeZone('UTC')),
-            [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_ARCHIVED,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_SHIPPED,
-                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
-            ],
+            null,
+            null,
             false,
             'total',
             $this->currencyProvider->getCurrencyList()[0],
             'year'
         );
+        $this->organizationRestrictionProvider->applyOrganizationRestrictions($queryBuilder);
 
-        $this->organizationRestrictionProvider->applyOrganizationRestrictions(
-            $queryBuilder
-        );
+        $result = $queryBuilder->getQuery()->getResult();
 
-        $result = $queryBuilder
-            ->getQuery()
-            ->getResult();
-
-        return $this->numberFormatter->formatCurrency(
-            $result[0]['amount'] ?? 0.0
-        );
+        return $this->numberFormatter->formatCurrency($result[0]['amount'] ?? 0.0);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
-use Oro\Bundle\AttachmentBundle\Tests\Unit\Fixtures\TestFile;
 use Oro\Bundle\CMSBundle\Entity\ContentTemplate;
 use Oro\Bundle\CMSBundle\Form\Type\ContentTemplateType;
 use Oro\Bundle\CMSBundle\Provider\HTMLPurifierScopeProvider;
@@ -14,6 +14,7 @@ use Oro\Bundle\CMSBundle\Validator\Constraints\TwigContentValidator;
 use Oro\Bundle\CMSBundle\Validator\Constraints\WYSIWYGValidator;
 use Oro\Bundle\TagBundle\Form\Type\TagSelectType;
 use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Psr\Log\LoggerInterface;
@@ -37,8 +38,8 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
                     TagSelectType::class => new TagSelectTypeStub([]),
                     $this->createWysiwygType(),
                     ImageType::class => new ImageTypeStub([
-                        1001 => (new TestFile())->setId(1001),
-                        1002 => (new TestFile())->setId(1002),
+                        1001 => $this->getFile(1001),
+                        1002 => $this->getFile(1002),
                     ]),
                 ],
                 []
@@ -76,6 +77,14 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
                 $logger
             )
         ];
+    }
+
+    private function getFile(int $id): File
+    {
+        $file = new File();
+        ReflectionUtil::setId($file, $id);
+
+        return $file;
     }
 
     public function testBuildForm(): void
@@ -130,18 +139,14 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
         self::assertEquals($existingData, $form->getData());
         self::assertEquals(
             'This value should not be blank.',
-            $form
-                ->get('name')
-                ->getErrors()
-                ->current()
-                ->getMessage()
+            $form->get('name')->getErrors()->current()->getMessage()
         );
     }
 
     private function submitSuccessDataProvider(): array
     {
-        $previewImageFoo = (new TestFile())->setId(1001);
-        $previewImageBar = (new TestFile())->setId(1002);
+        $previewImageFoo = $this->getFile(1001);
+        $previewImageBar = $this->getFile(1002);
 
         return [
             'new empty entity' => [

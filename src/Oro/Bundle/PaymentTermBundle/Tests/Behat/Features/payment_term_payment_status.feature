@@ -58,7 +58,7 @@ Feature: Payment Term payment status
   Scenario: Capture order payment with Payment Term
     Given I operate as the Admin
     When I go to Sales/ Orders
-    And I filter PO Number as is equal to "TEST_PO_NUMBER"
+    And I show column PO Number in grid
     And click View TEST_PO_NUMBER in grid
     And I should see "Payment Status Pending payment"
     And I should see following "Order Payment Transaction Grid" grid:

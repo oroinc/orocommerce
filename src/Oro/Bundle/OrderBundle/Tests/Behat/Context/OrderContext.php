@@ -43,7 +43,7 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware
     {
         static::assertStringContainsStringIgnoringCase(
             $status,
-            $this->getPage()->findLabel('Internal Status')->getParent()->getText()
+            $this->getPage()->getElement('Order Internal Status')->getText()
         );
     }
 

@@ -29,16 +29,10 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class ProductController extends AbstractController
 {
-    /**
-     * View list of products
-     *
-     *
-     * @return array
-     */
     #[Route(path: '/', name: 'oro_product_frontend_product_index')]
     #[Layout(vars: ['entity_class', 'grid_config', 'theme_name', 'filters_position'])]
     #[AclAncestor('oro_product_frontend_view')]
-    public function indexAction()
+    public function indexAction(): array
     {
         return [
             'entity_class' => Product::class,
@@ -51,16 +45,10 @@ class ProductController extends AbstractController
         ];
     }
 
-    /**
-     * Search products
-     *
-     *
-     * @return array
-     */
     #[Route(path: '/search', name: 'oro_product_frontend_product_search')]
     #[Layout(vars: ['entity_class', 'grid_config', 'theme_name', 'filters_position'])]
     #[AclAncestor('oro_product_frontend_view')]
-    public function searchAction()
+    public function searchAction(): array
     {
         return [
             'entity_class' => Product::class,
@@ -73,22 +61,6 @@ class ProductController extends AbstractController
         ];
     }
 
-    private function getFiltersPosition(): string
-    {
-        /** @var ThemeConfigurationProvider $themeConfigurationProvider */
-        $themeConfigurationProvider = $this->container->get(ThemeConfigurationProvider::class);
-
-        $themeConfigurationOptionKey = ThemeConfiguration::buildOptionKey('product_listing', 'filters_position');
-        if ($themeConfigurationProvider->hasThemeConfigurationOption($themeConfigurationOptionKey)) {
-            return $themeConfigurationProvider->getThemeConfigurationOption($themeConfigurationOptionKey);
-        }
-
-        return $this->container->get(ConfigManager::class)->get(Configuration::getConfigKeyByName('filters_position'));
-    }
-
-    /**
-     * Get data for website search autocomplete
-     */
     #[Route(path: '/search/autocomplete', name: 'oro_product_frontend_product_search_autocomplete')]
     #[AclAncestor('oro_product_frontend_view')]
     public function autocompleteAction(Request $request): JsonResponse
@@ -102,14 +74,6 @@ class ProductController extends AbstractController
         return new JsonResponse($autocompleteData);
     }
 
-    /**
-     * View list of products
-     *
-     *
-     * @param Request $request
-     * @param Product $product
-     * @return array
-     */
     #[Route(path: '/view/{id}', name: 'oro_product_frontend_product_view', requirements: ['id' => '\d+'])]
     #[Layout(vars: ['product_type', 'attribute_family', 'page_template'])]
     #[Acl(
@@ -119,7 +83,7 @@ class ProductController extends AbstractController
         permission: 'VIEW',
         groupName: 'commerce'
     )]
-    public function viewAction(Request $request, Product $product)
+    public function viewAction(Request $request, Product $product): array
     {
         $data = [
             'product' => $product,
@@ -144,7 +108,8 @@ class ProductController extends AbstractController
         $parentProduct = null;
         $parentProductId = $request->get('parentProductId');
         if ($parentProductId) {
-            $parentProduct = $this->container->get('doctrine')->getRepository(Product::class)->find($parentProductId);
+            $parentProduct = $this->container->get(ManagerRegistry::class)->getRepository(Product::class)
+                ->find($parentProductId);
         }
 
         $pageTemplate = $this->container->get(PageTemplateProvider::class)
@@ -176,9 +141,22 @@ class ProductController extends AbstractController
             ProductAutocompleteProvider::class,
             ProductViewFormAvailabilityProvider::class,
             ConfigManager::class,
-            'doctrine' => ManagerRegistry::class,
+            ManagerRegistry::class,
             ThemeConfigurationProvider::class,
         ]);
+    }
+
+    private function getFiltersPosition(): string
+    {
+        /** @var ThemeConfigurationProvider $themeConfigurationProvider */
+        $themeConfigurationProvider = $this->container->get(ThemeConfigurationProvider::class);
+
+        $themeConfigurationOptionKey = ThemeConfiguration::buildOptionKey('product_listing', 'filters_position');
+        if ($themeConfigurationProvider->hasThemeConfigurationOption($themeConfigurationOptionKey)) {
+            return $themeConfigurationProvider->getThemeConfigurationOption($themeConfigurationOptionKey);
+        }
+
+        return $this->container->get(ConfigManager::class)->get(Configuration::getConfigKeyByName('filters_position'));
     }
 
     private function getChosenProductVariantFromRequest(Request $request, Product $product): ?Product
@@ -187,7 +165,7 @@ class ProductController extends AbstractController
         $variantProductId = $request->get('variantProductId');
         if ($variantProductId) {
             /** @var EntityManagerInterface $em */
-            $em = $this->container->get('doctrine')->getManagerForClass(Product::class);
+            $em = $this->container->get(ManagerRegistry::class)->getManagerForClass(Product::class);
             $variantProductId = (int)$variantProductId;
             $simpleProductIds = $this->container->get(ProductVariantAvailabilityProvider::class)
                 ->getSimpleProductIdsByConfigurable([$product->getId()]);

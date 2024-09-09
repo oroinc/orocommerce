@@ -1,0 +1,21 @@
+.three-columns-testimonials {
+    --grid-gap: 24px;
+}
+
+/* stylelint-disable scale-unlimited/declaration-strict-value */
+.three-columns-testimonials .grid-item {
+    --grid-gap: 0;
+    --grid-auto-rows: 1fr auto;
+
+    height: 100%;
+    background: #f0f3f5;
+}
+/* stylelint-enable scale-unlimited/declaration-strict-value */
+
+.three-columns-testimonials .grid-item__bottom {
+    --grid-column-count: 2;
+    --grid-template-columns: 44px 1fr;
+    --grid-gap: 12px;
+
+    padding: 0 58px 24px;
+}

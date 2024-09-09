@@ -10,6 +10,8 @@ export default (BaseTypeModel, {editor}) => {
         },
 
         init() {
+            FileTypeModel.__super__.init.call(this);
+
             const toolbar = this.get('toolbar');
             if (!toolbar.find(toolbar => toolbar.id === 'file-settings')) {
                 this.set('toolbar', [

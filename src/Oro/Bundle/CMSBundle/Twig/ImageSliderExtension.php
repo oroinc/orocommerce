@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Twig;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\Proxy;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
 use Oro\Bundle\CMSBundle\Entity\ImageSlide;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -27,6 +30,9 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         $this->container = $container;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public function getFunctions(): array
     {
         return [
@@ -35,12 +41,16 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         ];
     }
 
+    /**
+     * {@inheritDoc}
+     */
     public static function getSubscribedServices(): array
     {
         return [
             AttachmentManager::class,
             'oro_cms.provider.image_slider_image_placeholder.default' => ImagePlaceholderProviderInterface::class,
-            'property_accessor' => PropertyAccessorInterface::class
+            PropertyAccessorInterface::class,
+            DoctrineHelper::class
         ];
     }
 
@@ -100,27 +110,29 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
     public function getImageSlideSources(ImageSlide $imageSlide, array $imageVariantSettings): array
     {
         $sources = [];
+        $imageTypes = ['smallImage', 'mediumImage', 'largeImage', 'extraLargeImage'];
+        $sizes = ['', '2x', '3x'];
+
+        $this->ensureImagesLoaded($imageSlide, $imageTypes, $sizes);
+
         $isWebpEnabledIfSupported = $this->getAttachmentManager()->isWebpEnabledIfSupported();
-        foreach (['smallImage', 'mediumImage', 'largeImage', 'extraLargeImage'] as $imageType) {
+        foreach ($imageTypes as $imageType) {
+            $imageVariants = $this->getImageVariants($imageType, $sizes);
             $mediaQuery = $imageVariantSettings[$imageType]['media'] ?? '';
             $mediaQuery = $mediaQuery ? ['media' => $mediaQuery] : [];
             $imageOptions = $imageVariantSettings[$imageType] ?? [];
 
             if ($isWebpEnabledIfSupported) {
-                $srcset = $this->getSrcset($imageType, $imageOptions, $imageSlide, 'webp');
-                if ($srcset) {
-                    $sources[] = $mediaQuery + [
-                            'srcset' => $srcset,
-                            'type' => 'image/webp',
-                        ];
+                $webpSrcset = $this->getSrcset($imageType, $imageVariants, $imageOptions, $imageSlide, 'webp');
+                if ($webpSrcset) {
+                    $sources[] = $mediaQuery + ['srcset' => $webpSrcset, 'type' => 'image/webp'];
                 }
             }
-            $srcset = $this->getSrcset($imageType, $imageOptions, $imageSlide);
+
+            $srcset = $this->getSrcset($imageType, $imageVariants, $imageOptions, $imageSlide);
             if ($srcset) {
-                $data = [
-                    'srcset' => $srcset,
-                ];
-                $type = $this->getMimeType($imageType, $imageSlide);
+                $data = ['srcset' => $srcset];
+                $type = $this->getMimeType($imageVariants, $imageSlide);
                 if ($type) {
                     $data['type'] = $type;
                 }
@@ -131,17 +143,15 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         return $sources;
     }
 
-    public function getImageSlideImage(
-        ImageSlide $imageSlide,
-        string $format = ''
-    ): ?string {
-        $image = $this->getPropertyAccessor()->getValue($imageSlide, 'extraLargeImage');
-        if ($image) {
+    public function getImageSlideImage(ImageSlide $imageSlide, string $format = ''): ?string
+    {
+        $image = $this->getImage($imageSlide, 'extraLargeImage');
+        if (null !== $image) {
             return $this->getAttachmentManager()->getFilteredImageUrl($image, 'original', $format);
         }
 
         $image = $this->getFallbackImage($imageSlide, 'extraLargeImage');
-        if ($image) {
+        if (null !== $image) {
             return $this->getAttachmentManager()->getFilteredImageUrl($image, 'slider_extra_large', $format);
         }
 
@@ -150,26 +160,21 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
 
     private function getSrcset(
         string $imageType,
+        array $imageVariants,
         array $imageOptions,
         ImageSlide $imageSlide,
         $format = ''
     ): string {
-        $sizes = ['', '2x', '3x'];
         $srcset = [];
-        $propertyAccessor = $this->getPropertyAccessor();
-
-        foreach ($sizes as $size) {
-            $imageVariant = sprintf('%s%s', $imageType, $size);
-            /** @var File $image */
-            $image = $propertyAccessor->getValue($imageSlide, $imageVariant);
-            if ($image) {
-                $filterName = $imageOptions[sprintf('filter%s', $size)] ?? 'original';
+        foreach ($imageVariants as $size => $imageVariant) {
+            $image = $this->getImage($imageSlide, $imageVariant);
+            if (null !== $image) {
+                $filterName = $imageOptions['filter' . $size] ?? 'original';
             } else {
                 $image = $this->getFallbackImage($imageSlide, $imageType, $size);
-                $filterName = $imageOptions[sprintf('fallback_filter%s', $size)] ?? 'original';
+                $filterName = $imageOptions['fallback_filter' . $size] ?? 'original';
             }
-
-            if (!$image) {
+            if (null === $image) {
                 continue;
             }
 
@@ -177,32 +182,28 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
                 continue;
             }
 
-            $srcset[] = sprintf(
-                '%s%s',
-                $this->getAttachmentManager()->getFilteredImageUrl($image, $filterName, $format),
-                $size ? sprintf(' %s', $size) : ''
-            );
+            $src = $this->getAttachmentManager()->getFilteredImageUrl($image, $filterName, $format);
+            if ($size) {
+                $src .= ' ' . $size;
+            }
+            $srcset[] = $src;
         }
 
-        return !empty($srcset) ? implode(', ', $srcset) : '';
+        return $srcset ? implode(', ', $srcset) : '';
     }
 
-    private function getMimeType(string $imageType, ImageSlide $imageSlide): ?string
+    private function getMimeType(array $imageVariants, ImageSlide $imageSlide): ?string
     {
-        $sizes = ['', '2x', '3x'];
         $mimeTypes = [];
-        foreach ($sizes as $size) {
-            $imageVariant = sprintf('%s%s', $imageType, $size);
-            /** @var File $image */
-            $image = $this->getPropertyAccessor()->getValue($imageSlide, $imageVariant);
-            if ($image) {
+        foreach ($imageVariants as $imageVariant) {
+            $image = $this->getImage($imageSlide, $imageVariant);
+            if (null !== $image) {
                 $mimeTypes[] = $image->getMimeType();
             }
         }
-
         $mimeTypes = array_unique($mimeTypes);
 
-        return count($mimeTypes) == 1 ? reset($mimeTypes) : null;
+        return \count($mimeTypes) === 1 ? reset($mimeTypes) : null;
     }
 
     /**
@@ -212,14 +213,60 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
      */
     private function getFallbackImage(ImageSlide $imageSlide, string $imageType, string $size = ''): ?File
     {
-        $fallback2x = $this->getPropertyAccessor()->getValue($imageSlide, sprintf('%s%s', $imageType, '2x'));
-        $fallback3x = $this->getPropertyAccessor()->getValue($imageSlide, sprintf('%s%s', $imageType, '3x'));
+        if ('' === $size) {
+            return
+                $this->getImage($imageSlide, $this->getImageVariant($imageType, '3x'))
+                ?? $this->getImage($imageSlide, $this->getImageVariant($imageType, '2x'));
+        }
 
-        return match ($size) {
-            default => null,
-            '' => $fallback3x ?: $fallback2x ?: null,
-            '2x' => $fallback3x ?: null,
-        };
+        if ('2x' === $size) {
+            return $this->getImage($imageSlide, $this->getImageVariant($imageType, '3x'));
+        }
+
+        return null;
+    }
+
+    private function getImage(ImageSlide $imageSlide, string $imageVariant): ?File
+    {
+        return $this->getPropertyAccessor()->getValue($imageSlide, $imageVariant);
+    }
+
+    private function getImageVariant(string $imageType, string $size): string
+    {
+        return $size ? $imageType . $size : $imageType;
+    }
+
+    private function getImageVariants(string $imageType, array $sizes): array
+    {
+        $imageVariants = [];
+        foreach ($sizes as $size) {
+            $imageVariants[$size] = $this->getImageVariant($imageType, $size);
+        }
+
+        return $imageVariants;
+    }
+
+    /**
+     * Loads all images to avoid loading each image by a separate DB query.
+     */
+    private function ensureImagesLoaded(ImageSlide $imageSlide, array $imageTypes, array $sizes): void
+    {
+        $imageIds = [];
+        foreach ($imageTypes as $imageType) {
+            $imageVariants = $this->getImageVariants($imageType, $sizes);
+            foreach ($imageVariants as $imageVariant) {
+                $image = $this->getImage($imageSlide, $imageVariant);
+                if ($image instanceof Proxy && !$image->__isInitialized()) {
+                    $imageIds[] = $image->getId();
+                }
+            }
+        }
+        if ($imageIds) {
+            $imageIds = array_unique($imageIds);
+            sort($imageIds);
+            // load entities into the entity manager
+            $this->getDoctrine()->getRepository(File::class)->findBy(['id' => $imageIds]);
+        }
     }
 
     private function getAttachmentManager(): AttachmentManager
@@ -245,9 +292,14 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
     private function getPropertyAccessor(): PropertyAccessorInterface
     {
         if (null === $this->propertyAccessor) {
-            $this->propertyAccessor = $this->container->get('property_accessor');
+            $this->propertyAccessor = $this->container->get(PropertyAccessorInterface::class);
         }
 
         return $this->propertyAccessor;
+    }
+
+    private function getDoctrine(): ManagerRegistry
+    {
+        return $this->container->get(ManagerRegistry::class);
     }
 }

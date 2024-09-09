@@ -19,15 +19,10 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
 
     public function testGetList(): void
     {
-        $response = $this->cget(['entity' => 'orderstatuses']);
+        $response = $this->cget(['entity' => 'orderstatuses'], ['filter[id]' => 'open,closed,cancelled']);
         $this->assertResponseContains(
             [
                 'data' => [
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'archived',
-                        'attributes' => ['name' => 'Archived']
-                    ],
                     [
                         'type'       => 'orderstatuses',
                         'id'         => 'cancelled',
@@ -42,11 +37,6 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
                         'type'       => 'orderstatuses',
                         'id'         => 'open',
                         'attributes' => ['name' => 'Open']
-                    ],
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'shipped',
-                        'attributes' => ['name' => 'Shipped']
                     ]
                 ]
             ],
@@ -56,13 +46,13 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
 
     public function testGet(): void
     {
-        $response = $this->get(['entity' => 'orderstatuses', 'id' => 'archived']);
+        $response = $this->get(['entity' => 'orderstatuses', 'id' => 'closed']);
         $this->assertResponseContains(
             [
                 'data' => [
                     'type'       => 'orderstatuses',
-                    'id'         => 'archived',
-                    'attributes' => ['name' => 'Archived']
+                    'id'         => 'closed',
+                    'attributes' => ['name' => 'Closed']
                 ]
             ],
             $response

@@ -1,0 +1,8 @@
+.four-columns-team {
+    --grid-gap: 24px;
+}
+
+.four-columns-team .picture-wrapper {
+    min-height: 200px;
+    display: flex;
+}

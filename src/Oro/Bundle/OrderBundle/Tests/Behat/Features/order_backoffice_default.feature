@@ -9,9 +9,9 @@ Feature: Order Backoffice Default
     And go to Sales/Orders
     And click view OrderWithoutCustomerUser in grid
     Then I should see Order with:
-      | Order Number | OrderWithoutCustomerUser |
-      | Customer | first customer |
-      | Customer User | N/A |
+      | Order Number  | OrderWithoutCustomerUser |
+      | Customer      | first customer           |
+      | Customer User | N/A                      |
 
     Then I operate as the Buyer
     And I click "Account Dropdown"
@@ -26,21 +26,21 @@ Feature: Order Backoffice Default
     And go to Sales/Orders
     And click view OrderWithChildCustomerAndWithCustomerUser in grid
     Then I should see Order with:
-      | Order Number | OrderWithChildCustomerAndWithCustomerUser |
-      | Customer | child of first customer |
-      | Customer User | Ruth Maxwell |
+      | Order Number  | OrderWithChildCustomerAndWithCustomerUser |
+      | Customer      | child of first customer                   |
+      | Customer User | Ruth Maxwell                              |
     And go to Sales/Orders
     And click view OrderWithChildCustomerAndWithoutCustomerUser in grid
     Then I should see Order with:
-      | Order Number | OrderWithChildCustomerAndWithoutCustomerUser |
-      | Customer | child of first customer |
-      | Customer User | N/A |
+      | Order Number  | OrderWithChildCustomerAndWithoutCustomerUser |
+      | Customer      | child of first customer                      |
+      | Customer User | N/A                                          |
 
     Then I operate as the Buyer
     And I click "Account Dropdown"
     And I click "Order History"
     Then I should see following records in grid:
-      | OrderWithChildCustomerAndWithCustomerUser |
+      | OrderWithChildCustomerAndWithCustomerUser    |
       | OrderWithChildCustomerAndWithoutCustomerUser |
     When I click view OrderWithChildCustomerAndWithCustomerUser in grid
     Then I should see "Order #OrderWithChildCustomerAndWithCustomerUser"
@@ -54,9 +54,9 @@ Feature: Order Backoffice Default
     And go to Sales/Orders
     And click view OrderWithoutCustomerUser in grid
     Then I should see Order with:
-      | Order Number | OrderWithoutCustomerUser |
-      | Customer | first customer |
-      | Customer User | N/A |
+      | Order Number  | OrderWithoutCustomerUser |
+      | Customer      | first customer           |
+      | Customer User | N/A                      |
 
     Then I operate as the Buyer
     And I signed in as RuthWMaxwell@example.org on the store frontend
@@ -64,17 +64,17 @@ Feature: Order Backoffice Default
     And I click "Order History"
     Then I should not see "OrderWithoutCustomerUser"
     And I should see following records in grid:
-      | OrderWithChildCustomerAndWithCustomerUser |
+      | OrderWithChildCustomerAndWithCustomerUser    |
       | OrderWithChildCustomerAndWithoutCustomerUser |
 
   Scenario: Don't see Orders by frontend administrator of another customer.
     Given I operate as the Admin
     And go to Sales/Orders
     And I should see following records in grid:
-      | OrderWithoutCustomerUser |
-      | OrderWithChildCustomerAndWithCustomerUser |
+      | OrderWithoutCustomerUser                     |
+      | OrderWithChildCustomerAndWithCustomerUser    |
       | OrderWithChildCustomerAndWithoutCustomerUser |
-      | OrderWithCustomerAndCustomerUser |
+      | OrderWithCustomerAndCustomerUser             |
 
     Then I operate as the Buyer
     And I signed in as JuanaPBrzezinski@example.net on the store frontend
@@ -87,9 +87,9 @@ Feature: Order Backoffice Default
     And go to Sales/Orders
     And click view OrderWithCustomerAndCustomerUser in grid
     Then I should see Order with:
-      | Order Number | OrderWithCustomerAndCustomerUser |
-      | Customer | first customer |
-      | Customer User | Amanda Cole |
+      | Order Number  | OrderWithCustomerAndCustomerUser |
+      | Customer      | first customer                   |
+      | Customer User | Amanda Cole                      |
 
     Then I operate as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
