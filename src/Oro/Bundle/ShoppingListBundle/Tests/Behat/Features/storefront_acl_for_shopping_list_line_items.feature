@@ -44,4 +44,4 @@ Feature: Storefront acl for shopping list line items
     And I click on "Shopping List Line Item 1 Save Changes Button"
     Then I should see following grid:
       | SKU | Qty Update All |
-      | AA1 | 10 item        |
+      | AA1 | 10 item set    |

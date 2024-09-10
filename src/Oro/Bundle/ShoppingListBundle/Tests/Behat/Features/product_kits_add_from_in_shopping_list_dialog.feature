@@ -35,7 +35,7 @@ Feature: Product kits add from in shopping list dialog
     And I should see "Configure and Add to Shopping List" in the "Product Kit In Shopping List Dialog Action Panel" element
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "2"
-    And the "Shopping List 1 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
 
   Scenario: Configure and Add to Shopping List from "In Shopping List" dialog
     When I click "Configure and Add to Shopping List" in "Product Kit In Shopping List Dialog Action Panel" element
@@ -76,10 +76,10 @@ Feature: Product kits add from in shopping list dialog
       | Shopping List 2 Configuration | Base Unit[x 1] Product 1                                |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "2"
-    And the "Shopping List 1 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     When I click on "Shopping List 2 Kit Line Item Quantity"
     Then the "Shopping List 2 Kit Line Item Quantity Input" field element should contain "1"
-    And the "Shopping List 2 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 2 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     And I close ui dialog
     And click on "Flash Message Close Button"
 
@@ -137,10 +137,10 @@ Feature: Product kits add from in shopping list dialog
       | Shopping List 3 Configuration | Base Unit[x 1] Product 2                                |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "2"
-    And the "Shopping List 1 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     When I click on "Shopping List 2 Kit Line Item Quantity"
     Then the "Shopping List 2 Kit Line Item Quantity Input" field element should contain "1"
-    And the "Shopping List 2 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 2 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     When I click on "Shopping List 3 Kit Line Item Quantity"
     Then the "Shopping List 3 Kit Line Item Quantity Input" field element should contain "1"
-    And the "Shopping List 3 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 3 Kit Line Item Single Unit" element with text "piece" inside "Grid" element

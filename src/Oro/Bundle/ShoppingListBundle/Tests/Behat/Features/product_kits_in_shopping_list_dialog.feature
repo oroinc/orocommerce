@@ -38,10 +38,10 @@ Feature: Product kits in shopping list dialog
       | Shopping List 3 Configuration | Barcode Scanner[x 1] Product 3 Base Unit[x 1] Product 2 |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "2"
-    And the "Shopping List 1 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     When I click on "Shopping List 2 Kit Line Item Quantity"
     Then the "Shopping List 2 Kit Line Item Quantity Input" field element should contain "1"
-    And the "Shopping List 2 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 2 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
 
   Scenario: Update quantity in "In Shopping List" dialog
     When I click on "Shopping List 1 Kit Line Item Quantity"
@@ -166,10 +166,10 @@ Feature: Product kits in shopping list dialog
       | Shopping List 2 Configuration | Base Unit[x 1] Product 1                                |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "3"
-    And the "Shopping List 1 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     When I click on "Shopping List 2 Kit Line Item Quantity"
     Then the "Shopping List 2 Kit Line Item Quantity Input" field element should contain "3"
-    And the "Shopping List 2 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 2 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
 
   Scenario: Check product kit line item edit dialog
     When I click "Shopping List 2 Kit Line Item Edit Button"

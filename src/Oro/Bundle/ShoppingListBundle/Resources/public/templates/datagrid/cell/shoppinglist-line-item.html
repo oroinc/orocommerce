@@ -1,4 +1,6 @@
+<% let oroui = _.macros('oroui') %>
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<% let oroproduct = _.macros('oroproduct') %>
 <% if (obj.isConfigurable) { %>
     <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable" data-label="<%- _metadata.label %>:">
         <% if (quantity) { %>
@@ -15,8 +17,45 @@
     </div>
 <% } else { %>
     <div class="line-item-container">
-        <% var _formattedUnit = oroshoppinglist.renderUnit({unit: unitCode, quantity: 1}) %>
-        <div tabindex="0" class="input input-qty"><%- oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %></div>
-        <div class="select" tabindex="0" data-focused=".select2-container" title="<%- _formattedUnit.trim() %>"><%- _formattedUnit.trim() %></div>
+        <% const _formattedUnit = oroshoppinglist.renderUnit({unit: unitCode, quantity: 1}) %>
+        <% if (obj.useInputStepper) { %>
+            <div class="form-quantity-row">
+                <div tabindex="0"
+                     class="input"
+                ><%- oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %></div>
+                <button type="button"
+                        class="btn btn--simple input-quantity-btn input-quantity-btn--minus"
+                        data-type="decrement"
+                        aria-label="<%- _.__('oro_frontend.input_widget.step_input.decrease') %>"
+                        data-focused=".input-quantity-btn--minus"
+                        tabindex="0"
+                ><%= oroui.renderIcon({name: 'minus'}) %></button>
+                <button type="button"
+                        class="btn btn--simple input-quantity-btn input-quantity-btn--plus"
+                        data-type="increment"
+                        aria-label="<%- _.__('oro_frontend.input_widget.step_input.increase') %>"
+                        data-focused=".input-quantity-btn--plus"
+                        tabindex="0"
+                ><%= oroui.renderIcon({name: 'plus'}) %></button>
+            </div>
+        <% } else { %>
+            <div tabindex="0" class="input input-qty"><%- oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %></div>
+        <% } %>
+        <% if (oroproduct.isSingleUnitMode(obj.units)) { %>
+            <span class="single-unit" data-role="unit-label"><%- _formattedUnit.trim() %></span>
+        <% } else if (oroproduct.displayUnitsAsGroup(obj.units)) { %>
+            <%= oroproduct.renderUnitsAsRadioGroup({
+                selectedValue: obj.unitCode,
+                units: obj.units,
+                radioAttrs: {
+                    role: 'radio-view-mode'
+                },
+                labelAttrs: {
+                    role: 'label-view-mode'
+                }
+            }) %>
+        <% } else { %>
+            <div class="select" tabindex="0" data-focused=".select2-container" title="<%- _formattedUnit.trim() %>"><%- _formattedUnit.trim() %></div>
+        <% } %>
     </div>
 <% } %>

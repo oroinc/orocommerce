@@ -32,6 +32,7 @@
 
     &__fields {
         width: 100%;
+        gap: spacing('sm');
     }
 
     &__actions {
@@ -69,26 +70,15 @@
 .shoppinglist-line-item-frontend-type-editor {
     .input {
         position: relative;
-        width: 80px;
-        min-width: 80px;
+        width: $edit-mode-cell-stepper-input-width;
+        min-width: $edit-mode-cell-stepper-input-width;
 
-        text-align: right;
-
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
+        text-align: center;
 
         overflow: hidden;
 
-        &:hover,
-        &:focus,
-        &.error {
-            z-index: z('base') + 1;
-        }
-
         .highlight-error & {
             border-color: $input-border-color-error-state;
-
-            z-index: z('base') + 1;
         }
 
         // Mask to hide text overflow
@@ -105,14 +95,19 @@
         }
     }
 
+    .input-qty {
+        text-align: right;
+
+        width: $edit-mode-cell-qty-input-width;
+        min-width: $edit-mode-cell-qty-input-width;
+    }
+
     .select2-container,
     .select {
         position: relative;
 
-        width: 100px;
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
-        margin-left: -1px;
+        width: $toggler-min-width;
+
         text-align: left;
 
         @include ellipsis();
@@ -127,11 +122,17 @@
             z-index: z('base') + 2;
         }
     }
+
+    .single-unit {
+        padding-left: $input-padding-x;
+        color: $base-ui-element-placeholder-color;
+    }
 }
 
 .line-item-container {
     display: flex;
     align-items: center;
+    gap: spacing('sm');
 
     &.edited {
         padding-right: 0;
@@ -164,6 +165,20 @@
         .view-mode {
             &.editable {
                 width: 100%;
+            }
+        }
+
+        .edit-mode {
+            .input {
+                width: $edit-mode-cell-qty-input-width;
+                min-width: $edit-mode-cell-qty-input-width;
+                text-align: right;
+                padding-left: $input-padding-x;
+                padding-right: $input-padding-x;
+            }
+
+            .input-quantity-btn {
+                display: none;
             }
         }
     }

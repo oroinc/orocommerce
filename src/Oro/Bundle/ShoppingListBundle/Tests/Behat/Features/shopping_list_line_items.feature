@@ -19,8 +19,8 @@ Feature: Shopping List Line Items
     And I click "Edit"
     Then I should see following grid:
       | SKU | Qty Update All |
-      | AA1 | 1 set          |
-      | AA1 | 2 item         |
+      | AA1 | 1 item set     |
+      | AA1 | 2 item set     |
     When I click on "Shopping List Line Item 2 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 1   |
@@ -34,8 +34,8 @@ Feature: Shopping List Line Items
     And I click "Update All"
     Then I should see following grid:
       | SKU | Qty Update All |
-      | AA1 | 1 set          |
-      | AA1 | 3 item         |
+      | AA1 | 1 item set     |
+      | AA1 | 3 item set     |
 
   Scenario: Merge Line items
     When I click on "Shopping List Line Item 1 Quantity"
@@ -47,7 +47,7 @@ Feature: Shopping List Line Items
     When I save changes for "Shopping List Line Item 1" row
     Then I should see following grid:
       | SKU | Qty Update All |
-      | AA1 | 5 item         |
+      | AA1 | 5 item set     |
 
   Scenario: Check edit permission for line item
     When I proceed as the Admin

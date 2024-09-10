@@ -1,5 +1,18 @@
-<% const name = _.uniqueId('name-'); %>
-<% let oroui = _.macros('oroui') %>
+<%
+let oroui = _.macros('oroui');
+let oroshoppinglist = _.macros('oroshoppinglist');
+const radioGroupName = obj.radioGroupName ?? _.uniqueId('name-');
+const prepareAttrs = (attrsList) => {
+    let attrs = '';
+    for (const [key, value] of Object.entries(attrsList)) {
+        attrs += ` data-${key}=${value}`;
+    }
+    return attrs;
+};
+const radioAttrs = prepareAttrs(obj.radioAttrs || {});
+const labelAttrs = prepareAttrs(obj.labelAttrs || {});
+%>
+
 <div class="toggle-container-wrapper">
     <% if (obj.title) { %>
     <p class="toggle-container-title">
@@ -9,9 +22,20 @@
     <% } %>
     <div class="toggle-container">
         <% _.each(units, (unitLabel, unitValue) => { %>
-        <% const id = _.uniqueId('id-'); %>
-        <input id="<%- id %>" name="<%- name %>" type="radio" value="<%- unitValue %>"<% if (obj.selectValue === unitValue) {%> checked<% } %>>
-        <label for="<%- id %>"><%- _.__(unitLabel) %></label>
+            <%  const id = _.uniqueId('id-');
+                if (_.isObject(unitLabel)) {
+                    unitLabel = oroshoppinglist.renderUnit({unit: unitValue, quantity: 1});
+                }
+            %>
+        <input id="<%- id %>"
+               name="<%- radioGroupName %>"
+               type="radio"
+               value="<%- unitValue %>"
+               class="toggle-input"
+           <% if (obj.selectedValue === unitValue) {%> checked<% } %>
+             <%- radioAttrs %>
+        >
+        <label for="<%- id %>" <%- labelAttrs %>><%- _.__(unitLabel) %></label>
         <% }); %>
     </div>
 </div>

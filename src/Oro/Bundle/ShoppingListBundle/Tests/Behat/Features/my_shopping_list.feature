@@ -698,19 +698,18 @@ Feature: My Shopping List
     Then I should see following grid with exact columns order:
       | SKU  | Item                             |              | Qty Update All | Price  | Subtotal                 |
       |      | Configurable Product 1           |              | 13 items       |        | $227.00 -$113.50 $113.50 |
-      | BB04 | Color: Red Size: M Note 4 text   | In Stock     | 3 item         | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB04 | Color: Red Size: M Note 4 text   | In Stock     | 3 item each    | $11.00 | $33.00 -$16.50 $16.50    |
       | BB05 | Color: Green Size: L Note 5 text | Out of Stock | 3 item         | $11.00 | $33.00 -$16.50 $16.50    |
       | BB12 | Color: Blue Size: S Note 12 text | In Stock     | 7 item         | $23.00 | $161.00 -$80.50 $80.50   |
     When I click on "Shopping List Line Item 2 Quantity"
     Then the "Shopping List Line Item 2 Quantity Input" field element should contain "3"
-    And the "Shopping List Line Item 2 Unit Select" field element should contain "item"
     When I fill "Shopping List Line Item Form" with:
       | Quantity | 10   |
       | Unit     | each |
     And I click on "Shopping List Line Item 2 Save Changes Button"
     Then I should see following grid containing rows:
       | SKU  | Item                                                  |              | Qty Update All | Price  | Subtotal               |
-      | BB04 | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock     | 10 each        |        |                        |
+      | BB04 | Configurable Product 1 Color: Red Size: M Note 4 text | In Stock     | 10 item each   |        |                        |
       |      | Configurable Product 1                                |              | 10 items       |        | $194.00 -$97.00 $97.00 |
       | BB05 | Color: Green Size: L Note 5 text                      | Out of Stock | 3 item         | $11.00 | $33.00 -$16.50 $16.50  |
       | BB12 | Color: Blue Size: S Note 12 text                      | In Stock     | 7 item         | $23.00 | $161.00 -$80.50 $80.50 |
@@ -723,7 +722,7 @@ Feature: My Shopping List
     Then I should see following grid containing rows:
       | SKU  | Item                             |              | Qty Update All | Price  | Subtotal                 |
       |      | Configurable Product 1           |              | 15 items       |        | $249.00 -$124.50 $124.50 |
-      | BB04 | Color: Red Size: M Note 4 text   | In Stock     | 3 item         | $11.00 | $33.00 -$16.50 $16.50    |
+      | BB04 | Color: Red Size: M Note 4 text   | In Stock     | 3 item each    | $11.00 | $33.00 -$16.50 $16.50    |
       | BB05 | Color: Green Size: L Note 5 text | Out of Stock | 5 item         | $11.00 | $55.00 -$27.50 $27.50    |
       | BB12 | Color: Blue Size: S Note 12 text | In Stock     | 7 item         | $23.00 | $161.00 -$80.50 $80.50   |
 

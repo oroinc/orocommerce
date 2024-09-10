@@ -123,18 +123,18 @@ oro_behat_extension:
             locator: 'input[name="quantity"]'
             type: css
           Unit:
-            locator: 'select'
+            locator: '[name="unitCode"]'
             type: css
-            element: Select
+            element: ProductUnitSelector
 
     Shopping List Line Item Quantity:
-      selector: 'div.input-qty'
+      selector: 'div.input-qty, .form-quantity-row'
 
     Shopping List Line Item 1:
       selector: '.grid-body .grid-row:first-child'
 
     Shopping List Line Item 1 Quantity:
-      selector: '.grid-body .grid-row:first-child div.input-qty'
+      selector: '.grid-body .grid-row:first-child div.input-qty, .grid-body .grid-row:first-child .form-quantity-row'
 
     Shopping List Line Item 1 Quantity Input:
       selector: '.grid-body .grid-row:first-child form input[name="quantity"]'
@@ -149,13 +149,10 @@ oro_behat_extension:
       selector: '.grid-body .grid-row:first-child form button[data-action="cancel"]'
 
     Shopping List Line Item 2 Quantity:
-      selector: '.grid-body .grid-row:nth-child(2) div.input-qty'
+      selector: '.grid-body .grid-row:nth-child(2) div.input-qty, .grid-body .grid-row:nth-child(2) .form-quantity-row'
 
     Shopping List Line Item 2 Quantity Input:
       selector: '.grid-body .grid-row:nth-child(2) form input[name="quantity"]'
-
-    Shopping List Line Item 2 Unit Select:
-      selector: '.grid-body .grid-row:nth-child(2) form select'
 
     Shopping List Line Item 2 Save Changes Button:
       selector: '.grid-body .grid-row:nth-child(2) form button[type="submit"]'
@@ -164,7 +161,7 @@ oro_behat_extension:
       selector: '.grid-body .grid-row:nth-child(2) form button[data-action="cancel"]'
 
     Shopping List Line Item 3 Quantity:
-      selector: '.grid-body .grid-row:nth-child(3) div.input-qty'
+      selector: '.grid-body .grid-row:nth-child(3) div.input-qty, .grid-body .grid-row:nth-child(3) .form-quantity-row'
 
     Shopping List Line Item 3 Quantity Input:
       selector: '.grid-body .grid-row:nth-child(3) form input[name="quantity"]'
@@ -179,7 +176,7 @@ oro_behat_extension:
       selector: '.grid-body .grid-row:nth-child(3) form button[data-action="cancel"]'
 
     Shopping List Line Item 4 Quantity:
-      selector: '.grid-body .grid-row:nth-child(4) div.input-qty'
+      selector: '.grid-body .grid-row:nth-child(4) div.input-qty, .grid-body .grid-row:nth-child(4) .form-quantity-row'
 
     Shopping List Line Item 4 Quantity Input:
       selector: '.grid-body .grid-row:nth-child(4) form input[name="quantity"]'
@@ -713,11 +710,11 @@ oro_behat_extension:
       selector: 'div.ui-dialog-buttonpane button.add-to-shopping-list-button'
 
     Shopping List 1 Kit Line Item Quantity:
-      selector: 'tr:nth-child(1) div.input-qty'
+      selector: 'tr:nth-child(1) div.input-qty, tr:nth-child(1) .form-quantity-row'
     Shopping List 1 Kit Line Item Quantity Input:
       selector: 'tr:nth-child(1) form input[name="quantity"]'
-    Shopping List 1 Kit Line Item Unit Select:
-      selector: 'tr:nth-child(1) form select'
+    Shopping List 1 Kit Line Item Single Unit:
+      selector: 'tr:nth-child(1) form [data-role="unit-label"]'
     Shopping List 1 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(1) form button[type="submit"]'
     Shopping List 1 Kit Line Item Edit Button:
@@ -726,11 +723,11 @@ oro_behat_extension:
       selector: 'tr:nth-child(1) td.action-cell a[title="Delete"]'
 
     Shopping List 2 Kit Line Item Quantity:
-      selector: 'tr:nth-child(2) div.input-qty'
+      selector: 'tr:nth-child(2) div.input-qty, tr:nth-child(2) .form-quantity-row'
     Shopping List 2 Kit Line Item Quantity Input:
       selector: 'tr:nth-child(2) form input[name="quantity"]'
-    Shopping List 2 Kit Line Item Unit Select:
-      selector: 'tr:nth-child(2) form select'
+    Shopping List 2 Kit Line Item Single Unit:
+      selector: 'tr:nth-child(2) form [data-role="unit-label"]'
     Shopping List 2 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(2) form button[type="submit"]'
     Shopping List 2 Kit Line Item Edit Button:
@@ -739,11 +736,11 @@ oro_behat_extension:
       selector: 'tr:nth-child(2) td.action-cell a[title="Delete"]'
 
     Shopping List 3 Kit Line Item Quantity:
-      selector: 'tr:nth-child(3) div.input-qty'
+      selector: 'tr:nth-child(3) div.input-qty, tr:nth-child(3) .form-quantity-row'
     Shopping List 3 Kit Line Item Quantity Input:
       selector: 'tr:nth-child(3) form input[name="quantity"]'
-    Shopping List 3 Kit Line Item Unit Select:
-      selector: 'tr:nth-child(3) form select'
+    Shopping List 3 Kit Line Item Single Unit:
+      selector: 'tr:nth-child(3) form [data-role="unit-label"]'
     Shopping List 3 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(3) form button[type="submit"]'
     Shopping List 3 Kit Line Item Edit Button:

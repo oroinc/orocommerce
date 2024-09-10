@@ -44,7 +44,12 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
     public function setLineItemUnit(string $sku, string $unit): void
     {
         $form = $this->getLineItemForm($sku);
-        $form->typeInField('Unit', $unit);
+        $field = $form->find('css', '[name="unitCode"]');
+        $unitSelector = $this->elementFactory->wrapElement('ProductUnitSelector', $field);
+
+        self::assertTrue($unitSelector->isVisible());
+
+        $unitSelector->setValue($unit);
     }
 
     private function getLineItemForm(string $sku): Form

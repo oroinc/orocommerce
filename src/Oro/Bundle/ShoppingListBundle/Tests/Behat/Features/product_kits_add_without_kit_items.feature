@@ -56,7 +56,7 @@ Feature: Product kits add without kit items
       | Shopping List 1 Configuration |                           |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "1"
-    And the "Shopping List 1 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     And I close ui dialog
     And click on "Flash Message Close Button"
 

@@ -836,9 +836,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $selector = sprintf(
             "//*[contains(text(), '%s')]/ancestor::tr//td[contains(@class, 'grid-body-cell-quantity')]//" .
-            "div[contains(@class, 'select') and contains(text(), '%s')]/ancestor::tr/" .
-            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+            "div[(contains(@class, 'select') and contains(text(), '%s')) or " .
+            "(input[@type='radio' and @checked]/following-sibling::label[1][contains(text(), '%s')]) or ".
+            "(span[contains(@class, 'single-unit') and contains(text(), '%s')])]" .
+            "/ancestor::tr/following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
             $SKU,
+            $unit,
+            $unit,
             $unit
         );
 
@@ -874,9 +878,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $selector = sprintf(
             "//*[contains(text(), '%s')]/ancestor::tr//td[contains(@class, 'grid-body-cell-quantity')]//" .
-            "div[contains(@class, 'select') and contains(text(), '%s')]/ancestor::tr/" .
-            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+            "div[(contains(@class, 'select') and contains(text(), '%s')) or " .
+            "(input[@type='radio' and @checked]/following-sibling::label[1][contains(text(), '%s')]) or ".
+            "(span[contains(@class, 'single-unit') and contains(text(), '%s')])]" .
+            "/ancestor::tr/following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
             $SKU,
+            $unit,
+            $unit,
             $unit
         );
 

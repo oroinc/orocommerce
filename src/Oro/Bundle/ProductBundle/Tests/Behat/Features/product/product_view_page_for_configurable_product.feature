@@ -121,8 +121,8 @@ Feature: Product view page for configurable product
     Given I open page with shopping list "Shopping List"
     And I should see following grid:
       | SKU     | Qty Update All | Price     |
-      | tpc_w   | 1 item        | $1,100.00  |
-      | tpc_b_r | 1 item        | $800.00    |
+      | tpc_w   | 1 item         | $1,100.00  |
+      | tpc_b_r | 1 item each    | $800.00    |
     When I click on "tpc_b_r" configurable product in "Shopping List Line Items Table"
     Then "Configurable Product Form" must contains values:
       | Color       | Black |
@@ -203,4 +203,4 @@ Feature: Product view page for configurable product
     And I should see following grid:
       | SKU     | Item                                    | Qty Update All | Price     |
       | tpc_w   | Tablet PC Color: White Refurbished: No  | 1 item         | $1,100.00 |
-      | tpc_b_r | Tablet PC Color: Black Refurbished: Yes | 2 item         | $800.00   |
+      | tpc_b_r | Tablet PC Color: Black Refurbished: Yes | 2 item each    | $800.00   |

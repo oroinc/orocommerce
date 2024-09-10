@@ -73,15 +73,11 @@ const UnitsAsRadioGroupView = BaseView.extend({
 
         if (Array.isArray(data.units)) {
             data.units = data.units.reduce((obj, unit) => {
-                if (typeof unit === 'object') {
-                    obj[unit.size] = unit.label;
-                } else {
-                    obj[unit] = unit;
-                }
+                obj[unit] = unit;
                 return obj;
             }, {});
         }
-        data.selectValue = this.$select.val();
+        data.selectedValue = this.$select.val();
 
         return data;
     },
