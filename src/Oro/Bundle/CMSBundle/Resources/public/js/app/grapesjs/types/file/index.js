@@ -4,7 +4,7 @@ import openDigitalAssetsCommand from 'orocms/js/app/grapesjs/modules/open-digita
 import openDigitalAssetsManager from './open-digital-assets-manager';
 import TypeModel from './file-type-model';
 
-const Index = BaseType.extend({
+const FileType = BaseType.extend({
     parentType: 'link',
 
     button: {
@@ -21,10 +21,6 @@ const Index = BaseType.extend({
 
     viewProps: {
         tagName: 'a',
-
-        events: {
-            dblclick: 'onActive'
-        },
 
         onActive: function(e) {
             e && e.stopPropagation();
@@ -45,8 +41,8 @@ const Index = BaseType.extend({
         'open-digital-assets': openDigitalAssetsCommand
     },
 
-    constructor: function FileTypeBuilder(options) {
-        FileTypeBuilder.__super__.constructor.call(this, options);
+    constructor: function FileType(options) {
+        FileType.__super__.constructor.call(this, options);
     },
 
     onInit: function() {
@@ -81,7 +77,7 @@ const Index = BaseType.extend({
             return;
         }
 
-        Index.__super__.createPanelButton.call(this);
+        FileType.__super__.createPanelButton.call(this);
     },
 
     registerEditorCommands() {
@@ -89,7 +85,7 @@ const Index = BaseType.extend({
             return;
         }
 
-        Index.__super__.registerEditorCommands.call(this);
+        FileType.__super__.registerEditorCommands.call(this);
     },
 
     isComponent: function(el) {
@@ -101,4 +97,4 @@ const Index = BaseType.extend({
     type: 'file'
 });
 
-export default Index;
+export default FileType;
