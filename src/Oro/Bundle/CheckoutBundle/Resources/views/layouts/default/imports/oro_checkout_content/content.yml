@@ -119,9 +119,18 @@ layout:
                     blockType: container
 
                 __checkout_order_summary_totals_main:
+                    blockType: summary_collapse
+                    options:
+                        alwaysShow: 'desktop-small'
+                __checkout_order_summary_wrapper:
                     blockType: container
-
+                __checkout_order_summary_inner:
+                    blockType: container
+                __checkout_order_summary_summary:
+                    blockType: container
                 __checkout_order_summary_totals_container:
+                    blockType: container
+                __checkout_order_summary_totals_subtree:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
@@ -208,7 +217,10 @@ layout:
                                             __checkout_outside_button_continue: ~
                                     __checkout_order_footer_col_second: ~
                         __checkout_order_sidebar:
-                            __checkout_order_summary_totals_main:
-                                __checkout_order_summary_totals_container:
-                                    __checkout_order_summary_totals: ~
-
+                            __checkout_order_summary_totals_container:
+                                __checkout_order_summary_totals_main:
+                                    __checkout_order_summary_wrapper:
+                                        __checkout_order_summary_inner:
+                                            __checkout_order_summary_summary:
+                                                __checkout_order_summary_totals_subtree:
+                                                    __checkout_order_summary_totals: ~

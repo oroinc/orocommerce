@@ -2,7 +2,7 @@ layout:
     actions:
         - '@add':
             id: __checkout_outside_submit_order_button
-            parentId: __checkout_order_summary_totals_main
+            parentId: __checkout_order_summary_summary
             prepend: false
             blockType: checkout_transition_submit
             options:
@@ -42,7 +42,7 @@ layout:
                 responsive:
                     -
                         viewport: 'tablet'
-                        moveTo: '.order-checkout-widget__container-collapse'
+                        moveTo: '.summary-widget__summary'
                         endpointClass: 'checkout-form__buttons--full'
                         sibling: '.checkout__submit-button-container'
                         prepend: true

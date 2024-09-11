@@ -45,20 +45,24 @@
 {% block _quote_choice_subtotals_widget %}
     <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
         <div class="order-checkout-widget__container order-checkout-widget__container--fixed-width">
-            <table class="order-checkout-widget__table">
-                {% for subtotal in subtotals %}
-                    {% if subtotal.visible %}
+            <div class="summary-widget">
+                <div class="summary-widget__summary">
+                    <table class="summary-table">
+                        {% for subtotal in subtotals %}
+                            {% if subtotal.visible %}
+                                <tr>
+                                    <th>{{ subtotal.label }}</th>
+                                    <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
                         <tr>
-                            <th>{{ subtotal.label }}</th>
-                            <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                            <th class="summary-table__total">{{ total.label }}</th>
+                            <td class="summary-table__total"><span class="summary-table__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                         </tr>
-                    {% endif %}
-                {% endfor %}
-                <tr>
-                    <th class="order-checkout-widget__total">{{ total.label }}</th>
-                    <td class="order-checkout-widget__total"><span class="order-checkout-widget__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
-                </tr>
-            </table>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

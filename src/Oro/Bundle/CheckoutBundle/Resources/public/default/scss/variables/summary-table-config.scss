@@ -1,0 +1,18 @@
+/* @theme: default; */
+
+$summary-table-width: 100% !default;
+
+$summary-table-th-text-align: left !default;
+$summary-table-th-font-weight: font-weight('normal') !default;
+
+$summary-table-td-text-align: right !default;
+
+$summary-table-th-td-space: spacing('xs') !default;
+
+$summary-table-divider-margin: spacing('sm') 0 !default;
+$summary-table-divider-height: 1px !default;
+$summary-table-divider-border: none !default;
+$summary-table-divider-background-color: get-color('neutral', 'grey2') !default;
+
+$summary-table-summary-total-font-size: 18px !default;
+$summary-table-summary-total-font-weight: font-weight('semi-bold') !default;

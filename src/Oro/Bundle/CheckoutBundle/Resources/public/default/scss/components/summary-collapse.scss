@@ -1,0 +1,53 @@
+/* @theme: default; */
+
+.summary-collapse {
+    position: $summary-collapse-position;
+
+    &__toggle {
+        --btn-background: #{$summary-collapse-toggle-btn-background};
+        --btn-color: #{$summary-collapse-toggle-btn-color};
+
+        position: $summary-collapse-toggle-position;
+        top: $summary-collapse-toggle-top;
+        left: $summary-collapse-toggle-left;
+
+        box-shadow: $summary-collapse-toggle-box-shadow;
+
+        &:not(.collapsed) {
+            transform: $summary-collapse-toggle-not-collapsed-transform;
+        }
+    }
+
+    &-content {
+        // Reset to collapse styles
+        position: initial;
+        height: initial;
+        overflow: initial;
+        transition: $summary-collapse-content-transition;
+
+        &:not(.show) {
+            display: $summary-collapse-content-not-show-display;
+
+            .hide-on-collapsed {
+                display: none;
+            }
+        }
+    }
+
+    // Auto-Generated rules for responsive alwaysShow collapse
+    @each $key, $value in $breakpoints {
+        @include breakpoint($key) {
+            &--show-#{$key} & {
+                &__toggle {
+                    display: none;
+                }
+
+                &-content:not(.show) {
+                    .hide-on-collapsed {
+                        display: initial;
+                    }
+                }
+            }
+        }
+    }
+}

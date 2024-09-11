@@ -289,7 +289,7 @@ oro_behat_extension:
 
     Subtotals:
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\Subtotals
-      selector: '.order-checkout-widget__container, .order-checkout-widget__table'
+      selector: '.order-checkout-widget__container, .order-checkout-widget__table, .summary-widget, .summary-table'
 
     In Shopping List:
       selector: '.shopping-lists button.btn'
@@ -313,7 +313,7 @@ oro_behat_extension:
       selector: 'form[data-role="edit-notes-form"] button[data-role="apply"]'
 
     Create Order:
-      selector: '.order-checkout-widget a:contains("Create Order")'
+      selector: '.order-checkout-widget a:contains("Checkout"), .summary-widget a:contains("Checkout")'
 
     ShoppingListEditTitleField:
       selector: '#title-inline-editable input[name="value"]'

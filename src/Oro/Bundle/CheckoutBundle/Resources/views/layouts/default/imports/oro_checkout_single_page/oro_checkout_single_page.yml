@@ -261,8 +261,15 @@ layout:
               parentId: checkout_order_summary_line_item_wrapper
 
         - '@move':
-            id: checkout_order_summary_totals_main
+            id: checkout_order_summary_inner
             parentId: checkout_order_footer_col_second
+
+        - '@move':
+            id: checkout_order_summary_totals_container
+            parentId: checkout_order_summary_summary
+
+        - '@remove':
+            id: checkout_order_summary_totals_main
 
         - '@move':
             id: checkout_order_summary
@@ -357,7 +364,3 @@ layout:
             optionName: attr
             optionValue:
                 class: ' checkout__container--single-page'
-
-        - '@removeOption':
-            id: checkout_order_summary_totals_main
-            optionName: attr.class

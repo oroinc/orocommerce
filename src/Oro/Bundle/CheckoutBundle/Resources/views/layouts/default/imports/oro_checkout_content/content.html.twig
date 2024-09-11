@@ -210,12 +210,7 @@
 
 {% block __oro_checkout_content__checkout_order_summary_totals_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' order-checkout-widget__container-wrapper ',
-        'data-page-component-view': 'oroshoppinglist/js/app/views/summary-wrapper-view',
-        'data-page-component-options': {
-            'showMaskEvents': ['shopping-list:request'],
-            'hideMaskEvents': ['shopping-list:refresh']
-        }|json_encode
+        '~class': ' summary-wrapper'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -223,27 +218,44 @@
     </div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_summary_totals_main_widget %}
-    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-    {% set collapseId = 'checkout-collapse-'|uniqid %}
-
+{% block __oro_checkout_content___checkout_order_summary_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " order-checkout-widget__container"
+        '~class': " summary-widget"
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <button class="btn btn--circle btn--size-small order-checkout-widget__toggle collapsed" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="false" aria-controls="{{ collapseId }}">
-            {{ renderIcon.icon({name: 'chevron-up'}) }}
-        </button>
-        <div id="{{ collapseId }}" class="order-checkout-widget__container-collapse">
-            {{ block_widget(block) }}
-        </div>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_inner_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget__inner"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_summary_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget__summary"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_order_summary_totals_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-order-summary__totals"
+        '~class': " checkout-order-summary__totals",
+        'data-page-component-view': 'oroshoppinglist/js/app/views/summary-wrapper-view',
+        'data-page-component-options': {
+            'showMaskEvents': ['shopping-list:request'],
+            'hideMaskEvents': ['shopping-list:refresh']
+        }|json_encode
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}

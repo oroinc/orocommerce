@@ -26,7 +26,6 @@ Feature: Create RFQ with Product Kits from Shopping List
     And I should see "Total $254.32"
 
   Scenario: Check Request Quote page
-    When I click "More Actions"
     And I click "Request Quote"
     Then I should see "product-kit-01 - Product Kit 01 Mandatory Item 1 piece simple-product-01 - Simple Product 01 QTY: 1 piece Target Price $0.00 Listed Price: $124.6867" in the "RFQ Products List Line Item 1" element
     And I should see "product-kit-01 - Product Kit 01 Optional Item 1 piece simple-product-03 - Simple Product 03 Mandatory Item 1 piece simple-product-02 - Simple Product 02 QTY: 1 piece Target Price $0.00 Listed Price: $129.6267" in the "RFQ Products List Line Item 2" element

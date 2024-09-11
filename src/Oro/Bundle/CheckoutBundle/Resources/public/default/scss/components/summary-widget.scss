@@ -1,0 +1,80 @@
+/* @theme: default; */
+
+.summary-widget {
+    &__inner {
+        display: $summary-widget-inner-display;
+        gap: $summary-widget-inner-gap;
+    }
+
+    &__summary {
+        background: $summary-widget-summary-background;
+        display: $summary-widget-summary-display;
+        gap: $summary-widget-summary-gap;
+        border-radius: $summary-widget-summary-border-radius;
+        padding: $summary-widget-summary-padding;
+    }
+
+    &__combined-bottons {
+        display: $summary-widget-combined-bottons-display;
+        gap: $summary-widget-combined-bottons-gap;
+    }
+
+    &-divider {
+        display: none;
+        color: $summary-widget-divider-color;
+    }
+}
+
+@include breakpoint('tablet') {
+    .summary-widget {
+        background: $summary-widget-tablet-background;
+        border-top: $summary-widget-tablet-border-top;
+
+        &__inner {
+            background: $summary-widget-inner-tablet-background;
+        }
+
+        &__combined-bottons {
+            grid-auto-columns: $summary-widget-combined-bottons-tablet-grid-auto-columns;
+            grid-auto-flow: $summary-widget-combined-bottons-tablet-grid-auto-flow;
+        }
+    }
+
+    .summary-collapse-content:not(.show) {
+        .summary-widget {
+            &__summary {
+                grid-template-columns: $summary-widget-summary-shown-tablet-grid-template-columns;
+                align-items: $summary-widget-summary-shown-tablet-align-items;
+                gap: $summary-widget-summary-shown-tablet-gap;
+            }
+
+            &__combined-bottons {
+                grid-auto-columns: $summary-widget-combined-bottons-shown-tablet-grid-auto-columns;
+                justify-content: $summary-widget-combined-bottons-shown-tablet-justify-content;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .summary-widget {
+        &__combined-bottons {
+            grid-auto-columns: $summary-widget-combined-bottons-mobile-landscape-grid-auto-columns;
+            grid-auto-flow: $summary-widget-combined-bottons-mobile-landscape-grid-auto-flow;
+        }
+    }
+
+    .summary-collapse-content:not(.show) {
+        .summary-widget {
+            &__summary {
+                grid-template-columns: $summary-widget-summary-shown-mobile-landscape-grid-template-columns;
+            }
+
+            &__combined-bottons {
+                grid-auto-flow: $summary-widget-combined-bottons-shown-mobile-landscape-grid-auto-flow;
+                grid-auto-columns: $summary-widget-combined-bottons-shown-mobile-landscape-grid-auto-columns;
+                justify-content: $summary-widget-combined-bottons-shown-mobile-landscape-justify-content;
+            }
+        }
+    }
+}

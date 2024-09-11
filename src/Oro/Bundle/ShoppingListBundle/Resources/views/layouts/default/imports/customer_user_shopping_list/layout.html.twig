@@ -17,12 +17,32 @@
 
 {% block __customer_user_shopping_list__container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' customer-profile customer-profile--no-offset'
+        '~class': ' customer-shopping-list'
     }) %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' customer-shopping-list__content'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__sidebar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' customer-shopping-list__sidebar'
+    }) %}
+
+    <aside {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </aside>
 {% endblock %}
 
 {% block __customer_user_shopping_list__header_widget %}
@@ -128,20 +148,9 @@
     </div>
 {% endblock %}
 
-{% block __customer_user_shopping_list__checkout_container_widget %}
+{% block __customer_user_shopping_list__summary_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' responsive-order-layout order-checkout-widget order-checkout-widget--offset-none sticky sticky--top',
-        'data-sticky': ''
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block __customer_user_shopping_list__summary_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' order-checkout-widget__container-wrapper ',
+        '~class': ' summary-wrapper',
         'data-page-component-view': 'oroshoppinglist/js/app/views/summary-wrapper-view',
         'data-page-component-options': {
             'showMaskEvents': ['shopping-list:request'],
@@ -154,16 +163,69 @@
     </div>
 {% endblock %}
 
+{% block __customer_user_shopping_list__summary_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__summary_inner_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget__inner"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__summary_summary_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget__summary"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __customer_user_shopping_list__combined_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
+        '~class': ' summary-widget__combined-bottons',
         'data-name': 'empty-items__hide'
     }) %}
 
-    {% set actionButtonClass = actionButtonClass|default('btn btn--outlined btn--full direct-link') %}
-    {% set dropdownActionClass = dropdownActionClass|default('btn btn--outlined btn--block direct-link') %}
-    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--outlined dropdown-toggle') %}
+    {% set mainButtonClass = mainButtonClass|default('btn btn--full direct-link') %}
+    {% set additionalButtonClass = additionalButtonClass|default('btn btn--outlined btn--block direct-link') %}
 
-    {{ block('combined_buttons_widget') }}
+    {% set buttonsCount = buttons|length %}
+    {% if buttonsCount > 0 %}
+        {% set button = buttons|first %}
+        <div{{ block('block_attributes') }}>
+            {% include button.template with button.templateData|merge({
+                onlyLink: true,
+                aClass: mainButtonClass,
+                noIcon: true,
+                noIconText: true
+            }) %}
+
+            {% if buttonsCount > 1 %}
+                <div class="divider summary-widget-divider">or</div>
+                {% for button in buttons|slice(1) %}
+                    {% include button.template with button.templateData|merge({
+                        onlyLink: true,
+                        aClass: additionalButtonClass,
+                        noIcon: true,
+                        noIconText: true
+                    }) %}
+                {% endfor %}
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __customer_user_shopping_list__totals_placeholder_widget %}

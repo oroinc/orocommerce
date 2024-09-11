@@ -305,7 +305,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
     And click "Edit"
-    Then I should not see "More Actions"
     And I should not see "Request Quote"
 
   Scenario: Order empty matrix form and a simple product
@@ -325,7 +324,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Create request for quote with empty configurable product and a simple product
     Given I open shopping list widget
     And I click "View Details"
-    And I click "More Actions"
     And I click "Request Quote"
     Then I should see "Confirmation This shopping list contains configurable products with no variations. Proceed to RFQ without these products?"
     And I click "Proceed"
@@ -361,7 +359,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
   Scenario: Create request for quote with configurable product
     Given I open shopping list widget
     When I click "View Details"
-    And I click "More Actions"
     And I click "Request Quote"
     Then I should see "Request A Quote"
     And I should see "400-Watt Bulb Work Light" in the "RequestAQuoteProducts" element

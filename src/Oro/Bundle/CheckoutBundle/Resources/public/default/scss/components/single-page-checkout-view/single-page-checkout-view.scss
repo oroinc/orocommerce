@@ -45,6 +45,11 @@
 
             &:not(.show) {
                 display: grid;
+                align-items: center;
+
+                .summary-widget__summary {
+                    padding: 0;
+                }
 
                 .coupon-container,
                 .checkout__footer-col {

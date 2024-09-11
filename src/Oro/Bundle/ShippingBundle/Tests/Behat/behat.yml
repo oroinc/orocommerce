@@ -30,7 +30,7 @@ oro_behat_extension:
       selector: '.checkout-order-summary__header [data-collapse-trigger]'
 
     CheckoutTotalSum:
-      selector: 'td.order-checkout-widget__total span.order-checkout-widget__total-price'
+      selector: 'td.order-checkout-widget__total span.order-checkout-widget__total-price, td.summary-table__total span.summary-table__total-price'
 
     CheckoutFormRow:
       selector: '.checkout-form label.checkbox-label'

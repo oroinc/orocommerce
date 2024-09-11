@@ -27,7 +27,6 @@ Feature: RFQ from Shipping List
     When I fill in "Shopping List Product Note" with "This item was missed in the previous request"
     And I click "Add"
     Then I should see "Line item note has been successfully updated" flash message
-    And I click "More Actions"
     When I click "Request Quote"
     Then the "Request Notes" field element should contain "Parish so enable innate in formed missed. Hand two was eat busy fail."
     And I should see "Note: This item was missed in the previous request"
@@ -144,7 +143,6 @@ Feature: RFQ from Shipping List
   Scenario: Create another RFQ from shopping list with more than one product
     Given I proceed as the User
     When I open page with shopping list "Shopping List 6"
-    And I click "More Actions"
     And I click "Request Quote"
     And I fill "Frontend Request Form" with:
       | First Name             | Marlene                     |

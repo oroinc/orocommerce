@@ -1,6 +1,11 @@
 /* @theme: default; */
 
 .coupon-container {
+    background: $coupon-container-background;
+    display: $coupon-container-display;
+    gap: $coupon-container-gap;
+    border-radius: $coupon-container-border-radius;
+
     &__form {
         display: grid;
         grid-template-columns: $coupon-container-form-grid-template-column;
@@ -18,14 +23,20 @@
     &__content {
         display: grid;
         gap: spacing('base');
-        margin-block-start: spacing('sm');
+        padding-block-end: spacing('base');
+        padding-inline: spacing('base');
     }
 
     .coupon-trigger {
         width: 100%;
-        padding-inline: 0;
+        color: $coupon-container-trigger-color;
+        padding-inline: spacing('base');
         justify-content: space-between;
         font-size: $base-font-size;
+
+        &:hover {
+            background: none;
+        }
 
         &:has(.badge) {
             grid-template-columns: $coupon-container-trigger-grid-template-column;

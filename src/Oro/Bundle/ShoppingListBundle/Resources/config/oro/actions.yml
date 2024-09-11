@@ -186,8 +186,6 @@ operations:
                 cancelText: oro.shoppinglist.create_rfp_confirmation.cancel_button_title
                 hasEmptyMatrix: $.result.shoppingListHasEmptyMatrix
                 component: oroshoppinglist/js/shoppinglist-request-quote-confirmation
-            options:
-                icon: briefcase
         preactions:
             - '@call_service_method':
                 service: oro_shopping_list.manager.empty_matrix_grid

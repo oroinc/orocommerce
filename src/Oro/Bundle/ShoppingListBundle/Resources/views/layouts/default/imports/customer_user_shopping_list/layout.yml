@@ -27,6 +27,10 @@ layout:
             items:
                 __container:
                     blockType: container
+                __content:
+                    blockType: container
+                __sidebar:
+                    blockType: container
                 __header:
                     blockType: container
                 __header_title_wrapper:
@@ -65,9 +69,17 @@ layout:
                         shoppingList: '=data["entity"]'
                 __line_items:
                     blockType: container
-                __checkout_container:
+                __summary_wrapper:
                     blockType: container
+                __collapse_container:
+                    blockType: summary_collapse
+                    options:
+                        alwaysShow: 'desktop-small'
                 __summary_container:
+                    blockType: container
+                __summary_inner:
+                    blockType: container
+                __summary_summary:
                     blockType: container
                 __totals_wrapper:
                     blockType: layout_subtree_update
@@ -112,22 +124,27 @@ layout:
             tree:
                 __root:
                     __container:
-                        __header:
-                            __header_title_wrapper:
-                                __header_title_container:
-                                    __header_title_text: ~
-                                    __header_status: ~
-                            __header_owner_wrapper:
-                                __header_owner: ~
-                        __line_items: ~
-                        __checkout_container:
-                            __summary_container:
-                                __totals_wrapper:
-                                    __totals: ~
-                                    __totals_placeholder: ~
-                                __combined_button_wrapper:
-                                    __combined_button: ~
-                                    __combined_button_placeholder: ~
+                        __content:
+                            __header:
+                                __header_title_wrapper:
+                                    __header_title_container:
+                                        __header_title_text: ~
+                                        __header_status: ~
+                                __header_owner_wrapper:
+                                    __header_owner: ~
+                            __line_items: ~
+                        __sidebar:
+                            __summary_wrapper:
+                                __collapse_container:
+                                    __summary_container:
+                                        __summary_inner:
+                                            __summary_summary:
+                                                __totals_wrapper:
+                                                    __totals: ~
+                                                    __totals_placeholder: ~
+                                                __combined_button_wrapper:
+                                                    __combined_button: ~
+                                                    __combined_button_placeholder: ~
 
         - '@move':
             id: __header_shopping_list_actions_container

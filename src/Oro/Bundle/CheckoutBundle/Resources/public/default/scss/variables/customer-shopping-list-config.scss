@@ -1,0 +1,18 @@
+/* @theme: default; */
+
+$customer-shopping-list-display: grid !default;
+$customer-shopping-list-grid-template-columns: minmax(0, 1fr) !default;
+$customer-shopping-list-gap: spacing('lg') !default;
+
+$customer-shopping-list-sidebar-position: sticky !default;
+
+// Desktop-small
+$customer-shopping-list-desktop-small-grid-template-columns: minmax(0, 1fr) 280px !default;
+
+$customer-shopping-list-sidebar-desktop-small-top:
+    calc(
+        var(--sticky-page-header-element-offset-top, 0) + #{spacing('xl')}
+    ) !default;
+$customer-shopping-list-sidebar-desktop-small-height: max-content !default;
+
+// Tablet

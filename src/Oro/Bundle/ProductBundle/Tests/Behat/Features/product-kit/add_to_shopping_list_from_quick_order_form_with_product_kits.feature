@@ -63,4 +63,4 @@ Feature: Add to Shopping List from Quick order form with Product Kits
     And I should see "Summary 2 Items"
     And I should see "Subtotal $376.53"
     And I should see "Total $376.53"
-    And I should see "Create Order"
+    And I should see "Checkout"

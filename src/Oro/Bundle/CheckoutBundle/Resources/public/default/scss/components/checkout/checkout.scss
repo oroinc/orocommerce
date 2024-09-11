@@ -64,6 +64,10 @@
             &:empty {
                 display: none;
             }
+
+            .checkout-form__buttons {
+                justify-self: start;
+            }
         }
     }
 
@@ -152,10 +156,6 @@
                     margin: 0;
                 }
             }
-        }
-
-        &__submit-button-container {
-            grid-column: 4 / 5;
         }
 
         &__submit-button-container:not(.final-step) {
