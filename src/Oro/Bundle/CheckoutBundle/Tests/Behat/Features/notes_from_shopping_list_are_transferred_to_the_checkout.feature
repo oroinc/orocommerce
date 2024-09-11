@@ -18,7 +18,7 @@ Feature: Notes from shopping list are transferred to the checkout
     And I type "My shopping list notes" in "Shopping List Notes"
     And I click on "Save Shopping List Notes"
     Then I should see "My shopping list notes"
-    When I click "Add Shopping List item Note" on row "SKU123" in grid
+    When I click "Add a note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"
     And I click "Add"
     Then I should see "Line item note has been successfully updated" flash message
@@ -65,7 +65,7 @@ Feature: Notes from shopping list are transferred to the checkout
     And I type "My shopping list notes" in "Shopping List Notes"
     And I click on "Save Shopping List Notes"
     Then I should see "My shopping list notes"
-    When I click "Add Shopping List item Note" on row "SKU123" in grid
+    When I click "Add a note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"
     And I click "Add"
     Then I should see "Line item note has been successfully updated" flash message

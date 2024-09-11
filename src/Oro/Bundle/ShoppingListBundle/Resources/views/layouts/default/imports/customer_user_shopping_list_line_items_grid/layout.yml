@@ -34,9 +34,10 @@ layout:
             id: __datagrid
             optionName: grid_render_parameters.themeOptions
             optionValue:
-                cellActionsHideCount: 4
+                cellActionsHideCount: 3
                 cellLauncherOptions:
                     launcherMode: 'icon-only'
+                    dropdownLauncherMode: 'icon-text'
 
         - '@appendOption':
             id: __datagrid

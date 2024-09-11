@@ -71,15 +71,15 @@ oro:
             add_to_multiple: add item to multiple lists
             copied: " (copied %copyDate%)"
             update_configurable_line_item:
-                label: Edit
+                label: Configure
             delete_line_item:
                 label: Delete
             add_notes:
-                label: Add Shopping List item Note
+                label: Add a note
             edit_notes:
-                label: Edit Shopping List item Note
+                label: Edit a note
             update_product_kit_line_item:
-                label: Edit
+                label: Configure
             delete_product_kit_line_item:
                 label: Delete
             in_shopping_list: "In Shopping List"
@@ -89,7 +89,7 @@ oro:
                 label: Delete
                 success_message: "{0} Can't delete selected items(s)|[1,Inf[%count% item(s) have been deleted successfully"
             move_line_items:
-                label: Move to another Shopping List
+                label: Move to
                 success_message: '{0} No items were moved.|{1} One entity has been moved successfully.|]1,Inf[ %count% items have been moved successfully.'
                 no_edit_permission_message: 'You do not have permission to edit the target shopping list.'
 

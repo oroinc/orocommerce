@@ -488,11 +488,11 @@ datagrids:
             update_configurable:
                 type: update-configurable-product
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
-                icon: pencil
+                icon: settings
             update_product_kit_line_item:
                 type: update-product-kit-line-item
                 label: oro.shoppinglist.actions.update_product_kit_line_item.label
-                icon: pencil
+                icon: settings
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label

@@ -73,5 +73,5 @@ Feature: Shopping List Line Items
     When I proceed as the Buyer
     And I reload the page
     Then I should see only following actions for row #1 on grid:
-      | Add Shopping List item Note |
-      | Delete                      |
+      | Add a note |
+      | Delete     |

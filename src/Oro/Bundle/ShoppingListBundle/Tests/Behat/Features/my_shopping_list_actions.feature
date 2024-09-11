@@ -103,7 +103,7 @@ Feature: My Shopping List Actions
     And I click Edit "Shopping List 3" in grid
     And I sort grid by "SKU"
     When I click on "First Line Item Row Checkbox"
-    And I click "Move to another Shopping List" link from mass action dropdown in "Frontend Shopping List Edit Grid"
+    And I click "Move to" link from mass action dropdown in "Frontend Shopping List Edit Grid"
     And I click "Filter Toggle" in "UiDialog" element
     And I filter Name as is equal to "Shopping List 1" in "Shopping List Action Move Grid"
     And I click "Shopping List Action Move Radio"
