@@ -11,7 +11,7 @@ oro_behat_extension:
       selector: 'div.shopping-list-dropdown__item span.shopping-list-dropdown__name-inner'
 
     ShoppingListTitle:
-      selector: 'h1.page-title span.page-title__text'
+      selector: 'h2.page-title span.page-title__text'
 
     ShoppingListEdit:
       selector: '.shopping-lists button.btn'

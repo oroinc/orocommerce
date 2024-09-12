@@ -1,5 +1,9 @@
-import BaseView from 'oroui/js/app/views/base/view';
 import $ from 'jquery';
+import __ from 'orotranslation/js/translator';
+import BaseView from 'oroui/js/app/views/base/view';
+import DeleteConfirmation from 'oroui/js/delete-confirmation';
+import viewportManager from 'oroui/js/viewport-manager';
+import ShoppinglistAddNotesModalView from './shoppinglist-add-notes-modal-view';
 
 const ENTER_KEY_CODE = 13;
 const ESCAPE_KEY_CODE = 27;
@@ -12,10 +16,15 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
     events: {
         'click [data-role="apply"]': 'saveNote',
         'click [data-role="edit-notes"]': 'editNote',
+        'click [data-role="remove-notes"]': 'removeNote',
         'click [data-role="add-notes"]': 'addNote',
         'click [data-role="decline"]': 'undoChanges',
         'input textarea': 'onInput',
         'keydown textarea': 'onKeydown'
+    },
+
+    listen: {
+        'change:notes model': 'onNotesChanged'
     },
 
     constructor: function ShoppingListOwnerInlineEditableView(options) {
@@ -45,10 +54,39 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
         this.$('[data-role="apply"]').attr('disabled', e.target.value === this.model.get('notes'));
     },
 
-    addNote(e) {
-        $(e.target).addClass('hide');
+    createPopupForm(notes) {
+        const shoppingListAddNotesModalView = new ShoppinglistAddNotesModalView({
+            title: __(`oro.frontend.shoppinglist.dialog.notes.add`, {
+                shoppingList: this.options.shoppingListLabel
+            }),
+            okText: __(`oro.frontend.shoppinglist.dialog.notes.add_btn_label`),
+            cancelText: __('Cancel'),
+            okCloses: false,
+            notes
+        });
+        this.subview('shoppingListAddNotesModalView', shoppingListAddNotesModalView);
 
-        this.editNote();
+        shoppingListAddNotesModalView.on('ok', () => {
+            if (shoppingListAddNotesModalView.isValid()) {
+                this.saveModel({
+                    notes: shoppingListAddNotesModalView.getValue()
+                });
+                shoppingListAddNotesModalView.close();
+            }
+        });
+
+        shoppingListAddNotesModalView.open();
+    },
+
+    addNote() {
+        this.createPopupForm();
+    },
+
+    onNotesChanged(model, newValue) {
+        this.updateNotesText(newValue);
+        this.updateTexAreaValue(newValue);
+        this.hideEditForm();
+        this.switchActions();
     },
 
     saveNote() {
@@ -59,9 +97,13 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
         const newValue = this.$('textarea').val().trim();
 
         this.$el.addClass(this.options.loadingClass);
-        this.model.save({
+        this.saveModel({
             notes: newValue
-        }, {
+        });
+    },
+
+    saveModel(value) {
+        this.model.save(value, {
             patch: true,
             wait: false,
             success: resp => {
@@ -75,14 +117,29 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
                 this.$el.removeClass(this.options.loadingClass);
             }
         });
-        this.updateNotesText(newValue);
-        this.hideEditForm();
-        this.switchActions();
     },
 
     editNote() {
+        if (viewportManager.isApplicable('mobile-big')) {
+            return this.createPopupForm(this.model.get('notes'));
+        }
         this.hideActions();
         this.showEditForm();
+    },
+
+    removeNote() {
+        const confirm = new DeleteConfirmation({
+            title: false,
+            content: __('oro.frontend.shoppinglist.dialog.notes.remove_title', {
+                shoppingList: this.options.shoppingListLabel
+            }),
+            okText: __('oro.frontend.shoppinglist.dialog.notes.delete_btn')
+        });
+        this.subview('confirm', confirm);
+        this.listenTo(confirm, 'ok', () => this.saveModel({
+            notes: ''
+        }));
+        confirm.open();
     },
 
     undoChanges() {

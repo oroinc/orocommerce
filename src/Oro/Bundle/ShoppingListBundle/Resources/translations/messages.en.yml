@@ -303,10 +303,12 @@ oro:
                 create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
                 choose_assign_user.label: 'Choose a User to assign "%label%"'
                 rename.label: 'Rename Shopping List'
+                add_note.label: 'Add note'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
                 set_default_success: 'Shopping list has been successfully set as default'
                 rename_success: 'Shopping list has been successfully renamed'
+                add_note_success: 'Note has been successfully added to shopping list'
                 assign_success: 'Shopping list has been successfully re-assigned'
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
@@ -370,9 +372,12 @@ oro:
                 textarea:
                     aria_label: 'Notes for %shoppinglist%'
                 add_entire_note: 'Add a note to entire Shopping List'
+                add_note: 'Add Note'
+                add_note_dialog_title: 'Add note to “%shoppinglist%”'
                 apply: 'Apply changes in the Note'
                 decline: 'Decline changes in the Note'
                 edit: 'Edit the Note'
+                remove: 'Remove the Note'
 
             product_kit_line_item:
                 added_to_shopping_list: 'Product kit has been added to "%shoppinglist%"'

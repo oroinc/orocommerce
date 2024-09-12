@@ -14,9 +14,10 @@ Feature: Notes from shopping list are transferred to the checkout
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-    And I click "Add a note to entire Shopping List"
-    And I type "My shopping list notes" in "Shopping List Notes"
-    And I click on "Save Shopping List Notes"
+    When I click "Shopping List Actions"
+    And I click "Add Note"
+    And I type "My shopping list notes" in "Shopping List Notes in Modal"
+    And I press "Space" key on "UiWindow okButton" element
     Then I should see "My shopping list notes"
     When I click "Add Shopping List item Note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"
@@ -61,9 +62,10 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see "Workflow activated" flash message
     Given I proceed as the User
     When I open page with shopping list List 2
-    And I click "Add a note to entire Shopping List"
-    And I type "My shopping list notes" in "Shopping List Notes"
-    And I click on "Save Shopping List Notes"
+    And I click "Shopping List Actions"
+    And I click "Add Note"
+    And I type "My shopping list notes" in "Shopping List Notes in Modal"
+    And I press "Space" key on "UiWindow okButton" element
     Then I should see "My shopping list notes"
     When I click "Add Shopping List item Note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"

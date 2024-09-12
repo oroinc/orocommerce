@@ -75,6 +75,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/product-kit-form-view
         - oroshoppinglist/js/shopping-list-item-errors-handler
         - oroshoppinglist/js/shoppinglist-request-quote-confirmation
+        - oroshoppinglist/js/app/views/shopping-list-add-notes-button-view
         - tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/item-message.html

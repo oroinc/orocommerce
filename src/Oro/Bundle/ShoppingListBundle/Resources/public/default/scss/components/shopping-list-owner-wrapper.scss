@@ -1,0 +1,27 @@
+/* @theme: default; */
+
+.shopping-list-owner {
+    display: flex;
+    align-items: center;
+    gap: $shopping-list-owner-gap;
+
+    color: $shopping-list-owner-color;
+
+    min-height: $shopping-list-owner-min-height;
+}
+
+@include breakpoint('mobile-big') {
+    .shopping-list-owner {
+        margin-left: initial;
+
+        &__wrapper {
+            grid-column: 1 / 3;
+            grid-row: 2 / 3;
+        }
+
+        &__actions-wrapper {
+            grid-column: 2 / 3;
+            grid-row: 1 / 2;
+        }
+    }
+}

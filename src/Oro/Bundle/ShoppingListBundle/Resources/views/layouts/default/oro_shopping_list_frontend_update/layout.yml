@@ -4,6 +4,10 @@ layout:
             id: customer_user_shopping_list
             root: page_content
 
+        -
+            id: shopping_list_notes
+            root: content
+
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
@@ -47,35 +51,12 @@ layout:
             options:
                 visible: '=data["entity"]==null'
 
-        - '@addTree':
-            items:
-                shopping_list_notes:
-                    blockType: container
-                    siblingId: header
-                    prepend: false
-                    options:
-                        vars:
-                            shoppingList: '=data["entity"]'
-                shopping_list_notes_add:
-                    blockType: container
-                    options:
-                        vars:
-                            shoppingList: '=data["entity"]'
-                shopping_list_notes_edit_form:
-                    blockType: shopping_list_notes_block
-                    options:
-                        shoppingList: '=data["entity"]'
-                shopping_list_notes_text:
-                    blockType: container
-                    options:
-                        vars:
-                            shoppingList: '=data["entity"]'
-                shopping_list_notes_edit:
-                    blockType: container
-            tree:
-                content:
-                    shopping_list_notes:
-                        shopping_list_notes_add: ~
-                        shopping_list_notes_edit_form: ~
-                        shopping_list_notes_text:
-                            shopping_list_notes_edit: ~
+        - '@add':
+              id: shopping_list_notes_add
+              parentId: header_shopping_list_actions_container
+              siblingId: header_shopping_list_action_assign
+              blockType: shopping_list_notes_block
+              options:
+                  shoppingList: '=data["entity"]'
+                  vars:
+                      shoppingList: '=data["entity"]'

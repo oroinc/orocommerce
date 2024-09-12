@@ -18,8 +18,10 @@ $shopping-lists-text-align-items: center !default;
 $shopping-lists-text-justify-content: center !default;
 $shopping-lists-text-border-radius: 4px !default;
 
-$shopping-lists-notes-offset: 22px 0 16px !default;
-$shopping-lists-notes-font-size: $base-font-size - 2 !default;
+$shopping-lists-notes-offset: spacing('sm') 0 !default;
+$shopping-lists-notes-max-width: 1204px !default;
+$shopping-lists-notes-gap: spacing('sm') !default;
+$shopping-lists-notes-font-size: $base-font-size !default;
 $shopping-lists-notes-font-s: italic !default;
 $shopping-lists-notes-line-height: 1.35 !default;
 $shopping-lists-notes-expanded-height: 200px !default;
