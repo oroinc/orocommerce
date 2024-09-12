@@ -123,7 +123,7 @@ class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
         /** @var CombinedPriceList $cpl */
         $cpl = $this->getReference('1t_2t_3t');
 
-        $this->assertEquals(
+        $this->assertEqualsCanonicalizing(
             [
                 $this->getReference('price_list_1')->getId(),
                 $this->getReference('price_list_2')->getId(),
