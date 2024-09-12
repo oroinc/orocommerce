@@ -7,14 +7,54 @@
     align-content: $product-filters-sidebar-align-content;
     flex-grow: $product-filters-sidebar-flex-grow;
 
-    margin-top: $product-filters-sidebar-offset-top;
     padding-right: $product-filters-sidebar-inner-offset;
 
     border-right: $product-filters-sidebar-border;
     border-image: $product-filters-sidebar-border-image;
 
-    &:not(:first-child) {
-        margin-top: $product-filters-sidebar-not-first-child-offset-top;
+    --group-offset-y: var(--sticky-page-header-group-offset-y);
+    --sticky-position-top-offset: var(--sticky-page-header-element-offset-top);
+
+    transition: transform 250ms ease-out;
+
+    max-height: calc(100vh - var(--sticky-product-filters-sidebar-offset-top));
+    height: 100%;
+
+    &.in-sticky {
+        z-index: 101;
+        max-height: calc(100vh - var(--sticky-page-header-element-height));
+    }
+
+    &.scroll-down {
+        transform: translateY(calc(var(--group-offset-y, 0) * -1));
+
+        max-height: 100vh;
+    }
+
+    .filter-items-container {
+        height: 100%;
+        padding-inline: spacing('lg') + 4px spacing('lg');
+        margin-inline: -#{spacing('lg') + 4px} 0;
+        max-width: inherit;
+    }
+
+    .filter-container-header,
+    .filter-items-container {
+        opacity: 0;
+    }
+
+    // Set filter items content scrollable when it filter manager is not opened
+    &:not(:has(.dropdown-menu[tabindex='-1'])) {
+        .filter-container-header,
+        .filter-items-container {
+            opacity: 1;
+        }
+
+        .filter-items-container {
+            overflow-y: auto;
+            padding-inline: spacing('xs') spacing('lg');
+            margin-inline: -#{spacing('xs')} 0;
+        }
     }
 }
 

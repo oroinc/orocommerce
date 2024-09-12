@@ -72,6 +72,7 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote13 |
     And number of records in "AllQuotes" should be 1
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Check Valid Until filter
@@ -83,6 +84,7 @@ Feature: Quotes Grid Frontend
       | Quote # |
       | Quote12 |
     And number of records in "AllQuotes" should be 1
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Check Created At filter
@@ -91,16 +93,19 @@ Feature: Quotes Grid Frontend
     Then there are no records in grid
     When I filter Created At as between "today" and "today+1"
     Then number of records in "AllQuotes" should be 13
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Enable & Check Status filter
     Given number of records in "AllQuotes" should be 13
     And I show filter "Status" in "AllQuotes" frontend grid
+    And I open "Status" filter
     When I choose filter for Status as is any of "Not Approved"
     Then I should see following grid:
       | Quote # |
       | Quote10 |
     And number of records in "AllQuotes" should be 1
+    And I scroll to top
     And I reset "AllQuotes" grid
 
   Scenario: Check Owner filter

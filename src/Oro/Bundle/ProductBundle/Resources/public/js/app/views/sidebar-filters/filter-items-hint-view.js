@@ -1,24 +1,11 @@
 import BaseView from 'oroui/js/app/views/base/view';
 import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
 import mediator from 'oroui/js/mediator';
-import template from 'tpl-loader!oroproduct/templates/sidebar-filters/filter-items-hint.html';
-import filterSettings from 'oro/filter-settings';
 import viewportManager from 'oroui/js/viewport-manager';
-
-import moduleConfig from 'module-config';
-
-const config = {
-    toggleBlock: true,
-    ...moduleConfig(module.id)
-};
+import template from 'tpl-loader!oroproduct/templates/sidebar-filters/filter-items-hint.html';
 
 const FilterItemsHintView = BaseView.extend({
-    optionNames: BaseView.prototype.optionNames.concat([
-        'toggleBlock'
-    ]),
-
-    toggleBlock: config.toggleBlock,
-
     /**
      * Specific datagrid name
      * @property {string}
@@ -43,10 +30,8 @@ const FilterItemsHintView = BaseView.extend({
         'click .reset-filter-button': 'resetAllFilters'
     },
 
-    listen() {
-        return {
-            [`viewport:${filterSettings.fullScreenViewport} mediator`]: 'doToggleBlock'
-        };
+    listen: {
+        'viewport:mobile-big mediator': 'updateResetBtnLabel'
     },
 
     /**
@@ -80,6 +65,12 @@ const FilterItemsHintView = BaseView.extend({
         mediator.trigger('filters:reset', e);
     },
 
+    updateResetBtnLabel() {
+        this.$('[data-role="reset-button-label"]').text(viewportManager.isApplicable('mobile-big')
+            ? __('oro.filter.reset.short_label')
+            : __('oro.filter.reset.label'));
+    },
+
     /**
      * @inheritdoc
      */
@@ -87,16 +78,8 @@ const FilterItemsHintView = BaseView.extend({
         FilterItemsHintView.__super__.render.call(this);
         this.$el.addClass(this.renderMode);
         this.$el.attr('data-hint-container', this.gridName);
-        this.doToggleBlock();
+        this.updateResetBtnLabel();
         return this;
-    },
-
-    doToggleBlock() {
-        if (this.toggleBlock === false) {
-            return;
-        }
-
-        viewportManager.isApplicable(filterSettings.fullScreenViewport) ? this.$el.hide() : this.$el.show();
     }
 });
 

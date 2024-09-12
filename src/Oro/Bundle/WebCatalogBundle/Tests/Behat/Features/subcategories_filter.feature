@@ -95,7 +95,7 @@ Feature: Sub-Categories filter
     When I click on "Frontend Grid Action Filter Button"
     Then I should see an "Subcategories Filter" element
     When I click on "Subcategories Filter"
-    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+    And I should see "Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (1) |
       | Headlamps (2)                   |
 
@@ -116,7 +116,7 @@ Feature: Sub-Categories filter
 
   Scenario: Apply another filter
     Given I filter Text as does not contain "Product3"
-    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+    And I should see "Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (1) |
       | Headlamps (1)                   |
     And number of records in "Product Frontend Grid" should be 2
@@ -124,7 +124,7 @@ Feature: Sub-Categories filter
     And I should see "PSKU4" product
 
     When I filter Text as does not contain "Product2"
-    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+    And I should see "Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2
@@ -132,24 +132,26 @@ Feature: Sub-Categories filter
     And I should see "PSKU4" product
 
     When I filter Text as contains "Product1"
-    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+    And I should see "Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
     And should see filter hints in frontend grid:
-      | Any Text: contains "Product1"                          |
-      | Sub-Categories: Architectural Floodlighting, Headlamps |
+      | Any Text: contains "Product1" |
+      | Architectural Floodlighting   |
+      | Headlamps                     |
     When I reload the page
-    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+    And I should see "Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (0)                   |
     And number of records in "Product Frontend Grid" should be 0
     And should see filter hints in frontend grid:
-      | Any Text: contains "Product1"                          |
-      | Sub-Categories: Architectural Floodlighting, Headlamps |
+      | Any Text: contains "Product1" |
+      | Architectural Floodlighting   |
+      | Headlamps                     |
 
     When I filter Text as does not contain "Product2"
-    And I should see "Filter By Sub-Categories" filter with exact options in frontend product grid:
+    And I should see "Sub-Categories" filter with exact options in frontend product grid:
       | Architectural Floodlighting (0) |
       | Headlamps (2)                   |
     And number of records in "Product Frontend Grid" should be 2

@@ -10,9 +10,9 @@ class FrontendProductGridFilters extends GridFilters
     /**
      * Resets the given filter.
      */
-    public function resetFilter(string $filterName): void
+    public function resetFilter(string $filterName, string $hint = ''): void
     {
-        $resetButton = $this->getFilterHint($filterName)->find('css', 'button.reset-filter');
+        $resetButton = $this->getFilterHint($filterName, false, $hint)->find('css', 'button.reset-filter');
 
         self::assertNotNull(sprintf('Could not find reset button for "%s" filter', $filterName));
 
@@ -22,9 +22,10 @@ class FrontendProductGridFilters extends GridFilters
     /**
      * Returns hint for applied filter.
      */
-    public function getAppliedFilterHint(string $filterName): string
+    public function getAppliedFilterHint(string $filterName, string $hint = ''): string
     {
-        $filterHintLabel = $this->getFilterHint($filterName)->find('css', 'span.filter-criteria-hint');
+        $filterHintLabel = $this->getFilterHint($filterName, false, $hint)
+            ->find('css', 'span.filter-criteria-hint');
 
         self::assertNotNull(sprintf('Could not find filter hint label for "%s" filter', $filterName));
 
@@ -39,10 +40,15 @@ class FrontendProductGridFilters extends GridFilters
         return $this->getFilterHint($filterName, false) ? true : false;
     }
 
-    private function getFilterHint(string $filterName, bool $assertFound = true): ?NodeElement
+    private function getFilterHint(string $filterName, bool $assertFound = true, string $hint = ''): ?NodeElement
     {
-        $hintPrefix = sprintf('%s:', $filterName);
-        $filterHint = $this->find('css', sprintf('span.filter-criteria-hint-item:contains("%s")', $hintPrefix));
+        $selector = sprintf('span.filter-criteria-hint-item[aria-label="%s"]', $filterName);
+
+        if ($hint) {
+            $selector .= sprintf(':contains("%s")', $hint);
+        }
+
+        $filterHint = $this->find('css', $selector);
 
         if ($assertFound) {
             self::assertNotNull(sprintf('Could not find hint for "%s" filter', $filterName));
@@ -52,7 +58,7 @@ class FrontendProductGridFilters extends GridFilters
             );
         }
 
-        if (!$filterHint->isVisible()) {
+        if (!$filterHint || !$filterHint->isVisible()) {
             return null;
         }
 

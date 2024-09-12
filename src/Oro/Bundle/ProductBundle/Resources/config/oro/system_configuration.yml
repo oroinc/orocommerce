@@ -607,6 +607,7 @@ system_configuration:
                 choices:
                     oro.product.system_configuration.fields.filters_position.options.top: top
                     oro.product.system_configuration.fields.filters_position.options.sidebar: sidebar
+                    oro.product.system_configuration.fields.filters_position.options.overlay: overlay
 
         oro_product.original_file_names_enabled:
             data_type: boolean

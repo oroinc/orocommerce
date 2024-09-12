@@ -432,7 +432,9 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Shopping List Action Reassign GridFilters:
-      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-assign-grid"] div.filter-box'
+      selector:
+        type: xpath
+        locator: './/div[@data-page-component-name="frontend-customer-user-shopping-list-assign-grid"]/parent::div/parent::div/parent::div//*[contains(concat(" ",normalize-space(@class)," ")," filter-box ")]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     Shopping List Action Reassign GridToolbarActions:
@@ -465,7 +467,9 @@ oro_behat_extension:
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
 
     Shopping List Action Move GridFilters:
-      selector: 'div[data-page-component-name="frontend-customer-user-shopping-list-select-grid"] div.filter-box'
+      selector:
+        type: xpath
+        locator: './/div[@data-page-component-name="frontend-customer-user-shopping-list-select-grid"]/parent::div/parent::div/parent::div//*[contains(concat(" ",normalize-space(@class)," ")," filter-box ")]'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
     First Line Item Row Checkbox:

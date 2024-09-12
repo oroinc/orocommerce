@@ -759,12 +759,13 @@ oro:
                     tooltip: 'Set the maximum number of products displayed in the storefront autocomplete dropdown.'
 
                 filters_position:
-                    label: 'Filter Panel Position'
+                    label: 'Filter Panel Position on Product Listing Page'
                     tooltip: 'Select the required position of the filter bar in the storefront.'
                     legacy_note: 'This configuration applies to OroCommerce version 5.1 and below and is retained in the current version only for backward compatibility with legacy storefront themes. For newer themes starting with v6.0 and above, please configure this option under System > Theme Configuration.'
                     options:
                         top: 'Top'
                         sidebar: 'Sidebar'
+                        overlay: 'Overlay'
                 product_data_export_enabled:
                     label: 'Enable Product Grid Export'
                     tooltip: 'Select the option to enable customers in the storefront to export selected product data. Please check individual field settings for the Product entity under Entity Management, product attribute settings, and price attribute settings to see what data can be included in the exported file.'
@@ -1125,10 +1126,11 @@ oro:
                     product_listing:
                         label: Product Listing Page
                         filters_position:
-                            label: Filter Panel Position
+                            label: Filter Panel Position on Product Listing Page
                             values:
                                 top: Top
                                 sidebar: Sidebar
+                                overlay: Overlay
 
         usage_stats:
             products.label: Products

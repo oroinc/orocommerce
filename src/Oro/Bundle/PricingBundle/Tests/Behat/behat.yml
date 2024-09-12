@@ -268,6 +268,11 @@ oro_behat_extension:
         locator: '//span[@class="select2-chosen"]'
         type: 'xpath'
 
+    Chosen Select Radio Option:
+      selector:
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," filter-select-oro-wrapper ")]//input[@data-choice-value-select][@selected or @checked]'
+        type: 'xpath'
+
     Open Filters Panel Button:
       selector:
         type: 'xpath'

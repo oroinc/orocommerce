@@ -150,9 +150,9 @@ Feature: Product search and filter using flat prices and bayer
 
   Scenario: Check product grid flat price filter
     Given I click "Grid Filters Button"
-    When I filter "Filter by Price" as between "1" and "18" use "each" unit
+    When I filter "Price" as between "1" and "18" use "each" unit
     Then number of records in "Product Frontend Grid" should be 0
 
-    When I filter "Filter by Price" as between "19" and "21" use "each" unit
+    When I filter "Price" as between "19" and "21" use "each" unit
     Then number of records in "Product Frontend Grid" should be 1
     And should see "Product 1" in grid "Product Frontend Grid"

@@ -23,7 +23,7 @@ Feature: Responsive Product Filters On Products Catalog
     Then I should not see an "GridFilters" element
     And I click "GridFiltersButton"
     Then I should see an "Fullscreen Popup" element
-    And I should see "Fullscreen Popup Header" element with text "Filter Toggle" inside "Fullscreen Popup" element
+    And I should see "Fullscreen Popup Header" element with text "Filter By" inside "Fullscreen Popup" element
     And click "Close Fullscreen Popup"
 
     When I set window size to 1440x900
@@ -41,11 +41,11 @@ Feature: Responsive Product Filters On Products Catalog
     When I set window size to 992x1024
     And I click "GridFiltersButton"
     Then I should see an "Fullscreen Popup" element
-    And I should see "Fullscreen Popup Header" element with text "Filters (1)" inside "Fullscreen Popup" element
+    And I should see "Fullscreen Popup Footer" element with text "Show (1)" inside "Fullscreen Popup" element
     Then I should see "GridFilters" element inside "Fullscreen Popup" element
     Then I should see "FrontendGridFilterManagerButton" element inside "Fullscreen Popup" element
     And click "Close Fullscreen Popup"
-    When click "GridFiltersState"
+    When click "GridFiltersButtonSelected"
     Then I should see an "Fullscreen Popup" element
     And click "Close Fullscreen Popup"
 
@@ -59,7 +59,7 @@ Feature: Responsive Product Filters On Products Catalog
     And I go to System / Theme Configurations
     When I click "Edit" on row "Refreshing Teal" in grid
     And I fill "Theme Configuration Form" with:
-      | Filter Panel Position | sidebar |
+      | Filter Panel Position on Product Listing Page | sidebar |
     And I save and close form
     Then I should see "Theme Configuration has been saved" flash message
 
@@ -73,11 +73,11 @@ Feature: Responsive Product Filters On Products Catalog
     When I set window size to 992x1024
     And I click "GridFiltersButton"
     Then I should see an "Fullscreen Popup" element
-    And I should see "Fullscreen Popup Header" element with text "Filters (2)" inside "Fullscreen Popup" element
+    And I should see "Fullscreen Popup Footer" element with text "Show (2)" inside "Fullscreen Popup" element
     Then I should see "GridFilters" element inside "Fullscreen Popup" element
     Then I should see "FrontendGridFilterManagerButton" element inside "Fullscreen Popup" element
     And click "Close Fullscreen Popup"
-    When click "GridFiltersState"
+    When click "GridFiltersButtonSidebarSelected"
     Then I should see an "Fullscreen Popup" element
     And click "Close Fullscreen Popup"
 

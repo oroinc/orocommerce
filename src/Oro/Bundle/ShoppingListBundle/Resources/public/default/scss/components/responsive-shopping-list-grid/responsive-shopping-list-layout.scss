@@ -15,6 +15,20 @@
         border-radius: $base-ui-element-border-radius;
         background: $responsive-shopping-list-layout-background;
     }
+
+    .page-sidebar {
+        width: $responsive-shopping-page-sidebar;
+    }
+}
+
+@include breakpoint('desktop-small') {
+    .responsive-shopping-list-layout {
+        .page-content {
+            &--has-sidebar {
+                width: calc(#{$page-content-width} - #{$responsive-shopping-page-sidebar});
+            }
+        }
+    }
 }
 
 @include breakpoint('responsive-shopping-list-grid-overflow') {
@@ -50,6 +64,10 @@
             &__container-wrapper {
                 width: 50%;
             }
+        }
+
+        .page-sidebar {
+            width: $page-sidebar-tablet-s-width;
         }
     }
 }

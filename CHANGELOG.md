@@ -12,6 +12,7 @@ The current file describes significant changes in the code that may affect the u
 ### Removed
 
 ### ProductBundle
+* Removed `oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view`
 * Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.
 * Removed `oro_product.product_details_display_price_tiers_as` system configuration option.
 
