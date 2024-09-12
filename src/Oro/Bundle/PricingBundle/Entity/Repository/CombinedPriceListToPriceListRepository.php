@@ -126,8 +126,8 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
         $searchQuery = <<<SQL
         WITH aggregated_cpl AS (
             SELECT
-                string_agg(price_list_id::text || (CASE WHEN merge_allowed = true THEN 't' ELSE 'f' END),
-                    '_' ORDER BY sort_order) as price_lists,
+                ':' || string_agg(price_list_id::text || (CASE WHEN merge_allowed = true THEN 't' ELSE 'f' END),
+                    ':' ORDER BY sort_order) as price_lists,
                 count(id) as items_count,
                 combined_price_list_id
             FROM oro_cmb_pl_to_pl
