@@ -1,4 +1,5 @@
 {% block _checkout_additional_options_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " order-review-options__wrapper"
     }) %}
@@ -8,7 +9,9 @@
             {% set shippingDateId= 'shipping-date-uid-'|uniqid %}
             <div class="grid-col-6 grid-col-mobile-landscape-12" role="group">
                 <div class="datepicker-box datepicker-box--form-mode">
-                    <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
+                    <span class="datepicker-box__icon" aria-hidden="true">
+                        {{ renderIcon.icon({name: 'calendar'}) }}
+                    </span>
                     <label class="label label--full" for="{{ shippingDateId }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
                     {{ form_widget(form.ship_until, {id: shippingDateId}) }}
                 </div>

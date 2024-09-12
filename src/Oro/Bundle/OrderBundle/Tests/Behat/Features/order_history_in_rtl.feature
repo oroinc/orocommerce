@@ -28,8 +28,8 @@ Feature: Order History in RTL
     And I click "Order History"
     And I should see following records in "PastOrdersGrid":
       | ORD#1 |
-    When I filter "Filter By Created At" as between "today-2" and "today-1" in "PastOrdersGrid"
+    When I filter "Created At" as between "today-2" and "today-1" in "PastOrdersGrid" grid strictly
     Then I should not see "ORD#1"
-    When I filter "Filter By Created At" as between "today-1" and "today+1" in "PastOrdersGrid"
+    When I filter "Created At 1" as between "today-1" and "today+1" in "PastOrdersGrid" grid strictly
     Then I should see following records in "PastOrdersGrid":
       | ORD#1 |

@@ -52,7 +52,7 @@ Feature: Product attributes import triggers product reindex
     And I should see "SKU123" product
     And I should see "SKU456" product
     When I click "Grid Filters Button"
-    Then I should not see "Filter By Country" in the "ProductFrontendGridFiltersBlock" element
+    Then I should not see "Country" in the "ProductFrontendGridFiltersBlock" element
     Then I should not see "Country" in the "Frontend Product Grid Sorter" element
 
   Scenario: Update attribute properties via import

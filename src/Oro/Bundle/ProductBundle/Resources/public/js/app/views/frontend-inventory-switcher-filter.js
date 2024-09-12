@@ -4,6 +4,7 @@ define(function(require) {
     const $ = require('jquery');
     const template = require('tpl-loader!oroproduct/default/templates/filter/inventory-switcher-filter.html');
     const MultiselectFilter = require('orofrontend/js/app/views/frontend-multiselect-filter');
+    const InventoryFilterHintView = require('orofrontend/default/js/app/views/inventory-filter-hint-view').default;
     const KEYBOARD_CODES = require('oroui/js/tools/keyboard-key-codes').default;
 
     const FrontendInventorySwitchFilter = MultiselectFilter.extend({
@@ -13,6 +14,8 @@ define(function(require) {
          * @property
          */
         template: template,
+
+        HintView: InventoryFilterHintView,
 
         events: {
             'change [data-role="inventory-checkbox"]': 'onCheckboxValueChange',

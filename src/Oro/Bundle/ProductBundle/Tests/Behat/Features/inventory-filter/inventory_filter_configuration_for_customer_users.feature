@@ -43,7 +43,7 @@ Feature: Inventory Filter configuration for Customer Users
     And I should not see "SKU2" product
     And I should not see "SKU3" product
     And I should see filter hints in frontend grid:
-      | In Stock Only: On |
+      | In Stock Only |
 
     When I click "Inventory Status Switcher"
     Then number of records in "Product Frontend Grid" should be 3
@@ -71,7 +71,7 @@ Feature: Inventory Filter configuration for Customer Users
     And I should see "SKU3" product
     And I should not see "SKU1" product
     And I should see filter hints in frontend grid:
-      | Inventory Status: In Stock |
+      | In Stock |
 
     When I click "Clear All Filters"
     Then number of records in "Product Frontend Grid" should be 3

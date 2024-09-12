@@ -58,7 +58,7 @@ Feature: Product search and filter using flat prices and anonymous user
     And click "Search Button"
 
     When I click "Grid Filters Button"
-    And filter "Filter by Price" as between "9" and "11" use "each" unit
+    And filter "Price" as between "9" and "11" use "each" unit
     Then number of records in "Product Frontend Grid" should be 1
     And should see "Product 1" in grid "Product Frontend Grid"
 

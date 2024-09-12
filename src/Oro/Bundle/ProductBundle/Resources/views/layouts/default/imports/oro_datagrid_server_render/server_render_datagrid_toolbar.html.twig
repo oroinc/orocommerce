@@ -106,6 +106,12 @@
                         {% set startThresholdLength = showAtStartEnd + 1 %}
                     {% endif %}
 
+                    {% if pages|length <= showAtStartEnd %}
+                        {% set startThreshold = 0 %}
+                        {% set endThreshold = showAtStartEnd %}
+                        {% set startThresholdLength = showAtStartEnd + 1 %}
+                    {% endif %}
+
                     {% set middle = pages|slice(startThreshold, startThresholdLength) %}
                     {% set start = pages|slice(0, startThreshold) %}
                     {% set end = pages|slice(endThreshold, pages|length) %}
