@@ -144,7 +144,7 @@
 }
 
 @include breakpoint('mobile-landscape') {
-    .responsive-shopping-list-grid .grid-body {
+    .responsive-shopping-list-grid {
         .edit-mode,
         .view-mode {
             &.editable {
@@ -160,38 +160,49 @@
 }
 
 @include breakpoint('mobile') {
-    .responsive-shopping-list-grid .grid-body {
+    .responsive-shopping-list-grid {
+        .input-quantity-btn {
+            display: none;
+        }
+
+        .line-item-container {
+            flex-grow: 1;
+        }
+
+        .line-item-container,
+        .shoppinglist-line-item-frontend-type-editor {
+            .select2-container,
+            .select {
+                flex-grow: 1;
+            }
+
+            .select {
+                margin-right: 64px;
+            }
+        }
+
         .edit-mode,
         .view-mode {
+            .input {
+                flex-grow: 1;
+                padding-left: $input-padding-x;
+                padding-right: $input-padding-x;
+
+                text-align: right;
+            }
+
             &.editable {
                 width: 100%;
             }
         }
 
-        .edit-mode {
-            .input {
-                width: $edit-mode-cell-qty-input-width;
-                min-width: $edit-mode-cell-qty-input-width;
-                text-align: right;
-                padding-left: $input-padding-x;
-                padding-right: $input-padding-x;
-            }
-
-            .input-quantity-btn {
-                display: none;
-            }
-        }
-    }
-
-    .line-item-container,
-    .shoppinglist-line-item-frontend-type-editor {
-        .select2-container,
-        .select {
+        .form-quantity-row {
             flex-grow: 1;
-        }
 
-        .select {
-            margin-right: 64px;
+            .input {
+                width: 100%;
+                min-width: 100%;
+            }
         }
     }
 }
