@@ -34,7 +34,7 @@ Feature: Product kits remove from product kit dialog
       | Shopping List 1 Configuration | Barcode Scanner[x 2] Product 3 Base Unit[x 2] Product 2 |
 
   Scenario: Remove product kit line item from "Edit Product Kit Line Item Configuration" dialog
-    When I click "Configure" on row "Product Kit 01" in grid
+    When I click "Configure" on row "Barcode Scanner" in grid
     And I click "Product Kit Dialog Shopping List Dropdown"
     And I click "Remove From Product Kit Shopping List" in "Shopping List Button Group Menu" element
     Then I should see 'The "Product Kit 1" product was successfully deleted' flash message
