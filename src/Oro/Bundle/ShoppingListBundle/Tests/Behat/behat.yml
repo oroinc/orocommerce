@@ -339,7 +339,7 @@ oro_behat_extension:
 
     Row 1 Edit Line Item:
       selector:
-        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Edit")]'
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="2"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Configure")]'
         type: 'xpath'
 
     Row 1 Delete Line Item:
@@ -354,12 +354,12 @@ oro_behat_extension:
 
     Row 4 Edit Line Item:
       selector:
-        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="5"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Edit")]'
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="5"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Configure")]'
         type: 'xpath'
 
     Row 5 Edit Line Item:
       selector:
-        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="6"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Edit")]'
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="6"]/*[@aria-colindex="10"]//a[contains(@aria-label, "Configure")]'
         type: 'xpath'
 
     Shopping list Line items Grid:
@@ -718,7 +718,7 @@ oro_behat_extension:
     Shopping List 1 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(1) form button[type="submit"]'
     Shopping List 1 Kit Line Item Edit Button:
-      selector: 'tr:nth-child(1) td.action-cell a[title="Edit"]'
+      selector: 'tr:nth-child(1) td.action-cell a[title="Configure"]'
     Shopping List 1 Kit Line Item Delete Button:
       selector: 'tr:nth-child(1) td.action-cell a[title="Delete"]'
 
@@ -731,7 +731,7 @@ oro_behat_extension:
     Shopping List 2 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(2) form button[type="submit"]'
     Shopping List 2 Kit Line Item Edit Button:
-      selector: 'tr:nth-child(2) td.action-cell a[title="Edit"]'
+      selector: 'tr:nth-child(2) td.action-cell a[title="Configure"]'
     Shopping List 2 Kit Line Item Delete Button:
       selector: 'tr:nth-child(2) td.action-cell a[title="Delete"]'
 
@@ -744,7 +744,7 @@ oro_behat_extension:
     Shopping List 3 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(3) form button[type="submit"]'
     Shopping List 3 Kit Line Item Edit Button:
-      selector: 'tr:nth-child(3) td.action-cell a[title="Edit"]'
+      selector: 'tr:nth-child(3) td.action-cell a[title="Configure"]'
     Shopping List 3 Kit Line Item Delete Button:
       selector: 'tr:nth-child(3) td.action-cell a[title="Delete"]'
 

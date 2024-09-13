@@ -36,7 +36,7 @@ Feature: Add to Shopping List from Quick order form with Product Kits
     And I should not see "Create Order"
 
   Scenario: Configure Product Kit
-    When I click "Shopping List 1 Kit Line Item Edit Button"
+    And I click "Configure" on row "Product Kit 01" in grid
     Then I should see "Product Kit Dialog" with elements:
       | Title                | Product Kit 01                       |
       | Kit Item 1 Name      | Optional Item                        |

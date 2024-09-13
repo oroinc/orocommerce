@@ -91,7 +91,7 @@ Feature: Product kits add with required kit items
     And I should see "Total $41.00"
 
   Scenario: Remove product kit from shopping list
-    When I click "Row 1 Delete Line Item"
+    When I click "Delete" on row "productkit1" in grid
     Then I should see "Are you sure you want to delete this product?"
     When click "Yes, Delete"
     Then I should see 'The "Product Kit 1" product was successfully deleted' flash message

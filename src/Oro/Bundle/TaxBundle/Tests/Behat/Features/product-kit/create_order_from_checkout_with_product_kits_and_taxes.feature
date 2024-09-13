@@ -68,7 +68,7 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Add product kit item line item product
     When I click "Edit items"
-    And I click "Shopping List 1 Kit Line Item Edit Button"
+    And I click "Configure" on row "Product Kit 01" in grid
     And I click "Kit Item Line Item 2 Product 1"
     Then I should see "Product Kit Dialog" with elements:
       | Price | Total: $256.77 |
@@ -91,7 +91,7 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit item line item product
     When I click "Edit items"
-    And I click "Shopping List 1 Kit Line Item Edit Button"
+    And I click "Configure" on row "Product Kit 01" in grid
     And I click "Kit Item Line Item 2 Product 2"
     Then I should see "Product Kit Dialog" with elements:
       | Price | Total: $259.25 |
@@ -114,7 +114,7 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Change product kit item line item quantity
     When I click "Edit items"
-    And I click "Shopping List 1 Kit Line Item Edit Button"
+    And I click "Configure" on row "Product Kit 01" in grid
     When I fill "Product Kit Line Item Form" with:
       | Kit Item Line Item 1 Quantity | 2 |
       | Kit Item Line Item 2 Quantity | 3 |
@@ -139,7 +139,7 @@ Feature: Create Order from Checkout with product kits and taxes
 
   Scenario: Add one more product kit line item
     When I click "Edit items"
-    And I click "Shopping List 1 Kit Line Item Edit Button"
+    And I click "Configure" on row "Product Kit 01" in grid
     When I fill "Product Kit Line Item Totals Form" with:
       | Quantity | 3 |
     Then I should see "Product Kit Dialog" with elements:
