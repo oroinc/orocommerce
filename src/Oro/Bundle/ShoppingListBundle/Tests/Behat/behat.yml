@@ -717,8 +717,6 @@ oro_behat_extension:
       selector: 'tr:nth-child(1) form [data-role="unit-label"]'
     Shopping List 1 Kit Line Item Save Changes Button:
       selector: 'tr:nth-child(1) form button[type="submit"]'
-    Shopping List 1 Kit Line Item Edit Button:
-      selector: 'tr:nth-child(1) td.action-cell a[title="Configure"]'
     Shopping List 1 Kit Line Item Delete Button:
       selector: 'tr:nth-child(1) td.action-cell a[title="Delete"]'
 
