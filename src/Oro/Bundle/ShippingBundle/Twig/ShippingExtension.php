@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\ShippingBundle\Twig;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerInterface;
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
+use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ShippingMethodOrganizationProvider;
 use Psr\Container\ContainerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\ServiceSubscriberInterface;
@@ -61,7 +64,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
         return [
             new TwigFunction('get_shipping_method_label', [$this, 'formatShippingMethodLabel']),
             new TwigFunction('get_shipping_method_type_label', [$this, 'formatShippingMethodTypeLabel']),
-            new TwigFunction('oro_shipping_method_with_type_label', [$this, 'formatShippingMethodWithTypeLabel']),
+            new TwigFunction('oro_shipping_method_with_type_label', [$this, 'formatShippingMethodWithTypeLabelAndOrg']),
             new TwigFunction('oro_shipping_method_config_template', [$this, 'getShippingMethodConfigRenderData']),
             new TwigFunction('oro_shipping_method_enabled', [$this, 'isShippingMethodEnabled'])
         ];
@@ -105,6 +108,34 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
     {
         return $this->getShippingMethodLabelFormatter()
             ->formatShippingMethodTypeLabel($shippingMethodName, $shippingTypeName);
+    }
+
+    /**
+     * @param string $shippingMethodName
+     * @param string $shippingTypeName
+     * @param Organization|int|null $organization
+     *
+     * @return string
+     */
+    public function formatShippingMethodWithTypeLabelAndOrg(
+        $shippingMethodName,
+        $shippingTypeName,
+        $organization = null
+    ) {
+        if (null === $organization) {
+            return $this->formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName);
+        }
+
+        $organizationProvider = $this->getShippingMethodOrganizationProvider();
+        $previousOrganization = $organizationProvider->getOrganization();
+        $organizationProvider->setOrganization(
+            \is_int($organization) ? $this->getOrganization($organization) : $organization
+        );
+        try {
+            return $this->formatShippingMethodWithTypeLabel($shippingMethodName, $shippingTypeName);
+        } finally {
+            $organizationProvider->setOrganization($previousOrganization);
+        }
     }
 
     /**
@@ -266,7 +297,9 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
             'oro_shipping.formatter.weight_unit_value' => UnitValueFormatterInterface::class,
             'oro_shipping.formatter.length_unit_label' => UnitLabelFormatterInterface::class,
             'oro_shipping.formatter.freight_class_label' => UnitLabelFormatterInterface::class,
+            'oro_shipping.method.org_provider' => ShippingMethodOrganizationProvider::class,
             EventDispatcherInterface::class,
+            DoctrineHelper::class
         ];
     }
 
@@ -305,8 +338,23 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
         return $this->container->get('oro_shipping.formatter.freight_class_label');
     }
 
+    private function getShippingMethodOrganizationProvider(): ShippingMethodOrganizationProvider
+    {
+        return $this->container->get('oro_shipping.method.org_provider');
+    }
+
     private function getEventDispatcher(): EventDispatcherInterface
     {
         return $this->container->get(EventDispatcherInterface::class);
+    }
+
+    private function getDoctrineHelper(): DoctrineHelper
+    {
+        return $this->container->get(DoctrineHelper::class);
+    }
+
+    private function getOrganization(int $organizationId): Organization
+    {
+        return $this->getDoctrineHelper()->getEntityReference(Organization::class, $organizationId);
     }
 }

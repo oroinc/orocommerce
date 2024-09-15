@@ -122,7 +122,10 @@
 
     {% set shippingInformation %}
         {%- if entity.shippingMethod and entity.shippingMethodType -%}
-            {{ UI.renderProperty('oro.sale.quote.shipping_method.label'|trans, oro_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType)) }}
+            {{ UI.renderProperty(
+                'oro.sale.quote.shipping_method.label'|trans,
+                oro_shipping_method_with_type_label(entity.shippingMethod, entity.shippingMethodType, entity.organization)
+            ) }}
         {%- endif -%}
         {% if entity.shippingCost is not null %}
             {{ UI.renderProperty('oro.sale.quote.shipping_cost.label'|trans,
