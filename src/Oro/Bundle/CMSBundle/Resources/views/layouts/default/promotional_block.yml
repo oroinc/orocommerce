@@ -6,8 +6,8 @@ layout:
                       blockType: content_block
                       prepend: true
                       options:
-                          visible: '=data["theme_header_config"].getPromotionalBlockAlias()'
-                          alias: '=data["theme_header_config"].getPromotionalBlockAlias()'
+                          visible: '=data["content_block"].getPromotionalBlockAlias()'
+                          alias: '=data["content_block"].getPromotionalBlockAlias()'
                           vars:
                               hideTitle: true
                           attr:

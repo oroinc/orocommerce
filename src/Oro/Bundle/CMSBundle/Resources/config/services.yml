@@ -31,8 +31,9 @@ services:
             - "@oro_cms.content_block.resolver"
             - "@doctrine"
             - "@oro_scope.scope_manager"
+            - '@oro_theme.provider.theme_configuration'
+            - '@oro_security.acl_helper'
             - "@logger"
-            - 'Oro\Bundle\CMSBundle\Entity\ContentBlock'
             - "cms_content_block"
         tags:
             - { name: layout.data_provider, alias: content_block }
@@ -237,9 +238,6 @@ services:
         arguments:
             - !tagged_iterator oro_cms.content_widget.type
 
-    Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry:
-        alias: oro_cms.content_widget.type_registry
-
     oro_cms.provider.content_widget_type:
         class: Oro\Bundle\CMSBundle\Provider\ContentWidgetTypeProvider
         public: true
@@ -262,11 +260,22 @@ services:
             - '@oro_layout.theme_manager'
             - '@oro_cms.content_widget_layout_cache'
 
-    Oro\Bundle\CMSBundle\Provider\ContentWidgetLayoutProvider:
-        alias: oro_cms.provider.content_widget_layout
+    oro_cms.acl.voter.content_block:
+        class: Oro\Bundle\CMSBundle\Acl\Voter\ContentBlockVoter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: security.voter }
 
     oro_cms.acl.voter.frontend_quote_permission_voter:
         class: Oro\Bundle\CMSBundle\Acl\Voter\ContentWidgetVoter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: security.voter }
+
+    oro_cms.acl.voter.landing_page_delete:
+        class: Oro\Bundle\CMSBundle\Acl\Voter\LandingPageDeleteVoter
         arguments:
             - '@oro_entity.doctrine_helper'
         tags:
@@ -315,9 +324,6 @@ services:
             - '@oro_ui.html_tag_helper'
             - '@oro_cms.twig.renderer'
             - '@translator'
-
-    Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker:
-        alias: oro_cms.tools.wysiwyg_content_checker
 
     oro_cms.event_listener.content_widget_datagrid.inline:
         class: Oro\Bundle\CMSBundle\EventListener\ContentWidgetDatagridListener
@@ -441,9 +447,6 @@ services:
             - '@doctrine'
             - '@oro_attachment.provider.file_url'
 
-    Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter:
-        alias: oro_cms.tools.digital_asset_twig_tags_converter
-
     Oro\Bundle\CMSBundle\Provider\MysqlTemporaryPrivilegeRequirementProvider:
         class: Oro\Bundle\CMSBundle\Provider\MysqlTemporaryPrivilegeRequirementProvider
         arguments:
@@ -470,9 +473,6 @@ services:
             - '@doctrine'
             - '@oro_attachment.provider.picture_sources'
             - '@oro_cms.provider.content_template_preview_image_placeholder'
-
-    Oro\Bundle\CMSBundle\Provider\ContentTemplateContentProvider:
-        alias: oro_cms.provider.content_template_content_provider
 
     oro_cms.provider.content_template_content_provider:
         class: Oro\Bundle\CMSBundle\Provider\ContentTemplateContentProvider
@@ -551,20 +551,9 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_options_set, method: onFormOptions }
 
-    oro_cms.acl.voter.landing_page_delete:
-        class: Oro\Bundle\CMSBundle\Acl\Voter\LandingPageDeleteVoter
-        calls:
-            - [ setClassName, [ 'Oro\Bundle\CMSBundle\Entity\Page' ] ]
-        arguments:
-            - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: security.voter }
-
-    Oro\Bundle\CMSBundle\Provider\HomeLandingPageProvider:
-        alias: oro_cms.provider.home_landing_page
-
-    oro_cms.provider.home_landing_page:
-        class: Oro\Bundle\CMSBundle\Provider\HomeLandingPageProvider
+    oro_cms.provider.home_page:
+        class: Oro\Bundle\CMSBundle\Provider\HomePageProvider
+        decorates: oro_frontend.home_page_provider
         arguments:
             - '@oro_config.manager'
             - '@doctrine'

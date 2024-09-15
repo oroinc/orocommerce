@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FrontendLocalizationBundle\Controller\Frontend;
 
+use Oro\Bundle\FrontendLocalizationBundle\Helper\LocalizedSlugRedirectHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Component\Routing\UrlUtil;
@@ -94,13 +95,16 @@ trait RedirectLocalizationControllerTrait
         return $toUrl;
     }
 
-    private function getUrlForWebsitePath(Request $request, string $fromUrl, Localization $localization): string
-    {
+    private function getUrlForWebsitePath(
+        Request $request,
+        string $fromUrl,
+        Localization $localization,
+        LocalizedSlugRedirectHelper $redirectHelper
+    ): string {
         $baseUrl = $request->getBaseUrl();
-        $redirectHelper = $this->container->get('oro_locale.helper.localized_slug_redirect');
         $websitePath = $request->server->get('WEBSITE_PATH');
 
-        if (in_array($baseUrl, ['/', ''])) {
+        if (\in_array($baseUrl, ['/', ''], true)) {
             $baseUrl = $websitePath;
         }
 

@@ -21,9 +21,6 @@ class ContentWidgetVoterTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetVoter */
     private $voter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->token = $this->createMock(TokenInterface::class);

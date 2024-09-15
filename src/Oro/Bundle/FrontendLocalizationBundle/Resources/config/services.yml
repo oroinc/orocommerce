@@ -54,9 +54,6 @@ services:
             - '@oro_website.manager'
             - '@oro_redirect.routing.router'
 
-    Oro\Bundle\FrontendLocalizationBundle\Helper\LocalizedSlugRedirectHelper:
-        alias: oro_locale.helper.localized_slug_redirect
-
     oro_frontend_localization.extension.slug_detect_localization:
         class: Oro\Bundle\FrontendLocalizationBundle\Extension\SlugDetectLocalizationExtension
         arguments:
