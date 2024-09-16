@@ -13,6 +13,9 @@ use Oro\Bundle\RFPBundle\Entity\Request as RequestEntity;
 use Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType;
 
+/**
+ * @dbIsolationPerTest
+ */
 class RequestTypeTest extends FrontendWebTestCase
 {
     protected function setUp(): void
