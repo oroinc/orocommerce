@@ -183,7 +183,9 @@ oro:
                 title: Edit items
             item: Item
             sku: SKU
+            # used in old themes
             inventory_status: ''
+            inventory_status_full: 'Availability'
             quantity: Quantity
             quantity_short: Qty
             unit: ''
