@@ -1,0 +1,44 @@
+<% let oroproduct = _.macros('oroproduct') %>
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<% let singleMode = obj.singleMode ?? {displayInput: true}%>
+<% let selectMode = obj.selectMode ?? {displaySelect: true}%>
+<% let toggleMode = obj.toggleMode ?? {} %>
+<% const _formattedUnit = oroshoppinglist.renderUnit({unit: unit, quantity: 1}) %>
+<div class="unit-select-root" data-role="toggle-type-root">
+    <% if (oroproduct.isSingleUnitMode(units)) { %>
+        <span class="single-unit"
+              data-role="unit-label"
+        <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SINGLE %>"
+        ><%- oroshoppinglist.renderUnit({unit: unit, quantity: 1}) %></span>
+        <% if (singleMode.displayInput) { %>
+            <input type="hidden" name="<%- name %>" value="<%- unit %>">
+        <% } %>
+    <% } else if (oroproduct.displayUnitsAsGroup(units)) { %>
+        <%= oroproduct.renderUnitsAsRadioGroup({
+            selectedValue: unit,
+            units: units,
+            name: name,
+            markSelectedLabel: true,
+            radioAttrs: toggleMode.radioAttrs ?? {},
+            labelAttrs: toggleMode.labelAttrs ?? {}
+        }) %>
+    <% } else { %>
+        <% if (selectMode.displaySelect) { %>
+            <select name="<%- name %>"
+                    class="select <%- selectMode.class ?? ''%>"
+                    aria-label="select <%- selectMode.ariaLabel ?? ''%>"
+                    required
+                <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SELECT %>
+            >
+                <% _.each(units, function(unit, value) { %>
+                <option value="<%- value %>"<% if (unit.selected) { %> selected<% } %><% if (unit.disabled) { %> disabled<% } %>>
+                    <%- oroshoppinglist.renderUnit({unit: value, quantity: 1}) %>
+                </option>
+                <% }) %>
+            </select>
+        <% } else { %>
+            <div class="select" tabindex="0" data-focused=".select2-container" title="<%- _formattedUnit.trim() %>" <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SELECT %>"><%- _formattedUnit.trim() %></div>
+        <% } %>
+    <% } %>
+</div>
+

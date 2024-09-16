@@ -9,8 +9,7 @@
     &__row {
         display: flex;
         flex-direction: column;
-
-        line-height: $grid-line-line-height;
+        row-gap: spacing('xs');
 
         &:last-child {
             flex-grow: 1;

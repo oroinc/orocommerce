@@ -9,7 +9,12 @@ macros('oroproduct', {
      * @param {Object} data.units
      * @param {string} data.selectedValue
      */
-    renderUnitsAsRadioGroup: require('tpl-loader!oroproduct/templates/units-as-radio-group.html'),
+    renderUnitsAsRadioGroup: require('tpl-loader!orofrontend/templates/units-as-radio-group.html'),
+
+    /**
+     *
+     */
+    renderGroupedUnits: require('tpl-loader!oroproduct/templates/units-group.html'),
 
     /**
      * Determines to show units as a radio group

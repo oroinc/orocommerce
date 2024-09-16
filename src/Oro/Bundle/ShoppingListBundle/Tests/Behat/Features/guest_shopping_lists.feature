@@ -124,7 +124,7 @@ Feature: Guest Shopping Lists
     And I click "Open List"
     Then I should see following grid:
       | SKU    | Item         | Qty Update All                   | Price | Subtotal |
-      | 1GB83  | Slip-On Clog | Click "edit" to select variants  |       |          |
+      | 1GB83  | Slip-On Clog | Click "configure" to select variants  |       |          |
     And I should see following actions for 1GB83 in grid:
       | Edit   |
       | Delete |

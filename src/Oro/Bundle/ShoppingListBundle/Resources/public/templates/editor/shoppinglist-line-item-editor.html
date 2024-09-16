@@ -32,33 +32,15 @@
                 data-boundaries-element="[role='dialog']"
             >
         <% } %>
-        <% if (oroproduct.isSingleUnitMode(data.units)) { %>
-            <span class="single-unit"
-                  data-role="unit-label"
-              <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SINGLE %>"
-            ><%- oroshoppinglist.renderUnit({unit: data.unit, quantity: 1}) %></span>
-            <input type="hidden" name="unitCode" value="<%- data.unit %>">
-        <% } else if (oroproduct.displayUnitsAsGroup(data.units)) { %>
-            <%= oroproduct.renderUnitsAsRadioGroup({
-                selectedValue: data.unit,
-                markSelectedLabel: true,
-                units: data.units,
-                radioGroupName: 'unitCode'
-            }) %>
-        <% } else { %>
-            <select name="unitCode"
-                    class="select input"
-                    aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.unit.aria_label') %>"
-                    required
-                <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SELECT %>
-            >
-                <% _.each(data.units, function(data, value) { %>
-                <option value="<%- value %>"<% if (data.selected) { %> selected<% } %><% if (data.disabled) { %> disabled<% } %>>
-                    <%- oroshoppinglist.renderUnit({unit: value, quantity: 1}) %>
-                </option>
-                <% }) %>
-            </select>
-        <% } %>
+        <%= oroproduct.renderGroupedUnits({
+            name: 'unitCode',
+            units: data.units,
+            unit: data.unit,
+            selectMode: {
+                'class': 'input',
+                'ariaLabel': '<% _.__("oro.frontend.shoppinglist.inline_editing.unit.aria_label")'
+            }
+        }) %>
     </div>
     <div class="inline-editor__actions">
         <button class="btn inline-editor__action-item" type="submit"

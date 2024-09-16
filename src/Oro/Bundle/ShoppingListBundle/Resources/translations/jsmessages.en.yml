@@ -48,7 +48,7 @@ oro:
             accept_button_title: 'Proceed'
             cancel_button_title: 'Cancel'
         lineitem:
-            empty_configurable_product: Click "edit" to select variants
+            empty_configurable_product: Click "configure" to select variants
     frontend:
         shoppinglist:
             product_variants: 'Product Variants'

@@ -248,8 +248,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Source Shopping List\" was updated successfully"
     When I follow "Source Shopping List" link within flash message "Shopping list \"Source Shopping List\" was updated successfully"
     Then I should see following grid:
-      | SKU  | Item                 | Qty Update All                   | Price | Subtotal |
-      | CNFB | ConfigurableProductB | Click "edit" to select variants  |       |          |
+      | SKU  | Item                 | Qty Update All                        | Price | Subtotal |
+      | CNFB | ConfigurableProductB | Click "configure" to select variants  |       |          |
     And I click on "First Line Item Row Checkbox"
     And I click "Move to" link from mass action dropdown in "Frontend Shopping List Edit Grid"
     And I click "Filter Toggle" in "UiDialog" element
@@ -264,8 +264,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Yes, delete"
     And I open page with shopping list "Shopping List"
     Then I should see following grid:
-      | SKU  | Item                 | Qty Update All                   | Price  | Subtotal |
-      | CNFB | ConfigurableProductB | Click "edit" to select variants  |        |          |
+      | SKU  | Item                 | Qty Update All                        | Price  | Subtotal |
+      | CNFB | ConfigurableProductB | Click "configure" to select variants  |        |          |
 
   Scenario: Order empty matrix form
     When I click Edit CNFB in grid
@@ -300,8 +300,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click on "Shopping Lists"
     And I click view Shopping List in grid
     Then I should see following grid:
-      | SKU  | Item                 | Qty | Unit                            | Price  | Subtotal |
-      | CNFB | ConfigurableProductB |     | Click "edit" to select variants |        |          |
+      | SKU  | Item                 | Qty | Unit                                 | Price  | Subtotal |
+      | CNFB | ConfigurableProductB |     | Click "configure" to select variants |        |          |
 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
