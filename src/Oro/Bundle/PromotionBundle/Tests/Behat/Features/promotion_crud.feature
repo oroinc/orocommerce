@@ -42,6 +42,22 @@ Feature: Promotion CRUD
     And I save form
     Then I should see "Promotion has been saved" flash message
 
+  Scenario: Promotion view
+    Given I go to Marketing / Promotions / Promotions
+    When I click view New promotion name in grid
+    Then I should see "Name New promotion name"
+    And I should see "Sort Order 10"
+    And I should see "Stop Further Rule Processing Yes"
+    And I should see "Triggered By Coupons and Conditions"
+    And I should see "Discount Value $10.00"
+    And I should see "Type Fixed Amount"
+    And I should see "Discount Order Total"
+    And I should see following grid:
+      | SKU   | Name      |
+      | PSKU1 | Product 1 |
+    When I filter SKU as is equal to "NonExisting"
+    Then number of records should be 0
+
   Scenario: Promotion delete
     When I go to Marketing / Promotions / Promotions
     Then number of records should be 1

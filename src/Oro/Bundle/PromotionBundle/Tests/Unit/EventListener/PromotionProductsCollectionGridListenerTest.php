@@ -46,4 +46,25 @@ class PromotionProductsCollectionGridListenerTest extends \PHPUnit\Framework\Tes
         $listener = new PromotionProductsCollectionGridListener();
         $listener->onBuildAfter($event);
     }
+
+    public function testOnBuildAfterWithoutPromotionInParameters(): void
+    {
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datasource = $this->createMock(OrmDatasource::class);
+
+        $event = new BuildAfter($datagrid);
+        $parameters = new ParameterBag(['params' => []]);
+
+        $datagrid->expects(self::once())
+            ->method('getDatasource')
+            ->willReturn($datasource);
+        $datagrid->expects(self::once())
+            ->method('getParameters')
+            ->willReturn($parameters);
+        $datasource->expects(self::never())
+            ->method('getQueryBuilder');
+
+        $listener = new PromotionProductsCollectionGridListener();
+        $listener->onBuildAfter($event);
+    }
 }
