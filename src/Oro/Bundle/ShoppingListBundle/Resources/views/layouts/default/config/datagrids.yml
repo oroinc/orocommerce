@@ -243,7 +243,7 @@ datagrids:
                 image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             inventoryStatus:
-                label:         oro.frontend.shoppinglist.lineitem.inventory_status.label
+                label:         oro.frontend.shoppinglist.lineitem.inventory_status.full_label
                 frontend_type: shoppinglist-html-template
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"

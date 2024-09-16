@@ -356,7 +356,9 @@ oro:
                     cant_remove.label: 'No current ShoppingList or no Product in current ShoppingList'
                 sku.label: 'SKU'
                 item.label: 'Item'
-                inventory_status.label: 'Availability'
+                # used in old themes
+                inventory_status.label: ''
+                inventory_status.full_label: 'Availability'
                 quantity.label: 'Qty'
                 unit.label: ''
                 price.label: 'Price'
