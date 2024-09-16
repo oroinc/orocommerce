@@ -1,9 +1,9 @@
 /* @theme: default; */
 
 $grid-line-items-row-offset-x: spacing('base') !default;
-$grid-line-items-line-height: 1.15 !default;
+$grid-line-items-line-height: $base-line-height !default;
 $grid-line-items-word-break: break-word !default;
-$grid-line-items-title-font-size: $base-font-size !default;
+$grid-line-items-title-font-size: $base-font-size--s !default;
 $grid-line-items-title-font-w: font-weight('semi-bold') !default;
 $grid-line-items-field-val-offset: 2px !default;
 $grid-line-items-link-color: get-color('text', 'primary') !default;

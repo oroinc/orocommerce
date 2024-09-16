@@ -65,7 +65,7 @@ Feature: Product kits remove from product kit dialog
 
   Scenario: Remove product kit line item from "Edit Product Kit Line Item Configuration" dialog
     Given I switch to the browser tab "ProductKitViewPage"
-    When I click "Configure" on row "Product Kit 01" in grid
+    When I click "Configure" on row "Product Kit Shopping List" in grid
     And I click "Product Kit Dialog Shopping List Dropdown"
     And I click "Remove From Product Kit Shopping List" in "Shopping List Button Group Menu" element
     Then I should see 'The "Product Kit 1" product was successfully deleted' flash message
