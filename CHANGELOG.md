@@ -9,6 +9,9 @@ The current file describes significant changes in the code that may affect the u
 ### ProductBundle
 * Added a new frontend `inventory-switcher` filter.
 
+#### PricingBundle
+* Added a new backend `customerprices` API resource.
+
 ### Removed
 
 ### ProductBundle
