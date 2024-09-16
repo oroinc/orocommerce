@@ -62,4 +62,4 @@ Feature: Mass Product Actions for Guest user
     And I click "Open List"
     Then I should see following grid:
       | SKU    | Qty Update All |
-      | rtsh_m | 3 item set     |
+      | rtsh_m | 3 ( item ) set |

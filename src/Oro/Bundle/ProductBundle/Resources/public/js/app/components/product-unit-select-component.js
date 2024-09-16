@@ -55,12 +55,17 @@ define(function(require) {
             }
 
             const $select = this.options._sourceElement.find('select');
+
+            unitsUtil.markAsSelectUnit($select);
             unitsUtil.updateSelect(model, $select);
 
             const productUnits = _.keys(model.get('product_units'));
             if (this.isProductApplySingleUnitMode(productUnits)) {
                 if (this.options.singleUnitModeCodeVisible) {
-                    $select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
+                    const $label = `<span class="unit-label">${productUnits[0]}</span>`;
+
+                    unitsUtil.markAsSingleUnit($label);
+                    $select.parent().append($label);
                 }
                 $select.inputWidget('dispose');
                 $select.addClass('no-input-widget').hide();

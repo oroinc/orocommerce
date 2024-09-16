@@ -27,5 +27,15 @@ macros('oroproduct', {
      */
     isSingleUnitMode(units) {
         return unitsUtil.isSingleUnitMode(units);
-    }
+    },
+
+    /**
+     * An attribute name used to differentiate elements as they are unit-select widget
+     */
+    UNIT_SELECT_NAME: unitsUtil.UNIT_SELECT_NAME,
+
+    /**
+     * An attribute name used to differentiate elements as they are unit-select widget
+     */
+    UNIT_SELECT_TYPE: unitsUtil.UNIT_SELECT_TYPE
 });

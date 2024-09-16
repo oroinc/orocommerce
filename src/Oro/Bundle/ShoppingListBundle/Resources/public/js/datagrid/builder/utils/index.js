@@ -34,6 +34,7 @@ export const isHighlight = item => item.isUpcoming || (item.warnings && item.war
 export const isError = item => item.errors && item.errors.length > 0;
 
 export const messageModel = (item, columnName, opts = {}) => {
+    const rowId = `${item.productId}-m`;
     const messageItem = {
         ...item,
         id: item.id + uniqueId('-bind-'),
@@ -42,14 +43,20 @@ export const messageModel = (item, columnName, opts = {}) => {
         _templateKey: 'message',
         isMessage: true,
         isAuxiliary: true,
+        rowId: rowId,
         row_attributes: {
             ...item.row_attributes,
-            'aria-hidden': true
+            'aria-hidden': true,
+            'data-row-id': rowId
         },
         ...opts
     };
 
     item.row_class_name += ' has-message-row';
+    item.row_attributes = {
+        ...item.row_attributes,
+        'data-related-row': messageItem.rowId
+    };
     item.messageModelId = messageItem.id;
     return messageItem;
 };
