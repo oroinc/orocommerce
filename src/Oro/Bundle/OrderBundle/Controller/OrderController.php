@@ -14,6 +14,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
+use Oro\Bundle\OrderBundle\Provider\OrderDuplicator;
 use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
@@ -183,10 +184,38 @@ class OrderController extends AbstractController
         return $this->update($order, $request);
     }
 
+    #[Route(path: '/reorder/{id}', name: 'oro_order_reorder', requirements: ['id' => '\d+'])]
+    #[ParamConverter('oldOrder', options: ['repository_method' => 'getOrderWithRelations'])]
+    #[Template]
+    #[AclAncestor('oro_order_view')]
+    public function reorderAction(Order $oldOrder, Request $request): array|RedirectResponse
+    {
+        if (!$this->isGranted('oro_order_create') || !$oldOrder->getSubOrders()->isEmpty()) {
+            throw $this->createAccessDeniedException();
+        }
+
+        return $this->update(
+            $this->container->get('oro_order.duplicator.order_duplicator')->duplicate($oldOrder),
+            $request,
+            function (Order $order, FormInterface $form, Request $request) use ($oldOrder) {
+                return [
+                    'entity' => $order,
+                    'form' => $form->createView(),
+                    'returnAction' => [
+                        'route' => 'oro_order_view',
+                        'parameters' => ['id' => $order->getId()],
+                        'aclRole' => 'oro_order_view'
+                    ],
+                    'oldOrder' => $oldOrder
+                ];
+            }
+        );
+    }
+
     protected function update(
         Order $order,
         Request $request,
-        FormTemplateDataProviderInterface|null $resultProvider = null
+        callable|FormTemplateDataProviderInterface|null $resultProvider = null
     ): array|RedirectResponse {
         if (\in_array($request->getMethod(), ['POST', 'PUT'], true)) {
             $orderRequestHandler = $this->container->get(OrderRequestHandler::class);
@@ -263,6 +292,7 @@ class OrderController extends AbstractController
             SaveAndReturnActionFormTemplateDataProvider::class,
             FormTemplateDataProviderComposite::class,
             'doctrine' => ManagerRegistry::class,
+            'oro_order.duplicator.order_duplicator' => OrderDuplicator::class,
         ]);
     }
 }
