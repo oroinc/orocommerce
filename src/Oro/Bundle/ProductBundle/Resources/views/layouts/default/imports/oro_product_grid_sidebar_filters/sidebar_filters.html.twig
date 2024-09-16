@@ -1,6 +1,9 @@
 {% block __oro_product_grid_sidebar_filters__sidebar_filters_root_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-filters-sidebar'
+        '~class': ' product-filters-sidebar sticky sticky--top',
+        'data-sticky': {
+            name: 'product-filters-sidebar'
+        }
     }) %}
 
     <div {{ block('block_attributes') }}>

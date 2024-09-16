@@ -42,11 +42,16 @@
             <div tabindex="0" class="input input-qty"><%- oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %></div>
         <% } %>
         <% if (oroproduct.isSingleUnitMode(obj.units)) { %>
-            <span class="single-unit" data-role="unit-label"><%- _formattedUnit.trim() %></span>
+            <span class="single-unit"
+                  data-role="unit-label"
+              <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SINGLE %>"
+                  data-unit-type=""
+            ><%- _formattedUnit.trim() %></span>
         <% } else if (oroproduct.displayUnitsAsGroup(obj.units)) { %>
             <%= oroproduct.renderUnitsAsRadioGroup({
                 selectedValue: obj.unitCode,
                 units: obj.units,
+                markSelectedLabel: true,
                 radioAttrs: {
                     role: 'radio-view-mode'
                 },
@@ -55,7 +60,7 @@
                 }
             }) %>
         <% } else { %>
-            <div class="select" tabindex="0" data-focused=".select2-container" title="<%- _formattedUnit.trim() %>"><%- _formattedUnit.trim() %></div>
+            <div class="select" tabindex="0" data-focused=".select2-container" title="<%- _formattedUnit.trim() %>" <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SELECT %>"><%- _formattedUnit.trim() %></div>
         <% } %>
     </div>
 <% } %>

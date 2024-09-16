@@ -34,6 +34,7 @@
 {% endblock %}
 
 {% block __oro_rfp_frontend_request_edit__rfp_form_fields_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {{ form_row(form._token) }}
 
     <div class="grid-col-6 grid-col-mobile-landscape-12">
@@ -62,7 +63,9 @@
     </div>
     <div class="grid-col-6 grid-col-mobile-landscape-12">
         <div class="datepicker-box datepicker-box--form-mode">
-            <span class="datepicker-box__icon" aria-hidden="true"><i class="fa-calendar"></i></span>
+            <span class="datepicker-box__icon" aria-hidden="true">
+                {{ renderIcon.icon({name: 'calendar'}) }}
+            </span>
             {{ form_row(form.shipUntil, {
                 'attr': {
                     'class': 'datepicker-input input'

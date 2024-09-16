@@ -106,6 +106,7 @@ Feature: My Shopping List Actions
     And I click "Move to" link from mass action dropdown in "Frontend Shopping List Edit Grid"
     And I click "Filter Toggle" in "UiDialog" element
     And I filter Name as is equal to "Shopping List 1" in "Shopping List Action Move Grid"
+    And I click "Show (1)"
     And I click "Shopping List Action Move Radio"
     And I click "Shopping List Action Submit"
     Then I should see "One entity has been moved successfully" flash message and I close it
@@ -144,6 +145,7 @@ Feature: My Shopping List Actions
     When I click "Shopping List Actions"
     And I click "Reassign"
     And I filter First Name as is equal to "Nancy" in "Shopping List Action Reassign Grid"
+    And I click "Show (1)"
     And I click "Shopping List Action Reassign Radio"
     And I click "Shopping List Action Submit"
     Then I should see "Nancy Sallee"

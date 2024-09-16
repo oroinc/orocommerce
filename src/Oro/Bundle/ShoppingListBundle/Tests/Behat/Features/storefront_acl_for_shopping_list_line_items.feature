@@ -30,6 +30,7 @@ Feature: Storefront acl for shopping list line items
     And I click "Shopping List Actions"
     When I click "Reassign"
     And I filter First Name as is equal to "Amanda" in "Shopping List Action Reassign Grid"
+    And I click "Show (1)"
     And I click "Shopping List Action Reassign Radio"
     And I click "Shopping List Action Submit"
     Then I should see "Amanda Cole"
@@ -43,5 +44,5 @@ Feature: Storefront acl for shopping list line items
     And I type "10" in "Shopping List Line Item 1 Quantity Input"
     And I click on "Shopping List Line Item 1 Save Changes Button"
     Then I should see following grid:
-      | SKU | Qty Update All |
-      | AA1 | 10 item set    |
+      | SKU | Qty Update All  |
+      | AA1 | 10 ( item ) set |

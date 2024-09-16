@@ -254,6 +254,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Move to" link from mass action dropdown in "Frontend Shopping List Edit Grid"
     And I click "Filter Toggle" in "UiDialog" element
     And I filter Name as is equal to "Shopping List" in "Shopping List Action Move Grid"
+    And I click "Show (1)"
     And I click "Shopping List Action Move Radio"
     And I click "Shopping List Action Submit"
     Then I should see "One entity has been moved successfully" flash message

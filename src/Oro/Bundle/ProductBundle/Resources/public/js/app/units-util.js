@@ -1,11 +1,23 @@
 define(function(require) {
     'use strict';
 
+    const $ = require('jquery');
     const _ = require('underscore');
     const __ = require('orotranslation/js/translator');
     const InputWidgetManager = require('oroui/js/input-widget-manager');
 
     const UnitsUtil = {
+        /**
+         * An attribute name used to differentiate elements as they are unit-select widget
+         */
+        UNIT_SELECT_NAME: 'data-toggle-type',
+
+        UNIT_SELECT_TYPE: {
+            SINGLE: 'single',
+            TOGGLE: 'toggle',
+            SELECT: 'select'
+        },
+
         /**
          * An exact count of units to render them as a radio group
          */
@@ -42,6 +54,18 @@ define(function(require) {
                     }
                     return false;
                 });
+        },
+
+        markAsSingleUnit(el) {
+            $(el).attr(this.UNIT_SELECT_NAME, this.UNIT_SELECT_TYPE.SINGLE);
+        },
+
+        markAsSelectUnit(el) {
+            $(el).attr(this.UNIT_SELECT_NAME, this.UNIT_SELECT_TYPE.SELECT);
+        },
+
+        markAsToggleUnit(el) {
+            $(el).attr(this.UNIT_SELECT_NAME, this.UNIT_SELECT_TYPE.TOGGLE);
         },
 
         /**

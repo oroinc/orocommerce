@@ -1,0 +1,143 @@
+{% block _shopping_list_notes_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-notes',
+        'data-page-component-module': 'oroshoppinglist/js/app/components/shoppinglist-notes-editable-view-component',
+        'data-page-component-options': {
+            view: 'oroshoppinglist/js/app/views/shoppinglist-notes-editable-view',
+            shoppingListId: shoppingList.id,
+            shoppingListLabel: shoppingList.label,
+            routingOptions: {
+                className: oro_class_name(shoppingList, true),
+            },
+            notes: shoppingList.notes|default('')
+        }|json_encode
+    }) %}
+
+    {% set hasNotes = shoppingList.notes|length > 0 %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _shopping_list_notes_add_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' action mode-icon-text dropdown-item',
+        'type': 'button',
+        'data-role': 'add-notes',
+        'data-page-component-view': {
+            view: 'oroshoppinglist/js/app/views/shopping-list-add-notes-button-view',
+            shoppingList: shoppingList
+        }
+    }) %}
+
+    {% if shoppingList.notes|length > 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' hide'
+        }) %}
+    {% endif %}
+
+    <button {{ block('block_attributes') }}>
+        {{ renderIcon.icon({name: 'add-note'}) }}
+        {{ 'oro.frontend.shoppinglist.note.add_note'|trans }}
+    </button>
+{% endblock %}
+
+{% block _shopping_list_notes_edit_form_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'hide',
+        'data-role': 'edit-notes-form'
+    }) %}
+
+    {% set hasNotes = shoppingList.notes|length > 0 %}
+    <form {{ block('block_attributes') }}>
+        {{ form_widget(form.notes, {attr: {
+            'data-autoresize': '',
+            'aria-label': 'oro.frontend.shoppinglist.note.textarea.aria_label'|trans({
+                '%shoppinglist%': shoppingList.label
+            }),
+            'class': ' shopping-list-notes__textarea'
+        }}) }}
+        {%- apply spaceless -%}
+            <div class="shopping-lists-modify">
+            <span class="shopping-lists-modify__edit">
+                <button class="btn"
+                        type="button"
+                        title="{{ 'Apply'|trans }}"
+                        aria-label="{{ 'oro.frontend.shoppinglist.note.apply'|trans }}"
+                        data-role="apply"
+                        disabled="disabled"
+                >
+                    {{ renderIcon.icon({name: 'check'}) }}
+                </button>
+            </span>
+                <span class="shopping-lists-modify__edit">
+                <button class="btn btn--neutral"
+                        type="button"
+                        title="{{ 'Decline'|trans }}"
+                        aria-label="{{ 'oro.frontend.shoppinglist.note.decline'|trans }}"
+                        data-role="decline"
+                >
+                    {{ renderIcon.icon({name: 'close'}) }}
+                </button>
+            </span>
+            </div>
+        {%- endapply -%}
+    </form>
+{% endblock %}
+
+{% block _shopping_list_notes_text_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-notes__content',
+        'data-role': 'view-notes'
+    }) %}
+
+    {% if shoppingList.notes|length == 0 %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' hide'
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        <span data-role="notes-text">{{ shoppingList.notes }}</span>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_notes_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-notes__actions'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _shopping_list_notes_edit_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' btn btn--simple',
+        'type': 'button',
+        'title': 'Edit'|trans,
+        'data-role': 'edit-notes',
+        'aria-label': 'oro.frontend.shoppinglist.note.edit'|trans
+    }) %}
+
+    <button {{ block('block_attributes') }}>{{ renderIcon.icon({name: 'pencil'}) }}</button>
+{% endblock %}
+
+{% block _shopping_list_notes_remove_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' btn btn--simple-destructive',
+        'type': 'button',
+        'title': 'Remove'|trans,
+        'data-role': 'remove-notes',
+        'aria-label': 'oro.frontend.shoppinglist.note.remove'|trans
+    }) %}
+
+    <button {{ block('block_attributes') }}>{{ renderIcon.icon({name: 'remove-note'}) }}</button>
+{% endblock %}

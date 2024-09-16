@@ -4,6 +4,10 @@ layout:
             id: customer_user_shopping_list
             root: page_content
 
+        -
+            id: shopping_list_notes
+            root: content
+
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
@@ -40,20 +44,3 @@ layout:
             blockType: block
             options:
                 visible: '=data["entity"]==null'
-
-        - '@addTree':
-            items:
-                shopping_list_notes:
-                    blockType: container
-                    siblingId: header
-                    prepend: false
-                    options:
-                        visible: '=data["entity"].getNotes()'
-                shopping_list_notes_text:
-                    blockType: text
-                    options:
-                        text: '=data["entity"].getNotes()'
-            tree:
-                content:
-                    shopping_list_notes:
-                        shopping_list_notes_text: ~

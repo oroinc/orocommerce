@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.themeOptions.fullScreenViewport
+            optionValue: 'all'
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.themeOptions.overlayFilters
+            optionValue: true
+
+    conditions: 'context["filters_position"] == "overlay"'

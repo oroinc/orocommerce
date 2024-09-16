@@ -199,11 +199,14 @@
 {% endblock %}
 
 {% block _shipping_date_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set shippingDate= 'shipping-date-uid-'|uniqid %}
     <div class="single-page-checkout-view__shipping_date" role="group">
         <label class="label label--full" for="{{ shippingDate }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
         <div class="datepicker-box">
-            <span class="datepicker-box__icon" aria-hidden="true"><span class="fa-calendar"></span></span>
+            <span class="datepicker-box__icon" aria-hidden="true">
+                {{ renderIcon.icon({name: 'calendar'}) }}
+            </span>
             {{ form_widget(form.ship_until, {id: shippingDate}) }}
         </div>
     </div>

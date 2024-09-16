@@ -88,7 +88,13 @@ oro:
                     label: Set as Default Confirmation
                     message: Are you sure you want to set as default this shopping list?
                 set_as_default_ok.label: Yes, set as default
-                notes.success: Shopping list note has been successfully updated
+                notes:
+                    add: Add note to "{{ shoppingList }}"
+                    add_btn_label: Add Note
+                    success: Shopping list note has been successfully updated
+                    remove_title: Delete for "{{ shoppingList }}"
+                    remove: Are you sure you want to delete note?
+                    delete_btn: Delete note
             actions:
                 update_all: Update All
             lineitem:

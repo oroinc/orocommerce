@@ -1350,7 +1350,7 @@ oro_behat_extension:
     Brand Filter:
       selector:
         type: xpath
-        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Filter By Brand")]/..'
+        locator: '//div[contains(@class,"filter-item")]/*[contains(@class,"filter-select")]/span[contains(text(),"Brand")]/..'
 
     Product Collection Grid Form:
       selector: 'form[name="oro_web_catalog_content_node"]'
@@ -1705,9 +1705,6 @@ oro_behat_extension:
 
     Toggle Sidebar Button Expanded:
       selector: '.toggle-sidebar-btn[title="Collapse Filters"]'
-
-    Apply Filters Button:
-      selector: '.product-filters-sidebar .filter-box [data-role="apply"]'
 
     Catalog Sidebar Hints Container:
       selector: '[data-hint-container="frontend-product-search-grid"]'

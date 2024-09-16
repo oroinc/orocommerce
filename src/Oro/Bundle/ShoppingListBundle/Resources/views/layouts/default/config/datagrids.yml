@@ -525,7 +525,7 @@ datagrids:
                         modal: true
                         resizable: true
                         autoResize: true
-                        width: 950
+                        width: 1000
             delete:
                 type: delete
                 icon: trash

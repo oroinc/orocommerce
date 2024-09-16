@@ -6,7 +6,6 @@ $product-list-gallery-view-grid-count: 1 !default;
 $product-list-gallery-view-grid-template-columns: repeat(
     var(--product-list-count, #{$product-list-gallery-view-grid-count}), minmax(0, 1fr)
 ) !default;
-$product-list-gallery-view-offset: spacing('lg') 0 0 !default;
 
 $product-list-gallery-view-grid-count-map: (
     (
@@ -27,13 +26,26 @@ $product-list-gallery-view-grid-count-map: (
     )
 ) !default;
 
+$product-list-narrow-gallery-view-grid-count-map: (
+    (
+        'min-width': 1280px,
+        'count': 2
+    ),
+    (
+        'min-width': 1366px,
+        'count': 3
+    ),
+    (
+        'min-width': 1864px,
+        'count': 4
+    )
+) !default;
+
 $product-list-list-view-display: grid !default;
 $product-list-list-view-gap: spacing('lg') !default;
-$product-list-list-view-padding-top: spacing('lg') !default;
 
 $product-list-no-image-view-display: grid !default;
 $product-list-no-image-view-gap: spacing('lg') !default;
-$product-list-no-image-view-padding-top: spacing('lg') !default;
 
 $product-list-no-image-view-offset-top: 15px !default;
 

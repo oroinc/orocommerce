@@ -13,6 +13,7 @@ const config = {
     animationDuration: 150,
     className: 'btn btn--flat toggle-sidebar-btn toggle-filters-action',
     text: 'oro.product.sidebar_filters.button.text',
+    sidebarCloseBtnSelector: '[data-role="close-sidebar"]',
     [`${EXPANDED}Title`]: 'oro.product.sidebar_filters.button.title.collapse',
     [`${EXPANDED}Icon`]: 'sliders',
     [`${COLLAPSED}Title`]: 'oro.product.sidebar_filters.button.title.expand',
@@ -25,7 +26,8 @@ const SidebarToggleFiltersView = BaseView.extend({
         '$content',
         '$sidebar',
         'routeName',
-        'sidebarExpanded'
+        'sidebarExpanded',
+        'sidebarCloseBtnSelector'
     ]),
 
     autoAttach: true,
@@ -40,12 +42,30 @@ const SidebarToggleFiltersView = BaseView.extend({
 
     animationDuration: config.animationDuration,
 
+    sidebarCloseBtnSelector: config.sidebarCloseBtnSelector,
+
     events: {
         click: 'onClick'
     },
 
     constructor: function SidebarToggleFiltersView(options) {
         SidebarToggleFiltersView.__super__.constructor.call(this, options);
+    },
+
+    delegateEvents(events) {
+        SidebarToggleFiltersView.__super__.delegateEvents.call(this, events);
+
+        this.$sidebar.on(`click${this.eventNamespace()}`, this.sidebarCloseBtnSelector, this.toggleSidebar.bind(this));
+
+        return this;
+    },
+
+    undelegateEvents() {
+        this.$sidebar.off(`click${this.eventNamespace()}`);
+
+        SidebarToggleFiltersView.__super__.undelegateEvents.call(this);
+
+        return this;
     },
 
     onClick() {

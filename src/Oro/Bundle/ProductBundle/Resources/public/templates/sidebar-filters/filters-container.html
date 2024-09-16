@@ -1,8 +1,9 @@
+<% let oroui = _.macros('oroui') %>
 <div class="filter-box <%- renderMode %>">
     <div class="filter-container">
-        <div class="filter-container-header">
+        <div class="filter-container-header sticky sticky--top" data-sticky="{}">
             <div class="filter-container-title">
-                <h2><%- _.__('oro.product.sidebar_filters.title') %></h2>
+                <h3><%- _.__('oro.product.sidebar_filters.title') %></h3>
             </div>
 
             <div class="filter-container-manager">
@@ -24,8 +25,16 @@
                     <% } %>
                 </div>
             </div>
+
+            <div class="filter-container-additional">
+                <button type="button" class="btn btn--icon btn--plain filter-container-close-btn" data-role="close-sidebar">
+                    <%= oroui.renderIcon({
+                        name: 'close'
+                    }) %>
+                </button>
+            </div>
         </div>
-        <div data-filters-items>
+        <div class="filter-items-container" data-filters-items>
             <div class="filter-items"></div>
         </div>
     </div>

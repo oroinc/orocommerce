@@ -67,7 +67,7 @@
         }) %}
 
         <button {{ block('block_attributes') }}>
-            {{ renderIcon.icon({name: 'pencil', extraClass: 'theme-icon--small'}) }}
+            {{ renderIcon.icon({name: 'pencil'}) }}
             <span class="clip-text">
                 <% if (shoppingListsCount == 1) { %>
                     <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>

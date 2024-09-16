@@ -5,6 +5,8 @@
 
     margin: $shopping-lists-notes-offset;
 
+    max-width: $shopping-lists-notes-max-width;
+
     &--no-offset {
         margin: 0;
     }
@@ -15,6 +17,12 @@
     }
 
     &__content {
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+
+        gap: $shopping-lists-notes-gap;
+
         font-size: $shopping-lists-notes-font-size;
         font-style: $shopping-lists-notes-font-s;
 
@@ -25,6 +33,16 @@
 
             overflow: hidden;
         }
+    }
+
+    &__textarea {
+        border-width: 2px;
+        min-height: 44px;
+        padding: spacing('sm') spacing('md');
+    }
+
+    &__actions {
+        flex: 1 0 auto;
     }
 
     &__icon {

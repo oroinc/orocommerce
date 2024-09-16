@@ -1,6 +1,12 @@
 /* @theme: default; */
 
 .shopping-lists-modify {
+    display: flex;
+    align-items: center;
+    justify-content: end;
+
+    gap: spacing('sm');
+
     &__text,
     &__select {
         display: inline-block;
@@ -21,15 +27,6 @@
 
     &__select {
         min-width: $shopping-lists-modify-select-min-width;
-    }
-
-    &__edit {
-        display: inline-block;
-        vertical-align: middle;
-
-        &:not(:first-child) {
-            margin-left: spacing('xs');
-        }
     }
 
     &__icon {
