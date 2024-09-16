@@ -9,18 +9,12 @@ use Symfony\Component\Validator\Constraints\Uuid;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * Create files from digital asset used in WYSIWYG fields
+ * Creates files from digital asset used in WYSIWYG fields.
  */
 class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterface
 {
-    /** @var AclHelper */
-    private $aclHelper;
-
-    /** @var ValidatorInterface */
-    private $validator;
-
-    /** @var Uuid */
-    private $constraint;
+    private AclHelper $aclHelper;
+    private ValidatorInterface $validator;
 
     public function __construct(AclHelper $aclHelper, ValidatorInterface $validator)
     {
@@ -29,7 +23,7 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getApplicableMapping(): array
     {
@@ -40,7 +34,7 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function processTwigFunctions(WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls): bool
     {
@@ -58,10 +52,9 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
         $em = $processedDTO->getProcessedEntity()->getEntityManager();
         $repository = $em->getRepository(DigitalAsset::class);
 
-        $currentFiles = $repository->findForEntityField($ownerEntityClass, $ownerEntityId, $ownerEntityField);
-
         $isFlushNeeded = false;
         $digitalAssets = [];
+        $currentFiles = $repository->findForEntityField($ownerEntityClass, $ownerEntityId, $ownerEntityField);
         foreach ($currentFiles as $file) {
             /** @var DigitalAsset $digitalAsset */
             $digitalAsset = $file->getDigitalAsset();
@@ -102,7 +95,7 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function onPreRemove(WYSIWYGProcessedDTO $processedDTO): bool
     {
@@ -111,14 +104,11 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
             return false;
         }
 
-        $ownerEntityId = (int)$ownerEntityId;
-        $ownerEntityClass = $processedDTO->requireOwnerEntityClass();
-
         $em = $processedDTO->getProcessedEntity()->getEntityManager();
-        $repository = $em->getRepository(File::class);
-
-        $currentFiles = $repository->findForEntityField($ownerEntityClass, $ownerEntityId);
-
+        $currentFiles = $em->getRepository(File::class)->findForEntityField(
+            $processedDTO->requireOwnerEntityClass(),
+            (int)$ownerEntityId
+        );
         if (!$currentFiles) {
             return false;
         }
@@ -132,25 +122,20 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
 
     /**
      * @param array $twigFunctionCalls
-     * @return array ['uuid' => digital_asset_id, ...]
+     *
+     * @return array [uuid => digital asset id, ...]
      */
     private function getFileCalls(array $twigFunctionCalls): array
     {
-        if (!$this->constraint) {
-            $this->constraint = new Uuid([
-                'versions' => [Uuid::V4_RANDOM],
-                'strict' => true,
-            ]);
-        }
-
         $actualCalls = [];
         if ($twigFunctionCalls) {
-            foreach ($twigFunctionCalls as $fieldType => $calls) {
+            $constraint = new Uuid(['versions' => [Uuid::V4_RANDOM], 'strict' => true]);
+            foreach ($twigFunctionCalls as $calls) {
                 foreach ($calls as $callArguments) {
-                    foreach ($callArguments as list($digitalAssetId, $uuid)) {
+                    foreach ($callArguments as [$digitalAssetId, $uuid]) {
                         if ($digitalAssetId) {
                             $uuid = strtolower(trim($uuid));
-                            if ($this->validator->validate($uuid, $this->constraint)->count() === 0) {
+                            if ($this->validator->validate($uuid, $constraint)->count() === 0) {
                                 $actualCalls[$uuid] = (int)$digitalAssetId;
                             }
                         }

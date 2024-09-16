@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\Entity\Repository;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentWidgetUsageRepository;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadContentWidgetUsageData;
@@ -10,56 +9,54 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ContentWidgetUsageRepositoryTest extends WebTestCase
 {
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var ContentWidgetUsageRepository
-     */
-    protected $repository;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadContentWidgetUsageData::class]);
+    }
 
-        $this->registry = $this->getContainer()->get('doctrine');
-        $this->repository = $this->registry->getRepository(ContentWidgetUsage::class);
+    private function getRepository(): ContentWidgetUsageRepository
+    {
+        return self::getContainer()->get('doctrine')->getRepository(ContentWidgetUsage::class);
+    }
+
+    private function getContentWidgetUsage(string $reference): ContentWidgetUsage
+    {
+        return $this->getReference($reference);
+    }
+
+    private function getContentWidgetUsageIds(array $contentWidgetUsages): array
+    {
+        $ids = array_map(function (ContentWidgetUsage $contentWidgetUsage) {
+            return $contentWidgetUsage->getId();
+        }, $contentWidgetUsages);
+        sort($ids);
+
+        return $ids;
+    }
+
+    public function testFindForEntity(): void
+    {
+        $foundContentWidgetUsages = $this->getRepository()->findForEntityField(\stdClass::class, 1);
+        $expectedContentWidgetUsages = [
+            $this->getContentWidgetUsage(LoadContentWidgetUsageData::CONTENT_WIDGET_USAGE_1_A),
+            $this->getContentWidgetUsage(LoadContentWidgetUsageData::CONTENT_WIDGET_USAGE_1_B)
+        ];
+        $this->assertSame(
+            $this->getContentWidgetUsageIds($expectedContentWidgetUsages),
+            $this->getContentWidgetUsageIds($foundContentWidgetUsages)
+        );
     }
 
     public function testFindForEntityField(): void
     {
-        /** @var ContentWidgetUsage $usage1a */
-        $usage1a = $this->getReference(LoadContentWidgetUsageData::CONTENT_WIDGET_USAGE_1_A);
-
-        /** @var ContentWidgetUsage $usage1b */
-        $usage1b = $this->getReference(LoadContentWidgetUsageData::CONTENT_WIDGET_USAGE_1_B);
-
+        $foundContentWidgetUsages = $this->getRepository()->findForEntityField(\stdClass::class, 1, 'field_a');
+        $expectedContentWidgetUsages = [
+            $this->getContentWidgetUsage(LoadContentWidgetUsageData::CONTENT_WIDGET_USAGE_1_A)
+        ];
         $this->assertSame(
-            [
-                $usage1a,
-                $usage1b,
-            ],
-            $this->repository->findForEntityField(
-                $usage1a->getEntityClass(),
-                $usage1a->getEntityId()
-            )
-        );
-
-        $this->assertSame(
-            [
-                $usage1a,
-            ],
-            $this->repository->findForEntityField(
-                $usage1a->getEntityClass(),
-                $usage1a->getEntityId(),
-                $usage1a->getEntityField()
-            )
+            $this->getContentWidgetUsageIds($expectedContentWidgetUsages),
+            $this->getContentWidgetUsageIds($foundContentWidgetUsages)
         );
     }
 }
