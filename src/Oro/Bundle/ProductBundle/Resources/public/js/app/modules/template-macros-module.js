@@ -12,7 +12,7 @@ macros('oroproduct', {
     renderUnitsAsRadioGroup: require('tpl-loader!orofrontend/templates/units-as-radio-group.html'),
 
     /**
-     *
+     * Renders group of units as radio group, select element or label
      */
     renderGroupedUnits: require('tpl-loader!oroproduct/templates/units-group.html'),
 
