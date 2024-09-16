@@ -37,6 +37,7 @@
             data-operation-url="{{ buttonOptions.url }}"
             data-options="{{ buttonOptions|json_encode }}"
             data-page-component-module="oroaction/js/app/components/button-component"
+            {% if not button.buttonContext.enabled %}disabled="disabled"{% endif %}
         >
             {{ renderIcon.icon({name: button.icon, extraClass: 'theme-icon--small'}) }}
             {{- button.label|trans -}}

@@ -134,6 +134,7 @@ operations:
     oro_shoppinglist_frontend_set_as_default_action:
         label: oro.shoppinglist.set_as_default.action.label
         acl_resource: ['oro_shopping_list_frontend_set_as_default', $.data]
+        enabled: $.enabled
         button_options:
             icon: check
         frontend_options:
@@ -149,8 +150,13 @@ operations:
         routes:
             - oro_shopping_list_frontend_view
             - oro_shopping_list_frontend_update
-        preconditions:
-            '@equal': [false, $.data.current]
+        preactions:
+            - '@assign_value': [$.enabled, true]
+            - '@assign_value':
+                conditions:
+                    '@equal': [true, $.data.current]
+                parameters:
+                    '@assign_value': [$.enabled, false]
         actions:
             - '@get_active_user': $.currentUser
             - '@call_service_method':
