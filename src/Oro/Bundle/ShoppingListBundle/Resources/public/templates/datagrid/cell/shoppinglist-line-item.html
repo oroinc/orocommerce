@@ -29,14 +29,14 @@
                         aria-label="<%- _.__('oro_frontend.input_widget.step_input.decrease') %>"
                         data-focused=".input-quantity-btn--minus"
                         tabindex="0"
-                ><%= oroui.renderIcon({name: 'minus'}) %></button>
+                ><%= oroui.renderIcon({name: 'minus', extraClass: 'none-pointer-events'}) %></button>
                 <button type="button"
                         class="btn btn--simple input-quantity-btn input-quantity-btn--plus"
                         data-type="increment"
                         aria-label="<%- _.__('oro_frontend.input_widget.step_input.increase') %>"
                         data-focused=".input-quantity-btn--plus"
                         tabindex="0"
-                ><%= oroui.renderIcon({name: 'plus'}) %></button>
+                ><%= oroui.renderIcon({name: 'plus', extraClass: 'none-pointer-events'}) %></button>
             </div>
         <% } else { %>
             <div tabindex="0" class="input input-qty"><%- oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %></div>
