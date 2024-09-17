@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -11,14 +12,12 @@ use Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
@@ -56,11 +55,12 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
     private function getExtendableActionEvent(): ExtendableActionEvent
     {
-        $workflowItem = new WorkflowItem();
-        $workflowItem->setData(new WorkflowData(['order' => $this->createMock(Order::class)]));
-        $workflowItem->setEntity($this->createMock(Checkout::class));
+        return new ExtendableActionEvent(new ActionData(['checkout' => $this->createMock(Checkout::class)]));
+    }
 
-        return new ExtendableActionEvent($workflowItem);
+    private function getExtendableEmptyActionEvent(): ExtendableActionEvent
+    {
+        return new ExtendableActionEvent(new ActionData([]));
     }
 
     private function getExtendableConditionEvent(): ExtendableConditionEvent
@@ -151,16 +151,10 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testWrongContext(): void
     {
-        $workflowData = $this->createMock(WorkflowData::class);
-        $event = $this->createMock(ExtendableActionEvent::class);
-        $event->expects(self::any())
-            ->method('getContext');
-        $workflowData->expects(self::never())
-            ->method('get')
-            ->with('order');
         $this->quantityManager->expects(self::never())
             ->method('shouldDecrement');
 
+        $event = $this->getExtendableEmptyActionEvent();
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
