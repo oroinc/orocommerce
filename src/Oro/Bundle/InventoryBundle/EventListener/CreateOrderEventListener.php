@@ -4,6 +4,7 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -20,6 +21,10 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
+/**
+ * Checks that there are enough products in the stock.
+ * Decrements the inventory levels of the products after a checkout is finished.
+ */
 class CreateOrderEventListener
 {
     /**
@@ -59,13 +64,13 @@ class CreateOrderEventListener
      */
     public function onCreateOrder(ExtendableActionEvent $event)
     {
-        if (!$this->isCorrectOrderContext($event->getContext())) {
+        $context = $event->getContext();
+        if (!$context->has('checkout') || !$context->get('checkout') instanceof CheckoutInterface) {
             return;
         }
 
-        $orderLineItems = $this->checkoutLineItemsManager->getData($event->getContext()->getEntity());
-
-        /** @var OrderLineItem $lineItem */
+        $checkout = $context->get('checkout');
+        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
         foreach ($orderLineItems as $lineItem) {
             if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
