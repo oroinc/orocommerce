@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Component\Action\Action\ExtendableAction;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -80,6 +81,7 @@ class CheckoutActions implements CheckoutActionsInterface
         $this->addressActions->actualizeAddresses($checkout, $order);
         $this->sendConfirmationEmail($checkout, $order);
         $this->fillCheckoutCompletedData($checkout, $order);
+        $this->checkoutComplete($checkout);
         $this->finalizeSourceEntity(
             $checkout,
             $autoRemoveSource,
@@ -97,6 +99,17 @@ class CheckoutActions implements CheckoutActionsInterface
                 'checkout' => $checkout,
                 'order' => $order,
                 'workflow' => 'b2b_flow_checkout'
+            ]
+        );
+    }
+
+    public function checkoutComplete(Checkout $checkout): void
+    {
+        $this->actionExecutor->executeAction(
+            ExtendableAction::NAME,
+            [
+                'events' => ['extendable_action.checkout_complete'],
+                'eventData' => ['checkout' => $checkout]
             ]
         );
     }

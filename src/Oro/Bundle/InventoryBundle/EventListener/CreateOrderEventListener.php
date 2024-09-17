@@ -4,17 +4,16 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Action\Event\ExtendableActionEvent;
-use Oro\Component\Action\Model\AbstractStorage;
 
 /**
- * Decrements the inventory levels of the products after a checkout is finished.
+ * Decrement the inventory levels of the products after a checkout is finished.
  */
 class CreateOrderEventListener
 {
@@ -38,11 +37,12 @@ class CreateOrderEventListener
     public function onCreateOrder(ExtendableActionEvent $event): void
     {
         $context = $event->getContext();
-        if (!$context || !$this->isSupportedData($context)) {
+        if (!$context->has('checkout') || !$context->get('checkout') instanceof CheckoutInterface) {
             return;
         }
 
-        $orderLineItems = $this->checkoutLineItemsManager->getData($context->offsetGet('checkout'));
+        $checkout = $context->get('checkout');
+        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
         foreach ($orderLineItems as $lineItem) {
             if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
@@ -62,12 +62,5 @@ class CreateOrderEventListener
     {
         return $this->doctrine->getRepository(InventoryLevel::class)
             ->getLevelByProductAndProductUnit($product, $productUnit);
-    }
-
-    private function isSupportedData(AbstractStorage $data): bool
-    {
-        return $data->offsetExists('checkout')
-            && $data->offsetExists('order')
-            && $data->offsetGet('order') instanceof Order;
     }
 }
