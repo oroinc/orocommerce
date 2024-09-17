@@ -1,7 +1,8 @@
 /* @theme: default; */
 
+$grid-line-item-line-height: 1.539 !default;
 $grid-line-items-row-offset-x: spacing('base') !default;
-$grid-line-items-line-height: $base-line-height !default;
+$grid-line-items-line-height: $grid-line-item-line-height !default;
 $grid-line-items-word-break: break-word !default;
 $grid-line-items-title-font-size: $base-font-size--s !default;
 $grid-line-items-title-font-w: font-weight('semi-bold') !default;
@@ -12,11 +13,9 @@ $grid-line-items-link-color-hover: $link-color !default;
 $grid-line-items-errors-color: get-color('destructive', 'dark') !default;
 $grid-line-items-warnings-color: get-color('warning', 'dark') !default;
 
-$grid-line-clip-none-offset: spacing('sm') !default;
-
-$grid-line-separator-height: 16px !default;
+$grid-line-separator-height: 14px !default;
 $grid-line-separator-offset: 0 8px !default;
-$grid-line-separator-background: get-color('neutral', 'grey1') !default;
+$grid-line-separator-background: get-color('neutral', 'grey2') !default;
 
 // Tablet
 

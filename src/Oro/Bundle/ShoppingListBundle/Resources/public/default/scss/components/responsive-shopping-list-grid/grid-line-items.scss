@@ -39,10 +39,13 @@
     }
 
     &__clip-notes-container {
-        min-height: $grid-line-clip-none-offset + $shopping-lists-notes-font-size * $shopping-lists-notes-line-height;
+        min-height: $grid-line-items-title-font-size * $grid-line-item-line-height;
     }
 
     &__title {
+        --text-link: #{$grid-line-items-link-color};
+        --text-link-hover: #{$grid-line-items-link-color-hover};
+
         font-size: $grid-line-items-title-font-size;
         font-weight: $grid-line-items-title-font-w;
         line-height: $grid-line-items-line-height;
@@ -69,7 +72,6 @@
     &__notes-container {
         display: flex;
         align-items: center;
-        margin-top: $grid-line-clip-none-offset;
         line-height: $shopping-lists-notes-line-height;
     }
 
@@ -79,9 +81,13 @@
     }
 
     &__edit-notes {
+        --theme-icon-size: #{$theme-icon-small-size};
+
         display: inline-flex;
         justify-content: center;
         margin-left: spacing('xs');
+        padding: 0;
+        min-height: initial;
     }
 
     &__ellipsis {
@@ -97,16 +103,22 @@
         align-items: flex-start;
     }
 
-    &__field:not(:last-child)::after {
-        display: inline-block;
-        vertical-align: middle;
-        width: 1px;
-        height: $grid-line-separator-height;
-        margin: $grid-line-separator-offset;
+    &__field {
+        display: inline-flex;
+        align-items: center;
+        flex-wrap: wrap;
 
-        background: $grid-line-separator-background;
+        &:not(:last-child)::after {
+            display: inline-flex;
+            vertical-align: middle;
+            width: 1px;
+            height: $grid-line-separator-height;
+            margin: $grid-line-separator-offset;
 
-        content: '';
+            background: $grid-line-separator-background;
+
+            content: '';
+        }
     }
 
     &__field-val {

@@ -21,9 +21,9 @@ $shopping-lists-text-border-radius: 4px !default;
 $shopping-lists-notes-offset: spacing('sm') 0 !default;
 $shopping-lists-notes-max-width: 1204px !default;
 $shopping-lists-notes-gap: spacing('sm') !default;
-$shopping-lists-notes-font-size: $base-font-size !default;
+$shopping-lists-notes-font-size: $base-font-size--s !default;
 $shopping-lists-notes-font-s: italic !default;
-$shopping-lists-notes-line-height: 1.35 !default;
+$shopping-lists-notes-line-height: $base-line-height !default;
 $shopping-lists-notes-expanded-height: 200px !default;
 
 $shopping-lists-notes-title-font-w: font-weight('bold') !default;

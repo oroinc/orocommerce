@@ -43,6 +43,11 @@
 
     .grid-body-cell-item {
         width: $responsive-shopping-grid-body-cell-item-width;
+
+        .grid-line-items {
+            font-size: $responsive-shopping-list-cell-item-font-size;
+            line-height: $responsive-shopping-list-cell-item-line-height;
+        }
     }
 
     .grid-header-cell-quantity,

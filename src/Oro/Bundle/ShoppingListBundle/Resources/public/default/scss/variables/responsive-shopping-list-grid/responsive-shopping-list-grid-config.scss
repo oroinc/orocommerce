@@ -28,7 +28,7 @@ $responsive-shopping-cell-line-size-desktop: $responsive-shopping-cell-desktop-o
     + ($base-font-size / 2) - 1 !default;
 
 $responsive-shopping-expand-btn-in-select-row-margin-left: spacing('xmd') !default;
-$responsive-shopping-expand-btn-in-select-row-margin-top: -(spacing('xmd')) !default;
+$responsive-shopping-expand-btn-in-select-row-margin-top: -6px !default;
 
 // Tablet
 $responsive-shopping-group-cell-offset-tablet: 23px !default;
