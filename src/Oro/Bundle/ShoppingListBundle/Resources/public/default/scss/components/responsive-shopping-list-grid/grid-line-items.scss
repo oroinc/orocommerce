@@ -43,9 +43,6 @@
     }
 
     &__title {
-        --text-link: #{$grid-line-items-link-color};
-        --text-link-hover: #{$grid-line-items-link-color-hover};
-
         font-size: $grid-line-items-title-font-size;
         font-weight: $grid-line-items-title-font-w;
         line-height: $grid-line-items-line-height;
@@ -53,7 +50,10 @@
     }
 
     &__title-content {
+        color: $grid-line-items-link-color;
+
         &:hover {
+            color: $grid-line-items-link-color-hover;
             text-decoration: underline;
         }
     }

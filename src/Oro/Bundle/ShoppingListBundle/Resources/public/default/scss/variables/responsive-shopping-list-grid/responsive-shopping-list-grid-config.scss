@@ -16,7 +16,10 @@ $responsive-shopping-sub-row-border-offset: $responsive-shopping-sub-row-border-
 $responsive-shopping-sub-row-cell-inner-offset: 8px !default;
 $responsive-shopping-sub-row-cell-desktop-inner-offset: $datagrid-body-cell-offset * .5 !default;
 
-$responsive-shopping-grid-body-cell-sku-width: 80px !default;
+$responsive-shopping-grid-body-cell-sku-width: 130px !default;
+$responsive-shopping-grid-body-cell-inventory-width: 150px !default;
+$responsive-shopping-grid-body-cell-item-width: 604px !default;
+$responsive-shopping-grid-quantity-unit-color: get-var-color('text', 'secondary') !default;
 
 $responsive-shopping-page-sidebar: 280px !default;
 

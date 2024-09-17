@@ -7,7 +7,7 @@ $grid-line-items-title-font-size: $base-font-size--s !default;
 $grid-line-items-title-font-w: font-weight('semi-bold') !default;
 $grid-line-items-field-val-offset: 2px !default;
 $grid-line-items-link-color: get-color('text', 'primary') !default;
-$grid-line-items-link-color-hover: get-color('text', 'primary') !default;
+$grid-line-items-link-color-hover: $link-color !default;
 
 $grid-line-items-errors-color: get-color('destructive', 'dark') !default;
 $grid-line-items-warnings-color: get-color('warning', 'dark') !default;

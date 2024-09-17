@@ -24,11 +24,9 @@
     .grid-header-cell-quantity,
     .grid-header-cell-price,
     .grid-header-cell-subtotal,
-    .grid-header-cell-inventoryStatus,
     .grid-body-cell-quantity,
     .grid-body-cell-price,
-    .grid-body-cell-subtotal,
-    .grid-body-cell-inventoryStatus {
+    .grid-body-cell-subtotal {
         text-align: right;
     }
 
@@ -38,23 +36,30 @@
         word-break: break-all;
     }
 
+    .grid-body-cell-inventoryStatus {
+        width: $responsive-shopping-grid-body-cell-inventory-width;
+        min-width: $responsive-shopping-grid-body-cell-inventory-width;
+    }
+
+    .grid-body-cell-item {
+        width: $responsive-shopping-grid-body-cell-item-width;
+    }
+
     .grid-header-cell-quantity,
     .grid-body-cell-quantity {
-        padding-right: 2px;
+        padding-right: spacing('xs');
+        color: $responsive-shopping-grid-quantity-unit-color;
     }
 
     .grid-header-cell-unit,
     .grid-body-cell-unit {
-        padding-left: 2px;
+        padding-left: spacing('xs');
+        color: $responsive-shopping-grid-quantity-unit-color;
     }
 
     .grid-header-cell-price,
     .grid-body-cell-price {
         padding-right: 24px;
-    }
-
-    .grid-body-cell-item {
-        width: 400px;
     }
 
     .notification-container {
@@ -103,7 +108,7 @@
 
     .prices-hint-toggler {
         position: absolute;
-        right: -#{spacing('lg') + spacing('xs')};
+        right: -#{spacing('base') * 2};
     }
 
     .grid-scrollable-container {
