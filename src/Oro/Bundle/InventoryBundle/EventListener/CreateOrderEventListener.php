@@ -5,16 +5,15 @@ namespace Oro\Bundle\InventoryBundle\EventListener;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
@@ -44,11 +43,12 @@ class CreateOrderEventListener
     public function onCreateOrder(ExtendableActionEvent $event): void
     {
         $context = $event->getContext();
-        if (!$context instanceof WorkflowItem || !$this->isCorrectOrderData($context->getData())) {
+        if (!$context->has('checkout') || !$context->get('checkout') instanceof CheckoutInterface) {
             return;
         }
 
-        $orderLineItems = $this->checkoutLineItemsManager->getData($context->getEntity());
+        $checkout = $context->get('checkout');
+        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
         foreach ($orderLineItems as $lineItem) {
             if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
@@ -99,14 +99,6 @@ class CreateOrderEventListener
     {
         return $this->doctrine->getRepository(InventoryLevel::class)
             ->getLevelByProductAndProductUnit($product, $productUnit);
-    }
-
-    private function isCorrectOrderData(mixed $data): bool
-    {
-        return
-            $data instanceof WorkflowData
-            && $data->has('order')
-            && $data->get('order') instanceof Order;
     }
 
     private function isCorrectCheckoutEntity(Checkout $entity): bool

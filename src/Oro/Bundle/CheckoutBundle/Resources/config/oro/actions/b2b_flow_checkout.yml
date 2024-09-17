@@ -573,7 +573,8 @@ action_groups:
                         - [$.checkout.completedData.currency, $.order.currency]
                         - [$.checkout.completedData.subtotal, $.order.subtotalObject.value]
                         - [$.checkout.completedData.total, $.order.totalObject.value]
-
+            - '@extendable':
+                  events: [extendable_action.checkout_finish_checkout]
             - '@clear_checkout_source_entity':
                 conditions:
                     '@and':

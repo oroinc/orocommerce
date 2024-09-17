@@ -167,7 +167,7 @@ services:
             - '@doctrine'
             - '@oro_checkout.data_provider.manager.checkout_line_items'
         tags:
-            - { name: kernel.event_listener, event: extendable_action.finish_checkout, method: onCreateOrder, priority: 10 }
+            - { name: kernel.event_listener, event: extendable_action.checkout_finish_checkout, method: onCreateOrder, priority: 10 }
             - { name: kernel.event_listener, event: extendable_condition.pre_order_create, method: onBeforeOrderCreate, priority: 10 }
 
     oro_inventory.event_listener.create_order_check_upcoming_listener:
