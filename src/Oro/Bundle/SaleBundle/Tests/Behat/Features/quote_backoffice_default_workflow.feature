@@ -396,7 +396,6 @@ Feature: Quote Backoffice Default Workflow
   Scenario: Create a Quote #36 from RFQ. Internal status: Draft, customer status: N/A, invisible for customer
     Then I operate as the Buyer
     And I open page with shopping list Shopping List 1
-    And I click "More Actions"
     And I click "Request Quote"
     And I fill form with:
       | PO Number | PO36 |

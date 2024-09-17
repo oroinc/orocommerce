@@ -16,7 +16,6 @@ Feature: RFQ Localization
 
   Scenario: Create RFQ from shopping list
     Given I open page with shopping list "Shopping List 4"
-    When I click "More Actions"
     When I click "Request Quote"
     Then Request a Quote contains products
       | AA1 - Product1`"'&йёщ®&reg;> | 10 | item (lang1) |
@@ -25,4 +24,3 @@ Feature: RFQ Localization
     When I click "Submit Request"
     Then I should see "Product1`\"'&йёщ®&reg;>"
     And I should not see "Product1`\"'&йёщ®®>"
-

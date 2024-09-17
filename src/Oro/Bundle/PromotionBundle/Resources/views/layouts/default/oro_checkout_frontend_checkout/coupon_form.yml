@@ -7,7 +7,7 @@ layout:
     actions:
         - '@move':
             id: coupon_form_container
-            parentId: checkout_order_summary_totals_main
+            parentId: checkout_order_summary_inner
             prepend: false
 
         - '@setOption':

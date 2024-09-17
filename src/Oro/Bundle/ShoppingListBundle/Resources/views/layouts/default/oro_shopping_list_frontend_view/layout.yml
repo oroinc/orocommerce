@@ -19,11 +19,6 @@ layout:
             optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-view'
 
         - '@setOption':
-            id: page_content
-            optionName: attr.class
-            optionValue: 'page-content--has-sidebar-right'
-
-        - '@setOption':
             id: container
             optionName: visible
             optionValue: '=data["entity"]!=null'
@@ -39,10 +34,6 @@ layout:
             siblingId: page_sidebar
             prepend: true
 
-        - '@move':
-            id: checkout_container
-            parentId: page_sidebar
-
         - '@add':
             id: no_shopping_lists
             parentId: page_content
@@ -50,16 +41,12 @@ layout:
             options:
                 visible: '=data["entity"]==null'
 
-        - '@move':
-              id: shopping_list_notes
-              parentId: container
-              siblingId: header
-              prepend: false
-
         - '@addTree':
             items:
                 shopping_list_notes:
                     blockType: container
+                    siblingId: header
+                    prepend: false
                     options:
                         visible: '=data["entity"].getNotes()'
                 shopping_list_notes_text:
@@ -67,6 +54,6 @@ layout:
                     options:
                         text: '=data["entity"].getNotes()'
             tree:
-                container:
+                content:
                     shopping_list_notes:
                         shopping_list_notes_text: ~

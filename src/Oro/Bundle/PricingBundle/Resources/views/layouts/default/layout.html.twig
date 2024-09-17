@@ -80,28 +80,26 @@
 
     {% set pageComponent = pageComponent|default('oropricing/js/app/components/totals-component') %}
     <div data-page-component-module="{{ pageComponent }}" data-page-component-options="{{ options|default({})|json_encode }}">
-        <div class="totals-container">
-            {% block data_totals_container %}
-                <div{% if totalsConainerClassName|length %} class="{{ totalsConainerClassName }}"{% endif %}>
-                    <div class="totals-container">
-                        <table class="order-checkout-widget__table">
-                            {% if itemsCount is defined %}
-                            <tbody>
-                                <tr>
-                                    <th class="order-checkout-widget__summary" scope="row">{{ 'oro.pricing.frontend.summary'|trans }}</th>
-                                    <td>{{ 'oro.pricing.frontend.summary_count'|trans({'%count%': itemsCount}) }}</td>
-                                </tr>
-                                <tr aria-hidden="true" class="order-checkout-widget__table-presentation">
-                                    <td colspan="2"></td>
-                                </tr>
-                            </tbody>
-                            {% endif %}
-                            <tbody data-totals-container></tbody>
-                        </table>
-                    </div>
+        {% block data_totals_container %}
+            <div{% if totalsConainerClassName|length %} class="{{ totalsConainerClassName }}"{% endif %}>
+                <div class="totals-container">
+                    <table class="summary-table">
+                        {% if itemsCount is defined %}
+                        <tbody>
+                            <tr>
+                                <th class="summary-table__summary" scope="row">{{ 'oro.pricing.frontend.summary'|trans }}</th>
+                                <td>{{ 'oro.pricing.frontend.summary_count'|trans({'%count%': itemsCount}) }}</td>
+                            </tr>
+                            <tr aria-hidden="true" class="summary-table__presentation">
+                                <td colspan="2"></td>
+                            </tr>
+                        </tbody>
+                        {% endif %}
+                        <tbody data-totals-container></tbody>
+                    </table>
                 </div>
-            {% endblock data_totals_container %}
-        </div>
+            </div>
+        {% endblock data_totals_container %}
         {% placeholder oro_pricing_totals %}
     </div>
 

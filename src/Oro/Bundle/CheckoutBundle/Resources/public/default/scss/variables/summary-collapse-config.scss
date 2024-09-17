@@ -1,0 +1,16 @@
+/* @theme: default; */
+
+$summary-collapse-position: relative !default;
+
+$summary-collapse-toggle-btn-background: get-color('neutral', 'white-100');
+$summary-collapse-toggle-btn-color: get-color('text', 'primary');
+
+$summary-collapse-toggle-position: absolute !default;
+$summary-collapse-toggle-top: -#{spacing('base')} !default;
+$summary-collapse-toggle-left: spacing('base') !default;
+$summary-collapse-toggle-box-shadow: $toggler-switcher-box-shadow !default;
+
+$summary-collapse-toggle-not-collapsed-transform: rotate(180deg) !default;
+
+$summary-collapse-content-transition: none !default;
+$summary-collapse-content-not-show-display: block !default;

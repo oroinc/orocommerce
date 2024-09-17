@@ -1,0 +1,34 @@
+/* @theme: default; */
+
+.customer-shopping-list {
+    display: $customer-shopping-list-display;
+    grid-template-columns: $customer-shopping-list-grid-template-columns;
+    gap: $customer-shopping-list-gap;
+
+    &__sidebar {
+        position: $customer-shopping-list-sidebar-position;
+    }
+}
+
+@include breakpoint('desktop-small') {
+    .customer-shopping-list {
+        grid-template-columns: $customer-shopping-list-desktop-small-grid-template-columns;
+
+        &__sidebar {
+            top: $customer-shopping-list-sidebar-desktop-small-top;
+            height: $customer-shopping-list-sidebar-desktop-small-height;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .customer-shopping-list {
+        &__sidebar {
+            margin: 0 -#{spacing('base')};
+            bottom: 0;
+
+            // For sticky panel on mobile devices
+            z-index: z('fixed');
+        }
+    }
+}

@@ -1,9 +1,9 @@
 /* @theme: default; */
 
-$coupon-container-width: 280px !default;
-$coupon-container-float: right !default;
-$coupon-container-clear: $coupon-container-float !default;
-$coupon-container-padding: spacing('base') 0 !default;
+$coupon-container-background: get-color('neutral', 'grey1') !default;
+$coupon-container-display: grid !default;
+$coupon-container-gap: spacing('sm') !default;
+$coupon-container-border-radius: 4px !default;
 
 $coupon-container-content-inner-offset: 12px 0 0 !default;
 
@@ -11,6 +11,7 @@ $coupon-container-input-wrap-width: 240px !default;
 $coupon-container-input-wrap-inner-offset: 0 0 spacing('sm') !default;
 
 $coupon-container-success-icon-color: get-color('primary', 'main') !default;
+$coupon-container-trigger-color: get-color('text', 'primary') !default;
 $coupon-container-trigger-grid-template-column: auto auto 1fr !default;
 
 $coupon-container-loading-size: 24px !default;

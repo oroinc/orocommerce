@@ -86,7 +86,6 @@ Feature: Consent are stored correctly even if consent content node is not a part
     Given I proceed as the User
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list ShoppingList1
-    And I click "More Actions"
     And I click "Request Quote"
     And I click on "Consent Link" with title "Collecting and storing personal data"
     And I should see "Test landing page description"
@@ -117,7 +116,6 @@ Feature: Consent are stored correctly even if consent content node is not a part
     Given I proceed as the User
     And I signed in as MarleneSBradley@example.com on the store frontend
     When I open page with shopping list ShoppingList2
-    And I click "More Actions"
     And I click "Request Quote"
     And I click on "Consent Link" with title "Collecting and storing personal data"
     And I should see "Lorem ipsum dolor sit amet, consectetur adipiscing elit."

@@ -19,7 +19,6 @@ Feature: Start checkout for a quote
     Given I proceed as the Buyer
     And I login as AmandaRCole@example.org buyer
     And I open page with shopping list Shopping List 1
-    And I click "More Actions"
     And I click "Request Quote"
     And I fill form with:
       | PO Number | PONUMBER1 |

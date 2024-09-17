@@ -1,0 +1,23 @@
+{% block summary_collapse_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set collapseId = 'summary-collapse-'|uniqid %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " #{class_prefix ?: 'summary-collapse'}"
+    }) %}
+
+    {% if alwaysShow is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " #{class_prefix ?: 'summary-collapse'}--show-#{alwaysShow}"
+        }) %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        <button class="btn btn--circle btn--size-small {{ "#{class_prefix ?: 'summary-collapse'}__toggle" }} collapsed" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="false" aria-controls="{{ collapseId }}">
+            {{ renderIcon.icon({name: 'chevron-up'}) }}
+        </button>
+        <div id="{{ collapseId }}" class="{{ "#{class_prefix ?: 'summary-collapse'}-content" }}">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}

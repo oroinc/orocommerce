@@ -47,7 +47,7 @@ Feature: My Shopping List Actions
     When I open shopping list widget
     Then I should see "Shopping List 4" on shopping list widget
     And I close shopping list widget
-    And I should see "Create Order"
+    And I should see "Checkout"
     When I click "Create Order"
     Then Page title equals to "Billing Information - Checkout"
     And I click "Account Dropdown"

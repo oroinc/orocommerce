@@ -680,13 +680,12 @@ Feature: My Shopping List
 
   Scenario: Check create order button
     When Buyer is on "Shopping List 3" shopping list
-    Then I should see "Create Order"
+    Then I should see "Checkout"
     And I click "Create Order"
     And Page title equals to "Billing Information - Checkout"
 
   Scenario: Check request quote button
     When Buyer is on "Shopping List 3" shopping list
-    And I click "More Actions"
     Then I should see "Request Quote"
     And I click "Request Quote"
     And Page title equals to "Request A Quote - Requests For Quote - My Account"

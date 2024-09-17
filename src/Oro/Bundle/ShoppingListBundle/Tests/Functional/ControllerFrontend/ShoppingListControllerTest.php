@@ -84,7 +84,7 @@ class ShoppingListControllerTest extends WebTestCase
         self::assertStringContainsString($currentShoppingList->getLabel(), $crawler->html());
         // operations only for ShoppingList with LineItems
         self::assertStringNotContainsString('Request Quote', $crawler->html());
-        self::assertStringNotContainsString('Create Order', $crawler->html());
+        self::assertStringNotContainsString('Checkout', $crawler->html());
     }
 
     public function testIndex(): void
@@ -267,7 +267,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         self::assertStringContainsString($shoppingList1->getLabel(), $pageCrawler->html());
 
-        self::assertStringContainsString('Create Order', $buttonsCrawler->html());
+        self::assertStringContainsString('Checkout', $buttonsCrawler->html());
         if ($atLeastOneAvailableProduct) {
             self::assertStringContainsString('Request Quote', $buttonsCrawler->html());
         }
@@ -344,7 +344,7 @@ class ShoppingListControllerTest extends WebTestCase
         $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
 
         self::assertStringContainsString($shoppingList->getLabel(), $pageCrawler->html());
-        self::assertStringContainsString('Create Order', $buttonsCrawler->html());
+        self::assertStringContainsString('Checkout', $buttonsCrawler->html());
 
         $response = $this->client->requestFrontendGrid(
             'frontend-customer-user-shopping-list-grid',
@@ -437,9 +437,9 @@ class ShoppingListControllerTest extends WebTestCase
             $buttonsCrawler = new Crawler($content['combined_button_wrapper']);
 
             if ($expectedCreateOrderButtonVisible) {
-                self::assertStringContainsString('Create Order', $buttonsCrawler->html());
+                self::assertStringContainsString('Checkout', $buttonsCrawler->html());
             } elseif ($buttonsCrawler->count()) {
-                self::assertStringNotContainsString('Create Order', $buttonsCrawler->html());
+                self::assertStringNotContainsString('Checkout', $buttonsCrawler->html());
             }
         }
     }

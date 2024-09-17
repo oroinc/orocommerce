@@ -89,7 +89,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $content = self::jsonToArray($response->getContent());
         $crawler = new Crawler($content['combined_button_wrapper']);
 
-        $link = $crawler->selectLink('Create Order');
+        $link = $crawler->selectLink('Checkout');
         $this->assertCount(1, $link);
         $this->assertNotEmpty($link->attr('data-transition-url'));
         $this->ajaxRequest('POST', $link->attr('data-transition-url'));

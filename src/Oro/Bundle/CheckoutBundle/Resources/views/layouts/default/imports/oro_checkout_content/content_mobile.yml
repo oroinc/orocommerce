@@ -2,7 +2,8 @@ layout:
     actions:
         - '@move':
             id: __checkout_outside_form_buttons
-            parentId: __checkout_order_summary_totals_main
+            parentId: __checkout_order_summary_summary
+            siblingId: __checkout_outside_submit_order_button
             prepend: false
 
         - '@remove':

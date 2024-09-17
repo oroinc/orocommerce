@@ -74,7 +74,7 @@ class ShoppingListControllerTest extends WebTestCase
         $content = \json_decode($response->getContent(), true);
         $crawler = new Crawler($content['combined_button_wrapper']);
 
-        $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
+        $createOrderLabel = 'Checkout';
         static::assertStringContainsString($createOrderLabel, $crawler->html());
     }
 

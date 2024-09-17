@@ -233,7 +233,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
         $this->visitPath('customer/shoppinglist/'.$shoppingList->getId());
         $this->waitForAjax();
-        $this->getSession()->getPage()->clickLink('Create Order');
+        $this->getSession()->getPage()->clickLink('Checkout');
         $this->waitForAjax();
     }
 

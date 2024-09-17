@@ -116,12 +116,12 @@ oro:
                     warning_message: ''
                 start_from_quote_as_guest:
                     label: 'Start Checkout From Quote As Guest'
-                    button_label: 'Create Order'
+                    button_label: 'Checkout'
                     button_title: ''
                     warning_message: ''
                 start_from_shoppinglist:
                     label: 'Start Checkout From Shopping List'
-                    button_label: 'Create Order'
+                    button_label: 'Checkout'
                     button_title: ''
                     warning_message: ''
                 start_from_quickorderform:
@@ -312,12 +312,12 @@ oro:
                     warning_message: ''
                 start_from_quote_as_guest:
                     label: 'Start Checkout From Quote As Guest'
-                    button_label: 'Create Order'
+                    button_label: 'Checkout'
                     button_title: ''
                     warning_message: ''
                 start_from_shoppinglist:
                     label: 'Start Checkout From Shopping List'
-                    button_label: 'Create Order'
+                    button_label: 'Checkout'
                     button_title: ''
                     warning_message: ''
                 start_from_quickorderform:

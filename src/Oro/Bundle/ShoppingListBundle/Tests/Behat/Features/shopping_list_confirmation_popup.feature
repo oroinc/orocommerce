@@ -103,7 +103,7 @@ Feature: Shopping list confirmation popup
     When I click "Add to Shopping List"
     Then I should see "Product has been added to" flash message and I close it
     When I open shopping list widget
-    And click "Create Order"
+    And click "Checkout"
     Then I should not see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
 
   Scenario: Check create order with configurable product
@@ -112,7 +112,7 @@ Feature: Shopping list confirmation popup
     When I click "Add to Shopping List"
     Then should see 'Shopping list "Shopping List" was updated successfully' flash message and I close it
     When I open shopping list widget
-    And click "Create Order"
+    And click "Checkout"
     Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And click "Cancel"
     When I fill "Matrix Grid Form" with:
@@ -122,5 +122,5 @@ Feature: Shopping list confirmation popup
     And click "Add to Shopping List"
     Then I should see 'Shopping list "Shopping list" was updated successfully' flash message and I close it
     When I open shopping list widget
-    And click "Create Order"
+    And click "Checkout"
     Then I should not see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"

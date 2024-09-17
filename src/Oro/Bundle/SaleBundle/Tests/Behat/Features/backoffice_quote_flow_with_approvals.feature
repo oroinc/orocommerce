@@ -448,7 +448,6 @@ Feature: Backoffice Quote Flow with Approvals
   Scenario: Create a Quote from RFQ: Internal status: Draft, customer status: N/A, invisible for customer
     Given I signed in as AmandaRCole@example.org on the store frontend in old session
     And I open page with shopping list Shopping List 1
-    And I click "More Actions"
     And I click "Request Quote"
     And I fill form with:
       | PO Number | PO35 |
