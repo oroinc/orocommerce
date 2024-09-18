@@ -28,7 +28,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_8_1';
+        return 'v1_8_2';
     }
 
     /**
