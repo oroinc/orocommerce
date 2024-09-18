@@ -5,8 +5,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\EventListener;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductVariants;
+use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 /**
  * @dbIsolationPerTest
@@ -31,6 +33,18 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
             ]
         );
         $this->displayValue = $this->getConfigManager()->get('oro_product.display_simple_variations');
+        $this->reindexProducts();
+    }
+
+    /**
+     * Re-index products as other tests may have changed the index.
+     */
+    private function reindexProducts(): void
+    {
+        $this->getContainer()->get('event_dispatcher')->dispatch(
+            new ReindexationRequestEvent([Product::class], [], [], false),
+            ReindexationRequestEvent::EVENT_NAME
+        );
     }
 
     protected function tearDown(): void

@@ -295,6 +295,12 @@ oro_behat_extension:
     Matrix Grid Total Quantity:
       selector: 'div[data-role="total-quantity"]'
 
+    Dialog Matrix Grid Total Price:
+      selector: '.ui-dialog div[data-role="total-price"]'
+
+    Dialog Matrix Grid Total Quantity:
+      selector: '.ui-dialog div[data-role="total-quantity"]'
+
     Matrix Grid Column 1 Total Quantity:
       selector: 'div[data-columns-quantity="1"]'
 
