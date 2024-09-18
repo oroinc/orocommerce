@@ -35,10 +35,10 @@ Feature: Mass Product Actions for Previously purchased products
     And I click "Gallery View"
     And I check PSKU1 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU1" in frontend product grid:
-      | Quantity | 10   |
+      | Quantity | 10 |
     And I check PSKU2 record in "Product Frontend Grid" grid
     And I fill line item with "PSKU2" in frontend product grid:
-      | Quantity | 15   |
+      | Quantity | 15 |
     And I scroll to top
     And I click "Create New Shopping List" in "ProductFrontendMassPanelInBottomSticky" element
     Then should see an "Create New Shopping List popup" element
@@ -49,6 +49,6 @@ Feature: Mass Product Actions for Previously purchased products
     When I hover on "Shopping Cart"
     And I click "New Shopping List" on shopping list widget
     Then I should see following grid containing rows:
-      | SKU   | Item      |          | Qty Update All |
-      | PSKU1 | Product 1 | In Stock | 10 item        |
-      | PSKU2 | Product 2 | In Stock | 15 item        |
+      | SKU   | Item      | Availability | Qty Update All |
+      | PSKU1 | Product 1 | IN STOCK     | 10 item        |
+      | PSKU2 | Product 2 | IN STOCK     | 15 item        |

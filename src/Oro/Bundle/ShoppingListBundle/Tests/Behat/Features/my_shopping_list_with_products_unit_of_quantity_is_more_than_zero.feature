@@ -181,22 +181,22 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I should see "16.5779067891" in the "Matrix Grid Total Quantity" element
     And I click "Accept" in modal window
     And I should see following "Frontend Customer User Shopping List Edit Grid" grid containing rows:
-      | SKU  | Item                                                     |              | Qty Update All      | Price  | Subtotal                                   |
+      | SKU  | Item                                                     | Availability | Qty Update All      | Price  | Subtotal                                   |
       |      | Configurable Product 1                                   |              | 16.5779067891 items |        | $267.83922807465 -$133.91922807465 $133.92 |
-      | BB04 | Color: Red Size: M Note 4 text                           | In Stock     | 4.331 item          | $11.00 | $47.64 -$23.8205 $23.82                    |
-      | BB05 | Color: Green Size: L Note 5 text                         | Out of Stock | 5.12345 item        | $11.00 | $56.36 -$28.178975 $28.18                  |
-      | BB12 | Color: Blue Size: S Note 12 text                         | In Stock     | 7.1234567891 item   | $23.00 | $163.84 -$81.91975307465 $81.92            |
-      | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3 item              | $11.00 | $33.00 -$16.50 $16.50                      |
-      | BB07 | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5 piece             | $17.00 | $85.00                                     |
-      | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | Out of Stock | 7 set               | $19.00 | $133.00                                    |
+      | BB04 | Color: Red Size: M Note 4 text                           | IN STOCK     | 4.331 item          | $11.00 | $47.64 -$23.8205 $23.82                    |
+      | BB05 | Color: Green Size: L Note 5 text                         | OUT OF STOCK | 5.12345 item        | $11.00 | $56.36 -$28.178975 $28.18                  |
+      | BB12 | Color: Blue Size: S Note 12 text                         | IN STOCK     | 7.1234567891 item   | $23.00 | $163.84 -$81.91975307465 $81.92            |
+      | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | IN STOCK     | 3 item              | $11.00 | $33.00 -$16.50 $16.50                      |
+      | BB07 | Configurable Product 2 Color: Red Size: M Note 7 text    | OUT OF STOCK | 5 piece             | $17.00 | $85.00                                     |
+      | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | OUT OF STOCK | 7 set               | $19.00 | $133.00                                    |
       |      | Configurable Product 3                                   |              | 10 pieces           |        | $170.00                                    |
-      | BB08 | Color: Green Size: L Note 8 text                         | In Stock     | 5 piece             | $17.00 | $85.00                                     |
-      | BB09 | Color: Blue Size: S Note 9 text                          | Out of Stock | 5 piece             | $17.00 | $85.00                                     |
-      | BB10 | Configurable Product 3 Color: Red Size: M Note 10 text   | In Stock     | 7 set               | $19.00 | $133.00                                    |
-      | BB13 | Product 13 Note 13 text                                  | Out of Stock | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
-      | BB14 | Product 14 Note 14 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
-      | BB15 | Product 15 Note 15 text                                  | Out of Stock | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
-      | BB16 | Product 16 Note 16 text                                  | In Stock     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB08 | Color: Green Size: L Note 8 text                         | IN STOCK     | 5 piece             | $17.00 | $85.00                                     |
+      | BB09 | Color: Blue Size: S Note 9 text                          | OUT OF STOCK | 5 piece             | $17.00 | $85.00                                     |
+      | BB10 | Configurable Product 3 Color: Red Size: M Note 10 text   | IN STOCK     | 7 set               | $19.00 | $133.00                                    |
+      | BB13 | Product 13 Note 13 text                                  | OUT OF STOCK | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB14 | Product 14 Note 14 text                                  | IN STOCK     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB15 | Product 15 Note 15 text                                  | OUT OF STOCK | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB16 | Product 16 Note 16 text                                  | IN STOCK     | 9 item              | $23.00 | $207.00 -$103.50 $103.50                   |
     And click on "Flash Message Close Button"
 
   Scenario: Check the unit of quantity for configurable product at my shopping list view page
@@ -207,19 +207,19 @@ Feature: My Shopping List with products unit of quantity is more than zero
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List View Grid"
     And I sort grid by "SKU"
     Then I should see following "Frontend Customer User Shopping List View Grid" grid:
-      | SKU  | Item                                                     |              | Qty           | Unit   | Price  | Subtotal                                   |
+      | SKU  | Item                                                     | Availability | Qty           | Unit   | Price  | Subtotal                                   |
       |      | Configurable Product 1                                   |              | 16.5779067891 | items  |        | $267.83922807465 -$133.91922807465 $133.92 |
-      | BB04 | Color: Red Size: M Note 4 text                           | In Stock     | 4.331         | items  | $11.00 | $47.64 -$23.8205 $23.82                    |
-      | BB05 | Color: Green Size: L Note 5 text                         | Out of Stock | 5.12345       | items  | $11.00 | $56.36 -$28.178975 $28.18                  |
-      | BB12 | Color: Blue Size: S Note 12 text                         | In Stock     | 7.1234567891  | items  | $23.00 | $163.84 -$81.91975307465 $81.92            |
-      | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | In Stock     | 3             | items  | $11.00 | $33.00 -$16.50 $16.50                      |
-      | BB07 | Configurable Product 2 Color: Red Size: M Note 7 text    | Out of Stock | 5             | pieces | $17.00 | $85.00                                     |
-      | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | Out of Stock | 7             | sets   | $19.00 | $133.00                                    |
+      | BB04 | Color: Red Size: M Note 4 text                           | IN STOCK     | 4.331         | items  | $11.00 | $47.64 -$23.8205 $23.82                    |
+      | BB05 | Color: Green Size: L Note 5 text                         | OUT OF STOCK | 5.12345       | items  | $11.00 | $56.36 -$28.178975 $28.18                  |
+      | BB12 | Color: Blue Size: S Note 12 text                         | IN STOCK     | 7.1234567891  | items  | $23.00 | $163.84 -$81.91975307465 $81.92            |
+      | BB06 | Configurable Product 2 Color: Blue Size: S Note 6 text   | IN STOCK     | 3             | items  | $11.00 | $33.00 -$16.50 $16.50                      |
+      | BB07 | Configurable Product 2 Color: Red Size: M Note 7 text    | OUT OF STOCK | 5             | pieces | $17.00 | $85.00                                     |
+      | BB11 | Configurable Product 2 Color: Green Size: L Note 11 text | OUT OF STOCK | 7             | sets   | $19.00 | $133.00                                    |
       |      | Configurable Product 3                                   |              | 10            | pieces |        | $170.00                                    |
-      | BB08 | Color: Green Size: L Note 8 text                         | In Stock     | 5             | pieces | $17.00 | $85.00                                     |
-      | BB09 | Color: Blue Size: S Note 9 text                          | Out of Stock | 5             | pieces | $17.00 | $85.00                                     |
-      | BB10 | Configurable Product 3 Color: Red Size: M Note 10 text   | In Stock     | 7             | sets   | $19.00 | $133.00                                    |
-      | BB13 | Product 13 Note 13 text                                  | Out of Stock | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
-      | BB14 | Product 14 Note 14 text                                  | In Stock     | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
-      | BB15 | Product 15 Note 15 text                                  | Out of Stock | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
-      | BB16 | Product 16 Note 16 text                                  | In Stock     | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB08 | Color: Green Size: L Note 8 text                         | IN STOCK     | 5             | pieces | $17.00 | $85.00                                     |
+      | BB09 | Color: Blue Size: S Note 9 text                          | OUT OF STOCK | 5             | pieces | $17.00 | $85.00                                     |
+      | BB10 | Configurable Product 3 Color: Red Size: M Note 10 text   | IN STOCK     | 7             | sets   | $19.00 | $133.00                                    |
+      | BB13 | Product 13 Note 13 text                                  | OUT OF STOCK | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB14 | Product 14 Note 14 text                                  | IN STOCK     | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB15 | Product 15 Note 15 text                                  | OUT OF STOCK | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
+      | BB16 | Product 16 Note 16 text                                  | IN STOCK     | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |

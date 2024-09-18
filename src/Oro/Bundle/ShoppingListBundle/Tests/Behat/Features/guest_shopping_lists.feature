@@ -126,8 +126,8 @@ Feature: Guest Shopping Lists
       | SKU    | Item         | Qty Update All                   | Price | Subtotal |
       | 1GB83  | Slip-On Clog | Click "configure" to select variants  |       |          |
     And I should see following actions for 1GB83 in grid:
-      | Edit   |
-      | Delete |
+      | Configure |
+      | Delete    |
     When I click Delete 1GB83 in grid
     Then I should see "Are you sure you want to delete this product?"
     When click "Delete" in modal window

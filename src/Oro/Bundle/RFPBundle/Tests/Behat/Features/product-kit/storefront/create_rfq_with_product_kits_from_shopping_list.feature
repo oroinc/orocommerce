@@ -14,13 +14,13 @@ Feature: Create RFQ with Product Kits from Shopping List
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list "Product Kit Shopping List"
     Then I should see following grid:
-      | SKU               | Item                              |          | Qty Update All | Price     | Subtotal  |
-      | product-kit-01    | Product Kit 01                    | In Stock | 1 piece        | $124.6867 | $124.69   |
-      | simple-product-01 | Mandatory Item: Simple Product 01 |          | 1 piece        | $1.2345   |           |
+      | SKU               | Item                              | Availability | Qty Update All | Price     | Subtotal |
+      | product-kit-01    | Product Kit 01                    | IN STOCK     | 1 piece        | $124.6867 | $124.69  |
+      | simple-product-01 | Mandatory Item: Simple Product 01 |              | 1 piece        | $1.2345   |          |
 
-      | product-kit-01    | Product Kit 01                    | In Stock | 1 piece        | $129.6267 | $129.63   |
-      | simple-product-03 | Optional Item: Simple Product 03  |          | 1 piece        | $3.7035   |           |
-      | simple-product-02 | Mandatory Item: Simple Product 02 |          | 1 piece        | $2.469    |           |
+      | product-kit-01    | Product Kit 01                    | IN STOCK     | 1 piece        | $129.6267 | $129.63  |
+      | simple-product-03 | Optional Item: Simple Product 03  |              | 1 piece        | $3.7035   |          |
+      | simple-product-02 | Mandatory Item: Simple Product 02 |              | 1 piece        | $2.469    |          |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $254.32"
     And I should see "Total $254.32"

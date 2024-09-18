@@ -36,7 +36,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I go to Products / Product Families
     And I click Edit Attribute Family in grid
     And set Attribute Groups with:
-      | Label           | Visible | Attributes |
+      | Label           | Visible | Attributes                              |
       | Attribute group | true    | [Attribute 1, Attribute 2, Attribute 3] |
     And I save form
     Then I should see "Successfully updated" flash message
@@ -111,7 +111,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I follow "List 2" link within flash message "Shopping list \"List 2\" was updated successfully"
     Given I open page with shopping list List 2
     And I click "Group Product Variants"
-    And I click Edit ConfigurableProductB in grid
+    And I click "Configure" on row "ConfigurableProductB" in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 | Qty | Subtotal |
@@ -133,7 +133,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "$0.00" in the "Matrix Grid Total Price" element
     And I click "Accept" in modal window
     And I should see "ConfigurableProductB" in grid
-    And I click Edit ConfigurableProductB in grid
+    And I click "Configure" on row "ConfigurableProductB" in grid
     Then I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
@@ -248,8 +248,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Then I should see "Shopping list \"Source Shopping List\" was updated successfully"
     When I follow "Source Shopping List" link within flash message "Shopping list \"Source Shopping List\" was updated successfully"
     Then I should see following grid:
-      | SKU  | Item                 | Qty Update All                        | Price | Subtotal |
-      | CNFB | ConfigurableProductB | Click "configure" to select variants  |       |          |
+      | SKU  | Item                 | Qty Update All                  | Price | Subtotal |
+      | CNFB | ConfigurableProductB | Click "configure" to select variants |       |          |
     And I click on "First Line Item Row Checkbox"
     And I click "Move to" link from mass action dropdown in "Frontend Shopping List Edit Grid"
     And I click "Filter Toggle" in "UiDialog" element
@@ -264,11 +264,11 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Yes, delete"
     And I open page with shopping list "Shopping List"
     Then I should see following grid:
-      | SKU  | Item                 | Qty Update All                        | Price  | Subtotal |
-      | CNFB | ConfigurableProductB | Click "configure" to select variants  |        |          |
+      | SKU  | Item                 | Qty Update All                  | Price | Subtotal |
+      | CNFB | ConfigurableProductB | Click "configure" to select variants |       |          |
 
   Scenario: Order empty matrix form
-    When I click Edit CNFB in grid
+    When I click "Configure" on row "CNFB" in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -300,8 +300,8 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click on "Shopping Lists"
     And I click view Shopping List in grid
     Then I should see following grid:
-      | SKU  | Item                 | Qty | Unit                                 | Price  | Subtotal |
-      | CNFB | ConfigurableProductB |     | Click "configure" to select variants |        |          |
+      | SKU  | Item                 | Qty | Unit                                 | Price | Subtotal |
+      | CNFB | ConfigurableProductB |     | Click "configure" to select variants |       |          |
 
   Scenario: Create request for quote with empty matrix form
     When I click "Shopping List Actions"
@@ -336,7 +336,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I reload the page
     When I open shopping list widget
     And I click "View Details"
-    And I click Edit CNFB in grid
+    And I click "Configure" on row "CNFB" in grid
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
@@ -345,13 +345,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 14 | -        | -        | 1        |
     And I click "Accept"
     Then I should see following grid:
-      | SKU       | Item                                                             |          | Qty Update All | Price  | Subtotal |
-      | SKU123    | 400-Watt Bulb Work Light                                         | In Stock | 5 item         | $2.00  | $10.00   |
-      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | In Stock | 1 item         | $12.00 | $12.00   |
-      | PROD_B_12 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 22 | In Stock | 1 item         | $12.00 | $12.00   |
-      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | In Stock | 1 item         | $12.00 | $12.00   |
-      | PROD_B_23 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 23 | In Stock | 1 item         | $12.00 | $12.00   |
-      | PROD_B_43 | ConfigurableProductB Attribute 1: Value 14 Attribute 2: Value 23 | In Stock | 1 item         | $12.00 | $12.00   |
+      | SKU       | Item                                                             | Availability | Qty Update All | Price  | Subtotal |
+      | SKU123    | 400-Watt Bulb Work Light                                         | IN STOCK     | 5 item         | $2.00  | $10.00   |
+      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | IN STOCK     | 1 item         | $12.00 | $12.00   |
+      | PROD_B_12 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 22 | IN STOCK     | 1 item         | $12.00 | $12.00   |
+      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | IN STOCK     | 1 item         | $12.00 | $12.00   |
+      | PROD_B_23 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 23 | IN STOCK     | 1 item         | $12.00 | $12.00   |
+      | PROD_B_43 | ConfigurableProductB Attribute 1: Value 14 Attribute 2: Value 23 | IN STOCK     | 1 item         | $12.00 | $12.00   |
     When I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
@@ -406,7 +406,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Add to Shopping List" for "CNFB" product
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
-    And I click Edit ConfigurableProductB in grid
+    And I click "Configure" on row "ConfigurableProductB" in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -447,7 +447,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
-    And I click Edit ConfigurableProductA in grid
+    And I click "Configure" on row "ConfigurableProductA" in grid
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
       | Value 11 | Value 12 | Value 13 | Value 14 |
@@ -497,7 +497,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Add to Shopping List" in "ShoppingListButtonGroupMenu" element
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
-    And I click Edit ConfigurableProductB in grid
+    And I click "Configure" on row "ConfigurableProductB" in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -602,12 +602,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should not see an "Matrix Grid Form" element
     When I click "Group Product Variants"
-    And I click Edit ConfigurableProductB in grid
+    And I click "Configure" on row "ConfigurableProductB" in grid
     # Check popup close button and product name in popup title
     Then I should see "Edit \"ConfigurableProductB\" in \"Shopping List\"" in the "UiDialog Title" element
     When I click "Cancel" in modal window
     Then I should not see an "Matrix Grid Popup" element
-    When I click Edit ConfigurableProductB in grid
+    When I click "Configure" on row "ConfigurableProductB" in grid
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       | 1        | 1        | N/A      |
@@ -641,7 +641,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Update Shopping List" in modal window
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
-    And I click Edit ConfigurableProductB in grid
+    And I click "Configure" on row "ConfigurableProductB" in grid
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
       | 5        | 1        | N/A      |

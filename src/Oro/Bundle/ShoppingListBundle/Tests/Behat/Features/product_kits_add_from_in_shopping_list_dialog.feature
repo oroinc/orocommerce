@@ -43,7 +43,7 @@ Feature: Product kits add from in shopping list dialog
       | Title                | Product Kit 1                      |
       | Kit Item 1 Name      | Barcode Scanner                    |
       | Kit Item 2 Name      | Base Unit                          |
-      | Price                | Total: $41.00        |
+      | Price                | Total: $41.00                      |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00 |
       | Kit Item 1 Product 2 | None                               |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00 |
@@ -93,12 +93,12 @@ Feature: Product kits add from in shopping list dialog
     Given I open a new browser tab and set "ProductKitShoppingList" alias for it
     And Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU               | Item                                          |          | Qty | Unit   | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock | 2   | pieces | $134.00 | $268.00  |
-      | simple-product-03 | Barcode Scanner: Product 3                    |          | 2   | pieces | $31.00  |          |
-      | simple-product-02 | Base Unit: Product 2                          |          | 2   | pieces | $31.00  |          |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock | 1   | piece  | $41.00  | $41.00   |
-      | simple-product-01 | Base Unit: Product 1                          |          | 1   | piece  | $31.00  |          |
+      | SKU               | Item                                          | Availability | Qty | Unit   | Price   | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2   | pieces | $134.00 | $268.00  |
+      | simple-product-03 | Barcode Scanner: Product 3                    |              | 2   | pieces | $31.00  |          |
+      | simple-product-02 | Base Unit: Product 2                          |              | 2   | pieces | $31.00  |          |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1   | piece  | $41.00  | $41.00   |
+      | simple-product-01 | Base Unit: Product 1                          |              | 1   | piece  | $31.00  |          |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $309.00"
     And I should see "Total $309.00"
@@ -107,12 +107,12 @@ Feature: Product kits add from in shopping list dialog
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          |          | Qty Update All | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock | 2 piece        | $134.00 | $268.00  |
-      | simple-product-03 | Barcode Scanner: Product 3                    |          | 2 pieces       | $31.00  |          |
-      | simple-product-02 | Base Unit: Product 2                          |          | 2 pieces       | $31.00  |          |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock | 1 piece        | $41.00  | $41.00   |
-      | simple-product-01 | Base Unit: Product 1                          |          | 1 piece        | $31.00  |          |
+      | SKU               | Item                                          | Availability | Qty Update All | Price   | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $134.00 | $268.00  |
+      | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $31.00  |          |
+      | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $31.00  |          |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1 piece        | $41.00  | $41.00   |
+      | simple-product-01 | Base Unit: Product 1                          |              | 1 piece        | $31.00  |          |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $309.00"
     And I should see "Total $309.00"

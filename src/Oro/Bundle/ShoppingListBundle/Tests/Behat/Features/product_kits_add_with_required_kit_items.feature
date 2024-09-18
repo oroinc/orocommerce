@@ -30,7 +30,7 @@ Feature: Product kits add with required kit items
       | Title                | Product Kit 1                    |
       | Kit Item 1 Name      | Barcode Scanner                  |
       | Kit Item 2 Name      | Base Unit                        |
-      | Price                | Total: $41.00      |
+      | Price                | Total: $41.00                    |
       | Kit Item 1 Product 1 | simpleproduct03 Product 3 $31.00 |
       | Kit Item 1 Product 2 | None                             |
       | Kit Item 2 Product 1 | simpleproduct01 Product 1 $31.00 |
@@ -72,9 +72,9 @@ Feature: Product kits add with required kit items
   Scenario: Check shopping list view page
     When Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU             | Item                 |          | Qty | Unit  | Price  | Subtotal |
-      | productkit1     | Product Kit 1        | In Stock | 1   | piece | $41.00 | $41.00   |
-      | simpleproduct01 | Base Unit: Product 1 |          | 1   | piece | $31.00 |          |
+      | SKU             | Item                 | Availability | Qty | Unit  | Price  | Subtotal |
+      | productkit1     | Product Kit 1        | IN STOCK     | 1   | piece | $41.00 | $41.00   |
+      | simpleproduct01 | Base Unit: Product 1 |              | 1   | piece | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $41.00"
     And I should see "Total $41.00"
@@ -83,9 +83,9 @@ Feature: Product kits add with required kit items
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU             | Item                 |          | Qty Update All | Price  | Subtotal |
-      | productkit1     | Product Kit 1        | In Stock | 1 piece        | $41.00 | $41.00   |
-      | simpleproduct01 | Base Unit: Product 1 |          | 1 piece        | $31.00 |          |
+      | SKU             | Item                 | Availability | Qty Update All | Price  | Subtotal |
+      | productkit1     | Product Kit 1        | IN STOCK     | 1 piece        | $41.00 | $41.00   |
+      | simpleproduct01 | Base Unit: Product 1 |              | 1 piece        | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $41.00"
     And I should see "Total $41.00"
