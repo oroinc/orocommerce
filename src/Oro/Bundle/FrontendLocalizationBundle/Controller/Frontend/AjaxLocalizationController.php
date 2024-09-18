@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * Ajax Localization Controller
+ * AJAX controller for changing current localization.
  */
 class AjaxLocalizationController extends AbstractController
 {
@@ -24,7 +24,7 @@ class AjaxLocalizationController extends AbstractController
         name: 'oro_frontend_localization_frontend_set_current_localization',
         methods: ['POST']
     )]
-    #[CsrfProtection()]
+    #[CsrfProtection]
     public function setCurrentLocalizationAction(Request $request): JsonResponse
     {
         $localization = $this->container->get(LocalizationManager::class)
@@ -32,15 +32,15 @@ class AjaxLocalizationController extends AbstractController
 
         $localizationManager = $this->container->get(UserLocalizationManager::class);
         if ($localization instanceof Localization
-            && array_key_exists($localization->getId(), $localizationManager->getEnabledLocalizations())
+            && \array_key_exists($localization->getId(), $localizationManager->getEnabledLocalizations())
         ) {
             $localizationManager->setCurrentLocalization($localization);
 
-            $redirectHelper = $this->container->get('oro_locale.helper.localized_slug_redirect');
             $fromUrl = $this->generateUrlWithContext($request);
             if ($fromUrl) {
+                $redirectHelper = $this->container->get(LocalizedSlugRedirectHelper::class);
                 if ($request->server->has('WEBSITE_PATH')) {
-                    $toUrl = $this->getUrlForWebsitePath($request, $fromUrl, $localization);
+                    $toUrl = $this->getUrlForWebsitePath($request, $fromUrl, $localization, $redirectHelper);
                 } else {
                     $toUrl = $redirectHelper->getLocalizedUrl($fromUrl, $localization);
                     $toUrl = $this->rebuildQueryString($toUrl, $request);
@@ -56,7 +56,7 @@ class AjaxLocalizationController extends AbstractController
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices(): array
     {
@@ -65,7 +65,7 @@ class AjaxLocalizationController extends AbstractController
             [
                 LocalizationManager::class,
                 UserLocalizationManager::class,
-                'oro_locale.helper.localized_slug_redirect' => LocalizedSlugRedirectHelper::class,
+                LocalizedSlugRedirectHelper::class,
             ]
         );
     }

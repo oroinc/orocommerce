@@ -31,12 +31,10 @@ class ContentWidgetVoter implements VoterInterface
         }
 
         $repository = $this->doctrineHelper->getEntityRepositoryForClass(ContentWidgetUsage::class);
-
         foreach ($attributes as $attribute) {
             if (BasicPermission::DELETE !== $attribute) {
                 continue;
             }
-
             if ($repository->findOneBy(['contentWidget' => $subject])) {
                 return self::ACCESS_DENIED;
             }

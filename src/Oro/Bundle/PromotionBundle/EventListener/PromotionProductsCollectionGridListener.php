@@ -21,8 +21,11 @@ class PromotionProductsCollectionGridListener
 
         $parameters = $dataGrid->getParameters();
         $params = $parameters->get('params', []);
-        $promotion = $params['promotion'];
+        if (!isset($params['promotion'])) {
+            return;
+        }
 
+        $promotion = $params['promotion'];
         $organization = $promotion->getOrganization();
         $dataGridQueryBuilder = $dataSource->getQueryBuilder();
         $dataGridQueryBuilder->andWhere('IDENTITY(product.organization) = :orgId')

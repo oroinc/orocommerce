@@ -19,6 +19,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_cms.content_widget.type_registry, key: Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry }
             - { name: container.service_subscriber, id: oro_cms.content_widget.frontend_emulator, key: Oro\Bundle\CMSBundle\ContentWidget\FrontendEmulator }
 
     Oro\Bundle\CMSBundle\Controller\WysiwygContentController:
@@ -26,6 +27,8 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_cms.tools.wysiwyg_content_checker, key: Oro\Bundle\CMSBundle\Tools\WYSIWYGContentChecker }
+            - { name: container.service_subscriber, id: oro_cms.tools.digital_asset_twig_tags_converter, key: Oro\Bundle\CMSBundle\Tools\DigitalAssetTwigTagsConverter }
 
     Oro\Bundle\CMSBundle\Controller\LoginPageController:
         calls:
@@ -44,3 +47,4 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_cms.provider.content_template_content_provider, key: Oro\Bundle\CMSBundle\Provider\ContentTemplateContentProvider }

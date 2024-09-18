@@ -4,7 +4,9 @@ namespace Oro\Bundle\CMSBundle\Acl\Voter;
 
 use Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType;
 use Oro\Bundle\CMSBundle\DependencyInjection\Configuration;
+use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\ConfigBundle\Entity\ConfigValue;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -18,6 +20,12 @@ class LandingPageDeleteVoter extends AbstractEntityVoter
 {
     /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::DELETE];
+
+    public function __construct(DoctrineHelper $doctrineHelper)
+    {
+        parent::__construct($doctrineHelper);
+        $this->setClassName(Page::class);
+    }
 
     /**
      * {@inheritDoc}

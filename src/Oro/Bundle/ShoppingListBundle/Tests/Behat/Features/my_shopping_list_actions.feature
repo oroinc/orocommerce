@@ -63,7 +63,7 @@ Feature: My Shopping List Actions
     And reload the page
     And I wait for 3 seconds
     When I click "Shopping List Actions"
-    Then I should not see "Set as Default"
+    Then I should see "Set As Default" button disabled
     When I open shopping list widget
     And I click on "Shopping List Widget Set Current Radio 2"
     And I click on empty space

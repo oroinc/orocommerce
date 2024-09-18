@@ -6,7 +6,10 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
+use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -16,65 +19,49 @@ use Psr\Log\LoggerInterface;
  */
 class ContentBlockDataProvider
 {
-    /** @var ContentBlockResolver */
-    protected $contentBlockResolver;
-
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var string */
-    protected $entityClass;
-
-    /** @var ScopeManager */
-    protected $scopeManager;
-
-    /** @var LoggerInterface */
-    protected $logger;
-
-    /** @var string */
-    protected $scopeType;
-
-    /**
-     * @param ContentBlockResolver $contentBlockResolver
-     * @param ManagerRegistry      $registry
-     * @param ScopeManager         $scopeManager
-     * @param LoggerInterface      $logger
-     * @param string               $entityClass
-     * @param string               $scopeType
-     */
     public function __construct(
-        ContentBlockResolver $contentBlockResolver,
-        ManagerRegistry $registry,
-        ScopeManager $scopeManager,
-        LoggerInterface $logger,
-        $entityClass,
-        $scopeType
+        private ContentBlockResolver $contentBlockResolver,
+        private ManagerRegistry $doctrine,
+        private ScopeManager $scopeManager,
+        private ThemeConfigurationProvider $themeConfigurationProvider,
+        private AclHelper $aclHelper,
+        private LoggerInterface $logger,
+        private string $scopeType
     ) {
-        $this->contentBlockResolver = $contentBlockResolver;
-        $this->registry = $registry;
-        $this->scopeManager = $scopeManager;
-        $this->logger = $logger;
-        $this->entityClass = $entityClass;
-        $this->scopeType = $scopeType;
+    }
+
+    public function getPromotionalBlockAlias(): string
+    {
+        $configValue = $this->themeConfigurationProvider->getThemeConfigurationOption(
+            ThemeConfiguration::buildOptionKey('header', 'promotional_content')
+        );
+        if (!$configValue) {
+            return '';
+        }
+
+        return $this->doctrine->getRepository(ContentBlock::class)
+            ->getContentBlockAliasById($configValue, $this->aclHelper) ?? '';
     }
 
     public function hasContentBlockView(string $alias): bool
     {
-        $contentBlock = $this->getContentBlock($alias);
-        return null !== $contentBlock;
+        return null !== $this->getContentBlock($alias);
     }
 
     public function getContentBlockView(string $alias): ?ContentBlockView
     {
-        $criteria = $this->scopeManager->getCriteria($this->scopeType);
         $contentBlock = $this->getContentBlock($alias);
-
         if (null === $contentBlock) {
             return null;
         }
 
-        if (!$contentBlockView = $this->contentBlockResolver->getContentBlockViewByCriteria($contentBlock, $criteria)) {
+        $contentBlockView = $this->contentBlockResolver->getContentBlockViewByCriteria(
+            $contentBlock,
+            $this->scopeManager->getCriteria($this->scopeType)
+        );
+        if (!$contentBlockView) {
             $this->logger->notice('Content block with alias "{alias}" is not visible to user.', ['alias' => $alias]);
+
             return null;
         }
 
@@ -83,10 +70,6 @@ class ContentBlockDataProvider
 
     private function getContentBlock(string $alias): ?ContentBlock
     {
-        $repo = $this->registry->getManagerForClass($this->entityClass)->getRepository($this->entityClass);
-        /** @var ContentBlock $contentBlock */
-        $contentBlock = $repo->findOneBy(['alias' => $alias]);
-
-        return $contentBlock;
+        return $this->doctrine->getRepository(ContentBlock::class)->findOneBy(['alias' => $alias]);
     }
 }

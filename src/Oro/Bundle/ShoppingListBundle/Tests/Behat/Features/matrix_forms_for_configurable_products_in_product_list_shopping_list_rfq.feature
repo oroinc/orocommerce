@@ -276,16 +276,16 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
-    And I should see "0" in the "Matrix Grid Total Quantity" element
-    And I should see "$0.00" in the "Matrix Grid Total Price" element
+    And I should see "0" in the "Dialog Matrix Grid Total Quantity" element
+    And I should see "$0.00" in the "Dialog Matrix Grid Total Price" element
     When I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    Then I should see "5" in the "Matrix Grid Total Quantity" element
-    And I should see "$60.00" in the "Matrix Grid Total Price" element
+    Then I should see "5" in the "Dialog Matrix Grid Total Quantity" element
+    And I should see "$60.00" in the "Dialog Matrix Grid Total Price" element
     And I should see an "Clear All Button" element
     When I click "Clear All Product Variants"
     And I click "Accept" in modal window
@@ -444,7 +444,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
+    And I click "Add to Shopping List"
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
     And I click "Configure" on row "ConfigurableProductA" in grid
@@ -494,7 +494,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
     And I click on "Shopping List Dropdown"
-    And I click "Add to Shopping List" in "ShoppingListButtonGroupMenu" element
+    And I click "Add to Shopping List"
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
     And I click "Configure" on row "ConfigurableProductB" in grid
@@ -522,7 +522,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill in "Attribute 1" with "Value 12"
     And I fill in "Attribute 2" with "Value 23"
     And I fill in "Attribute 3" with "Value 32"
-    And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
+    And I click "Add to Shopping List"
     And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
     #next 6 lines related to @ticket-BB-10500
     And I should see text matching "Attribute 1: Value 12"
@@ -715,7 +715,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I fill "One Dimensional Matrix Grid Form" with:
       | Value 11 | Value 12 | Value 13 | Value 14 |
       | 1        | -        | -        | 1        |
-    And I click "Add to Shopping List" in "ShoppingListButtonGroup" element
+    And I click "Add to Shopping List"
     Then I should see "Shopping list \"Shopping List\" was updated successfully"
 
   Scenario: Order with two dimensional inline matrix form

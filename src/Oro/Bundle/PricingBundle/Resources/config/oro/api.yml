@@ -1,4 +1,9 @@
 api:
+    entity_aliases:
+        Oro\Bundle\PricingBundle\Api\Model\CustomerPrice:
+            alias: customerprice
+            plural_alias: customerprices
+
     entities:
         Oro\Bundle\PricingBundle\Entity\PriceList:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/price_list.md'
@@ -218,3 +223,62 @@ api:
                             form_options:
                                 mapped: false
                 update_list: true
+
+        Oro\Bundle\PricingBundle\Api\Model\CustomerPrice:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/customer_price.md'
+            disable_meta_properties: true
+            disable_fieldset: true
+            disable_inclusion: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                currency:
+                    data_type: string
+                quantity:
+                    data_type: float
+                value:
+                    data_type: money
+                product:
+                    property_path: productId
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-one
+                customer:
+                    property_path: customerId
+                    target_class: Oro\Bundle\CustomerBundle\Entity\Customer
+                    target_type: to-one
+                website:
+                    property_path: websiteId
+                    target_class: Oro\Bundle\WebsiteBundle\Entity\Website
+                    target_type: to-one
+                unit:
+                    data_type: string
+            filters:
+                fields:
+                    unit:
+                        data_type: string
+                        operators: ['=']
+                    currency:
+                        data_type: string
+                        operators: ['=']
+                        allow_array: true
+                    website:
+                        data_type: integer
+                        operators: ['=']
+                    customer:
+                        data_type: integer
+                        operators: ['=']
+                    product:
+                        data_type: integer
+                        operators: ['=']
+                        allow_array: true
+            actions:
+                get_list:
+                    page_size: -1 # disable paging because ProductPriceProvider doesn't support pagination
+                    disable_sorting: true
+                get: false
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+                get_subresource: false

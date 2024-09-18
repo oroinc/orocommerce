@@ -214,6 +214,10 @@ JS;
         $mainMenuTrigger = $this->createElement('Main Menu Button');
         if ($mainMenuTrigger->isValid() && $mainMenuTrigger->isVisible()) {
             $this->spin(function () use ($mainMenuTrigger) {
+                if ($mainMenuTrigger->hasClass('side-panel-menu-opened')) {
+                    return true;
+                }
+
                 $mainMenuTrigger->click();
                 return $mainMenuTrigger->hasClass('side-panel-menu-opened');
             });

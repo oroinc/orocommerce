@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@setOption':
+              id: title
+              optionName: params
+              optionValue:
+                  '%title%': '=data["locale"].getLocalizedValue(data["page"].getTitles())'
+        - '@setOption':
+              id: page_title
+              optionName: defaultValue
+              optionValue: '=data["locale"].getLocalizedValue(data["page"].getTitles())'
+        - '@setOption':
+              id: home_page_content
+              optionName: content
+              optionValue: '=data["page"].getContent()'
+        - '@setOption':
+              id: home_page_content
+              optionName: contentStyle
+              optionValue: '=data["page"].getContentStyle()'

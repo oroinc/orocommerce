@@ -778,6 +778,9 @@ oro_behat_extension:
         locator: '//h3[contains(@class, "grid-line-items__title")]/a[text()[contains(.,"Product 3")]]'
         type: 'xpath'
 
+    Set As Default:
+        selector: 'button[title="Set as Default"]'
+
   suites:
     OroShoppingListBundle:
       contexts:

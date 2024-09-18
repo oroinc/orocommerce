@@ -15,11 +15,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 {
-    /** @var EntityManagerInterface */
-    private $em;
-
-    /** @var ContentWidgetUsageRepository */
-    private $usageRepository;
+    private EntityManagerInterface $em;
+    private ContentWidgetUsageRepository $usageRepository;
 
     protected function setUp(): void
     {
@@ -28,20 +25,20 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
 
         $this->getOptionalListenerManager()->enableListener('oro_cms.event_listener.wysiwyg_field_twig_listener');
 
-        $this->em = $this->getContainer()->get('doctrine')->getManager();
+        $this->em = self::getContainer()->get('doctrine')->getManager();
         $this->usageRepository = $this->em->getRepository(ContentWidgetUsage::class);
+    }
+
+    private function getContentWidget(string $reference): ContentWidget
+    {
+        return $this->getReference($reference);
     }
 
     public function testPostPersist(): Page
     {
-        /** @var ContentWidget $contentWidget1 */
-        $contentWidget1 = $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_1);
-
-        /** @var ContentWidget $contentWidget2 */
-        $contentWidget2 = $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_2);
-
-        /** @var ContentWidget $contentWidget3 */
-        $contentWidget3 = $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_3);
+        $contentWidget1 = $this->getContentWidget(LoadContentWidgetData::CONTENT_WIDGET_1);
+        $contentWidget2 = $this->getContentWidget(LoadContentWidgetData::CONTENT_WIDGET_2);
+        $contentWidget3 = $this->getContentWidget(LoadContentWidgetData::CONTENT_WIDGET_3);
 
         $page = new Page();
         $page->setDefaultTitle('testTitle');
@@ -74,14 +71,9 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
      */
     public function testPreUpdate(Page $page): Page
     {
-        /** @var ContentWidget $contentWidget1 */
-        $contentWidget1 = $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_1);
-
-        /** @var ContentWidget $contentWidget2 */
-        $contentWidget2 = $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_2);
-
-        /** @var ContentWidget $contentWidget3 */
-        $contentWidget3 = $this->getReference(LoadContentWidgetData::CONTENT_WIDGET_3);
+        $contentWidget1 = $this->getContentWidget(LoadContentWidgetData::CONTENT_WIDGET_1);
+        $contentWidget2 = $this->getContentWidget(LoadContentWidgetData::CONTENT_WIDGET_2);
+        $contentWidget3 = $this->getContentWidget(LoadContentWidgetData::CONTENT_WIDGET_3);
 
         $page->setContent(
             "<div>
@@ -118,12 +110,10 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
     private function assertContentWidgets(Page $page, array $contentWidgets): void
     {
         $this->em->flush();
-        $this->getContainer()->get('oro_cms.tests.event_listener.wysiwyg_field_twig_listener')->onTerminate();
+        self::getContainer()->get('oro_cms.tests.event_listener.wysiwyg_field_twig_listener')->onTerminate();
 
         /** @var ContentWidgetUsage[] $usages */
-        $usages = $this->usageRepository->findBy([
-            'entityClass' => Page::class,
-        ]);
+        $usages = $this->usageRepository->findBy(['entityClass' => Page::class]);
 
         $this->assertCount(count($contentWidgets), $usages);
 

@@ -21,16 +21,10 @@ use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 class LandingPageDeleteVoterTest extends TestCase
 {
     private EntityRepository|MockObject $repository;
-
     private TokenInterface|MockObject $token;
-
     private DoctrineHelper|MockObject $doctrineHelper;
-
     private LandingPageDeleteVoter $voter;
 
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EntityRepository::class);

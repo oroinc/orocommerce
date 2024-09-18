@@ -7,6 +7,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_order.duplicator.order_duplicator }
 
     Oro\Bundle\OrderBundle\Controller\AjaxOrderController:
         calls:

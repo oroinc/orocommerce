@@ -24,7 +24,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Class to load demo data from content-template directory to ContentTemplates
+ * Loads demo data for content templates.
  */
 class LoadContentTemplateDemoData implements
     FixtureInterface,
@@ -48,9 +48,7 @@ class LoadContentTemplateDemoData implements
 
     public function load(ObjectManager $manager): void
     {
-        $path = $this
-            ->getFileLocator()
-            ->locate(self::ASSETS_PATH);
+        $path = $this->getFileLocator()->locate(self::ASSETS_PATH);
 
         $user = $this->getFirstUser($manager);
         $organization = $this->getOrganization($manager);
@@ -62,20 +60,12 @@ class LoadContentTemplateDemoData implements
         $fileManager = $this->container->get('oro_attachment.file_manager');
 
         foreach ($templates as $template) {
-            $contentTemplate = new ContentTemplate();
-
             if (is_file($path . DIRECTORY_SEPARATOR . $template['content'])) {
-                $template['content'] = file_get_contents(
-                    $path . DIRECTORY_SEPARATOR . $template['content']
-                );
+                $template['content'] = file_get_contents($path . DIRECTORY_SEPARATOR . $template['content']);
             }
-
             if (is_file($path . DIRECTORY_SEPARATOR . $template['contentStyle'])) {
-                $template['contentStyle'] = file_get_contents(
-                    $path . DIRECTORY_SEPARATOR . $template['contentStyle']
-                );
+                $template['contentStyle'] = file_get_contents($path . DIRECTORY_SEPARATOR . $template['contentStyle']);
             }
-
             if (is_file($path . DIRECTORY_SEPARATOR . $template['previewImage'])) {
                 $template['previewImage'] = $this->createFileEntity(
                     $manager,
@@ -86,22 +76,20 @@ class LoadContentTemplateDemoData implements
                 $template['previewImage'] = null;
             }
 
-            $contentTemplate
-                ->setName($template['name'])
-                ->setContent($attachmentArray ? strtr(
-                    $template['content'],
-                    $attachmentArray
-                ) : $template['content'])
-                ->setContentStyle($attachmentArray ? strtr(
-                    $template['contentStyle'],
-                    $attachmentArray
-                ) : $template['contentStyle'])
-                ->setPreviewImage($template['previewImage'])
-                ->setOwner($user)
-                ->setOrganization($organization);
-
+            $contentTemplate = new ContentTemplate();
+            $contentTemplate->setName($template['name']);
+            $contentTemplate->setContent(
+                $attachmentArray ? strtr($template['content'], $attachmentArray) : $template['content']
+            );
+            $contentTemplate->setContentStyle(
+                $attachmentArray ? strtr($template['contentStyle'], $attachmentArray) : $template['contentStyle']
+            );
+            $contentTemplate->setPreviewImage($template['previewImage']);
+            $contentTemplate->setOwner($user);
+            $contentTemplate->setOrganization($organization);
             $manager->persist($contentTemplate);
             $manager->flush();
+
             $this->setTags($contentTemplate, $template['tags']);
         }
         $this->container->get('security.token_storage')?->setToken();
@@ -109,22 +97,9 @@ class LoadContentTemplateDemoData implements
 
     private function loadDigitalAssets(ObjectManager $manager): array
     {
-        $path = $this
-            ->getFileLocator()
-            ->locate(self::ASSET_IMAGES_PATH);
-
-        $fsIterator = new \FilesystemIterator($path);
-        $fileArray = iterator_to_array($fsIterator);
-
-        if (count($fileArray) === 0) {
-            return [];
-        }
-
-        $fsIterator->rewind();
-
+        $digitalAssets = [];
         $fileManager = $this->container->get('oro_attachment.file_manager');
-        $data = [];
-
+        $fsIterator = new \FilesystemIterator($this->getFileLocator()->locate(self::ASSET_IMAGES_PATH));
         while ($fsIterator->valid()) {
             $file = $fsIterator->current();
             $key =  self::PLACEHOLDER_ASSETS_PATH . $file->getBasename();
@@ -134,19 +109,25 @@ class LoadContentTemplateDemoData implements
                 $file->getRealPath(),
                 $file->getFilename()
             );
+            $digitalAssets[] = [$digitalAsset, $key];
+            $fsIterator->next();
+        }
+        $manager->flush();
+
+        $data = [];
+        foreach ($digitalAssets as [$digitalAsset, $key]) {
             $data[$key] = sprintf(
                 "{{ wysiwyg_image('%d','%s') }}",
                 $digitalAsset->getId(),
                 UUIDGenerator::v4()
             );
-            $data[$key.'.webp'] = sprintf(
+            $data[$key . '.webp'] = sprintf(
                 "{{ wysiwyg_image('%d','%s','wysiwyg_original','webp') }}",
                 $digitalAsset->getId(),
-                UUIDGenerator::v4(),
+                UUIDGenerator::v4()
             );
-
-            $fsIterator->next();
         }
+
         return $data;
     }
 
@@ -166,6 +147,7 @@ class LoadContentTemplateDemoData implements
     {
         $path = $this->getFileLocator()->locate(self::DATA_FILE);
         $content = file_get_contents($path);
+
         return Yaml::parse($content);
     }
 
@@ -192,19 +174,16 @@ class LoadContentTemplateDemoData implements
     ): DigitalAsset {
         $user = $this->getFirstUser($manager);
 
-        $assetTitle = new LocalizedFallbackValue();
-        $assetTitle->setString($title);
-        $manager->persist($assetTitle);
-
-        $sourceFile = $this->createFileEntity($manager, $fileManager, $sourcePath);
+        $digitalAssetTitle = new LocalizedFallbackValue();
+        $digitalAssetTitle->setString($title);
+        $manager->persist($digitalAssetTitle);
 
         $digitalAsset = new DigitalAsset();
-        $digitalAsset->addTitle($assetTitle)
-            ->setSourceFile($sourceFile)
-            ->setOwner($user)
-            ->setOrganization($user->getOrganization());
+        $digitalAsset->addTitle($digitalAssetTitle);
+        $digitalAsset->setSourceFile($this->createFileEntity($manager, $fileManager, $sourcePath));
+        $digitalAsset->setOwner($user);
+        $digitalAsset->setOrganization($user->getOrganization());
         $manager->persist($digitalAsset);
-        $manager->flush();
 
         return $digitalAsset;
     }
@@ -217,6 +196,7 @@ class LoadContentTemplateDemoData implements
         $fileEntity = $fileManager->createFileEntity($sourcePath);
         $fileEntity->setOwner($this->getFirstUser($manager));
         $manager->persist($fileEntity);
+
         return $fileEntity;
     }
 

@@ -17,7 +17,7 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getApplicableMapping(): array
     {
@@ -27,7 +27,7 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function processTwigFunctions(WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls): bool
     {
@@ -43,12 +43,15 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
         $actualWidgetCalls = $this->getWidgetNames($twigFunctionCalls);
 
         $em = $processedDTO->getProcessedEntity()->getEntityManager();
-        $currentUsage = $em->getRepository(ContentWidgetUsage::class)
-            ->findForEntityField($ownerEntityClass, $ownerEntityId, $ownerEntityField);
+        $currentUsages = $em->getRepository(ContentWidgetUsage::class)->findForEntityField(
+            $ownerEntityClass,
+            $ownerEntityId,
+            $ownerEntityField
+        );
 
         $isFlushNeeded = false;
         // Removing currently not used widgets
-        foreach ($currentUsage as $usage) {
+        foreach ($currentUsages as $usage) {
             $widgetName = $usage->getContentWidget()->getName();
             if (!isset($actualWidgetCalls[$widgetName])) {
                 $em->remove($usage);
@@ -80,7 +83,7 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function onPreRemove(WYSIWYGProcessedDTO $processedDTO): bool
     {
@@ -89,17 +92,16 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
             return false;
         }
 
-        $ownerEntityClass = $processedDTO->requireOwnerEntityClass();
-
         $em = $processedDTO->getProcessedEntity()->getEntityManager();
-        $removeList = $em->getRepository(ContentWidgetUsage::class)
-            ->findForEntityField($ownerEntityClass, $ownerEntityId);
-
-        if (!$removeList) {
+        $currentUsages = $em->getRepository(ContentWidgetUsage::class)->findForEntityField(
+            $processedDTO->requireOwnerEntityClass(),
+            (int)$ownerEntityId
+        );
+        if (!$currentUsages) {
             return false;
         }
 
-        foreach ($removeList as $usage) {
+        foreach ($currentUsages as $usage) {
             $em->remove($usage);
         }
 
@@ -109,7 +111,7 @@ class ContentWidgetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessor
     /**
      * @param array $twigFunctionCalls
      *
-     * @return array ['widget_name' => true, ...]
+     * @return array [widget name => true, ...]
      */
     private function getWidgetNames(array $twigFunctionCalls): array
     {

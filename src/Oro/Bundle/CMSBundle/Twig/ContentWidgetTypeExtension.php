@@ -56,29 +56,29 @@ class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSub
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public static function getSubscribedServices(): array
     {
         return [
+            'oro_cms.content_widget.type_registry' => ContentWidgetTypeRegistry::class,
+            'oro_cms.provider.content_widget_layout' => ContentWidgetLayoutProvider::class,
             TranslatorInterface::class,
-            ContentWidgetTypeRegistry::class,
-            ContentWidgetLayoutProvider::class,
         ];
+    }
+
+    private function getContentWidgetTypeRegistry(): ContentWidgetTypeRegistry
+    {
+        return $this->container->get('oro_cms.content_widget.type_registry');
+    }
+
+    private function getContentWidgetLayoutProvider(): ContentWidgetLayoutProvider
+    {
+        return $this->container->get('oro_cms.provider.content_widget_layout');
     }
 
     private function getTranslator(): TranslatorInterface
     {
         return $this->container->get(TranslatorInterface::class);
-    }
-
-    private function getContentWidgetTypeRegistry(): ContentWidgetTypeRegistry
-    {
-        return $this->container->get(ContentWidgetTypeRegistry::class);
-    }
-
-    private function getContentWidgetLayoutProvider(): ContentWidgetLayoutProvider
-    {
-        return $this->container->get(ContentWidgetLayoutProvider::class);
     }
 }

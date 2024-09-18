@@ -7,8 +7,12 @@
     {% set data = [
         UI.renderProperty(
             'oro.discount_options.shipping_type.shipping_method.label'|trans,
-            oro_shipping_method_with_type_label(options['shipping_options']['shipping_method'], options['shipping_options']['shipping_method_type'])
-        ),
+            oro_shipping_method_with_type_label(
+                options['shipping_options']['shipping_method'],
+                options['shipping_options']['shipping_method_type'],
+                entity.organization
+            )
+        )
     ] %}
     {{ parent() }}
 {% endblock %}

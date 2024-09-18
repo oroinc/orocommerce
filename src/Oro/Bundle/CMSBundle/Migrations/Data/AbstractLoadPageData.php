@@ -78,10 +78,6 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param string        $filePath
-     * @param Organization  $organization
-     *
      * @return Page[]
      */
     protected function loadFromFile(ObjectManager $manager, string $filePath, Organization $organization): array
@@ -172,18 +168,20 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
             return $content;
         }
 
+        $digitalAssets = [];
         foreach ($this->imagesMap[$pageReference] as $source => $placeholder) {
             $parts = explode('/', $source);
-
             $digitalAsset = $this->createDigitalAsset(
                 $manager,
                 $fileManager,
                 $source,
                 sprintf('%s_%s', $pageReference, array_pop($parts))
             );
+            $digitalAssets[] = [$digitalAsset, $placeholder];
+        }
+        $manager->flush();
 
-            $manager->flush();
-
+        foreach ($digitalAssets as [$digitalAsset, $placeholder]) {
             $content = str_replace(
                 $placeholder,
                 sprintf("{{ wysiwyg_image('%d','%s') }}", $digitalAsset->getId(), UUIDGenerator::v4()),
@@ -196,9 +194,8 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
 
     protected function getPageByTitle(ObjectManager $manager, string $title): ?Page
     {
-        $qb = $manager->getRepository(Page::class)->createQueryBuilder('page');
-
-        return $qb
+        return $manager->getRepository(Page::class)
+            ->createQueryBuilder('page')
             ->innerJoin('page.titles', 'title')
             ->andWhere('title.string = :title')
             ->setParameter('title', $title)

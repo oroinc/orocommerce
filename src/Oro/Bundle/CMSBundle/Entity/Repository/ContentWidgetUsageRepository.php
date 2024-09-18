@@ -11,37 +11,23 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidgetUsage;
 class ContentWidgetUsageRepository extends EntityRepository
 {
     /**
-     * @param string $entityClass
-     * @param int $entityId
-     * @param string|null $entityField
+     * Finds content widget usages for a specific entity or entity field.
      *
      * @return ContentWidgetUsage[]
      */
-    public function findForEntityField(
-        string $entityClass,
-        int $entityId,
-        ?string $entityField = null
-    ): array {
-        $qb = $this->createQueryBuilder('usage');
-
-        $qb
+    public function findForEntityField(string $entityClass, int $entityId, ?string $entityField = null): array
+    {
+        $qb = $this->createQueryBuilder('usage')
             ->select('usage', 'contentWidget')
             ->innerJoin('usage.contentWidget', 'contentWidget')
-            ->where(
-                $qb->expr()->eq('usage.entityClass', ':entityClass'),
-                $qb->expr()->eq('usage.entityId', ':entityId')
-            )
-            ->setParameters([
-                ':entityClass' => $entityClass,
-                ':entityId' => $entityId,
-            ]);
-
+            ->where('usage.entityClass = :entityClass')
+            ->andWhere('usage.entityId = :entityId')
+            ->setParameter('entityClass', $entityClass)
+            ->setParameter('entityId', $entityId);
         if ($entityField) {
             $qb
-                ->andWhere(
-                    $qb->expr()->eq('usage.entityField', ':entityField')
-                )
-                ->setParameter(':entityField', $entityField);
+                ->andWhere('usage.entityField = :entityField')
+                ->setParameter('entityField', $entityField);
         }
 
         return $qb->getQuery()->getResult();

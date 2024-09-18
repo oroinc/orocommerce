@@ -13,28 +13,28 @@ class ContentWidgetTypeExtensionTest extends \PHPUnit\Framework\TestCase
 {
     use TwigExtensionTestCaseTrait;
 
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
     /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $contentWidgetTypeRegistry;
 
     /** @var ContentWidgetLayoutProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $contentWidgetLayoutProvider;
 
+    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    private $translator;
+
     /** @var ContentWidgetTypeExtension */
     private $extension;
 
     protected function setUp(): void
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);
         $this->contentWidgetLayoutProvider = $this->createMock(ContentWidgetLayoutProvider::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $container = self::getContainerBuilder()
             ->add(TranslatorInterface::class, $this->translator)
-            ->add(ContentWidgetTypeRegistry::class, $this->contentWidgetTypeRegistry)
-            ->add(ContentWidgetLayoutProvider::class, $this->contentWidgetLayoutProvider)
+            ->add('oro_cms.content_widget.type_registry', $this->contentWidgetTypeRegistry)
+            ->add('oro_cms.provider.content_widget_layout', $this->contentWidgetLayoutProvider)
             ->getContainer($this);
 
         $this->extension = new ContentWidgetTypeExtension($container);

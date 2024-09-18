@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -10,13 +11,11 @@ use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
-use Oro\Component\Action\Event\ExtendableEventData;
 
 class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -52,9 +51,12 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
     private function getExtendableActionEvent(): ExtendableActionEvent
     {
-        $context = new ExtendableEventData(['order' => new Order(), 'checkout' => new Checkout()]);
+        return new ExtendableActionEvent(new ActionData(['checkout' => new Checkout()]));
+    }
 
-        return new ExtendableActionEvent($context);
+    private function getExtendableEmptyActionEvent(): ExtendableActionEvent
+    {
+        return new ExtendableActionEvent(new ActionData([]));
     }
 
     private function getOrderLineItem(): OrderLineItem
@@ -106,12 +108,32 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
+    public function testOnCreateOrderWithFailedPurshace(): void
+    {
+        $this->checkoutLineItemsManager
+            ->expects(self::never())
+            ->method('getData');
+        $this->quantityManager
+            ->expects(self::never())
+            ->method('canDecrementInventory');
+        $this->quantityManager
+            ->expects(self::never())
+            ->method('decrementInventory');
+        $this->quantityManager
+            ->expects(self::never())
+            ->method('shouldDecrement');
+        $this->statusHandler
+            ->expects(self::never())
+            ->method('changeInventoryStatusWhenDecrement');
+
+        $event = $this->getExtendableEmptyActionEvent(false);
+        $this->createOrderEventListener->onCreateOrder($event);
+    }
+
     public function testWrongContext(): void
     {
         $workflowData = $this->createMock(WorkflowData::class);
-        $event = $this->createMock(ExtendableActionEvent::class);
-        $event->expects(self::any())
-            ->method('getContext');
+        $event = $this->getExtendableEmptyActionEvent();
         $workflowData->expects(self::never())
             ->method('get')
             ->with('order');

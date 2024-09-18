@@ -91,6 +91,19 @@ services:
     Oro\Bundle\CMSBundle\Form\Handler\ContentWidgetHandler:
         alias: oro_cms.form.handler.content_widget
 
+    oro_cms.form.extension.wysiwyg:
+        class: Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGTypeExtension
+        arguments:
+            - '@oro_layout.theme_manager'
+            - '@oro_layout.data_provider.theme'
+            - '@oro_config.manager'
+            - '@oro_website.manager'
+            - '@assets.packages'
+            - '@oro_theme.provider.theme_configuration'
+            - '@oro_layout.provider.svg_icons_support'
+        tags:
+            - { name: form.type_extension }
+
     oro_cms.form.extension.wysiwyg_field:
         class: Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGFieldExtension
         tags:
