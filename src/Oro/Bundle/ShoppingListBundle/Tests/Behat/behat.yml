@@ -509,7 +509,7 @@ oro_behat_extension:
 
     Shopping List Edit Grid Edit Note:
       selector:
-        locator: '//tr[@aria-rowindex="2"]//a[contains(@title, "Edit") and contains(@title, "Note")]'
+        locator: '//tr[@aria-rowindex="2"]//a[contains(@title, "Edit a note")]'
         type: 'xpath'
 
     Shopping List Edit Grid Select Row 1 Delete:

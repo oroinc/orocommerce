@@ -148,7 +148,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I click "Group Product Variants"
     When I select 10 from per page list dropdown in "Frontend Customer User Shopping List Edit Grid"
     And I sort grid by "SKU"
-    When I click "Edit" on row "Configurable Product 1" in grid
+    When I click "Configure" on row "Configurable Product 1" in grid
     Then I should see an "Matrix Grid Form" element
     Then I should see next rows in "Matrix Grid Form" table
       | s   | M   | L   |
