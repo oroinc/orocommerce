@@ -21,8 +21,8 @@ data:
             testAttrMoney: '1.2300'
             testAttrDateTime: '2010-06-15T20:20:30Z'
             testAttrMultiEnum:
-                - { id: '@productAttrMultiEnum_option1->id', targetValue: '@productAttrMultiEnum_option1->name' }
-                - { id: '@productAttrMultiEnum_option2->id', targetValue: '@productAttrMultiEnum_option2->name' }
+                - { id: '@productAttrMultiEnum_option1->internalId', targetValue: '@productAttrMultiEnum_option1->name' }
+                - { id: '@productAttrMultiEnum_option2->internalId', targetValue: '@productAttrMultiEnum_option2->name' }
             testAttrManyToOne:
                 id: '<toString(@customer1->id)>'
                 targetValue: 'Company 1'
@@ -47,7 +47,7 @@ data:
         inventoryStatus:
             data:
                 type: productinventorystatuses
-                id: '<toString(@in_stock->id)>'
+                id: '<toString(@in_stock->internalId)>'
         productFamily:
             data:
                 type: productfamilies

@@ -421,11 +421,11 @@ Oro\Bundle\ProductBundle\Entity\ProductVariantLink:
         parentProduct: '@configurable_product2'
         product: '@configurable_product2_variant2'
 
-Extend\Entity\EV_Test_Prod_Attr_Enum:
+Oro\Bundle\EntityExtendBundle\Entity\EnumOption:
     productAttrEnum_option1:
-        __construct: ['option1', 'Option 1', 1, false]
+        __construct: [ 'test_prod_attr_enum', 'Option 1', 'option1', 1, false]
     productAttrEnum_option2:
-        __construct: ['option2', 'Option 2', 2, true]
+        __construct: [ 'test_prod_attr_enum', 'Option 2', 'option2', 2, true]
 
 Oro\Bundle\AttachmentBundle\Entity\File:
     file_category1_small_image:

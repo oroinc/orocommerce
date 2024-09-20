@@ -7,8 +7,8 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterfac
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareTrait;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -17,11 +17,11 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class OroProductBundle implements
     Migration,
-    ExtendExtensionAwareInterface,
+    OutdatedExtendExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     AttachmentExtensionAwareInterface
 {
-    use ExtendExtensionAwareTrait;
+    use OutdatedExtendExtensionAwareTrait;
     use ActivityExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
 
@@ -41,9 +41,19 @@ class OroProductBundle implements
         $this->addOrob2BProductNameForeignKeys($schema);
         $this->addOrob2BProductDescriptionForeignKeys($schema);
 
-        $this->extendExtension->addEnumField($schema, 'orob2b_product', 'inventory_status', 'prod_inventory_status');
-        $this->extendExtension->addEnumField($schema, 'orob2b_product', 'visibility', 'prod_visibility');
-        $this->extendExtension->addEnumField($schema, 'orob2b_product', 'status', 'prod_status');
+        $this->outdatedExtendExtension->addOutdatedEnumField(
+            $schema,
+            'orob2b_product',
+            'inventory_status',
+            'prod_inventory_status'
+        );
+        $this->outdatedExtendExtension->addOutdatedEnumField(
+            $schema,
+            'orob2b_product',
+            'visibility',
+            'prod_visibility'
+        );
+        $this->outdatedExtendExtension->addOutdatedEnumField($schema, 'orob2b_product', 'status', 'prod_status');
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'orob2b_product');
         $this->attachmentExtension->addImageRelation($schema, 'orob2b_product', 'image', [], 10);

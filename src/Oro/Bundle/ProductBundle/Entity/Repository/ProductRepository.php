@@ -188,17 +188,17 @@ class ProductRepository extends ServiceEntityRepository
     public function getImagesFilesByProductId($productId)
     {
         $qb = $this->_em->createQueryBuilder()
-                        ->select('imageFile')
-                        ->from(File::class, 'imageFile')
-                        ->join(
-                            ProductImage::class,
-                            'pi',
-                            Expr\Join::WITH,
-                            'imageFile.id = pi.image'
-                        );
+            ->select('imageFile')
+            ->from(File::class, 'imageFile')
+            ->join(
+                ProductImage::class,
+                'pi',
+                Expr\Join::WITH,
+                'imageFile.id = pi.image'
+            );
 
         $qb->where($qb->expr()->eq('pi.product', ':product_id'))
-           ->setParameter('product_id', $productId);
+            ->setParameter('product_id', $productId);
 
         return $qb->getQuery()->execute();
     }
@@ -306,27 +306,18 @@ class ProductRepository extends ServiceEntityRepository
         return $queryBuilder;
     }
 
-    /**
-     * @param string $type
-     * @param string $fieldName
-     * @param array $attributeOptions
-     * @return array
-     */
-    public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions)
+    public function findParentSkusByAttributeOptions(string $type, string $fieldName, array $attributeOptions): array
     {
+        QueryBuilderUtil::checkField($fieldName);
         $qb = $this->createQueryBuilder('p');
-
-        $aliasedFieldName = QueryBuilderUtil::getField('p', $fieldName);
-
+        $attr = sprintf("JSON_EXTRACT(%s.serialized_data,'%s')", 'p', $fieldName);
         $result = $qb
-            ->select(['parent_product.sku', 'attr.id'])
+            ->select(['parent_product.sku', $attr . ' AS id'])
             ->distinct()
-            ->join($aliasedFieldName, 'attr')
             ->join('p.parentVariantLinks', 'variant_links')
             ->join('variant_links.parentProduct', 'parent_product')
-            ->where($qb->expr()->in('attr', ':attributeOptions'))
-            ->andWhere('p.type = :type')
-            ->andWhere($qb->expr()->isNotNull('attr'))
+            ->where('p.type = :type')
+            ->andWhere($qb->expr()->in($attr, ':attributeOptions'))
             ->orderBy('parent_product.sku')
             ->setParameter('attributeOptions', $attributeOptions)
             ->setParameter('type', $type)
@@ -334,7 +325,6 @@ class ProductRepository extends ServiceEntityRepository
             ->getArrayResult();
 
         $flattenedResult = [];
-
         foreach ($result as $item) {
             $flattenedResult[$item['id']][] = $item['sku'];
         }

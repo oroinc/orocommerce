@@ -2,19 +2,22 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
+
 /**
- * Provides supported internal order statuses for previously purchased feature.
+ * Service that provides available statuses for previously purchased orders
  */
 class PreviouslyPurchasedOrderStatusesProvider implements OrderStatusesProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public function getAvailableStatuses(): array
     {
-        return [
-            self::INTERNAL_STATUS_OPEN,
-            self::INTERNAL_STATUS_CLOSED
-        ];
+        return ExtendHelper::mapToEnumOptionIds(
+            Order::INTERNAL_STATUS_CODE,
+            [
+                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
+            ]
+        );
     }
 }

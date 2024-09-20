@@ -3,10 +3,14 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilitySearchQueryModifier;
 
+/**
+ *  Listening ProductSearchQueryRestrictionEvent and modify product search query for frontend requests
+ */
 class ProductSearchQueryRestrictionEventListener
 {
     /**
@@ -54,7 +58,10 @@ class ProductSearchQueryRestrictionEventListener
         }
 
         $inventoryStatuses = $this->configManager->get($this->frontendSystemConfigurationPath);
-        $this->modifier->modifyByInventoryStatus($event->getQuery(), $inventoryStatuses);
+        $this->modifier->modifyByInventoryStatus(
+            $event->getQuery(),
+            ExtendHelper::mapToEnumInternalIds($inventoryStatuses)
+        );
     }
 
     /**

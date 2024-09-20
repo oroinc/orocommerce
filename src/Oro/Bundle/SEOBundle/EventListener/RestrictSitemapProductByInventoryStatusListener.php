@@ -11,17 +11,11 @@ use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider;
  */
 class RestrictSitemapProductByInventoryStatusListener
 {
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    public function __construct(ConfigManager $configManager)
+    public function __construct(private ConfigManager $configManager)
     {
-        $this->configManager = $configManager;
     }
 
-    public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
+    public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event): void
     {
         $allowedStatuses = $this->configManager->get(
             'oro_product.general_frontend_product_visibility',
@@ -29,11 +23,12 @@ class RestrictSitemapProductByInventoryStatusListener
             false,
             $event->getWebsite()
         );
-
         if ($allowedStatuses) {
             $qb = $event->getQueryBuilder();
-
-            $qb->andWhere($qb->expr()->in(UrlItemsProvider::ENTITY_ALIAS . '.inventory_status', ':inventoryStatuses'))
+            $qb->andWhere($qb->expr()->in(
+                "JSON_EXTRACT(" . UrlItemsProvider::ENTITY_ALIAS . ".serialized_data, 'inventory_status')",
+                ':inventoryStatuses'
+            ))
                 ->setParameter('inventoryStatuses', $allowedStatuses);
         } else {
             // When allowed statuses list is empty - hide all products

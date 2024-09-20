@@ -92,6 +92,7 @@ Feature: Product attributes import with incorrect configuration
   Scenario: Check import error page from the email after importing file
     Given I import file
     Then Email should contains the following "Errors: 3 processed: 0, read: 2, added: 0, updated: 0, replaced: 0" text
+    And I wait for 2 seconds
     When I follow "Error log" link from the email
     Then I should see "Error in row #1. Attribute with datetime type cannot be filterable."
     And I should see "Error in row #1. Attribute with datetime type cannot be searchable."

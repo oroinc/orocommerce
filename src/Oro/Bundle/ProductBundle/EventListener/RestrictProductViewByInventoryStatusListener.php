@@ -21,9 +21,9 @@ class RestrictProductViewByInventoryStatusListener extends AbstractRestrictProdu
 
     protected function restrictProductView(Product $product, ControllerEvent $event)
     {
-        $allowedStatuses = $this->configManager->get('oro_product.general_frontend_product_visibility');
+        $allowedOptionIds = $this->configManager->get('oro_product.general_frontend_product_visibility');
         if ($product->getInventoryStatus()
-            && !\in_array($product->getInventoryStatus()->getId(), $allowedStatuses, true)
+            && !\in_array($product->getInventoryStatus()->getId(), $allowedOptionIds, true)
         ) {
             throw new AccessDeniedHttpException(sprintf(
                 'Inventory status "%s" is configured as invisible. Product id: %d',

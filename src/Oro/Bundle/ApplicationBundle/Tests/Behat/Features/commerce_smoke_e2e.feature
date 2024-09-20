@@ -156,8 +156,6 @@ Feature: Commerce smoke e2e
       | L      |
       | M      |
     When I save and close form
-    And click update schema
-    Then should see Schema updated flash message
 
     And go to Products/ Product Families
     When I click "Create Product Family"

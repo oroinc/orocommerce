@@ -2,14 +2,16 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\Strategy;
 
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Helper for Inventory Status import strategy.
+ */
 class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
-    /** @var array $inventoryStatusCache */
-    protected $inventoryStatusCache = [];
+    protected array $inventoryStatusCache = [];
 
     /**
      * {@inheritdoc}
@@ -37,11 +39,10 @@ class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelp
         }
 
         $inventoryStatus = null;
-        if (!empty(trim($product->getInventoryStatus()))) {
-            $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        if (!empty($product->getInventoryStatus())) {
             $inventoryStatus = $this->checkAndRetrieveEntity(
-                $inventoryStatusClassName,
-                ['name' => $product->getInventoryStatus()],
+                EnumOption::class,
+                ['id' => $product->getInventoryStatus()?->getId()],
                 'Inventory Status'
             );
         }

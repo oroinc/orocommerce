@@ -28,7 +28,7 @@ data:
         inventory_status:
             data:
                 type: prodinventorystatuses
-                id: 'out_of_stock'
+                id: out_of_stock
         primaryUnitPrecision:
             data:
                 type: productunitprecisions

@@ -6,6 +6,7 @@ use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as BaseLoadCustomerData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -157,7 +158,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertCount(1, $data);
         $this->assertArrayHasKey('item', $data[0]);
         $this->assertEquals('product-1', $data[0]['sku']);
-        $this->assertEquals('in_stock', $data[0]['inventoryStatus']);
+        $this->assertEquals('prod_inventory_status.in_stock', $data[0]['inventoryStatus']);
         $this->assertEquals(8, $data[0]['quantity']);
         $this->assertEquals('bottle', $data[0]['unit']);
         $this->assertEquals('$13.10', $data[0]['price']);
@@ -251,9 +252,14 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->requestShoppingListPage('oro_shopping_list_frontend_view', $shoppingList1->getId());
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        $availableInventoryStatuses = [$this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
-            ->find(Product::INVENTORY_STATUS_IN_STOCK)];
+        $availableInventoryStatuses = [
+            $this->getContainer()->get('doctrine')
+                ->getRepository(EnumOption::class)
+                ->find(ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_IN_STOCK
+                ))
+        ];
 
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
         $this->configManager->flush();
@@ -323,15 +329,34 @@ class ShoppingListControllerTest extends WebTestCase
         );
         $this->configManager->set(
             'oro_product.general_frontend_product_visibility',
-            ['in_stock', 'out_of_stock', 'discontinued']
+            [
+                ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_IN_STOCK
+                ),
+                ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_OUT_OF_STOCK
+                ),
+                ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_DISCONTINUED
+                ),
+            ]
         );
         $this->configManager->flush();
 
         $this->requestShoppingListPage('oro_shopping_list_frontend_view', $shoppingList->getId());
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        $availableInventoryStatuses = [$this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
-            ->find(Product::INVENTORY_STATUS_IN_STOCK)];
+        $availableInventoryStatuses = [
+            $this->getContainer()->get('doctrine')->getRepository(EnumOption::class)
+                ->find(
+                    ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    )
+                )
+        ];
 
         $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
         $this->configManager->flush();

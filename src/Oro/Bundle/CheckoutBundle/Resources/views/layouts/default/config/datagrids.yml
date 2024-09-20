@@ -234,6 +234,7 @@ datagrids:
                 join:
                     left:
                         - { join: lineItem.product, alias: product }
+                        - { join: Oro\Bundle\EntityExtendBundle\Entity\EnumOption, alias: invStatus, conditionType: WITH, condition: "JSON_EXTRACT(product.serialized_data, 'inventory_status') = invStatus" }
                         - { join: lineItem.parentProduct, alias: parentProduct }
                         - { join: lineItem.productUnit, alias: unit}
                         - { join: lineItem.kitItemLineItems, alias: kitItemLineItem }
@@ -303,10 +304,10 @@ datagrids:
                     filter_by_having: true
                 inventoryStatus:
                     type:             choice
-                    data_name:        product.inventory_status
+                    data_name:        invStatus
                     options:
                         field_options:
-                            choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                            choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('prod_inventory_status')"
                             translatable_options: false
                             multiple: true
                     label:            oro.checkout.frontend.checkout.lineitem.filter.inventory_status.label

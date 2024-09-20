@@ -13,7 +13,7 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
-                        identifier: 'submitted_for_review'
+                        identifier: 'quote_internal_status.submitted_for_review'
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.submit_for_review.success
                         type: 'info'
@@ -33,7 +33,7 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
-                        identifier: 'under_review'
+                        identifier: 'quote_internal_status.under_review'
                     - '@unset_value': [$approved]
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.review.success
@@ -46,7 +46,7 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
-                        identifier: 'draft'
+                        identifier: 'quote_internal_status.draft'
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.return.success
                         type: 'info'
@@ -58,7 +58,7 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
-                        identifier: 'reviewed'
+                        identifier: 'quote_internal_status.reviewed'
                     - '@assign_value': [$approved, true]
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.approve.success
@@ -71,7 +71,7 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
-                        identifier: 'not_approved'
+                        identifier: 'quote_internal_status.not_approved'
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.decline_by_reviewer.success
                         type: 'info'

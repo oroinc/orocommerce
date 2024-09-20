@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -218,15 +219,14 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
 
         if (isset($orderData['internalStatus'])) {
             $order->setInternalStatus(
-                $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-                    ->find($orderData['internalStatus'])
+                $manager->getRepository(EnumOption::class)
+                    ->find(ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $orderData['internalStatus']))
             );
         }
-
         if (isset($orderData['status'])) {
             $order->setStatus(
-                $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::STATUS_CODE))
-                    ->find($orderData['status'])
+                $manager->getRepository(EnumOption::class)
+                    ->find(ExtendHelper::buildEnumOptionId(Order::STATUS_CODE, $orderData['status']))
             );
         }
 

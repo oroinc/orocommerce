@@ -34,7 +34,7 @@ included:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@out_of_stock->id)>'
+                    id: '<toString(@out_of_stock->internalId)>'
             product:
                 data:
                     type: products
@@ -63,7 +63,7 @@ included:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@out_of_stock->id)>'
+                    id: '<toString(@out_of_stock->internalId)>'
             product:
                 data:
                     type: products
@@ -93,7 +93,7 @@ included:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: '<toString(@in_stock->internalId)>'
             product:
                 data:
                     type: products

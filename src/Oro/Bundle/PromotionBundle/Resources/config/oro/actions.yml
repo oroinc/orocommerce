@@ -196,7 +196,7 @@ operations:
         preconditions:
             '@and':
                 - '@neq': [$.data.disablePromotions, true]
-                - '@equal': [$internalStatus.id, 'open']
+                - '@equal': [$internalStatus.internalId, 'open']
 
     oro_promotion_coupon_unassign:
         label: oro.promotion.ui.unassign_coupon.label

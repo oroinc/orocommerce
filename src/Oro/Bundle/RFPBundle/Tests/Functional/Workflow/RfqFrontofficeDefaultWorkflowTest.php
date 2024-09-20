@@ -81,8 +81,8 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $data = self::jsonToArray($result);
         $this->assertArrayHasKey('workflowItem', $data);
         $this->request = $this->refreshEntity($this->request);
-        $this->assertEquals('cancelled', $this->request->getCustomerStatus()->getId());
-        $this->assertEquals('cancelled_by_customer', $this->request->getInternalStatus()->getId());
+        $this->assertEquals('cancelled', $this->request->getCustomerStatus()->getInternalId());
+        $this->assertEquals('cancelled_by_customer', $this->request->getInternalStatus()->getInternalId());
     }
 
     /**
@@ -108,14 +108,14 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $this->assertArrayHasKey('entity_class', $workflowItem);
 
         //Check Old Request statuses
-        $this->assertEquals('cancelled', $this->request->getCustomerStatus()->getId());
-        $this->assertEquals('cancelled_by_customer', $this->request->getInternalStatus()->getId());
+        $this->assertEquals('cancelled', $this->request->getCustomerStatus()->getInternalId());
+        $this->assertEquals('cancelled_by_customer', $this->request->getInternalStatus()->getInternalId());
 
         /** @var Request $newRequest */
         $newRequest = $this->getEntity($workflowItem['entity_class'], $workflowItem['entity_id'] + 1);
         $this->assertNotNull($newRequest);
-        $this->assertEquals('submitted', $newRequest->getCustomerStatus()->getId());
-        $this->assertEquals('open', $newRequest->getInternalStatus()->getId());
+        $this->assertEquals('submitted', $newRequest->getCustomerStatus()->getInternalId());
+        $this->assertEquals('open', $newRequest->getInternalStatus()->getInternalId());
     }
 
     public function testProvideMoreInformationTransition()
@@ -142,8 +142,8 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         $this->assertContains('transitionSuccess', $result);
 
         $this->request = $this->refreshEntity($this->request);
-        $this->assertEquals('submitted', $this->request->getCustomerStatus()->getId());
-        $this->assertEquals('open', $this->request->getInternalStatus()->getId());
+        $this->assertEquals('submitted', $this->request->getCustomerStatus()->getInternalId());
+        $this->assertEquals('open', $this->request->getInternalStatus()->getInternalId());
 
         $crawler = $this->openEntityViewPage($this->request);
         static::assertStringContainsString('customer notes', $crawler->html());

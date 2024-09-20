@@ -3,17 +3,17 @@
 namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
-use Oro\Bundle\EntityConfigBundle\Migration\RemoveEnumFieldQuery;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveOutdatedEnumFieldQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroProductBundle implements Migration, ExtendExtensionAwareInterface, OrderedMigrationInterface
+class OroProductBundle implements Migration, OutdatedExtendExtensionAwareInterface, OrderedMigrationInterface
 {
-    use ExtendExtensionAwareTrait;
+    use OutdatedExtendExtensionAwareTrait;
 
     /**
      * {@inheritDoc}
@@ -100,7 +100,7 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         $queries->addPostQuery('UPDATE orob2b_product SET status = status_id');
 
         // drop status enum table
-        $enumStatusTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_status');
+        $enumStatusTable = $this->outdatedExtendExtension->generateEnumTableName('prod_status');
         if ($schema->hasTable($enumStatusTable)) {
             $schema->dropTable($enumStatusTable);
         }
@@ -115,12 +115,12 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface, Orde
         }
 
         // drop visibility enum table
-        $enumVisibilityTable = $this->extendExtension->getNameGenerator()->generateEnumTableName('prod_visibility');
+        $enumVisibilityTable = $this->outdatedExtendExtension->generateEnumTableName('prod_visibility');
         if ($schema->hasTable($enumVisibilityTable)) {
             $schema->dropTable($enumVisibilityTable);
         }
 
         // remove visibility enum field data
-        $queries->addQuery(new RemoveEnumFieldQuery('Oro\Bundle\ProductBundle\Entity\Product', 'visibility'));
+        $queries->addQuery(new RemoveOutdatedEnumFieldQuery('Oro\Bundle\ProductBundle\Entity\Product', 'visibility'));
     }
 }

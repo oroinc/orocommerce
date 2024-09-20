@@ -5,7 +5,8 @@ namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 use Doctrine\Persistence\ManagerRegistry;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
@@ -72,16 +73,21 @@ class InlineEditProductController extends AbstractFOSRestController
     #[AclAncestor('oro_product_update')]
     public function patchInventoryStatusAction(Request $request, Product $product)
     {
-        $inventoryStatusId = $request->get('inventoryStatusId');
+        $inventoryStatusId = $request->get('inventory_status');
 
         if ($inventoryStatusId === null) {
             return parent::handleView($this->view([], Response::HTTP_BAD_REQUEST));
         }
 
-        /** @var AbstractEnumValue $inventoryStatus */
+        /** @var EnumOptionInterface $inventoryStatus */
         $inventoryStatus = $this->container->get('doctrine')
-            ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
-            ->find($inventoryStatusId);
+            ->getRepository(EnumOption::class)
+            ->find(
+                ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    ExtendHelper::getEnumInternalId($inventoryStatusId)
+                )
+            );
 
         if (!$inventoryStatus) {
             return parent::handleView($this->view([], Response::HTTP_NOT_FOUND));

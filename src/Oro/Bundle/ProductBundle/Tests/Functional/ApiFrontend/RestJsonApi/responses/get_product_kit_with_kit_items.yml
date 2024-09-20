@@ -61,7 +61,7 @@ data:
         inventoryStatus:
             data:
                 type: productinventorystatuses
-                id: '<toString(@in_stock->id)>'
+                id: '<toString(@in_stock->internalId)>'
         variantProducts:
             data: []
         parentProducts:
@@ -173,7 +173,7 @@ included:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: '<toString(@in_stock->internalId)>'
             variantProducts:
                 data: []
             parentProducts:
@@ -256,7 +256,7 @@ included:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@out_of_stock->id)>'
+                    id: '<toString(@out_of_stock->internalId)>'
             variantProducts:
                 data: []
             parentProducts:

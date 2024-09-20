@@ -5,10 +5,12 @@ namespace Oro\Bundle\RFPBundle\Migrations\Data\ORM;
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 use Oro\Bundle\RFPBundle\Entity\Request;
 
+/**
+ * Loads RFQ internal status enum options.
+ */
 class LoadRequestInternalStatuses extends AbstractEnumFixture
 {
-    /** @var array */
-    protected static $data = [
+    protected static array $data = [
         'open' => 'Open',
         'processed' => 'Processed',
         'more_info_requested' => 'More Info Requested',
@@ -17,10 +19,7 @@ class LoadRequestInternalStatuses extends AbstractEnumFixture
         'deleted' => 'Deleted'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData()
+    protected function getData(): array
     {
         return self::$data;
     }
@@ -29,15 +28,12 @@ class LoadRequestInternalStatuses extends AbstractEnumFixture
      * Returns array of data keys.
      * @return array
      */
-    public static function getDataKeys()
+    public static function getDataKeys(): array
     {
         return array_keys(self::$data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEnumCode()
+    protected function getEnumCode(): string
     {
         return Request::INTERNAL_STATUS_CODE;
     }

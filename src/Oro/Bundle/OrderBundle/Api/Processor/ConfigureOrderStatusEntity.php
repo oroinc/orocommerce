@@ -2,18 +2,17 @@
 
 namespace Oro\Bundle\OrderBundle\Api\Processor;
 
-use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\ApiBundle\Processor\Context;
+use Oro\Bundle\ApiBundle\Processor\GetConfig\ConfigContext;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
-use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
- * Updates the DQL query to load the internal order status instead of the order status
+ * Switches to the internal order status
  * when "Enable External Status Management" configuration option is disabled.
  */
-class UpdateOrderStatusQuery implements ProcessorInterface
+class ConfigureOrderStatusEntity implements ProcessorInterface
 {
     private OrderConfigurationProviderInterface $configurationProvider;
 
@@ -27,19 +26,12 @@ class UpdateOrderStatusQuery implements ProcessorInterface
      */
     public function process(ContextInterface $context): void
     {
-        /** @var Context $context */
-
-        $query = $context->getQuery();
-        if (!$query instanceof QueryBuilder) {
-            return;
-        }
+        /** @var ConfigContext $context */
 
         if ($this->configurationProvider->isExternalStatusManagementEnabled()) {
             return;
         }
 
-        $entityAlias = QueryBuilderUtil::getSingleRootAlias($query);
-        $query->resetDQLPart('from');
-        $query->from('Extend\Entity\EV_Order_Internal_Status', $entityAlias);
+        $context->getResult()->addHint('HINT_ENUM_OPTION', Order::INTERNAL_STATUS_CODE);
     }
 }

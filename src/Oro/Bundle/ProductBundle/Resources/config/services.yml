@@ -1110,19 +1110,26 @@ services:
         arguments:
             - '@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumValueTranslation', event: postPersist, method: clearCache }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumValueTranslation', event: postUpdate, method: clearCache }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumValueTranslation', event: postRemove, method: clearCache }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue', event: postPersist, method: clearCache }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue', event: postUpdate, method: clearCache }
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue', event: postRemove, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumOptionTranslation', event: postPersist, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumOptionTranslation', event: postUpdate, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumOptionTranslation', event: postRemove, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumOption', event: postPersist, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumOption', event: postUpdate, method: clearCache }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\EntityExtendBundle\Entity\EnumOption', event: postRemove, method: clearCache }
             - { name: kernel.event_listener, event: oro.entity_extend.entity.schema.update, method: clearCache }
+
+    oro_product.event_listener.enum_attribute_changes:
+        class: 'Oro\Bundle\ProductBundle\EventListener\EnumAttributeChangesListener'
+        arguments:
+            - '@oro_product.product_variant_field.field_value_handler.enum_type_handler.cache'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.post_flush, method: postFlush }
 
     oro_product.product_variant_field.field_value_handler.enum_type_handler:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_entity_extend.enum_options_provider'
             - '@logger'
             - '@oro_entity_config.config_manager'
             - '@oro_locale.helper.localization'
@@ -1930,7 +1937,7 @@ services:
             - '@oro_ui.twig.html_tag'
             - '@oro_product.provider.product_image_placeholder'
             - '@oro_config.manager'
-            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_entity_extend.enum_options_provider'
             - '@event_dispatcher'
             - '@oro_ui.tools.url_helper'
 

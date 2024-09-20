@@ -75,7 +75,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                             'inventoryStatus' => [
                                 'data' => [
                                     'type' => 'productinventorystatuses',
-                                    'id'   => '<toString(@product1->inventoryStatus->id)>'
+                                    'id'   => '<toString(@product1->inventoryStatus->internalId)>'
                                 ]
                             ]
                         ]
@@ -84,7 +84,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                 'included' => [
                     [
                         'type'       => 'productinventorystatuses',
-                        'id'         => '<toString(@product1->inventoryStatus->id)>',
+                        'id'         => '<toString(@product1->inventoryStatus->internalId)>',
                         'attributes' => [
                             'name' => '<toString(@product1->inventoryStatus->name)>'
                         ]
@@ -191,11 +191,11 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
                                 'testAttrDateTime'   => '2010-06-15T20:20:30Z',
                                 'testAttrMultiEnum'  => [
                                     [
-                                        'id'          => '@productAttrMultiEnum_option1->id',
+                                        'id'          => '@productAttrMultiEnum_option1->internalId',
                                         'targetValue' => '@productAttrMultiEnum_option1->name'
                                     ],
                                     [
-                                        'id'          => '@productAttrMultiEnum_option2->id',
+                                        'id'          => '@productAttrMultiEnum_option2->internalId',
                                         'targetValue' => '@productAttrMultiEnum_option2->name'
                                     ]
                                 ],

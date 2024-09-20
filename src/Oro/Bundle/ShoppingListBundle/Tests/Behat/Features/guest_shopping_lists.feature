@@ -35,9 +35,7 @@ Feature: Guest Shopping Lists
       | Label |
       | L     |
       | M     |
-    When I save and close form
-    And click update schema
-    Then I should see Schema updated flash message
+    Then I save and close form
 
   Scenario: Add new attributes to product family
     Given I go to Products/ Product Families

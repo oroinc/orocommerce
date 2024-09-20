@@ -48,7 +48,7 @@ services:
             - '@oro_api.entity_field_filtering_helper'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: get_config, requestType: '!frontend', extra: '!identifier_fields_only', priority: -40 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only', requestType: '!frontend', priority: -40 }
 
     oro_cms.api.frontend.configure_wysiwyg_fields:
         class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureSeparateWYSIWYGFields
@@ -58,7 +58,7 @@ services:
             - '@oro_api.doctrine_helper'
             - '@oro_api.resources_provider'
         tags:
-            - { name: oro.api.processor, action: get_config, requestType: frontend, extra: '!identifier_fields_only', priority: -40 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only', requestType: frontend, priority: -40 }
 
     oro_cms.api.frontend.product.configure_wysiwyg_attributes:
         class: Oro\Bundle\CMSBundle\Api\Processor\ConfigureWYSIWYGAttributes
@@ -66,7 +66,7 @@ services:
             - '@oro_cms.provider.wysiwyg_fields_provider'
             - 'productAttributes'
         tags:
-            - { name: oro.api.processor, action: get_config, requestType: frontend, extra: '!identifier_fields_only', class: Oro\Bundle\ProductBundle\Entity\Product, priority: -110 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only', requestType: frontend, class: Oro\Bundle\ProductBundle\Entity\Product, priority: -110 }
 
     oro_cms.api.complete_wysiwyg_fields_descriptions:
         class: Oro\Bundle\CMSBundle\Api\Processor\CompleteWYSIWYGFieldsDescriptions

@@ -13,8 +13,8 @@ use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfi
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
@@ -78,10 +78,10 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         /** @var User $user */
         $defaultUser = $manager->getRepository(User::class)->findOneBy([]);
 
-        /** @var AbstractEnumValue[] $internalStatuses */
+        /** @var EnumOptionInterface[] $internalStatuses */
         $internalStatuses = $manager
-            ->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-            ->findAll();
+            ->getRepository(EnumOption::class)
+            ->findBy(['enumCode' => Order::INTERNAL_STATUS_CODE]);
 
         $paymentTerm = $manager->getRepository(PaymentTerm::class)->findOneBy([]);
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');

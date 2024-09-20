@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
@@ -62,7 +63,10 @@ class ProductHelperTestCase extends WebTestCase
         $formValues['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
         $formValues['oro_product']['sku'] = ProductTestHelper::TEST_SKU;
         $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
-        $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['oro_product']['inventory_status'] = ExtendHelper::buildEnumOptionId(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            Product::INVENTORY_STATUS_IN_STOCK
+        );
         $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
         $formValues['oro_product']['names']['values']['default'] = ProductTestHelper::DEFAULT_NAME;
         $formValues['oro_product']['descriptions']['values']['default']['wysiwyg'] =
@@ -116,7 +120,10 @@ class ProductHelperTestCase extends WebTestCase
                 '_token' => $form['oro_product[_token]']->getValue(),
                 'sku' => ProductTestHelper::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
-                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'inventory_status' => ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_OUT_OF_STOCK
+                ),
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_SIMPLE,
                 'primaryUnitPrecision' => [

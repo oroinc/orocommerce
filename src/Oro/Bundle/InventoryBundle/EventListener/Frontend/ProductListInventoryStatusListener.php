@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\InventoryBundle\EventListener\Frontend;
 
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\BuildQueryProductListEvent;
 use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
 
@@ -11,11 +13,8 @@ use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
  */
 class ProductListInventoryStatusListener
 {
-    protected EnumValueProvider $enumValueProvider;
-
-    public function __construct(EnumValueProvider $enumValueProvider)
+    public function __construct(protected EnumOptionsProvider $enumOptionsProvider)
     {
-        $this->enumValueProvider = $enumValueProvider;
     }
 
     public function onBuildQuery(BuildQueryProductListEvent $event): void
@@ -26,15 +25,17 @@ class ProductListInventoryStatusListener
 
     public function onBuildResult(BuildResultProductListEvent $event): void
     {
-        $inventoryStatuses = array_flip(
-            $this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status')
-        );
+        $enumInventoryChoices = $this->enumOptionsProvider
+            ->getEnumInternalChoices(Product::INVENTORY_STATUS_ENUM_CODE);
 
         foreach ($event->getProductData() as $productId => $data) {
             $productView = $event->getProductView($productId);
             $inventoryStatus = $data['inventory_status'] ?? null;
+            if (is_string($inventoryStatus)) {
+                $inventoryStatus = ExtendHelper::getEnumInternalId($inventoryStatus);
+            }
             $productView->set('inventory_status', $inventoryStatus);
-            $productView->set('inventory_status_label', $inventoryStatuses[$inventoryStatus] ?? $inventoryStatus);
+            $productView->set('inventory_status_label', $enumInventoryChoices[$inventoryStatus] ?? $inventoryStatus);
         }
     }
 }

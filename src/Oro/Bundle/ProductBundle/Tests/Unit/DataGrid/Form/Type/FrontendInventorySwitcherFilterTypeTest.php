@@ -6,6 +6,7 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\FilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
 use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
 use Oro\Bundle\ProductBundle\DataGrid\Form\Type\FrontendInventorySwitcherFilterType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -51,6 +52,7 @@ final class FrontendInventorySwitcherFilterTypeTest extends AbstractTypeTestCase
                     'default_value' => null,
                     'null_value' => null,
                     'class' => null,
+                    'enum_code' => Product::INVENTORY_STATUS_ENUM_CODE
                 ],
             ],
         ];

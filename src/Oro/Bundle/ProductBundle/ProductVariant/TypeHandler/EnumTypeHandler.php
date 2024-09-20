@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ProductBundle\ProductVariant\TypeHandler;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
 use Symfony\Component\Form\FormFactory;
 
@@ -14,27 +16,11 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
 {
     const TYPE = 'enum';
 
-    /** @var FormFactory */
-    protected $formFactory;
-
-    /** @var string */
-    protected $productClass;
-
-    /**
-     * @var ConfigManager
-     */
-    protected $configManager;
-
-    /**
-     * @param FormFactory $formFactory
-     * @param string $productClass
-     * @param ConfigManager $configManager
-     */
-    public function __construct(FormFactory $formFactory, $productClass, ConfigManager $configManager)
-    {
-        $this->formFactory = $formFactory;
-        $this->productClass = $productClass;
-        $this->configManager = $configManager;
+    public function __construct(
+        protected FormFactory $formFactory,
+        protected string $productClass,
+        protected ConfigManager $configManager
+    ) {
     }
 
     /**
@@ -43,40 +29,31 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
     public function createForm($fieldName, array $availability, array $options = [])
     {
         $options = array_merge($this->getOptions($fieldName, $availability), $options);
-        $form = $this->formFactory->createNamed($fieldName, EnumSelectType::class, null, $options);
 
-        return $form;
+        return $this->formFactory->createNamed($fieldName, EnumSelectType::class, null, $options);
     }
 
-    /**
-     * @return string
-     */
-    public function getType()
+    public function getType(): string
     {
         return self::TYPE;
     }
 
-    /**
-     * @param string $fieldName
-     * @param array $availability
-     * @return array
-     */
-    private function getOptions($fieldName, array $availability)
+    private function getOptions(string $fieldName, array $availability): array
     {
         $notAvailableVariants = array_filter($availability, function ($item) {
             return $item === false;
         });
-
         $disabledValues = array_map('\strval', array_keys($notAvailableVariants));
-
         $config = $this->configManager->getConfigFieldModel($this->productClass, $fieldName);
-        $extendConfig = $config->toArray('extend');
+        $enumConfig = $config->toArray('enum');
 
         return [
-            'class' => $extendConfig['target_entity'],
+            'class' => EnumOption::class,
+            'enum_code' => $enumConfig['enum_code'],
             'configs' => ['allowClear' => false],
             'disabled_values' => $disabledValues,
-            'auto_initialize' => false
+            'auto_initialize' => false,
+            'multiple' => ExtendHelper::isMultiEnumType($config->getType())
         ];
     }
 }

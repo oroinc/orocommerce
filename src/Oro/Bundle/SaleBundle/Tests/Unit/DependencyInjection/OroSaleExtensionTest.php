@@ -21,7 +21,10 @@ class OroSaleExtensionTest extends \PHPUnit\Framework\TestCase
                 [
                     'settings' => [
                         'resolved' => true,
-                        'backend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
+                        'backend_product_visibility' => [
+                            'value' => ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
+                            'scope' => 'app'
+                        ],
                         'contact_info_source_display' => ['value' => 'dont_display', 'scope' => 'app'],
                         'contact_details' => ['value' => '', 'scope' => 'app'],
                         'allow_user_configuration' => ['value' => true, 'scope' => 'app'],

@@ -41,7 +41,7 @@ class WebsiteSearchProductIndexerListener
             $event->addField(
                 $product->getId(),
                 'inv_status',
-                $product->getInventoryStatus() ? $product->getInventoryStatus()->getId() : ''
+                $product->getInventoryStatus() ? $product->getInventoryStatus()->getInternalId() : ''
             );
 
             if ($this->entityFallbackResolver->getFallbackValue($product, 'highlightLowInventory')) {

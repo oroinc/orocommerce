@@ -18,7 +18,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -35,8 +35,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @method AbstractEnumValue getInternalStatus()
- * @method AbstractEnumValue getCustomerStatus()
+ * @method EnumOptionInterface getInternalStatus()
+ * @method EnumOptionInterface getCustomerStatus()
  * @mixin OroRFPBundle_Entity_Request
  */
 #[ORM\Entity(repositoryClass: RequestRepository::class)]

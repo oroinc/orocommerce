@@ -4,9 +4,10 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductLineItemListener;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -101,9 +102,13 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
         return $product;
     }
 
-    private function getInternalStatus(?string $id): AbstractEnumValue
+    private function getInternalStatus(?string $id): EnumOptionInterface
     {
-        return new TestEnumValue($id, null !== $id ? sprintf('Status (%s)', $id) : null);
+        return new TestEnumValue(
+            Order::INTERNAL_STATUS_CODE,
+            null !== $id ? sprintf('Status (%s)', $id) : null,
+            $id
+        );
     }
 
     public function testOrderLineItemProductNotChanged(): void

@@ -26,7 +26,6 @@ Feature: Override product variations functionality
     And I upload "override_product_variations_functionality_attributes.csv" file to "ShoppingListImportFileField"
     And I click "Import file"
     And I reload the page
-    And I confirm schema update
 
   Scenario: Update product family
     Given I proceed as the Admin

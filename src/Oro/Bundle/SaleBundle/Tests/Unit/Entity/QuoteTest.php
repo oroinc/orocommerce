@@ -158,7 +158,13 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         bool $expected,
         ?string $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
     ): void {
-        $status = $internalStatus ? new TestEnumValue($internalStatus, 'test') : null;
+        $status = $internalStatus
+            ? new TestEnumValue(
+                Quote::INTERNAL_STATUS_CODE,
+                'Test',
+                $internalStatus
+            )
+            : null;
 
         $quote = new Quote();
         $quote->setExpired($expired)
@@ -226,7 +232,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
     public function testIsAvailableOnFrontend(string $internalStatus, bool $expected): void
     {
         $quote = new Quote();
-        $quote->setInternalStatus(new TestEnumValue($internalStatus, 'test'));
+        $quote->setInternalStatus(new TestEnumValue(Quote::INTERNAL_STATUS_CODE, 'Test', $internalStatus));
 
         $this->assertEquals($expected, $quote->isAvailableOnFrontend());
     }

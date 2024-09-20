@@ -36,10 +36,6 @@ Feature: Visibility of product variants
       | Green |
     And I save form
 
-    # Update schema
-    And I go to Products / Product Attributes
-    And I confirm schema update
-
     # Update attribute family
     And I go to Products / Product Families
     And I click Edit product_attribute_family_code in grid

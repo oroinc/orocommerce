@@ -18,7 +18,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -42,8 +42,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
- * @method AbstractEnumValue getInternalStatus()
- * @method AbstractEnumValue getCustomerStatus()
+ * @method EnumOptionInterface getInternalStatus()
+ * @method EnumOptionInterface getCustomerStatus()
  * @mixin OroSaleBundle_Entity_Quote
  */
 #[ORM\Entity(repositoryClass: QuoteRepository::class)]
@@ -98,7 +98,7 @@ class Quote implements
     const INTERNAL_STATUS_DELETED = 'deleted';
     const INTERNAL_STATUS_SENT_TO_CUSTOMER = 'sent_to_customer';
 
-    const FRONTEND_INTERNAL_STATUSES = [
+    const INTERNAL_STATUSES = [
         'template',
         'open',
         'sent_to_customer',
@@ -748,18 +748,18 @@ class Quote implements
 
         return !$this->isExpired()
             && $status
-            && $status->getId() === self::INTERNAL_STATUS_SENT_TO_CUSTOMER
+            && $status->getInternalId() === self::INTERNAL_STATUS_SENT_TO_CUSTOMER
             && (!$this->getValidUntil() || $this->getValidUntil() >= new \DateTime('now', new \DateTimeZone('UTC')));
     }
 
-    /**
-     * @return bool
-     */
-    public function isAvailableOnFrontend()
+    public function isAvailableOnFrontend(): bool
     {
         $status = $this->getInternalStatus();
+        if (!$status) {
+            return true;
+        }
 
-        return !$status || \in_array($status->getId(), self::FRONTEND_INTERNAL_STATUSES, true);
+        return in_array($status->getInternalId(), self::INTERNAL_STATUSES, true);
     }
 
     /**

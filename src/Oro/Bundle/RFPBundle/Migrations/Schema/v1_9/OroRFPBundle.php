@@ -5,8 +5,8 @@ namespace Oro\Bundle\RFPBundle\Migrations\Schema\v1_9;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareTrait;
@@ -17,9 +17,9 @@ use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestCustomerStatuses;
 use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestInternalStatuses;
 use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
-class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameExtensionAwareInterface
+class OroRFPBundle implements Migration, OutdatedExtendExtensionAwareInterface, RenameExtensionAwareInterface
 {
-    use ExtendExtensionAwareTrait;
+    use OutdatedExtendExtensionAwareTrait;
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
@@ -53,7 +53,7 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
             LoadRequestCustomerStatuses::getDataKeys()
         );
 
-        $customerStatusEnumTable = $this->extendExtension->addEnumField(
+        $customerStatusEnumTable = $this->outdatedExtendExtension->addOutdatedEnumField(
             $schema,
             'oro_rfp_request',
             'customer_status',
@@ -70,8 +70,7 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface, RenameEx
             'immutable_codes',
             LoadRequestInternalStatuses::getDataKeys()
         );
-
-        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+        $internalStatusEnumTable = $this->outdatedExtendExtension->addOutdatedEnumField(
             $schema,
             'oro_rfp_request',
             'internal_status',

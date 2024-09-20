@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\Parameter;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener;
 use Oro\Component\Testing\Unit\ORM\OrmTestCase;
@@ -57,8 +58,9 @@ class FrontendQuoteDatagridListenerTest extends OrmTestCase
 
         $this->assertEquals(
             sprintf(
-                'SELECT q.id FROM %s quote ' .
-                'WHERE quote.internal_status IS NULL OR quote.internal_status IN(:internalStatuses)',
+                "SELECT q.id FROM %s quote " .
+                "WHERE JSON_EXTRACT(quote.serialized_data, 'internal_status') IS NULL " .
+                "OR JSON_EXTRACT(quote.serialized_data, 'internal_status') IN(:internalStatuses)",
                 Quote::class
             ),
             $qb->getQuery()->getDQL()
@@ -66,14 +68,23 @@ class FrontendQuoteDatagridListenerTest extends OrmTestCase
         $this->assertEquals(
             sprintf(
                 'SELECT COUNT(q) FROM %s quote ' .
-                'WHERE quote.internal_status IS NULL OR quote.internal_status IN(:internalStatuses)',
+                "WHERE JSON_EXTRACT(quote.serialized_data, 'internal_status') IS NULL " .
+                "OR JSON_EXTRACT(quote.serialized_data, 'internal_status') IN(:internalStatuses)",
                 Quote::class
             ),
             $countQb->getQuery()->getDQL()
         );
 
         $expectedParameters = new ArrayCollection(
-            [new Parameter('internalStatuses', Quote::FRONTEND_INTERNAL_STATUSES)]
+            [
+                new Parameter(
+                    'internalStatuses',
+                    ExtendHelper::mapToEnumOptionIds(
+                        Quote::INTERNAL_STATUS_CODE,
+                        Quote::INTERNAL_STATUSES
+                    )
+                )
+            ]
         );
         $this->assertEquals($expectedParameters, $qb->getParameters());
         $this->assertEquals($expectedParameters, $countQb->getParameters());

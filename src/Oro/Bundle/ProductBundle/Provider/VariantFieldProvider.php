@@ -5,22 +5,19 @@ namespace Oro\Bundle\ProductBundle\Provider;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 
+/**
+ * Data Provider that returns variant fields (attributes with restrictions)
+ */
 class VariantFieldProvider
 {
-    /** @var AttributeManager */
-    private $attributeManager;
+    private array $allowedAttributeTypes = ['boolean', 'enum'];
 
-    /** @var SerializedFieldProvider */
-    private $serializedFieldProvider;
-
-    /** @var array */
-    private $allowedAttributeTypes = ['boolean', 'enum'];
-
-    public function __construct(AttributeManager $attributeManager, SerializedFieldProvider $serializedFieldProvider)
-    {
-        $this->attributeManager = $attributeManager;
-        $this->serializedFieldProvider = $serializedFieldProvider;
+    public function __construct(
+        private AttributeManager $attributeManager,
+        private SerializedFieldProvider $serializedFieldProvider
+    ) {
     }
 
     /**
@@ -38,7 +35,8 @@ class VariantFieldProvider
             if (!in_array($attribute->getType(), $this->allowedAttributeTypes, true) ||
                 $this->attributeManager->isSystem($attribute) ||
                 !$this->attributeManager->isActive($attribute) ||
-                $this->serializedFieldProvider->isSerialized($attribute)
+                ($this->serializedFieldProvider->isSerialized($attribute)
+                    && !ExtendHelper::isEnumerableType($attribute->getType()))
             ) {
                 continue;
             }

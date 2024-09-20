@@ -6,7 +6,7 @@ workflows:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'draft'
+                            identifier: 'quote_internal_status.draft'
                 edit_transition_definition:
                     actions:
                         - '@flash_message':
@@ -43,7 +43,7 @@ workflows:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'deleted'
+                            identifier: 'quote_internal_status.deleted'
                         - '@flash_message':
                             message: oro.sale.quote.message.quote.delete.success
                             type: 'info'
@@ -54,7 +54,7 @@ workflows:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'draft'
+                            identifier: 'quote_internal_status.draft'
                         - '@flash_message':
                             message: oro.sale.quote.message.quote.undelete.success
                             type: 'info'
@@ -109,7 +109,7 @@ workflows:
                                 - '@request_enum_entity':
                                     enum_code: 'quote_internal_status'
                                     attribute: $quote.internalStatus
-                                    identifier: 'sent_to_customer'
+                                    identifier: 'quote_internal_status.sent_to_customer'
                                 - '@run_action_group':
                                     action_group: oro_sale_notify_customer_by_email
                                     parameters_mapping:
@@ -124,7 +124,7 @@ workflows:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'cancelled'
+                            identifier: 'quote_internal_status.cancelled'
                         - '@flash_message':
                             message: oro.sale.quote.message.quote.cancel.success
                             type: 'info'
@@ -135,7 +135,7 @@ workflows:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'expired'
+                            identifier: 'quote_internal_status.expired'
                         - '@assign_value': [$quote.expired, true]
                         - '@flash_message':
                             message: oro.sale.quote.message.quote.expire.success
@@ -188,7 +188,7 @@ workflows:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'accepted'
+                            identifier: 'quote_internal_status.accepted'
                         - '@tree':
                             conditions:
                                 '@equal': ['after_accept', $expire_quote]
@@ -204,13 +204,13 @@ workflows:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'declined'
+                            identifier: 'quote_internal_status.declined'
                 decline_by_customer_transition_definition:
                     actions:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $quote.internalStatus
-                            identifier: 'declined'
+                            identifier: 'quote_internal_status.declined'
                         - '@flash_message':
                             message: oro.sale.quote.message.quote.decline.success
                             type: 'info'

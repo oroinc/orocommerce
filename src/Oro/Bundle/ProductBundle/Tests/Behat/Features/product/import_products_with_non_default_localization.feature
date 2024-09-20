@@ -20,8 +20,6 @@ Feature: Import products with Non Default Localization
       | Black |
       | White |
     And I save and close form
-    When click update schema
-    Then I should see Schema updated flash message
 
   Scenario: Update product family
     When I go to Products/ Product Families

@@ -30,7 +30,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I upload "configurable_products_for_matrix_forms/products_attributes.csv" file to "ShoppingListImportFileField"
     And I click "Import file"
     And I reload the page
-    And I confirm schema update
 
     # Update attribute family
     And I go to Products / Product Families

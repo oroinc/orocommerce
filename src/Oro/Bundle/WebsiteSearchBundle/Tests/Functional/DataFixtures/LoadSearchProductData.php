@@ -8,8 +8,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
@@ -46,13 +46,13 @@ class LoadSearchProductData extends AbstractFixture implements DependentFixtureI
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue[] $enumInventoryStatuses */
-        $enumInventoryStatuses = $manager->getRepository($inventoryStatusClassName)->findAll();
+        /** @var EnumOptionInterface[] $enumInventoryStatuses */
+        $enumInventoryStatuses = $manager->getRepository(EnumOption::class)
+            ->findBy(['enumCode' => Product::INVENTORY_STATUS_ENUM_CODE]);
 
         $inventoryStatuses = [];
         foreach ($enumInventoryStatuses as $inventoryStatus) {
-            $inventoryStatuses[$inventoryStatus->getId()] = $inventoryStatus;
+            $inventoryStatuses[$inventoryStatus->getInternalId()] = $inventoryStatus;
         }
 
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);

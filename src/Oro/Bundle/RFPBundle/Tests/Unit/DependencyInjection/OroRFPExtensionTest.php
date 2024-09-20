@@ -26,8 +26,20 @@ class OroRFPExtensionTest extends \PHPUnit\Framework\TestCase
                         'notify_owner_of_customer_user_record' => ['value' => 'always', 'scope' => 'app'],
                         'notify_assigned_sales_reps_of_the_customer' => ['value' => 'always', 'scope' => 'app'],
                         'notify_owner_of_customer' => ['value' => 'always', 'scope' => 'app'],
-                        'backend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
-                        'frontend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
+                        'backend_product_visibility' => [
+                            'value' => [
+                                'prod_inventory_status.in_stock',
+                                'prod_inventory_status.out_of_stock'
+                            ],
+                            'scope' => 'app'
+                        ],
+                        'frontend_product_visibility' => [
+                            'value' => [
+                                'prod_inventory_status.in_stock',
+                                'prod_inventory_status.out_of_stock'
+                            ],
+                            'scope' => 'app'
+                        ],
                         'guest_rfp' => ['value' => false, 'scope' => 'app'],
                         'default_guest_rfp_owner' => ['value' => null, 'scope' => 'app'],
                     ]

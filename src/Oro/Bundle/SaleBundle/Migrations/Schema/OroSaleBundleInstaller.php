@@ -11,7 +11,7 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
-use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
@@ -514,10 +514,7 @@ class OroSaleBundleInstaller implements
 
     private function addQuoteCustomerStatusField(Schema $schema): void
     {
-        $customerStatusOptions = new OroOptions();
-        $customerStatusOptions->set('enum', 'immutable_codes', LoadQuoteCustomerStatuses::getDataKeys());
-
-        $customerStatusEnumTable = $this->extendExtension->addEnumField(
+        $this->extendExtension->addEnumField(
             $schema,
             'oro_sale_quote',
             'customer_status',
@@ -526,15 +523,22 @@ class OroSaleBundleInstaller implements
             false,
             ['dataaudit' => ['auditable' => true]]
         );
-        $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
+        $enumOptionIds = [];
+        foreach (LoadQuoteCustomerStatuses::getDataKeys() as $key) {
+            $enumOptionIds[] = ExtendHelper::buildEnumOptionId(Quote::CUSTOMER_STATUS_CODE, $key);
+        }
+        $schema->getTable('oro_sale_quote')
+            ->addExtendColumnOption(
+                'customer_status',
+                'enum',
+                'immutable_codes',
+                $enumOptionIds
+            );
     }
 
     private function addQuoteInternalStatusField(Schema $schema): void
     {
-        $internalStatusOptions = new OroOptions();
-        $internalStatusOptions->set('enum', 'immutable_codes', LoadQuoteInternalStatuses::getDataKeys());
-
-        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+        $this->extendExtension->addEnumField(
             $schema,
             'oro_sale_quote',
             'internal_status',
@@ -543,7 +547,18 @@ class OroSaleBundleInstaller implements
             false,
             ['dataaudit' => ['auditable' => true]]
         );
-        $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
+
+        $enumOptionIds = [];
+        foreach (LoadQuoteInternalStatuses::getDataKeys() as $key) {
+            $enumOptionIds[] = ExtendHelper::buildEnumOptionId(Quote::INTERNAL_STATUS_CODE, $key);
+        }
+        $schema->getTable('oro_sale_quote')
+            ->addExtendColumnOption(
+                'internal_status',
+                'enum',
+                'immutable_codes',
+                $enumOptionIds
+            );
     }
 
     /**

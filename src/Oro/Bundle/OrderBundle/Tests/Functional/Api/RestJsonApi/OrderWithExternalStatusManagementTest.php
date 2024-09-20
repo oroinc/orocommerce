@@ -55,7 +55,7 @@ class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
 
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, (int)$this->getResourceId($response));
-        self::assertEquals('open', $order->getStatus()->getId());
+        self::assertEquals('open', $order->getStatus()->getInternalId());
     }
 
     public function testUpdate(): void
@@ -82,7 +82,7 @@ class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
-        self::assertEquals('open', $updatedOrder->getStatus()->getId());
+        self::assertEquals('open', $updatedOrder->getStatus()->getInternalId());
     }
 
     public function testGetSubresourceForStatus(): void
@@ -134,6 +134,6 @@ class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
-        self::assertEquals('open', $updatedOrder->getStatus()->getId());
+        self::assertEquals('open', $updatedOrder->getStatus()->getInternalId());
     }
 }

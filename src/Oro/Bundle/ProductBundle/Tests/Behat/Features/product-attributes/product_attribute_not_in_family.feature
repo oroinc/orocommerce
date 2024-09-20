@@ -23,8 +23,6 @@ Feature: Product attribute not in family
       | CustomSelectOption2 |
     And I save and close form
     And I should see "Attribute was successfully saved" flash message
-    When I click update schema
-    Then I should see "Schema updated" flash message
 
   Scenario: Ensure product attribute is not present in datagrid column manager
     Given I go to Products/ Products

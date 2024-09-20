@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\QueryDesignerBundle\Model\QueryDesigner;
@@ -81,17 +82,26 @@ class VirtualFieldsProductDecorator
 
         $field = $this->getRelationField($name);
 
+        if ($field && isset($field['name'], $field['type']) && ExtendHelper::isEnumerableType($field['type'])) {
+            $propertyValue = $this->getPropertyAccessor()->getValue($this->product, $field['name']);
+
+            if ($propertyValue) {
+                return $propertyValue;
+            }
+        }
         /**
          * If its dynamic attribute and its value is empty
          * for expression language proper work we need to return attribute stub
          */
         if ($field && $this->fieldHelper->isSingleDynamicAttribute($field)) {
-            // AbstractEnumValue array equivalent
+            // EnumOptionInterface array equivalent
             $propertyValue = [
-                'id'       => null,
-                'name'     => null,
+                'id' => null,
+                'enumCode' => null,
+                'internalId' => null,
+                'name' => null,
                 'priority' => 0,
-                'default'  => false,
+                'default' => false,
             ];
         }
 

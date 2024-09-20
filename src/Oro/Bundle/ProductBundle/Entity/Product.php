@@ -16,7 +16,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -42,8 +42,8 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyFields)
  *
- * @method AbstractEnumValue getInventoryStatus()
- * @method Product setInventoryStatus(AbstractEnumValue $enumId)
+ * @method EnumOptionInterface getInventoryStatus()
+ * @method Product setInventoryStatus(EnumOptionInterface $enumId)
  * @method ProductName getName(Localization $localization = null)
  * @method ProductName getDefaultName()
  * @method LocalizedFallbackValue getDefaultSlugPrototype()
@@ -160,16 +160,17 @@ class Product implements
     use ExtendEntityTrait;
 
 
-    const STATUS_DISABLED = 'disabled';
-    const STATUS_ENABLED = 'enabled';
+    public const STATUS_DISABLED = 'disabled';
+    public const STATUS_ENABLED = 'enabled';
 
-    const INVENTORY_STATUS_IN_STOCK = 'in_stock';
-    const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
-    const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
+    public const INVENTORY_STATUS_ENUM_CODE = 'prod_inventory_status';
+    public const INVENTORY_STATUS_IN_STOCK = 'in_stock';
+    public const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
+    public const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
 
-    const TYPE_SIMPLE = 'simple';
-    const TYPE_CONFIGURABLE = 'configurable';
-    const TYPE_KIT = 'kit';
+    public const TYPE_SIMPLE = 'simple';
+    public const TYPE_CONFIGURABLE = 'configurable';
+    public const TYPE_KIT = 'kit';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]

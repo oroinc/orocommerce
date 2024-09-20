@@ -5,7 +5,8 @@ namespace Oro\Bundle\InventoryBundle\EventListener\Frontend;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 
 /**
@@ -13,13 +14,10 @@ use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
  */
 class ProductDatagridInventoryStatusListener
 {
-    private const SELECT_PATH = '[source][query][select]';
+    private const string SELECT_PATH = '[source][query][select]';
 
-    protected EnumValueProvider $enumValueProvider;
-
-    public function __construct(EnumValueProvider $enumValueProvider)
+    public function __construct(protected EnumOptionsProvider $enumOptionsProvider)
     {
-        $this->enumValueProvider = $enumValueProvider;
     }
 
     public function onPreBuild(PreBuild $event): void
@@ -48,7 +46,7 @@ class ProductDatagridInventoryStatusListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
         $inventoryStatuses = array_flip(
-            $this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status')
+            $this->enumOptionsProvider->getEnumChoicesByCode(Product::INVENTORY_STATUS_ENUM_CODE)
         );
         foreach ($records as $record) {
             $inventoryStatus = $record->getValue('inventory_status');

@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Search;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\TextFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
@@ -118,11 +118,10 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
      */
     public function testEnumVariantSearch(string $enumName, array $expectedSkus)
     {
-        $variantClassName = ExtendHelper::buildEnumValueClassName('variant_field_code');
-        /** @var AbstractEnumValue $variantEnum */
+        /** @var EnumOptionInterface $variantEnum */
         $variantEnum = self::getContainer()->get('oro_entity.doctrine_helper')
-            ->getEntityRepository($variantClassName)
-            ->findOneBy(['name' => $enumName]);
+            ->getEntityRepository(EnumOption::class)
+            ->findOneBy(['name' => $enumName, 'enumCode' => 'variant_field_code']);
 
         $response = $this->client->requestFrontendGrid(
             'frontend-product-search-grid',
@@ -196,14 +195,14 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
     {
         return [
             'only first option' => [
-                'multienum_codes' => ['first'],
+                'multienum_codes' => ['multienum_code.first'],
                 'expected_skus' => [
                     LoadConfigurableProductWithVariants::FIRST_VARIANT_SKU,
                     LoadConfigurableProductWithVariants::CONFIGURABLE_SKU,
                 ],
             ],
             'only second option' => [
-                'multienum_codes' => ['second'],
+                'multienum_codes' => ['multienum_code.second'],
                 'expected_skus' => [
                     LoadConfigurableProductWithVariants::FIRST_VARIANT_SKU,
                     LoadConfigurableProductWithVariants::CONFIGURABLE_SKU,
@@ -211,14 +210,14 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
                 ],
             ],
             'only third option' => [
-                'multienum_codes' => ['third'],
+                'multienum_codes' => ['multienum_code.third'],
                 'expected_skus' => [
                     LoadConfigurableProductWithVariants::CONFIGURABLE_SKU,
                     LoadConfigurableProductWithVariants::SECOND_VARIANT_SKU,
                 ],
             ],
             'first and third options' => [
-                'multienum_codes' => ['first', 'third'],
+                'multienum_codes' => ['multienum_code.first', 'multienum_code.third'],
                 'expected_skus' => [
                     LoadConfigurableProductWithVariants::FIRST_VARIANT_SKU,
                     LoadConfigurableProductWithVariants::CONFIGURABLE_SKU,
@@ -226,7 +225,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends WebTestCase
                 ],
             ],
             'only fourth option' => [
-                'multienum_codes' => ['fourth'],
+                'multienum_codes' => ['multienum_code.fourth'],
                 'expected_skus' => [],
             ],
         ];

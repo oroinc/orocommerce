@@ -95,7 +95,7 @@ class ProductType extends AbstractType
                 EnumSelectType::class,
                 [
                     'label'     => 'oro.product.inventory_status.label',
-                    'enum_code' => 'prod_inventory_status',
+                    'enum_code' => Product::INVENTORY_STATUS_ENUM_CODE,
                     'configs'   => ['allowClear' => false]
                 ]
             )

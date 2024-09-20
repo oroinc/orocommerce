@@ -5,7 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Datagrid;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\OrderBundle\Datagrid\OrderStatusFrontendDatagridListener;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
@@ -16,8 +17,8 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
     /** @var OrderConfigurationProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $configurationProvider;
 
-    /** @var EnumValueProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $enumValueProvider;
+    /** @var EnumOptionsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $enumOptionsProvider;
 
     /** @var OrderStatusFrontendDatagridListener */
     private $listener;
@@ -25,11 +26,11 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
     protected function setUp(): void
     {
         $this->configurationProvider = $this->createMock(OrderConfigurationProviderInterface::class);
-        $this->enumValueProvider = $this->createMock(EnumValueProvider::class);
+        $this->enumOptionsProvider = $this->createMock(EnumOptionsProvider::class);
 
         $this->listener = new OrderStatusFrontendDatagridListener(
             $this->configurationProvider,
-            $this->enumValueProvider
+            $this->enumOptionsProvider
         );
     }
 
@@ -79,7 +80,7 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
         $this->configurationProvider->expects(self::once())
             ->method('isExternalStatusManagementEnabled')
             ->willReturn(false);
-        $this->enumValueProvider->expects(self::once())
+        $this->enumOptionsProvider->expects(self::once())
             ->method('getEnumChoicesByCode')
             ->with('order_internal_status')
             ->willReturn(['Open' => 'open', 'Closed' => 'closed']);
@@ -101,7 +102,12 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
                         'join'   => [
                             'left' => [
                                 ['join' => PaymentStatus::class, 'alias' => 'payment_status'],
-                                ['join' => 'order1.internal_status', 'alias' => 'status']
+                                [
+                                    'join' => EnumOption::class,
+                                    'alias' => 'status',
+                                    'conditionType' => 'WITH',
+                                    'condition' => "JSON_EXTRACT(order1.serialized_data, 'internal_status') = status"
+                                ]
                             ]
                         ]
                     ],
@@ -189,7 +195,7 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
         $this->configurationProvider->expects(self::once())
             ->method('isExternalStatusManagementEnabled')
             ->willReturn(true);
-        $this->enumValueProvider->expects(self::once())
+        $this->enumOptionsProvider->expects(self::once())
             ->method('getEnumChoicesByCode')
             ->with('order_status')
             ->willReturn(['Open' => 'open', 'Closed' => 'closed']);
@@ -211,7 +217,12 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
                         'join'   => [
                             'left' => [
                                 ['join' => PaymentStatus::class, 'alias' => 'payment_status'],
-                                ['join' => 'order1.status', 'alias' => 'status']
+                                [
+                                    'join' => EnumOption::class,
+                                    'alias' => 'status',
+                                    'conditionType' => 'WITH',
+                                    'condition' => "JSON_EXTRACT(order1.serialized_data, 'status') = status"
+                                ]
                             ]
                         ]
                     ],

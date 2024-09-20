@@ -6,8 +6,8 @@ use Oro\Bundle\CacheBundle\Generator\UniversalCacheKeyGenerator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -25,7 +25,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
     public const TYPE = 'enum';
 
     private DoctrineHelper $doctrineHelper;
-    private EnumValueProvider $enumValueProvider;
+    private EnumOptionsProvider $enumOptionsProvider;
     private LoggerInterface $logger;
     private ConfigManager $configManager;
     private CacheInterface $cache;
@@ -35,14 +35,14 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
 
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        EnumValueProvider $enumValueProvider,
+        EnumOptionsProvider $enumOptionsProvider,
         LoggerInterface $logger,
         ConfigManager $configManager,
         LocalizationHelper $localizationHelper,
         LocaleSettings $localeSettings
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->enumValueProvider = $enumValueProvider;
+        $this->enumOptionsProvider = $enumOptionsProvider;
         $this->logger = $logger;
         $this->configManager = $configManager;
         $this->localizationHelper = $localizationHelper;
@@ -65,8 +65,9 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
             }
             $config = $this->configManager->getConfigFieldModel(Product::class, $fieldName);
             if ($config instanceof FieldConfigModel) {
-                $extendConfig = $config->toArray('extend');
-                return $this->enumValueProvider->getEnumChoicesWithNonUniqueTranslation($extendConfig['target_entity']);
+                $extendConfig = $config->toArray('enum');
+
+                return $this->enumOptionsProvider->getEnumChoicesWithNonUniqueTranslation($extendConfig['enum_code']);
             }
 
             return [];
@@ -75,7 +76,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
 
     public function getScalarValue(mixed $value): mixed
     {
-        if (!$value instanceof AbstractEnumValue) {
+        if (!$value instanceof EnumOptionInterface) {
             return null;
         }
 

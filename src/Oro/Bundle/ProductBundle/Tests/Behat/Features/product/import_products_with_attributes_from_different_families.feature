@@ -13,8 +13,6 @@ Feature: Import products with attributes from different families
     And I upload "color_attribute.csv" file to "Import Choose File"
     And I click "Import file"
     And I reload the page
-    And I confirm schema update
-    Then I should see Schema updated flash message
 
   Scenario: Update product family with new attribute
     When I go to Products/ Product Families

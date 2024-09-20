@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\DependencyInjection;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -31,14 +32,26 @@ class Configuration implements ConfigurationInterface
                 'notify_owner_of_customer' => ['value' => 'always'],
                 'backend_product_visibility' => [
                     'value' => [
-                        Product::INVENTORY_STATUS_IN_STOCK,
-                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        ),
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ),
                     ]
                 ],
                 'frontend_product_visibility' => [
                     'value' => [
-                        Product::INVENTORY_STATUS_IN_STOCK,
-                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        ),
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ),
                     ]
                 ],
                 'guest_rfp' => [

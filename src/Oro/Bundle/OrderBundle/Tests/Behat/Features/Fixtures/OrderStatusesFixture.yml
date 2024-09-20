@@ -1,5 +1,25 @@
-Extend\Entity\EV_Order_Status:
+Oro\Bundle\EntityExtendBundle\Entity\EnumOption:
     orderStatusOpen:
-        __construct: [open, 'Open', 1]
+        __construct: [ 'order_status', 'Open', 'open', 1 ]
     orderStatusWaitForApproval:
-        __construct: [wait_for_approval, 'Wait For Approval', 2]
+        __construct: [ 'order_status', 'Wait For Approval', 'wait_for_approval', 2 ]
+
+Oro\Bundle\TranslationBundle\Entity\TranslationKey:
+    orderStatusOpenTransKey:
+        key: 'oro.entity_extend.enum_option.order_status.open'
+        domain: 'messages'
+    orderStatusWaitForApprovalTransKey:
+        key: 'oro.entity_extend.enum_option.order_status.wait_for_approval'
+        domain: 'messages'
+
+Oro\Bundle\TranslationBundle\Entity\Translation:
+    orderStatusOpenTranslation:
+        translationKey: '@orderStatusOpenTransKey'
+        value: 'Open'
+        language: '@en_language'
+        scope: 1
+    orderStatusWaitForApprovalTranslation:
+        translationKey: '@orderStatusWaitForApprovalTransKey'
+        value: 'Wait For Approval'
+        language: '@en_language'
+        scope: 1

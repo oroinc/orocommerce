@@ -28,8 +28,8 @@ data:
                     id: '<toString(@country.usa->iso2Code)>'
                     targetValue: '<toString(@country.usa->iso2Code)>'
                 testAttrMultiEnum:
-                    - { id: '@productAttrMultiEnum_option1->id', targetValue: '@productAttrMultiEnum_option1->name' }
-                    - { id: '@productAttrMultiEnum_option2->id', targetValue: '@productAttrMultiEnum_option2->name' }
+                    - { id: '@productAttrMultiEnum_option1->internalId', targetValue: '@productAttrMultiEnum_option1->name' }
+                    - { id: '@productAttrMultiEnum_option2->internalId', targetValue: '@productAttrMultiEnum_option2->name' }
                 testAttrManyToMany:
                     - { id: '<toString(@customer_user1->id)>', targetValue: 'John Edgar Doo' }
                     - { id: '<toString(@customer_user2->id)>', targetValue: 'Amanda Cole' }
@@ -54,7 +54,7 @@ data:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: '<toString(@in_stock->internalId)>'
             productFamily:
                 data:
                     type: productfamilies
@@ -110,7 +110,7 @@ data:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@out_of_stock->id)>'
+                    id: '<toString(@out_of_stock->internalId)>'
             productFamily:
                 data:
                     type: productfamilies

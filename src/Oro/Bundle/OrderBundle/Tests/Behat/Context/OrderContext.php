@@ -5,7 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
@@ -96,14 +97,18 @@ class OrderContext extends OroFeatureContext implements OroPageObjectAware
     /**
      * @param string $statusName
      *
-     * @return AbstractEnumValue|object
+     * @return EnumOptionInterface|object
      */
     protected function getInternalStatus($statusName)
     {
         /** @var ManagerRegistry $registry */
         $registry = $this->getAppContainer()->get('doctrine');
-        $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
 
-        return $registry->getManagerForClass($className)->getRepository($className)->findOneBy(['name' => $statusName]);
+        return $registry->getManagerForClass(EnumOption::class)->getRepository(EnumOption::class)->findOneBy([
+            'id' => ExtendHelper::buildEnumOptionId(
+                Order::INTERNAL_STATUS_CODE,
+                ExtendHelper::buildEnumInternalId($statusName)
+            )
+        ]);
     }
 }

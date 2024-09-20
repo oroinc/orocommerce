@@ -6,9 +6,9 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
@@ -30,11 +30,11 @@ class LoadProductMultiEnumValues extends AbstractFixture implements ContainerAwa
      */
     public function load(ObjectManager $manager): void
     {
-        /** @var EnumValueRepository $enumRepo */
-        $enumRepo = $manager->getRepository(ExtendHelper::buildEnumValueClassName('multienum_code'));
+        /** @var EnumOptionRepository $enumRepo */
+        $enumRepo = $manager->getRepository(EnumOption::class);
         $priority = 1;
         foreach (self::DATA as $id => $name) {
-            $enumValue = $enumRepo->createEnumValue($name, $priority++, false, $id);
+            $enumValue = $enumRepo->createEnumOption('multienum_code', $id, $name, $priority++);
             $manager->persist($enumValue);
         }
         $manager->flush();

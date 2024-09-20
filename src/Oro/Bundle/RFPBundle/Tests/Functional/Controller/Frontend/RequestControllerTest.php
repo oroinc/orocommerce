@@ -4,7 +4,8 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
@@ -238,8 +239,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'workflowStepLabel',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -269,8 +269,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -301,8 +300,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -329,8 +327,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -358,8 +355,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -388,8 +384,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerUserName',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -862,11 +857,12 @@ class RequestControllerTest extends WebTestCase
         self::assertArrayHasKey('flashMessages', $jsonContent);
     }
 
-    private function getEnumEntity(string $enumField, string $enumCode): AbstractEnumValue
+    private function getEnumEntity(string $enumCode, string $enumField): EnumOptionInterface
     {
-        $className = ExtendHelper::buildEnumValueClassName($enumField);
-
-        return $this->getManager($className)->getReference($className, $enumCode);
+        return $this->getManager(EnumOption::class)->getReference(
+            EnumOption::class,
+            ExtendHelper::buildEnumOptionId($enumCode, $enumField)
+        );
     }
 
     private function getManager(string $className): EntityManagerInterface

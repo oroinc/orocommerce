@@ -11,7 +11,7 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrai
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
-use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -439,10 +439,7 @@ class OroOrderBundleInstaller implements
 
     private function addOrderInternalStatusField(Schema $schema): void
     {
-        $internalStatusOptions = new OroOptions();
-        $internalStatusOptions->set('enum', 'immutable_codes', LoadOrderInternalStatuses::getDataKeys());
-
-        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+        $this->extendExtension->addEnumField(
             $schema,
             'oro_order',
             'internal_status',
@@ -451,7 +448,17 @@ class OroOrderBundleInstaller implements
             false,
             ['dataaudit' => ['auditable' => true]]
         );
-        $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
+
+        $enumOptionIds = [];
+        foreach (LoadOrderInternalStatuses::getDataKeys() as $key) {
+            $enumOptionIds[] = ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $key);
+        }
+        $schema->getTable('oro_order')->addExtendColumnOption(
+            'internal_status',
+            'enum',
+            'immutable_codes',
+            $enumOptionIds
+        );
     }
 
     private function addOrderStatusField(Schema $schema): void

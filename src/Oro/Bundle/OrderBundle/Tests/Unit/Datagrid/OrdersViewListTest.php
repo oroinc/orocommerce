@@ -29,9 +29,9 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
         $view = new View(
             'oro_order.open_orders',
             [
-                'internalStatusName' => [
+                'internal_status' => [
                     'type'  => EnumFilterType::TYPE_IN,
-                    'value' => ['open']
+                    'value' => ['order_internal_status.open']
                 ]
             ]
         );

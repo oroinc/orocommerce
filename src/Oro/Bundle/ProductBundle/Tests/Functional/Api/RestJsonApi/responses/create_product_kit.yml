@@ -210,7 +210,7 @@ data:
         inventory_status:
             data:
                 type: prodinventorystatuses
-                id: '<toString(@in_stock->id)>'
+                id: in_stock
         test_variant_field:
             data: null
         testAttrEnum:
@@ -671,7 +671,7 @@ included:
             inventory_status:
                 data:
                     type: prodinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: in_stock
             test_variant_field:
                 data: null
             testAttrEnum:
@@ -897,7 +897,7 @@ included:
             inventory_status:
                 data:
                     type: prodinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: in_stock
             test_variant_field:
                 data: null
             testAttrEnum:
@@ -1123,7 +1123,7 @@ included:
             inventory_status:
                 data:
                     type: prodinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: in_stock
             test_variant_field:
                 data: null
             testAttrEnum:

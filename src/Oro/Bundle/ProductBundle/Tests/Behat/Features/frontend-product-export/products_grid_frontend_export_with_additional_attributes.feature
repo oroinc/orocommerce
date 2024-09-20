@@ -33,8 +33,6 @@ Feature: Products grid frontend export with additional attributes
       | TestMultiValueThree |
     When I save and close form
     Then I should see "Attribute was successfully saved" flash message
-    When I click update schema
-    Then I should see "Schema updated" flash message
 
   Scenario: Enable featured product attribute for export
     Given I go to Products / Product Attributes

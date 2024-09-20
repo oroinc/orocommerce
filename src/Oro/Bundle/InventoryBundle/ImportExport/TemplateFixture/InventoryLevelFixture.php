@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -83,10 +83,12 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $entity->setProductUnitPrecision($unitPrecision);
     }
 
-    private function createInventoryStatus(string $id, string $name): AbstractEnumValue
+    private function createInventoryStatus(string $id, string $name): EnumOptionInterface
     {
-        $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-
-        return new $enumValueClassName($id, $name);
+        return new EnumOption(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            $name,
+            $id,
+        );
     }
 }

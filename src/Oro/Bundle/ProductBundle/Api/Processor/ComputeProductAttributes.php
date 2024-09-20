@@ -277,6 +277,8 @@ class ComputeProductAttributes implements ProcessorInterface
             $targetFields = [$extendConfig->get('target_field')];
         } elseif (\in_array($underlyingType, RelationType::$toManyRelations, true)) {
             $targetFields = $extendConfig->get('target_title');
+        } elseif (ExtendHelper::isEnumerableType($extendConfig->getId()->getFieldType())) {
+            $targetFields = ['name'];
         }
 
         return $targetFields;

@@ -96,7 +96,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         ]);
 
         $defaultVariant = new ProductStub();
-        $defaultVariant->{self::FIELD_COLOR} = new TestEnumValue('id', 'name');
+        $defaultVariant->{self::FIELD_COLOR} = new TestEnumValue('test', 'Test', 'name');
         $defaultVariant->{self::FIELD_NEW} = true;
 
         $options = [
@@ -174,7 +174,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has(self::FIELD_NEW));
 
         $variantProduct = new ProductStub();
-        $variantProduct->{self::FIELD_COLOR} = new TestEnumValue('id2', 'name2');
+        $variantProduct->{self::FIELD_COLOR} = new TestEnumValue('test', 'Test', 'name2');
         $variantProduct->{self::FIELD_NEW} = false;
 
         $submittedData = [
@@ -198,7 +198,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->willReturn($variantProduct);
 
         $form->submit($submittedData);
-        $this->assertEquals(new TestEnumValue('id', 'name'), $defaultVariant->{self::FIELD_COLOR});
+        $this->assertEquals(new TestEnumValue('test', 'Test', 'name'), $defaultVariant->{self::FIELD_COLOR});
         $this->assertEquals(true, $defaultVariant->{self::FIELD_NEW});
 
         $this->assertEquals($variantProduct, $form->getData());

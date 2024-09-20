@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ProductKit\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
@@ -50,9 +51,9 @@ class ProductInventoryStatusListenerTest extends WebTestCase
                 Product::INVENTORY_STATUS_OUT_OF_STOCK,
             ],
             [
-                $kit1->getInventoryStatus()->getId(),
-                $kit2->getInventoryStatus()->getId(),
-                $kit3->getInventoryStatus()->getId(),
+                $kit1->getInventoryStatus()->getInternalId(),
+                $kit2->getInventoryStatus()->getInternalId(),
+                $kit3->getInventoryStatus()->getInternalId(),
             ]
         );
     }
@@ -66,7 +67,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit1 = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
 
-        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit1->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit1->getInventoryStatus()->getInternalId());
     }
 
     public function testStatusChangedIfRelatedProductChangedToDiscontinued(): void
@@ -78,7 +79,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit1 = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);
 
-        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit1->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit1->getInventoryStatus()->getInternalId());
     }
 
     public function testStatusChangedIfRelatedOutOfStockAndDiscontinuedProductsRemoved(): void
@@ -90,7 +91,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit1 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
-        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit1->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit1->getInventoryStatus()->getInternalId());
 
         $product = $this->getReference('product-4');
         $this->registry->getManager()->remove($product);
@@ -99,7 +100,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
-        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit3->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit3->getInventoryStatus()->getInternalId());
     }
 
     public function testStatusChangedIfProductKitItemWithOutOfStockProductIsRemoved(): void
@@ -121,7 +122,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
-        self::assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $kit3->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $kit3->getInventoryStatus()->getInternalId());
     }
 
     public function testStatusChangedIfProductKitItemWithOutOfStockProductTurnedIntoOptional(): void
@@ -144,7 +145,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
-        self::assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $kit3->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $kit3->getInventoryStatus()->getInternalId());
     }
 
     public function testStatusChangedIfProductKitItemProductWithOutOfStockProductWasRemoved(): void
@@ -176,7 +177,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
-        self::assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $kit3->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $kit3->getInventoryStatus()->getInternalId());
     }
 
     public function testStatusChangedIfProductKitItemProductWithInStockProductWasChanged(): void
@@ -200,15 +201,13 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 
         $kit3 = $this->getReference(LoadProductKitData::PRODUCT_KIT_3);
 
-        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit3->getInventoryStatus()->getId());
+        self::assertEquals(Product::INVENTORY_STATUS_OUT_OF_STOCK, $kit3->getInventoryStatus()->getInternalId());
     }
 
-    private function getInventoryStatus(string $inventoryStatusId): AbstractEnumValue
+    private function getInventoryStatus(string $internalId): EnumOptionInterface
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-
-        return $this->registry->getRepository($inventoryStatusClassName)->findOneBy([
-            'id' => $inventoryStatusId,
+        return $this->registry->getRepository(EnumOption::class)->findOneBy([
+            'id' => ExtendHelper::buildEnumOptionId(Product::INVENTORY_STATUS_ENUM_CODE, $internalId)
         ]);
     }
 }

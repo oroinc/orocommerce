@@ -178,7 +178,7 @@ class ProductKitItemRepository extends ServiceEntityRepository
         $qb->innerJoin('p1', 'oro_product_kit_item', 'pki', 'pki.product_kit_id = p1.id AND pki.optional <> true');
         $qb->innerJoin('pki', 'oro_product_kit_item_product', 'pkip', 'pki.id = pkip.product_kit_item_id');
         $qb->innerJoin('pkip', 'oro_product', 'p2', 'pkip.product_id = p2.id');
-        $qb->innerJoin('p2', 'oro_enum_prod_inventory_status', 'pis', 'p2.inventory_status_id = pis.id');
+        $qb->innerJoin('p2', 'oro_enum_option', 'pis', "p2.serialized_data::jsonb->>'inventory_status' = pis.id");
         $qb->addGroupBy('p1.id', 'pki.id');
         $qb->orderBy('p1.id');
 

@@ -10,8 +10,8 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -58,13 +58,13 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue[] $enumInventoryStatuses */
-        $enumInventoryStatuses = $manager->getRepository($inventoryStatusClassName)->findAll();
+        /** @var EnumOptionInterface[] $enumInventoryStatuses */
+        $enumInventoryStatuses = $manager->getRepository(EnumOption::class)
+            ->findBy(['enumCode' => Product::INVENTORY_STATUS_ENUM_CODE]);
 
         $inventoryStatuses = [];
         foreach ($enumInventoryStatuses as $inventoryStatus) {
-            $inventoryStatuses[$inventoryStatus->getId()] = $inventoryStatus;
+            $inventoryStatuses[$inventoryStatus->getInternalId()] = $inventoryStatus;
         }
 
         $data = Yaml::parse(file_get_contents($this->getFilePath()));

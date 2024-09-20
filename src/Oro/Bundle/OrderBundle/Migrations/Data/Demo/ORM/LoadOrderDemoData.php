@@ -13,7 +13,8 @@ use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -209,10 +210,10 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $orderAddress;
     }
 
-    private function getOrderInternalStatusByName(string $name, ObjectManager $manager): ?AbstractEnumValue
+    private function getOrderInternalStatusByName(string $name, ObjectManager $manager): ?EnumOptionInterface
     {
-        return $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-            ->findOneBy(['id' => $name]);
+        return $manager->getRepository(EnumOption::class)
+            ->findOneBy(['id' => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $name)]);
     }
 
     private function getCustomerUser(ObjectManager $manager, bool $isGuest = false): ?CustomerUser

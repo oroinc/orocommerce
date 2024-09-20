@@ -3,7 +3,8 @@
 namespace Oro\Bundle\WebsiteSearchSuggestionBundle\Tests\Functional\EventListener\Doctrine;
 
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
@@ -48,11 +49,9 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
     {
         self::assertEmpty($this->suggestionRepository->findAll());
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-
-        /** @var AbstractEnumValue[] $enumInventoryStatuses */
-        $inStockInventoryStatus = $this->manager->getRepository($inventoryStatusClassName)->findOneBy([
-            'id' => Product::INVENTORY_STATUS_IN_STOCK
+        /** @var EnumOptionInterface[] $enumInventoryStatuses */
+        $inStockInventoryStatus = $this->manager->getRepository(EnumOption::class)->findOneBy([
+            'id' => ExtendHelper::buildEnumOptionId('prod_inventory_status', Product::INVENTORY_STATUS_IN_STOCK)
         ]);
 
         $product = new Product();
