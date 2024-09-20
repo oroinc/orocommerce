@@ -9,7 +9,6 @@ use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationAwareTokenInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -80,7 +79,7 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
 
         try {
             $this->historyRepository->upsertSearchHistoryRecord(
-                $searchTerm,
+                $this->getNormalizedSearchTerm($searchTerm),
                 $searchType,
                 $resultsCount,
                 $this->getNormalizedSearchTermHash($searchTerm),
@@ -141,11 +140,14 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
 
     private function getNormalizedSearchTermHash(string $searchTerm): string
     {
-        return md5(
-            mb_strtolower(
-                Query::clearString($searchTerm)
-            )
-        );
+        return md5($this->getNormalizedSearchTerm($searchTerm));
+    }
+
+    public function getNormalizedSearchTerm(string $searchTerm): string
+    {
+        $searchTerm = trim($searchTerm);
+
+        return preg_replace('/[\s\t]+/', ' ', $searchTerm);
     }
 
     private function getOrganization(?TokenInterface $token): ?Organization
