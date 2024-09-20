@@ -5,6 +5,8 @@ namespace Oro\Bundle\ProductBundle\Api\Processor;
 use Oro\Bundle\ApiBundle\Config\EntityDefinitionConfig;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Component\EntitySerializer\EntitySerializer;
@@ -69,7 +71,9 @@ class ExpandProductSearchEntities implements ProcessorInterface
             if (null === $targetConfig || $field->isCollectionValuedAssociation()) {
                 continue;
             }
-            if (!$this->doctrineHelper->isManageableEntityClass($field->getTargetClass())) {
+            if (!$this->doctrineHelper->isManageableEntityClass($field->getTargetClass())
+                && !ExtendHelper::isOutdatedEnumOptionEntity($field->getTargetClass())
+            ) {
                 continue;
             }
             if ($targetConfig->isIdentifierOnlyRequested()) {
@@ -132,7 +136,12 @@ class ExpandProductSearchEntities implements ProcessorInterface
         if (!$idFieldName) {
             return [];
         }
-
+        $isOutdatedEnumOptionEntity = ExtendHelper::isOutdatedEnumOptionEntity($entityClass);
+        if ($isOutdatedEnumOptionEntity) {
+            $enumCode = ExtendHelper::getEnumCode($entityClass);
+            $ids = ExtendHelper::mapToEnumOptionIds($enumCode, $ids);
+            $entityClass = EnumOption::class;
+        }
         $idPropertyName = $config->getField($idFieldName)->getPropertyPath($idFieldName);
         $qb = $this->doctrineHelper
             ->createQueryBuilder($entityClass, 'e')
@@ -143,6 +152,9 @@ class ExpandProductSearchEntities implements ProcessorInterface
 
         $result = [];
         foreach ($rows as $row) {
+            if ($isOutdatedEnumOptionEntity) {
+                $row[$idFieldName] = ExtendHelper::getEnumInternalId($row[$idFieldName]);
+            }
             $result[$row[$idFieldName]] = $row;
         }
 

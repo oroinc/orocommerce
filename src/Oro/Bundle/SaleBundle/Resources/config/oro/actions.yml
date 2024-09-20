@@ -88,7 +88,7 @@ operations:
                 value: Oro\Bundle\SaleBundle\Entity\Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
 
         preconditions:
-            '@not_equal': [$.sentToCustomerInternalStatus, $internalStatus.id]
+            '@not_equal': [$.sentToCustomerInternalStatus, $internalStatus.internalId]
 
         actions:
             - '@run_action_group':
@@ -98,7 +98,7 @@ operations:
             - '@request_enum_entity':
                 enum_code: 'quote_internal_status'
                 attribute: $internalStatus
-                identifier: 'sent_to_customer'
+                identifier: 'quote_internal_status.sent_to_customer'
             - '@flush_entity': $.data
             - '@flash_message':
                 message: oro.sale.quote.message.quote.sent.success

@@ -6,8 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\EnumSynchronizer;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -51,13 +52,14 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
 
     private function createConfigModel(
         string $className = Product::class,
-        string $targetClass = AbstractEnumValue::class
+        string $targetClass = EnumOptionInterface::class
     ): FieldConfigModel {
         $entityConfig = new EntityConfigModel();
         $entityConfig->setClassName($className);
         $fieldConfig = new FieldConfigModel();
         $fieldConfig->setEntity($entityConfig);
         $fieldConfig->setFieldName('test_field');
+        $fieldConfig->setType('enum');
         $fieldConfig->fromArray('extend', ['target_entity' => $targetClass]);
 
         return $fieldConfig;
@@ -118,23 +120,29 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
     public function testValidateNoRemovedItems(array $values)
     {
         $persistedOptions = [
-            new TestEnumValue('test1', 'test1'),
-            new TestEnumValue('test2', 'test2')
+            new TestEnumValue('test', 'Test', 'test1'),
+            new TestEnumValue('test', 'Test', 'test2')
         ];
 
-        $enumRepo = $this->createMock(EnumValueRepository::class);
+        $enumRepo = $this->createMock(EnumOptionRepository::class);
         $enumRepo->expects($this->any())
-            ->method('findAll')
+            ->method('findBy')
             ->willReturn($persistedOptions);
 
         $productRepo = $this->createMock(ProductRepository::class);
+        $productRepo->expects($this->once())
+            ->method('findParentSkusByAttributeOptions')
+            ->with(Product::TYPE_SIMPLE, 'test_field', ['test.test1', 'test.test2'])
+            ->willReturn([]);
 
         $this->registry->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
-                [AbstractEnumValue::class, null, $enumRepo],
+                [EnumOption::class, null, $enumRepo],
                 [Product::class, null, $productRepo]
             ]);
+        $this->enumSynchronizer->expects($this->once())
+            ->method('fillOptionIds');
 
         $constraint = $this->createConstraint();
         $this->validator->validate($values, $constraint);
@@ -163,28 +171,28 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
     public function testValidateRemovedItemsThatAreNotUsedInVariant()
     {
         $persistedOptions = [
-            new TestEnumValue('test1', 'test1'),
-            new TestEnumValue('test2', 'test2')
+            new TestEnumValue('test', 'Test', 'test1'),
+            new TestEnumValue('test', 'Test', 'test2')
         ];
         $values = [
             ['id' => 'test2', 'label' => 'test2']
         ];
 
-        $enumRepo = $this->createMock(EnumValueRepository::class);
+        $enumRepo = $this->createMock(EnumOptionRepository::class);
         $enumRepo->expects($this->any())
-            ->method('findAll')
+            ->method('findBy')
             ->willReturn($persistedOptions);
 
         $productRepo = $this->createMock(ProductRepository::class);
         $productRepo->expects($this->once())
             ->method('findParentSkusByAttributeOptions')
-            ->with(Product::TYPE_SIMPLE, 'test_field', ['test1'])
+            ->with(Product::TYPE_SIMPLE, 'test_field', ['test.test1', 'test.test2'])
             ->willReturn([]);
 
         $this->registry->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
-                [AbstractEnumValue::class, null, $enumRepo],
+                [EnumOption::class, null, $enumRepo],
                 [Product::class, null, $productRepo]
             ]);
 
@@ -196,28 +204,28 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
     public function testValidateRemovedItemsThatAreUsedInVariant()
     {
         $persistedOptions = [
-            new TestEnumValue('test1', 'test1'),
-            new TestEnumValue('test2', 'test2')
+            new TestEnumValue('test', 'test1', 'test1'),
+            new TestEnumValue('test', 'test2', 'test2')
         ];
         $values = [
             ['id' => 'test2', 'label' => 'test2']
         ];
 
-        $enumRepo = $this->createMock(EnumValueRepository::class);
+        $enumRepo = $this->createMock(EnumOptionRepository::class);
         $enumRepo->expects($this->any())
-            ->method('findAll')
+            ->method('findBy')
             ->willReturn($persistedOptions);
 
         $productRepo = $this->createMock(ProductRepository::class);
         $productRepo->expects($this->once())
             ->method('findParentSkusByAttributeOptions')
-            ->with(Product::TYPE_SIMPLE, 'test_field', ['test1'])
-            ->willReturn(['test1' => ['SKU1']]);
+            ->with(Product::TYPE_SIMPLE, 'test_field', ['test.test1', 'test.test2'])
+            ->willReturn(['test.test1' => ['SKU1']]);
 
         $this->registry->expects($this->any())
             ->method('getRepository')
             ->willReturnMap([
-                [AbstractEnumValue::class, null, $enumRepo],
+                [EnumOption::class, null, $enumRepo],
                 [Product::class, null, $productRepo]
             ]);
 

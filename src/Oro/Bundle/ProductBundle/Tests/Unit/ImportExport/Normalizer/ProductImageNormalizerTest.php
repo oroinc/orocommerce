@@ -44,7 +44,8 @@ class ProductImageNormalizerTest extends \PHPUnit\Framework\TestCase
             ->willReturn(
                 [
                     [
-                        'name' => 'types'
+                        'name' => 'types',
+                        'type' => ProductImageType::TYPE_MAIN
                     ],
                 ]
             );

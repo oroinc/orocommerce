@@ -59,4 +59,4 @@
                 - 1AB92 # out of stock
                 - 2LM04
                 - 2WE71
-    inventoryStatusId: in_stock
+    inventory_status: in_stock

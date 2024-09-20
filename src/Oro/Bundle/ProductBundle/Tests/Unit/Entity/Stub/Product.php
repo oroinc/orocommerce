@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product as BaseProduct;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -16,7 +16,7 @@ class Product extends BaseProduct
     use LocalizedEntityTrait;
 
     /**
-     * @var AbstractEnumValue
+     * @var EnumOptionInterface
      */
     private $inventoryStatus;
 
@@ -41,7 +41,7 @@ class Product extends BaseProduct
     private $pageTemplate;
 
     /**
-     * @var AbstractEnumValue[]|ArrayCollection
+     * @var EnumOptionInterface[]|ArrayCollection
      */
     private $flags;
 
@@ -142,7 +142,7 @@ class Product extends BaseProduct
     }
 
     /**
-     * @return AbstractEnumValue
+     * @return EnumOptionInterface
      */
     public function getInventoryStatus()
     {
@@ -150,10 +150,10 @@ class Product extends BaseProduct
     }
 
     /**
-     * @param AbstractEnumValue $inventoryStatus
+     * @param EnumOptionInterface $inventoryStatus
      * @return $this
      */
-    public function setInventoryStatus(AbstractEnumValue $inventoryStatus)
+    public function setInventoryStatus(EnumOptionInterface $inventoryStatus)
     {
         $this->inventoryStatus = $inventoryStatus;
 
@@ -227,7 +227,7 @@ class Product extends BaseProduct
     }
 
     /**
-     * @return ArrayCollection|AbstractEnumValue[]
+     * @return ArrayCollection|EnumOptionInterface[]
      */
     public function getFlags()
     {
@@ -235,7 +235,7 @@ class Product extends BaseProduct
     }
 
     /**
-     * @param ArrayCollection|AbstractEnumValue[] $flags
+     * @param ArrayCollection|EnumOptionInterface[] $flags
      */
     public function setFlags($flags)
     {

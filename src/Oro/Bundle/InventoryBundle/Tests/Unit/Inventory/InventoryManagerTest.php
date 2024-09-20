@@ -31,7 +31,7 @@ class InventoryManagerTest extends \PHPUnit\Framework\TestCase
     public function testCreateInventoryLevel()
     {
         $product = new ProductStub();
-        $product->inventoryStatus = new InventoryStatus(1, Product::INVENTORY_STATUS_OUT_OF_STOCK);
+        $product->inventoryStatus = new InventoryStatus('test', 'Test', Product::INVENTORY_STATUS_OUT_OF_STOCK);
         $productUnitPrecision = $this->createMock(ProductUnitPrecision::class);
         $productUnitPrecision->expects($this->exactly(2))
             ->method('getProduct')
@@ -48,7 +48,7 @@ class InventoryManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertInstanceOf(InventoryLevel::class, $result);
         $this->assertEquals(
             Product::INVENTORY_STATUS_OUT_OF_STOCK,
-            $result->getProduct()->inventoryStatus->getName()
+            $result->getProduct()->inventoryStatus->getInternalId()
         );
     }
 

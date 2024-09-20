@@ -48,7 +48,7 @@ class LoadDisabledProductKitData extends LoadProductKitData
                         'products' => ['product-4', 'product-5'],
                     ],
                 ],
-                'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             ],
         ];
     }

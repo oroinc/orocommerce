@@ -6,7 +6,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
@@ -108,9 +109,9 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         $defaultProductFamily = $familyRepository
             ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
 
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue $inventoryStatus */
-        $inventoryStatus = $manager->getRepository($inventoryStatusClassName)->find('in_stock');
+        /** @var EnumOptionInterface $inventoryStatus */
+        $inventoryStatus = $manager->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId('prod_inventory_status', 'in_stock'));
 
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit($unit)
@@ -134,18 +135,23 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         $product->addName($defaultName);
 
         if ($variantName) {
-            $variantClassName = ExtendHelper::buildEnumValueClassName('variant_field_code');
-            $variantEnumRepository = $manager->getRepository($variantClassName);
-            $variantEnum = $variantEnumRepository->findOneBy(['name' => $variantName]);
+            $variantEnumRepository = $manager->getRepository(EnumOption::class);
+            $variantEnum = $variantEnumRepository->findOneBy([
+                'id' => ExtendHelper::buildEnumOptionId(
+                    'variant_field_code',
+                    ExtendHelper::buildEnumInternalId($variantName)
+                )
+            ]);
             $product->setTestVariantField($variantEnum);
         }
 
         if ($multiEnumCodes) {
-            $multiEnumClassName = ExtendHelper::buildEnumValueClassName('multienum_code');
-            $multiEnumRepository = $manager->getRepository($multiEnumClassName);
+            $multiEnumRepository = $manager->getRepository(EnumOption::class);
             foreach ($multiEnumCodes as $code) {
-                $multiEnumValue = $multiEnumRepository->find($code);
-                $product->addMultienumField($multiEnumValue);
+                $multiEnumOption = $multiEnumRepository->find(
+                    ExtendHelper::buildEnumOptionId('multienum_code', $code)
+                );
+                $product->addMultienumField($multiEnumOption);
             }
         }
 

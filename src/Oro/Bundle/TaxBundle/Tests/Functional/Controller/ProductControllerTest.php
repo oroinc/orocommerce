@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
@@ -48,7 +49,10 @@ class ProductControllerTest extends WebTestCase
         $formValues['input_action'] = $crawler->selectButton('Save and Close')->attr('data-action');
         $formValues['oro_product']['sku'] = self::TEST_SKU;
         $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
-        $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['oro_product']['inventory_status'] = ExtendHelper::buildEnumOptionId(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            Product::INVENTORY_STATUS_IN_STOCK
+        );
         $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
         $formValues['oro_product']['names']['values']['default'] = self::DEFAULT_NAME;
         $formValues['oro_product']['descriptions']['values']['default']['wysiwyg'] = self::DEFAULT_DESCRIPTION;

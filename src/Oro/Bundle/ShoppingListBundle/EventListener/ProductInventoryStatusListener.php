@@ -38,7 +38,8 @@ class ProductInventoryStatusListener
 
     public function preUpdate(Product $product, PreUpdateEventArgs $args)
     {
-        if ($args->hasChangedField('inventory_status')) {
+        $changeSet = $args->getEntityChangeSet();
+        if (isset($changeSet['serialized_data'][0]['inventory_status'])) {
             $websites = $this->websiteProvider->getWebsites();
             $allowedStatusesPerWebsite = $this->configManager->getValues(
                 'oro_product.general_frontend_product_visibility',

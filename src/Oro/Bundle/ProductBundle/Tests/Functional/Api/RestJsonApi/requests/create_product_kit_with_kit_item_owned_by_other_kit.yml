@@ -30,7 +30,7 @@ data:
         inventory_status:
             data:
                 type: prodinventorystatuses
-                id: '<toString(@in_stock->id)>'
+                id: in_stock
         pageTemplate:
             data:
                 type: entityfieldfallbackvalues

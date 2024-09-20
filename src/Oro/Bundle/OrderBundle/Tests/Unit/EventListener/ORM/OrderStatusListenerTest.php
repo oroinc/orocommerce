@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -31,7 +32,7 @@ class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
         $doctrine = $this->createMock(ManagerRegistry::class);
         $doctrine->expects(self::any())
             ->method('getRepository')
-            ->with(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
+            ->with(EnumOption::class)
             ->willReturn($this->entityRepository);
 
         $this->listener = new OrderStatusListener($this->configurationProvider, $doctrine);
@@ -40,15 +41,23 @@ class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
     public function testPrePersistWhenInternalStatusIsNotSetYet(): void
     {
         $order = new OrderStub();
+        $openStatusId = ExtendHelper::buildEnumOptionId(
+            Order::INTERNAL_STATUS_CODE,
+            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+        );
         $this->configurationProvider->expects(self::once())
             ->method('getNewOrderInternalStatus')
             ->with(self::identicalTo($order))
-            ->willReturn(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN);
+            ->willReturn($openStatusId);
 
-        $defaultInternalStatus = new TestEnumValue(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN, 'Open');
+        $defaultInternalStatus = new TestEnumValue(
+            Order::INTERNAL_STATUS_CODE,
+            'Open',
+            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+        );
         $this->entityRepository->expects(self::once())
             ->method('find')
-            ->with(OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
+            ->with($openStatusId)
             ->willReturn($defaultInternalStatus);
 
         $this->listener->prePersist($order);
@@ -73,7 +82,7 @@ class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
     public function testPrePersistWhenInternalStatusIsAlreadySet(): void
     {
         $order = new OrderStub();
-        $order->setInternalStatus(new TestEnumValue('another', 'Another'));
+        $order->setInternalStatus(new TestEnumValue('test', 'Test', 'test1'));
         $orderStatus = $order->getInternalStatus();
 
         $this->configurationProvider->expects(self::never())

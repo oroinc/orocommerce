@@ -45,10 +45,10 @@ dashboards:
                             allowClear: false
                     converter_attributes:
                         default_selected:
-                            - open
-                            - shipped # kept to be able to see shipped orders created in previous application versions
-                            - closed
-                            - archived # kept to be able to see archived orders created in previous application versions
+                            - order_internal_status.open
+                            - order_internal_status.shipped # kept to be able to see shipped orders created in previous application versions
+                            - order_internal_status.closed
+                            - order_internal_status.archived # kept to be able to see archived orders created in previous application versions
                     show_on_widget: true
                 includeSubOrders:
                     type: Oro\Bundle\DashboardBundle\Form\Type\WidgetChoiceType
@@ -119,10 +119,10 @@ dashboards:
                             allowClear: false
                     converter_attributes:
                         default_selected:
-                            - open
-                            - shipped # kept to be able to see shipped orders created in previous application versions
-                            - closed
-                            - archived # kept to be able to see archived orders created in previous application versions
+                            - order_internal_status.open
+                            - order_internal_status.shipped # kept to be able to see shipped orders created in previous application versions
+                            - order_internal_status.closed
+                            - order_internal_status.archived # kept to be able to see archived orders created in previous application versions
                     show_on_widget: true
                 includeSubOrders:
                     type: Oro\Bundle\DashboardBundle\Form\Type\WidgetChoiceType

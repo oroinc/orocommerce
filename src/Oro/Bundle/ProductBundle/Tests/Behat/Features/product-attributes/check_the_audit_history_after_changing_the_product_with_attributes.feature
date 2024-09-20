@@ -28,10 +28,6 @@ Feature: Check the audit history after changing the product with attributes
       | multi_select_attribute_1 |
       | multi_select_attribute_2 |
 
-  Scenario: Update schema
-    Given I click update schema
-    Then I should see "Schema updated" flash message
-
   Scenario: Update product family with new attributes
     Given I go to Products/ Product Families
     And click "Edit" on row "default family" in grid
@@ -53,10 +49,9 @@ Feature: Check the audit history after changing the product with attributes
       | [Name:]                     |
       | [multi_select_attribute_1:] |
       | [multi_select_attribute_2:] |
-    And I should see in row #1 column "New Values" contains items in "Audit History Grid" grid:
-      | [Name:, Product Name "English (United States)" added]                                                           |
-      | [multi_select_attribute_1:, multi_select_attribute_1 "Option1" added, multi_select_attribute_1 "Option2" added] |
-      | [multi_select_attribute_2:, multi_select_attribute_2 "Option1" added, multi_select_attribute_2 "Option2" added] |
+    And I should see following "Audit History Grid" grid:
+      | Old Values                                                | New Values                                                                                                                             |
+      | Name: multi_select_attribute_1: multi_select_attribute_2: | Name:  Product Name "English (United States)" added multi_select_attribute_1: option1,option2 multi_select_attribute_2: option1,option2 |
     And close ui dialog
 
   Scenario: Check product attribute history after all attribute option removed
@@ -67,18 +62,8 @@ Feature: Check the audit history after changing the product with attributes
     When I save and close form
     Then I should see "Product has been saved" flash message
     When I click "Change History"
-    Then I should see in row #1 column "Old values" contains items in "Audit History Grid" grid:
-      | [multi_select_attribute_1:, multi_select_attribute_1 "Option1" removed, multi_select_attribute_1 "Option2" removed] |
-      | [multi_select_attribute_2:, multi_select_attribute_2 "Option1" removed, multi_select_attribute_2 "Option2" removed] |
-    And I should see in row #1 column "New values" contains items in "Audit History Grid" grid:
-      | [multi_select_attribute_1:] |
-      | [multi_select_attribute_2:] |
-    And I should see in row #2 column "Old values" contains items in "Audit History Grid" grid:
-      | [Name:]                     |
-      | [multi_select_attribute_1:] |
-      | [multi_select_attribute_2:] |
-    And I should see in row #2 column "New values" contains items in "Audit History Grid" grid:
-      | [Name:, Product Name "English (United States)" added]                                                           |
-      | [multi_select_attribute_1:, multi_select_attribute_1 "Option1" added, multi_select_attribute_1 "Option2" added] |
-      | [multi_select_attribute_2:, multi_select_attribute_2 "Option1" added, multi_select_attribute_2 "Option2" added] |
+    And I should see following "Audit History Grid" grid:
+      | Old Values                                                                          | New Values                                                                                                                              |
+      | multi_select_attribute_1: option1,option2 multi_select_attribute_2: option1,option2 | multi_select_attribute_1:  multi_select_attribute_2:                                                                                     |
+      | Name: multi_select_attribute_1: multi_select_attribute_2:                           | Name:  Product Name "English (United States)" added multi_select_attribute_1: option1,option2 multi_select_attribute_2: option1,option2 |
     And close ui dialog

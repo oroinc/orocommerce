@@ -119,10 +119,6 @@ Feature: Product kits validation on shopping list page
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
-  Scenario: Update schema
-    When I go to Products/Product Attributes
-    Then I confirm schema update
-
   Scenario: Update product family
     When I go to Products/Product Families
     And I click Edit Default in grid

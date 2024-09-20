@@ -369,6 +369,6 @@ class QuoteDemandLineItemConverterTest extends TestCase
         return (new Product())
             ->setId($id)
             ->setStatus($status)
-            ->setInventoryStatus(new TestEnumValue($inventoryStatus, $inventoryStatus));
+            ->setInventoryStatus(new TestEnumValue('test', 'Test', $inventoryStatus));
     }
 }

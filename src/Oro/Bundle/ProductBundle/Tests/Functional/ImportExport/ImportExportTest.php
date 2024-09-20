@@ -204,7 +204,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         self::assertNotEmpty($product);
         self::assertEquals('enabled', $product->getStatus());
-        self::assertEquals('in_stock', $product->getInventoryStatus()->getId());
+        self::assertEquals('in_stock', $product->getInventoryStatus()->getInternalId());
 
         self::assertCount(1, $product->getUnitPrecisions());
         self::assertEquals('each', $product->getUnitPrecisions()->first()->getUnit()->getCode());

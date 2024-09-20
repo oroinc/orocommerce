@@ -176,16 +176,10 @@ datagrids:
                 select:
                     - CONCAT(quoteCustomerUser.firstName, ' ', quoteCustomerUser.lastName) as customerUserName
                     - quoteCustomer.name as customerName
-                    - internalStatus.name as internalStatusName
-                    - internalStatus.id as internalStatusId
-                    - customerStatus.name as customerStatusName
-                    - customerStatus.id as customerStatusId
                 join:
                     left:
                         - { join: quote.customerUser, alias: quoteCustomerUser }
                         - { join: quote.customer, alias: quoteCustomer }
-                        - { join: quote.internal_status, alias: internalStatus }
-                        - { join: quote.customer_status, alias: customerStatus }
             hints:
                 - HINT_TRANSLATABLE
         columns:
@@ -195,11 +189,19 @@ datagrids:
             customerName:
                 label: oro.sale.quote.customer.label
                 order: 3
-            internalStatusName:
+            internal_status:
                 label: oro.sale.quote.internal_status.label
+                frontend_type: select
+                data_name: internal_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('quote_internal_status')"
+                translatable_options: false
                 order: 4
-            customerStatusName:
+            customer_status:
                 label: oro.sale.quote.customer_status.label
+                frontend_type: select
+                data_name: customer_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('quote_customer_status')"
+                translatable_options: false
                 order: 5
         sorters:
             columns:
@@ -207,10 +209,10 @@ datagrids:
                     data_name: customerUserName
                 customerName:
                     data_name: customerName
-                internalStatusName:
-                    data_name: internalStatusName
-                customerStatusName:
-                    data_name: customerStatusName
+                internal_status:
+                    data_name: internal_status
+                customer_status:
+                    data_name: customer_status
         filters:
             columns:
                 qid:
@@ -225,13 +227,13 @@ datagrids:
                 customerName:
                     type:      string
                     data_name: customerName
-                internalStatusName:
+                internal_status:
                     type:      enum
-                    data_name: internalStatusId
+                    data_name: internal_status
                     enum_code: quote_internal_status
-                customerStatusName:
+                customer_status:
                     type:      enum
-                    data_name: customerStatusId
+                    data_name: customer_status
                     enum_code: quote_customer_status
                 expired:
                     type:      boolean

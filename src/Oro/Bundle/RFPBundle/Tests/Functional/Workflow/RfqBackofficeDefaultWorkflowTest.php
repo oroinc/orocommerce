@@ -255,8 +255,8 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     private function assertStatuses(string $internalStatus, string $customerStatus): void
     {
         $this->request = $this->refreshRequestEntity($this->request);
-        $this->assertEquals($internalStatus, $this->request->getInternalStatus()->getId());
-        $this->assertEquals($customerStatus, $this->request->getCustomerStatus()->getId());
+        $this->assertEquals($internalStatus, $this->request->getInternalStatus()->getInternalId());
+        $this->assertEquals($customerStatus, $this->request->getCustomerStatus()->getInternalId());
     }
 
     private function assertBackofficeTransition(

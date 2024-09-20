@@ -10,22 +10,22 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
-    private ProductVisibilityQueryBuilderModifier $modifier;
     private QueryBuilder $queryBuilder;
+    private ProductVisibilityQueryBuilderModifier $modifier;
 
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([LoadProductData::class]);
 
-        $this->modifier = new ProductVisibilityQueryBuilderModifier();
-
-        $this->queryBuilder = $this->getContainer()->get('doctrine')
+        $this->queryBuilder = self::getContainer()->get('doctrine')
             ->getRepository(Product::class)
             ->createQueryBuilder('p')
             ->orderBy('p.id');
+
+        $this->modifier = new ProductVisibilityQueryBuilderModifier();
     }
 
     /**
@@ -99,7 +99,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         return [
             'products in_stock' => [
                 'statuses' => [
-                    'in_stock',
+                    'prod_inventory_status.in_stock',
                 ],
                 'expected' => [
                     LoadProductData::PRODUCT_1,
@@ -113,7 +113,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ],
             'products out_of_stock' => [
                 'statuses' => [
-                    'out_of_stock',
+                    'prod_inventory_status.out_of_stock',
                 ],
                 'expected' => [
                     LoadProductData::PRODUCT_3,
@@ -121,7 +121,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ],
             'products discontinued' => [
                 'statuses' => [
-                    'discontinued',
+                    'prod_inventory_status.discontinued',
                 ],
                 'expected' => [
                     LoadProductData::PRODUCT_4,
@@ -129,9 +129,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ],
             'all products' => [
                 'statuses' => [
-                    'in_stock',
-                    'out_of_stock',
-                    'discontinued',
+                    'prod_inventory_status.in_stock',
+                    'prod_inventory_status.out_of_stock',
+                    'prod_inventory_status.discontinued',
                 ],
                 'expected' => [
                     LoadProductData::PRODUCT_1,
@@ -162,7 +162,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier->modifyByInventoryStatus(
             $this->queryBuilder,
             [
-                Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'prod_inventory_status.out_of_stock',
             ]
         );
 
@@ -170,9 +170,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier->modifyByInventoryStatus(
             $this->queryBuilder,
             [
-                Product::INVENTORY_STATUS_IN_STOCK,
-                Product::INVENTORY_STATUS_OUT_OF_STOCK,
-                Product::INVENTORY_STATUS_DISCONTINUED,
+                'prod_inventory_status.in_stock',
+                'prod_inventory_status.out_of_stock',
+                'prod_inventory_status.discontinued',
             ]
         );
 

@@ -48,9 +48,6 @@ Feature: Product attribute multiselect
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
-    When I click update schema
-    Then I should see "Schema updated" flash message
-
   Scenario: Delete option from attribute
     Given I go to Products/ Product Attributes
     And click edit MultiSelectField in grid
@@ -165,4 +162,3 @@ Feature: Product attribute multiselect
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"
     Then I should see "Attribute successfully deleted" flash message
-    And I should see "Update schema"

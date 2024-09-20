@@ -32,8 +32,6 @@ Feature: Matrix form product with decimal prices
     And I click "Continue"
     And save and close form
     Then I should see "Attribute was successfully saved" flash message
-    When I confirm schema update
-    Then I should see "Schema updated" flash message
 
   Scenario: Upload attributes options
     And I click "Import file"

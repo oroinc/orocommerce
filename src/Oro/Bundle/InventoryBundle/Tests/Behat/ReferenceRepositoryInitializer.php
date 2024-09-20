@@ -3,8 +3,8 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Behat;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
@@ -16,15 +16,14 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
      */
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue[] $enumInventoryStatuses */
-        $enumInventoryStatuses = $doctrine->getManagerForClass($inventoryStatusClassName)
-            ->getRepository($inventoryStatusClassName)
-            ->findAll();
+        /** @var EnumOptionInterface[] $enumInventoryStatuses */
+        $enumInventoryStatuses = $doctrine->getManagerForClass(EnumOption::class)
+            ->getRepository(EnumOption::class)
+            ->findBy(['enumCode' => Product::INVENTORY_STATUS_ENUM_CODE]);
 
         $inventoryStatuses = [];
         foreach ($enumInventoryStatuses as $inventoryStatus) {
-            $inventoryStatuses[$inventoryStatus->getId()] = $inventoryStatus;
+            $inventoryStatuses[$inventoryStatus->getInternalId()] = $inventoryStatus;
         }
 
         $referenceRepository->set(

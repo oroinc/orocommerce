@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\SaleBundle\Provider\GuestQuoteAccessProvider;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
@@ -134,7 +135,10 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
         $this->websiteManager->expects($this->never())
             ->method('getCurrentWebsite');
 
-        $this->assertFalse($this->provider->isGranted($this->getQuote(Quote::INTERNAL_STATUS_DRAFT)));
+        $this->assertFalse($this->provider->isGranted($this->getQuote(ExtendHelper::buildEnumOptionId(
+            Quote::INTERNAL_STATUS_CODE,
+            Quote::INTERNAL_STATUS_DRAFT
+        ))));
     }
 
     public function testIsGrantedWithoutCurrentWebsite()
@@ -182,7 +186,13 @@ class GuestQuoteAccessProviderTest extends \PHPUnit\Framework\TestCase
     private function getQuote(string $status, ?int $websiteId = null): Quote
     {
         $quote = new Quote();
-        $quote->setInternalStatus(new TestEnumValue($status, $status));
+        $quote->setInternalStatus(
+            new TestEnumValue(
+                Quote::INTERNAL_STATUS_CODE,
+                'Test',
+                $status
+            )
+        );
 
         if ($websiteId) {
             $quote->setWebsite($this->getWebsite($websiteId));

@@ -7,7 +7,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -71,7 +72,7 @@ class LoadProductKitData extends AbstractFixture implements
                         'products' => ['product-1'],
                     ],
                 ],
-                'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             ],
             [
                 'sku' => self::PRODUCT_KIT_2,
@@ -98,7 +99,7 @@ class LoadProductKitData extends AbstractFixture implements
                         'products' => ['product-3'],
                     ],
                 ],
-                'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             ],
             [
                 'sku' => self::PRODUCT_KIT_3,
@@ -134,7 +135,7 @@ class LoadProductKitData extends AbstractFixture implements
                         'products' => ['product-4', 'product-5'],
                     ],
                 ],
-                'inventoryStatusId' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
             ],
         ];
     }
@@ -155,7 +156,7 @@ class LoadProductKitData extends AbstractFixture implements
         $createdProducts = [];
 
         foreach ($this->getProductsData() as $productData) {
-            $inventoryStatus = $this->getInventoryStatus($manager, $productData['inventoryStatusId']);
+            $inventoryStatus = $this->getInventoryStatus($manager, $productData['inventory_status']);
 
             $productKit = new Product();
             $productKit
@@ -249,12 +250,10 @@ class LoadProductKitData extends AbstractFixture implements
         $manager->flush();
     }
 
-    private function getInventoryStatus(ObjectManager $manager, string $inventoryStatusId): AbstractEnumValue
+    private function getInventoryStatus(ObjectManager $manager, string $inventoryStatusId): EnumOptionInterface
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-
-        return $manager->getRepository($inventoryStatusClassName)->findOneBy([
-            'id' => $inventoryStatusId,
+        return $manager->getRepository(EnumOption::class)->findOneBy([
+            'id' => ExtendHelper::buildEnumOptionId(Product::INVENTORY_STATUS_ENUM_CODE, $inventoryStatusId)
         ]);
     }
 

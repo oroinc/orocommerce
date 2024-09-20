@@ -67,7 +67,7 @@ define(['jquery', 'underscore'], function($, _) {
             if (typeof value === 'string') {
                 value = value.trim();
             }
-            const columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
+            const columnValue = _.find(self.statusMetadata.choices, function(choiceValue) {
                 return choiceValue === value;
             });
             if (typeof columnValue !== 'undefined') {
@@ -82,7 +82,7 @@ define(['jquery', 'underscore'], function($, _) {
          */
         _updateInventoryStatus: function(model, value) {
             const self = this;
-            const columnValue = _.findKey(self.statusMetadata.choices, function(choiceValue) {
+            const columnValue = _.find(self.statusMetadata.choices, function(choiceValue) {
                 return choiceValue === value;
             });
 

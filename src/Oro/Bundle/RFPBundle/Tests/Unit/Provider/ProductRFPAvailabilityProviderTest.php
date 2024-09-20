@@ -8,6 +8,7 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Stubs\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider;
@@ -40,7 +41,7 @@ class ProductRFPAvailabilityProviderTest extends TestCase
 
     private function getInventoryStatus(string $id): InventoryStatus
     {
-        return new InventoryStatus($id, $id);
+        return new InventoryStatus(Product::INVENTORY_STATUS_ENUM_CODE, 'Test', $id);
     }
 
     /**
@@ -58,7 +59,7 @@ class ProductRFPAvailabilityProviderTest extends TestCase
         $this->configManager
             ->method('get')
             ->with('oro_rfp.frontend_product_visibility')
-            ->willReturn(['in_stock']);
+            ->willReturn([ExtendHelper::buildEnumOptionId(Product::INVENTORY_STATUS_ENUM_CODE, 'in_stock')]);
 
         self::assertSame($expectedResult, $this->provider->isProductAllowedForRFP($product));
     }
@@ -79,7 +80,7 @@ class ProductRFPAvailabilityProviderTest extends TestCase
         $this->configManager
             ->method('get')
             ->with('oro_rfp.frontend_product_visibility')
-            ->willReturn(['in_stock']);
+            ->willReturn([ExtendHelper::buildEnumOptionId(Product::INVENTORY_STATUS_ENUM_CODE, 'in_stock')]);
 
         $query = $this->createMock(AbstractQuery::class);
         $query->expects(self::once())

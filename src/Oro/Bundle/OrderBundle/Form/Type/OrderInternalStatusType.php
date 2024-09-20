@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Form\Type;
 
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\Form\AbstractType;
@@ -13,21 +13,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OrderInternalStatusType extends AbstractType
 {
-    private EnumValueProvider $enumValueProvider;
-
-    public function __construct(EnumValueProvider $enumValueProvider)
+    public function __construct(private EnumOptionsProvider $enumOptionsProvider)
     {
-        $this->enumValueProvider = $enumValueProvider;
     }
 
     /**
-     * {@inheritSoc}
+     * {@inheritdoc}
      */
-    public function configureOptions(OptionsResolver $resolver): void
+    public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
             'multiple' => true,
-            'choices' => $this->enumValueProvider->getEnumChoicesByCode(Order::INTERNAL_STATUS_CODE)
+            'choices' => $this->enumOptionsProvider->getEnumChoicesByCode(Order::INTERNAL_STATUS_CODE)
         ]);
     }
 

@@ -22,24 +22,24 @@ datagrids:
                     - oro_product_WEBSITE_ID
         columns:
             sku:
-                label:         oro.product.sku.label
+                label: oro.product.sku.label
             productName:
-                label:         oro.product.names.label
+                label: oro.product.names.label
             inventoryStatus:
-                label:         oro.product.inventory_status.label
+                label: oro.product.inventory_status.label
                 frontend_type: select
-                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                choices: "@oro_entity_extend.enum_options_provider->getEnumInternalChoicesByCode('prod_inventory_status')"
                 translatable_options: false
         filters:
             columns:
                 sku:
-                    type:      string
+                    type: string
                     data_name: sku
                 productName:
-                    type:      string
+                    type: string
                     data_name: names_LOCALIZATION_ID
                 inventoryStatus:
-                    type:      enum
+                    type: enum
                     data_name: inv_status
                     enum_code: prod_inventory_status
         properties:
@@ -52,10 +52,10 @@ datagrids:
                     data_name: names_LOCALIZATION_ID
                 inventoryStatus:
                     data_name: inventory_status
-
+            
             toolbar_sorting: true
             disable_default_sorting: true
-
+    
     frontend-product-search-grid:
         options:
             entityHint: oro.product.entity_plural_label
@@ -88,20 +88,20 @@ datagrids:
                 from:
                     - oro_product_WEBSITE_ID
             hints:
-                - {'name': HINT_SEARCH_TYPE, 'value': 'product_search'} # Used for search term logging.
+                - { 'name': HINT_SEARCH_TYPE, 'value': 'product_search' } # Used for search term logging.
         columns:
             sku:
-                label:         oro.product.sku.label
+                label: oro.product.sku.label
             name:
-                label:         oro.product.names.label
+                label: oro.product.names.label
             shortDescription:
-                label:         oro.product.short_descriptions.label
+                label: oro.product.short_descriptions.label
         filters:
             columns:
                 all_text:
-                    type:      string
+                    type: string
                     data_name: all_text_LOCALIZATION_ID
-                    label:     oro.product.anything.label
+                    label: oro.product.anything.label
                     max_length: 255
                     options:
                         operator_choices:
@@ -112,23 +112,23 @@ datagrids:
             schemaOrgBrandName: ~
             schemaOrgDescription: ~
             view_link:
-                type:  url
+                type: url
                 route: oro_product_frontend_product_view
                 params: [ id ]
             newArrival: ~
             unit: ~
             view_aria_label:
-                type:   translatable
-                key:    oro.product.frontend.grid.action.product.view.aria_label
-                params: [name]
+                type: translatable
+                key: oro.product.frontend.grid.action.product.view.aria_label
+                params: [ name ]
         sorters:
             toolbar_sorting: true
             disable_default_sorting: true
         actions:
             view:
-                type:          navigate
-                label:         oro.grid.action.view
-                ariaLabel:     view_aria_label
-                link:          view_link
-                icon:          eye
-                rowAction:     true
+                type: navigate
+                label: oro.grid.action.view
+                ariaLabel: view_aria_label
+                link: view_link
+                icon: eye
+                rowAction: true

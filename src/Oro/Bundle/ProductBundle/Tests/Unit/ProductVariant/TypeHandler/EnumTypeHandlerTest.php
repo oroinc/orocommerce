@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\TypeHandler;
 
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler;
@@ -43,17 +44,6 @@ class EnumTypeHandlerTest extends \PHPUnit\Framework\TestCase
             '10 mm' => true,
             '10mm' => true,
         ];
-
-        $fieldConfig = $this->createMock(FieldConfigModel::class);
-        $fieldConfig->expects($this->once())
-            ->method('toArray')
-            ->with('extend')
-            ->willReturn(['target_entity' => \stdClass::class]);
-        $this->configManager->expects($this->once())
-            ->method('getConfigFieldModel')
-            ->with(Product::class, $fieldName)
-            ->willReturn($fieldConfig);
-
         $form = $this->createMock(Form::class);
 
         $this->formFactory->expects($this->once())
@@ -62,15 +52,28 @@ class EnumTypeHandlerTest extends \PHPUnit\Framework\TestCase
                 $disabledValues = ['red', 'yellow', '10'];
 
                 $this->assertEquals([
-                    'class' => \stdClass::class,
+                    'class' => EnumOption::class,
                     'configs' => ['allowClear' => false],
                     'disabled_values' => $disabledValues,
                     'auto_initialize' => false,
+                    'enum_code' => 'test',
+                    'multiple' => false
                 ], $options);
 
                 return true;
             }))
             ->willReturn($form);
+        $fieldConfig = $this->createMock(FieldConfigModel::class);
+        $fieldConfig->method('getType')
+            ->willReturn('enum');
+        $fieldConfig->expects(self::once())
+            ->method('toArray')
+            ->with('enum')
+            ->willReturn(['target_entity' => EnumOption::class, 'enum_code' => 'test']);
+        $this->configManager->expects(self::once())
+            ->method('getConfigFieldModel')
+            ->with(Product::class, $fieldName)
+            ->willReturn($fieldConfig);
 
         $actualForm = $this->handler->createForm($fieldName, $availability);
         $this->assertSame($form, $actualForm);

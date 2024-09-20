@@ -39,7 +39,7 @@ data:
         inventoryStatus:
             data:
                 type: productinventorystatuses
-                id: '<toString(@in_stock->id)>'
+                id: '<toString(@in_stock->internalId)>'
         productFamily:
             data:
                 type: productfamilies

@@ -4,8 +4,9 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\EnumSynchronizer;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\EntityExtendBundle\Validator\Constraints\ConfigModelAwareConstraintInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -41,7 +42,9 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
         }
 
         $persistedOptions = $this->getPersistedOptions($constraint);
-        $this->enumSynchronizer->fillOptionIds($persistedOptions, $value);
+        if (!empty($persistedOptions)) {
+            $this->enumSynchronizer->fillOptionIds($persistedOptions, $value, $this->getEnumCode($constraint));
+        }
         $removedIds = $this->getRemovedIds($persistedOptions, $value);
         if (!$removedIds) {
             return;
@@ -70,6 +73,9 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
     private function getTargetEntity(ConfigModelAwareConstraintInterface $constraint): ?string
     {
         $configModel = $constraint->getConfigModel();
+        if (ExtendHelper::isEnumerableType($configModel->getType())) {
+            return EnumOption::class;
+        }
         $extendConfig = $configModel->toArray('extend');
 
         return $extendConfig['target_entity'] ?? null;
@@ -80,19 +86,15 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
         if (!$constraint instanceof ConfigModelAwareConstraintInterface) {
             return false;
         }
-
         $configModel = $constraint->getConfigModel();
         if (!$configModel instanceof FieldConfigModel) {
             return false;
         }
-
         if ($configModel->getEntity()->getClassName() !== Product::class) {
             return false;
         }
-
         $targetEntity = $this->getTargetEntity($constraint);
-
-        if (!$targetEntity || !is_a($targetEntity, AbstractEnumValue::class, true)) {
+        if (!$targetEntity) {
             return false;
         }
 
@@ -109,6 +111,14 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
         }
 
         return $usedEnumLabels;
+    }
+
+    private function getEnumCode(Constraint $constraint): string
+    {
+        return ExtendHelper::generateEnumCode(
+            $constraint->getConfigModel()->getEntity()->getClassName(),
+            $constraint->getConfigModel()->getFieldName()
+        );
     }
 
     private function getProductSkusFoErrorMessage(array $configProductsSkuUsingEnum): string
@@ -131,6 +141,10 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
     {
         $targetEntity = $this->getTargetEntity($constraint);
         $repo = $this->registry->getRepository($targetEntity);
+        $configModel = $constraint->getConfigModel();
+        if (ExtendHelper::isEnumerableType($configModel->getType())) {
+            return $repo->findBy(['enumCode' => $this->getEnumCode($constraint)]);
+        }
 
         return $repo->findAll();
     }

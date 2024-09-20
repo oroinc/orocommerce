@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Oro\Bundle\InventoryBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductView;
 
@@ -15,21 +15,16 @@ use Oro\Bundle\ProductBundle\Model\ProductView;
  */
 class InventoryStatusProvider
 {
-    private EnumValueProvider $enumValueProvider;
-    private ManagerRegistry $doctrine;
-
     public function __construct(
-        EnumValueProvider $enumValueProvider,
-        ManagerRegistry $doctrine,
+        private EnumOptionsProvider $enumOptionsProvider,
+        private ManagerRegistry $doctrine
     ) {
-        $this->enumValueProvider = $enumValueProvider;
-        $this->doctrine = $doctrine;
     }
 
     public function getLabel(Product|ProductView|array $product): ?string
     {
         $inventoryStatuses = array_flip(
-            $this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status')
+            $this->enumOptionsProvider->getEnumChoicesByCode(Product::INVENTORY_STATUS_ENUM_CODE)
         );
         $inventoryStatus = $this->getEnumValue($product)?->getId();
 
@@ -41,7 +36,7 @@ class InventoryStatusProvider
         return $this->getEnumValue($product)?->getId();
     }
 
-    private function getEnumValue(Product|ProductView|array $product): ?AbstractEnumValue
+    private function getEnumValue(Product|ProductView|array $product): ?EnumOptionInterface
     {
         if ($product instanceof Product && ($value = $product->getInventoryStatus())) {
             return $value;

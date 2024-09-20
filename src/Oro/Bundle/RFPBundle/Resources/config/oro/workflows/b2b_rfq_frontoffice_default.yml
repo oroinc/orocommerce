@@ -52,8 +52,8 @@ workflows:
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
                         queued: false
-                        field: internal_status
-                        require: "entity.getInternalStatus().getId() === 'more_info_requested'"
+                        field: serialized_data
+                        require: "entity.getInternalStatus().getInternalId() === 'more_info_requested'"
                 frontend_options:
                     icon: fa-question-circle-o
             provide_more_information_transition:
@@ -83,8 +83,8 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
-                        field: customer_status
-                        require: "entity.getCustomerStatus().getId() === 'cancelled'"
+                        field: serialized_data
+                        require: "entity.getCustomerStatus() !== null && entity.getCustomerStatus().getInternalId() === 'cancelled'"
             resubmit_transition:
                 step_to: cancelled
                 transition_definition: resubmit_transition_definition
@@ -98,11 +98,11 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
-                        field: customer_status
+                        field: serialized_data
                         require: >
                             prevEntity.getCustomerStatus() !== null &&
-                            entity.getCustomerStatus().getId() === 'submitted' &&
-                            prevEntity.getCustomerStatus().getId() === 'cancelled'
+                            entity.getCustomerStatus().getInternalId() === 'submitted' &&
+                            prevEntity.getCustomerStatus().getInternalId() === 'cancelled'
                 frontend_options:
                     icon: fa-external-link
 
@@ -112,21 +112,21 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'open'
+                        identifier: 'rfp_internal_status.open'
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
-                        identifier: 'submitted'
+                        identifier: 'rfp_customer_status.submitted'
             cancel_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'cancelled_by_customer'
+                        identifier: 'rfp_internal_status.cancelled_by_customer'
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
-                        identifier: 'cancelled'
+                        identifier: 'rfp_customer_status.cancelled'
             decline_transition_definition: ~
             resubmit_transition_definition:
                 actions:
@@ -152,19 +152,19 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
-                        identifier: 'requires_attention'
+                        identifier: 'rfp_customer_status.requires_attention'
             provide_more_information_transition_definition:
                 preconditions:
-                    '@equal': [$request.internalStatus.id, 'more_info_requested']
+                    '@equal': [$request.internalStatus.internalId, 'more_info_requested']
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'open'
+                        identifier: 'rfp_internal_status.open'
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
-                        identifier: 'submitted'
+                        identifier: 'rfp_customer_status.submitted'
                     - '@assign_constant_value':
                         attribute: $.result.note_type
                         value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_CUSTOMER_NOTE

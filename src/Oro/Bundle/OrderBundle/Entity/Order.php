@@ -19,7 +19,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderNameInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
@@ -48,10 +48,10 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @method AbstractEnumValue|null getInternalStatus()
- * @method $this setInternalStatus(AbstractEnumValue|null $internalStatus)
- * @method AbstractEnumValue|null getStatus()
- * @method $this setStatus(AbstractEnumValue|null $status)
+ * @method EnumOptionInterface getInternalStatus()
+ * @method $this setInternalStatus(EnumOptionInterface $status)
+ * @method EnumOptionInterface|null getStatus()
+ * @method $this setStatus(EnumOptionInterface|null $status)
  * @mixin OroOrderBundle_Entity_Order
  */
 #[ORM\Entity(repositoryClass: OrderRepository::class)]

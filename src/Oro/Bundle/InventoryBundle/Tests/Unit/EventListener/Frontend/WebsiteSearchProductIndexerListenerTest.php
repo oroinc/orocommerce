@@ -42,7 +42,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $product1Id = 10;
         $product1 = new ProductStub();
         ReflectionUtil::setId($product1, $product1Id);
-        $product1->setInventoryStatus(new InventoryStatus('in_stock', 'In Stock'));
+        $product1->setInventoryStatus(new InventoryStatus('test', 'Test', 'in_stock'));
         $product1HighlightLowInventory = true;
         $product1LowInventoryThreshold = 1.1;
         $product1IsUpcoming = true;
@@ -57,7 +57,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
         $product3Id = 30;
         $product3 = new ProductStub();
         ReflectionUtil::setId($product3, $product3Id);
-        $product3->setInventoryStatus(new InventoryStatus('in_stock', 'In Stock'));
+        $product3->setInventoryStatus(new InventoryStatus('test', 'Test', 'in_stock'));
         $product3HighlightLowInventory = false;
         $product3IsUpcoming = true;
         $product3AvailabilityDate = null;

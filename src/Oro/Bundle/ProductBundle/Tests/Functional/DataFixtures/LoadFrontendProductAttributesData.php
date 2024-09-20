@@ -8,6 +8,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerData;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -110,18 +112,10 @@ class LoadFrontendProductAttributesData extends AbstractFixture implements
         );
     }
 
-    /**
-     * @param ObjectManager $manager
-     * @param $enumCode
-     * @param $id
-     * @return object
-     */
-    private function findEnum(ObjectManager $manager, $enumCode, $id)
+    private function findEnum(ObjectManager $manager, string $enumCode, string $id): ?EnumOptionInterface
     {
-        $enumClass = ExtendHelper::buildEnumValueClassName($enumCode);
-
         return $manager
-            ->getRepository($enumClass)
-            ->find($id);
+            ->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId($enumCode, $id));
     }
 }

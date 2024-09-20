@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Frontend;
 
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductListInventoryStatusListener;
 use Oro\Bundle\ProductBundle\Event\BuildQueryProductListEvent;
 use Oro\Bundle\ProductBundle\Event\BuildResultProductListEvent;
@@ -16,14 +16,14 @@ class ProductListInventoryStatusListenerTest extends TestCase
 
     protected function setUp(): void
     {
-        $enumValueProvider = $this->createMock(EnumValueProvider::class);
-        $enumValueProvider
+        $enumOptionsProvider = $this->createMock(EnumOptionsProvider::class);
+        $enumOptionsProvider
             ->expects(self::any())
-            ->method('getEnumChoicesByCode')
+            ->method('getEnumInternalChoices')
             ->with('prod_inventory_status')
-            ->willReturn(['In Stock' => 'in_stock']);
+            ->willReturn(['in_stock' => 'In Stock']);
 
-        $this->listener = new ProductListInventoryStatusListener($enumValueProvider);
+        $this->listener = new ProductListInventoryStatusListener($enumOptionsProvider);
     }
 
     public function testOnBuildQuery(): void

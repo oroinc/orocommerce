@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Cache;
 
 use Oro\Bundle\EntityBundle\Provider\EntityWithFieldsProvider;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\ProductBundle\Cache\EnumProductVariantFieldValuesCacheWarmer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
@@ -37,7 +37,7 @@ class EnumProductVariantFieldValuesCacheWarmerTest extends \PHPUnit\Framework\Te
             ->with(Product::class)
             ->willReturn(
                 [
-                    ['name' => 'field1', 'related_entity_name' => AbstractEnumValue::class],
+                    ['name' => 'field1', 'related_entity_name' => EnumOptionInterface::class],
                     ['name' => 'field2'],
                     ['name' => 'field3', 'related_entity_name' => Product::class],
                 ]

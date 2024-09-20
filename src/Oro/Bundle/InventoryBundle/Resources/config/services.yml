@@ -138,7 +138,7 @@ services:
     oro_inventory.event_listener.frontend_product_datagrid_inventory_status:
         class: Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridInventoryStatusListener
         arguments:
-            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_entity_extend.enum_options_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
@@ -161,7 +161,7 @@ services:
     oro_inventory.event_listener.product_list.inventory_status:
         class: Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductListInventoryStatusListener
         arguments:
-            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_entity_extend.enum_options_provider'
         tags:
             - { name: kernel.event_listener, event: oro_product.product_list.build_query, method: onBuildQuery }
             - { name: kernel.event_listener, event: oro_product.product_list.build_result, method: onBuildResult }
@@ -235,5 +235,5 @@ services:
     oro_inventory.provider.inventory_status:
         class: Oro\Bundle\InventoryBundle\Provider\InventoryStatusProvider
         arguments:
-            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_entity_extend.enum_options_provider'
             - '@doctrine'

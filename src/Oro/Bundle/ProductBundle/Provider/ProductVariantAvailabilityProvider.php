@@ -127,6 +127,7 @@ class ProductVariantAvailabilityProvider
         $cacheKey = $this->getProductsByVariantsCacheKey($configurableProduct->getId(), $variantParameters);
         if (!isset($this->productsByVariantFieldsCache[$cacheKey])) {
             $result = $this->getSimpleProductsByVariantFieldsQB($configurableProduct, $variantParameters)
+                ->orderBy('p.id', 'DESC')
                 ->getQuery()
                 ->getResult();
             $this->productsByVariantFieldsCache[$cacheKey] = $result;

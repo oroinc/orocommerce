@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Migrations\Schema\v1_14;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
-use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\OutdatedExtendExtensionAwareTrait;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -14,9 +14,9 @@ use Oro\Bundle\SaleBundle\Migrations\Data\ORM\LoadQuoteCustomerStatuses;
 use Oro\Bundle\SaleBundle\Migrations\Data\ORM\LoadQuoteInternalStatuses;
 use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
-class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
+class OroSaleBundle implements Migration, OutdatedExtendExtensionAwareInterface
 {
-    use ExtendExtensionAwareTrait;
+    use OutdatedExtendExtensionAwareTrait;
 
     /**
      * {@inheritdoc}
@@ -34,7 +34,7 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
         $customerStatusOptions = new OroOptions();
         $customerStatusOptions->set('enum', 'immutable_codes', LoadQuoteCustomerStatuses::getDataKeys());
 
-        $customerStatusEnumTable = $this->extendExtension->addEnumField(
+        $customerStatusEnumTable = $this->outdatedExtendExtension->addOutdatedEnumField(
             $schema,
             'oro_sale_quote',
             'customer_status',
@@ -51,7 +51,7 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
         $internalStatusOptions = new OroOptions();
         $internalStatusOptions->set('enum', 'immutable_codes', LoadQuoteInternalStatuses::getDataKeys());
 
-        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+        $internalStatusEnumTable = $this->outdatedExtendExtension->addOutdatedEnumField(
             $schema,
             'oro_sale_quote',
             'internal_status',

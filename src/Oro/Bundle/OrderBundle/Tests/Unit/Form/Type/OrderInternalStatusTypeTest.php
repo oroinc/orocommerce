@@ -2,7 +2,8 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType;
@@ -15,13 +16,16 @@ class OrderInternalStatusTypeTest extends FormIntegrationTestCase
 
     protected function setUp(): void
     {
-        $enumValueProvider = $this->createMock(EnumValueProvider::class);
-        $enumValueProvider->expects(self::any())
+        $enumOptionProvider = $this->createMock(EnumOptionsProvider::class);
+        $enumOptionProvider->expects(self::any())
             ->method('getEnumChoicesByCode')
             ->with(Order::INTERNAL_STATUS_CODE)
-            ->willReturn(['Open' => 'open', 'Cancelled' => 'cancelled']);
+            ->willReturn([
+                'Open' => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, 'open'),
+                'Cancelled' => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, 'cancelled')
+            ]);
 
-        $this->type = new OrderInternalStatusType($enumValueProvider);
+        $this->type = new OrderInternalStatusType($enumOptionProvider);
 
         parent::setUp();
     }
@@ -50,12 +54,12 @@ class OrderInternalStatusTypeTest extends FormIntegrationTestCase
 
         self::assertEquals([], $form->getData());
 
-        $form->submit(['open']);
+        $form->submit(['order_internal_status.open']);
 
         self::assertCount(0, $form->getErrors(true));
         self::assertTrue($form->isValid());
         self::assertTrue($form->isSynchronized());
-        self::assertEquals(['open'], $form->getData());
+        self::assertEquals(['order_internal_status.open'], $form->getData());
     }
 
     public function testSubmitWhenInvalidChoice(): void

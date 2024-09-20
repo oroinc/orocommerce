@@ -5,7 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
@@ -193,11 +194,10 @@ class OrderReindexTest extends FrontendWebTestCase
         $em->flush();
     }
 
-    private function getOrderInternalStatusById(string $id): AbstractEnumValue
+    private function getOrderInternalStatusById(string $id): EnumOptionInterface
     {
-        $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
-
-        return $this->doctrine->getManagerForClass($className)->getRepository($className)->find($id);
+        return $this->doctrine->getManagerForClass(EnumOption::class)->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $id));
     }
 
     private function createOrderLineItem(

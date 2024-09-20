@@ -118,10 +118,6 @@ Feature: Validate unique variant field values when changing simple products
     And I save form
     Then I should see "Field saved" flash message
 
-    # Update schema
-    And I go to Products / Product Attributes
-    And I confirm schema update
-
     # Update attribute family
     And I go to Products / Product Families
     And I click Edit Product Attribute Family in grid

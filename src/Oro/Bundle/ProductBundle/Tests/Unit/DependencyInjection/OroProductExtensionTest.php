@@ -46,7 +46,7 @@ final class OroProductExtensionTest extends TestCase
                         'default_unit' => ['value' => 'each', 'scope' => 'app'],
                         'default_unit_precision' => ['value' => 0, 'scope' => 'app'],
                         'general_frontend_product_visibility' => [
-                            'value' => ['in_stock', 'out_of_stock'],
+                            'value' => ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
                             'scope' => 'app'
                         ],
                         'product_image_watermark_file' => ['value' => null, 'scope' => 'app'],
@@ -98,7 +98,7 @@ final class OroProductExtensionTest extends TestCase
                         'inventory_filter_enable_for_guests' => ['value' => true, 'scope' => 'app'],
                         'inventory_filter_type' => ['value' => 'inventory-switcher', 'scope' => 'app'],
                         'inventory_filter_in_stock_statuses_for_simple_filter' => [
-                            'value' => ['in_stock'],
+                            'value' => ['prod_inventory_status.in_stock'],
                             'scope' => 'app'
                         ],
                     ]

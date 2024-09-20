@@ -99,7 +99,7 @@ class OrderWithExternalStatusManagementTest extends FrontendRestJsonApiTestCase
 
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
-        self::assertEquals('wait_for_approval', $order->getStatus()->getId());
+        self::assertEquals('wait_for_approval', $order->getStatus()->getInternalId());
     }
 
     public function testGetSubresourceForStatus(): void

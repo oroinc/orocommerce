@@ -33,10 +33,6 @@ Feature: Check shopping list dialog in configurable product
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
-    When I go to Products / Product Attributes
-    And I click update schema
-    Then I should see "Schema updated" flash message
-
     Then I go to Products / Product Families
     When I click Edit "Default" in grid
     And set Attribute Groups with:

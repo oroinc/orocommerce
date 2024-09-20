@@ -543,7 +543,7 @@ services:
     oro_order.form.type.order_internal_status:
         class: Oro\Bundle\OrderBundle\Form\Type\OrderInternalStatusType
         arguments:
-            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_entity_extend.enum_options_provider'
         tags:
             - { name: form.type }
 
@@ -684,6 +684,7 @@ services:
         class: Oro\Bundle\OrderBundle\Datagrid\OrderStatusDatagridListener
         arguments:
             - '@oro_order.provider.configuration'
+            - '@oro_entity_extend.enum_options_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.orders-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.embed-orders-grid, method: onBuildBefore }
@@ -692,7 +693,7 @@ services:
         class: Oro\Bundle\OrderBundle\Datagrid\OrderStatusFrontendDatagridListener
         arguments:
             - '@oro_order.provider.configuration'
-            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_entity_extend.enum_options_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-orders-grid, method: onBuildBefore }
 

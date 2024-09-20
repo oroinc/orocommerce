@@ -85,25 +85,25 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         enabled: true
         sortOrder: 1
         stopProcessing: true
-        expression: "lineItems.any( lineItem.product.shipping_category.id = 'd' )"
+        expression: "lineItems.any( lineItem.product.shipping_category.internalId = 'd' )"
     shippingRuleC:
         name: 'C'
         enabled: true
         sortOrder: 2
         stopProcessing: true
-        expression: "lineItems.any( lineItem.product.shipping_category.id = 'c' )"
+        expression: "lineItems.any( lineItem.product.shipping_category.internalId = 'c' )"
     shippingRuleB:
         name: 'B'
         enabled: true
         sortOrder: 3
         stopProcessing: true
-        expression: "lineItems.any( lineItem.product.shipping_category.id = 'b' )"
+        expression: "lineItems.any( lineItem.product.shipping_category.internalId = 'b' )"
     shippingRuleA:
         name: 'A'
         enabled: true
         sortOrder: 4
         stopProcessing: true
-        expression: "lineItems.any( lineItem.product.shipping_category.id = 'a' )"
+        expression: "lineItems.any( lineItem.product.shipping_category.internalId = 'a' )"
     shippingRuleDefault:
         name: 'Default'
         enabled: true

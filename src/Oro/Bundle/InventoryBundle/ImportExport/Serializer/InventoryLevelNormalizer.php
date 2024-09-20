@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\ImportExport\Serializer;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -140,7 +141,23 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         $productUnitPrecision->setProduct($productEntity);
 
         if (array_key_exists('inventoryStatus', $productData)) {
-            $productEntity->setInventoryStatus($productData['inventoryStatus']);
+            $inventoryStatus = $this->doctrineHelper->getEntityRepository(EnumOption::class)
+                ->findOneBy([
+                    'enumCode' => Product::INVENTORY_STATUS_ENUM_CODE,
+                    'name' => $productData['inventoryStatus']
+                ]);
+
+            if (null !== $inventoryStatus) {
+                $productEntity->setInventoryStatus($inventoryStatus);
+            } elseif (null !== $productData['inventoryStatus'] && !empty($productData['inventoryStatus'])) {
+                // set invalid inventory status reference is expected in HasSupportedInventoryStatusValidator
+                $productEntity->setInventoryStatus(
+                    $this->doctrineHelper->getEntityReference(
+                        EnumOption::class,
+                        $productData['inventoryStatus']
+                    )
+                );
+            }
         }
 
         $this->determineQuantity($inventoryLevel, $data);

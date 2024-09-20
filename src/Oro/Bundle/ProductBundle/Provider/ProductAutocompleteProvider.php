@@ -5,9 +5,11 @@ declare(strict_types=1);
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LayoutBundle\Provider\Image\ImagePlaceholderProviderInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration as ProductConfiguration;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteDataEvent;
 use Oro\Bundle\ProductBundle\Event\ProcessAutocompleteQueryEvent;
 use Oro\Bundle\ProductBundle\Search\ProductRepository;
@@ -16,7 +18,6 @@ use Oro\Bundle\SearchBundle\Query\Result\Item;
 use Oro\Bundle\UIBundle\Tools\UrlHelper;
 use Oro\Bundle\UIBundle\Twig\HtmlTagExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
@@ -31,7 +32,7 @@ class ProductAutocompleteProvider
     protected HtmlTagExtension $htmlTagExtension;
     protected ImagePlaceholderProviderInterface $imagePlaceholderProvider;
     protected ConfigManager $configManager;
-    protected EnumValueProvider $enumValueProvider;
+    protected EnumOptionsProvider $enumOptionsProvider;
     protected EventDispatcherInterface $eventDispatcher;
     protected UrlHelper $urlHelper;
 
@@ -41,7 +42,7 @@ class ProductAutocompleteProvider
         HtmlTagExtension $htmlTagExtension,
         ImagePlaceholderProviderInterface $imagePlaceholderProvider,
         ConfigManager $configManager,
-        EnumValueProvider $enumValueProvider,
+        EnumOptionsProvider $enumOptionsProvider,
         EventDispatcherInterface $eventDispatcher,
         UrlHelper $urlHelper
     ) {
@@ -50,7 +51,7 @@ class ProductAutocompleteProvider
         $this->htmlTagExtension = $htmlTagExtension;
         $this->imagePlaceholderProvider = $imagePlaceholderProvider;
         $this->configManager = $configManager;
-        $this->enumValueProvider = $enumValueProvider;
+        $this->enumOptionsProvider = $enumOptionsProvider;
         $this->eventDispatcher = $eventDispatcher;
         $this->urlHelper = $urlHelper;
     }
@@ -98,9 +99,8 @@ class ProductAutocompleteProvider
     protected function getProductData(array $productItems): array
     {
         $defaultImage = $this->imagePlaceholderProvider->getPath('product_small');
-        $inventoryStatuses = array_flip(
-            $this->enumValueProvider->getEnumChoicesByCode('prod_inventory_status')
-        );
+        $enumInventoryChoices = $this->enumOptionsProvider
+            ->getEnumInternalChoices(Product::INVENTORY_STATUS_ENUM_CODE);
 
         $data = [];
         foreach ($productItems as $item) {
@@ -122,8 +122,8 @@ class ProductAutocompleteProvider
             // set default image for cases when original image is missing
             $productData['default_image'] = $defaultImage;
 
-            $inventoryStatus = $productData['inventory_status'];
-            $productData['inventory_status_label'] = $inventoryStatuses[$inventoryStatus] ?? $inventoryStatus;
+            $inventoryStatus = ExtendHelper::getEnumInternalId($productData['inventory_status']);
+            $productData['inventory_status_label'] = $enumInventoryChoices[$inventoryStatus] ?? $inventoryStatus;
 
             // product ID or SKU are not used as a key to keep proper order at the storefront
             $data[] = $productData;

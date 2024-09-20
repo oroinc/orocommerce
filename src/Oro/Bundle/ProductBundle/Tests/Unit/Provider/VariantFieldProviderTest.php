@@ -33,11 +33,14 @@ class VariantFieldProviderTest extends \PHPUnit\Framework\TestCase
         $attribute1 = new FieldConfigModel('other_type_field', 'text');
         $attribute2 = new FieldConfigModel('system_field', 'enum');
         $attribute3 = new FieldConfigModel('not_active_field', 'enum');
-        $attribute4 = new FieldConfigModel('serialized_field', 'enum');
+        $attribute4 = new FieldConfigModel('correct_variant_enum_field', 'enum');
         $attribute5 = new FieldConfigModel('correct_variant_field', 'boolean');
         $attributeFamily = new AttributeFamily();
 
-        $expectedResult['correct_variant_field'] = new VariantField('correct_variant_field', 'Some label');
+        $expectedResult = [
+            'correct_variant_enum_field' => new VariantField('correct_variant_enum_field', 'Label enum'),
+            'correct_variant_field' => new VariantField('correct_variant_field', 'Label boolean')
+        ];
 
         $this->attributeManager->expects($this->once())
             ->method('getAttributesByFamily')
@@ -59,10 +62,10 @@ class VariantFieldProviderTest extends \PHPUnit\Framework\TestCase
             ->withConsecutive([$attribute4], [$attribute5])
             ->willReturnOnConsecutiveCalls(true, false);
 
-        $this->attributeManager->expects($this->once())
+        $this->attributeManager->expects($this->exactly(2))
             ->method('getAttributeLabel')
-            ->with($attribute5)
-            ->willReturn('Some label');
+            ->withConsecutive([$attribute4], [$attribute5])
+            ->willReturn('Label enum', 'Label boolean');
 
         $this->assertEquals($expectedResult, $this->variantFieldProvider->getVariantFields($attributeFamily));
     }

@@ -37,7 +37,12 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
     {
         return [
             [
-                ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.out_of_stock'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -47,7 +52,7 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.in_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -56,17 +61,22 @@ class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectT
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['out_of_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.out_of_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_3,
                 ],
             ],
             [
-                ['availableInventoryStatuses' => ['discontinued']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.discontinued']],
                 'expectedProducts' => [],
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock', 'discontinued']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.discontinued'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,

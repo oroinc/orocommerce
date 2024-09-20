@@ -173,6 +173,10 @@ oro_behat_extension:
 
     Product Attribute Name:
       selector: '[name="oro_entity_config_type[fieldName]"]'
+    Product Color Attribute White:
+      selector: '[name="oro_entity_config_type[enum][enum_options][1][id]"]'
+    Product Size Attribute S:
+      selector: '[name="oro_entity_config_type[enum][enum_options][0][id]"]'
 
     Customer Form:
       selector: 'form[name="oro_customer_type"]'

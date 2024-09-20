@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\DataGrid\Form\Type;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\FilterType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
@@ -43,6 +44,7 @@ class FrontendInventorySwitcherFilterType extends AbstractType
                 'default_value' => null,
                 'null_value' => null,
                 'class' => null,
+                'enum_code' => Product::INVENTORY_STATUS_ENUM_CODE,
             ]
         );
     }
@@ -59,7 +61,9 @@ class FrontendInventorySwitcherFilterType extends AbstractType
         if (!empty($options['null_value'])) {
             $view->vars['null_value'] = $options['null_value'];
         }
-
+        if (!empty($options['enum_code'])) {
+            $view->vars['enum_code'] = $options['enum_code'];
+        }
         if (!empty($options['class'])) {
             $view->vars['class'] = $options['class'];
         }

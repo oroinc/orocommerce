@@ -4,7 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Test\EntityExtendTestInitializer;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductWithInventoryStatus;
 use Oro\Bundle\ShoppingListBundle\Async\MessageFactory;
@@ -35,6 +37,7 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
         $this->messageFactory = $this->createMock(MessageFactory::class);
         $this->producer = $this->createMock(MessageProducerInterface::class);
         $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);
+        EntityExtendTestInitializer::initialize();
 
         $this->listener = new ProductInventoryStatusListener(
             $this->configManager,
@@ -50,9 +53,8 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
         $product = $this->getEntity(Product::class, ['id' => 1]);
         $args = $this->createMock(PreUpdateEventArgs::class);
         $args->expects(self::once())
-            ->method('hasChangedField')
-            ->with('inventory_status')
-            ->willReturn(false);
+            ->method('getEntityChangeSet')
+            ->willReturn([]);
 
         $this->producer->expects(self::never())
             ->method(self::anything());
@@ -62,18 +64,28 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPreUpdate(): void
     {
-        $inventoryStatus = $this->createMock(AbstractEnumValue::class);
-        $inventoryStatus->expects(self::any())
-            ->method('getId')
-            ->willReturn('out_of_stock');
+        $inventoryStatus = new TestEnumValue(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            'Out of stock',
+            Product::INVENTORY_STATUS_OUT_OF_STOCK
+        );
+
         /** @var Product $product */
         $product = $this->getEntity(ProductWithInventoryStatus::class, ['id' => 1]);
         $product->setInventoryStatus($inventoryStatus);
         $args = $this->createMock(PreUpdateEventArgs::class);
         $args->expects(self::once())
-            ->method('hasChangedField')
-            ->with('inventory_status')
-            ->willReturn(true);
+            ->method('getEntityChangeSet')
+            ->willReturn([
+                'serialized_data' => [
+                    [
+                        'inventory_status' => ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        )
+                    ],
+                ]
+            ]);
 
         $website1 = $this->getEntity(Website::class, ['id' => 1]);
         $website3 = $this->getEntity(Website::class, ['id' => 3]);
@@ -91,8 +103,22 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
                 $websites
             )
             ->willReturn([
-                1 => ['in_stock', 'out_of_stock'],
-                3 => ['in_stock'],
+                1 => [
+                    ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    ),
+                    ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                    ),
+                ],
+                3 => [
+                    ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    )
+                ],
             ]);
 
         $data = [
@@ -118,18 +144,27 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testPreUpdateWithZeroContext(): void
     {
-        $inventoryStatus = $this->createMock(AbstractEnumValue::class);
-        $inventoryStatus->expects(self::any())
-            ->method('getId')
-            ->willReturn('out_of_stock');
+        $inventoryStatus = new TestEnumValue(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            'Out of stock',
+            Product::INVENTORY_STATUS_OUT_OF_STOCK
+        );
         /** @var Product $product */
         $product = $this->getEntity(ProductWithInventoryStatus::class, ['id' => 1]);
         $product->setInventoryStatus($inventoryStatus);
         $args = $this->createMock(PreUpdateEventArgs::class);
         $args->expects(self::once())
-            ->method('hasChangedField')
-            ->with('inventory_status')
-            ->willReturn(true);
+            ->method('getEntityChangeSet')
+            ->willReturn([
+                'serialized_data' => [
+                    [
+                        'inventory_status' => ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        )
+                    ],
+                ]
+            ]);
 
         $website = $this->getEntity(Website::class, ['id' => 1]);
         $websites = [
@@ -145,7 +180,12 @@ class ProductInventoryStatusListenerTest extends \PHPUnit\Framework\TestCase
                 $websites
             )
             ->willReturn([
-                0 => ['in_stock'],
+                0 => [
+                    ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    )
+                ],
             ]);
 
         $data = [

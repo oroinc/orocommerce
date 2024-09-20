@@ -200,27 +200,25 @@ Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue:
     configurable_product1_variant1_low_inventory_threshold:
         scalar_value: 10
 
-Extend\Entity\EV_Test_Prod_Attr_Enum:
+Oro\Bundle\EntityExtendBundle\Entity\EnumOption:
     productAttrEnum_option1:
-        __construct: ['option1', 'Option 1', 1, false]
+        __construct: [ 'test_prod_attr_enum', 'Option 1', 'option1', 1, false ]
     productAttrEnum_option2:
-        __construct: ['option2', 'Option 2', 2, true]
+        __construct: [ 'test_prod_attr_enum', 'Option 2', 'option2', 2, true ]
     productAttrEnum_option3:
-        __construct: ['option3', 'Option 3', 3, true]
+        __construct: [ 'test_prod_attr_enum', 'Option 3', 'option3', 3, true ]
     productAttrEnum_option4:
-        __construct: ['option4', 'Option 4', 4, true]
+        __construct: [ 'test_prod_attr_enum', 'Option 4', 'option4', 4, true ]
     productAttrEnum_option5:
-        __construct: ['option5', 'Option 5', 5, true]
+        __construct: [ 'test_prod_attr_enum', 'Option 5', 'option5', 5, true ]
     productAttrEnum_option6:
-        __construct: ['option6', 'Option 6', 6, true]
-
-Extend\Entity\EV_Test_Prod_Attr_M_Enum:
+        __construct: [ 'test_prod_attr_enum', 'Option 6', 'option6', 6, true ]
     productAttrMultiEnum_option1:
-        __construct: ['option1', 'Option 1', 1, false]
+        __construct: [ 'test_prod_attr_m_enum', 'Option 1', 'option1', 1, false ]
     productAttrMultiEnum_option2:
-        __construct: ['option2', 'Option 2', 2, true]
+        __construct: [ 'test_prod_attr_m_enum', 'Option 2', 'option2', 2, true ]
     productAttrMultiEnum_option3:
-        __construct: ['option3', 'Option 3', 3, false]
+        __construct: [ 'test_prod_attr_m_enum', 'Option 3', 'option3', 3, false ]
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
     customer1:

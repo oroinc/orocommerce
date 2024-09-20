@@ -46,9 +46,9 @@ class ProductInventoryStatusSelectTypeTest extends WebTestCase
             ],
             'valid data' => [
                 'submitData' => [
-                    'in_stock',
-                    'out_of_stock',
-                    'discontinued',
+                    'prod_inventory_status.in_stock',
+                    'prod_inventory_status.out_of_stock',
+                    'prod_inventory_status.discontinued',
                 ],
                 'isValid' => true,
             ],

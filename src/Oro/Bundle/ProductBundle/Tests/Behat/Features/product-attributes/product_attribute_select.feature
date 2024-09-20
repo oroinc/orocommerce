@@ -48,9 +48,6 @@ Feature: Product attribute select
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
-    When I click update schema
-    Then I should see "Schema updated" flash message
-
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families
     When I click "Edit" on row "default_family" in grid
@@ -216,7 +213,7 @@ Feature: Product attribute select
     When I reload the page
     Then I should see an "Configurable Product Form" element
     And "Configurable Product Form" must contains values:
-      | SelectField    | TestValueTwo   | TestValueOne     |
+      | SelectField | TestValueOne | TestValueTwo |
 
   Scenario: Update product family and remove new attribute from it
     Given I proceed as the Admin
@@ -271,4 +268,3 @@ Feature: Product attribute select
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"
     Then I should see "Attribute successfully deleted" flash message
-    And I should see "Update schema"

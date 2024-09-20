@@ -4,7 +4,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\SalesOrders
 
 use Carbon\Carbon;
 use Oro\Bundle\DashboardBundle\Model\WidgetOptionBag;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\AbstractDateFilterType;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\OrdersCreatedAt as OrdersFixtures;
@@ -43,7 +45,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
         $widgetOptions = new WidgetOptionBag(array_merge(
             $convertedDateRanges,
             [
-                'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                 'includeSubOrders' => false,
                 'orderTotal' => $orderTotal,
             ]
@@ -98,7 +100,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 1 day - days) with amount type subtotal' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -110,7 +112,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time < 31 days - days) with amount type subtotal' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -122,7 +124,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 31 days - days) with amount type subtotal' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -134,7 +136,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time > 31 days and < 53 weeks - weeks) with amount type subtotal' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -146,7 +148,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time - 53 weeks - weeks) with amount type subtotal' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -158,7 +160,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time > 53 weeks - month) with amount type subtotal' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -180,7 +182,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -193,9 +195,12 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            )
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -209,7 +214,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'with sub-orders with amount type subtotal' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                     'orderTotal' => 'subtotal',
                 ],
@@ -243,7 +248,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -255,7 +260,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 1 day - days) with amount type total' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -267,7 +272,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time < 31 days - days) with amount type total' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -279,7 +284,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 31 days - days) with amount type total' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -291,7 +296,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time > 31 days and < 53 weeks - weeks) with amount type total' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -303,7 +308,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time - 53 weeks - weeks) with amount type total' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -315,7 +320,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time > 53 weeks - month) with amount type total' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -337,7 +342,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -350,9 +355,12 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            )
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -366,7 +374,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'with sub-orders with amount type total' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                     'orderTotal' => 'total',
                 ],
@@ -400,7 +408,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -412,7 +420,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 1 day - days) with amount type subtotal_with_discounts' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -424,7 +432,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time < 31 days - days) with amount type subtotal_with_discounts' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -436,7 +444,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 31 days - days) with amount type subtotal_with_discounts' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -449,7 +457,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                 [
                     'dateRanges' => $allTimeDateRange1,
                     'widgetOptions' => [
-                        'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                         'includeSubOrders' => false,
                         'orderTotal' => 'subtotal_with_discounts',
                     ],
@@ -461,7 +469,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time - 53 weeks - weeks) with amount type subtotal_with_discounts' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -473,7 +481,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time > 53 weeks - month) with amount type subtotal_with_discounts' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -495,7 +503,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -508,9 +516,12 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            )
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -524,7 +535,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'with sub-orders with amount type subtotal_with_discounts' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -558,7 +569,7 @@ class SalesOrdersVolumeChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],

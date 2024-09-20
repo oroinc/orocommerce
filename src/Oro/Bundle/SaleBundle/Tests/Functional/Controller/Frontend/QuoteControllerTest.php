@@ -87,7 +87,7 @@ class QuoteControllerTest extends WebTestCase
     public function indexProvider(): array
     {
         $defaultColumns = [
-            'customerStatusName',
+            'customer_status',
             'id',
             'qid',
             'createdAt',

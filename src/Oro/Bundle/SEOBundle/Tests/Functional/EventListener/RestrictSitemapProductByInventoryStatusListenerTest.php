@@ -36,8 +36,8 @@ class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
         $configManager = self::getConfigManager(null);
         $this->assertEquals(
             [
-                'in_stock',
-                'out_of_stock'
+                'prod_inventory_status.in_stock',
+                'prod_inventory_status.out_of_stock'
             ],
             $configManager->get('oro_product.general_frontend_product_visibility')
         );

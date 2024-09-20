@@ -21,13 +21,28 @@ class OroOrderExtensionTest extends \PHPUnit\Framework\TestCase
                 [
                     'settings' => [
                         'resolved' => true,
-                        'backend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
-                        'frontend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
+                        'backend_product_visibility' => [
+                            'value' => ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
+                            'scope' => 'app'
+                        ],
+                        'frontend_product_visibility' => [
+                            'value' => ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
+                            'scope' => 'app'
+                        ],
                         'order_automation_enable_cancellation' => ['value' => false, 'scope' => 'app'],
-                        'order_automation_applicable_statuses' => ['value' => ['open'], 'scope' => 'app'],
-                        'order_automation_target_status' => ['value' => 'cancelled', 'scope' => 'app'],
+                        'order_automation_applicable_statuses' => [
+                            'value' => ['order_internal_status.open'],
+                            'scope' => 'app'
+                        ],
+                        'order_automation_target_status' => [
+                            'value' => 'order_internal_status.cancelled',
+                            'scope' => 'app'
+                        ],
                         'order_enable_external_status_management' => ['value' => false, 'scope' => 'app'],
-                        'order_creation_new_internal_order_status' => ['value' => 'open', 'scope' => 'app'],
+                        'order_creation_new_internal_order_status' => [
+                            'value' => 'order_internal_status.open',
+                            'scope' => 'app'
+                        ],
                         'order_creation_new_order_owner' => ['value' => null, 'scope' => 'app'],
                         'order_previously_purchased_period' => ['value' => 90, 'scope' => 'app'],
                         'enable_purchase_history' => ['value' => false, 'scope' => 'app'],

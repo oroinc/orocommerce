@@ -24,8 +24,6 @@ Feature: Check product fields without permissions
       | Label |
       | Black |
     And save and close form
-    When I click update schema
-    Then I should see Schema updated flash message
 
   Scenario: Update product family
     Given I go to Products/ Product Families

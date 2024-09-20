@@ -175,7 +175,7 @@ Feature: Product attributes import
       | descriptions                 | System relation | Description       | System | Active        | Table column     | No        | Default          |
       | featured                     | Boolean         | Is Featured       | System | Active        | Table column     | No        | Default          |
       | images                       | System relation | Images            | System | Active        | Table column     | Yes       | Default          |
-      | inventory_status             | Select          | Inventory Status  | System | Active        | Table column     | Yes       | Default          |
+      | inventory_status             | Select          | Inventory Status  | System | Active        | Serialized field | Yes       | Default          |
       | koko                         | String          | label value 5     | Custom | Active        | Serialized field | No        |                  |
       | LOREM                        | String          | label value 6     | Custom | Active        | Serialized field | No        |                  |
       | metaDescriptions             | Many to many    | Meta description  | System | Active        | Table column     | No        | Default          |

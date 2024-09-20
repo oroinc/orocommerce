@@ -22,8 +22,6 @@ Feature: Unable to save enum attribute containing '0' option value
       | 0     |
       | 1     |
     And I save and close form
-    When click update schema
-    Then I should see Schema updated flash message
 
   Scenario: Update product family
     Given I go to Products/ Product Families
@@ -66,4 +64,4 @@ Feature: Unable to save enum attribute containing '0' option value
     And click "View Details" for "1GB83" product
     Then I should see an "Configurable Product Form" element
     And "Configurable Product Form" must contains values:
-      | Width | 0 |
+      | Width | 1 | 0 |
