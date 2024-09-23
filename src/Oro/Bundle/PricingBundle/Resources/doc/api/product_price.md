@@ -167,7 +167,7 @@ The product price.
 
 ### priceList
 
-Price list related to a product price.
+The price list.
 
 #### create
 
@@ -183,7 +183,7 @@ Price list related to a product price.
 
 ### product
 
-The product of a product price.
+The product.
 
 #### create
 
@@ -199,7 +199,7 @@ The product of a product price.
 
 ### unit
 
-The unit of a product.
+The unit of quantity.
 
 #### create
 

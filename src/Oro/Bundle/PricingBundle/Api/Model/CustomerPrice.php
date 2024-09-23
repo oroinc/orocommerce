@@ -3,21 +3,22 @@
 namespace Oro\Bundle\PricingBundle\Api\Model;
 
 /**
- * Represents a customer's price {@link ProductPrice} by scope criteria.
+ * Represents a customer's price.
  */
-class CustomerPrice
+final readonly class CustomerPrice
 {
+    private string $id;
+
     public function __construct(
-        private ?string $id,
+        private ?int $customerId,
+        private int $websiteId,
+        private int $productId,
         private string $currency,
         private float $quantity,
         private float $value,
-        private int $productId,
-        private string $unit,
-        private ?int $customerId,
-        private ?int $websiteId,
+        private string $unit
     ) {
-        $this->id ??= $this->buildCustomerPriceId();
+        $this->id = implode('-', [$customerId ?? 0, $websiteId, $productId, $currency, $unit, $quantity]);
     }
 
     public function getId(): string
@@ -25,11 +26,19 @@ class CustomerPrice
         return $this->id;
     }
 
-    public function setId(string $id): self
+    public function getCustomerId(): ?int
     {
-        $this->id = $id;
+        return $this->customerId;
+    }
 
-        return $this;
+    public function getWebsiteId(): int
+    {
+        return $this->websiteId;
+    }
+
+    public function getProductId(): int
+    {
+        return $this->productId;
     }
 
     public function getCurrency(): string
@@ -47,35 +56,8 @@ class CustomerPrice
         return $this->value;
     }
 
-    public function getProductId(): int
-    {
-        return $this->productId;
-    }
-
     public function getUnit(): string
     {
         return $this->unit;
-    }
-
-    public function getCustomerId(): ?int
-    {
-        return $this->customerId;
-    }
-
-    public function getWebsiteId(): ?int
-    {
-        return $this->websiteId;
-    }
-
-    public function buildCustomerPriceId(): string
-    {
-        return implode('-', array_filter([
-            $this->customerId,
-            $this->websiteId,
-            $this->productId,
-            $this->currency,
-            $this->unit,
-            $this->quantity
-        ]));
     }
 }

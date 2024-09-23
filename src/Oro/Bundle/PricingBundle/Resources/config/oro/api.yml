@@ -227,8 +227,6 @@ api:
         Oro\Bundle\PricingBundle\Api\Model\CustomerPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/customer_price.md'
             disable_meta_properties: true
-            disable_fieldset: true
-            disable_inclusion: true
             identifier_field_names: [id]
             fields:
                 id:
@@ -252,7 +250,8 @@ api:
                     target_class: Oro\Bundle\WebsiteBundle\Entity\Website
                     target_type: to-one
                 unit:
-                    data_type: string
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductUnit
+                    target_type: to-one
             filters:
                 fields:
                     unit:
