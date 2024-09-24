@@ -130,7 +130,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | N/A      | N/A      |          |
     And I should see "0" in the "Matrix Grid Total Quantity" element
     And I should see "$0.00" in the "Matrix Grid Total Price" element
-    And I click "Accept" in modal window
+    And I click "Save Changes" in modal window
     And I should see "ConfigurableProductB" in grid
     And I click "Configure" on row "ConfigurableProductB" in grid
     Then I fill "Matrix Grid Form" with:
@@ -139,7 +139,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Accept" in modal window
+    And I click "Save Changes" in modal window
 
     Then type "CNFB" in "search"
     And click "Search Button"
@@ -287,7 +287,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "$60.00" in the "Dialog Matrix Grid Total Price" element
     And I should see an "Clear All Button" element
     When I click "Clear All Product Variants"
-    And I click "Accept" in modal window
+    And I click "Save Changes" in modal window
     And I click "Create Order"
     Then I should see "This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     When I click "Proceed"
@@ -342,7 +342,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    And I click "Accept"
+    And I click "Save Changes"
     Then I should see following grid:
       | SKU       | Item                                                             | Availability | Qty Update All | Price  | Subtotal |
       | SKU123    | 400-Watt Bulb Work Light                                         | IN STOCK     | 5 item         | $2.00  | $10.00   |
@@ -413,7 +413,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | 1        | N/A      | 1        |
       |          |          | N/A      |
       | N/A      | N/A      | 1        |
-    When I click "Accept" in modal window
+    When I click "Save Changes" in modal window
     And I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
@@ -447,14 +447,20 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
     And I click "Configure" on row "ConfigurableProductA" in grid
-    Then I should see an "One Dimensional Matrix Grid Form" element
-    And I should see next rows in "One Dimensional Matrix Grid Form" table
-      | Value 11 | Value 12 | Value 13 | Value 14 |
-      | 1        |          | N/A      | 1        |
-    And I fill "One Dimensional Matrix Grid Form" with:
-      | Value 11 | Value 12 | Value 13 | Value 14 |
-      | -        | 2        | -        |          |
-    And I click "Accept"
+    Then I should see an "Matrix Grid Form" element
+    And I should see next rows in "Matrix Grid Form" table
+      | QTY |
+      | 1   |
+      |     |
+      | N/A |
+      | 1   |
+    And I fill "Matrix Grid Form" with:
+      |          | QTY |
+      | Value 11 | -   |
+      | Value 12 | 2   |
+      | Value 13 | -   |
+      | Value 14 |     |
+    And I click "Save Changes"
     And I click "ConfigurableProductA"
     Then I should see an "One Dimensional Matrix Grid Form" element
     And I should see next rows in "One Dimensional Matrix Grid Form" table
@@ -619,7 +625,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       | Value 12 | -        | -        | 3        |
       | Value 13 | -        | -        | -        |
       | Value 14 | -        | -        | -        |
-    And I click "Accept" in modal window
+    And I click "Save Changes" in modal window
     Then I should see "Shopping list \"Shopping List\" was updated successfully"
     When type "CNFB" in "search"
     And click "Search Button"

@@ -77,6 +77,15 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
 
     getMaximumQuantity() {
         return this.get('maximumQuantityToOrder') || 1000000000;
+    },
+
+    deleteItemAction() {
+        const deleteAction = this.get('availableActions')
+            .find(({configuration}) => configuration.name === 'delete');
+
+        if (deleteAction) {
+            return deleteAction.execute();
+        }
     }
 });
 

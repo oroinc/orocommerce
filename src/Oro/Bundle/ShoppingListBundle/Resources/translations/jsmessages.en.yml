@@ -95,6 +95,10 @@ oro:
                     remove_title: Delete for "{{ shoppingList }}"
                     remove: Are you sure you want to delete note?
                     delete_btn: Delete note
+                configurable_product:
+                    delete.label: Remove From Shopping List
+                    cancel.label: Cancel
+                    accept.label: Save Changes
             actions:
                 update_all: Update All
             lineitem:

@@ -175,7 +175,7 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I should see "5.12345" in the "Matrix Grid Row 2 Total Quantity" element
     And I should see "7.1234567891" in the "Matrix Grid Row 3 Total Quantity" element
     And I should see "16.5779067891" in the "Matrix Grid Total Quantity" element
-    And I click "Accept" in modal window
+    And I click "Save Changes" in modal window
     And I should see following "Frontend Customer User Shopping List Edit Grid" grid containing rows:
       | SKU  | Item                                                     | Availability | Qty Update All      | Price  | Subtotal                                   |
       |      | Configurable Product 1                                   |              | 16.5779067891 items |        | $267.83922807465 -$133.91922807465 $133.92 |
