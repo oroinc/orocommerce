@@ -67,7 +67,7 @@ dynamic-imports:
         - oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view
     oroshoppinglist:
         - oroshoppinglist/js/app/components/shoppinglist-notes-editable-view-component
-        - oroshoppinglist/js/app/views/preview-full-notes-view
+        - oroshoppinglist/js/app/views/shopping-list-item-edit-notes-view
         - oroshoppinglist/js/app/views/shopping-list-assign-link-view
         - oroshoppinglist/js/app/views/shoppinglist-image-popover-view
         - oroshoppinglist/js/app/views/shoppinglist-notes-editable-view

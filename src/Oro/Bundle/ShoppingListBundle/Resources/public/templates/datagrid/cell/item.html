@@ -38,7 +38,7 @@
             </div>
             <% if (notes) { %>
                 <div class="shift-mobile-row">
-                    <%= oroshoppinglist.renderNotes({notes: notes}) %>
+                    <%= oroshoppinglist.renderNotes(obj) %>
                 </div>
             <% } %>
         <% } else { %>
@@ -85,7 +85,7 @@
             <% } %>
             <% if (obj.notes) { %>
                 <div class="shift-mobile-row">
-                    <%= oroshoppinglist.renderNotes({notes: notes}) %>
+                    <%= oroshoppinglist.renderNotes(obj) %>
                 </div>
             <% } %>
         <% } %>

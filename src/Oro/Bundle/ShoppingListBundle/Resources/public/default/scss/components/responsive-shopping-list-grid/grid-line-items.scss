@@ -72,6 +72,7 @@
     &__notes-container {
         display: flex;
         align-items: center;
+        gap: spacing('sm');
         line-height: $shopping-lists-notes-line-height;
     }
 

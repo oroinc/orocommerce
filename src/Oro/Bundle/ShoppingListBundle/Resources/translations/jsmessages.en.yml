@@ -101,10 +101,13 @@ oro:
                 updated.label: 'Product has been updated in "<a href="{{ shoppinglistPath }}">{{ shoppinglistLabel }}</a>"'
                 dialog:
                     add.title: 'Add note to "{{ productName }}" product'
+                    add_note.title: 'Add note to "{{ productName }}" product'
                     edit.title: 'Edit note for "{{ productName }}" product'
                     cancel.label: Cancel
                     add.label: Add
+                    add_note.label: Add Note
                     edit.label: Save
+                    edit_note.label: Save Note
                     notes.success: Line item note has been successfully updated
 
             inline_editing:

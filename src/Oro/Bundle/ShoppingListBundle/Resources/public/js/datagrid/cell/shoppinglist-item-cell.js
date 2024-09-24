@@ -39,6 +39,13 @@ const ShoppingListItemCell = HtmlTemplateCell.extend({
         const $note = this.$('[data-role=notes]');
         const actionsColumn = this.column.collection.find(model => model.get('actions'));
 
+        if (!$note.length && actionsColumn && !this.model.get('isConfigurable')) {
+            this.model.set('action_configuration', {
+                ...this.model.get('action_configuration'),
+                add_notes: true
+            });
+        }
+
         if (!$note.length || !actionsColumn) {
             return;
         }

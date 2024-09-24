@@ -1,18 +1,17 @@
+<% let oroui = _.macros('oroui') %>
 <% let clipLength = obj.clipLength === void 0 ? 30 : obj.clipLength; %>
 
 <% let renderNotes = function(clip) { %>
     <div class="grid-line-items__notes<%- clip ? ' grid-line-items__ellipsis' : '' %>" data-role="notes"><%- notes %></div>
 <% } %>
-<% if (notes.length <= clipLength) { %>
-<div class="grid-line-items__notes-container">
-    <% renderNotes() %>
-</div>
-<% } else { %>
-<div class="grid-line-items__clip-notes-container"
-     data-page-component-init-on="click,mouseover"
-     data-page-component-view="oroshoppinglist/js/app/views/preview-full-notes-view">
-    <div class="grid-line-items__clip-placeholder grid-line-items__notes-container">
-        <% renderNotes(true) %>
+
+<div class="grid-line-items__clip-notes-container" data-page-component-init-on="click,mouseover,focusin"
+     data-page-component-view="oroshoppinglist/js/app/views/shopping-list-item-edit-notes-view"
+     data-page-component-options="<%- JSON.stringify({
+        itemId: obj.id
+     }) %>">
+    <div class="<%- notes.length > clipLength ? 'grid-line-items__clip-placeholder' : '' %> grid-line-items__notes-container">
+        <% renderNotes(notes.length > clipLength) %>
     </div>
 </div>
-<% } %>
+

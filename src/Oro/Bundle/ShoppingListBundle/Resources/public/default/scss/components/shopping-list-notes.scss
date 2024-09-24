@@ -35,8 +35,13 @@
         }
     }
 
+    &__edit-form {
+        display: grid;
+        gap: spacing('sm');
+        min-width: 364px;
+    }
+
     &__textarea {
-        border-width: 2px;
         min-height: 44px;
         padding: spacing('sm') spacing('md');
     }

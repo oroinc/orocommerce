@@ -133,9 +133,10 @@ Feature: My Shopping List Accessibility
   Scenario: Edit product note by keyboard
     Given I focus on "Shopping List Edit Grid Edit Note"
     When I press "Space" key on "Shopping List Edit Grid Edit Note" element
-    And I should see focus within "UiWindow" element
-    And I fill in "Shopping List Notes in Modal" with "Update Note 5 text"
-    When I press "Space" key on "UiWindow okButton" element
+    And I should see focus within "UiPopover" element
+    And I fill in "Shopping List Notes in Popover" with "Update Note 5 text"
+    And I focus on "UiPopover Submit Button"
+    When I press "Space" key on "UiPopover Submit Button" element
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
     And I should see "Shopping List Edit Grid Select Row 1 Item" element focused
     Then I should see following grid containing rows:

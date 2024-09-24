@@ -21,7 +21,7 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see "My shopping list notes"
     When I click "Add a note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"
-    And I click "Add"
+    And I click "Add Note" in modal window
     Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
     Then I should see following grid:
@@ -69,7 +69,7 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see "My shopping list notes"
     When I click "Add a note" on row "SKU123" in grid
     And I fill in "Shopping List Product Note" with "SKU123 Product Note"
-    And I click "Add"
+    And I click "Add Note" in modal window
     Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
     Then I should see following grid:

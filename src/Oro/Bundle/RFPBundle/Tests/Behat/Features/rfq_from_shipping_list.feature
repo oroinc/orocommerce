@@ -26,7 +26,7 @@ Feature: RFQ from Shipping List
     Then I should see "Parish so enable innate in formed missed. Hand two was eat busy fail."
     And I click "Add a note" on row "AA1" in grid
     When I fill in "Shopping List Product Note" with "This item was missed in the previous request"
-    And I click "Add"
+    And I click "Add Note" in modal window
     Then I should see "Line item note has been successfully updated" flash message
     When I click "Request Quote"
     Then the "Request Notes" field element should contain "Parish so enable innate in formed missed. Hand two was eat busy fail."

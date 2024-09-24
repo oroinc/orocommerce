@@ -309,6 +309,9 @@ oro_behat_extension:
     Shopping List Notes in Modal:
       selector: 'div.modal textarea[name="notes"]'
 
+    Shopping List Notes in Popover:
+      selector: 'div.popover textarea[name="notes"]'
+
     Save Shopping List Notes:
       selector: 'form[data-role="edit-notes-form"] button[data-role="apply"]'
 

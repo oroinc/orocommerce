@@ -3,6 +3,7 @@ import __ from 'orotranslation/js/translator';
 import routing from 'routing';
 import mediator from 'oroui/js/mediator';
 import ModelAction from 'oro/datagrid/action/model-action';
+import viewportManager from 'oroui/js/viewport-manager';
 import ShoppinglistAddNotesModalView from '../../app/views/shoppinglist-add-notes-modal-view';
 
 /**
@@ -52,25 +53,27 @@ const AddNotesAction = ModelAction.extend({
         const notes = this.model.get('notes');
         const action = notes ? 'edit' : 'add';
 
-        const shoppingListAddNotesModalView = new ShoppinglistAddNotesModalView({
-            title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
-                productName: _.escape(this.model.get('name'))
-            }),
-            okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.label`),
-            cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
-            okCloses: false,
-            notes
-        });
+        if (!notes || viewportManager.isApplicable('mobile-big')) {
+            const shoppingListAddNotesModalView = new ShoppinglistAddNotesModalView({
+                title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
+                    productName: _.escape(this.model.get('name'))
+                }),
+                okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}_note.label`),
+                cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
+                okCloses: false,
+                notes
+            });
 
-        shoppingListAddNotesModalView.on('ok', () => {
-            if (shoppingListAddNotesModalView.isValid()) {
-                this.updateNotes(shoppingListAddNotesModalView.getValue());
-                this._handleAjax();
-                shoppingListAddNotesModalView.close();
-            }
-        });
+            shoppingListAddNotesModalView.on('ok', () => {
+                if (shoppingListAddNotesModalView.isValid()) {
+                    this.updateNotes(shoppingListAddNotesModalView.getValue());
+                    this._handleAjax();
+                    shoppingListAddNotesModalView.close();
+                }
+            });
 
-        shoppingListAddNotesModalView.open();
+            shoppingListAddNotesModalView.open();
+        }
     },
 
     updateNotes(notes) {

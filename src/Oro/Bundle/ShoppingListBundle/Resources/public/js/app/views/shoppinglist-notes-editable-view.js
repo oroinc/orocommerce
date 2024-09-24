@@ -6,6 +6,7 @@ import viewportManager from 'oroui/js/viewport-manager';
 import ShoppinglistAddNotesModalView from './shoppinglist-add-notes-modal-view';
 
 const ENTER_KEY_CODE = 13;
+const SPACE_KEY_CODE = 32;
 const ESCAPE_KEY_CODE = 27;
 
 const ShoppingListOwnerInlineEditableView = BaseView.extend({
@@ -20,11 +21,20 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
         'click [data-role="add-notes"]': 'addNote',
         'click [data-role="decline"]': 'undoChanges',
         'input textarea': 'onInput',
+        'keydown [data-role="apply"]': 'onKeydownApply',
         'keydown textarea': 'onKeydown'
     },
 
     listen: {
         'change:notes model': 'onNotesChanged'
+    },
+
+    validationRules: {
+        notes: {
+            Length: {
+                max: 2048
+            }
+        }
     },
 
     constructor: function ShoppingListOwnerInlineEditableView(options) {
@@ -33,7 +43,9 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
 
     initialize(options) {
         this.options = Object.assign({}, options || {}, this.options);
-        this.validator = this.$('form').validate();
+        this.validator = this.$('form').validate({
+            rules: this.validationRules
+        });
         ShoppingListOwnerInlineEditableView.__super__.initialize.call(this, options);
     },
 
@@ -46,6 +58,13 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
             this.getVisibleAction().trigger('focus');
         } else if (e.keyCode === ESCAPE_KEY_CODE) {
             this.undoChanges();
+            this.getVisibleAction().trigger('focus');
+        }
+    },
+
+    onKeydownApply(e) {
+        if (!e.target.disabled && (e.keyCode === ENTER_KEY_CODE || e.keyCode === SPACE_KEY_CODE)) {
+            this.saveNote();
             this.getVisibleAction().trigger('focus');
         }
     },
@@ -83,6 +102,10 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
     },
 
     onNotesChanged(model, newValue) {
+        if (this.disposed) {
+            return;
+        }
+
         this.updateNotesText(newValue);
         this.updateTexAreaValue(newValue);
         this.hideEditForm();
@@ -100,6 +123,10 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
         this.saveModel({
             notes: newValue
         });
+
+        if (typeof this.options.onSaveNote === 'function') {
+            this.options.onSaveNote(newValue);
+        }
     },
 
     saveModel(value) {
@@ -107,7 +134,13 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
             patch: true,
             wait: false,
             success: resp => {
-                this.$el.removeClass(this.options.loadingClass);
+                if (!this.disposed) {
+                    this.$el.removeClass(this.options.loadingClass);
+                }
+
+                if (typeof this.options.onSuccess === 'function') {
+                    this.options.onSuccess();
+                }
             },
             error: err => {
                 this.model.set('notes', this.model.previous('notes'));
@@ -146,6 +179,10 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
         this.hideEditForm();
         this.updateTexAreaValue(this.model.get('notes'));
         this.switchActions();
+
+        if (typeof this.options.onDecline === 'function') {
+            this.options.onDecline();
+        }
     },
 
     showEditForm() {
@@ -179,7 +216,7 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
 
     updateNotesText(val) {
         if (val !== void 0) {
-            this.$('[data-role="notes-text"]').text(val);
+            this.$('[data-role="notes-text"]').length && this.$('[data-role="notes-text"]').text(val);
         }
     },
 
