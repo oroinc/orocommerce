@@ -11,6 +11,7 @@ navigation:
                         - 'oro_order_view'
                         - 'oro_order_update'
                         - 'oro_order_create'
+                        - 'oro_order_reorder'
                         - 'oro_order_create_for_customer'
                         - 'oro_order_create_for_customer_user'
                     description: 'oro.order.menu.order_list.description'
@@ -114,6 +115,7 @@ navigation:
         oro_order_view:   'oro.order.navigation.view'
         oro_order_update: 'oro.order.navigation.view - oro.ui.edit'
         oro_order_create: 'oro.ui.create_entity'
+        oro.order.navigation.reorder.title: 'oro.ui.create_entity'
         oro_order_create_for_customer: 'oro.ui.create_entity'
         oro_order_create_for_customer_user: 'oro.ui.create_entity'
 

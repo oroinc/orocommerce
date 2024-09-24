@@ -1,0 +1,6 @@
+{% extends '@OroOrder/Order/update.html.twig' %}
+
+{% block pageHeader %}
+    {% set title = 'oro.order.navigation.reorder.label'|trans({'%identifier%': oldOrder.identifier|default('N/A'|trans)}) %}
+    {% include '@OroUI/page_title_block.html.twig' with { title: title } %}
+{% endblock pageHeader %}

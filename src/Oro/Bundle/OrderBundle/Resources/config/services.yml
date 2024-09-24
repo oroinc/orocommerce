@@ -719,3 +719,8 @@ services:
             - '@oro_locale.formatter.number'
         tags:
             - { name: oro_platform.usage_stats_provider, priority: 70 }
+
+    oro_order.duplicator.order_duplicator:
+        class: Oro\Bundle\OrderBundle\Provider\OrderDuplicator
+        arguments:
+            - '@oro_action.factory.duplicator_factory'

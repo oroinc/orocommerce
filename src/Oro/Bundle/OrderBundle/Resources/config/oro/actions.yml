@@ -534,6 +534,29 @@ operations:
                 okText: oro.order.payment_transaction.refund.button.okText
                 cancelText: oro.order.payment_transaction.refund.button.resetText
 
+    oro_order_reorder_existing:
+        label: oro.order.navigation.reorder.title
+        button_options:
+            icon: fa-shopping-cart
+        applications: [ default ]
+        datagrids:
+            - orders-grid
+        routes:
+            - oro_order_view
+        groups:
+            - view_navButtons.activity
+            - datagridRowAction
+        preconditions:
+            '@and':
+                - '@acl_granted': ['VIEW', $.data]
+                - '@acl_granted': ['oro_order_create']
+                - '@not':
+                      - '@has_elements': $.data.subOrders
+        actions:
+            - '@redirect':
+                  parameters:
+                      route: oro_order_reorder
+                      route_parameters: {'id': $.data.id}
 action_groups:
     api_order_purchase_by_payment_term:
         parameters:
