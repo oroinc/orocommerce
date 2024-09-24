@@ -22,6 +22,7 @@ class SlugRedirectMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var SlugRedirectMatcher */
     private $redirectMatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(RedirectRepository::class);

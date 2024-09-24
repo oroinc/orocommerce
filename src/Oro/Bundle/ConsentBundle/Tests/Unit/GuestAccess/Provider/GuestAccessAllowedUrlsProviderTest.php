@@ -24,6 +24,7 @@ class GuestAccessAllowedUrlsProviderTest extends TestCase
     /** @var GuestAccessAllowedUrlsProvider */
     private $guestAccessAllowedUrlsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->consentProvider = $this->createMock(EnabledConsentProvider::class);

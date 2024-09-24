@@ -17,6 +17,7 @@ class ActualizeCombinedPriceListTopicTest extends AbstractTopicTestCase
 
     private CombinedPriceListProvider $combinedPriceListProvider;
 
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
@@ -29,6 +30,7 @@ class ActualizeCombinedPriceListTopicTest extends AbstractTopicTestCase
         return new ActualizeCombinedPriceListTopic($this->combinedPriceListProvider);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -43,6 +45,7 @@ class ActualizeCombinedPriceListTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

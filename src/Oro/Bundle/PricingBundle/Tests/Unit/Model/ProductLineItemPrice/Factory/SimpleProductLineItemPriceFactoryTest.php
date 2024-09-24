@@ -22,6 +22,7 @@ class SimpleProductLineItemPriceFactoryTest extends TestCase
 
     private SimpleProductLineItemPriceFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);

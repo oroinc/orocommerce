@@ -28,9 +28,7 @@ class DropEntityConfigFieldQuery extends ParametrizedMigrationQuery
         $this->className = $className;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -39,9 +37,7 @@ class DropEntityConfigFieldQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

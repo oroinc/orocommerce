@@ -18,6 +18,7 @@ class PaymentTransactionListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTransactionListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->manager = $this->createMock(PaymentStatusManager::class);

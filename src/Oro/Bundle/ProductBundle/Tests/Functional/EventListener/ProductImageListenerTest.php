@@ -29,6 +29,7 @@ class ProductImageListenerTest extends WebTestCase
 
     private EntityManagerInterface $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

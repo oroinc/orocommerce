@@ -16,9 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class QuoteFrontendOperationsTest extends FrontendActionTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

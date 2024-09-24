@@ -26,6 +26,7 @@ class UPSTransportMock extends UPSTransport
      *
      * @return PriceResponse|null
      */
+    #[\Override]
     public function getPriceResponse(PriceRequest $priceRequest, Transport $transportEntity): ?PriceResponse
     {
         $fileName = FeatureContext::getBehatYamlFilename($this->cacheDir);

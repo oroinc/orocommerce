@@ -26,6 +26,7 @@ class TimeInTransitRequestBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var AddressInterface */
     private $address;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->pickupDate = new \DateTime();

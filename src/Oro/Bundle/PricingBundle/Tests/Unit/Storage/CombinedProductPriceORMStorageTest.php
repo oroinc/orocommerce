@@ -31,6 +31,7 @@ class CombinedProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
     /** @var CombinedProductPriceORMStorage */
     private $storage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

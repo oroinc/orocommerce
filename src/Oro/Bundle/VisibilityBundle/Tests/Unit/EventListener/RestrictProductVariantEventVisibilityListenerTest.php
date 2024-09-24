@@ -18,6 +18,7 @@ class RestrictProductVariantEventVisibilityListenerTest extends \PHPUnit\Framewo
     /** @var RestrictProductVariantEventVisibilityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->modifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);

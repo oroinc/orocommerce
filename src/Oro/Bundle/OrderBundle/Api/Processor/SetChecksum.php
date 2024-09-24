@@ -20,9 +20,7 @@ class SetChecksum implements ProcessorInterface
         $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

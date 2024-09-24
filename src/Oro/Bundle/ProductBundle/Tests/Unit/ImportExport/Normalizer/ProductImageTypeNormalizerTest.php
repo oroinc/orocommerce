@@ -12,6 +12,7 @@ class ProductImageTypeNormalizerTest extends \PHPUnit\Framework\TestCase
 
     private ProductImageTypeNormalizer $productImageTypeNormalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);

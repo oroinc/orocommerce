@@ -13,6 +13,7 @@ class EntityTaxListenerTest extends WebTestCase
 {
     use OrderTaxHelperTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

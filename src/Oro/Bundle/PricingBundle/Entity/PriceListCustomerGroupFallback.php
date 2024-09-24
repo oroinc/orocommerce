@@ -26,6 +26,7 @@ class PriceListCustomerGroupFallback extends PriceListFallback implements Custom
     /**
      * @return CustomerGroup
      */
+    #[\Override]
     public function getCustomerGroup()
     {
         return $this->customerGroup;
@@ -36,6 +37,7 @@ class PriceListCustomerGroupFallback extends PriceListFallback implements Custom
      *
      * @return $this
      */
+    #[\Override]
     public function setCustomerGroup(CustomerGroup $customerGroup)
     {
         $this->customerGroup = $customerGroup;

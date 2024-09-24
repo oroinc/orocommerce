@@ -16,6 +16,7 @@ class PriceAttributePriceListAccessRuleTest extends TestCase
     private PriceAttributePriceListAccessRule $accessRule;
     private Criteria $criteria;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->accessRule = new PriceAttributePriceListAccessRule();

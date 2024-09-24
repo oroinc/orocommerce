@@ -23,9 +23,7 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
         $this->formattedProductPriceProvider = $formattedProductPriceProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function search($query, $page, $perPage, $searchById = false)
     {
         $results = $this->baseSearchHandler->search($query, $page, $perPage, $searchById);
@@ -52,25 +50,19 @@ class ProductVisibilityLimitedWithPricesSearchHandler implements SearchHandlerIn
         return $results;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function convertItem($item)
     {
         return $this->baseSearchHandler->convertItem($item);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProperties()
     {
         return $this->baseSearchHandler->getProperties();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityName()
     {
         return $this->baseSearchHandler->getEntityName();

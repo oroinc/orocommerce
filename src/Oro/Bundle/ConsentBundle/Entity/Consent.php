@@ -93,9 +93,6 @@ class Consent implements
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?bool $declinedNotification = true;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->names = new ArrayCollection();

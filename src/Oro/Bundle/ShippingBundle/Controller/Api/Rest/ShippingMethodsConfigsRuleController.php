@@ -105,25 +105,19 @@ class ShippingMethodsConfigsRuleController extends RestController
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getManager()
     {
         return $this->container->get(ApiEntityManager::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getForm()
     {
         throw new \LogicException('This method should not be called');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormHandler()
     {
         throw new \LogicException('This method should not be called');
@@ -154,9 +148,7 @@ class ShippingMethodsConfigsRuleController extends RestController
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

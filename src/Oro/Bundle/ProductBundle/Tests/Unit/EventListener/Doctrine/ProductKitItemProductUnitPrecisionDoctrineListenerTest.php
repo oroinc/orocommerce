@@ -13,6 +13,7 @@ class ProductKitItemProductUnitPrecisionDoctrineListenerTest extends \PHPUnit\Fr
 {
     private ProductKitItemProductUnitPrecisionDoctrineListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductKitItemProductUnitPrecisionDoctrineListener();

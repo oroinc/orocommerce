@@ -31,21 +31,25 @@ class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
         $this->numberFormatter = $numberFormatter;
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return 'oro.order.usage_stats.orders_volume.label';
     }
 
+    #[\Override]
     public function getTooltip(): string
     {
         return 'oro.order.usage_stats.orders_volume.tooltip';
     }
 
+    #[\Override]
     public function isApplicable(): bool
     {
         return \count($this->currencyProvider->getCurrencyList()) === 1;
     }
 
+    #[\Override]
     public function getValue(): ?string
     {
         $queryBuilder = $this->doctrine->getRepository(Order::class)->getSalesOrdersVolumeQueryBuilder(

@@ -31,6 +31,7 @@ class AttributeValueUsageInVariantValidator extends ConstraintValidator
      * @param array $value
      * @param Constraint|AttributeValueUsageInVariant|ConfigModelAwareConstraintInterface $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!is_array($value)) {

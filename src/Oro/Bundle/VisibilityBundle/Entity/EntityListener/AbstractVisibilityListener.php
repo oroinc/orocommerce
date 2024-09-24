@@ -28,9 +28,7 @@ abstract class AbstractVisibilityListener implements OptionalListenerInterface
         $this->topic = $topic;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setEnabled($enabled = true)
     {
         $this->enabled = $enabled;

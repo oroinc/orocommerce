@@ -13,9 +13,7 @@ class PaymentType extends AbstractOption implements OptionsDependentInterface
     const INSTANTONLY = 'instantonly';
     const ANY = 'any';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         if (!isset($options[Action::ACTION])) {
@@ -24,9 +22,7 @@ class PaymentType extends AbstractOption implements OptionsDependentInterface
         return in_array($options[Action::ACTION], [Action::SET_EC, Action::DO_EC], true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         $resolver

@@ -32,8 +32,8 @@ class CheckoutContextDataConverter implements ContextDataConverterInterface
 
     /**
      * @param Checkout $entity
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getContextData($entity): array
     {
         if (!$this->supports($entity)) {
@@ -46,9 +46,7 @@ class CheckoutContextDataConverter implements ContextDataConverterInterface
         return $this->orderContextDataConverter->getContextData($order);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($entity): bool
     {
         return $entity instanceof Checkout && !$entity->getSourceEntity() instanceof QuoteDemand;

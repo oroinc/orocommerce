@@ -30,17 +30,13 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [GenerateSitemapByWebsiteAndTypeTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $messageBody = $message->getBody();

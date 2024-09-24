@@ -7,9 +7,7 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 
 class UPSMethodTypeIdentifierGenerator implements UPSMethodTypeIdentifierGeneratorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function generateIdentifier(Channel $channel, ShippingService $service)
     {
         return $service->getCode();

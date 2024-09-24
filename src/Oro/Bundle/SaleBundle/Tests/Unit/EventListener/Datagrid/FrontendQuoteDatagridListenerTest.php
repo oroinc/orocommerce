@@ -20,9 +20,7 @@ class FrontendQuoteDatagridListenerTest extends OrmTestCase
     /** @var FrontendQuoteDatagridListener */
     protected $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->datagrid = $this->createMock(DatagridInterface::class);

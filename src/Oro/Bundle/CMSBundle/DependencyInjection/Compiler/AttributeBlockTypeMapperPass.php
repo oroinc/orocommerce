@@ -15,9 +15,7 @@ class AttributeBlockTypeMapperPass implements CompilerPassInterface
     private const WYSIWYG_FIELD_TYPE_KEY = DBALWYSIWYGType::TYPE;
     private const SERVICE_ID = 'oro_entity_config.layout.chain_attribute_block_type_mapper';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if ($container->hasDefinition(self::SERVICE_ID)) {

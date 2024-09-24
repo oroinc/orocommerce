@@ -40,6 +40,7 @@ class PriceListConfig implements PriceListAwareInterface
     /**
      * @return PriceList
      */
+    #[\Override]
     public function getPriceList()
     {
         return $this->priceList;
@@ -49,6 +50,7 @@ class PriceListConfig implements PriceListAwareInterface
      * @param PriceList $priceList
      * @return $this
      */
+    #[\Override]
     public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
@@ -59,6 +61,7 @@ class PriceListConfig implements PriceListAwareInterface
     /**
      * @return int|null
      */
+    #[\Override]
     public function getSortOrder()
     {
         return $this->sortOrder;

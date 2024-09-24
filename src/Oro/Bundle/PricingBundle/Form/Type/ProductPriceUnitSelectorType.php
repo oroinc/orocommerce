@@ -20,6 +20,7 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
      * @param Product|null $product
      * @return ProductUnit[]
      */
+    #[\Override]
     protected function getProductUnits(FormInterface $form, Product $product = null)
     {
         $productForm = $this->getProductForm($form);

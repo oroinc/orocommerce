@@ -15,6 +15,7 @@ class CheckoutHasApplicableShippingMethodsTest extends \PHPUnit\Framework\TestCa
     /** @var CheckoutHasApplicableShippingMethods */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->availableShippingMethodChecker = $this->createMock(AvailableShippingMethodCheckerInterface::class);

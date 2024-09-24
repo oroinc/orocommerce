@@ -21,9 +21,7 @@ class DeleteMassActionHandler extends ParentHandler
         $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function processDelete(object $entity, EntityManagerInterface $manager): void
     {
         $shoppingList = $entity->getShoppingList();
@@ -34,9 +32,7 @@ class DeleteMassActionHandler extends ParentHandler
         parent::processDelete($entity, $manager);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function finishBatch(EntityManagerInterface $manager): void
     {
         $manager->flush();

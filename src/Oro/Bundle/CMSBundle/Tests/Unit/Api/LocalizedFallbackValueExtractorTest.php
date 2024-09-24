@@ -20,6 +20,7 @@ class LocalizedFallbackValueExtractorTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizedFallbackValueExtractor */
     private $valueExtractor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerValueExtractor = $this->createMock(LocalizedFallbackValueExtractorInterface::class);

@@ -21,9 +21,7 @@ class CompleteContentFieldMetadata implements ProcessorInterface
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var MetadataContext $context */

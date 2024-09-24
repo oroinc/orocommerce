@@ -24,6 +24,7 @@ class PriceAttributePricesProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $priceAttributePricesProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

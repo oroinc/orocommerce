@@ -8,17 +8,13 @@ class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'customer_notes';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isEntitySupported($entity)
     {
         return is_object($entity) && $entity instanceof Checkout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::DATA_NAME;
@@ -28,12 +24,13 @@ class CustomerNotesDiffMapper implements CheckoutStateDiffMapperInterface
      * @param Checkout $checkout
      * @return string
      */
+    #[\Override]
     public function getCurrentState($checkout)
     {
         return $checkout->getCustomerNotes();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function isStatesEqual($entity, $state1, $state2)
     {
         return $state1 === $state2;

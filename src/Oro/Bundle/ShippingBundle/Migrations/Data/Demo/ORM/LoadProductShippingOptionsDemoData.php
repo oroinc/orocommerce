@@ -32,17 +32,13 @@ class LoadProductShippingOptionsDemoData extends AbstractFixture implements
     private array $lengthUnits = [];
     private array $freightClasses = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $processedPairs = [];

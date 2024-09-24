@@ -21,6 +21,7 @@ class FrontendQuoteDemandPermissionVoterTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendQuoteDemandPermissionVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

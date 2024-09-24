@@ -33,6 +33,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
     private DoctrineHelper $doctrineHelper;
     private int $precisionBottleQuantity;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

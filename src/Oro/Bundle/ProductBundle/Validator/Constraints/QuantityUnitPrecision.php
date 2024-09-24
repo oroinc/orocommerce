@@ -18,17 +18,13 @@ class QuantityUnitPrecision extends Constraint
      */
     public string $path = '';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return QuantityUnitPrecisionValidator::ALIAS;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

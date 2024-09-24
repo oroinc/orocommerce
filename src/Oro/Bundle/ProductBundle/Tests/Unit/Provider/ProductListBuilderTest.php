@@ -24,6 +24,7 @@ class ProductListBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductListBuilder */
     private $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->queryFactory = $this->createMock(QueryFactoryInterface::class);

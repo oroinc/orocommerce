@@ -11,9 +11,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 
 class UpdatePageFormType implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(

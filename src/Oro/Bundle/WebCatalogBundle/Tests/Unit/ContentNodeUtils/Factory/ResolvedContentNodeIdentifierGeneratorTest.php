@@ -8,6 +8,7 @@ class ResolvedContentNodeIdentifierGeneratorTest extends \PHPUnit\Framework\Test
 {
     private ResolvedContentNodeIdentifierGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = new ResolvedContentNodeIdentifierGenerator();

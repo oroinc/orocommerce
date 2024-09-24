@@ -48,7 +48,7 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
         $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
         if (!$this->supports($action)) {
@@ -321,9 +321,7 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
         return $option;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(PaymentContextInterface $context)
     {
         $amount = round($context->getTotal(), self::AMOUNT_PRECISION);
@@ -332,17 +330,13 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
         return !($amount === $zeroAmount);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($actionName)
     {
         if ($actionName === self::VALIDATE) {

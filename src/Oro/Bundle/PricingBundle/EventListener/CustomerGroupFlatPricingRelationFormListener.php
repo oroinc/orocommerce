@@ -18,6 +18,7 @@ class CustomerGroupFlatPricingRelationFormListener extends AbstractFlatPricingRe
      * @return PriceListToCustomerGroup|null
      * @throws \Doctrine\ORM\NonUniqueResultException
      */
+    #[\Override]
     protected function getPriceListRelation(Website $website, $targetEntity): ?BasePriceListRelation
     {
         return $this->doctrineHelper
@@ -30,6 +31,7 @@ class CustomerGroupFlatPricingRelationFormListener extends AbstractFlatPricingRe
      * @param CustomerGroup $targetEntity
      * @return PriceListToCustomerGroup
      */
+    #[\Override]
     protected function createNewRelation(Website $website, $targetEntity): BasePriceListRelation
     {
         $priceListRelation = new PriceListToCustomerGroup();
@@ -40,9 +42,7 @@ class CustomerGroupFlatPricingRelationFormListener extends AbstractFlatPricingRe
         return $priceListRelation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function handlePriceListChanges(Website $website, $targetEntity)
     {
         $this->triggerHandler->handleCustomerGroupChange($targetEntity, $website);

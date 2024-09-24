@@ -17,6 +17,7 @@ class LoginPageProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LoginPageProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

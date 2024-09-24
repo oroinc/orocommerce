@@ -27,11 +27,13 @@ class SlugUrlCacheWarmer implements CacheWarmerInterface
         $this->messageFactory = $messageFactory;
     }
 
+    #[\Override]
     public function isOptional(): bool
     {
         return true;
     }
 
+    #[\Override]
     public function warmUp(string $cacheDir): array
     {
         foreach ($this->routingInformationProvider->getEntityClasses() as $entityClass) {

@@ -18,6 +18,7 @@ class VisibilityExtensionTest extends TestCase
 
     private VisibilityExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);

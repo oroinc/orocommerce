@@ -10,9 +10,7 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
  */
 class QuickAddRowGrouper implements QuickAddRowGrouperInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function groupProducts(QuickAddRowCollection $collection): void
     {
         $groupedRows = [];

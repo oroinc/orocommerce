@@ -177,6 +177,7 @@ class CategoryRepositoryTest extends AbstractCategoryRepositoryTest
         }
     }
 
+    #[\Override]
     protected function getRepository(): CategoryRepository
     {
         return $this->getContainer()->get('oro_visibility.category_repository');

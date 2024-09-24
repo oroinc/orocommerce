@@ -31,9 +31,7 @@ class ProductImageFileNamesProvider implements FileNamesProviderInterface
         $this->featureChecker = $featureChecker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFileNames(File $file): array
     {
         if (!$this->isApplicable($file)) {

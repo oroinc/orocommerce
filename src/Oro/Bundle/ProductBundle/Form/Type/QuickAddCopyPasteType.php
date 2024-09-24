@@ -29,9 +29,7 @@ class QuickAddCopyPasteType extends AbstractType
         . '(?<quantity>(\d{1,32}(?:[.,]\d{1,32})?))(?:[\t,; ]'
         . '(?<unit>([^\s,;]+)))?)?$/';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
@@ -54,9 +52,7 @@ class QuickAddCopyPasteType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_quick_add_copy_paste';

@@ -37,11 +37,7 @@ class IsLineItemGroupsShippingMethodsUpdateRequired extends AbstractCondition im
         $this->checkoutFactory = $checkoutFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     * Line item group shipping methods should be updated if stored checkout value is not empty
-     * but some line item group has no shipping method.
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $lineItemGroupsShippingData = $this->resolveValue($context, $this->lineItemGroupsShippingData);
@@ -62,17 +58,13 @@ class IsLineItemGroupsShippingMethodsUpdateRequired extends AbstractCondition im
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'is_line_item_groups_shipping_methods_update_required';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (\array_key_exists(self::ENTITY, $options)) {
@@ -98,17 +90,13 @@ class IsLineItemGroupsShippingMethodsUpdateRequired extends AbstractCondition im
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->entity, $this->lineItemGroupsShippingData]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->entity, $this->lineItemGroupsShippingData], $factoryAccessor);

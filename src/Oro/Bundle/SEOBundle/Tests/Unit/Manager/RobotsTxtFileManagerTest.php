@@ -23,6 +23,7 @@ class RobotsTxtFileManagerTest extends \PHPUnit\Framework\TestCase
     /** @var RobotsTxtFileManager */
     private $robotsTxtFileManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fileManager = $this->createMock(FileManager::class);

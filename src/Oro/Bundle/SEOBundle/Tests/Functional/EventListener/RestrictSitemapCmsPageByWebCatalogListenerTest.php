@@ -35,6 +35,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
     private EventDispatcher $eventDispatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

@@ -28,9 +28,7 @@ class ComputeRouteResourceTypeAndApiUrl implements ProcessorInterface
         $this->apiUrlResolver = $apiUrlResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

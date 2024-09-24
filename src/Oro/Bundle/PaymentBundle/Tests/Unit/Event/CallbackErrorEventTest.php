@@ -9,6 +9,7 @@ class CallbackErrorEventTest extends AbstractCallbackEventTest
     /**
      * @return CallbackErrorEvent
      */
+    #[\Override]
     protected function getEvent()
     {
         return new CallbackErrorEvent();

@@ -8,17 +8,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ContentWidgetTypeStub extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('param', TextType::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_content_widget_stub';

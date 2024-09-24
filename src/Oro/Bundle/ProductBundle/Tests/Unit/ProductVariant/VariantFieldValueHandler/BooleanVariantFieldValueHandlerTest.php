@@ -10,6 +10,7 @@ class BooleanVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var BooleanVariantFieldValueHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

@@ -11,6 +11,7 @@ class InventoryLevelExportTemplateTypeExtensionTest extends \PHPUnit\Framework\T
     /** @var InventoryLevelExportTemplateTypeExtension */
     private $inventoryLevelExportTemplateTypeExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->inventoryLevelExportTemplateTypeExtension = new InventoryLevelExportTemplateTypeExtension();

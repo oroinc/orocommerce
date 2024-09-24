@@ -17,6 +17,7 @@ class LineItemsSimpleOnResultAfterListenerTest extends \PHPUnit\Framework\TestCa
     /** @var LineItemsSimpleOnResultAfterListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new LineItemsSimpleOnResultAfterListener();

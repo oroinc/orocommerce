@@ -46,9 +46,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
         $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(ShippingContextInterface $context): ShippingMethodViewCollection
     {
         return $this->memoryCacheProvider->get(
@@ -94,9 +92,9 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
     }
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function getPrice(ShippingContextInterface $context, ?string $methodId, ?string $typeId): ?Price
     {
         if (!$methodId) {

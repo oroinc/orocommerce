@@ -31,6 +31,7 @@ class OrderReindexTest extends FrontendWebTestCase
     /** @var ManagerRegistry */
     private $doctrine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

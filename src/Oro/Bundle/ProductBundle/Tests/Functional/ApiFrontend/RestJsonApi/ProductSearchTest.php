@@ -22,6 +22,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
     use WebsiteSearchExtensionTrait;
     use PreviouslyPurchasedFeatureTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,6 +34,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

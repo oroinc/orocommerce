@@ -19,6 +19,7 @@ class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -26,6 +27,7 @@ class UniqueExpressCheckoutNameValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new UniqueExpressCheckoutNameValidator($this->doctrine);

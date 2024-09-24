@@ -15,6 +15,7 @@ class CouponApplicabilityQueryBuilderModifierTest extends WebTestCase
      */
     private $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());

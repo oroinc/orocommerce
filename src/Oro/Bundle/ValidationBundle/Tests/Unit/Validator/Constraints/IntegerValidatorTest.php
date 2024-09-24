@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class IntegerValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): IntegerValidator
     {
         return new IntegerValidator();

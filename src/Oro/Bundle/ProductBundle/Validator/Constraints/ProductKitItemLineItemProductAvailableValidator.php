@@ -26,6 +26,7 @@ class ProductKitItemLineItemProductAvailableValidator extends ConstraintValidato
         $this->entityStateChecker = $entityStateChecker;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductKitItemLineItemProductAvailable) {

@@ -32,9 +32,7 @@ class CheckoutShipUntilValidator extends ConstraintValidator
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($checkout, Constraint $constraint)
     {
         if (!$checkout instanceof Checkout) {

@@ -44,6 +44,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     private ShippingMethodProviderInterface $shippingMethodProvider;
     private MethodConfigSubscriberProxy $methodConfigSubscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->getShippingMethodProvider();
@@ -170,9 +171,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         return [
@@ -183,9 +182,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);

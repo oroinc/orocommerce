@@ -21,9 +21,7 @@ class SinglePageTransitionProvider implements TransitionProviderInterface
         $this->transitionProvider = $transitionProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContinueTransition(WorkflowItem $workflowItem, $transitionName = null)
     {
         $transitionData = $this->transitionProvider->getContinueTransition($workflowItem, $transitionName);
@@ -33,25 +31,19 @@ class SinglePageTransitionProvider implements TransitionProviderInterface
             : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackTransitions(WorkflowItem $workflowItem)
     {
         return $this->transitionProvider->getBackTransitions($workflowItem);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackTransition(WorkflowItem $workflowItem)
     {
         return $this->transitionProvider->getBackTransition($workflowItem);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clearCache()
     {
         $this->transitionProvider->clearCache();

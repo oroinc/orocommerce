@@ -29,9 +29,7 @@ class CouponDataConverter extends ConfigurableTableDataConverter
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function convertHeaderToFrontend(array $backendHeader)
     {
         $headers = parent::convertHeaderToFrontend($backendHeader);
@@ -41,9 +39,7 @@ class CouponDataConverter extends ConfigurableTableDataConverter
         return $headers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function convertHeaderToBackend(array $frontendHeader)
     {
         $headers = parent::convertHeaderToBackend($frontendHeader);

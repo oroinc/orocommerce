@@ -24,6 +24,7 @@ class CheckoutSubOrderShippingPriceProviderTest extends \PHPUnit\Framework\TestC
     /** @var CheckoutSubOrderShippingPriceProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutShippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);

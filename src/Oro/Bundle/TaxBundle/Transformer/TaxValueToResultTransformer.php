@@ -17,17 +17,13 @@ class TaxValueToResultTransformer implements TaxTransformerInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function transform(TaxValue $taxValue)
     {
         return new Result($taxValue->getResult()->getArrayCopy());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reverseTransform(Result $result, Taxable $taxable)
     {
         $taxValue = $this->taxValueManager->getTaxValue($taxable->getClassName(), $taxable->getIdentifier());

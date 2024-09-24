@@ -38,9 +38,7 @@ class PaymentMethodConfigType extends AbstractType
         $this->methodViewProvider = $methodViewProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -55,9 +53,7 @@ class PaymentMethodConfigType extends AbstractType
         $builder->add('options', OroUnstructuredHiddenType::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $result = [];
@@ -71,6 +67,7 @@ class PaymentMethodConfigType extends AbstractType
         $view->vars['methods_labels'] = $result;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -78,9 +75,7 @@ class PaymentMethodConfigType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

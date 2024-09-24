@@ -19,6 +19,7 @@ class InlineEditProductControllerTest extends WebTestCase
     private const NEW_PRODUCT_SLUG_PROTOTYPE = 'new-default-product-1-name';
     private const NEW_INVENTORY_STATUS_ID = 'out_of_stock';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());

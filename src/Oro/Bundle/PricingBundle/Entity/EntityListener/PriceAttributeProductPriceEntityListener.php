@@ -16,9 +16,7 @@ class PriceAttributeProductPriceEntityListener extends BaseProductPriceEntityLis
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function postPersist(BaseProductPrice $price)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -28,9 +26,7 @@ class PriceAttributeProductPriceEntityListener extends BaseProductPriceEntityLis
         parent::postPersist($price);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function preUpdate(BaseProductPrice $price, PreUpdateEventArgs $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -40,9 +36,7 @@ class PriceAttributeProductPriceEntityListener extends BaseProductPriceEntityLis
         return parent::preUpdate($price, $event);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function preRemove(BaseProductPrice $price)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -52,9 +46,7 @@ class PriceAttributeProductPriceEntityListener extends BaseProductPriceEntityLis
         parent::preRemove($price);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntityClassName()
     {
         return PriceAttributeProductPrice::class;

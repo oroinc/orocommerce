@@ -13,6 +13,7 @@ class CategoryProviderTreeTest extends WebTestCase
 {
     use CatalogTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

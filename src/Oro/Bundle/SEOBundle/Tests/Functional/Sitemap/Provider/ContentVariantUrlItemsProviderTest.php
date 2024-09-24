@@ -20,6 +20,7 @@ class ContentVariantUrlItemsProviderTest extends WebTestCase
 
     private ?ContentVariantUrlItemsProvider $contentVariantUrlItemsProvider = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

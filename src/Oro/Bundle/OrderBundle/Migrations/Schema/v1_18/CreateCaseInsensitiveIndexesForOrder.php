@@ -14,9 +14,7 @@ class CreateCaseInsensitiveIndexesForOrder implements Migration, DatabasePlatfor
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         if ($this->platform instanceof PostgreSqlPlatform) {

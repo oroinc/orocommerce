@@ -13,6 +13,7 @@ class BuildProductListSchemaOrgListenerTest extends \PHPUnit\Framework\TestCase
 {
     private BuildProductListSchemaOrgListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new BuildProductListSchemaOrgListener();

@@ -16,17 +16,13 @@ class LoadCombinedPriceListWithCustomerRelation extends AbstractFixture implemen
 {
     public const DEFAULT_PRICE_LIST = 'default_price_list';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadCustomer::class, LoadWebsite::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->loadCombinedPriceListWithDefaultPriceListAndCustomerRelation($manager);

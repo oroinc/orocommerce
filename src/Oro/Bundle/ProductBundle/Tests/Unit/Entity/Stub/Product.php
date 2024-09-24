@@ -71,17 +71,13 @@ class Product extends BaseProduct
         $this->flags = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __call($name, $arguments)
     {
         return $this->localizedMethodCall($this->localizedFields, $name, $arguments);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __get(string $name)
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -95,9 +91,7 @@ class Product extends BaseProduct
         throw new \RuntimeException('It\'s not expected to get non-existing property');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __set(string $name, $value): void
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -115,9 +109,7 @@ class Product extends BaseProduct
         throw new \RuntimeException('It\'s not expected to set non-existing property');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __isset(string $name): bool
     {
         if (array_key_exists($name, $this->localizedFields)) {

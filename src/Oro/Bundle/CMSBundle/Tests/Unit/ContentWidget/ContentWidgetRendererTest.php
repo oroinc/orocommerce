@@ -41,6 +41,7 @@ HTML;
 
     private LayoutBuilderInterface|\PHPUnit\Framework\MockObject\MockObject $layoutBuilder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentWidgetProvider = $this->createMock(ContentWidgetProvider::class);

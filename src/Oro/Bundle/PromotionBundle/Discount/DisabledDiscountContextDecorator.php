@@ -18,6 +18,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
         $this->context = $discountContext;
     }
 
+    #[\Override]
     public function getSubtotal(): float
     {
         return $this->context->getSubtotal();
@@ -27,6 +28,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param float $subtotal
      * @return $this
      */
+    #[\Override]
     public function setSubtotal($subtotal)
     {
         $this->context->setSubtotal($subtotal);
@@ -38,6 +40,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param DiscountInterface $discount
      * @return $this
      */
+    #[\Override]
     public function addShippingDiscount(DiscountInterface $discount)
     {
         $this->context->addShippingDiscount(new DisabledDiscountDecorator($discount));
@@ -49,6 +52,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param DiscountInterface $discount
      * @return $this
      */
+    #[\Override]
     public function addSubtotalDiscount(DiscountInterface $discount)
     {
         $this->context->addSubtotalDiscount(new DisabledDiscountDecorator($discount));
@@ -59,6 +63,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
     /**
      * @return DiscountLineItem[]
      */
+    #[\Override]
     public function getLineItems(): array
     {
         $lineItems = [];
@@ -73,6 +78,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param DiscountLineItem[] $lineItems
      * @return $this
      */
+    #[\Override]
     public function setLineItems($lineItems)
     {
         $this->context->setLineItems($lineItems);
@@ -84,6 +90,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param DiscountLineItem $lineItem
      * @return $this
      */
+    #[\Override]
     public function addLineItem(DiscountLineItem $lineItem)
     {
         $this->context->addLineItem($lineItem);
@@ -94,6 +101,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
     /**
      * @return array|DiscountInterface[]
      */
+    #[\Override]
     public function getShippingDiscounts(): array
     {
         return $this->context->getShippingDiscounts();
@@ -102,6 +110,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
     /**
      * @return array|DiscountInterface[]
      */
+    #[\Override]
     public function getSubtotalDiscounts(): array
     {
         return $this->context->getSubtotalDiscounts();
@@ -110,11 +119,13 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
     /**
      * @return array|DiscountInterface[]
      */
+    #[\Override]
     public function getLineItemDiscounts()
     {
         return $this->context->getLineItemDiscounts();
     }
 
+    #[\Override]
     public function getShippingCost(): float
     {
         return $this->context->getShippingCost();
@@ -124,6 +135,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param float $shippingCost
      * @return $this
      */
+    #[\Override]
     public function setShippingCost($shippingCost)
     {
         $this->context->setShippingCost($shippingCost);
@@ -135,6 +147,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param DiscountInformation $discountInformation
      * @return $this
      */
+    #[\Override]
     public function addSubtotalDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->context->addSubtotalDiscountInformation($discountInformation);
@@ -145,6 +158,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
     /**
      * @return array|DiscountInformation[]
      */
+    #[\Override]
     public function getSubtotalDiscountsInformation(): array
     {
         return $this->context->getSubtotalDiscountsInformation();
@@ -154,6 +168,7 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param DiscountInformation $discountInformation
      * @return $this
      */
+    #[\Override]
     public function addShippingDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->context->addShippingDiscountInformation($discountInformation);
@@ -164,21 +179,25 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
     /**
      * @return array|DiscountInformation[]
      */
+    #[\Override]
     public function getShippingDiscountsInformation(): array
     {
         return $this->context->getShippingDiscountsInformation();
     }
 
+    #[\Override]
     public function getShippingDiscountTotal(): float
     {
         return $this->context->getShippingDiscountTotal();
     }
 
+    #[\Override]
     public function getSubtotalDiscountTotal(): float
     {
         return $this->context->getSubtotalDiscountTotal();
     }
 
+    #[\Override]
     public function getTotalLineItemsDiscount(): float
     {
         return $this->context->getTotalLineItemsDiscount();
@@ -188,11 +207,13 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      * @param object $lineItem
      * @return float
      */
+    #[\Override]
     public function getDiscountByLineItem($lineItem): float
     {
         return $this->context->getDiscountByLineItem($lineItem);
     }
 
+    #[\Override]
     public function getTotalDiscountAmount(): float
     {
         return $this->context->getTotalDiscountAmount();

@@ -11,9 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->createProductUnitPrecision($manager, 'product-1', 'product_unit.liter', 3, 5, true);
@@ -71,9 +69,7 @@ class LoadProductUnitPrecisions extends AbstractFixture implements DependentFixt
         return $productUnitPrecision;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

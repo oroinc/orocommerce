@@ -41,6 +41,7 @@ class OrderShippingContextFactoryTest extends TestCase
 
     private SystemShippingOriginProvider $systemShippingOriginProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

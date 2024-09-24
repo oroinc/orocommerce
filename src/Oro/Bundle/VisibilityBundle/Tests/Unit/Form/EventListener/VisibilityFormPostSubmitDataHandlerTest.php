@@ -26,6 +26,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit\Framework\TestCas
     /** @var VisibilityFormPostSubmitDataHandler */
     private $dataHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldDataProvider = $this->createMock(VisibilityFormFieldDataProvider::class);

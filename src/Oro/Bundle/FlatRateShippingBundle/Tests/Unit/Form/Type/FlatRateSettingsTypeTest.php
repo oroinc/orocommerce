@@ -28,9 +28,7 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
 {
     private const LOCALIZATION_ID = 998;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $repositoryLocalization = $this->createMock(ObjectRepository::class);

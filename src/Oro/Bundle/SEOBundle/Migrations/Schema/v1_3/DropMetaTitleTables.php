@@ -20,9 +20,7 @@ class DropMetaTitleTables implements
 {
     use ExtendNameGeneratorAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $schema->dropTable($this->nameGenerator->generateManyToManyJoinTableName(
@@ -42,9 +40,7 @@ class DropMetaTitleTables implements
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 20;

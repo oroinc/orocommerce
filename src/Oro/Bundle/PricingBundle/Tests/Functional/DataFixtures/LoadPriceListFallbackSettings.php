@@ -110,9 +110,7 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -122,9 +120,7 @@ class LoadPriceListFallbackSettings extends AbstractFixture implements Dependent
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->fallbackSettings['customer'] as $websiteReference => $fallbackSettings) {

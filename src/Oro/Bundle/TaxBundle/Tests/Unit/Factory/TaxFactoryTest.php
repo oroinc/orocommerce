@@ -17,6 +17,7 @@ class TaxFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var TaxFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mapper1 = $this->createMock(TaxMapperInterface::class);

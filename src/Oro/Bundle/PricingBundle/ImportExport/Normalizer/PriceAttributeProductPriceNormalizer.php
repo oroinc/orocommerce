@@ -10,8 +10,8 @@ class PriceAttributeProductPriceNormalizer extends ConfigurableEntityNormalizer
     /**
      * @param PriceAttributeProductPrice $object
      *
-     * {@inheritDoc}
      */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         $data = parent::normalize($object, $format, $context);
@@ -23,17 +23,13 @@ class PriceAttributeProductPriceNormalizer extends ConfigurableEntityNormalizer
         return $data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof PriceAttributeProductPrice;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return false;

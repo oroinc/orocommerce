@@ -21,6 +21,7 @@ class RequestProductKitItemChecksumGeneratorTest extends TestCase
 {
     private RequestProductKitItemChecksumGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = new RequestProductKitItemChecksumGenerator();

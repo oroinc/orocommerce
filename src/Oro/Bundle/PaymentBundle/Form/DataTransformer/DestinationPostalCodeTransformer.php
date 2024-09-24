@@ -13,6 +13,7 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
      * @param ArrayCollection|ShippingMethodsConfigsRuleDestinationPostalCode[] $postalCodes
      * @return string
      */
+    #[\Override]
     public function transform($postalCodes)
     {
         if (!$postalCodes) {
@@ -32,6 +33,7 @@ class DestinationPostalCodeTransformer implements DataTransformerInterface
      * @param string|null $postalCodesString
      * @return ArrayCollection|ShippingMethodsConfigsRuleDestinationPostalCode[]
      */
+    #[\Override]
     public function reverseTransform($postalCodesString)
     {
         $postalCodes = new ArrayCollection();

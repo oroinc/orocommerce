@@ -26,6 +26,7 @@ class ContentNodeTreeCachingResolverTest extends \PHPUnit\Framework\TestCase
 
     private EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerResolver = $this->createMock(ContentNodeTreeResolverInterface::class);

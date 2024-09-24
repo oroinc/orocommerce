@@ -28,6 +28,7 @@ class PriceForProductUnitExistsValidator extends ConstraintValidator
      * @param PersistentCollection $value The value that should be validated
      * @param PriceForProductUnitExists|Constraint $constraint The constraint for the validation
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof PersistentCollection) {

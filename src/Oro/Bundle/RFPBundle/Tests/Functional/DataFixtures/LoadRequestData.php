@@ -228,9 +228,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -240,6 +238,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var User $owner */

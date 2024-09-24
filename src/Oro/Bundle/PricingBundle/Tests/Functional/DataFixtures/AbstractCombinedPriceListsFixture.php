@@ -22,9 +22,7 @@ abstract class AbstractCombinedPriceListsFixture extends AbstractFixture impleme
      */
     protected $data = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->data as $priceListData) {

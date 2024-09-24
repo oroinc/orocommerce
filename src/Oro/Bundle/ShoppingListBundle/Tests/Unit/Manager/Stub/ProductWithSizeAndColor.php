@@ -60,9 +60,7 @@ class ProductWithSizeAndColor extends Product
         return $this;
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function getUnitPrecision($unitCode)
     {
         return $this->precision;

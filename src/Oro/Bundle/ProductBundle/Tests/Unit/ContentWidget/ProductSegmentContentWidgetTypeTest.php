@@ -39,6 +39,7 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(SegmentRepository::class);
@@ -357,6 +358,7 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         $this->assertEquals('', $this->contentWidgetType->getDefaultTemplate($contentWidget, $twig));
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [
@@ -372,9 +374,7 @@ class ProductSegmentContentWidgetTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTypeExtensions(): array
     {
         return array_merge(

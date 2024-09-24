@@ -13,6 +13,7 @@ class TaxTypeTest extends FormIntegrationTestCase
     /** @var TaxType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new TaxType();
@@ -20,9 +21,7 @@ class TaxTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

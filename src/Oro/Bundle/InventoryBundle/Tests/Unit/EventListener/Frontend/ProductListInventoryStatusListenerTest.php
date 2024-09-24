@@ -14,6 +14,7 @@ class ProductListInventoryStatusListenerTest extends TestCase
 {
     private ProductListInventoryStatusListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $enumOptionsProvider = $this->createMock(EnumOptionsProvider::class);

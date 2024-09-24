@@ -21,6 +21,7 @@ class MeasureUnitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MeasureUnitProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EntityRepository::class);

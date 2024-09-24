@@ -26,17 +26,13 @@ class EnumValueCollectionExtension extends AbstractTypeExtension
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [EnumValueCollectionType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $data = $form->getData();

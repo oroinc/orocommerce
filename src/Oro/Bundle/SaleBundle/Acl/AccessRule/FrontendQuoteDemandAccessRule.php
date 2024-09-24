@@ -24,17 +24,13 @@ class FrontendQuoteDemandAccessRule implements AccessRuleInterface
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(Criteria $criteria): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(Criteria $criteria): void
     {
         $token = $this->tokenStorage->getToken();

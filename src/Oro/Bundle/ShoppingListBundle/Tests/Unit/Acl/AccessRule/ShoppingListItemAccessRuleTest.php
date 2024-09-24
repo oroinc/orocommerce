@@ -12,6 +12,7 @@ class ShoppingListItemAccessRuleTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListItemAccessRule */
     private $accessRule;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->accessRule = new ShoppingListItemAccessRule();

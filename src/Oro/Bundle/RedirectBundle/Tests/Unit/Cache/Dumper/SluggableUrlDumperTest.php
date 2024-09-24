@@ -41,6 +41,7 @@ class SluggableUrlDumperTest extends \PHPUnit\Framework\TestCase
 
     private SluggableUrlDumper $dumper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = $this->createMock(UrlCacheAllCapabilities::class);

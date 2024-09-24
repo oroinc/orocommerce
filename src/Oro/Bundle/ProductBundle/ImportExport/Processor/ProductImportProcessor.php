@@ -7,9 +7,7 @@ use Oro\Bundle\ImportExportBundle\Processor\ImportProcessor;
 
 class ProductImportProcessor extends ImportProcessor implements ClosableInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function close()
     {
         if ($this->strategy instanceof ClosableInterface) {

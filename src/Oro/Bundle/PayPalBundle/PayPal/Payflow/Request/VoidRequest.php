@@ -6,13 +6,13 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class VoidRequest extends AbstractRequest
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function getTransactionType()
     {
         return Option\Transaction::VOID;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureRequestOptions()
     {
         $this

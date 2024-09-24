@@ -25,9 +25,7 @@ class LoadSubOrders extends LoadOrders
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

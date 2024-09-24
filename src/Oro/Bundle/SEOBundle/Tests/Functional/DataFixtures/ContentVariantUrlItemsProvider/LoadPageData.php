@@ -23,9 +23,7 @@ class LoadPageData extends AbstractFixture
         self::PAGE5_WEB_CATALOG_SCOPE_DEFAULT => [],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         // remove all built-in pages before tests

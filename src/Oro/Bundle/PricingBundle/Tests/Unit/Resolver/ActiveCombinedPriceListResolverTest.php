@@ -19,6 +19,7 @@ class ActiveCombinedPriceListResolverTest extends \PHPUnit\Framework\TestCase
     /** @var CombinedPriceListScheduleResolver */
     private $combinedPriceListScheduleResolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

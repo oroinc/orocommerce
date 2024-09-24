@@ -42,9 +42,7 @@ abstract class AbstractEngine implements EngineInterface
      */
     abstract protected function doSearch(Query $query, array $context = []);
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function search(Query $query, array $context = [])
     {
         $event = new BeforeSearchEvent($query, $context);

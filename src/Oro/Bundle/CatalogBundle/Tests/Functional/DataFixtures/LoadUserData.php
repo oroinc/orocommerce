@@ -10,9 +10,7 @@ class LoadUserData extends AbstractLoadUserData
     public const USER_PASSWORD_CATALOG_MANAGER = 'system_user_cm_api_key';
     public const ROLE_CATALOG_MANAGER = 'ROLE_CATALOG_MANAGER';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getUsersData(): array
     {
         return [

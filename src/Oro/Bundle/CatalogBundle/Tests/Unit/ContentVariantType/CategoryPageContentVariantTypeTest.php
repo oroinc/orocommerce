@@ -20,6 +20,7 @@ class CategoryPageContentVariantTypeTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryPageContentVariantType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

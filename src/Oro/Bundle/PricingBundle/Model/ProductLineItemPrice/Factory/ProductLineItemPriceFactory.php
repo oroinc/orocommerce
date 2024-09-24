@@ -24,6 +24,7 @@ class ProductLineItemPriceFactory implements ProductLineItemPriceFactoryInterfac
         $this->innerFactories = $innerFactories;
     }
 
+    #[\Override]
     public function createForProductLineItem(
         ProductLineItemInterface $lineItem,
         ProductPriceInterface $productPrice
@@ -37,6 +38,7 @@ class ProductLineItemPriceFactory implements ProductLineItemPriceFactoryInterfac
         return null;
     }
 
+    #[\Override]
     public function isSupported(
         ProductLineItemInterface $lineItem,
         ProductPriceInterface $productPrice

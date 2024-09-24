@@ -36,7 +36,7 @@ class Currency implements OptionInterface
         $this->required = $required;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         if ($this->required) {

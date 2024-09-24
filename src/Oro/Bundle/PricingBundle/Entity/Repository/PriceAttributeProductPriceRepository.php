@@ -45,9 +45,7 @@ class PriceAttributeProductPriceRepository extends BaseProductPriceRepository
         return $qb->getQuery()->getResult();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPriceListIdsByProduct(Product $product)
     {
         $qb = $this->createQueryBuilder('productToPriceList');

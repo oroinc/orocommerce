@@ -27,18 +27,14 @@ class QuoteDemandType extends AbstractType
         $this->quoteDemandManager = $quoteDemandManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['data']);
         $resolver->setDefault('data_class', 'Oro\Bundle\SaleBundle\Entity\QuoteDemand');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var QuoteDemand $quoteDemand */
@@ -54,17 +50,12 @@ class QuoteDemandType extends AbstractType
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

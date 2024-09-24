@@ -37,6 +37,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidato
     /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attributeManager = $this->createMock(AttributeManager::class);
@@ -75,9 +76,7 @@ class AttributeFamilyUsageInVariantFieldValidatorTest extends ConstraintValidato
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createValidator(): AttributeFamilyUsageInVariantFieldValidator
     {
         return new AttributeFamilyUsageInVariantFieldValidator(

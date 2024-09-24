@@ -9,9 +9,7 @@ use Oro\Bundle\ShippingBundle\Model\Weight;
 
 class ShippingPackageOptionsFactory implements ShippingPackageOptionsFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(Dimensions $dimensions, Weight $weight): ShippingPackageOptionsInterface
     {
         return new ShippingPackageOptions($dimensions, $weight);

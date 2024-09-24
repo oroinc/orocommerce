@@ -12,6 +12,7 @@ class OroFlatRateBundle implements Migration
     /**
      * @throws SchemaException
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroFlatRateTransportLabelTable($schema);

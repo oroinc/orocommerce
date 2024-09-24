@@ -25,6 +25,7 @@ class ProductsChangeRelationListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductsChangeRelationListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

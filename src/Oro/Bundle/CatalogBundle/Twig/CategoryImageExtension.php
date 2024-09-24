@@ -31,9 +31,7 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -107,9 +105,7 @@ class CategoryImageExtension extends AbstractExtension implements ServiceSubscri
         return $pictureSources;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

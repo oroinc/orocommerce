@@ -23,16 +23,19 @@ class ActualizeCombinedPriceListTopic extends AbstractTopic implements JobAwareT
     ) {
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Schedule prices combination for a given list of Combined Price Lists';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver->define('cpl')
@@ -52,6 +55,7 @@ class ActualizeCombinedPriceListTopic extends AbstractTopic implements JobAwareT
             });
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         $ids = array_map(

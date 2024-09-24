@@ -39,6 +39,7 @@ class LoadContentTemplateDemoData implements
     private const ASSET_IMAGES_PATH = '@OroCMSBundle/Migrations/Data/Demo/ORM/data/content-template/img';
     private const PLACEHOLDER_ASSETS_PATH = DIRECTORY_SEPARATOR . 'img' . DIRECTORY_SEPARATOR;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -46,6 +47,7 @@ class LoadContentTemplateDemoData implements
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $path = $this->getFileLocator()->locate(self::ASSETS_PATH);

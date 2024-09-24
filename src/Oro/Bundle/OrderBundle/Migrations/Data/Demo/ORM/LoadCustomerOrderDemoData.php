@@ -40,9 +40,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
     private array $countries = [];
     private array $regions = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -58,8 +56,8 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
 
     /**
      * @param EntityManagerInterface $manager
-     * {@inheritDoc}
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $orderMetadata = $manager->getClassMetadata(Order::class);

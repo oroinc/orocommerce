@@ -59,6 +59,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     protected ManagerRegistry $registry;
     protected static ?string $checkoutUrl = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

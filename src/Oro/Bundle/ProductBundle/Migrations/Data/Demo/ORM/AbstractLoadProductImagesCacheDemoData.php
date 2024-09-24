@@ -39,9 +39,7 @@ abstract class AbstractLoadProductImagesCacheDemoData extends AbstractFixture im
         string $name
     ): ?GaufretteFile;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -50,10 +48,10 @@ abstract class AbstractLoadProductImagesCacheDemoData extends AbstractFixture im
     }
 
     /**
-     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');

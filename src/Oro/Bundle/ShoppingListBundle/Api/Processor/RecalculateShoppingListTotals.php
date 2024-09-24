@@ -26,9 +26,7 @@ class RecalculateShoppingListTotals implements ProcessorInterface
         $this->totalManager = $totalManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

@@ -11,9 +11,7 @@ class UpdateBrandAttributeConfig extends AbstractFixture implements ContainerAwa
 {
     use MakeProductAttributesTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->updateProductAttributes(

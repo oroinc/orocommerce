@@ -41,16 +41,19 @@ class CombinedProductPriceDatagridExtension extends ProductPriceDatagridExtensio
         $this->priceListRequestHandler = $priceListRequestHandler;
     }
 
+    #[\Override]
     protected function getFilterType(): string
     {
         return 'combined-product-price';
     }
 
+    #[\Override]
     protected function getPriceClassName(): string
     {
         return CombinedProductPrice::class;
     }
 
+    #[\Override]
     public function visitResult(DatagridConfiguration $config, ResultsObject $result)
     {
         parent::visitResult($config, $result);
@@ -61,6 +64,7 @@ class CombinedProductPriceDatagridExtension extends ProductPriceDatagridExtensio
         }
     }
 
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config)
     {
         parent::processConfigs($config);

@@ -19,6 +19,7 @@ class CronSegmentsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);

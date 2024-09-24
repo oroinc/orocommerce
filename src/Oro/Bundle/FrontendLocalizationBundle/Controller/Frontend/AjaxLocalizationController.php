@@ -55,9 +55,7 @@ class AjaxLocalizationController extends AbstractController
         return new JsonResponse(['success' => false]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

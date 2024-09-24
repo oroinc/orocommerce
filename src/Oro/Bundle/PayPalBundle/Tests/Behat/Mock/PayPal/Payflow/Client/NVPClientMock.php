@@ -25,9 +25,7 @@ class NVPClientMock implements ClientInterface
         $this->cache = $cache;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function send($hostAddress, array $options = [], array $connectionOptions = [])
     {
         if (!$this->credentialsAreValid($options)) {

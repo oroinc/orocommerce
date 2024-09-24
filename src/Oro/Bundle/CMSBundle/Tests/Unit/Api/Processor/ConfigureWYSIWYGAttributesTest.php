@@ -16,6 +16,7 @@ class ConfigureWYSIWYGAttributesTest extends ConfigProcessorTestCase
     /** @var ConfigureWYSIWYGAttributes */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

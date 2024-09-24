@@ -8,6 +8,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class AddVersionToCombinedPriceListRelations implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->addField($schema, 'oro_cmb_price_list_to_cus');

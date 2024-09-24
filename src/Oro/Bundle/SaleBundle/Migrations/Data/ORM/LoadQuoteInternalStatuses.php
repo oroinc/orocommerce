@@ -26,6 +26,7 @@ class LoadQuoteInternalStatuses extends AbstractEnumFixture
         'not_approved' => 'Not Approved'
     ];
 
+    #[\Override]
     protected function getData(): array
     {
         return self::$data;
@@ -36,6 +37,7 @@ class LoadQuoteInternalStatuses extends AbstractEnumFixture
         return array_keys(self::$data);
     }
 
+    #[\Override]
     protected function getEnumCode(): string
     {
         return Quote::INTERNAL_STATUS_CODE;

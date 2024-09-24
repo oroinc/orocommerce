@@ -30,17 +30,13 @@ class UpdateFallbackEntitySystemOptionConfig extends ParametrizedMigrationQuery
         $this->systemOption = $systemOption;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Update system option config for fallback entity field config';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->updateEntityConfig($logger);

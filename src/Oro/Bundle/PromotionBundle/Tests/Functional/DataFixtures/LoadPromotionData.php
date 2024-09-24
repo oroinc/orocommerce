@@ -8,9 +8,7 @@ class LoadPromotionData extends AbstractLoadPromotionData
     public const ORDER_AMOUNT_PROMOTION = 'order_amount_promotion';
     public const SHIPPING_PROMOTION = 'shipping_promotion';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(
@@ -19,9 +17,7 @@ class LoadPromotionData extends AbstractLoadPromotionData
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPromotions(): array
     {
         return [

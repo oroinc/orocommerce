@@ -35,6 +35,7 @@ class ProductFormProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductFormProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

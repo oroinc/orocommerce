@@ -26,9 +26,7 @@ class FedexPackagesByLineItemsAndPackageSettingsFactory implements
         $this->fedexPackageFactory = $fedexPackageFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(
         Collection $lineItemCollection,
         FedexPackageSettingsInterface $packageSettings

@@ -13,6 +13,7 @@ class InlineMatrixHeaderOneDimensional extends TableHeader
      * @param string $headerText Header of table column
      * @return int column number
      */
+    #[\Override]
     public function getColumnNumber($headerText)
     {
         $crawler = new Crawler($this->getHtml());
@@ -44,6 +45,7 @@ class InlineMatrixHeaderOneDimensional extends TableHeader
      * @param $columnName
      * @return bool
      */
+    #[\Override]
     public function hasColumn($columnName)
     {
         $crawler = new Crawler($this->getHtml());

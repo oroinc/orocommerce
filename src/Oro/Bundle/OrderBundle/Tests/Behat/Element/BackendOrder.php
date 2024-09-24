@@ -7,17 +7,13 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Table;
 
 class BackendOrder extends Order
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getLineItemsFromTable('BackendOrderLineItem');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal($subtotalName)
     {
         /** @var BackendOrderSubtotals $subtotals */

@@ -12,6 +12,7 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductKitItemLineItemType;
 
 class RequestProductKitItemLineItemTypeTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

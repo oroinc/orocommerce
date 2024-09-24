@@ -20,6 +20,7 @@ class StartShoppingListCheckoutTest extends TestCase
 
     private StartShoppingListCheckout $startShoppingListCheckout;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListUrlProvider = $this->createMock(ShoppingListUrlProvider::class);

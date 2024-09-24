@@ -13,6 +13,7 @@ class RequestAdditionalNoteTest extends \PHPUnit\Framework\TestCase
     /** @var RequestAdditionalNote */
     private $requestAdditionalNote;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestAdditionalNote = new RequestAdditionalNote();

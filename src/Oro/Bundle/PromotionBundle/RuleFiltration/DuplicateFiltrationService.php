@@ -15,9 +15,7 @@ class DuplicateFiltrationService extends AbstractSkippableFiltrationService
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $filteredRuleOwners = $this->filterDuplicatedRuleOwners($ruleOwners);

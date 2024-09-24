@@ -17,9 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CheckoutAddressType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('customerAddress', CheckoutAddressSelectType::class, [
@@ -56,9 +54,7 @@ class CheckoutAddressType extends AbstractType
         }, 100);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -72,17 +68,13 @@ class CheckoutAddressType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_checkout_address';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return OrderAddressType::class;

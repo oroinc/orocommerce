@@ -22,9 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class QuoteProductOfferType extends AbstractType
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -88,9 +86,7 @@ class QuoteProductOfferType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
@@ -103,17 +99,13 @@ class QuoteProductOfferType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['allow_prices_override'] = $options['allow_prices_override'];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_sale_quote_product_offer';

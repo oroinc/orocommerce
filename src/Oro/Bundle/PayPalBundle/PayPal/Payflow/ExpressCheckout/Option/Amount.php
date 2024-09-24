@@ -13,16 +13,12 @@ class Amount extends BaseAmount implements OptionsDependentInterface
         parent::__construct(false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         if (!isset($options[Action::ACTION])) {
@@ -32,9 +28,7 @@ class Amount extends BaseAmount implements OptionsDependentInterface
         return in_array($options[Action::ACTION], [Action::SET_EC, Action::DO_EC], true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         if (isset($options[Action::ACTION]) &&

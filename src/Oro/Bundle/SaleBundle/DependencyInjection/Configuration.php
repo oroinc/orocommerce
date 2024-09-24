@@ -23,9 +23,7 @@ class Configuration implements ConfigurationInterface
     const ENABLE_GUEST_QUOTE = 'enable_guest_quote';
     const QUOTE_FRONTEND_FEATURE_ENABLED = 'quote_frontend_feature_enabled';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

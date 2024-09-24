@@ -25,11 +25,11 @@ class MenuCategoriesCache implements CacheInterface
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param callable $callback Callback must return an array of menu categories data
      *                           as per {@see MenuCategoriesProviderInterface::getCategories}.
      */
+    #[\Override]
     public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
     {
         $wrappedCallback = function (CacheItemInterface $cacheItem) use ($callback, &$denormalizedMenuCategories) {
@@ -58,6 +58,7 @@ class MenuCategoriesCache implements CacheInterface
         return $menuCategories;
     }
 
+    #[\Override]
     public function delete(string $key): bool
     {
         return $this->cache->delete($key);

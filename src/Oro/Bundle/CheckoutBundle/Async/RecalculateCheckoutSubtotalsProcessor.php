@@ -30,6 +30,7 @@ class RecalculateCheckoutSubtotalsProcessor implements
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         try {
@@ -49,6 +50,7 @@ class RecalculateCheckoutSubtotalsProcessor implements
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [RecalculateCheckoutSubtotalsTopic::getName()];

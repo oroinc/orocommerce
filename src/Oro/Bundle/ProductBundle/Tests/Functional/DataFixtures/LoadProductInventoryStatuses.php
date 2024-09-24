@@ -13,9 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\InitialFixtureInterface;
  */
 class LoadProductInventoryStatuses extends AbstractFixture implements InitialFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $repository = $manager->getRepository(EnumOption::class);

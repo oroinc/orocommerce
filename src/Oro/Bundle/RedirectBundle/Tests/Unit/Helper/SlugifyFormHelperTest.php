@@ -10,6 +10,7 @@ class SlugifyFormHelperTest extends \PHPUnit\Framework\TestCase
     /** @var SlugifyFormHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->helper = new SlugifyFormHelper();

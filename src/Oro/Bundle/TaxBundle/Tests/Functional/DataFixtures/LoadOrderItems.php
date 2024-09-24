@@ -35,9 +35,7 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -46,9 +44,7 @@ class LoadOrderItems extends AbstractFixture implements DependentFixtureInterfac
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Order $order */

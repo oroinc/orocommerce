@@ -33,9 +33,7 @@ class WebsiteSearchProductImageListenerTest extends \PHPUnit\Framework\TestCase
 
     private WebsiteSearchProductImageListener $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

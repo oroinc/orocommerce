@@ -19,6 +19,7 @@ class CheckoutShipUntilValidatorTest extends ConstraintValidatorTestCase
     /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutLineItemsManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->upcomingProvider = $this->createMock(UpcomingProductProvider::class);
@@ -26,6 +27,7 @@ class CheckoutShipUntilValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new CheckoutShipUntilValidator($this->upcomingProvider, $this->checkoutLineItemsManager);

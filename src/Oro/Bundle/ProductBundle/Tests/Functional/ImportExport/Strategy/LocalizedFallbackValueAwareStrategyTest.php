@@ -31,6 +31,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 {
     private LocalizedFallbackValueAwareStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -31,6 +31,7 @@ class DefaultMultiShippingMethodSetter implements DefaultMultiShippingMethodSett
         $this->lineItemsShippingManager = $lineItemsShippingManager;
     }
 
+    #[\Override]
     public function setDefaultShippingMethods(
         Checkout $checkout,
         ?array $lineItemsShippingMethods = null,

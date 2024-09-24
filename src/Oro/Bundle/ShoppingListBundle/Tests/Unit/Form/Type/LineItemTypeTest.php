@@ -33,6 +33,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         'kg'
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new LineItemType();
@@ -40,9 +41,7 @@ class LineItemTypeTest extends AbstractFormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

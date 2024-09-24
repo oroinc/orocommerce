@@ -22,6 +22,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 {
     private const PAYMENT_METHOD_TYPE = 'payment_term';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

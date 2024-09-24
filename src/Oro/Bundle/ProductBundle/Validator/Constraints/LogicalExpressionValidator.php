@@ -33,8 +33,8 @@ class LogicalExpressionValidator extends ConstraintValidator
      * @param string $value
      * @param LogicalExpression $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         try {

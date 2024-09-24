@@ -8,17 +8,13 @@ class Url extends BaseUrl implements AliasAwareConstraintInterface
 {
     const ALIAS = 'url';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'Symfony\Component\Validator\Constraints\UrlValidator';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAlias()
     {
         return self::ALIAS;

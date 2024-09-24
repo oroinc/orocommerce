@@ -59,17 +59,13 @@ class PriceRuleProcessor implements
         $this->dependentPriceListProvider = $dependentPriceListProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [ResolvePriceRulesTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $body = $message->getBody();

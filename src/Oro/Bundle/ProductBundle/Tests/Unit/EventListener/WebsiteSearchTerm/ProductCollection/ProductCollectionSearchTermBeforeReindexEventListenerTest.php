@@ -24,6 +24,7 @@ class ProductCollectionSearchTermBeforeReindexEventListenerTest extends TestCase
 
     private ProductCollectionSearchTermBeforeReindexEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->staticSegmentManager = $this->createMock(StaticSegmentManager::class);

@@ -79,9 +79,7 @@ class RequestController extends AbstractController
         return new GroupSequence([Constraint::DEFAULT_GROUP, 'request_update']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

@@ -13,6 +13,7 @@ use Oro\Component\Testing\ReflectionUtil;
 
 class CustomerDataGridListenerTest extends AbstractPriceListRelationDataGridListenerTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,9 +29,7 @@ class CustomerDataGridListenerTest extends AbstractPriceListRelationDataGridList
         $this->listener = new CustomerDataGridListener($doctrine);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createRelation(int $objectId): PriceListToCustomer
     {
         $customer = new Customer();

@@ -13,9 +13,7 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -25,9 +23,7 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
         $extension->renameTable($schema, $queries, 'orob2b_cms_login_page', 'oro_cms_login_page');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

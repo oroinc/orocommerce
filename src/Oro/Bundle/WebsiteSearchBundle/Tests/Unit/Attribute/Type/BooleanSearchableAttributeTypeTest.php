@@ -8,9 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 class BooleanSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return BooleanSearchableAttributeType::class;

@@ -29,6 +29,7 @@ class CustomerGroupPriceListsAssignmentProvider implements PriceListsAssignmentP
     ) {
     }
 
+    #[\Override]
     public function getPriceListAssignments(): ?array
     {
         $customer = $this->requestHandler->getCustomer();

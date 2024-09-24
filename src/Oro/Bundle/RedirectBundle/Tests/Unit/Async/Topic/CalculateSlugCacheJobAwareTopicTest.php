@@ -16,6 +16,7 @@ class CalculateSlugCacheJobAwareTopicTest extends \PHPUnit\Framework\TestCase
 
     private CalculateSlugCacheJobAwareTopic $topic;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->directUrlTopicHelper = $this->createMock(DirectUrlTopicHelper::class);

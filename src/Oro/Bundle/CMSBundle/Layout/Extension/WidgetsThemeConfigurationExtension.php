@@ -14,17 +14,13 @@ use Symfony\Component\Config\Definition\Builder\NodeBuilder;
  */
 class WidgetsThemeConfigurationExtension implements ThemeConfigurationExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getConfigFileNames(): array
     {
         return ['widgets.yml'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function appendConfig(NodeBuilder $configNode): void
     {
         $configNode->arrayNode('widgets')

@@ -11,9 +11,7 @@ class ProductHolderTypeStub extends AbstractType
 {
     const NAME = 'oro_stub_product_holder';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -23,17 +21,13 @@ class ProductHolderTypeStub extends AbstractType
         ;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

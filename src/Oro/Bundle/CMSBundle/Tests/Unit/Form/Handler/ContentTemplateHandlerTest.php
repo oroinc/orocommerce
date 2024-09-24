@@ -36,6 +36,7 @@ class ContentTemplateHandlerTest extends \PHPUnit\Framework\TestCase
 
     private ContentTemplateHandler $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->manager = $this->createMock(EntityManager::class);

@@ -16,9 +16,7 @@ class BasicMethodTypeRemovalEventDispatcher implements MethodTypeRemovalEventDis
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function dispatch($methodId, $typeId)
     {
         $this->eventDispatcher->dispatch(new MethodTypeRemovalEvent($methodId, $typeId), MethodTypeRemovalEvent::NAME);

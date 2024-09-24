@@ -19,6 +19,7 @@ class UpdateCheckoutState implements UpdateCheckoutStateInterface
     ) {
     }
 
+    #[\Override]
     public function execute(
         Checkout $checkout,
         string $stateToken,

@@ -20,6 +20,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
     /** @var string */
     private $originalTaxationUseAsBaseOption;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,6 +37,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = $this->getConfigManager();
@@ -45,6 +47,7 @@ class OrderTaxesTest extends FrontendRestJsonApiTestCase
         parent::tearDown();
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

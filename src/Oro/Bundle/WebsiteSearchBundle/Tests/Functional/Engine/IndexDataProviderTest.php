@@ -33,6 +33,7 @@ class IndexDataProviderTest extends \Oro\Bundle\TestFrameworkBundle\Test\WebTest
      */
     private $localizationManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

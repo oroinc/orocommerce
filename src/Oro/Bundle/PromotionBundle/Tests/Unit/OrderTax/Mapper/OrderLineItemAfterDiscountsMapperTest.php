@@ -23,6 +23,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
     private PromotionExecutor|MockObject $promotionExecutor;
     private OrderLineItemAfterDiscountsMapper $orderLineItemAfterDiscountsMapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerMapper = $this->createMock(TaxMapperInterface::class);

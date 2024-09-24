@@ -22,6 +22,7 @@ abstract class AbstractResolveVisibilityTopic extends AbstractTopic
         $this->managerRegistry = $managerRegistry;
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

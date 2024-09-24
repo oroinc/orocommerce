@@ -40,9 +40,7 @@ class AsyncIndexer implements IndexerInterface
         $this->inputValidator = $indexerInputValidator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function save($entity, array $context = [])
     {
         $this->sendAsyncIndexerMessage(
@@ -54,9 +52,7 @@ class AsyncIndexer implements IndexerInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function delete($entity, array $context = [])
     {
         $this->sendAsyncIndexerMessage(
@@ -69,18 +65,16 @@ class AsyncIndexer implements IndexerInterface
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context Not used here, only to comply with the interface
      */
+    #[\Override]
     public function getClassesForReindex($class = null, array $context = [])
     {
         return $this->baseIndexer->getClassesForReindex($class, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function resetIndex($class = null, array $context = [])
     {
         $this->sendAsyncIndexerMessage(
@@ -93,7 +87,6 @@ class AsyncIndexer implements IndexerInterface
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context
      * $context = [
@@ -101,6 +94,7 @@ class AsyncIndexer implements IndexerInterface
      *     'websiteIds' int[] Array of websites ids to reindex
      * ]
      */
+    #[\Override]
     public function reindex($class = null, array $context = [])
     {
         $parameters = $this->inputValidator->validateClassAndContext([

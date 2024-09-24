@@ -8,17 +8,13 @@ class Email extends BaseEmail implements AliasAwareConstraintInterface
 {
     const ALIAS = 'email';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'Symfony\Component\Validator\Constraints\EmailValidator';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAlias()
     {
         return self::ALIAS;

@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class QuickAddImportFromFileTypeTest extends FormIntegrationTestCase
 {
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

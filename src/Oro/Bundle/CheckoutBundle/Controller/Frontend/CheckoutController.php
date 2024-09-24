@@ -96,9 +96,7 @@ class CheckoutController extends AbstractController
         return $item;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

@@ -9,7 +9,7 @@ class ErrorUrl implements OptionInterface
 {
     const ERRORURL = 'ERRORURL';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

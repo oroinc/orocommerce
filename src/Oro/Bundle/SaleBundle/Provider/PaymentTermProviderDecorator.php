@@ -23,57 +23,43 @@ class PaymentTermProviderDecorator implements PaymentTermProviderInterface
         $this->innerProvider = $innerProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentTerm(Customer $customer)
     {
         return $this->innerProvider->getPaymentTerm($customer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCurrentPaymentTerm()
     {
         return $this->innerProvider->getCurrentPaymentTerm();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerPaymentTerm(Customer $customer)
     {
         return $this->innerProvider->getCustomerPaymentTerm($customer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerGroupPaymentTerm(CustomerGroup $customerGroup)
     {
         return $this->innerProvider->getCustomerGroupPaymentTerm($customerGroup);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
         return $this->innerProvider->getCustomerPaymentTermByOwner($customerOwnerAware);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerGroupPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
         return $this->innerProvider->getCustomerGroupPaymentTermByOwner($customerOwnerAware);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getObjectPaymentTerm($object)
     {
         if ($object instanceof QuoteDemand) {

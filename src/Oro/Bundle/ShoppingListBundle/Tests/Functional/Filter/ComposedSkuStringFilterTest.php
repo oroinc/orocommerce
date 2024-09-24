@@ -23,6 +23,7 @@ class ComposedSkuStringFilterTest extends FrontendWebTestCase
         . ','
         . LoadConfigurableProductWithVariants::SECOND_VARIANT_SKU;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

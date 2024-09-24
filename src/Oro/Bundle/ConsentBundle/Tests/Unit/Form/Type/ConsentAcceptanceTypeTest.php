@@ -20,9 +20,7 @@ class ConsentAcceptanceTypeTest extends \PHPUnit\Framework\TestCase
      */
     private $transformer;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->transformer = $this->createMock(CustomerConsentsTransformer::class);

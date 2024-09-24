@@ -95,17 +95,13 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRolesData()
     {
         return $this->roles;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getUsersData()
     {
         return $this->users;

@@ -26,9 +26,7 @@ class InitializeGuestCheckoutCustomerUser implements ProcessorInterface
         $this->guestCustomerUserManager = $guestCustomerUserManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CreateContext $context */

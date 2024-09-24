@@ -19,9 +19,7 @@ class UpdatePaymentTransactionConfig implements Migration, DatabasePlatformAware
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $updateEntityModeSql = <<<EOF

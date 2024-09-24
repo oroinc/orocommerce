@@ -32,9 +32,7 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
         $this->subscriber = $subscriber;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this->subscriber);
@@ -62,6 +60,7 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
     /**
      * @throws AccessException
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -70,9 +69,7 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (!empty($options['region_route'])) {
@@ -80,9 +77,7 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

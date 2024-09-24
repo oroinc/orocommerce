@@ -31,6 +31,7 @@ class ValidateCheckoutPreOrderCreateEventListenerTest extends TestCase
 
     private ValidateCheckoutPreOrderCreateEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);

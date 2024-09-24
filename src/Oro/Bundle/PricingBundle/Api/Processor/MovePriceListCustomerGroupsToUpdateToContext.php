@@ -13,9 +13,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class MovePriceListCustomerGroupsToUpdateToContext implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         if (!$context instanceof CustomizeFormDataContext || $context->isPrimaryEntityRequest()) {

@@ -42,9 +42,7 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -54,9 +52,7 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $configurableProduct = $this->createProduct($manager, self::CONFIGURABLE_SKU, Product::TYPE_CONFIGURABLE);

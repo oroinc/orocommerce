@@ -19,6 +19,7 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
         $this->translator = $translator;
     }
 
+    #[\Override]
     public function getPossibleValues(string $fieldName): array
     {
         return [
@@ -27,11 +28,13 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
         ];
     }
 
+    #[\Override]
     public function getScalarValue(mixed $value): mixed
     {
         return (bool)$value;
     }
 
+    #[\Override]
     public function getHumanReadableValue(string $fieldName, mixed $value): mixed
     {
         $values = $this->getPossibleValues($fieldName);
@@ -39,6 +42,7 @@ class BooleanVariantFieldValueHandler implements ProductVariantFieldValueHandler
         return array_key_exists((int) $value, $values) ? $values[(int) $value] : 'N/A';
     }
 
+    #[\Override]
     public function getType(): string
     {
         return self::TYPE;

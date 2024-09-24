@@ -44,9 +44,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         $this->twig = $twig;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function fillItemsData(object $entity, array $itemsData): void
     {
         /** @var EntityManagerInterface $em */
@@ -81,9 +79,7 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function addItem(Product $product, object $entity, array $itemData): void
     {
         /** @var RFPRequest $entity */
@@ -145,17 +141,13 @@ class RequestDataStorageExtension extends AbstractProductDataStorageExtension
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClass(): string
     {
         return RFPRequest::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [RequestType::class];

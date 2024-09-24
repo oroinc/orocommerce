@@ -27,6 +27,7 @@ class ConfigureCombinedWYSIWYGFieldsTest extends ConfigProcessorTestCase
     /** @var ConfigureCombinedWYSIWYGFields */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

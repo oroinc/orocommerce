@@ -14,17 +14,13 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
  */
 class ProductsContentVariantProvider implements ContentVariantProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupportedClass($className)
     {
         return $className === Product::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function modifyNodeQueryBuilderByEntities(QueryBuilder $queryBuilder, $entityClass, array $entities)
     {
         $categoryIdentity = 'IDENTITY(variant.category_page_category)';
@@ -66,33 +62,25 @@ class ProductsContentVariantProvider implements ContentVariantProviderInterface
         ->addSelect('categoryProduct.id as categoryProductId');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getValues(ContentNodeInterface $node)
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLocalizedValues(ContentNodeInterface $node)
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRecordId(array $item)
     {
         return $item['categoryProductId'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRecordSortOrder(array $item)
     {
         return null;

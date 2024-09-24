@@ -24,33 +24,21 @@ class Order extends BaseOrder
         $this->appliedPromotions = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAppliedPromotions()
     {
         return $this->appliedPromotions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeAppliedPromotion($promotion)
     {
         $this->appliedPromotions->removeElement($promotion);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setAppliedPromotions($promotions)
     {
         $this->appliedPromotions = $promotions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addAppliedPromotion($promotion)
     {
         $this->appliedPromotions->add($promotion);
@@ -61,6 +49,7 @@ class Order extends BaseOrder
      *
      * @return Order|void
      */
+    #[\Override]
     public function setLineItems(Collection $lineItems)
     {
         $this->lineItems = $lineItems;

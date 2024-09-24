@@ -37,6 +37,7 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
     }
 
+    #[\Override]
     protected function addItem(Product $product, object $entity, array $itemData): void
     {
         /** @var Quote $entity */
@@ -88,17 +89,13 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClass(): string
     {
         return Quote::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [QuoteType::class];

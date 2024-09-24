@@ -21,6 +21,7 @@ class ProductWebsiteReindexRequestDataStorage implements ProductWebsiteReindexRe
         $this->websiteProvider = $websiteProvider;
     }
 
+    #[\Override]
     public function insertMultipleRequests(
         int $relatedJobId,
         array $websiteIds,
@@ -41,6 +42,7 @@ class ProductWebsiteReindexRequestDataStorage implements ProductWebsiteReindexRe
      * @param int[] $productIds
      * @return int
      */
+    #[\Override]
     public function deleteProcessedRequestItems(
         int $relatedJobId,
         int $websiteId,
@@ -57,11 +59,13 @@ class ProductWebsiteReindexRequestDataStorage implements ProductWebsiteReindexRe
      * @param int $relatedJobId
      * @return int[]
      */
+    #[\Override]
     public function getWebsiteIdsByRelatedJobId(int $relatedJobId): array
     {
         return $this->driver->getWebsiteIdsByRelatedJobId($relatedJobId);
     }
 
+    #[\Override]
     public function getProductIdIteratorByRelatedJobIdAndWebsiteId(
         int $relatedJobId,
         int $websiteId,

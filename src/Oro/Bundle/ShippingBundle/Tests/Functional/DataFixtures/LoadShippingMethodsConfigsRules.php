@@ -11,9 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingMethodsConfigsRules extends AbstractFixture
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getShippingMethodsConfigsRulesData() as $reference => $data) {

@@ -6,9 +6,7 @@ use Oro\Bundle\UPSBundle\TimeInTransit\Result\EstimatedArrival;
 
 class EstimatedArrivalFactory implements EstimatedArrivalFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createEstimatedArrival(
         \DateTime $arrivalDate,
         $businessDaysInTransit,

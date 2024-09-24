@@ -20,6 +20,7 @@ class CheckoutLineItemGroupingInvalidationHelperTest extends \PHPUnit\Framework\
     /** @var CheckoutLineItemGroupingInvalidationHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->multiShippingConfigProvider = $this->createMock(ConfigProvider::class);

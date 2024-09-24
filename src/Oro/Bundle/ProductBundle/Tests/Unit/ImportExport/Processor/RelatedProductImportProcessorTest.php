@@ -58,6 +58,7 @@ class RelatedProductImportProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var RelatedProduct */
     private $object;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productRepository = $this->createMock(ProductRepository::class);

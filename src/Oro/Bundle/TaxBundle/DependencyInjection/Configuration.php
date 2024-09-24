@@ -13,9 +13,7 @@ class Configuration implements ConfigurationInterface
     public const ROOT_NODE = 'oro_tax';
     public const ADDRESS_RESOLVER_GRANULARITY = 'address_resolver_granularity';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

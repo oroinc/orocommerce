@@ -24,6 +24,7 @@ class ExpressionLanguageRuleFiltrationServiceTest extends \PHPUnit\Framework\Tes
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);

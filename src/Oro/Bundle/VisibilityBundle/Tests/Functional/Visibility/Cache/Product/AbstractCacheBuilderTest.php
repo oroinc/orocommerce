@@ -10,6 +10,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 
 abstract class AbstractCacheBuilderTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -17,6 +18,7 @@ abstract class AbstractCacheBuilderTest extends WebTestCase
         $this->loadFixtures([LoadProductVisibilityData::class]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->getContainer()->get('doctrine')->getManager()->clear();

@@ -15,6 +15,7 @@ class DuplicateFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     /** @var DuplicateFiltrationService */
     private $filtrationService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);

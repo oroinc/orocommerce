@@ -18,9 +18,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethodViews(array $identifiers)
     {
         $items = [];
@@ -35,9 +33,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
         return $items;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethodView($identifier)
     {
         foreach ($this->providers as $provider) {
@@ -49,9 +45,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
         throw new \InvalidArgumentException('There is no payment method view for "'.$identifier.'"');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasPaymentMethodView($identifier)
     {
         foreach ($this->providers as $provider) {

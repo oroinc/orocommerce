@@ -20,17 +20,13 @@ class CompositeSupportsEntityPaymentContextFactory implements SupportsEntityPaym
         $this->factories = $factories;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create($entityClass, $entityId)
     {
         return $this->getFactory($entityClass, $entityId)->create($entityClass, $entityId);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function supports($entityClass, $entityId)
     {
         foreach ($this->factories as $factory) {

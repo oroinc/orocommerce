@@ -10,9 +10,7 @@ use Oro\Component\Expression\Node\RelationNode;
 
 class PriceListProvider implements ColumnInformationProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function fillColumnInformation(NodeInterface $node, array &$addedColumns, array &$definition)
     {
         if ($node instanceof NameNode) {

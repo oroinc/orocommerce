@@ -17,6 +17,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
  */
 class RoundingResolver implements ResolverInterface
 {
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         $this->walk($taxable->getResult());

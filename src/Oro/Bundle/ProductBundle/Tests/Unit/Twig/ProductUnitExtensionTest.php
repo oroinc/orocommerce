@@ -26,6 +26,7 @@ class ProductUnitExtensionTest extends TestCase
 
     private ProductUnitExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->labelFormatter = $this->createMock(UnitLabelFormatterInterface::class);

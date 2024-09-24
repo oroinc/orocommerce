@@ -24,9 +24,7 @@ class FilteredProductsExportConfigurationProvider implements ImportExportConfigu
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

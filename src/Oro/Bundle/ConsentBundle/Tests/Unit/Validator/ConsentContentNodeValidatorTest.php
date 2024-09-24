@@ -28,6 +28,7 @@ class ConsentContentNodeValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentContentNodeValidator */
     private $validator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);

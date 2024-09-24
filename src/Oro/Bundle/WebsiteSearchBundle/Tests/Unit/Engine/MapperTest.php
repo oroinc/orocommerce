@@ -11,6 +11,7 @@ class MapperTest extends \PHPUnit\Framework\TestCase
     /** @var Mapper */
     private $mapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mapper = new Mapper(new DateTimeFormatter());

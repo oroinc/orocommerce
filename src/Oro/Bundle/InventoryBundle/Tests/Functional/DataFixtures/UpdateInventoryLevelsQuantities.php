@@ -12,9 +12,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class UpdateInventoryLevelsQuantities extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -22,9 +20,7 @@ class UpdateInventoryLevelsQuantities extends AbstractEntityReferenceFixture imp
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var InventoryLevelRepository $inventoryRepository */

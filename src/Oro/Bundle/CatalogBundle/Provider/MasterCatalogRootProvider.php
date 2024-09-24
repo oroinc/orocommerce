@@ -27,6 +27,7 @@ class MasterCatalogRootProvider implements MasterCatalogRootProviderInterface
         $this->aclHelper = $aclHelper;
     }
 
+    #[\Override]
     public function getMasterCatalogRoot(): Category
     {
         $categoryRepository = $this->registry->getManagerForClass(Category::class)->getRepository(Category::class);

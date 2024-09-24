@@ -16,6 +16,7 @@ class HashingLineItemChecksumGeneratorTest extends TestCase
 
     private HashingLineItemChecksumGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);

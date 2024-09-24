@@ -20,9 +20,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
     private int $sortOrder;
     private ?string $icon = null;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isGrouped(): bool
     {
         return $this->isGrouped;
@@ -33,9 +31,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->isGrouped = $isGrouped;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->isEnabled;
@@ -46,9 +42,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->isEnabled = $isEnabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->identifier;
@@ -59,6 +53,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->identifier = $identifier;
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
@@ -69,9 +64,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->name = $name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
@@ -82,9 +75,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->label = $label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTypes(): array
     {
         return $this->types;
@@ -98,9 +89,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->types = $types;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
         foreach ($this->types as $type) {
@@ -112,9 +101,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptionsConfigurationFormType(): ?string
     {
         return $this->optionsConfigurationFormType;
@@ -125,9 +112,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->optionsConfigurationFormType = $optionsConfigurationFormType;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSortOrder(): int
     {
         return $this->sortOrder;
@@ -138,9 +123,7 @@ class ShippingMethodStub implements ShippingMethodInterface, ShippingMethodIconA
         $this->sortOrder = $sortOrder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon(): ?string
     {
         return $this->icon;

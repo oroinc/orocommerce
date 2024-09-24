@@ -36,6 +36,7 @@ class ReindexProductCollectionProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexProductCollectionProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);

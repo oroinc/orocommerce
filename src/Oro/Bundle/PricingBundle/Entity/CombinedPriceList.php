@@ -57,9 +57,7 @@ class CombinedPriceList extends BasePriceList
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createPriceListCurrency()
     {
         return new CombinedPriceListCurrency();

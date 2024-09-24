@@ -27,6 +27,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
     /** @var SluggableEntityPrefixType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->storage = $this->createMock(RedirectStorage::class);
@@ -45,9 +46,7 @@ class SluggableEntityPrefixTypeTest extends FormIntegrationTestCase
             ->getFormFactory();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

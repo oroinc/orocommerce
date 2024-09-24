@@ -14,6 +14,7 @@ class OrderInternalStatusTypeTest extends FormIntegrationTestCase
 {
     private OrderInternalStatusType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $enumOptionProvider = $this->createMock(EnumOptionsProvider::class);
@@ -30,9 +31,7 @@ class OrderInternalStatusTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

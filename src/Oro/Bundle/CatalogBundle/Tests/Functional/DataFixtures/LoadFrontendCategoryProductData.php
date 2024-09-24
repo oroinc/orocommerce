@@ -14,9 +14,7 @@ class LoadFrontendCategoryProductData implements FixtureInterface, DependentFixt
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -24,9 +22,7 @@ class LoadFrontendCategoryProductData implements FixtureInterface, DependentFixt
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->container->get('event_dispatcher')->dispatch(

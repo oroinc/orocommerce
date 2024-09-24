@@ -14,6 +14,7 @@ class ContentWidgetTypeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetTypeProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);

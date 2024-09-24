@@ -11,9 +11,7 @@ use Psr\Log\LoggerInterface;
 
 class UpdateCustomerVisitorLineItemsOwnerQuery extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription(): array
     {
         $logger = new ArrayLogger();
@@ -22,9 +20,7 @@ class UpdateCustomerVisitorLineItemsOwnerQuery extends ParametrizedMigrationQuer
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger): void
     {
         $this->doExecute($logger);

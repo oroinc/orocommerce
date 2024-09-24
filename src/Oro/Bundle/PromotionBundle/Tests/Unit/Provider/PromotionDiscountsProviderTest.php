@@ -33,6 +33,7 @@ class PromotionDiscountsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PromotionDiscountsProvider */
     private $discountsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->promotionProvider = $this->createMock(PromotionProvider::class);

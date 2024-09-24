@@ -39,6 +39,7 @@ class PaymentTermTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermMethod */
     private $method;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);

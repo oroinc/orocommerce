@@ -25,6 +25,7 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ConfigEnableDirectUrlListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

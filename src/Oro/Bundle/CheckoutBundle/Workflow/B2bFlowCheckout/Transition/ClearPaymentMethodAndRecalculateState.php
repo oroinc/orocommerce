@@ -12,6 +12,7 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
  */
 class ClearPaymentMethodAndRecalculateState extends TransitionServiceAbstract
 {
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
@@ -20,6 +21,7 @@ class ClearPaymentMethodAndRecalculateState extends TransitionServiceAbstract
         return !$checkout->isCompleted();
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         /** @var Checkout $checkout */

@@ -21,6 +21,7 @@ class CategoryTreeProviderTest extends \PHPUnit\Framework\TestCase
     private MasterCatalogRootProvider|\PHPUnit\Framework\MockObject\MockObject $masterCatalogRootProvider;
     private CategoryTreeProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryRepository = $this->createMock(CategoryRepository::class);

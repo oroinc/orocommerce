@@ -19,9 +19,7 @@ class FeatureVoter implements VoterInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function vote($feature, $scopeIdentifier = null)
     {
         if ($feature === self::FEATURE_NAME) {

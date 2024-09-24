@@ -19,6 +19,7 @@ class PaymentErrorTest extends TestCase
 
     private PaymentError $paymentError;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

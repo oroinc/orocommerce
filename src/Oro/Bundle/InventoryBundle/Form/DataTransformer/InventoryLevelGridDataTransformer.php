@@ -29,17 +29,13 @@ class InventoryLevelGridDataTransformer implements DataTransformerInterface
         $this->product = $product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($value)
     {
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         if (!$value) {

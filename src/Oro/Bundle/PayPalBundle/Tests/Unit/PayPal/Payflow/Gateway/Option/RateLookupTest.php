@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class RateLookupTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new RateLookup()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

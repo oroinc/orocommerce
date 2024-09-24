@@ -10,17 +10,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class UpdateTypeForExistingProducts implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 20;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         // Add type 'simple' to all existing products

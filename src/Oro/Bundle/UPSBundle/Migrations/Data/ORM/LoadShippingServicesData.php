@@ -20,17 +20,13 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
     private array $loadedCountries = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadCountryData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->loadSpecifiedCountryServices($manager);

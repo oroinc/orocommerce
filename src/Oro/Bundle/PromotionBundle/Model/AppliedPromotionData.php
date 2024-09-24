@@ -55,9 +55,7 @@ class AppliedPromotionData implements PromotionDataInterface
         $this->coupons = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountConfiguration()
     {
         return $this->discountConfiguration;
@@ -74,9 +72,7 @@ class AppliedPromotionData implements PromotionDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isUseCoupons()
     {
         return $this->useCoupons;
@@ -93,9 +89,7 @@ class AppliedPromotionData implements PromotionDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCoupons()
     {
         return $this->coupons;
@@ -117,6 +111,7 @@ class AppliedPromotionData implements PromotionDataInterface
     /**
      * @return Segment
      */
+    #[\Override]
     public function getProductsSegment()
     {
         return $this->productsSegment;
@@ -133,9 +128,7 @@ class AppliedPromotionData implements PromotionDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRule()
     {
         return $this->rule;
@@ -155,6 +148,7 @@ class AppliedPromotionData implements PromotionDataInterface
     /**
      * @return Collection|Scope[]
      */
+    #[\Override]
     public function getScopes()
     {
         return $this->scopes;
@@ -173,9 +167,7 @@ class AppliedPromotionData implements PromotionDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -192,9 +184,7 @@ class AppliedPromotionData implements PromotionDataInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSchedules()
     {
         return new ArrayCollection([]);

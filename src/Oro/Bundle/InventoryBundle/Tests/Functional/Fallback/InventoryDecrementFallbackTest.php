@@ -17,6 +17,7 @@ class InventoryDecrementFallbackTest extends WebTestCase
     private const VIEW_DECREMENT_INVENTORY_XPATH =
         "//label[text() = 'Decrement Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

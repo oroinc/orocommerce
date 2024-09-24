@@ -53,6 +53,7 @@ class FedexRateServiceSoapResponse implements FedexRateServiceResponseInterface
         return $this->severityCode;
     }
 
+    #[\Override]
     public function getPrices(): array
     {
         return $this->prices;

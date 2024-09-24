@@ -15,9 +15,7 @@ class CheckFrontendSkuRequestType implements ProcessorInterface
     private const REQUEST_HEADER_VALUE = 'sku';
     private const REQUEST_TYPE = 'frontend_sku';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

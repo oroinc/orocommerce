@@ -10,6 +10,7 @@ class FallbackProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var FallbackProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processor = new FallbackProcessor();

@@ -56,9 +56,7 @@ class CategoryEntityListener extends AbstractRuleEntityListener implements Featu
         $this->priceRuleLexemeTriggerHandler->processLexemes($lexemes, $products);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntityClassName()
     {
         return Category::class;

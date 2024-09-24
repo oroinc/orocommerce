@@ -12,6 +12,7 @@ class ProductMultiFileBlockListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductMultiFileBlockListener */
     private $productMultiFileBlockListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productMultiFileBlockListener = new ProductMultiFileBlockListener();

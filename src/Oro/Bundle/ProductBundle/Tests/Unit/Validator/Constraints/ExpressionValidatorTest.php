@@ -26,6 +26,7 @@ class ExpressionValidatorTest extends ConstraintValidatorTestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);
@@ -36,6 +37,7 @@ class ExpressionValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new ExpressionValidator(

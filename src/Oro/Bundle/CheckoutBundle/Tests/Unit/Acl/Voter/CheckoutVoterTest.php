@@ -18,6 +18,7 @@ class CheckoutVoterTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

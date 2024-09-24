@@ -20,6 +20,7 @@ class VariantFieldProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SerializedFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $serializedFieldProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attributeManager = $this->createMock(AttributeManager::class);

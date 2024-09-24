@@ -27,9 +27,7 @@ class ContentVariantCollectionResizeSubscriber implements EventSubscriberInterfa
         $this->options = $options;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

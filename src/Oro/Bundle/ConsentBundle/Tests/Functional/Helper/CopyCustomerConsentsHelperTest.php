@@ -16,6 +16,7 @@ class CopyCustomerConsentsHelperTest extends WebTestCase
     private CopyCustomerConsentsHelper $helper;
     private DoctrineHelper $doctrineHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

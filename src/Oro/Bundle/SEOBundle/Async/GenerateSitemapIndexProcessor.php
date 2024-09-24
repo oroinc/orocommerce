@@ -30,17 +30,13 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [GenerateSitemapIndexTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $messageBody = $message->getBody();

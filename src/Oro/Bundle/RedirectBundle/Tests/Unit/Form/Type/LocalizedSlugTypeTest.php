@@ -42,6 +42,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
     /** @var LocalizedSlugType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
@@ -63,9 +64,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

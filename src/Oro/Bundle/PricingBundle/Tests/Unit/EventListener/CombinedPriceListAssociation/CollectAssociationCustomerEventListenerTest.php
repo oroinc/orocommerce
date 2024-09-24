@@ -31,6 +31,7 @@ class CollectAssociationCustomerEventListenerTest extends TestCase
     private EventDispatcherInterface|MockObject $eventDispatcher;
     private CollectAssociationCustomerEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->collectionProvider = $this->createMock(PriceListCollectionProvider::class);

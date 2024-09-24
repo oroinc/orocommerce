@@ -20,9 +20,7 @@ class DefaultProvider implements ColumnInformationProviderInterface
         $this->fieldsProvider = $fieldsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function fillColumnInformation(NodeInterface $node, array &$addedColumns, array &$definition)
     {
         if ($node instanceof NameNode) {

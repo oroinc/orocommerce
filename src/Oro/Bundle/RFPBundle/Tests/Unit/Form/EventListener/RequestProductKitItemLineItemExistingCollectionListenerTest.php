@@ -22,6 +22,7 @@ class RequestProductKitItemLineItemExistingCollectionListenerTest extends TestCa
 
     private FormFactoryInterface $formFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new RequestProductKitItemLineItemExistingCollectionListener(

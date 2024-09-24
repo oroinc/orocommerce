@@ -13,6 +13,7 @@ abstract class AbstractTreeHandlerTestCase extends WebTestCase
     /** @var AbstractTreeHandler */
     protected $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

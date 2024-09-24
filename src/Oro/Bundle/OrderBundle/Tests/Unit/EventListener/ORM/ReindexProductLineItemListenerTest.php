@@ -43,6 +43,7 @@ class ReindexProductLineItemListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexProductLineItemListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

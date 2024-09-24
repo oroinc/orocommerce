@@ -21,9 +21,7 @@ class UpdateOrderStatusFieldData implements ProcessorInterface
         $this->configurationProvider = $configurationProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var FormContext $context */

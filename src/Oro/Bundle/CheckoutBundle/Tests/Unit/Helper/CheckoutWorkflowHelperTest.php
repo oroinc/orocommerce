@@ -21,6 +21,7 @@ class CheckoutWorkflowHelperTest extends TestCase
     /** @var CheckoutWorkflowHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

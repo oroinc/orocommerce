@@ -15,9 +15,9 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class UpdateFieldsAuditable implements Migration
 {
     /**
-     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ShortMethodName)
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->updateWysiwygFieldAuditable($queries);

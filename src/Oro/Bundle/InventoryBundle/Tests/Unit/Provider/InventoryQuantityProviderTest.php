@@ -21,9 +21,7 @@ class InventoryQuantityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryQuantityProvider */
     protected $provider;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

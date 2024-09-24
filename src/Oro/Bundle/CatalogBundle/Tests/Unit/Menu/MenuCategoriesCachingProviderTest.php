@@ -30,6 +30,7 @@ class MenuCategoriesCachingProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MenuCategoriesCachingProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->menuCategoriesProvider = $this->createMock(MenuCategoriesProviderInterface::class);

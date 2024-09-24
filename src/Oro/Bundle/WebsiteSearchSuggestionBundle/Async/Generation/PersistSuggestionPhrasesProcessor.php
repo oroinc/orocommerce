@@ -39,6 +39,7 @@ class PersistSuggestionPhrasesProcessor implements MessageProcessorInterface, To
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [PersistSuggestionPhrasesChunkTopic::getName()];

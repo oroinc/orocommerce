@@ -37,9 +37,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
 
     protected ContainerInterface $container;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;

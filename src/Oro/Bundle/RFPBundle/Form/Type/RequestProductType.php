@@ -44,9 +44,7 @@ class RequestProductType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -92,9 +90,7 @@ class RequestProductType extends AbstractType
         $builder->addEventSubscriber($this->requestProductItemChecksumListener);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -106,9 +102,7 @@ class RequestProductType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $units = [];
@@ -138,18 +132,14 @@ class RequestProductType extends AbstractType
         $view->vars['componentOptions'] = $componentOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['page_component'] = $options['page_component'];
         $view->vars['page_component_options'] = $options['page_component_options'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_request_product';

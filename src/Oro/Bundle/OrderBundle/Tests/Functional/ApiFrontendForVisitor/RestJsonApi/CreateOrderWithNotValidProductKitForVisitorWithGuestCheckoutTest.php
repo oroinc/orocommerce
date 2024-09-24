@@ -20,6 +20,7 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
 
     private ?bool $originalGuestCheckoutOptionValue;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -35,6 +36,7 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
         }
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -44,16 +46,19 @@ class CreateOrderWithNotValidProductKitForVisitorWithGuestCheckoutTest extends F
         $this->originalGuestCheckoutOptionValue = null;
     }
 
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/requests';
     }
 
+    #[\Override]
     protected function getResponseDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/responses';
     }
 
+    #[\Override]
     protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();

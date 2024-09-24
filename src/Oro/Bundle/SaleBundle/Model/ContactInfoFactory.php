@@ -17,9 +17,7 @@ class ContactInfoFactory implements ContactInfoFactoryInterface
         $this->nameFormatter = $nameFormatter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createContactInfoByUser(User $user)
     {
         return $this->createContactInfo()
@@ -28,9 +26,7 @@ class ContactInfoFactory implements ContactInfoFactoryInterface
             ->setPhone($user->getPhone());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createContactInfoWithText($text)
     {
         $contactInfo = $this->createContactInfo();
@@ -41,9 +37,7 @@ class ContactInfoFactory implements ContactInfoFactoryInterface
         return $contactInfo;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createContactInfo()
     {
         return new ContactInfo();

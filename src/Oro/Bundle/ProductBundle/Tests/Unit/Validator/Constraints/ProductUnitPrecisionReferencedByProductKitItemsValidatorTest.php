@@ -23,6 +23,7 @@ class ProductUnitPrecisionReferencedByProductKitItemsValidatorTest extends Const
 
     private UnitOfWork|\PHPUnit\Framework\MockObject\MockObject $unitOfWork;
 
+    #[\Override]
     protected function createValidator(): ProductUnitPrecisionReferencedByProductKitItemsValidator
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);

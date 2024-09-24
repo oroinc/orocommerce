@@ -27,9 +27,7 @@ class EnumProductVariantFieldValuesCacheWarmer extends CacheWarmer
         $this->enumVariantFieldValueHandler = $enumVariantFieldValueHandler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function warmUp(string $cacheDir): array
     {
         $fields = $this->entityWithFieldsProvider->getFieldsForEntity(Product::class);
@@ -44,9 +42,7 @@ class EnumProductVariantFieldValuesCacheWarmer extends CacheWarmer
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOptional(): bool
     {
         return true;

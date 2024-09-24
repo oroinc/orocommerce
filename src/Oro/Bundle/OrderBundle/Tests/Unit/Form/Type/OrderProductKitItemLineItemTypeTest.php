@@ -49,6 +49,7 @@ class OrderProductKitItemLineItemTypeTest extends FormIntegrationTestCase
 
     private OrderProductKitItemLineItemType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnitItem = (new ProductUnit())->setCode('item');
@@ -84,6 +85,7 @@ class OrderProductKitItemLineItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge(

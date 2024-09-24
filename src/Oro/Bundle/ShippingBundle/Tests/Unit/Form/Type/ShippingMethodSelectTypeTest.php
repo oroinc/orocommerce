@@ -39,6 +39,7 @@ class ShippingMethodSelectTypeTest extends FormIntegrationTestCase
     /** @var ShippingMethodSelectType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->choicesProvider = $this->createMock(ShippingMethodChoicesProvider::class);

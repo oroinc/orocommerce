@@ -34,9 +34,7 @@ abstract class AbstractFlatPricingRelationFormListenerTest extends \PHPUnit\Fram
      */
     protected $featureChecker;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class WebCatalogDependenciesCompilerPass implements CompilerPassInterface
 {
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if ($container->hasDefinition('oro_product.provider.content_variant_segment_provider')) {

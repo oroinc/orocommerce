@@ -243,6 +243,7 @@ class PaymentMethodsConfigsRuleDestination implements ExtendEntityInterface
      *
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         $countryPostalStr = implode(

@@ -32,6 +32,7 @@ class CustomerUserActionsTest extends TestCase
     private ActionExecutor|MockObject $actionExecutor;
     private CustomerUserActions $customerUserActions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

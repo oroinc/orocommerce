@@ -29,27 +29,23 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, Category::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, Category::class, true);
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param Category $object
      */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         $object = $this->revitalizeObject($object);
@@ -65,9 +61,7 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
         return $normalizedCategory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isFieldSkippedForNormalization($entityName, $fieldName, array $context)
     {
         return parent::isFieldSkippedForNormalization($entityName, $fieldName, $context)

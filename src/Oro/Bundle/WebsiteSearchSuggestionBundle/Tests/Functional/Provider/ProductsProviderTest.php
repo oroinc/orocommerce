@@ -11,6 +11,7 @@ final class ProductsProviderTest extends WebTestCase
 {
     private ProductsProvider $productsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

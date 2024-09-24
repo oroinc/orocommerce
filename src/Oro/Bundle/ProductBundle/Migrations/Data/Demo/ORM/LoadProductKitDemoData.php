@@ -20,6 +20,7 @@ class LoadProductKitDemoData extends LoadProductDemoData
     /** @var Product[] */
     private array $products = [];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [
@@ -27,18 +28,14 @@ class LoadProductKitDemoData extends LoadProductDemoData
         ]);
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         parent::load($manager);
         $this->products = [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getProducts(): \Iterator
     {
         $locator = $this->container->get('file_locator');
@@ -50,6 +47,7 @@ class LoadProductKitDemoData extends LoadProductDemoData
         return new \ArrayIterator(Yaml::parseFile($filePath));
     }
 
+    #[\Override]
     protected function applyAdditionalData(Product $product, array $row, ObjectManager $manager): void
     {
         foreach ($row['units'] ?? [] as $additionalUnit) {

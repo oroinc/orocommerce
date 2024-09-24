@@ -67,9 +67,7 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -77,9 +75,7 @@ class LoadOrderAddressData extends AbstractFixture implements DependentFixtureIn
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->addresses as $name => $address) {

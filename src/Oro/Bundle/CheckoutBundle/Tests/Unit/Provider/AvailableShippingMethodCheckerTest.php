@@ -20,6 +20,7 @@ class AvailableShippingMethodCheckerTest extends \PHPUnit\Framework\TestCase
     /** @var AvailableShippingMethodChecker */
     private $checker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodsConfigsRulesProvider = $this->createMock(

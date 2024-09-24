@@ -46,8 +46,8 @@ class SaveAcceptedConsentsAction extends AbstractAction
 
     /**
      * Saves accepted consents for Existing CustomerUser only
-     * {@inheritdoc}
      */
+    #[\Override]
     protected function executeAction($context)
     {
         if (!$this->featureChecker->isFeatureEnabled(FeatureVoter::FEATURE_NAME)) {
@@ -70,9 +70,7 @@ class SaveAcceptedConsentsAction extends AbstractAction
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (!array_key_exists('acceptedConsents', $options)) {

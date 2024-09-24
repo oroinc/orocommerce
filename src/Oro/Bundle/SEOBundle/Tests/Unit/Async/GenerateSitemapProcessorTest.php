@@ -43,6 +43,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit\Framework\TestCase
 
     private GenerateSitemapProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);

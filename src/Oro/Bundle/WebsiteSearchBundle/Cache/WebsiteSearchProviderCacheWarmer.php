@@ -18,25 +18,19 @@ class WebsiteSearchProviderCacheWarmer implements CacheClearerInterface, CacheWa
         $this->searchMappingProvider = $searchMappingProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function warmUp($cacheDir)
     {
         $this->searchMappingProvider->warmUpCache();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOptional()
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clear($cacheDir)
     {
         $this->searchMappingProvider->clearCache();

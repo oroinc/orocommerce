@@ -6,9 +6,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList;
 
 class PromotionShoppingList extends ShoppingList
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getElements('PromotionShoppingListLineItem');

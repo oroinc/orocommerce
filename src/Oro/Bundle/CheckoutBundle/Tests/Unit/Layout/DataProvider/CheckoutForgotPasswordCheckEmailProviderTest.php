@@ -15,6 +15,7 @@ class CheckoutForgotPasswordCheckEmailProviderTest extends \PHPUnit\Framework\Te
 
     private CheckoutForgotPasswordCheckEmailProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

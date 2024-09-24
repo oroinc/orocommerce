@@ -21,6 +21,7 @@ class RemoveFromConfigurationConsentEntityListenerTest extends \PHPUnit\Framewor
     /** @var RemoveFromConfigurationConsentEntityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->consentConfigManager = $this->createMock(ConsentConfigManager::class);

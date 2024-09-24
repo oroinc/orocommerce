@@ -20,6 +20,7 @@ class WebsiteSearchReindexTopicTest extends AbstractTopicTestCase
 
     private IndexerInputValidator $indexerInputValidator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $mappingProvider = $this->createMock(SearchMappingProvider::class);
@@ -58,11 +59,13 @@ class WebsiteSearchReindexTopicTest extends AbstractTopicTestCase
         parent::setUp();
     }
 
+    #[\Override]
     public function getTopic(): WebsiteSearchReindexTopic
     {
         return new WebsiteSearchReindexTopic($this->indexerInputValidator);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -153,6 +156,7 @@ class WebsiteSearchReindexTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

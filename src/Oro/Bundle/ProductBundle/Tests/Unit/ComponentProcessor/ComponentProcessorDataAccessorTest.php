@@ -13,6 +13,7 @@ class ComponentProcessorDataAccessorTest extends \PHPUnit\Framework\TestCase
 {
     private ComponentProcessorDataAccessor $dataAccessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dataAccessor = new ComponentProcessorDataAccessor();

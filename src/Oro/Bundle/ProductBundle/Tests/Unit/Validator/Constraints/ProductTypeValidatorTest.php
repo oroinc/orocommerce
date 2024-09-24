@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductTypeValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): ProductTypeValidator
     {
         return new ProductTypeValidator();

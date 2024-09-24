@@ -154,9 +154,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
         return $this->queryConverter->convert($source);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrderedFields()
     {
         return self::$fieldsOrder;

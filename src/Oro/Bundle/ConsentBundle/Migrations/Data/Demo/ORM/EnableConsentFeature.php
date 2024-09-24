@@ -15,9 +15,7 @@ class EnableConsentFeature extends AbstractFixture implements ContainerAwareInte
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $configManager = $this->container->get('oro_config.global');

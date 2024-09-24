@@ -10,6 +10,7 @@ class LoadShoppingListUserACLData extends AbstractLoadACLData
     /**
      * @return string
      */
+    #[\Override]
     protected function getAclResourceClassName()
     {
         return ShoppingList::class;
@@ -18,11 +19,13 @@ class LoadShoppingListUserACLData extends AbstractLoadACLData
     /**
      * @return array
      */
+    #[\Override]
     protected function getSupportedRoles()
     {
         return array_keys($this->getRolesAndPermissions());
     }
 
+    #[\Override]
     protected function getRolesAndPermissions(): array
     {
         return [

@@ -24,9 +24,7 @@ class LoadSearchProductData extends AbstractFixture implements DependentFixtureI
 
     private const PRODUCTS_QUANTITY = 1001;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -36,9 +34,7 @@ class LoadSearchProductData extends AbstractFixture implements DependentFixtureI
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */

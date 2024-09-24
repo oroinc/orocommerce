@@ -15,9 +15,7 @@ use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
 class WebCatalogTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $configManager = $this->createMock(ConfigManager::class);

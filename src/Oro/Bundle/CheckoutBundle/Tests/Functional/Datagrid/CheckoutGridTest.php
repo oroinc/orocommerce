@@ -15,6 +15,7 @@ class CheckoutGridTest extends FrontendWebTestCase
      */
     protected $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

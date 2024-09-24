@@ -24,6 +24,7 @@ class AccessTokenProviderTest extends TestCase
     /** @var AccessTokenProvider  */
     private $accessTokenProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $restClientFactory = $this->createMock(RestClientFactoryInterface::class);

@@ -18,6 +18,7 @@ class AfterSearchEventTest extends \PHPUnit\Framework\TestCase
     /** @var AfterSearchEvent */
     private $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->query = new Query();

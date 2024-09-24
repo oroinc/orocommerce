@@ -18,9 +18,7 @@ class VisibilityMessageFilter implements MessageFilterInterface
         $this->topic = $topic;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function apply(MessageBuffer $buffer): void
     {
         if (!$buffer->hasMessagesForTopic($this->topic)) {

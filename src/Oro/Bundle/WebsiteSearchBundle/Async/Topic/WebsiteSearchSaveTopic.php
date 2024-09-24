@@ -18,16 +18,19 @@ class WebsiteSearchSaveTopic extends AbstractTopic
         $this->indexerInputValidator = $indexerInputValidator;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.website.search.indexer.save';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Add to the website search index the specified entities by class and ids.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->indexerInputValidator->configureEntityOptions($resolver);

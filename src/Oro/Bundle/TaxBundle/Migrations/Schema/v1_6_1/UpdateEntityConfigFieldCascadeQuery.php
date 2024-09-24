@@ -40,9 +40,7 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
         $this->fields = $fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -51,9 +49,7 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

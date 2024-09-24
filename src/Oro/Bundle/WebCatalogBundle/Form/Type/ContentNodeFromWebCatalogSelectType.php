@@ -25,9 +25,7 @@ class ContentNodeFromWebCatalogSelectType extends AbstractType
         $this->treeHandler = $treeHandler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefined(['web_catalog']);
@@ -66,17 +64,13 @@ class ContentNodeFromWebCatalogSelectType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_web_catalog_content_node_from_web_catalog_select';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return EntityTreeSelectType::class;

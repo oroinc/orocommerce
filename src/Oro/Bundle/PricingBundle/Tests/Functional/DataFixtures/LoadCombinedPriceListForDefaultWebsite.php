@@ -21,9 +21,7 @@ class LoadCombinedPriceListForDefaultWebsite extends AbstractCombinedPriceListsF
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

@@ -9,6 +9,7 @@ class CallbackNotifyEventTest extends AbstractCallbackEventTest
     /**
      * @return CallbackNotifyEvent
      */
+    #[\Override]
     protected function getEvent()
     {
         return new CallbackNotifyEvent();

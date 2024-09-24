@@ -24,16 +24,19 @@ class WYSIWYGStylesType extends AbstractType
         $this->digitalAssetTwigTagsEventSubscriber = $digitalAssetTwigTagsEventSubscriber;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this->digitalAssetTwigTagsEventSubscriber);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['attr']['data-grapesjs-styles'] = $form->getName();
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return HiddenType::class;

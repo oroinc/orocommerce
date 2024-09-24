@@ -60,6 +60,7 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

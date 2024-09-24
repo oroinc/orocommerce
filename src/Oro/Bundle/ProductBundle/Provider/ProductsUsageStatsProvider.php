@@ -22,11 +22,13 @@ class ProductsUsageStatsProvider extends AbstractUsageStatsProvider
         $this->organizationRestrictionProvider = $organizationRestrictionProvider;
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return 'oro.product.usage_stats.products.label';
     }
 
+    #[\Override]
     public function getValue(): ?string
     {
         $queryBuilder = $this->productRepository->getProductCountQueryBuilder();

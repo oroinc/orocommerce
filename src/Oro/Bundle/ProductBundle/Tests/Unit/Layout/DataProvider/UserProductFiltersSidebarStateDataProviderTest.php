@@ -12,6 +12,7 @@ class UserProductFiltersSidebarStateDataProviderTest extends \PHPUnit\Framework\
 
     private UserProductFiltersSidebarStateDataProvider $dataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->userProductFiltersSidebarStateManager = $this->createMock(

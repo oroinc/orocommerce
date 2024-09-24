@@ -59,6 +59,7 @@ class ShoppingListItemCollection extends ArrayCollection
     /**
      * Gets an array contains all submitted line items.
      */
+    #[\Override]
     public function toArray(): array
     {
         return $this->submittedItems;
@@ -81,9 +82,7 @@ class ShoppingListItemCollection extends ArrayCollection
         return $item;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function set($key, $value)
     {
         parent::set($key, $value);

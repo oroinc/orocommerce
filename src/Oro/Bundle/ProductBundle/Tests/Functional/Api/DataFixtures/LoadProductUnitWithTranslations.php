@@ -13,9 +13,7 @@ class LoadProductUnitWithTranslations extends AbstractFixture implements Contain
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addTranslations();

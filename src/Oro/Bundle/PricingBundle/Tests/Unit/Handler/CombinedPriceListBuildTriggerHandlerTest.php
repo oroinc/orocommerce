@@ -20,6 +20,7 @@ class CombinedPriceListBuildTriggerHandlerTest extends \PHPUnit\Framework\TestCa
     private ShardManager $shardManager;
     private CombinedPriceListBuildTriggerHandler $combinedPriceListBuildTriggerHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

@@ -30,6 +30,7 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends WebTestCase
     private Scope $scope;
     private CustomerGroupCategoryResolvedCacheBuilder $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -33,6 +33,7 @@ class ComposedSkuStringFilter extends StringFilter
         return $this;
     }
 
+    #[\Override]
     protected function parseValue(array $data)
     {
         switch ($data['type']) {
@@ -62,9 +63,7 @@ class ComposedSkuStringFilter extends StringFilter
         return $data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function buildExpr(FilterDatasourceAdapterInterface $ds, $comparisonType, $fieldName, $data)
     {
         $parameterNames = [];
@@ -107,9 +106,9 @@ class ComposedSkuStringFilter extends StringFilter
     }
 
     /**
-     * {@inheritDoc}
      * @param string|array $parameterNames
      */
+    #[\Override]
     protected function buildComparisonExpr(
         FilterDatasourceAdapterInterface $ds,
         $comparisonType,

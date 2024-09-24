@@ -16,9 +16,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductAttributePriceCollectionTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $translator = $this->createMock(TranslatorInterface::class);

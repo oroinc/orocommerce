@@ -21,9 +21,7 @@ class UpsellProductConfigProvider implements
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isEnabled(): bool
     {
         return (bool)$this->configManager->get(
@@ -31,6 +29,7 @@ class UpsellProductConfigProvider implements
         );
     }
 
+    #[\Override]
     public function getLimit(): int
     {
         return (int)$this->configManager->get(
@@ -38,15 +37,13 @@ class UpsellProductConfigProvider implements
         );
     }
 
-    /**
-     * {@inheritdoc}
-     * Up-sell products are not bidirectional, since we are trying to sell more expensive product
-     */
+    #[\Override]
     public function isBidirectional(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function getMinimumItems(): int
     {
         return (int)$this->configManager->get(
@@ -54,6 +51,7 @@ class UpsellProductConfigProvider implements
         );
     }
 
+    #[\Override]
     public function getMaximumItems(): int
     {
         return (int)$this->configManager->get(
@@ -61,6 +59,7 @@ class UpsellProductConfigProvider implements
         );
     }
 
+    #[\Override]
     public function isSliderEnabledOnMobile(): bool
     {
         return (bool)$this->configManager->get(
@@ -68,6 +67,7 @@ class UpsellProductConfigProvider implements
         );
     }
 
+    #[\Override]
     public function isAddButtonVisible(): bool
     {
         return (bool)$this->configManager->get(
@@ -75,6 +75,7 @@ class UpsellProductConfigProvider implements
         );
     }
 
+    #[\Override]
     public function getProductListType(): string
     {
         return 'upsell_products';

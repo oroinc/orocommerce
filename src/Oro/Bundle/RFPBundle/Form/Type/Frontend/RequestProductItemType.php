@@ -15,6 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RequestProductItemType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -47,6 +48,7 @@ class RequestProductItemType extends AbstractType
             );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -54,6 +56,7 @@ class RequestProductItemType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_frontend_request_product_item';

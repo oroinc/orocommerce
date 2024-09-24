@@ -21,9 +21,7 @@ class DisableGuestCheckoutSecurityCheck implements ProcessorInterface
         $this->guestCheckoutChecker = $guestCheckoutChecker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

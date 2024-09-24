@@ -14,6 +14,7 @@ class WeightTypeTest extends FormIntegrationTestCase
 {
     private WeightType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new WeightType();
@@ -75,9 +76,7 @@ class WeightTypeTest extends FormIntegrationTestCase
         return $weightUnit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

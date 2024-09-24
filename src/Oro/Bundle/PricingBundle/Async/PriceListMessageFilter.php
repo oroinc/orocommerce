@@ -35,9 +35,7 @@ class PriceListMessageFilter implements MessageFilterInterface
         $this->topics = $topics;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function apply(MessageBuffer $buffer): void
     {
         if (!$buffer->hasMessagesForTopics($this->topics)) {

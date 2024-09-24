@@ -17,9 +17,7 @@ class Configuration implements ConfigurationInterface
     public const INDEXER_BATCH_SIZE_MIN = 1;
     public const INDEXER_BATCH_SIZE_MAX = 100;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('oro_website_search');

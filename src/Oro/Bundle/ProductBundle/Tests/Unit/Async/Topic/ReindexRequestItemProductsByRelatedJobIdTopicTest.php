@@ -10,11 +10,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class ReindexRequestItemProductsByRelatedJobIdTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new ReindexRequestItemProductsByRelatedJobIdTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -40,6 +42,7 @@ class ReindexRequestItemProductsByRelatedJobIdTopicTest extends AbstractTopicTes
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

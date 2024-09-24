@@ -15,9 +15,7 @@ class OroOrderBundle implements Migration, OutdatedExtendExtensionAwareInterface
 {
     use OutdatedExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addOrderInternalStatusField($schema);

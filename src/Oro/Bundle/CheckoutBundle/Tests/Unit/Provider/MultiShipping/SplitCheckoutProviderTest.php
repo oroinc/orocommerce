@@ -32,6 +32,7 @@ class SplitCheckoutProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SplitCheckoutProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutWorkflowHelper = $this->createMock(CheckoutWorkflowHelper::class);

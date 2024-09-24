@@ -20,17 +20,13 @@ class BuiltInTaxProvider implements TaxProviderInterface
         $this->taxManager = $taxManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return self::LABEL;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable()
     {
         return true;
@@ -50,25 +46,19 @@ class BuiltInTaxProvider implements TaxProviderInterface
         return $this->taxManager->createTaxValue($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function loadTax($object)
     {
         return $this->taxManager->loadTax($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTax($object)
     {
         return $this->taxManager->getTax($object);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function saveTax($object)
     {
         // Always calculate taxes for entity which doesn't have it
@@ -92,9 +82,7 @@ class BuiltInTaxProvider implements TaxProviderInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function removeTax($object)
     {
         return $this->taxManager->removeTax($object);

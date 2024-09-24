@@ -20,6 +20,7 @@ class QueryExecutorProviderTest extends TestCase
     private MultiInsertShardQueryExecutor|MockObject $multiInsertQueryExecutor;
     private QueryExecutorProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

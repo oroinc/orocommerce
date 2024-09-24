@@ -40,10 +40,10 @@ class WYSIWYGValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param WYSIWYG $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value) {

@@ -28,6 +28,7 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
 
     private ExecutionContextInterface|MockObject $context;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerValidator = $this->createMock(ConstraintValidator::class);

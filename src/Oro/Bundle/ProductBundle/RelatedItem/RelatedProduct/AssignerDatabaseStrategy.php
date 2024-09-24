@@ -7,25 +7,19 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractAssignerDatabaseStrategy;
 
 class AssignerDatabaseStrategy extends AbstractAssignerDatabaseStrategy
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createNewRelation()
     {
         return new RelatedProduct();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityManager()
     {
         return $this->doctrineHelper->getEntityManager(RelatedProduct::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getRepository()
     {
         return $this->doctrineHelper->getEntityRepository(RelatedProduct::class);

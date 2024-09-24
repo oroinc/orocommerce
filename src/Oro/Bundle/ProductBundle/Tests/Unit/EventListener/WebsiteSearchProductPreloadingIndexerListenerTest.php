@@ -17,6 +17,7 @@ class WebsiteSearchProductPreloadingIndexerListenerTest extends TestCase
     private PreloadingManager|MockObject $preloadingManager;
     private WebsiteSearchProductPreloadingIndexerListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);

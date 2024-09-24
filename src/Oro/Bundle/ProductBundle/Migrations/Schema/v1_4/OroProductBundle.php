@@ -26,17 +26,13 @@ class OroProductBundle implements
     use RenameExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 10;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createConstraint(

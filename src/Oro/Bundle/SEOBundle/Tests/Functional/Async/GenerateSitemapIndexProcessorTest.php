@@ -35,6 +35,7 @@ class GenerateSitemapIndexProcessorTest extends WebTestCase
 
     private GenerateSitemapIndexProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -47,6 +48,7 @@ class GenerateSitemapIndexProcessorTest extends WebTestCase
         $this->prepareFiles();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->clearSitemapStorage();

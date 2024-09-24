@@ -19,6 +19,7 @@ class ProductVoterTest extends TestCase
     private ProductKitsByProductProvider|MockObject $productKitsByProductProvider;
     private ProductVoter $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

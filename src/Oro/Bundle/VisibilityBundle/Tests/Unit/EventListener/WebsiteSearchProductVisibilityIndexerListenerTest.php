@@ -19,6 +19,7 @@ class WebsiteSearchProductVisibilityIndexerListenerTest extends \PHPUnit\Framewo
     /** @var WebsiteSearchProductVisibilityIndexerListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->visibilityIndexer = $this->createMock(ProductVisibilityIndexer::class);

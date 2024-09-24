@@ -79,17 +79,13 @@ class LoadCustomerUsersData extends AbstractFixture implements ContainerAwareInt
         ]
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadCustomers::class, LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /* @var BaseUserManager $userManager */

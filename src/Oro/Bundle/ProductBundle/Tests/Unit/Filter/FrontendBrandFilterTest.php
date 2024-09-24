@@ -51,6 +51,7 @@ class FrontendBrandFilterTest extends TestCase
         return $form;
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

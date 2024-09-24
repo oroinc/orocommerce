@@ -30,6 +30,7 @@ class AbstractCouponMassActionHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var MassActionHandlerInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

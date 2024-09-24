@@ -41,6 +41,7 @@ class FrontendConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestC
     /** @var FrontendConsentContentNodeValidFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

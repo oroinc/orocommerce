@@ -12,9 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddScopesHashField implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_redirect_slug');
@@ -26,9 +24,7 @@ class AddScopesHashField implements Migration, OrderedMigrationInterface
         $queries->addPostQuery(new RemoveSlugDuplicatesQuery());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

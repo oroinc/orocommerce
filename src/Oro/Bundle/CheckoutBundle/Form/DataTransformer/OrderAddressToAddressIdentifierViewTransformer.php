@@ -31,9 +31,7 @@ class OrderAddressToAddressIdentifierViewTransformer implements DataTransformerI
         $this->requiredFields = $requiredFields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($address)
     {
         // Transforms OrderAddress to an address key.
@@ -53,9 +51,7 @@ class OrderAddressToAddressIdentifierViewTransformer implements DataTransformerI
         return $address;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         // Do nothing, it is expected that value will be transformed by the ChoiceToValueTransformer.

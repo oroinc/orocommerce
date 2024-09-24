@@ -11,6 +11,7 @@ class CategoryLowInventoryThresholdFormViewListenerTest extends AbstractFallback
     /** @var CategoryLowInventoryThresholdFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,17 +24,13 @@ class CategoryLowInventoryThresholdFormViewListenerTest extends AbstractFallback
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function callTestMethod(): void
     {
         $this->listener->onCategoryEdit($this->event);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExpectedScrollData(): array
     {
         return [
@@ -46,9 +43,7 @@ class CategoryLowInventoryThresholdFormViewListenerTest extends AbstractFallback
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntity(): object
     {
         return new Category();

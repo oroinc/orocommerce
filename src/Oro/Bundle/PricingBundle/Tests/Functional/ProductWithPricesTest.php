@@ -38,6 +38,7 @@ class ProductWithPricesTest extends WebTestCase
 
     private const CATEGORY_ID = 1;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

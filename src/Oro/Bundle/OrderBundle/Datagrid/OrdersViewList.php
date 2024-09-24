@@ -11,9 +11,7 @@ use Oro\Bundle\FilterBundle\Form\Type\Filter\EnumFilterType;
  */
 class OrdersViewList extends AbstractViewsList
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getViewsList(): array
     {
         $view = new View(

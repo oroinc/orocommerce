@@ -25,6 +25,7 @@ class StartShoppingListCheckout implements StartShoppingListCheckoutInterface
         $this->sourceRemoveLabel = $sourceRemoveLabel;
     }
 
+    #[\Override]
     public function execute(
         ShoppingList $shoppingList,
         bool $forceStartCheckout = false,

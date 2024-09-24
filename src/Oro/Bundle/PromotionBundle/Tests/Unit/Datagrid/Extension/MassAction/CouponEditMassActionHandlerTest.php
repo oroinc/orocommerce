@@ -19,6 +19,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
     /** @var FormFactoryInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $formFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
@@ -27,9 +28,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createHandler()
     {
         $this->handler = new CouponEditMassActionHandler(
@@ -40,9 +39,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
         $this->handler->setFormFactory($this->formFactory);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function assertExecuteCalled(
         array $coupons,
         MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args
@@ -64,9 +61,7 @@ class CouponEditMassActionHandlerTest extends AbstractCouponMassActionHandlerTes
             ->willReturn($form);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function assertGetResponseCalled(int $entitiesCount): MassActionResponse
     {
         $translatedMessage = $entitiesCount . ' processed';

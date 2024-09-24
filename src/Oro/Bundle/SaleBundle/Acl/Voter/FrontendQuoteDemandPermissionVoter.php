@@ -24,9 +24,7 @@ class FrontendQuoteDemandPermissionVoter implements VoterInterface
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote(TokenInterface $token, $subject, array $attributes): int
     {
         if (!$subject instanceof QuoteDemand || !$this->frontendHelper->isFrontendRequest()) {

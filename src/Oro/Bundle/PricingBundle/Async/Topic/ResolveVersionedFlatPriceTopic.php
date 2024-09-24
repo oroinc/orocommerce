@@ -13,16 +13,19 @@ class ResolveVersionedFlatPriceTopic extends AbstractTopic implements JobAwareTo
 {
     private const NAME = 'oro_pricing.flat_price.resolve_by_version';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolves flat product prices by version.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
@@ -38,6 +41,7 @@ class ResolveVersionedFlatPriceTopic extends AbstractTopic implements JobAwareTo
             ->allowedTypes('int[]');
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return ResolveFlatPriceTopic::getName() . ':v' . $messageBody['version'];

@@ -21,6 +21,7 @@ class CountryZipCodeMatcherTest extends WebTestCase
     private const ZIP_US_NY_RANGE_INSIDE = '00200';
     private const ZIP_UNUSED_CODE = '00001';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

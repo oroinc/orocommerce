@@ -40,15 +40,13 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function initialize(array $options)
     {
         if (empty($options['payment_method']) && empty($options['action'])) {
@@ -61,7 +59,7 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
         return $this;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $paymentMethod = $this->resolveValue($context, $this->paymentMethod, false);
@@ -76,13 +74,13 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
         return false;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->paymentMethod, $this->actionName]);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->paymentMethod, $this->actionName], $factoryAccessor);

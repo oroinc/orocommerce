@@ -20,9 +20,7 @@ class FlatPriceListTreeHandler extends AbstractPriceListTreeHandler
      */
     private $priceListRepository;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function loadPriceListByCustomer(Customer $customer, Website $website)
     {
         $priceList = $this->getPriceListRepository()->getPriceListByCustomer($customer, $website);
@@ -30,9 +28,7 @@ class FlatPriceListTreeHandler extends AbstractPriceListTreeHandler
         return $this->checkPriceListSchedule($priceList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function loadPriceListByCustomerGroup(CustomerGroup $customerGroup, Website $website)
     {
         $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup, $website);
@@ -40,25 +36,18 @@ class FlatPriceListTreeHandler extends AbstractPriceListTreeHandler
         return $this->checkPriceListSchedule($priceList);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPriceListByWebsite(Website $website)
     {
         return $this->getDefaultPriceList($website);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPriceListFromConfig()
     {
         return $this->getDefaultPriceList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     protected function getPriceListRepository()
     {
         if (!$this->priceListRepository) {

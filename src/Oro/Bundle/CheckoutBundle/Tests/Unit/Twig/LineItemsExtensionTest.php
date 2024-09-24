@@ -36,6 +36,7 @@ class LineItemsExtensionTest extends TestCase
 
     private LineItemsExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalsProvider = $this->createMock(TotalProcessorProvider::class);

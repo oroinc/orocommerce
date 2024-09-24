@@ -38,9 +38,7 @@ class WebsiteSearchProductIndexDataProvider implements ProductIndexDataProviderI
         $this->searchableProvider = $searchableProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations): \ArrayIterator
     {
         $data = new \ArrayIterator();

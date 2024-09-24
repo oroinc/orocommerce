@@ -18,9 +18,7 @@ class MoneyOrderView implements PaymentMethodViewInterface
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOptions(PaymentContextInterface $context)
     {
         return [
@@ -29,39 +27,31 @@ class MoneyOrderView implements PaymentMethodViewInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlock()
     {
         return '_payment_methods_money_order_widget';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return $this->config->getLabel();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShortLabel()
     {
         return $this->config->getShortLabel();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAdminLabel()
     {
         return $this->config->getAdminLabel();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getPaymentMethodIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();

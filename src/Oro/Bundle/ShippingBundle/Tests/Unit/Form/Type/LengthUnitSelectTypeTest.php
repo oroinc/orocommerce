@@ -6,6 +6,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\LengthUnitSelectType;
 
 class LengthUnitSelectTypeTest extends AbstractShippingOptionSelectTypeTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->configureFormatter();

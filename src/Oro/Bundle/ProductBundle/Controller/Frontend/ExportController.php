@@ -100,6 +100,7 @@ class ExportController extends AbstractController
         return null;
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

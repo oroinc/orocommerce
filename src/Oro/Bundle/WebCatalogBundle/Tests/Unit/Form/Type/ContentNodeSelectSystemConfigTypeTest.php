@@ -31,6 +31,7 @@ class ContentNodeSelectSystemConfigTypeTest extends FormIntegrationTestCase
     /** @var ContentNodeSelectSystemConfigType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -80,9 +81,7 @@ class ContentNodeSelectSystemConfigTypeTest extends FormIntegrationTestCase
         $this->assertEquals($treeData, $view->vars['treeOptions']['data']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

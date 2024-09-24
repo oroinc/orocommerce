@@ -23,6 +23,7 @@ class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
     /** @var ShardManager|\PHPUnit\Framework\MockObject\MockObject */
     private $shardManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -30,6 +31,7 @@ class UniqueEntityValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): UniqueEntityValidator
     {
         return new UniqueEntityValidator($this->doctrine, $this->shardManager);

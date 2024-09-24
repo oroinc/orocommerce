@@ -10,6 +10,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class CouponCodeLengthValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator()
     {
         return new CouponCodeLengthValidator();

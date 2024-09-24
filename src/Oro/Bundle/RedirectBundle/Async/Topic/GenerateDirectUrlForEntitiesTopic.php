@@ -19,16 +19,19 @@ class GenerateDirectUrlForEntitiesTopic extends AbstractTopic
         $this->directUrlCommonTopicHelper = $directUrlCommonTopicHelper;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.redirect.generate_direct_url.entity';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Generate Slug URLs for the specified entities.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->directUrlCommonTopicHelper->configureIdOption($resolver);

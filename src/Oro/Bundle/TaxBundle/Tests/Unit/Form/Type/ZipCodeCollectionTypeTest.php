@@ -13,6 +13,7 @@ class ZipCodeCollectionTypeTest extends FormIntegrationTestCase
     /** @var ZipCodeCollectionType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

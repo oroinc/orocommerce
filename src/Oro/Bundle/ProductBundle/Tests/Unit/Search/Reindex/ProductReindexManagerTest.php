@@ -18,6 +18,7 @@ class ProductReindexManagerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductReindexManager */
     private $reindexManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

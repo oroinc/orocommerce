@@ -21,6 +21,7 @@ class WYSIWYGFieldTwigListenerTest extends WebTestCase
     /** @var Localization */
     private $localization;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

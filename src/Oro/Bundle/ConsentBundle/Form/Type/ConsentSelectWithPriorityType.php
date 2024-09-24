@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ConsentSelectWithPriorityType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -28,6 +29,7 @@ class ConsentSelectWithPriorityType extends AbstractType
             );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -38,9 +40,7 @@ class ConsentSelectWithPriorityType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_consent_select_with_priority';

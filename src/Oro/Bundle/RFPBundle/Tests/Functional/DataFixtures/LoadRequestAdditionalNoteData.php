@@ -16,9 +16,7 @@ class LoadRequestAdditionalNoteData extends AbstractFixture implements Dependent
     const CUSTOMER_NOTE = 'request.1.additional_note.1.customer_note';
     const SELLER_NOTE = ' request.1.additional_note.1.seller_note';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -26,9 +24,7 @@ class LoadRequestAdditionalNoteData extends AbstractFixture implements Dependent
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         for ($i = 1; $i <= LoadRequestData::NUM_REQUESTS; $i++) {

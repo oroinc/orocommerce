@@ -18,6 +18,7 @@ class PriceAttributeProductPriceDataConverterTest extends TestCase
 
     private PriceAttributeProductPriceDataConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converter = new PriceAttributeProductPriceDataConverter(

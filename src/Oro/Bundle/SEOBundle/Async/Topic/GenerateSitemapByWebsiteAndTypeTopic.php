@@ -26,16 +26,19 @@ class GenerateSitemapByWebsiteAndTypeTopic extends AbstractTopic
         $this->urlItemsProviderRegistry = $urlItemsProviderRegistry;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return self::TOPIC_NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return self::TOPIC_DESCRIPTION;
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

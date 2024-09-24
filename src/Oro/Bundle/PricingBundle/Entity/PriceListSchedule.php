@@ -55,9 +55,7 @@ class PriceListSchedule implements ScheduleIntervalInterface
         return $this->priceList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getScheduleIntervalsHolder()
     {
         return $this->getPriceList();

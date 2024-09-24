@@ -40,6 +40,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit\Framework\TestCase
     /** @var TransactionOptionProvider */
     private $transactionOptionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);

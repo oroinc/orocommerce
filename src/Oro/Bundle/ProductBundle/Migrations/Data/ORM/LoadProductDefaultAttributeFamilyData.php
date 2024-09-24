@@ -56,9 +56,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -66,9 +64,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);

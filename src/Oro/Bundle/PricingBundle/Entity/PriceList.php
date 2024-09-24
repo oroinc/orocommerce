@@ -103,9 +103,6 @@ class PriceList extends BasePriceList implements
     #[ORM\OrderBy(['priority' => Criteria::ASC])]
     protected ?Collection $priceRules = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->schedules = new ArrayCollection();
@@ -116,6 +113,7 @@ class PriceList extends BasePriceList implements
     /**
      * @return ArrayCollection|PriceListSchedule[]
      */
+    #[\Override]
     public function getSchedules()
     {
         return $this->schedules;
@@ -239,9 +237,7 @@ class PriceList extends BasePriceList implements
         $this->productAssignmentRule = $productAssignmentRule;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createPriceListCurrency()
     {
         return new PriceListCurrency();
@@ -331,6 +327,7 @@ class PriceList extends BasePriceList implements
     /**
      * Gets the organization the price list issued to.
      */
+    #[\Override]
     public function getOrganization(): ?Organization
     {
         return $this->organization;
@@ -339,6 +336,7 @@ class PriceList extends BasePriceList implements
     /**
      * Sets the organization the price list issued to.
      */
+    #[\Override]
     public function setOrganization(OrganizationInterface $organization): self
     {
         $this->organization = $organization;

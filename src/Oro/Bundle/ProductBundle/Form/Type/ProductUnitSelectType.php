@@ -37,9 +37,7 @@ class ProductUnitSelectType extends AbstractProductAwareType
         $this->entityClass = $entityClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -55,9 +53,7 @@ class ProductUnitSelectType extends AbstractProductAwareType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         /** @var ChoiceView $choiceView */
@@ -66,25 +62,18 @@ class ProductUnitSelectType extends AbstractProductAwareType
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return EntityType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return static::NAME;

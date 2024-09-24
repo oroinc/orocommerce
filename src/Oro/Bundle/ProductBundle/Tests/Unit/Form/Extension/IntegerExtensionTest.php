@@ -15,6 +15,7 @@ class IntegerExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var IntegerExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extension = new IntegerExtension();

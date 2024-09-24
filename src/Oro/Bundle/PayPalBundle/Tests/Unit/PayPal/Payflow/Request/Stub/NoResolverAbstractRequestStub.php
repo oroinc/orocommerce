@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\AbstractRequest;
 
 class NoResolverAbstractRequestStub extends AbstractRequest
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOptions(Option\OptionsResolver $resolver)
     {
         $this->addOption(new Option\User());
@@ -16,6 +16,7 @@ class NoResolverAbstractRequestStub extends AbstractRequest
     /**
      * @return string
      */
+    #[\Override]
     public function getTransactionType()
     {
         return 'some_action';

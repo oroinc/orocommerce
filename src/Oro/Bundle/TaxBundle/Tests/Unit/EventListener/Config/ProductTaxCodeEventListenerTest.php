@@ -29,6 +29,7 @@ class ProductTaxCodeEventListenerTest extends \PHPUnit\Framework\TestCase
 
     private array $data = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

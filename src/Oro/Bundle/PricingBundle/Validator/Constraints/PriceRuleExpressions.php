@@ -15,9 +15,7 @@ class PriceRuleExpressions extends Constraint
      */
     public $message = 'oro.pricing.validators.invalid_price_rule_expression.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

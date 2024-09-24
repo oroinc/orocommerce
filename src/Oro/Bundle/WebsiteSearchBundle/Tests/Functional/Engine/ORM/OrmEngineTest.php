@@ -18,6 +18,7 @@ class OrmEngineTest extends AbstractEngineTest
 
     private AbstractPlatform $platform;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -38,6 +39,7 @@ class OrmEngineTest extends AbstractEngineTest
         $indexer->reindex(TestEntity::class);
     }
 
+    #[\Override]
     public function testSearchAll()
     {
         if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
@@ -49,9 +51,7 @@ class OrmEngineTest extends AbstractEngineTest
         parent::testSearchAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getSearchEngine(): AbstractEngine
     {
         $driver = $this->getEngineDriver();

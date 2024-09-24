@@ -21,6 +21,7 @@ class UpdateAclsForProductRequiredFields implements Migration
         'isUpcoming'
     ];
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         foreach (self::PRODUCT_REQUIRED_FIELDS as $field) {

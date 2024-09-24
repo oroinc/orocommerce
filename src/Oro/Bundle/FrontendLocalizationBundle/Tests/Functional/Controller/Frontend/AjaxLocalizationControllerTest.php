@@ -15,9 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AjaxLocalizationControllerTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

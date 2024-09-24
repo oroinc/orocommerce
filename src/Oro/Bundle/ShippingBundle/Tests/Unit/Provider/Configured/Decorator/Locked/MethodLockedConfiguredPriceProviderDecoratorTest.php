@@ -24,6 +24,7 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit\Framewor
      */
     private $testedProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->parentProviderMock = $this

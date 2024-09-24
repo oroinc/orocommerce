@@ -16,6 +16,7 @@ class ReindexationWebsiteProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexationWebsiteProvider */
     private $websiteProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

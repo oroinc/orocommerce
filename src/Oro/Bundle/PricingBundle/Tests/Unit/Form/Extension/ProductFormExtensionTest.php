@@ -60,6 +60,7 @@ class ProductFormExtensionTest extends TestCase
     /** @var ProductFormExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);

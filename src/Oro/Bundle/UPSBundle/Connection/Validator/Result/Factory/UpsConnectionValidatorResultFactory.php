@@ -25,12 +25,12 @@ class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResul
     public const SERVER_SEVERITY = 'server';
 
     /**
-     * {@inheritDoc}
      *
      * @throws RestException
      * @throws \InvalidArgumentException
      * @throws \LogicException
      */
+    #[\Override]
     public function createResultByUpsClientResponse(
         RestResponseInterface $response
     ): UpsConnectionValidatorResultInterface {
@@ -63,9 +63,7 @@ class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResul
         return new UpsConnectionValidatorResult($resultParams);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createExceptionResult(RestException $exception): UpsConnectionValidatorResultInterface
     {
         return new UpsConnectionValidatorResult([

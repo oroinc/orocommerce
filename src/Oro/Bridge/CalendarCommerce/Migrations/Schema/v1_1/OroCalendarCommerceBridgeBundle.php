@@ -15,9 +15,7 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         self::renameActivityTables($schema, $queries, $this->renameExtension);

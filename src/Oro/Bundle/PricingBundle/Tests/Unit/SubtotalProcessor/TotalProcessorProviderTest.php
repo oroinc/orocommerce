@@ -40,6 +40,7 @@ class TotalProcessorProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TotalProcessorProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

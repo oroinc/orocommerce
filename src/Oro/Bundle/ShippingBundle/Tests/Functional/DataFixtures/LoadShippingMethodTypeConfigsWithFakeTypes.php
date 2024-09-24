@@ -11,9 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingMethodTypeConfigsWithFakeTypes extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -21,9 +19,7 @@ class LoadShippingMethodTypeConfigsWithFakeTypes extends AbstractFixture impleme
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getShippingMethodTypeConfigsData() as $reference => $data) {

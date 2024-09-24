@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductDa
 
 class EnsureProductEntityProxiesNotInitializedOnPlpTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader(

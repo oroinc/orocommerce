@@ -61,17 +61,13 @@ class CheckoutDataProvider implements CheckoutDataProviderInterface
         $this->validationGroups = $validationGroups;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEntitySupported(object $entity): bool
     {
         return $entity instanceof Checkout;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getData(object $entity): array
     {
         return $this->memoryCacheProvider->get(

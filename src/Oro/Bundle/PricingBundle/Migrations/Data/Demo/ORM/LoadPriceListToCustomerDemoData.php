@@ -14,17 +14,13 @@ class LoadPriceListToCustomerDemoData extends LoadBasePriceListRelationDemoData
 {
     private array $customers = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [LoadWebsiteData::class]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $filePath = $this->getFileLocator()

@@ -19,9 +19,9 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
      * @param array $values
      */
+    #[\Override]
     public function transform($values)
     {
         if (empty($values) || !is_array($values)) {
@@ -37,9 +37,9 @@ class TaxBaseExclusionTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
      * @param TaxBaseExclusion[] $entities
      */
+    #[\Override]
     public function reverseTransform($entities)
     {
         if (empty($entities) || !is_array($entities)) {

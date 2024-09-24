@@ -37,6 +37,7 @@ class FrontendCustomerUserProfileExtensionTest extends FormIntegrationTestCase
     /** @var FrontendCustomerUserProfileExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

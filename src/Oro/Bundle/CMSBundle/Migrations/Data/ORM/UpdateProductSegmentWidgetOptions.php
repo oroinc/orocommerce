@@ -23,6 +23,7 @@ class UpdateProductSegmentWidgetOptions extends AbstractFixture
         'infinite' => false
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $widgets = $manager->getRepository(ContentWidget::class)->findBy([

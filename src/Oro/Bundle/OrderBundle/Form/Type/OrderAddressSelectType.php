@@ -58,9 +58,7 @@ class OrderAddressSelectType extends AbstractType
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var CustomerOwnerAwareInterface $object */
@@ -78,9 +76,7 @@ class OrderAddressSelectType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         /** @var TypedOrderAddressCollection $collection */
@@ -106,9 +102,7 @@ class OrderAddressSelectType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -165,25 +159,18 @@ class OrderAddressSelectType extends AbstractType
             ->setAllowedTypes('object', CustomerOwnerAwareInterface::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return Select2ChoiceType::class;

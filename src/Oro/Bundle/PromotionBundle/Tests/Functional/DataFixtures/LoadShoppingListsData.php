@@ -23,9 +23,7 @@ class LoadShoppingListsData extends AbstractFixture implements DependentFixtureI
         self::PROMOTION_SHOPPING_LIST,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -34,9 +32,7 @@ class LoadShoppingListsData extends AbstractFixture implements DependentFixtureI
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getData() as $listLabel => $definition) {

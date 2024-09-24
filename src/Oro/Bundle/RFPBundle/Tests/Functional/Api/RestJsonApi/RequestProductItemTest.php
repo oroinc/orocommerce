@@ -9,9 +9,7 @@ use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 class RequestProductItemTest extends RestJsonApiTestCase
 {
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

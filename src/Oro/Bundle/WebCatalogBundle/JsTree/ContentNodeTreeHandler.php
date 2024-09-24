@@ -64,8 +64,8 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     /**
      * @param ContentNode $entity
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     protected function formatEntity($entity)
     {
         $titleValue = $this->localizationHelper->getFirstNonEmptyLocalizedValue($entity->getTitles());
@@ -79,9 +79,7 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function moveProcessing($entityId, $parentId, $position)
     {
         /** @var ContentNodeRepository $entityRepository */
@@ -121,9 +119,7 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
         return $node;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createTree($root = null, $includeRoot = true)
     {
         if (!$root) {

@@ -8,9 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 class QuoteFrontendPage extends EntityPage
 {
-    /*
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertPageContainsValue($label, $value)
     {
         /* @var TableRow $rowElement */

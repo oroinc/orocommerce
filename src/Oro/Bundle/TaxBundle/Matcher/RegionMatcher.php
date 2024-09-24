@@ -29,9 +29,7 @@ class RegionMatcher implements MatcherInterface, ResetInterface
         $this->countryMatcher = $countryMatcher;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function match(AbstractAddress $address, TaxCodes $taxCodes): array
     {
         $country = $address->getCountry();
@@ -61,9 +59,7 @@ class RegionMatcher implements MatcherInterface, ResetInterface
         return $taxRules;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset(): void
     {
         $this->cache = [];

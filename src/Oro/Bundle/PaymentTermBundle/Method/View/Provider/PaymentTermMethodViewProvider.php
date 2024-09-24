@@ -29,9 +29,7 @@ class PaymentTermMethodViewProvider extends AbstractPaymentMethodViewProvider
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function buildViews()
     {
         $configs = $this->configProvider->getPaymentConfigs();

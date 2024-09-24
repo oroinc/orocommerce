@@ -22,6 +22,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexMessageGranularizer */
     private $granularizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->setUpIdentifierRepository();

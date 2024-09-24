@@ -8,9 +8,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 
 class PriceListRequestHandlerStub implements PriceListRequestHandlerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceListSelectedCurrencies(BasePriceList $priceList)
     {
         return [];
@@ -24,17 +22,13 @@ class PriceListRequestHandlerStub implements PriceListRequestHandlerInterface
         return new CombinedPriceList();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShowTierPrices()
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceList()
     {
         return null;

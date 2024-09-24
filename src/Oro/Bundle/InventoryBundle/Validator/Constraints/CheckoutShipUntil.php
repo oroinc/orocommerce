@@ -8,9 +8,7 @@ class CheckoutShipUntil extends Constraint
 {
     public $message = 'oro.inventory.checkout.validators.ship_until';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

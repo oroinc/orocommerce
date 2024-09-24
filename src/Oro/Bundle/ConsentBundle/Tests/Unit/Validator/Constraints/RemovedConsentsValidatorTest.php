@@ -17,12 +17,14 @@ class RemovedConsentsValidatorTest extends ConstraintValidatorTestCase
     /** @var ConsentRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $consentRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->consentRepository = $this->createMock(ConsentRepository::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         $doctrineHelper = $this->createMock(DoctrineHelper::class);

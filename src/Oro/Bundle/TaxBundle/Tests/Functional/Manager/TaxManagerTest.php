@@ -45,6 +45,7 @@ class TaxManagerTest extends WebTestCase
     private LoaderInterface $loader;
     private TaxManager $taxManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -57,6 +58,7 @@ class TaxManagerTest extends WebTestCase
         $this->taxManager = $this->getContainer()->get('oro_tax.manager.tax_manager');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->clearCache();

@@ -11,20 +11,24 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class GenerateSitemapTopic extends AbstractTopic implements JobAwareTopicInterface
 {
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.seo.generate_sitemap';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Generates sitemaps for all websites';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return self::getName();

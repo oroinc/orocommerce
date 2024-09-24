@@ -13,6 +13,7 @@ class DigitalKitItemResolver implements ResolverInterface
 {
     use CalculateUSSalesTaxTrait;
 
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         if (!$this->isApplicable($taxable)) {

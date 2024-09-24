@@ -25,9 +25,7 @@ class LoadVariantFields extends AbstractFixture
         'The best' => false,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var EnumOptionRepository $enumRepo */

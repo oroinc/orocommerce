@@ -6,9 +6,7 @@ use Oro\Bundle\PaymentBundle\Model\Surcharge;
 
 class PaymentDiscountSurchargeListener extends AbstractSurchargeListener
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setAmount(Surcharge $model, $amount)
     {
         $model->setDiscountAmount($model->getDiscountAmount() + $amount);

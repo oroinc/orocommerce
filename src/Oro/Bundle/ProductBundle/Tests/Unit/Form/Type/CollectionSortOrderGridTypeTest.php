@@ -33,6 +33,7 @@ class CollectionSortOrderGridTypeTest extends FormIntegrationTestCase
 
     private EntityManager|MockObject $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
@@ -48,9 +49,7 @@ class CollectionSortOrderGridTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

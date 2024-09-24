@@ -13,6 +13,7 @@ class FormattedProductPriceProviderTest extends FrontendWebTestCase
 {
     private FormattedProductPriceProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

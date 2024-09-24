@@ -36,9 +36,7 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions(): array
     {
         return [
@@ -146,9 +144,7 @@ class ProductImageExtension extends AbstractExtension implements ServiceSubscrib
         return $pictureSources;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

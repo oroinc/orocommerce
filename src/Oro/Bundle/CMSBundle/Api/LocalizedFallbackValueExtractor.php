@@ -28,9 +28,7 @@ class LocalizedFallbackValueExtractor implements LocalizedFallbackValueExtractor
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function extractValue(AbstractLocalizedFallbackValue $value): ?string
     {
         if ($this->propertyAccessor->isReadable($value, self::WYSIWYG_FIELD_VALUE)

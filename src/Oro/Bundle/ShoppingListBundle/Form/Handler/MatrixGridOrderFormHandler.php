@@ -49,9 +49,7 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
         $this->shoppingListManager = $shoppingListManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process($data, FormInterface $form, Request $request): bool
     {
         if (!$data instanceof MatrixCollection) {

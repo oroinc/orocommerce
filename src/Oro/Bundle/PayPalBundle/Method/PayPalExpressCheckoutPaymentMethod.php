@@ -45,9 +45,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
         if (!$this->supports($action)) {
@@ -59,17 +57,13 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
         return $this->{$action}($paymentTransaction) ?: [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(PaymentContextInterface $context)
     {
         $amount = round($context->getTotal(), self::AMOUNT_PRECISION);
@@ -82,6 +76,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
      * @param string $actionName
      * @return bool
      */
+    #[\Override]
     public function supports($actionName)
     {
         return in_array(

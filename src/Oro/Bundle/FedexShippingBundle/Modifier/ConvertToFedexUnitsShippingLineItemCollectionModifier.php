@@ -29,9 +29,7 @@ class ConvertToFedexUnitsShippingLineItemCollectionModifier implements
         $this->dimensionsUnitTransformer = $dimensionsUnitTransformer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function modify(
         Collection $shippingLineItems,
         FedexIntegrationSettings $settings

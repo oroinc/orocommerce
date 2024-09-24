@@ -23,6 +23,7 @@ class CombinedPriceListActivationStatusHandler implements CombinedPriceListStatu
         $this->registry = $registry;
     }
 
+    #[\Override]
     public function isReadyForBuild(CombinedPriceList $cpl): bool
     {
         $activationDate = new \DateTime('now', new \DateTimeZone('UTC'));

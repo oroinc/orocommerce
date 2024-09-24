@@ -21,6 +21,7 @@ class VisibilityExtension extends AbstractExtension implements ServiceSubscriber
         $this->container = $container;
     }
 
+    #[\Override]
     public function getFunctions(): array
     {
         return [
@@ -28,6 +29,7 @@ class VisibilityExtension extends AbstractExtension implements ServiceSubscriber
         ];
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

@@ -9,9 +9,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxRule;
 
 class TaxRuleImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

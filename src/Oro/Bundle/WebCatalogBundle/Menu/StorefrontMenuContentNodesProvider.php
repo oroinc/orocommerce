@@ -33,6 +33,7 @@ class StorefrontMenuContentNodesProvider implements MenuContentNodesProviderInte
      *
      * @return ResolvedContentNode|null
      */
+    #[\Override]
     public function getResolvedContentNode(ContentNode $contentNode, array $context = []): ?ResolvedContentNode
     {
         $scopes = (array)$this->requestWebContentScopeProvider->getScopes();

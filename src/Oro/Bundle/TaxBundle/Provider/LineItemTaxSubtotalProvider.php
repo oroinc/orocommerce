@@ -31,9 +31,7 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         $this->taxManager = $taxManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCachedSubtotal($entity): Subtotal
     {
         $subtotal = $this->createSubtotal();
@@ -51,6 +49,7 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
+    #[\Override]
     protected function createSubtotal(): Subtotal
     {
         $subtotal = new Subtotal();
@@ -65,6 +64,7 @@ class LineItemTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
+    #[\Override]
     protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal
     {
         $itemTotalAmount = 0.0;

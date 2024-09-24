@@ -41,6 +41,7 @@ class LocalizedLinksDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizedLinksDataProvider */
     private $dataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(CanonicalUrlGenerator::class);

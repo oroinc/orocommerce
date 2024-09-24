@@ -106,6 +106,7 @@ class LoadImageSliderDemoData extends AbstractFixture implements DependentFixtur
         'smallImage3x',
     ];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -113,6 +114,7 @@ class LoadImageSliderDemoData extends AbstractFixture implements DependentFixtur
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);

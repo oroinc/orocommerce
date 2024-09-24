@@ -11,6 +11,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class GenerateSitemapByWebsiteAndTypeTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         $urlProvider = $this->createMock(UrlItemsProviderRegistryInterface::class);
@@ -22,6 +23,7 @@ class GenerateSitemapByWebsiteAndTypeTopicTest extends AbstractTopicTestCase
         return new GenerateSitemapByWebsiteAndTypeTopic($urlProvider);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -42,6 +44,7 @@ class GenerateSitemapByWebsiteAndTypeTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

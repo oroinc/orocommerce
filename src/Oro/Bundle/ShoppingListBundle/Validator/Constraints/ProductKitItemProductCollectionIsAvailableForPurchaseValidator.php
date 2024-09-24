@@ -32,6 +32,7 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidator extends Con
      * @param iterable<ProductKitItemProduct>|null $value
      * @param ProductKitItemProductCollectionIsAvailableForPurchase $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductKitItemProductCollectionIsAvailableForPurchase) {

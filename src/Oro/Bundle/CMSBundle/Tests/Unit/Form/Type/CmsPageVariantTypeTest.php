@@ -13,6 +13,7 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 
 class CmsPageVariantTypeTest extends FormIntegrationTestCase
 {
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

@@ -13,6 +13,7 @@ class ShoppingListLimitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListLimitProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->manager = $this->createMock(ShoppingListLimitManager::class);

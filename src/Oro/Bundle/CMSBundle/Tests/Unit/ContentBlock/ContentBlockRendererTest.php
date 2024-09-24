@@ -24,6 +24,7 @@ class ContentBlockRendererTest extends TestCase
 
     private ContentBlockRenderer $renderer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentBlockDataProvider = $this->createMock(ContentBlockDataProvider::class);

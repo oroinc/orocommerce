@@ -9,9 +9,7 @@ use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
  */
 class LoadPageDemoData extends AbstractLoadPageData
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator('@OroCMSBundle/Migrations/Data/Demo/ORM/data/pages.yml');

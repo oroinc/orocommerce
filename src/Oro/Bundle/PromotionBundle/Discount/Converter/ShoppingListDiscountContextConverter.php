@@ -40,8 +40,8 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
 
     /**
      * @param ShoppingList $sourceEntity
-     * {@inheritdoc}
      */
+    #[\Override]
     public function convert($sourceEntity): DiscountContext
     {
         if (!$this->supports($sourceEntity)) {
@@ -59,9 +59,7 @@ class ShoppingListDiscountContextConverter implements DiscountContextConverterIn
         return $discountContext;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($sourceEntity): bool
     {
         return $sourceEntity instanceof ShoppingList;

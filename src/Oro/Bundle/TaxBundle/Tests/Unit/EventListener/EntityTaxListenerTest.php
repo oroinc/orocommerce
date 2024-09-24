@@ -16,6 +16,7 @@ class EntityTaxListenerTest extends \PHPUnit\Framework\TestCase
     /** @var EntityTaxListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(BuiltInTaxProvider::class);

@@ -16,6 +16,7 @@ class ResolvedContentNodeFactoryTest extends \PHPUnit\Framework\TestCase
 {
     private ResolvedContentNodeFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $resolvedNodeIdentifierGenerator = $this->createMock(ResolvedContentNodeIdentifierGenerator::class);

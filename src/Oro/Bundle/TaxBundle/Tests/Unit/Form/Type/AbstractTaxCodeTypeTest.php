@@ -11,6 +11,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
     /** @var AbstractTaxCodeType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = $this->createTaxCodeType();
@@ -18,9 +19,7 @@ abstract class AbstractTaxCodeTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

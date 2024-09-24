@@ -30,6 +30,7 @@ class FirewallTest extends \PHPUnit\Framework\TestCase
     /** @var Firewall */
     private $firewall;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->matchedUrlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);

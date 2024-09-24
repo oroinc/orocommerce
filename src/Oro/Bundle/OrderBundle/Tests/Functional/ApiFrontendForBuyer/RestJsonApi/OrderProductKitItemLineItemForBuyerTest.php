@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class OrderProductKitItemLineItemForBuyerTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -21,11 +22,13 @@ class OrderProductKitItemLineItemForBuyerTest extends FrontendRestJsonApiTestCas
         ]);
     }
 
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/requests';
     }
 
+    #[\Override]
     protected function getResponseDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/responses';

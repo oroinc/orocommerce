@@ -12,17 +12,13 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
     /** @var PriceAttributeProductPriceEntityListener */
     protected $listener;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClassName(): string
     {
         return PriceAttributeProductPrice::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getListener(): AbstractRuleEntityListener
     {
         return new PriceAttributeProductPriceEntityListener(
@@ -32,6 +28,7 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
         );
     }
 
+    #[\Override]
     public function testPostPersist()
     {
         $this->assertFeatureChecker('feature1');
@@ -50,6 +47,7 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
             ->postPersist($baseProductPrice);
     }
 
+    #[\Override]
     public function testPreUpdate()
     {
         [$baseProductPrice] = $this->getEntities();
@@ -91,6 +89,7 @@ class PriceAttributeProductPriceEntityListenerTest extends BaseProductPriceEntit
             ->preUpdate($baseProductPrice, $event);
     }
 
+    #[\Override]
     public function testPreRemove()
     {
         $this->assertFeatureChecker('feature1');

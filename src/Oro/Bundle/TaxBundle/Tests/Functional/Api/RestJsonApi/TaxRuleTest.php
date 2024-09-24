@@ -11,6 +11,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxRule;
  */
 class TaxRuleTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

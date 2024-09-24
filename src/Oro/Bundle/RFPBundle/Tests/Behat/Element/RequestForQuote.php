@@ -35,9 +35,6 @@ class RequestForQuote extends Element
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function assertPageContainsValue($label, $value)
     {
         /* @var TableRow $rowElement */

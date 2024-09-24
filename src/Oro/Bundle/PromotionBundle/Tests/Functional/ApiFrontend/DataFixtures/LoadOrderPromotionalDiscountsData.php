@@ -19,9 +19,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadOrderPromotionalDiscountsData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -31,9 +29,7 @@ class LoadOrderPromotionalDiscountsData extends AbstractFixture implements Depen
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $rule = new Rule();

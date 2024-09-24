@@ -21,6 +21,7 @@ final class TitleDataProviderTest extends TestCase
 
     private RequestWebContentVariantProvider&MockObject $requestWebContentVariantProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->decoratedTitleDataProvider = $this->createMock(TitleDataProviderInterface::class);

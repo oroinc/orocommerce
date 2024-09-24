@@ -31,9 +31,7 @@ class CompleteWYSIWYGFieldsDescriptions implements ProcessorInterface
         $this->fileLocator = $fileLocator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */

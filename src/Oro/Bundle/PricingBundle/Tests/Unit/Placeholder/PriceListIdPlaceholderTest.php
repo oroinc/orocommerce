@@ -50,6 +50,7 @@ class PriceListIdPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $featureChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceListTreeHandler = $this->createMock(AbstractPriceListTreeHandler::class);

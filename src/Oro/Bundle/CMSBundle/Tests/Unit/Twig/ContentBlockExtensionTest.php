@@ -16,6 +16,7 @@ class ContentBlockExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ContentBlockExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->renderer = $this->createMock(ContentBlockRenderer::class);

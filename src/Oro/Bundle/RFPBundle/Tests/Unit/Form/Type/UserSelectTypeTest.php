@@ -12,6 +12,7 @@ class UserSelectTypeTest extends \PHPUnit\Framework\TestCase
     /** @var UserSelectType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new UserSelectType($this->createMock(ManagerRegistry::class));

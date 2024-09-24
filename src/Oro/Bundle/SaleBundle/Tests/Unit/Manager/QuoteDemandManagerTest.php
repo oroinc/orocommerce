@@ -23,6 +23,7 @@ class QuoteDemandManagerTest extends TestCase
 
     private QuoteDemandManager $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProvider = $this->createMock(TotalProcessorProvider::class);

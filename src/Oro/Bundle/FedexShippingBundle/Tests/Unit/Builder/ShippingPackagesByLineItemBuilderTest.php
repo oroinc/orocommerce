@@ -20,6 +20,7 @@ class ShippingPackagesByLineItemBuilderTest extends TestCase
 
     private ShippingPackagesByLineItemBuilder $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->builder = new ShippingPackagesByLineItemBuilder(

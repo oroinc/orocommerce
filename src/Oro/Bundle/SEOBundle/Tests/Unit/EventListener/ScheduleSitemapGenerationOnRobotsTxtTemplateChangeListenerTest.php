@@ -16,6 +16,7 @@ class ScheduleSitemapGenerationOnRobotsTxtTemplateChangeListenerTest extends Tes
 
     private ScheduleSitemapGenerationOnRobotsTxtTemplateChangeListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->sitemapGenerationScheduler = $this->createMock(SitemapGenerationScheduler::class);

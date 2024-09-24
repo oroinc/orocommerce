@@ -51,9 +51,7 @@ class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
         if (!method_exists($this, $action)) {
@@ -103,9 +101,7 @@ class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function capture(PaymentTransaction $paymentTransaction): array
     {
         $paymentTransaction
@@ -116,25 +112,19 @@ class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
         return ['successful' => true];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSourceAction(): string
     {
         return self::PENDING;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function useSourcePaymentTransaction(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function purchase(PaymentTransaction $paymentTransaction): array
     {
         $assigned = $this->assignPaymentTerm($paymentTransaction);
@@ -147,17 +137,13 @@ class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
         return ['successful' => $assigned];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isApplicable(PaymentContextInterface $context)
     {
         if ($context->getCustomer()) {
@@ -167,9 +153,7 @@ class PaymentTerm implements PaymentMethodWithPostponedCaptureInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($actionName)
     {
         return \in_array($actionName, [self::PURCHASE, self::CAPTURE], true);

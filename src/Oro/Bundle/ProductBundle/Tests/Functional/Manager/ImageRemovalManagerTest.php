@@ -26,6 +26,7 @@ class ImageRemovalManagerTest extends WebTestCase
 
     private CacheState $cacheState;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -40,6 +41,7 @@ class ImageRemovalManagerTest extends WebTestCase
         $this->setOriginalFileNames(self::ATTACHMENT_ORIGINAL_FILE_NAMES_ENABLED, false);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->setOriginalFileNames(

@@ -23,6 +23,7 @@ abstract class AbstractFieldsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->expressionParser = $this->createMock(ExpressionParser::class);

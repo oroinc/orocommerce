@@ -41,6 +41,7 @@ class HasEnoughInventoryLevelValidator extends ConstraintValidator
      * @param ProductLineItemInterface $value
      * @param HasEnoughInventoryLevel $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if ($value === null) {

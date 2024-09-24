@@ -19,6 +19,7 @@ class SortOrderDialogTargetStorageTest extends TestCase
 
     private SortOrderDialogTargetStorage $storage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = new RequestStack();

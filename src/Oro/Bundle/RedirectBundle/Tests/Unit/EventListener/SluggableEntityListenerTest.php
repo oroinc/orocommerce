@@ -40,6 +40,7 @@ class SluggableEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var SluggableEntityListener */
     private $sluggableEntityListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);

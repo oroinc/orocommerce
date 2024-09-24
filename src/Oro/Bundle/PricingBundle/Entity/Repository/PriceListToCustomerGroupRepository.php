@@ -36,9 +36,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         return $this->findOneBy(['customerGroup' => $customerGroup, 'priceList' => $priceList, 'website' => $website]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceLists($customerGroup, Website $website, $sortOrder = Criteria::ASC)
     {
         $qb = $this->createQueryBuilder('relation');
@@ -196,6 +194,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
      * @param array|CustomerGroup[]|int[] $holdersIds
      * @return PriceListToCustomerGroup[]
      */
+    #[\Override]
     public function getRelationsByHolders(array $holdersIds)
     {
         $qb = $this->createQueryBuilder('relation');

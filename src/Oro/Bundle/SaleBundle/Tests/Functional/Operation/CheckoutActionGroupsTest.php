@@ -22,6 +22,7 @@ use Oro\Component\Action\Exception\InvalidParameterException;
  */
 class CheckoutActionGroupsTest extends FrontendActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

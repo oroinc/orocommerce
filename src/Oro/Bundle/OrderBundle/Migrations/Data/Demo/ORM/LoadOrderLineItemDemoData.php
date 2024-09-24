@@ -42,9 +42,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     /** @var array|Price[] */
     private array $prices = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
@@ -54,9 +52,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
         $this->priceListTreeHandler = $container->get('oro_pricing.model.price_list_tree_handler');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -66,13 +62,13 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param EntityManager $manager
      * @throws \Exception
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->disableLifecycleCallbacks($manager);

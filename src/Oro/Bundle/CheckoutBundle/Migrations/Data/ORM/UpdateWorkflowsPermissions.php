@@ -9,9 +9,7 @@ use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\AbstractMassUpdateCustomerUser
  */
 class UpdateWorkflowsPermissions extends AbstractMassUpdateCustomerUserRolePermissions
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getACLData(): array
     {
         return [

@@ -45,9 +45,7 @@ class RemoveRestrictedProducts extends AbstractAction
         parent::__construct($contextAccessor);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         /** @var array|\Traversable $productHolderIterator */
@@ -88,9 +86,7 @@ class RemoveRestrictedProducts extends AbstractAction
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (!empty($options[self::OPTION_KEY_PRODUCT_HOLDER])) {

@@ -32,6 +32,7 @@ class ContentNodeInConfigReferencesChecker implements ContentNodeDeletionChecker
         $this->websiteProvider = $websiteProvider;
     }
 
+    #[\Override]
     public function check(ContentNode $contentNode): ?NotDeletableContentNodeResult
     {
         $result = new NotDeletableContentNodeResult();

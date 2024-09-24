@@ -32,6 +32,7 @@ class CombinedPriceListActivationRulesProviderTest extends TestCase
     private CustomerUserRelationsProvider|MockObject $customerUserRelationsProvider;
     private CombinedPriceListActivationRulesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

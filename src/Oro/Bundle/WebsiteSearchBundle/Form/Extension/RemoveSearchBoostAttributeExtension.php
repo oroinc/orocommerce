@@ -38,9 +38,7 @@ class RemoveSearchBoostAttributeExtension extends AbstractTypeExtension
         $this->attributeTypeRegistry   = $attributeTypeRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $configModel = $options['config_model'];
@@ -63,9 +61,7 @@ class RemoveSearchBoostAttributeExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ConfigType::class];

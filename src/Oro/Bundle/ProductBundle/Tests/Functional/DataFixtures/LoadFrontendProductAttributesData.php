@@ -25,14 +25,13 @@ class LoadFrontendProductAttributesData extends AbstractFixture implements
      */
     public $container;
 
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -42,9 +41,7 @@ class LoadFrontendProductAttributesData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getProductAttributesData() as $item) {

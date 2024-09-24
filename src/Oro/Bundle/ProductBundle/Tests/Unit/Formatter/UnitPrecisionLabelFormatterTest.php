@@ -16,6 +16,7 @@ class UnitPrecisionLabelFormatterTest extends TestCase
 
     private UnitPrecisionLabelFormatter $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

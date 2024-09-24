@@ -16,6 +16,7 @@ class ContentWidgetDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $contentWidgetTypeRegistry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentWidgetTypeRegistry = $this->createMock(ContentWidgetTypeRegistry::class);

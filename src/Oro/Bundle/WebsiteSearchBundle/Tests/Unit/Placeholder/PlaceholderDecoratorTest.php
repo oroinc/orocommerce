@@ -14,6 +14,7 @@ class PlaceholderDecoratorTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderDecorator */
     private $placeholder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(PlaceholderRegistry::class);

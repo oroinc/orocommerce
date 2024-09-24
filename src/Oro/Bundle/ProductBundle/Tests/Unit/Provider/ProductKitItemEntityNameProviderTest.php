@@ -14,6 +14,7 @@ class ProductKitItemEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private ProductKitItemEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new ProductKitItemEntityNameProvider();

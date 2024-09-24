@@ -27,9 +27,7 @@ class TimeInTransitProvider implements TimeInTransitProviderInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTimeInTransitResult(
         UPSTransport $transport,
         AddressInterface $shipFromAddress,

@@ -26,6 +26,7 @@ class FrontendShoppingListAssignGridEventListenerTest extends \PHPUnit\Framework
     /** @var FrontendShoppingListAssignGridEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

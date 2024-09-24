@@ -15,17 +15,13 @@ class LoadMasterCatalogLocalizedTitles extends AbstractFixture implements Depend
 {
     public const MASTER_CATALOG_LOCALIZED_TITLES = 2;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadLocalizationData::class, LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $localizations = $manager->getRepository(Localization::class)->findAll();

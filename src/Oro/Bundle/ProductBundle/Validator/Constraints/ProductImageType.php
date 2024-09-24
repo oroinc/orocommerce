@@ -16,17 +16,13 @@ class ProductImageType extends Constraint
      */
     public $already_exists_message = 'oro.product.product_image_type.already_exists';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return ProductImageTypeValidator::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

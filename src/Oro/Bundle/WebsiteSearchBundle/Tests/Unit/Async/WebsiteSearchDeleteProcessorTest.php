@@ -25,6 +25,7 @@ class WebsiteSearchDeleteProcessorTest extends \PHPUnit\Framework\TestCase
 
     private WebsiteSearchDeleteProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->indexer = $this->createMock(IndexerInterface::class);

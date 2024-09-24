@@ -9,6 +9,7 @@ class Company implements OptionInterface
 {
     public const COMPANYNAME = 'COMPANYNAME';
 
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver->setDefined(self::COMPANYNAME)

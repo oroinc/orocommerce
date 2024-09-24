@@ -9,6 +9,7 @@ class CodeGeneratorTest extends \PHPUnit\Framework\TestCase
 {
     private CodeGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = new CodeGenerator();

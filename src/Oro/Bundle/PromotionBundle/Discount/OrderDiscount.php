@@ -6,17 +6,13 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 
 class OrderDiscount extends AbstractDiscount
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function apply(DiscountContextInterface $discountContext)
     {
         $discountContext->addSubtotalDiscount($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculate($entity): float
     {
         if (!$entity instanceof SubtotalAwareInterface) {

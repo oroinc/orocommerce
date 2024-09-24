@@ -15,6 +15,7 @@ abstract class InventoryFallbackTest extends WebTestCase
     protected const VIEW_MANAGED_INVENTORY_XPATH =
         "//label[text() = 'Highlight Low Inventory']/following-sibling::div/div[contains(@class,  'control-label')]";
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

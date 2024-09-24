@@ -25,6 +25,7 @@ class ShoppingListBeforeAddToIndexListenerTest extends FrontendWebTestCase
     private GuestShoppingListManager $guestShoppingListMgr;
     private MessageTransformerInterface $messageTransformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

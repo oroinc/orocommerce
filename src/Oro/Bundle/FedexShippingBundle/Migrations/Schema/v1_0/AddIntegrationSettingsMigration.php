@@ -10,10 +10,10 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class AddIntegrationSettingsMigration implements Migration
 {
     /**
-     * {@inheritDoc}
      *
      * @throws SchemaException
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroFedexTransportLabelTable($schema);

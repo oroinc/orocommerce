@@ -28,6 +28,7 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit\Framework\TestCase
 
     private SyncSlugRedirectsProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

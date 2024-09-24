@@ -33,6 +33,7 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
      */
     private $prevFullCpl;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -63,6 +64,7 @@ class CombinedPriceListGarbageCollectorTest extends WebTestCase
         $this->gc->setGcOffsetMinutes(0);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $cm = self::getConfigManager('global');

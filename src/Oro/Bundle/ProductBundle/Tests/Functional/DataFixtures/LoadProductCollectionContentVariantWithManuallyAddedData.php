@@ -28,17 +28,13 @@ class LoadProductCollectionContentVariantWithManuallyAddedData extends AbstractF
         self::CONTENT_VARIANT_WITH_MIXED => LoadProductCollectionSegmentWithManuallyAddedData::SEGMENT_WITH_MIXED,
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductCollectionSegmentWithManuallyAddedData::class, LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Organization $organization */

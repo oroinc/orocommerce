@@ -35,9 +35,7 @@ class MoveProductsMassActionHandlerTest extends WebTestCase
     /** @var MoveProductsMassActionHandler */
     private $handler;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

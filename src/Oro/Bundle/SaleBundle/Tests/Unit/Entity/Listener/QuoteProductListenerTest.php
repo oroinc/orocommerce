@@ -21,6 +21,7 @@ class QuoteProductListenerTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteProductListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack =  $this->createMock(RequestStack::class);

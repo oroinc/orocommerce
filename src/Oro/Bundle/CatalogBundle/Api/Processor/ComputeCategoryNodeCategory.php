@@ -36,9 +36,7 @@ class ComputeCategoryNodeCategory implements ProcessorInterface
         $this->dataAccessor = $dataAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

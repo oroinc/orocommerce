@@ -38,9 +38,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
 
     private ?array $productUnits = null;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -53,9 +51,7 @@ class LoadQuoteDemoData extends AbstractFixture implements ContainerAwareInterfa
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         // temporary disable notification rules event listener

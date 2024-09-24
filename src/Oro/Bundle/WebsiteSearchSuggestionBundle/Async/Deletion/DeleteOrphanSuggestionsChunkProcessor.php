@@ -24,6 +24,7 @@ class DeleteOrphanSuggestionsChunkProcessor implements MessageProcessorInterface
     ) {
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();
@@ -41,6 +42,7 @@ class DeleteOrphanSuggestionsChunkProcessor implements MessageProcessorInterface
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [DeleteOrphanSuggestionsChunkTopic::getName()];

@@ -19,6 +19,7 @@ class LoadRequestInternalStatuses extends AbstractEnumFixture
         'deleted' => 'Deleted'
     ];
 
+    #[\Override]
     protected function getData(): array
     {
         return self::$data;
@@ -33,6 +34,7 @@ class LoadRequestInternalStatuses extends AbstractEnumFixture
         return array_keys(self::$data);
     }
 
+    #[\Override]
     protected function getEnumCode(): string
     {
         return Request::INTERNAL_STATUS_CODE;

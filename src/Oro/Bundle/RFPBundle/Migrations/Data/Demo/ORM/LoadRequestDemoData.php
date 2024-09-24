@@ -31,9 +31,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
 
     protected array $requests = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -44,8 +42,8 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
 
     /**
      * @param EntityManager $manager
-     * {@inheritdoc}
      */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organization = $manager->getRepository(Organization::class)->getFirst();

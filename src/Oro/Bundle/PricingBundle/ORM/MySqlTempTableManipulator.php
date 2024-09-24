@@ -7,9 +7,7 @@ namespace Oro\Bundle\PricingBundle\ORM;
  */
 class MySqlTempTableManipulator extends AbstractTempTableManipulator
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createTempTableForEntity(string $className, $identifier)
     {
         // Accordingly to https://dev.mysql.com/doc/refman/8.0/en/create-temporary-table.html
@@ -22,9 +20,7 @@ class MySqlTempTableManipulator extends AbstractTempTableManipulator
             ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function truncateTempTableForEntity(string $className, $identifier)
     {
         $this->registry->getConnection()->executeQuery(sprintf(
@@ -33,9 +29,7 @@ class MySqlTempTableManipulator extends AbstractTempTableManipulator
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function dropTempTableForEntity(string $className, $identifier)
     {
         $this->registry->getConnection()->executeQuery(sprintf(

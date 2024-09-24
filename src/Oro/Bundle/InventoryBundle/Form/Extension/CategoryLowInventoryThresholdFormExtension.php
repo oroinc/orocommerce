@@ -14,9 +14,7 @@ use Symfony\Component\Form\FormEvents;
  */
 class CategoryLowInventoryThresholdFormExtension extends AbstractFallbackCategoryTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackProperties()
     {
         return [
@@ -24,9 +22,7 @@ class CategoryLowInventoryThresholdFormExtension extends AbstractFallbackCategor
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);

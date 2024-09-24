@@ -11,9 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 
 class LoadContentBlockData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -22,9 +20,7 @@ class LoadContentBlockData extends AbstractFixture implements DependentFixtureIn
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $manager->persist($this->createContentBlock(true, 'content_block_1'));

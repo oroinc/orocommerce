@@ -13,17 +13,13 @@ class CreateNewTables implements Migration, OrderedMigrationInterface, ActivityE
 {
     use ActivityExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 20;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroShipMethodConfigsRuleTable($schema);

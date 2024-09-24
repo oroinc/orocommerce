@@ -15,17 +15,13 @@ class OroProductBundle implements Migration, OutdatedExtendExtensionAwareInterfa
 {
     use OutdatedExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 10;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->renameStatusEnumToStatusString($schema, $queries);

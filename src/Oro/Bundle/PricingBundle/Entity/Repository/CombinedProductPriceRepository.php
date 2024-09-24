@@ -629,9 +629,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
             ->execute();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPriceListIdsByProduct(Product $product)
     {
         $qb = $this->createQueryBuilder('productToPriceList');

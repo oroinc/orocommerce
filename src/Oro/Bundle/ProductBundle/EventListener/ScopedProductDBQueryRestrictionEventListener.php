@@ -23,6 +23,7 @@ class ScopedProductDBQueryRestrictionEventListener extends ProductDBQueryRestric
     /**
      * @return bool
      */
+    #[\Override]
     protected function isConditionsAcceptable()
     {
         if (!$this->scope) {

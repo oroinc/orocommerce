@@ -12,6 +12,7 @@ class ProductKitItemProductUnitCheckerTest extends \PHPUnit\Framework\TestCase
 {
     private ProductKitItemProductUnitChecker $checker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checker = new ProductKitItemProductUnitChecker();

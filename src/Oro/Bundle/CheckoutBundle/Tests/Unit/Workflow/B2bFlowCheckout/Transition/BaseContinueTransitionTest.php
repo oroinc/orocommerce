@@ -17,6 +17,7 @@ class BaseContinueTransitionTest extends TestCase
     private OrderLineItemsNotEmptyInterface|MockObject $orderLineItemsNotEmpty;
     private BaseContinueTransition $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

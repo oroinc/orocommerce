@@ -17,6 +17,7 @@ class WidgetExtensionTest extends TestCase
     private ContentWidgetRenderer|MockObject $contentWidgetRenderer;
     private WysiwygWidgetIconRenderer|MockObject $wysiwygWidgetIconRenderer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentWidgetRenderer = $this->createMock(ContentWidgetRenderer::class);

@@ -43,6 +43,7 @@ class CheckoutLineItemGroupsShippingManager implements CheckoutLineItemGroupsShi
      * @param Checkout   $checkout
      * @param bool       $useDefaults
      */
+    #[\Override]
     public function updateLineItemGroupsShippingMethods(
         ?array $shippingData,
         Checkout $checkout,
@@ -79,11 +80,13 @@ class CheckoutLineItemGroupsShippingManager implements CheckoutLineItemGroupsShi
      *
      * @return array ['product.category:1' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
      */
+    #[\Override]
     public function getCheckoutLineItemGroupsShippingData(Checkout $checkout): array
     {
         return $this->getLineItemGroupShipping($checkout->getLineItemGroupShippingData())->getShippingMethods();
     }
 
+    #[\Override]
     public function updateLineItemGroupsShippingPrices(Checkout $checkout): void
     {
         $lineItemGroupShipping = $this->getLineItemGroupShipping($checkout->getLineItemGroupShippingData());

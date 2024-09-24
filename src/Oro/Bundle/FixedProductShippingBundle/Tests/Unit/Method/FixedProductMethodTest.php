@@ -17,6 +17,7 @@ class FixedProductMethodTest extends \PHPUnit\Framework\TestCase
 
     private FixedProductMethod $fixedProduct;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fixedProduct = new FixedProductMethod(

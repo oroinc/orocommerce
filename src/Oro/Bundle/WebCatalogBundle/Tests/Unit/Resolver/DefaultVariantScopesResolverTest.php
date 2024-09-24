@@ -27,6 +27,7 @@ class DefaultVariantScopesResolverTest extends \PHPUnit\Framework\TestCase
     /** @var DefaultVariantScopesResolver */
     private $defaultVariantScopesResolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

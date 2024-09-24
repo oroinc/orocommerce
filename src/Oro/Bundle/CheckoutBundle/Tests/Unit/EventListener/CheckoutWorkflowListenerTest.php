@@ -19,6 +19,7 @@ class CheckoutWorkflowListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutWorkflowListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(CheckoutRepository::class);

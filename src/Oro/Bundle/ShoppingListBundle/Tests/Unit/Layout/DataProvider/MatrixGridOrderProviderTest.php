@@ -41,6 +41,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MatrixGridOrderProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->matrixGridManager = $this->createMock(MatrixGridOrderManager::class);

@@ -25,11 +25,13 @@ class UpdateShippingServiceData extends AbstractFixture implements ContainerAwar
 
     private array $specifiedCountryCodes = [];
 
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCountryData::class];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->allCountryCodes = array_column($this->getAllCountryCodes(), "iso2Code");

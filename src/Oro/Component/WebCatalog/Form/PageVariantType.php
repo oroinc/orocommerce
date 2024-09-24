@@ -8,9 +8,7 @@ class PageVariantType extends AbstractType
 {
     const NAME = 'page_variant';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

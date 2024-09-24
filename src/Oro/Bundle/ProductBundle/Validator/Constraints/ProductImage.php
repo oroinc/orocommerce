@@ -11,17 +11,13 @@ class ProductImage extends Constraint
      */
     public $message = 'oro.product.product_image.not_blank';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return ProductImageValidator::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

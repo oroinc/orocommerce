@@ -19,6 +19,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
 {
     private ProductSelectType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
@@ -151,9 +152,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
         return $productHolder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

@@ -31,6 +31,7 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
     /** @var OrderPromotionDiscountsProviderDecorator */
     private $discountsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);

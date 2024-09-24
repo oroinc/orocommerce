@@ -21,9 +21,7 @@ class SubcategoryProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SubcategoryProvider */
     protected $provider;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

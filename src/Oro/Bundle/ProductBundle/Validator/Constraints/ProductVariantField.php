@@ -9,17 +9,13 @@ class ProductVariantField extends Constraint
     /** @var string */
     public $message = 'oro.product.product_variant_field.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return ProductVariantFieldValidator::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

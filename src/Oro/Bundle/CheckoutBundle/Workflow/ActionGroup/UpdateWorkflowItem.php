@@ -17,6 +17,7 @@ class UpdateWorkflowItem implements UpdateWorkflowItemInterface
     ) {
     }
 
+    #[\Override]
     public function execute(
         object $entity,
         array $data

@@ -15,9 +15,7 @@ class SitemapChangefreqTypeTest extends FormIntegrationTestCase
      */
     private $type;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new SitemapChangefreqType();

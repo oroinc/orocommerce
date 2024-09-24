@@ -12,6 +12,7 @@ class ProductMessageFilterTest extends \PHPUnit\Framework\TestCase
     /** @var ProductMessageFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new ProductMessageFilter(self::TOPIC);

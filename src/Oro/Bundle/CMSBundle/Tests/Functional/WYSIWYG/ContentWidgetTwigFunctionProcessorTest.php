@@ -18,6 +18,7 @@ class ContentWidgetTwigFunctionProcessorTest extends WebTestCase
     private EntityManagerInterface $em;
     private ContentWidgetUsageRepository $usageRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

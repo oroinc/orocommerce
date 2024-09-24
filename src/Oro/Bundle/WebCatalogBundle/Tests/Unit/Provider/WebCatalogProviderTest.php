@@ -24,6 +24,7 @@ class WebCatalogProviderTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

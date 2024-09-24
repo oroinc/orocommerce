@@ -31,9 +31,7 @@ class FixedProductSettingsTypeTest extends FormIntegrationTestCase
 
     private const LOCALIZATION_ID = 998;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $repositoryLocalization = $this->createMock(ObjectRepository::class);

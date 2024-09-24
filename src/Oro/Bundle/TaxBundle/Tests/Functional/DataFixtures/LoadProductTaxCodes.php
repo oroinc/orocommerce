@@ -40,9 +40,7 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
         ]
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -51,9 +49,7 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $organization = $this->getFirstUser($manager)->getOrganization();

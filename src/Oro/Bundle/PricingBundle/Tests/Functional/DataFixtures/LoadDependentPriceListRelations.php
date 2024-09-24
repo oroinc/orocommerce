@@ -31,9 +31,7 @@ class LoadDependentPriceListRelations extends AbstractFixture implements Depende
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -42,9 +40,7 @@ class LoadDependentPriceListRelations extends AbstractFixture implements Depende
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->data as $websiteReference => $priceListsData) {

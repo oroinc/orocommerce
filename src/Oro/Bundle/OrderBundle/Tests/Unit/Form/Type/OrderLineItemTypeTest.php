@@ -92,6 +92,7 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
         ],
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnitItem = (new ProductUnit())->setCode('item');
@@ -150,6 +151,7 @@ class OrderLineItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         $priceType = new PriceType();

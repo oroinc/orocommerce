@@ -12,9 +12,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class RemoveScopesHashUniqueIndex implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_redirect_slug');
@@ -25,9 +23,7 @@ class RemoveScopesHashUniqueIndex implements Migration, OrderedMigrationInterfac
         $table->dropIndex('oro_redirect_slug_scopes_idx');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

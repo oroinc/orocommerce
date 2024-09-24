@@ -10,34 +10,25 @@ class GreaterThanZero extends GreaterThan implements AliasAwareConstraintInterfa
 
     public $value = 0;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($options = null)
     {
         $options['value'] = $this->value;
         parent::__construct($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultOption(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'Symfony\Component\Validator\Constraints\GreaterThanValidator';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAlias()
     {
         return self::ALIAS;

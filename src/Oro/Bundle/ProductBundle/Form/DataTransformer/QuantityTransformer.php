@@ -29,9 +29,7 @@ class QuantityTransformer implements DataTransformerInterface
         $this->skipTransformation = $skipTransformation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($value)
     {
         if ($this->skipTransformation) {
@@ -48,9 +46,7 @@ class QuantityTransformer implements DataTransformerInterface
         return $formattedValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         if ($value === '') {

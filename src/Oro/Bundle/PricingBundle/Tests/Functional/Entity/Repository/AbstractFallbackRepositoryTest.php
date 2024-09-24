@@ -11,6 +11,7 @@ abstract class AbstractFallbackRepositoryTest extends WebTestCase
 {
     protected ManagerRegistry $doctrine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

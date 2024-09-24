@@ -18,9 +18,7 @@ class OroPricingBundle implements
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameCustomerColumns($schema, $queries);
@@ -80,9 +78,7 @@ class OroPricingBundle implements
         $extension->renameColumn($schema, $queries, $table, 'account_id', 'customer_id');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

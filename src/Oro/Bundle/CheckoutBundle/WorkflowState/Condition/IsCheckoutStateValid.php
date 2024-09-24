@@ -50,9 +50,7 @@ class IsCheckoutStateValid extends AbstractCondition implements ContextAccessorA
         $this->checkoutDiffStorage = $checkoutDiffStorage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context): bool
     {
         $entity = $this->resolveValue($context, $this->entity);
@@ -71,9 +69,7 @@ class IsCheckoutStateValid extends AbstractCondition implements ContextAccessorA
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options): self
     {
         $this->entity = $this->getValueFromOption($options, self::OPTION_ENTITY);
@@ -97,19 +93,19 @@ class IsCheckoutStateValid extends AbstractCondition implements ContextAccessorA
         return $options[$key];
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName(): string
     {
         return 'is_checkout_state_valid';
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function toArray(): array
     {
         return $this->convertToArray([$this->entity, $this->savedStateToken, $this->currentState]);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function compile($factoryAccessor): string
     {
         return $this->convertToPhpCode([$this->entity, $this->savedStateToken, $this->currentState], $factoryAccessor);

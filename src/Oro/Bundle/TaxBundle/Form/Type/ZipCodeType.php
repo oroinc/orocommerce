@@ -14,9 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ZipCodeType extends AbstractType
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new ZipCodeTransformer());
@@ -25,9 +23,7 @@ class ZipCodeType extends AbstractType
             ->add('zipRangeEnd', TextType::class, ['required' => false]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -35,9 +31,7 @@ class ZipCodeType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_tax_zip_code_type';

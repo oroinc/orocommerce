@@ -40,6 +40,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
     /**
      * @param UniqueProductVariantLinks|Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         $product = $this->getConfigurableProduct($value, $constraint);

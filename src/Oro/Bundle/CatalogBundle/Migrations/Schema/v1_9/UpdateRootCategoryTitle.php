@@ -18,9 +18,7 @@ class UpdateRootCategoryTitle implements
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;
@@ -29,8 +27,8 @@ class UpdateRootCategoryTitle implements
     /**
      * Update default root category title column with new value.
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         if ($this->platform instanceof PostgreSqlPlatform) {

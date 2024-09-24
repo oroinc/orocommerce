@@ -15,6 +15,7 @@ class ProductSearchBySkuTest extends FrontendRestJsonApiTestCase
     use WebsiteSearchExtensionTrait;
     use PreviouslyPurchasedFeatureTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,6 +27,7 @@ class ProductSearchBySkuTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

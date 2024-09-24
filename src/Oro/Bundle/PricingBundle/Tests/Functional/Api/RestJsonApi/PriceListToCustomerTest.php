@@ -18,6 +18,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
  */
 class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,14 +30,13 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         );
     }
 
+    #[\Override]
     protected function getAliceFilesFolderName(): string
     {
         return 'price_list_to_customer';
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     protected function getApiEntityName(): string
     {
         return 'pricelisttocustomers';
@@ -47,14 +47,13 @@ class PriceListToCustomerTest extends AbstractApiPriceListRelationTest
         return $this->getEntityManager()->getRepository(PriceListToCustomer::class);
     }
 
+    #[\Override]
     protected function getFirstRelation(): PriceListToCustomer
     {
         return $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_US_1);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(

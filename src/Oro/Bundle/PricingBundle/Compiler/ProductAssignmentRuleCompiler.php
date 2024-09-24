@@ -79,9 +79,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
         return $this->queryConverter->convert($source);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrderedFields()
     {
         return $this->fieldsOrder;

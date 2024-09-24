@@ -33,25 +33,19 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
         $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass()
     {
         return Category::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData()
     {
         return $this->getEntityData('Sample Category');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createEntity($key)
     {
         return new Category();
@@ -61,6 +55,7 @@ class CategoryFixture extends AbstractTemplateRepository implements TemplateFixt
      * @param string $key
      * @param Category $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity)
     {
         $organizationRepo = $this->templateManager->getEntityRepository(Organization::class);

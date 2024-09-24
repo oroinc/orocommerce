@@ -34,6 +34,7 @@ class VersionedFlatPriceProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ProductWebsiteReindexRequestDataStorage|\PHPUnit\Framework\MockObject\MockObject */
     private $productWebsiteReindexRequestDataStorage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);

@@ -18,6 +18,7 @@ class Order extends EntityPage implements LineItemsAwareInterface, SubtotalAware
      * @param string $subtotalName
      * @return string
      */
+    #[\Override]
     public function getSubtotal($subtotalName)
     {
         /** @var Subtotals $subtotals */
@@ -26,17 +27,13 @@ class Order extends EntityPage implements LineItemsAwareInterface, SubtotalAware
         return $subtotals->getSubtotal($subtotalName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getElements('OrderLineItem');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertPageContainsValue($label, $value)
     {
         $rowColumn = $this->findElementContains('FirstTableRowColumn', $label);

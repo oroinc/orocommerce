@@ -28,9 +28,7 @@ class CmsPageHelperTest extends \PHPUnit\Framework\TestCase
     /** @var CmsPageHelper */
     private $helper;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);

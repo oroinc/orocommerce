@@ -27,6 +27,7 @@ class OrderLineItemRequiredTaxRecalculationSpecification implements Specificatio
     /**
      * @param OrderLineItem|object $orderLineItem
      */
+    #[\Override]
     public function isSatisfiedBy(object $orderLineItem): bool
     {
         if (!$orderLineItem instanceof OrderLineItem) {

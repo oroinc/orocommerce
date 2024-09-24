@@ -42,17 +42,13 @@ class OroProductBundleInstaller implements
     use SlugExtensionAwareTrait;
     use AddFallbackRelationTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
         return 'v1_34';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroProductTable($schema);

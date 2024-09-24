@@ -14,9 +14,7 @@ class ShipToBillingAddressType extends AbstractType
     const NAME = 'oro_ship_to_billing_address';
     const SHIPPING_ADDRESS_FORM_FIELD = 'shipping_address';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
@@ -32,25 +30,18 @@ class ShipToBillingAddressType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return CheckboxType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

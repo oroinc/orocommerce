@@ -30,9 +30,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -56,9 +54,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
         $builder->setDataMapper($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
@@ -66,34 +62,25 @@ class CouponAddType extends AbstractType implements DataMapperInterface
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['entityClass'] = ClassUtils::getClass($options['entity']);
         $view->vars['entityId'] = $this->doctrineHelper->getSingleEntityIdentifier($options['entity']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         if (null === $data) {
@@ -104,9 +91,7 @@ class CouponAddType extends AbstractType implements DataMapperInterface
         $forms['addedCoupons']->setData($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         if (null === $data) {

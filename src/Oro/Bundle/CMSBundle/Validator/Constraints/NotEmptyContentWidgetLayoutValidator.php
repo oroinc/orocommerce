@@ -22,9 +22,7 @@ class NotEmptyContentWidgetLayoutValidator extends ConstraintValidator
         $this->widgetLayoutProvider = $widgetLayoutProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof NotEmptyContentWidgetLayout) {

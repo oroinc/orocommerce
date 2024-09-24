@@ -67,9 +67,7 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
         $this->errors[$errorMessage] = $prefix;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getErrors($deep = false)
     {
         $successorErrors = $this->successor ? $this->successor->getErrors(true) : [];
@@ -77,9 +75,7 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
         return array_merge($this->errors, $successorErrors);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setSuccessor(InventoryLevelStrategyHelperInterface $successor)
     {
         $this->successor = $successor;
@@ -96,9 +92,7 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
         return isset($entities[$name]) ? $entities[$name] : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clearCache($deep = false)
     {
         $this->errors = [];

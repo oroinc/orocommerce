@@ -16,6 +16,7 @@ class AppliedCouponsAwareContextConfiguratorTest extends \PHPUnit\Framework\Test
     /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $promotionAwareHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->promotionAwareHelper = $this->createMock(PromotionAwareEntityHelper::class);

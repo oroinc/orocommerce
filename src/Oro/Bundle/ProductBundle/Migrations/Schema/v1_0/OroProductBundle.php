@@ -25,9 +25,7 @@ class OroProductBundle implements
     use ActivityExtensionAwareTrait;
     use AttachmentExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroProductTable($schema);

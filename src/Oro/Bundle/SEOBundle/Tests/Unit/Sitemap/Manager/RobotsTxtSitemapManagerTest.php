@@ -15,6 +15,7 @@ class RobotsTxtSitemapManagerTest extends \PHPUnit\Framework\TestCase
     /** @var RobotsTxtSitemapManager */
     private $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fileManager = $this->createMock(RobotsTxtFileManager::class);

@@ -27,6 +27,7 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductNormalizerEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->aclHelper = $this->createMock(AclHelper::class);

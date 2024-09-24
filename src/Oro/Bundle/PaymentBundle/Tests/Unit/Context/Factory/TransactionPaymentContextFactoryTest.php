@@ -14,6 +14,7 @@ class TransactionPaymentContextFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var TransactionPaymentContextFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compositeFactory = $this->createMock(CompositeSupportsEntityPaymentContextFactory::class);

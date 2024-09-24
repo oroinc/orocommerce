@@ -13,6 +13,7 @@ class SourceDocumentFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var SourceDocumentFormatter */
     private $sourceDocumentFormatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityClassNameProvider = $this->createMock(EntityClassNameProviderInterface::class);

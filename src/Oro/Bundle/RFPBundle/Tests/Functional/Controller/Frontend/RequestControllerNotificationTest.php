@@ -33,9 +33,7 @@ class RequestControllerNotificationTest extends WebTestCase
     private ConfigManager $configManager;
     private Website $website;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -52,6 +50,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->configManager = self::getConfigManager();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::getContainer()->get('mailer.message_logger_listener')->reset();

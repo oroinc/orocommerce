@@ -31,6 +31,7 @@ class SplitOrderActions implements SplitOrderActionsInterface
     ) {
     }
 
+    #[\Override]
     public function createChildOrders(
         Checkout $checkout,
         Order $order,

@@ -24,17 +24,13 @@ class LoadProductCollectionSegmentWithManuallyAddedData extends AbstractFixture 
     public const SEGMENT_WITH_MANUALLY_ADDED = 'product-collection-segment-manually-added';
     public const SEGMENT_WITH_MIXED = 'product-collection-segment-mixed';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductData::class, LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);

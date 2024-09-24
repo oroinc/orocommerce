@@ -14,6 +14,7 @@ class BasicQuoteDemandSubtotalsCalculatorTest extends \PHPUnit\Framework\TestCas
     /** @var BasicQuoteDemandSubtotalsCalculator */
     private $basicQuoteDemandSubtotalsCalculator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);

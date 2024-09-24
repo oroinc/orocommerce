@@ -30,6 +30,7 @@ class FrontendProductListModifierTest extends \PHPUnit\Framework\TestCase
      */
     protected $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);

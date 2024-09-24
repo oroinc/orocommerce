@@ -35,6 +35,7 @@ class WebsiteSearchReindexProductKitListenerTest extends WebTestCase
     private ?ManagerRegistry $registry = null;
     private ?WebsiteSearchReindexProductKitListener $listener = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -51,6 +52,7 @@ class WebsiteSearchReindexProductKitListenerTest extends WebTestCase
         self::reindexProductData();
     }
 
+    #[\Override]
     public static function tearDownAfterClass(): void
     {
         parent::tearDownAfterClass();

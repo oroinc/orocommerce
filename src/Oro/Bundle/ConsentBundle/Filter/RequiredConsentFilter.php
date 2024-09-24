@@ -11,17 +11,13 @@ class RequiredConsentFilter implements ConsentFilterInterface
 {
     const NAME = 'required_consent_filter';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isConsentPassedFilter(Consent $consent, array $params = [])
     {
         return $consent->isMandatory();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;

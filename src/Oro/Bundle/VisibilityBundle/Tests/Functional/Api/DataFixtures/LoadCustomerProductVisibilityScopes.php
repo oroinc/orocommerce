@@ -17,14 +17,13 @@ class LoadCustomerProductVisibilityScopes extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCustomers::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $visibilityProvider = $this->container->get('oro_visibility.provider.visibility_scope_provider');

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,6 +24,7 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function getResponseDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/responses';

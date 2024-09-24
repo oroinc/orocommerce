@@ -37,9 +37,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -48,9 +46,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilters()
     {
         return [
@@ -132,9 +128,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
         return $this->getUnitPrecisionLabelFormatter()->formatUnitPrecisionLabel($unitCode, $precision);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

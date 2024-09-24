@@ -12,6 +12,7 @@ class PageControllerTest extends WebTestCase
 {
     use SEOFrontendTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

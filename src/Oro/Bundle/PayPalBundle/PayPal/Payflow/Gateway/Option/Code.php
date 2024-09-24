@@ -9,7 +9,7 @@ class Code implements OptionInterface
 {
     const CVV2 = 'CVV2';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

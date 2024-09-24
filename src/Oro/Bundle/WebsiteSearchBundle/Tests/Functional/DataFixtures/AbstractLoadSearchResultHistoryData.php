@@ -16,6 +16,7 @@ use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
 
 abstract class AbstractLoadSearchResultHistoryData extends AbstractFixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -26,6 +27,7 @@ abstract class AbstractLoadSearchResultHistoryData extends AbstractFixture imple
 
     abstract protected function getCsvPath(): string;
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organization = $this->getOrganization($manager);

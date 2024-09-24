@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class SystemPageForVisitorTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

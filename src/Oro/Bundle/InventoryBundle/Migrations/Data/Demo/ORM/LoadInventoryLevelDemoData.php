@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDe
  */
 class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -22,6 +23,7 @@ class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implemen
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $inventoryLevels = $this->getObjectReferences($manager, InventoryLevel::class);

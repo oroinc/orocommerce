@@ -11,9 +11,7 @@ class FreightClassSelectType extends AbstractShippingOptionSelectType
 {
     const NAME = 'oro_shipping_freight_class_select';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $formParent = $form->getParent();

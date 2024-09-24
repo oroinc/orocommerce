@@ -25,6 +25,7 @@ class DisabledPromotionDiscountProviderDecoratorTest extends \PHPUnit\Framework\
     /** @var DisabledPromotionDiscountProviderDecorator */
     private $providerDecorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseDiscountsProvider = $this->createMock(PromotionDiscountsProviderInterface::class);

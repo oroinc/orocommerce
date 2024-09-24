@@ -35,9 +35,7 @@ class ConfigureSeparateWYSIWYGFields extends ConfigureWYSIWYGFields
         $this->resourcesProvider = $resourcesProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function configureWysiwygField(
         ConfigContext $context,
         EntityDefinitionConfig $definition,

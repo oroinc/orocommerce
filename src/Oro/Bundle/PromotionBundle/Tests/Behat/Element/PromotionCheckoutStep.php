@@ -6,9 +6,7 @@ use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 
 class PromotionCheckoutStep extends CheckoutStep
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getElements('PromotionCheckoutStepLineItem');

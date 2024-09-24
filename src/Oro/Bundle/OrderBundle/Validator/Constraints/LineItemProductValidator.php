@@ -16,8 +16,8 @@ class LineItemProductValidator extends ConstraintValidator
      * @param OrderLineItem|object $value
      * @param LineItemProduct $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof OrderLineItem) {

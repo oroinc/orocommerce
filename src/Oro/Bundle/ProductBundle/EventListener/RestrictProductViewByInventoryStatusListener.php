@@ -19,6 +19,7 @@ class RestrictProductViewByInventoryStatusListener extends AbstractRestrictProdu
         $this->configManager = $configManager;
     }
 
+    #[\Override]
     protected function restrictProductView(Product $product, ControllerEvent $event)
     {
         $allowedOptionIds = $this->configManager->get('oro_product.general_frontend_product_visibility');

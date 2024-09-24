@@ -11,6 +11,7 @@ class ResolvedContentNodesMergerTest extends \PHPUnit\Framework\TestCase
 {
     private ResolvedContentNodesMerger $merger;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->merger = new ResolvedContentNodesMerger();

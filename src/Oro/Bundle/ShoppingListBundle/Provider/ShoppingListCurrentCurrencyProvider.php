@@ -14,6 +14,7 @@ class ShoppingListCurrentCurrencyProvider implements CurrentCurrencyProviderInte
     {
     }
 
+    #[\Override]
     public function getCurrentCurrency(): ?string
     {
         $request = $this->requestStack->getMainRequest();

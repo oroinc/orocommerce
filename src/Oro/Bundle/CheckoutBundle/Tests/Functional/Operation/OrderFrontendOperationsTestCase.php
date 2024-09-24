@@ -22,9 +22,7 @@ abstract class OrderFrontendOperationsTestCase extends FrontendActionTestCase
     /** @var ObjectManager */
     protected $emFallback;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

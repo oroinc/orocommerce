@@ -24,9 +24,7 @@ class CategoryVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     private $categoryVisibilityQueryBuilderModifier;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

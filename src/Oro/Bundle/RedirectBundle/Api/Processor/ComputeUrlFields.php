@@ -41,9 +41,7 @@ class ComputeUrlFields implements ProcessorInterface
         $this->urlsField = $urlsField;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

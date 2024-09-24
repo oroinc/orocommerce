@@ -19,6 +19,7 @@ class ProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCase
 
     private ProductAutocompleteListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $currencyManager = $this->createMock(UserCurrencyManager::class);

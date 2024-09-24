@@ -15,9 +15,7 @@ class AddPageTemplateToProductFields implements Migration, ExtendExtensionAwareI
     use AddFallbackRelationTrait;
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addFallbackRelation(

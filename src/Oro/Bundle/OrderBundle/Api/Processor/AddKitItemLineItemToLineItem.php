@@ -20,9 +20,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 
 class AddKitItemLineItemToLineItem implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

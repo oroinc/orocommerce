@@ -18,9 +18,7 @@ class QuickAddMenuBuilder implements BuilderInterface
         $this->processorRegistry = $processorRegistry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function build(ItemInterface $menu, array $options = [], $alias = null)
     {
         if (!$this->processorRegistry->hasAllowedProcessors()) {

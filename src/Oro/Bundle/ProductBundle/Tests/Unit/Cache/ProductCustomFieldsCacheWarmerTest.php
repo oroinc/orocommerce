@@ -14,6 +14,7 @@ class ProductCustomFieldsCacheWarmerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductCustomFieldsCacheWarmer */
     private $warmer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);

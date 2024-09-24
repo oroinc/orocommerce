@@ -19,6 +19,7 @@ class ActualizeWorkflowItemTest extends TestCase
     private WorkflowManager|MockObject $workflowManager;
     private ActualizeWorkflowItem $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

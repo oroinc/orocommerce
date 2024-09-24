@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductPriceCurrencyValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): ProductPriceCurrencyValidator
     {
         return new ProductPriceCurrencyValidator();

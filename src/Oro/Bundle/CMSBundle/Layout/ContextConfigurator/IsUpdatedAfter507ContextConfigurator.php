@@ -26,9 +26,7 @@ class IsUpdatedAfter507ContextConfigurator implements ContextConfiguratorInterfa
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureContext(ContextInterface $context): void
     {
         $context->getResolver()

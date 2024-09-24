@@ -13,9 +13,7 @@ class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelp
 {
     protected array $inventoryStatusCache = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(
         InventoryLevel $importedEntity,
         array $importData = [],
@@ -109,9 +107,7 @@ class InventoryStatusesStrategyHelper extends AbstractInventoryLevelStrategyHelp
         $this->inventoryStatusCache[$productSku][] = $inventoryStatusName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clearCache($deep = false)
     {
         $this->inventoryStatusCache = [];

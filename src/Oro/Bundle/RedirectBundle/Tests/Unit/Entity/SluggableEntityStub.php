@@ -42,6 +42,7 @@ class SluggableEntityStub implements DatesAwareInterface, SluggableInterface
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;

@@ -27,6 +27,7 @@ class HasEnoughInventoryLevelValidatorTest extends ConstraintValidatorTestCase
 
     private InventoryLevelRepository|MockObject $inventoryLevelRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);
@@ -46,6 +47,7 @@ class HasEnoughInventoryLevelValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): HasEnoughInventoryLevelValidator
     {
         return new HasEnoughInventoryLevelValidator(

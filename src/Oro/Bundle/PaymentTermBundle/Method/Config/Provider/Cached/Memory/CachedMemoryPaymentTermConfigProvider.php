@@ -21,9 +21,7 @@ class CachedMemoryPaymentTermConfigProvider implements PaymentTermConfigProvider
         $this->paymentTermConfigProvider = $paymentTermConfigProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentConfigs()
     {
         if (null === $this->cachedConfigs) {
@@ -33,9 +31,7 @@ class CachedMemoryPaymentTermConfigProvider implements PaymentTermConfigProvider
         return $this->cachedConfigs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentConfig($identifier)
     {
         if (false === $this->hasPaymentConfig($identifier)) {
@@ -45,9 +41,7 @@ class CachedMemoryPaymentTermConfigProvider implements PaymentTermConfigProvider
         return $this->cachedConfigs[$identifier];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function hasPaymentConfig($identifier)
     {
         $configs = $this->getPaymentConfigs();

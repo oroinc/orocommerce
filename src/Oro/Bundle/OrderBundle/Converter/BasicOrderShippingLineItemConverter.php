@@ -18,9 +18,7 @@ class BasicOrderShippingLineItemConverter implements OrderShippingLineItemConver
         $this->shippingLineItemFactory = $shippingLineItemFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function convertLineItems(Collection $orderLineItems): Collection
     {
         $orderLineItemsToConvert = [];

@@ -169,9 +169,7 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);

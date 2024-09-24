@@ -13,9 +13,7 @@ class OroCalendarCommerceBridgeBundle implements Migration, ActivityExtensionAwa
 {
     use ActivityExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         self::addCalendarActivityAssociations($schema, $this->activityExtension);

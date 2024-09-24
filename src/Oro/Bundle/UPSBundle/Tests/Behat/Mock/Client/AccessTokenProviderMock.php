@@ -8,6 +8,7 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
 class AccessTokenProviderMock implements AccessTokenProviderInterface
 {
+    #[\Override]
     public function getAccessToken(
         UPSTransport $transport,
         RestClientInterface $client,

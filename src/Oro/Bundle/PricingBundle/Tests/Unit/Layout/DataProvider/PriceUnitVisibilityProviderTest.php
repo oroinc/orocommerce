@@ -17,6 +17,7 @@ class PriceUnitVisibilityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PriceUnitVisibilityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->unitVisibility = $this->createMock(UnitVisibilityInterface::class);

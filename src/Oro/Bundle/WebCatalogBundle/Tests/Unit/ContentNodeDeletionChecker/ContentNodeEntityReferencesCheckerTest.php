@@ -18,6 +18,7 @@ class ContentNodeEntityReferencesCheckerTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeEntityReferencesChecker $checker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

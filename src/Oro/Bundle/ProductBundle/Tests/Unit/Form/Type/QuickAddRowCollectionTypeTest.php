@@ -23,6 +23,7 @@ class QuickAddRowCollectionTypeTest extends FormIntegrationTestCase
 
     private ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject $unitsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);
@@ -55,6 +56,7 @@ class QuickAddRowCollectionTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

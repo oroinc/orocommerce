@@ -14,6 +14,7 @@ class DatagridKitItemLineItemsDataListenerTest extends TestCase
 {
     private DatagridKitItemLineItemsDataListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $localizationHelper = $this->createMock(LocalizationHelper::class);

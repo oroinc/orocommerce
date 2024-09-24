@@ -19,6 +19,7 @@ class PaymentMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestCa
     /** @var PaymentMethodsConfigsRuleDestination */
     private $paymentMethodsConfigsRuleDestination;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodsConfigsRuleDestination = $this->getEntity(

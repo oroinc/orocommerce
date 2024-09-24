@@ -20,9 +20,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerFormFlatPricingExtensionTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $featureChecker = $this->createMock(FeatureChecker::class);

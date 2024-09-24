@@ -14,9 +14,7 @@ class ObjectStorage implements \Countable
      */
     private $storage = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function count(): int
     {
         return count($this->storage);

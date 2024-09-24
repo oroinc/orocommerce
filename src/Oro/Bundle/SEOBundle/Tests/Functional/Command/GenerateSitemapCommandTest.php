@@ -17,6 +17,7 @@ class GenerateSitemapCommandTest extends WebTestCase
     use MessageQueueExtension;
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

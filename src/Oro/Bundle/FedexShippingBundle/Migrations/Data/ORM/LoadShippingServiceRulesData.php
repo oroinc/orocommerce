@@ -15,17 +15,13 @@ class LoadShippingServiceRulesData extends AbstractFixture implements OrderedFix
     const REFERENCE_RULE4 = 'fedex_shipping_service_rule4';
     const REFERENCE_RULE5 = 'fedex_shipping_service_rule5';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getData() as $data) {

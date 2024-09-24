@@ -29,6 +29,7 @@ class SlugifyEntityHelperTest extends TestCase
 
     private SlugifyEntityHelper $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->slugGenerator = $this->createMock(SlugGenerator::class);

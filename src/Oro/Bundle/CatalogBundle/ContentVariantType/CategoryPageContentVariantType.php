@@ -36,41 +36,31 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface, Con
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTitle()
     {
         return 'oro.catalog.category.entity_label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormType()
     {
         return CategoryPageVariantType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isAllowed()
     {
         return $this->authorizationChecker->isGranted('oro_catalog_category_view');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Category $category */
@@ -88,25 +78,19 @@ class CategoryPageContentVariantType implements ContentVariantTypeInterface, Con
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceClassName()
     {
         return Category::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return sprintf('IDENTITY(%s.category_page_category)', $alias);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAttachedEntity(ContentVariantInterface $contentVariant)
     {
         return $this->propertyAccessor->getValue($contentVariant, 'categoryPageCategory');

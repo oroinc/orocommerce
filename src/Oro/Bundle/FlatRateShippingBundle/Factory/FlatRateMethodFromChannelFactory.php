@@ -30,9 +30,7 @@ class FlatRateMethodFromChannelFactory implements IntegrationShippingMethodFacto
         $this->integrationIconProvider = $integrationIconProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(Channel $channel): ShippingMethodInterface
     {
         /** @var FlatRateSettings $transport */

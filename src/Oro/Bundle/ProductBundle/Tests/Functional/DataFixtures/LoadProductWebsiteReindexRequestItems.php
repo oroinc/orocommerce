@@ -32,6 +32,7 @@ class LoadProductWebsiteReindexRequestItems extends AbstractFixture
         ]
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Connection $connection */

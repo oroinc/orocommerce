@@ -23,6 +23,7 @@ class RequestProductKitItemLineItemGhostOptionListener implements EventSubscribe
 
     private array $ghostOptionChoiceAttributes = ['data-ghost-option' => true, 'class' => 'ghost-option'];
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

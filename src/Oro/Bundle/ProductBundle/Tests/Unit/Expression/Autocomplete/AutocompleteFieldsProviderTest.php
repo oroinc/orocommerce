@@ -9,6 +9,7 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
     /** @var AutocompleteFieldsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

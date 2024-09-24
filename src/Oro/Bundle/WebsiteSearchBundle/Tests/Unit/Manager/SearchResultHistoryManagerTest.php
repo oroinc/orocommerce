@@ -65,6 +65,7 @@ class SearchResultHistoryManagerTest extends TestCase
 
     private SearchResultHistoryManager $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->historyRepository = $this->createMock(SearchResultHistoryRepository::class);

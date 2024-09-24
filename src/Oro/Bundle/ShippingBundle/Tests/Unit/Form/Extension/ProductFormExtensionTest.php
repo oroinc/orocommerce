@@ -38,6 +38,7 @@ class ProductFormExtensionTest extends TestCase
     /** @var FieldAclHelper */
     private $fieldAclHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repo = $this->createMock(ObjectRepository::class);

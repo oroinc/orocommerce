@@ -15,6 +15,7 @@ class WebsiteLocalizationConfigListenerTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteLocalizationConfigListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);

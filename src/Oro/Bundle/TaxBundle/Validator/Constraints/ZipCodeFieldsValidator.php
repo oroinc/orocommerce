@@ -14,10 +14,10 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class ZipCodeFieldsValidator extends ConstraintValidator
 {
     /**
-     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ZipCodeFields) {

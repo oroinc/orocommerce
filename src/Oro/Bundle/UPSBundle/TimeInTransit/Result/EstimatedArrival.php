@@ -15,41 +15,31 @@ class EstimatedArrival extends ParameterBag implements EstimatedArrivalInterface
     public const TOTAL_TRANSIT_DAYS_KEY = 'total_transit_days';
     public const CUSTOMER_CENTER_CUTOFF_KEY = 'customer_center_cutoff';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getArrivalDate(): \DateTime
     {
         return $this->get(self::ARRIVAL_DATE_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBusinessDaysInTransit(): string
     {
         return (string) $this->get(self::BUSINESS_DAYS_IN_TRANSIT_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDayOfWeek(): string
     {
         return (string) $this->get(self::DAY_OF_WEEK_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCustomerCenterCutoff(): string
     {
         return (string) $this->get(self::CUSTOMER_CENTER_CUTOFF_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTotalTransitDays(): string
     {
         return (string) $this->get(self::TOTAL_TRANSIT_DAYS_KEY);

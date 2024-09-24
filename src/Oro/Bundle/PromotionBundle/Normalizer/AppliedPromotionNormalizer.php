@@ -49,6 +49,7 @@ class AppliedPromotionNormalizer implements NormalizerInterface
      * @param object|PromotionDataInterface $promotion
      * @return array
      */
+    #[\Override]
     public function normalize($promotion)
     {
         if (!$promotion instanceof PromotionDataInterface) {
@@ -80,6 +81,7 @@ class AppliedPromotionNormalizer implements NormalizerInterface
      * @param array $promotionData
      * @return AppliedPromotionData
      */
+    #[\Override]
     public function denormalize(array $promotionData)
     {
         $resolver = $this->getOptionResolver();

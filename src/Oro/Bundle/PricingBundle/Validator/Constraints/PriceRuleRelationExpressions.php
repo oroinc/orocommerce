@@ -36,14 +36,13 @@ class PriceRuleRelationExpressions extends Constraint
     /**
      * @return string
      */
+    #[\Override]
     public function validatedBy(): string
     {
         return self::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

@@ -10,6 +10,7 @@ class ContentTemplateContentProviderTest extends \PHPUnit\Framework\TestCase
 {
     private ContentTemplateContentProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);

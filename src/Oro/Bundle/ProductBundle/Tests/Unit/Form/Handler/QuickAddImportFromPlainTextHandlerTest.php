@@ -44,6 +44,7 @@ class QuickAddImportFromPlainTextHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddImportFromPlainTextHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);

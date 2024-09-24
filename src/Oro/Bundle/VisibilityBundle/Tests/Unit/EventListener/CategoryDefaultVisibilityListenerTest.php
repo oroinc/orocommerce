@@ -25,6 +25,7 @@ class CategoryDefaultVisibilityListenerTest extends \PHPUnit\Framework\TestCase
     private ScopeManager|MockObject $scopeManager;
     private InsertFromSelectQueryExecutor|MockObject $executor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);

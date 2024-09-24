@@ -11,6 +11,7 @@ use Oro\Bundle\TaxBundle\Tests\Unit\Resolver\AbstractItemResolverTestCase;
 
 class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
 {
+    #[\Override]
     protected function createResolver(): AbstractItemResolver
     {
         return new CustomerAddressItemResolver(

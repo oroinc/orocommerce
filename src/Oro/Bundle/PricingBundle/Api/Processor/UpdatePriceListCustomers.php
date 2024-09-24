@@ -51,9 +51,7 @@ class UpdatePriceListCustomers implements ProcessorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         $customers = $context->get(self::CUSTOMERS);

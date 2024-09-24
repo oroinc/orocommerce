@@ -19,6 +19,7 @@ class TwigParserTest extends \PHPUnit\Framework\TestCase
     /** @var TwigParser */
     private $parser;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);

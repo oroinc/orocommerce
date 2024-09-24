@@ -18,6 +18,7 @@ class WYSIWYGFieldsNameValidator extends ConstraintValidator
      * @param FieldConfigModel $value
      * @param Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof FieldConfigModel) {

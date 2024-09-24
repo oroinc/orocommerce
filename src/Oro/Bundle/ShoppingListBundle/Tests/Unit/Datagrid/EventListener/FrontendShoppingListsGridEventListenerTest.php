@@ -26,6 +26,7 @@ class FrontendShoppingListsGridEventListenerTest extends \PHPUnit\Framework\Test
     /** @var FrontendShoppingListsGridEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);

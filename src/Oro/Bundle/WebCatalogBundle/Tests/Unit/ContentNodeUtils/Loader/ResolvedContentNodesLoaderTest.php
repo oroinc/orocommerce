@@ -20,6 +20,7 @@ class ResolvedContentNodesLoaderTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeRepository|\PHPUnit\Framework\MockObject\MockObject $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

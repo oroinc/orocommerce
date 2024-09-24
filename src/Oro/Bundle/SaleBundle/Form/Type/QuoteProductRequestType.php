@@ -15,9 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class QuoteProductRequestType extends AbstractType
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -57,9 +55,7 @@ class QuoteProductRequestType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
@@ -71,9 +67,7 @@ class QuoteProductRequestType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_sale_quote_product_request';

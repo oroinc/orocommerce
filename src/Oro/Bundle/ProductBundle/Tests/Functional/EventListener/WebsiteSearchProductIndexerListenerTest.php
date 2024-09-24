@@ -18,6 +18,7 @@ class WebsiteSearchProductIndexerListenerTest extends WebTestCase
 
     private ?EngineInterface $engine = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

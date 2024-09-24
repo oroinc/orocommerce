@@ -30,6 +30,7 @@ class IsLineItemGroupsShippingMethodsUpdateRequiredTest extends \PHPUnit\Framewo
     /** @var IsLineItemGroupsShippingMethodsUpdateRequired */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);

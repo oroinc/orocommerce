@@ -8,9 +8,7 @@ use Psr\Log\LoggerInterface;
 
 abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -19,9 +17,7 @@ abstract class UpdateCategoryIdsInProductsAbstract extends ParametrizedMigration
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

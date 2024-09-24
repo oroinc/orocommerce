@@ -46,6 +46,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceManager */
     private $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);

@@ -14,6 +14,7 @@ class GenerateDirectUrlForEntitiesTopicTest extends \PHPUnit\Framework\TestCase
 
     private GenerateDirectUrlForEntitiesTopic $topic;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->directUrlTopicHelper = $this->createMock(DirectUrlTopicHelper::class);

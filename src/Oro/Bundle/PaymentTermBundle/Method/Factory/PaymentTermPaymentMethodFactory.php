@@ -44,9 +44,7 @@ class PaymentTermPaymentMethodFactory implements PaymentTermPaymentMethodFactory
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(PaymentTermConfigInterface $config)
     {
         $paymentMethod = new PaymentTerm(

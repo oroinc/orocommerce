@@ -16,6 +16,7 @@ abstract class BaseProductPriceEntityListenerTest extends AbstractRuleEntityList
     /** @var BaseProductPriceEntityListener */
     protected $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->preUpdateEventArgs = $this->createMock(PreUpdateEventArgs::class);

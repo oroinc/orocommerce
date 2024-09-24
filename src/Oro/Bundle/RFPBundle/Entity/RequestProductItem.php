@@ -88,17 +88,13 @@ class RequestProductItem implements
         $this->kitItemLineItems = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this->getRequestProduct();
@@ -132,6 +128,7 @@ class RequestProductItem implements
      *
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -182,6 +179,7 @@ class RequestProductItem implements
      *
      * @return ProductUnit
      */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->productUnit;
@@ -205,6 +203,7 @@ class RequestProductItem implements
      *
      * @return string
      */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->productUnitCode;
@@ -277,16 +276,19 @@ class RequestProductItem implements
         }
     }
 
+    #[\Override]
     public function getProduct()
     {
         return $this->requestProduct?->getProduct();
     }
 
+    #[\Override]
     public function getProductSku()
     {
         return $this->getProduct()?->getSku();
     }
 
+    #[\Override]
     public function getParentProduct()
     {
         return null;
@@ -307,6 +309,7 @@ class RequestProductItem implements
     /**
      * @return Collection<RequestProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         if (!$this->kitItemLineItems->count()) {
@@ -323,6 +326,7 @@ class RequestProductItem implements
         return $this;
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->checksum;

@@ -30,6 +30,7 @@ class QueryExecutorProvider implements QueryExecutorProviderInterface
         $this->allowInsertFromSelectExecutorUsage = $allowInsertFromSelectExecutorUsage;
     }
 
+    #[\Override]
     public function getQueryExecutor(): ShardQueryExecutorInterface
     {
         if ($this->allowInsertFromSelectExecutorUsage

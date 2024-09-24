@@ -11,6 +11,7 @@ class ProductTaxCodeSearchHandlerTest extends WebTestCase
 {
     private TaxCodeSearchHandler $searchHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());

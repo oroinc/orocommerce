@@ -33,6 +33,7 @@ class SitemapDumperTest extends \PHPUnit\Framework\TestCase
     /** @var SitemapDumper */
     private $dumper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteUrlProvidersService = $this->createMock(WebsiteUrlProvidersServiceInterface::class);

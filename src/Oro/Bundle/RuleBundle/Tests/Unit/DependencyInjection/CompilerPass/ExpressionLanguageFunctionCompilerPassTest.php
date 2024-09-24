@@ -11,6 +11,7 @@ class ExpressionLanguageFunctionCompilerPassTest extends \PHPUnit\Framework\Test
     /** @var ExpressionLanguageFunctionCompilerPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new ExpressionLanguageFunctionCompilerPass();

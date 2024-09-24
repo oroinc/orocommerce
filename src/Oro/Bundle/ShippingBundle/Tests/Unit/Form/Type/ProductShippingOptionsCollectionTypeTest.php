@@ -14,6 +14,7 @@ class ProductShippingOptionsCollectionTypeTest extends FormIntegrationTestCase
 
     private ProductShippingOptionsCollectionType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

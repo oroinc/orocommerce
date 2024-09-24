@@ -34,6 +34,7 @@ class ResolvePaymentTermListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ResolvePaymentTermListener */
     private $resolvePaymentTermListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->event = new ResolvePaymentTermEvent();

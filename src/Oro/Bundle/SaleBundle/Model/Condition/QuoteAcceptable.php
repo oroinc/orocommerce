@@ -30,17 +30,13 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
     /** @var bool */
     protected $default = false;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $quote = array_shift($options);
@@ -60,9 +56,7 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $quote = $this->getQuote($context);
@@ -71,17 +65,13 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
         return $quote ? $quote->isAcceptable() : $default;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMessage()
     {
         return 'oro.frontend.sale.message.quote.not_available';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMessageParameters($context)
     {
         $quote = $this->getQuote($context);

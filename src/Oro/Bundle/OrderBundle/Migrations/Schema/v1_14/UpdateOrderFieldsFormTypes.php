@@ -11,9 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class UpdateOrderFieldsFormTypes implements Migration
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(

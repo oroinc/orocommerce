@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MinimalPricesCombiningStrategy;
  */
 class MinimalPricesCombiningStrategyTest extends AbstractPricesCombiningStrategyTest
 {
+    #[\Override]
     protected function getPricingStrategyName(): string
     {
         return MinimalPricesCombiningStrategy::NAME;

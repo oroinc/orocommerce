@@ -49,9 +49,7 @@ class OrderDiscountItemType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['currency', 'total']);
@@ -79,9 +77,7 @@ class OrderDiscountItemType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -135,9 +131,7 @@ class OrderDiscountItemType extends AbstractType
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'submit']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (array_key_exists('page_component', $options)) {
@@ -177,17 +171,12 @@ class OrderDiscountItemType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

@@ -25,12 +25,14 @@ class PaymentTermType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add('label', TextType::class, ['required' => true, 'label' => 'oro.paymentterm.label.label']);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -49,9 +51,7 @@ class PaymentTermType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

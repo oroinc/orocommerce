@@ -8,6 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FulltextAwareTypeInterface;
 class EnumSearchableAttributeTypeStub extends EnumSearchableAttributeType implements
     FulltextAwareTypeInterface
 {
+    #[\Override]
     public function isFulltextSearchSupported(): bool
     {
         return false;

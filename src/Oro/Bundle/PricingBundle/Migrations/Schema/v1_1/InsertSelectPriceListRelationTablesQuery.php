@@ -43,9 +43,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
         $this->fieldName = $fieldName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -53,9 +51,7 @@ class InsertSelectPriceListRelationTablesQuery extends ParametrizedMigrationQuer
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->migrateData($logger);

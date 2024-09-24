@@ -43,6 +43,7 @@ class ConfigurableProductProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ConfigurableProductProvider */
     private $configurableProductProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);

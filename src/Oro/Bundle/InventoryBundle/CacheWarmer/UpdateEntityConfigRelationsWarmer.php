@@ -21,18 +21,14 @@ class UpdateEntityConfigRelationsWarmer implements CacheWarmerInterface
         $this->entityConfigRelationsMigration = $entityConfigRelationsMigration;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function warmUp(string $cacheDir): array
     {
         $this->entityConfigRelationsMigration->migrate();
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOptional(): bool
     {
         return false;

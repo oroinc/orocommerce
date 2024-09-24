@@ -8,6 +8,7 @@ use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 
 class TaxRuleDeleteOperationTest extends ActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

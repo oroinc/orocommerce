@@ -14,6 +14,7 @@ class PageEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private PageEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new PageEntityNameProvider();

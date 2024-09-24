@@ -52,9 +52,7 @@ class FormViewListenerTest extends TestCase
     /** @var RequestStack */
     private $requestStack;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

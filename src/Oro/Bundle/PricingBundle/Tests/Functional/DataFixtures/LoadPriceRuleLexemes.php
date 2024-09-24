@@ -13,6 +13,7 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $priceRuleLexemeHandler = $this->container->get('oro_pricing.handler.price_rule_lexeme_handler');
@@ -25,6 +26,7 @@ class LoadPriceRuleLexemes extends AbstractFixture implements DependentFixtureIn
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies()
     {
         return [LoadPriceRules::class];

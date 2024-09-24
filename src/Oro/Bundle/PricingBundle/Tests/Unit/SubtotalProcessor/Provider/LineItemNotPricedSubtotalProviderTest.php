@@ -32,6 +32,7 @@ class LineItemNotPricedSubtotalProviderTest extends TestCase
 
     private ProductLineItemPriceProviderInterface|MockObject $productLineItemsPriceProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $currencyManager = $this->createMock(UserCurrencyManager::class);

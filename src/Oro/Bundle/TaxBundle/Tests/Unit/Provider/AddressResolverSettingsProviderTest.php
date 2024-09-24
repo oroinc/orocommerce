@@ -13,6 +13,7 @@ class AddressResolverSettingsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var AddressResolverSettingsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->config = $this->createMock(ConfigManager::class);

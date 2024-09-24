@@ -36,9 +36,7 @@ class GzipSitemapFileWriter implements SitemapFileWriterInterface
         $this->skipCompressionForProviders = $providerTypes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function saveSitemap(string $content, string $path): string
     {
         $gzippedContent = false;

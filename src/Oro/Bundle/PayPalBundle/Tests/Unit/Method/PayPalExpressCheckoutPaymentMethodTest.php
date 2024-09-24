@@ -61,6 +61,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit\Framework\TestCase
     /** @var SurchargeProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $surchargeProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);

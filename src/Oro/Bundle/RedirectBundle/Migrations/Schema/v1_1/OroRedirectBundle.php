@@ -14,9 +14,7 @@ class OroRedirectBundle implements Migration, RenameExtensionAwareInterface, Ord
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameExtension->renameTable($schema, $queries, 'orob2b_redirect_slug', 'oro_redirect_slug');
@@ -24,9 +22,7 @@ class OroRedirectBundle implements Migration, RenameExtensionAwareInterface, Ord
         $queries->addQuery(new UpdatePrefixQuery('oro_redirect_slug', 'route_name'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

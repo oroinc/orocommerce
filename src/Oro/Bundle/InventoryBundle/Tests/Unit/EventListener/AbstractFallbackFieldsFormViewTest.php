@@ -49,6 +49,7 @@ abstract class AbstractFallbackFieldsFormViewTest extends \PHPUnit\Framework\Tes
 
     abstract protected function getExpectedScrollData(): array;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

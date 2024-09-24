@@ -27,8 +27,8 @@ class VisibilityChoiceFilter extends ChoiceFilter
      * We don't store records with default visibility value in database
      * To include this records when default option is selected additional "or" condition added
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     protected function buildExpr(FilterDatasourceAdapterInterface $ds, $comparisonType, $fieldName, $data)
     {
         $expression = parent::buildExpr($ds, $comparisonType, $fieldName, $data);

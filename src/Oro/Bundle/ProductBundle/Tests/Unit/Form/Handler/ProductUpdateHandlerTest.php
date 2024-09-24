@@ -84,6 +84,7 @@ class ProductUpdateHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUpdateHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->request = new Request();

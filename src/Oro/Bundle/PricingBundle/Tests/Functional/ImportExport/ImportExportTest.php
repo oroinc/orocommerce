@@ -30,6 +30,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     /** @var PriceList */
     private $priceList;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -22,6 +22,7 @@ class BasicOrderPaymentLineItemConverterTest extends TestCase
 
     private BasicOrderPaymentLineItemConverter $orderPaymentLineItemConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentLineItemFactory = $this->createMock(PaymentLineItemFromProductLineItemFactoryInterface::class);

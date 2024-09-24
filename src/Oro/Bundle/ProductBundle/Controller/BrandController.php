@@ -93,9 +93,7 @@ class BrandController extends AbstractController
             ->getChangedSlugsData($brand, BrandType::class));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [

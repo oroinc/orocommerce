@@ -17,12 +17,14 @@ class RemovedLandingPagesValidatorTest extends ConstraintValidatorTestCase
     /** @var PageRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $pageRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->pageRepository = $this->createMock(PageRepository::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         $doctrineHelper = $this->createMock(DoctrineHelper::class);

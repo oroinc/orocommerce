@@ -11,6 +11,7 @@ class ReturnRouteDataStorage extends AbstractSessionDataStorage
 {
     public const RETURN_ROUTE_DATA_KEY = 'return_route';
 
+    #[\Override]
     protected function getKey(): string
     {
         return self::RETURN_ROUTE_DATA_KEY;

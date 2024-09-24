@@ -10,9 +10,7 @@ use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
  */
 class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         $processors = [
@@ -25,9 +23,7 @@ class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
                 && $data instanceof Product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         return [

@@ -21,9 +21,7 @@ class ClearCheckoutSourceEntity extends AbstractAction
      */
     protected $target;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         $value = $this->contextAccessor->getValue($context, $this->target);
@@ -72,9 +70,7 @@ class ClearCheckoutSourceEntity extends AbstractAction
         $checkoutSourceEntity->getLineItems()->clear();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (1 == count($options)) {

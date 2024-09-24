@@ -11,9 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class SecurityFirewallCompilerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if ($container->hasParameter('kernel.debug') && $container->getParameter('kernel.debug')) {

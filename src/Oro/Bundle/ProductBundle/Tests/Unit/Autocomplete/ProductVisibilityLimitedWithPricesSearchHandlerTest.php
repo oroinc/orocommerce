@@ -18,6 +18,7 @@ class ProductVisibilityLimitedWithPricesSearchHandlerTest extends \PHPUnit\Frame
     /** @var ProductVisibilityLimitedWithPricesSearchHandler */
     private $searchHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseSearchHandler = $this->createMock(SearchHandlerInterface::class);

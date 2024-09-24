@@ -36,7 +36,7 @@ class OrderMapper implements MapperInterface
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function map(Checkout $checkout, array $data = [], array $skipped = [])
     {
         $order = new Order();

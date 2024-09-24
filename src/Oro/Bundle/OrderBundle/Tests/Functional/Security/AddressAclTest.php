@@ -30,6 +30,7 @@ class AddressAclTest extends AbstractAddressAclTest
 
     private string $formName = 'oro_order_type';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

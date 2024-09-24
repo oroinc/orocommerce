@@ -13,6 +13,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     private QueryBuilder $queryBuilder;
     private ProductVisibilityQueryBuilderModifier $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

@@ -21,9 +21,7 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         $this->lineItem = $lineItem;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice()
     {
         return $this->lineItem->getPrice();
@@ -41,17 +39,13 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->lineItem->getProduct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setProduct(Product $product = null)
     {
         $this->lineItem->setProduct($product);
@@ -59,17 +53,13 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku(): string
     {
         return $this->lineItem->getProductSku();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setProductSku($productSku)
     {
         $this->lineItem->setProductSku($productSku);
@@ -77,17 +67,13 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->lineItem->getProductUnit();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->lineItem->setProductUnit($productUnit);
@@ -95,17 +81,13 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode(): string
     {
         return $this->lineItem->getProductUnitCode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setProductUnitCode($productUnitCode)
     {
         $this->lineItem->setProductUnitCode($productUnitCode);
@@ -113,17 +95,13 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getQuantity(): float
     {
         return $this->lineItem->getQuantity();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setQuantity($quantity)
     {
         $this->lineItem->setQuantity($quantity);
@@ -131,17 +109,13 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal(): float
     {
         return $this->lineItem->getSubtotal();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setSubtotal($subtotal)
     {
         $this->lineItem->setSubtotal($subtotal);
@@ -149,17 +123,13 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotalAfterDiscounts(): float
     {
         return $this->lineItem->getSubtotalAfterDiscounts();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setSubtotalAfterDiscounts(float $subtotal): self
     {
         $this->lineItem->setSubtotalAfterDiscounts($subtotal);
@@ -167,9 +137,7 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addDiscount(DiscountInterface $discount)
     {
         $this->lineItem->addDiscount(new DisabledDiscountDecorator($discount));
@@ -177,25 +145,19 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscounts(): array
     {
         return $this->lineItem->getDiscounts();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceType(): int
     {
         return $this->lineItem->getPriceType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setPriceType($priceType)
     {
         $this->lineItem->setPriceType($priceType);
@@ -203,9 +165,7 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->lineItem->addDiscountInformation($discountInformation);
@@ -213,33 +173,25 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountsInformation(): array
     {
         return $this->lineItem->getDiscountsInformation();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountTotal(): float
     {
         return $this->lineItem->getDiscountTotal();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSourceLineItem()
     {
         return $this->lineItem->getSourceLineItem();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setSourceLineItem($sourceLineItem)
     {
         $this->lineItem->setSourceLineItem($sourceLineItem);

@@ -18,6 +18,7 @@ class SystemShippingOriginProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SystemShippingOriginProvider */
     private $shippingOriginProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -35,6 +35,7 @@ class SplitOrderActionsTest extends TestCase
     private AppliedPromotionManager|MockObject $appliedPromotionManager;
     private SplitOrderActions $splitOrderActions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderActions = $this->createMock(OrderActions::class);

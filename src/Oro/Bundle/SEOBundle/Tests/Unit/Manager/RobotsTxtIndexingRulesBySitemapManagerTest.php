@@ -24,6 +24,7 @@ class RobotsTxtIndexingRulesBySitemapManagerTest extends \PHPUnit\Framework\Test
     /** @var RobotsTxtIndexingRulesBySitemapManager */
     private $robotsTxtIndexingRulesBySitemapManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->robotsTxtFileManager = $this->createMock(RobotsTxtFileManager::class);

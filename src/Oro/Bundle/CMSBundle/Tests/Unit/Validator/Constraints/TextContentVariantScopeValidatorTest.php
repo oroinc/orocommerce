@@ -39,6 +39,7 @@ class TextContentVariantScopeValidatorTest extends ConstraintValidatorTestCase
         $this->buildViolation($constraint->message)->assertRaised();
     }
 
+    #[\Override]
     protected function createValidator(): TextContentVariantScopeValidator
     {
         $scope = new Scope();

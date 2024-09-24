@@ -17,6 +17,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
  */
 class LoadMasterCatalogRootForAllOrganizations extends AbstractFixture
 {
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $allOrganizations = $manager->getRepository(Organization::class)->findAll();

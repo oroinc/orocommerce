@@ -10,9 +10,7 @@ class InventoryLevelStrategy extends AbstractImportStrategy
     /** @var  InventoryLevelStrategyHelperInterface $inventoryLevelStrategyHelper */
     protected $inventoryLevelStrategyHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process($entity)
     {
         $this->assertEnvironment($entity);

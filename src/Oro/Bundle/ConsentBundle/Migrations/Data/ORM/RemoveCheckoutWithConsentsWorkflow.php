@@ -17,9 +17,7 @@ class RemoveCheckoutWithConsentsWorkflow extends AbstractFixture implements Cont
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $checkoutWithConsentsWorkflow =

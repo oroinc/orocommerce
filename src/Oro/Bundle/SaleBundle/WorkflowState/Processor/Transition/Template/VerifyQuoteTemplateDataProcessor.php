@@ -34,6 +34,7 @@ class VerifyQuoteTemplateDataProcessor implements ProcessorInterface
     /**
      * @param TransitionContext $context
      */
+    #[\Override]
     public function process(ContextInterface $context)
     {
         if (!$this->isApplicable($context)) {

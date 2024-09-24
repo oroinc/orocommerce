@@ -27,6 +27,7 @@ class OrderProductPriceProviderTest extends TestCase
 
     private OrderProductPriceProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);

@@ -28,6 +28,7 @@ class ProductVisibilityProviderTest extends WebTestCase
     /** @var ProductVisibilityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

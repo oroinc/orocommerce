@@ -10,9 +10,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class TaxCodeSearchHandler extends BaseSearchHandler
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $queryBuilder = $this->entityRepository->createQueryBuilder('e');

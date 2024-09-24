@@ -17,6 +17,7 @@ class ProductKitItemExtensionTest extends TestCase
 
     private ProductKitItemExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->kitItemUnitPrecisionProvider = $this->createMock(ProductKitItemUnitPrecisionProvider::class);

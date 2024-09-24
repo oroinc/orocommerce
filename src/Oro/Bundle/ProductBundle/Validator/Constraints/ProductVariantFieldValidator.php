@@ -24,6 +24,7 @@ class ProductVariantFieldValidator extends ConstraintValidator
      * @param Product $value
      * @param ProductVariantField|Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         $productClass = ClassUtils::getClass($value);

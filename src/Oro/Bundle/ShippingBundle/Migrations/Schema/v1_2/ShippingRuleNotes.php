@@ -12,9 +12,7 @@ class ShippingRuleNotes implements Migration, ActivityExtensionAwareInterface
 {
     use ActivityExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', 'oro_shipping_rule');

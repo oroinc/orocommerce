@@ -19,9 +19,7 @@ class CmsPageSlugRedirectOrganization extends AbstractFixture implements Depende
 {
     const BATCH_SIZE = 1000;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -29,6 +27,7 @@ class CmsPageSlugRedirectOrganization extends AbstractFixture implements Depende
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addOrganizationToPageSlugRedirect($manager);

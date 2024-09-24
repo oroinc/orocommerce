@@ -43,6 +43,7 @@ class ProductKitItemProductsType extends AbstractType
         $this->modelDataTransformer = $modelDataTransformer;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer($this->getViewDataTransformer());
@@ -77,6 +78,7 @@ class ProductKitItemProductsType extends AbstractType
         });
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['kitItemId'] = isset($options['kit_item']) ? (int)$options['kit_item']->getId() : 0;
@@ -91,6 +93,7 @@ class ProductKitItemProductsType extends AbstractType
         $view->vars['attr']['data-type'] = 'json-collection';
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -101,11 +104,13 @@ class ProductKitItemProductsType extends AbstractType
         $resolver->setAllowedTypes('kit_item', [ProductKitItem::class, 'null']);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_kit_item_products';
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return HiddenType::class;

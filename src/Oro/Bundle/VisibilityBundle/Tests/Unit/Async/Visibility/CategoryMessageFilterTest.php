@@ -12,6 +12,7 @@ class CategoryMessageFilterTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryMessageFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new CategoryMessageFilter(self::TOPIC);

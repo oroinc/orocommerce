@@ -32,9 +32,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {
         if ($skipRootEntity) {

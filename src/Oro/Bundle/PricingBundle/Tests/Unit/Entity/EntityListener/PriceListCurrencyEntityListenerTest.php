@@ -31,9 +31,7 @@ class PriceListCurrencyEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListCurrencyEntityListener */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = $this->createMock(RuleCache::class);

@@ -20,6 +20,7 @@ class GroupLineItemHelperTest extends \PHPUnit\Framework\TestCase
     /** @var GroupLineItemHelper */
     private $groupLineItemHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

@@ -12,6 +12,7 @@ class SearchProcessingEngineExceptionListenerTest extends \PHPUnit\Framework\Tes
 {
     private SearchProcessingEngineExceptionListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new SearchProcessingEngineExceptionListener();

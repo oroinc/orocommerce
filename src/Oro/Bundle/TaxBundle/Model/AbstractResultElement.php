@@ -13,6 +13,7 @@ abstract class AbstractResultElement extends AbstractResult
      * @param string $index
      * @param string $value
      */
+    #[\Override]
     public function offsetSet($index, $value): void
     {
         parent::offsetSet((string)$index, (string)$value);

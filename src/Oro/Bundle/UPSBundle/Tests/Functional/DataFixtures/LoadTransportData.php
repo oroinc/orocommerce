@@ -42,9 +42,7 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->transportData as $data) {
@@ -63,9 +61,7 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

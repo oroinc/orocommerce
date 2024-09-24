@@ -10,9 +10,7 @@ use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
 
 class LoadShippingOptionUnitsAndClasses extends AbstractFixture
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->addWeightUnit($manager, 'kilo');

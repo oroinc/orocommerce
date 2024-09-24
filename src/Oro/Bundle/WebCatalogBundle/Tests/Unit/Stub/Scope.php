@@ -17,6 +17,7 @@ class Scope extends StubScope
         return $this;
     }
 
+    #[\Override]
     public function getId(): ?int
     {
         return $this->id;

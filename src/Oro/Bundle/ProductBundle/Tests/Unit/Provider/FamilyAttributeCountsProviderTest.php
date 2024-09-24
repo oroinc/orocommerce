@@ -24,6 +24,7 @@ class FamilyAttributeCountsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FamilyAttributeCountsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->datagridManager = $this->createMock(ManagerInterface::class);

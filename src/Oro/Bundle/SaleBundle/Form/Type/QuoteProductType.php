@@ -43,9 +43,7 @@ class QuoteProductType extends AbstractType
         $this->quoteProductOfferChecksumListener = $quoteProductOfferChecksumListener;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['page_component'] = $options['page_component'];
@@ -53,9 +51,7 @@ class QuoteProductType extends AbstractType
         $view->vars['allow_add_free_form_items'] = $options['allow_add_free_form_items'];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $units = [];
@@ -96,9 +92,7 @@ class QuoteProductType extends AbstractType
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -177,9 +171,7 @@ class QuoteProductType extends AbstractType
         $builder->addEventSubscriber($this->quoteProductOfferChecksumListener);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -193,9 +185,7 @@ class QuoteProductType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_sale_quote_product';

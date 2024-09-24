@@ -35,6 +35,7 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
 {
     private ConsentCollectionType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ConsentCollectionType(
@@ -93,9 +94,7 @@ class ConsentCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $metadata = $this->createMock(ClassMetadata::class);

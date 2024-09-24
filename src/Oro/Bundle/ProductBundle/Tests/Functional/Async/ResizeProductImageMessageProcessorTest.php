@@ -31,6 +31,7 @@ class ResizeProductImageMessageProcessorTest extends WebTestCase
     /** @var ResizeProductImageMessageProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

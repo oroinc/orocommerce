@@ -33,17 +33,13 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [WYSIWYGType::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('page-component', function (Options $options, $value) {

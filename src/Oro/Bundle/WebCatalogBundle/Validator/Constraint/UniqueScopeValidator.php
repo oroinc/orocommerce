@@ -12,8 +12,8 @@ class UniqueScopeValidator extends ConstraintValidator
     /**
      * @param UniqueScope $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof Collection || $value->isEmpty()) {

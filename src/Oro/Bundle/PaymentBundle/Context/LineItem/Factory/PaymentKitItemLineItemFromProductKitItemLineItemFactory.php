@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemPriceAwareInterface;
 class PaymentKitItemLineItemFromProductKitItemLineItemFactory implements
     PaymentKitItemLineItemFromProductKitItemLineItemFactoryInterface
 {
+    #[\Override]
     public function create(ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem): PaymentKitItemLineItem
     {
         return (new PaymentKitItemLineItem(
@@ -29,6 +30,7 @@ class PaymentKitItemLineItemFromProductKitItemLineItemFactory implements
             ->setSortOrder($productKitItemLineItem->getSortOrder());
     }
 
+    #[\Override]
     public function createCollection(iterable $productKitItemLineItems): Collection
     {
         $paymentKitItemLineItems = [];

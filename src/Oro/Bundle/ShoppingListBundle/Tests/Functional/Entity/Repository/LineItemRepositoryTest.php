@@ -27,6 +27,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class LineItemRepositoryTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

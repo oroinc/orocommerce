@@ -18,6 +18,7 @@ class OrderLineItemsNotEmpty implements OrderLineItemsNotEmptyInterface
     ) {
     }
 
+    #[\Override]
     public function execute(Checkout $checkout): array
     {
         $orderLineItemsNotEmpty = false;

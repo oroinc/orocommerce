@@ -27,7 +27,7 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
         LoadProductData::PRODUCT_5 => 0.2
     ];
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -36,9 +36,7 @@ class LoadCategoryProductData extends AbstractFixture implements DependentFixtur
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$relations as $categoryReference => $productsReference) {

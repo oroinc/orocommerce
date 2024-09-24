@@ -17,9 +17,7 @@ class LoadProductsToBatchIndex extends AbstractFixture implements ContainerAware
     public const REFERENCE = 'product';
     public const NAME = 'Product ';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         for ($i = 1; $i <= self::AMOUNT; ++$i) {

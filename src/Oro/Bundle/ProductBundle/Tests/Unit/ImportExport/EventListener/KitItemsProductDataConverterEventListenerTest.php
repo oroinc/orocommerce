@@ -11,6 +11,7 @@ class KitItemsProductDataConverterEventListenerTest extends \PHPUnit\Framework\T
 {
     private KitItemsProductDataConverterEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new KitItemsProductDataConverterEventListener('|');

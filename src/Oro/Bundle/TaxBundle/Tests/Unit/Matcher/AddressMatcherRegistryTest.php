@@ -20,6 +20,7 @@ class AddressMatcherRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var AddressMatcherRegistry */
     private $matcherRegistry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->regionMatcher = $this->createMock(MatcherInterface::class);

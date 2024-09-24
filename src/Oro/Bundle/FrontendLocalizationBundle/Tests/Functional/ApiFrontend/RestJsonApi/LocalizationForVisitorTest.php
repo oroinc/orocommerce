@@ -14,6 +14,7 @@ class LocalizationForVisitorTest extends FrontendRestJsonApiTestCase
     /** @var string */
     private $originalDefaultLocalization;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -36,6 +37,7 @@ class LocalizationForVisitorTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = $this->getConfigManager();

@@ -15,9 +15,7 @@ class UpdateProductEntityFieldFallbackValuesFieldsConfigs implements Migration, 
 {
     use ExtendOptionsManagerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $fields = [

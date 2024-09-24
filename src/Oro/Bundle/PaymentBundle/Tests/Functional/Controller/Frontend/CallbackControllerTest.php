@@ -10,6 +10,7 @@ class CallbackControllerTest extends WebTestCase
 {
     private const ALLOWED_REMOTE_ADDR = '173.0.81.1';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

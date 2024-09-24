@@ -31,9 +31,7 @@ class LoadShoppingListLineItemsData extends AbstractFixture implements Dependent
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -42,9 +40,7 @@ class LoadShoppingListLineItemsData extends AbstractFixture implements Dependent
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->lineItems as $name => $lineItem) {

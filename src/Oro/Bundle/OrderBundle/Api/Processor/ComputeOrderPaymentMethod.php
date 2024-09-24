@@ -27,9 +27,7 @@ class ComputeOrderPaymentMethod implements ProcessorInterface
         $this->paymentMethodFormatter = $paymentMethodFormatter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

@@ -20,6 +20,7 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit\Framework\TestCase
 
     protected RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

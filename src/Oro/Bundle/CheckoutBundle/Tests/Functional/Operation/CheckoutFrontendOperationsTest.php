@@ -10,9 +10,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 class CheckoutFrontendOperationsTest extends FrontendActionTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

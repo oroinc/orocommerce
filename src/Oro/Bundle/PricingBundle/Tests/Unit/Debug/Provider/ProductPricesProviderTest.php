@@ -26,6 +26,7 @@ class ProductPricesProviderTest extends TestCase
     private ShardManager|MockObject $shardManager;
     private ProductPricesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestHandler = $this->createMock(DebugProductPricesPriceListRequestHandler::class);

@@ -7,17 +7,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class VerbosityTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new Verbosity()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

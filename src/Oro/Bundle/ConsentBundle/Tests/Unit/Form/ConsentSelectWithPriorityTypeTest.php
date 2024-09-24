@@ -31,15 +31,14 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
     private ConsentSelectWithPriorityType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ConsentSelectWithPriorityType();
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $repository = $this->createMock(EntityRepository::class);

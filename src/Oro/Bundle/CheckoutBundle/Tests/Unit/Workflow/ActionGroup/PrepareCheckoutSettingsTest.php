@@ -17,6 +17,7 @@ class PrepareCheckoutSettingsTest extends TestCase
     private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
     private PrepareCheckoutSettings $prepareCheckoutSettings;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->addressActions = $this->createMock(AddressActionsInterface::class);

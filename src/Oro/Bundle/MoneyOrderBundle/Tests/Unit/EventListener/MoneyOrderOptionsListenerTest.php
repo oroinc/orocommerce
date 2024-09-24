@@ -21,6 +21,7 @@ class MoneyOrderOptionsListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

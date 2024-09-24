@@ -33,9 +33,7 @@ class LocaleSettings extends FrontendLocaleSettings
         $this->currencyManager = $currencyManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCurrency()
     {
         if (null === $this->currency) {

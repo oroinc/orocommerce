@@ -19,6 +19,7 @@ class ProductUnitsWithoutPricesProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitsWithoutPricesProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendProductPricesProvider = $this->createMock(FrontendProductPricesProvider::class);

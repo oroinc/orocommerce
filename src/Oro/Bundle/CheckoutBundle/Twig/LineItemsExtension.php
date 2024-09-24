@@ -65,9 +65,7 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [new TwigFunction('order_line_items', [$this, 'getOrderLineItems'])];
@@ -155,9 +153,7 @@ class LineItemsExtension extends AbstractExtension implements ServiceSubscriberI
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

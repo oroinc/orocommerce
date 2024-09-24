@@ -14,7 +14,7 @@ class Address extends AbstractAddress
         $this->data = new \ArrayObject($data);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setRegion($region)
     {
         $this->data->offsetSet('region', $region);
@@ -22,7 +22,7 @@ class Address extends AbstractAddress
         return parent::setRegion($region);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setRegionText($regionText)
     {
         $this->data->offsetSet('region_text', $regionText);
@@ -30,7 +30,7 @@ class Address extends AbstractAddress
         return parent::setRegionText($regionText);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setPostalCode($postalCode)
     {
         $this->data->offsetSet('postal_code', $postalCode);
@@ -38,7 +38,7 @@ class Address extends AbstractAddress
         return parent::setPostalCode($postalCode);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setCountry($country)
     {
         $this->data->offsetSet('country', $country);
@@ -46,7 +46,7 @@ class Address extends AbstractAddress
         return parent::setCountry($country);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getRegion()
     {
         return $this->getOffset('region');
@@ -66,19 +66,19 @@ class Address extends AbstractAddress
         return $default;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getRegionText()
     {
         return $this->getOffset('region_text');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getPostalCode()
     {
         return $this->getOffset('postal_code');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCountry()
     {
         return $this->getOffset('country');

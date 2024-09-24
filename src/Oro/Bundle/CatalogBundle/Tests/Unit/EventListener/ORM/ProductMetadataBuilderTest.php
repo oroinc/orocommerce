@@ -16,6 +16,7 @@ class ProductMetadataBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductMetadataBuilder */
     private $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->builder = new ProductMetadataBuilder();

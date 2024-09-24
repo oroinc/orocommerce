@@ -15,9 +15,7 @@ class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
     /** @var QuantityRoundingService */
     protected $service;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRoundingService(): AbstractRoundingService
     {
         return new QuantityRoundingService($this->configManager);

@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class CountryShippingServicesValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): CountryShippingServicesValidator
     {
         return new CountryShippingServicesValidator();

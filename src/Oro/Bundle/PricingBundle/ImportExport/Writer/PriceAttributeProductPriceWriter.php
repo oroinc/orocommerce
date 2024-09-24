@@ -9,10 +9,10 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 class PriceAttributeProductPriceWriter extends PersistentBatchWriter
 {
     /**
-     * {@inheritDoc}
      *
      * @param PriceAttributeProductPrice[] $items
      */
+    #[\Override]
     protected function saveItems(array $items, EntityManager $em)
     {
         foreach ($items as $item) {

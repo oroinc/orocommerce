@@ -29,6 +29,7 @@ class RequestProductType extends AbstractType
         $this->requestProductItemChecksumListener = $requestProductItemChecksumListener;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -70,6 +71,7 @@ class RequestProductType extends AbstractType
         $builder->addEventSubscriber($this->requestProductItemChecksumListener);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -77,6 +79,7 @@ class RequestProductType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $product = $form->getData()?->getProduct();
@@ -84,6 +87,7 @@ class RequestProductType extends AbstractType
         $view->vars['product_units'] = $product?->getAvailableUnitsPrecision() ?? [];
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_frontend_request_product';

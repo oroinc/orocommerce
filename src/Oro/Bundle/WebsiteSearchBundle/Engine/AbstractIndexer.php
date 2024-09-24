@@ -132,7 +132,6 @@ abstract class AbstractIndexer implements IndexerInterface
     abstract protected function renameIndex($temporaryAlias, $currentAlias);
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context
      * $context = [
@@ -141,6 +140,7 @@ abstract class AbstractIndexer implements IndexerInterface
      *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
      * ]
      */
+    #[\Override]
     public function reindex($classOrClasses = null, array $context = [])
     {
         [$entityClassesToIndex, $websiteIdsToIndex] =
@@ -177,17 +177,16 @@ abstract class AbstractIndexer implements IndexerInterface
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context Not used here, only to comply with the interface
      */
+    #[\Override]
     public function getClassesForReindex($class = null, array $context = [])
     {
         return $this->entityDependenciesResolver->getClassesForReindex($class);
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context
      * $context = [
@@ -195,6 +194,7 @@ abstract class AbstractIndexer implements IndexerInterface
      *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
      * ]
      */
+    #[\Override]
     public function save($entityOrEntities, array $context = [])
     {
         $entities = is_array($entityOrEntities) ? $entityOrEntities : [$entityOrEntities];

@@ -51,9 +51,7 @@ class FedexShippingMethodFactory implements IntegrationShippingMethodFactoryInte
         $this->rateServiceClient = $rateServiceClient;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(Channel $channel): ShippingMethodInterface
     {
         /** @var FedexIntegrationSettings $transport */

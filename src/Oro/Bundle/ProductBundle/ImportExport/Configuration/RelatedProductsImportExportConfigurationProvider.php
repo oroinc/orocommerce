@@ -34,9 +34,7 @@ class RelatedProductsImportExportConfigurationProvider implements ImportExportCo
         $this->relatedItemConfigHelper = $relatedItemConfigHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         $provider = $this->relatedItemConfigHelper->getConfigProvider('related_products');

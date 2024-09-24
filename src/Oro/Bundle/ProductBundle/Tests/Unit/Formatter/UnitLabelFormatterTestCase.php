@@ -14,6 +14,7 @@ abstract class UnitLabelFormatterTestCase extends \PHPUnit\Framework\TestCase
     /** @var UnitLabelFormatterInterface */
     protected $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

@@ -18,6 +18,7 @@ class RelatedProductsConfigProvider implements
     {
     }
 
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->configManager->get(
@@ -25,6 +26,7 @@ class RelatedProductsConfigProvider implements
         );
     }
 
+    #[\Override]
     public function getLimit(): int
     {
         return (int)$this->configManager->get(
@@ -32,6 +34,7 @@ class RelatedProductsConfigProvider implements
         );
     }
 
+    #[\Override]
     public function isBidirectional(): bool
     {
         return (bool)$this->configManager->get(
@@ -39,6 +42,7 @@ class RelatedProductsConfigProvider implements
         );
     }
 
+    #[\Override]
     public function getMinimumItems(): int
     {
         return (int)$this->configManager->get(
@@ -46,6 +50,7 @@ class RelatedProductsConfigProvider implements
         );
     }
 
+    #[\Override]
     public function getMaximumItems(): int
     {
         return (int)$this->configManager->get(
@@ -53,6 +58,7 @@ class RelatedProductsConfigProvider implements
         );
     }
 
+    #[\Override]
     public function isSliderEnabledOnMobile(): bool
     {
         return (bool)$this->configManager->get(
@@ -60,6 +66,7 @@ class RelatedProductsConfigProvider implements
         );
     }
 
+    #[\Override]
     public function isAddButtonVisible(): bool
     {
         return (bool)$this->configManager->get(
@@ -67,6 +74,7 @@ class RelatedProductsConfigProvider implements
         );
     }
 
+    #[\Override]
     public function getProductListType(): string
     {
         return 'related_products';

@@ -30,6 +30,7 @@ class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
         $this->factory = $factory;
     }
 
+    #[\Override]
     protected function collectMethods()
     {
         $configs = $this->configProvider->getPaymentConfigs();

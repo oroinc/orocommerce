@@ -39,6 +39,7 @@ class PriceRequestFactoryTest extends TestCase
 
     private PriceRequestFactory $priceRequestFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingService = $this->createMock(ShippingService::class);

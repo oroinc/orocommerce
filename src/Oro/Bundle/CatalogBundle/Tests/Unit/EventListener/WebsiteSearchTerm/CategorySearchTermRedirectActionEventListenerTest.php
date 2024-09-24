@@ -23,6 +23,7 @@ class CategorySearchTermRedirectActionEventListenerTest extends TestCase
     private UrlGeneratorInterface|MockObject $urlGenerator;
     private CategorySearchTermRedirectActionEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->basicRedirectActionHandler = $this->createMock(BasicRedirectActionHandler::class);

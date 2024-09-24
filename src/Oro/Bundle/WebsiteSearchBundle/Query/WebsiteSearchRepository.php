@@ -8,9 +8,6 @@ use Oro\Bundle\SearchBundle\Query\SearchRepository;
 
 class WebsiteSearchRepository extends SearchRepository
 {
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(
         QueryFactoryInterface $queryFactory,
         AbstractSearchMappingProvider $mappingProvider

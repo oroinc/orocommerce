@@ -22,40 +22,32 @@ class OrderConfigurationProvider implements OrderConfigurationProviderInterface
     /**
      * Returns 'System'-level configuration value
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getNewOrderInternalStatus(Order $order)
     {
         return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS, null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isAutomaticCancellationEnabled($identifier = null)
     {
         return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_ENABLE_CANCELLATION, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargetInternalStatus($identifier = null)
     {
         return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_TARGET_INTERNAL_STATUS, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApplicableInternalStatuses($identifier = null)
     {
         return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isExternalStatusManagementEnabled($identifier = null)
     {
         return $this->getConfigValue(OrderConfiguration::CONFIG_KEY_ENABLE_EXTERNAL_STATUS_MANAGEMENT, $identifier);

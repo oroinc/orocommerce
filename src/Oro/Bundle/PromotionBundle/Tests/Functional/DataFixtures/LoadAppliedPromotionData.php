@@ -48,9 +48,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -60,6 +58,7 @@ class LoadAppliedPromotionData extends AbstractFixture implements DependentFixtu
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (static::$appliedDiscounts as $reference => $appliedDiscountData) {

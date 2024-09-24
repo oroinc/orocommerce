@@ -23,6 +23,7 @@ class ProductImportWysiwygFieldConfigListenerTest extends TestCase
     private ConfigHelper|MockObject $configHelper;
     private ProductImportWysiwygFieldConfigListener $entityFieldModelWriteListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

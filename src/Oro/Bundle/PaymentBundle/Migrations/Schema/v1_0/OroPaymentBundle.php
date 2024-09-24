@@ -21,9 +21,7 @@ class OroPaymentBundle implements Migration, ActivityExtensionAwareInterface
     const ACCOUNT_TABLE                       = 'orob2b_account';
     const ACCOUNT_GROUP_TABLE                 = 'orob2b_account_group';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroPaymentTermTable($schema);

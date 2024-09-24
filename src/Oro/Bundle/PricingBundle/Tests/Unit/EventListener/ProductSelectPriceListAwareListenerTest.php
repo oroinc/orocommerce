@@ -24,6 +24,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ProductSelectPriceListAwareListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->modifier = $this->createMock(FrontendProductListModifier::class);

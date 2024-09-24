@@ -18,15 +18,13 @@ class WebsiteIdPlaceholder extends AbstractPlaceholder
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getDefaultValue()
     {
         $website = $this->websiteManager->getCurrentWebsite();

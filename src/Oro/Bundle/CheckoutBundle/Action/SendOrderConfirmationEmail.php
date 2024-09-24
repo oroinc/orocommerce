@@ -14,9 +14,7 @@ use Twig\Error\Error;
  */
 class SendOrderConfirmationEmail extends SendEmailTemplate
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context): void
     {
         try {

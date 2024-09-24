@@ -42,6 +42,7 @@ class CombinedPriceListPostProcessingStepsProcessor implements
         $this->producer = $producer;
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $messageData = $message->getBody();
@@ -54,6 +55,7 @@ class CombinedPriceListPostProcessingStepsProcessor implements
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [RunCombinedPriceListPostProcessingStepsTopic::getName()];

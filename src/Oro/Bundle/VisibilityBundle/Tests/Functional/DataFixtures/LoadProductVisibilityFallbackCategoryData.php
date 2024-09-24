@@ -73,9 +73,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         'customer.level_1.4',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -84,17 +82,13 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->em = $manager;

@@ -14,6 +14,7 @@ use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfig
 
 class UPSTransportEntityListenerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

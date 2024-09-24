@@ -26,6 +26,7 @@ class SubOrdersFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var SubOrdersFrontendDatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->multiShippingConfigProvider = $this->createMock(ConfigProvider::class);

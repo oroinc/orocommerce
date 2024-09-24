@@ -16,17 +16,13 @@ class ShippingDiscount extends AbstractDiscount
     const SHIPPING_METHOD = 'shipping_method';
     const SHIPPING_METHOD_TYPE = 'shipping_method_type';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function apply(DiscountContextInterface $discountContext)
     {
         $discountContext->addShippingDiscount($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculate($entity): float
     {
         if (!$entity instanceof ShippingAwareInterface) {
@@ -48,9 +44,7 @@ class ShippingDiscount extends AbstractDiscount
         return $this->calculateDiscountAmount($shippingCost);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getOptionsResolver(): OptionsResolver
     {
         $resolver = parent::getOptionsResolver();

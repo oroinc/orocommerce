@@ -21,9 +21,7 @@ class CheckoutManagerTest extends \PHPUnit\Framework\TestCase
      */
     private $doctrineHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

@@ -25,6 +25,7 @@ class WebsiteSearchResetIndexProcessorTest extends \PHPUnit\Framework\TestCase
 
     private WebsiteSearchResetIndexProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->indexer = $this->createMock(IndexerInterface::class);

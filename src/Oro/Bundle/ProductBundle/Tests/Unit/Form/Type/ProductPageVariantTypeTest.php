@@ -22,9 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductPageVariantTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $classMetadata = new ClassMetadata(Product::class);

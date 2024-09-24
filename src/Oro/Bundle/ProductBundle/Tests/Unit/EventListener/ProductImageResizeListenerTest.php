@@ -14,6 +14,7 @@ class ProductImageResizeListenerTest extends \PHPUnit\Framework\TestCase
 
     private ProductImageResizeListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductImageResizeListener(self::getMessageProducer());

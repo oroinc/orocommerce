@@ -14,8 +14,9 @@ use Symfony\Component\HttpFoundation\Request;
 class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
 {
     /**
-     * {@inheritdoc}Oro\Bundle\CommerceCrmEnterpriseTestBundle\Tests\Functional\BackendQueriesTest
+     * \Oro\Bundle\CommerceCrmEnterpriseTestBundle\Tests\Functional\BackendQueriesTest
      */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());
@@ -28,9 +29,7 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
         $this->loadFixtures([]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getToken()
     {
         $managerRegistry = self::getContainer()->get('doctrine');
@@ -48,17 +47,13 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRole()
     {
         return 'ROLE_ADMINISTRATOR';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getHandlerServiceName()
     {
         return 'oro_promotion.handler.coupon_validation_handler';
@@ -100,9 +95,7 @@ class CouponValidationHandlerTest extends AbstractCouponHandlerTestCase
         self::assertEmpty($jsonContent['errors']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRequestWithCouponData(array $postData = [])
     {
         $postData['couponId'] = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)

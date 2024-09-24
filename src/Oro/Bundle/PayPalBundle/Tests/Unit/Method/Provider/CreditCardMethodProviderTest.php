@@ -10,6 +10,7 @@ use Oro\Bundle\PayPalBundle\Method\Provider\CreditCardMethodProvider;
 
 class CreditCardMethodProviderTest extends AbstractMethodProviderTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = $this->createMock(PayPalCreditCardPaymentMethodFactoryInterface::class);

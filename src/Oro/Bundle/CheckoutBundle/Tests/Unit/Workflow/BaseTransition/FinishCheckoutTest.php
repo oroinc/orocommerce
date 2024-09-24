@@ -19,6 +19,7 @@ class FinishCheckoutTest extends TestCase
 
     private FinishCheckout $finishCheckout;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customerUserActions = $this->createMock(CustomerUserActionsInterface::class);

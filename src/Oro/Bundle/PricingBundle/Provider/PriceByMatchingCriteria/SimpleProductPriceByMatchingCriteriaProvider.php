@@ -18,6 +18,7 @@ class SimpleProductPriceByMatchingCriteriaProvider implements ProductPriceByMatc
     {
     }
 
+    #[\Override]
     public function getProductPriceMatchingCriteria(
         ProductPriceCriteria $productPriceCriteria,
         ProductPriceCollectionDTO $productPriceCollection
@@ -90,6 +91,7 @@ class SimpleProductPriceByMatchingCriteriaProvider implements ProductPriceByMatc
         return false;
     }
 
+    #[\Override]
     public function isSupported(
         ProductPriceCriteria $productPriceCriteria,
         ProductPriceCollectionDTO $productPriceCollection

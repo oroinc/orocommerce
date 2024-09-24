@@ -16,6 +16,7 @@ class CategoryTreeTypeTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryTreeType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->treeHandler = $this->createMock(AbstractTreeHandler::class);

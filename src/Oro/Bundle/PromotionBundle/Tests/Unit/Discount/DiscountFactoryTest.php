@@ -22,6 +22,7 @@ class DiscountFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var DiscountFactory */
     protected $discountFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->container = $this->createMock(ContainerInterface::class);

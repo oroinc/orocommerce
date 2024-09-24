@@ -25,9 +25,7 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
         $this->estimatedArrivalFactory = $estimatedArrivalFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createResultByUpsClientResponse(RestResponseInterface $response)
     {
         $data = $response->json();
@@ -96,9 +94,7 @@ class TimeInTransitResultFactory implements TimeInTransitResultFactoryInterface
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createExceptionResult(RestException $exception)
     {
         $parameters = [

@@ -29,6 +29,7 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
     /**
      * @return array
      */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -75,9 +76,6 @@ class MethodTypeConfigCollectionSubscriber implements EventSubscriberInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function preSubmit(FormEvent $event)
     {
         /** @var array $submittedData */

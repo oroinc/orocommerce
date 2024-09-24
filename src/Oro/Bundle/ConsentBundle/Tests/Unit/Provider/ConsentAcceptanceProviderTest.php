@@ -25,6 +25,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentAcceptanceProvider */
     private $consentAcceptanceProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

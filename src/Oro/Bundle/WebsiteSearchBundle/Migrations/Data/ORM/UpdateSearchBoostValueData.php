@@ -16,9 +16,7 @@ class UpdateSearchBoostValueData extends AbstractFixture implements ContainerAwa
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         if (!$this->container->hasParameter('installed') || !$this->container->getParameter('installed')) {

@@ -37,6 +37,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
     private AclHelper|MockObject $aclHelper;
     private RequestStack|MockObject $requestStack;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -46,9 +47,7 @@ class PriceAttributesProductFormExtensionTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $translator = $this->createMock(TranslatorInterface::class);

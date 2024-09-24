@@ -12,9 +12,7 @@ class AddProductSlugs implements Migration, SlugExtensionAwareInterface
 {
     use SlugExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->slugExtension->addSlugs(

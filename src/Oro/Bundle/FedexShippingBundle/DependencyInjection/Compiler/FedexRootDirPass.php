@@ -21,9 +21,7 @@ class FedexRootDirPass implements CompilerPassInterface
         $this->rootDir = $rootDir;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $container->setParameter('fedex_root_dir', $this->rootDir);

@@ -24,6 +24,7 @@ class CustomerUserListenerTest extends \PHPUnit\Framework\TestCase
     private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
     private CustomerUserListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->request = new Request();

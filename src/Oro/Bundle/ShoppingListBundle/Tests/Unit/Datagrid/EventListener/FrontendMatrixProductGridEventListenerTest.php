@@ -55,6 +55,7 @@ class FrontendMatrixProductGridEventListenerTest extends \PHPUnit\Framework\Test
     /** @var FrontendMatrixProductGridEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

@@ -23,9 +23,7 @@ class ProductSEOContextConfigurator implements ContextConfiguratorInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureContext(ContextInterface $context): void
     {
         $context->getResolver()->setDefault('microdata_without_prices_disabled', false);

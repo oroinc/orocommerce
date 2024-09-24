@@ -18,16 +18,19 @@ class WebsiteSearchResetIndexTopic extends AbstractTopic
         $this->indexerInputValidator = $indexerInputValidator;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.website.search.indexer.reset_index';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Reset (clear) the entire index or a specific entity class in it.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->indexerInputValidator->configureClassOptions($resolver);

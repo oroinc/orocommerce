@@ -25,6 +25,7 @@ class PaymentLineItemFromProductLineItemFactoryTest extends TestCase
 
     private PaymentLineItemFromProductLineItemFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new PaymentLineItemFromProductLineItemFactory(

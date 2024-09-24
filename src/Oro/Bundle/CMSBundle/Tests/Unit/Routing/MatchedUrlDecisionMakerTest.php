@@ -25,6 +25,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
     private ConfigManager|MockObject $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

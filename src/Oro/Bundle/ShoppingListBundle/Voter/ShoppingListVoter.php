@@ -15,7 +15,6 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  */
 class ShoppingListVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [
         BasicPermission::VIEW,
         BasicPermission::CREATE,
@@ -31,9 +30,7 @@ class ShoppingListVoter extends AbstractEntityVoter implements ServiceSubscriber
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
@@ -41,9 +38,7 @@ class ShoppingListVoter extends AbstractEntityVoter implements ServiceSubscriber
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         $currentWebsite = $this->getWebsiteManager()->getCurrentWebsite();

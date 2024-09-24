@@ -33,6 +33,7 @@ class CheckoutPostRequestHandlerTest extends TestCase
     private EventDispatcherInterface|MockObject $eventDispatcher;
     private CheckoutPostRequestHandler $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

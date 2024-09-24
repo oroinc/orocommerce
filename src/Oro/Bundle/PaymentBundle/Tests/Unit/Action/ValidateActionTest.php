@@ -38,6 +38,7 @@ class ValidateActionTest extends \PHPUnit\Framework\TestCase
     /** @var ValidateAction */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);

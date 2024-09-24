@@ -42,6 +42,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
     private Organization $organization;
     private Website $website;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -53,6 +54,7 @@ class LoadShoppingListDemoData extends AbstractFixture implements DependentFixtu
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->manager = $manager;

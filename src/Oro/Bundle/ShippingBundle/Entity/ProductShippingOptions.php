@@ -95,6 +95,7 @@ class ProductShippingOptions implements
     /**
      * @return Product
      */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -115,6 +116,7 @@ class ProductShippingOptions implements
     /**
      * @return ProductUnit
      */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->productUnit;
@@ -135,6 +137,7 @@ class ProductShippingOptions implements
     /**
      * @return Weight
      */
+    #[\Override]
     public function getWeight()
     {
         return $this->weight;
@@ -156,6 +159,7 @@ class ProductShippingOptions implements
     /**
      * @return Dimensions
      */
+    #[\Override]
     public function getDimensions()
     {
         return $this->dimensions;
@@ -193,33 +197,25 @@ class ProductShippingOptions implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->getProductUnit()->getCode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->getProduct()->getSku();

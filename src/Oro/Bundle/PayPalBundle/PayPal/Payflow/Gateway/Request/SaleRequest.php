@@ -11,13 +11,13 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\AbstractRequest;
  */
 class SaleRequest extends AbstractRequest
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function getTransactionType()
     {
         return Option\Transaction::SALE;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureRequestOptions()
     {
         $this

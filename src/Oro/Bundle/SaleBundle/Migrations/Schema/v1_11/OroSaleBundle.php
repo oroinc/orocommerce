@@ -13,9 +13,7 @@ class OroSaleBundle implements Migration, DatabasePlatformAwareInterface
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateOroSaleQuoteDemandTable($schema);

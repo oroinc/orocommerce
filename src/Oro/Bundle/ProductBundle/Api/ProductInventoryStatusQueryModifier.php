@@ -31,9 +31,7 @@ class ProductInventoryStatusQueryModifier implements QueryModifierInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {
         if ($skipRootEntity) {

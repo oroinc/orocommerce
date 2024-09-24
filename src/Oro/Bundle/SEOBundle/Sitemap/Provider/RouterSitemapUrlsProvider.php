@@ -33,9 +33,7 @@ class RouterSitemapUrlsProvider implements UrlItemsProviderInterface
         $this->routes = $routes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getUrlItems(WebsiteInterface $website, $version)
     {
         foreach ($this->getAllowUrls() as $url) {

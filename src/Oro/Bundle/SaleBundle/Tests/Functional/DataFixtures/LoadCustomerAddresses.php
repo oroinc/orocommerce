@@ -65,9 +65,7 @@ class LoadCustomerAddresses extends BaseLoadCustomerAddresses
         ]
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadUserData::class];

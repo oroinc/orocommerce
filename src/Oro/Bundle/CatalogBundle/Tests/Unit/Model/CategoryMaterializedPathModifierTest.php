@@ -20,6 +20,7 @@ class CategoryMaterializedPathModifierTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryMaterializedPathModifier */
     private $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

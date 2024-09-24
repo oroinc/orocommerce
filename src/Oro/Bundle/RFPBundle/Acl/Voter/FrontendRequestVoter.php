@@ -16,7 +16,6 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  */
 class FrontendRequestVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::EDIT];
 
     private FrontendHelper $frontendHelper;
@@ -32,9 +31,7 @@ class FrontendRequestVoter extends AbstractEntityVoter implements ServiceSubscri
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
@@ -42,18 +39,14 @@ class FrontendRequestVoter extends AbstractEntityVoter implements ServiceSubscri
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityIdentifier($object)
     {
         // disallow EDIT for all Requests, so id does not matter
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if ($this->frontendHelper->isFrontendRequest() && $this->hasActiveWorkflows('b2b_rfq_frontoffice_flow')) {

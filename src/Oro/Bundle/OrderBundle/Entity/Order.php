@@ -326,6 +326,7 @@ class Order implements
     }
 
     #[ORM\PostLoad]
+    #[\Override]
     public function loadMultiCurrencyFields()
     {
         $this->subtotal = MultiCurrency::create(
@@ -344,6 +345,7 @@ class Order implements
      * @return void
      */
     #[ORM\PreFlush]
+    #[\Override]
     public function updateMultiCurrencyFields()
     {
         $this->fixCurrencyInMultiCurrencyFields();
@@ -354,6 +356,7 @@ class Order implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->identifier;
@@ -387,17 +390,13 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceDocument()
     {
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceDocumentIdentifier()
     {
         return $this->identifier;
@@ -542,9 +541,7 @@ class Order implements
         return $this->shipUntil;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setCurrency($currency)
     {
         $this->currency = $currency;
@@ -554,9 +551,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCurrency()
     {
         return $this->currency;
@@ -598,9 +593,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal()
     {
         return $this->subtotal->getValue();
@@ -752,14 +745,13 @@ class Order implements
      *
      * @return Collection|OrderLineItem[]
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->lineItems;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEmail()
     {
         if (null !== $this->getCustomerUser()) {
@@ -769,9 +761,7 @@ class Order implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEmailHolderName()
     {
         if (null !== $this->getCustomerUser()) {
@@ -784,9 +774,7 @@ class Order implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;
@@ -794,17 +782,13 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingCost()
     {
         $amount = $this->estimatedShippingCostAmount;
@@ -1016,6 +1000,7 @@ class Order implements
      *
      * @return Collection|OrderDiscount[]
      */
+    #[\Override]
     public function getDiscounts()
     {
         return $this->discounts;
@@ -1045,9 +1030,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethod()
     {
         return $this->shippingMethod;
@@ -1064,9 +1047,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethodType()
     {
         return $this->shippingMethodType;

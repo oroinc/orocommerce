@@ -31,9 +31,7 @@ class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInt
         'isUpcoming'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $duplicateListener = $this->container->get('oro_inventory.event_listener.product_duplicate');

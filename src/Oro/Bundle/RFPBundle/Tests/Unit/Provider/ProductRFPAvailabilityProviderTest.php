@@ -26,6 +26,7 @@ class ProductRFPAvailabilityProviderTest extends TestCase
 
     private ProductRFPAvailabilityProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

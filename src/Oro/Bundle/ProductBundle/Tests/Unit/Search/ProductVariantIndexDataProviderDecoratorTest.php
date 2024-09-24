@@ -26,6 +26,7 @@ class ProductVariantIndexDataProviderDecoratorTest extends \PHPUnit\Framework\Te
     /** @var ProductVariantIndexDataProviderDecorator */
     private $productVariantProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->originalProvider = $this->createMock(ProductIndexDataProviderInterface::class);

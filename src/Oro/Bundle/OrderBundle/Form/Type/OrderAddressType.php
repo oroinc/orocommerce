@@ -33,9 +33,7 @@ class OrderAddressType extends AbstractType
         $this->addressSecurityProvider = $addressSecurityProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $addressType = $options['addressType'];
@@ -75,9 +73,7 @@ class OrderAddressType extends AbstractType
         }, -10);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $isManualEditGranted = $this->addressSecurityProvider->isManualEditGranted($options['addressType']);
@@ -86,9 +82,7 @@ class OrderAddressType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -101,25 +95,18 @@ class OrderAddressType extends AbstractType
             ->setAllowedTypes('object', CustomerOwnerAwareInterface::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return AddressType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

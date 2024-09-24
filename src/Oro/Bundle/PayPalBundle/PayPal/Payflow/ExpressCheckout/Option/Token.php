@@ -10,17 +10,13 @@ class Token extends AbstractOption implements OptionsDependentInterface
 {
     const TOKEN = 'TOKEN';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         return isset($options[Action::ACTION]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         if (in_array($options[Action::ACTION], [Action::GET_EC_DETAILS, Action::DO_EC], true)) {

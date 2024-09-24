@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class NotEmptyProductKitItemsCollectionValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): NotEmptyProductKitItemsCollectionValidator
     {
         return new NotEmptyProductKitItemsCollectionValidator();

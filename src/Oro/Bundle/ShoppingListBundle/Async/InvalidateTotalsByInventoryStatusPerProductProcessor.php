@@ -39,17 +39,13 @@ class InvalidateTotalsByInventoryStatusPerProductProcessor implements
         $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [InvalidateTotalsByInventoryStatusPerProductTopic::getName()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $data = $message->getBody();

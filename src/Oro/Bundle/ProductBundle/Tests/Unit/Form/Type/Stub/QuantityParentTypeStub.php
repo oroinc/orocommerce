@@ -14,7 +14,7 @@ class QuantityParentTypeStub extends AbstractType
     /** @var array */
     protected $quantityOptions = [];
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -23,7 +23,7 @@ class QuantityParentTypeStub extends AbstractType
             ->add('quantityField', QuantityType::class, $this->quantityOptions);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

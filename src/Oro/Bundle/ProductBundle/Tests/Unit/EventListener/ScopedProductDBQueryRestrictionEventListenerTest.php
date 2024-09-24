@@ -15,6 +15,7 @@ class ScopedProductDBQueryRestrictionEventListenerTest extends ProductDBQueryRes
     /**
      * @return ScopedProductDBQueryRestrictionEventListener
      */
+    #[\Override]
     protected function createListener()
     {
         $listener = new ScopedProductDBQueryRestrictionEventListener(
@@ -30,6 +31,7 @@ class ScopedProductDBQueryRestrictionEventListenerTest extends ProductDBQueryRes
     /**
      * @dataProvider onQueryDataProvider
      */
+    #[\Override]
     public function testOnQuery(bool $isFrontend, ?string $frontendPath, ?string $backendPath)
     {
         $this->event->expects($this->any())

@@ -31,6 +31,7 @@ class ProductKitItemType extends AbstractType
     ) {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -82,6 +83,7 @@ class ProductKitItemType extends AbstractType
             ]);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $kitItem = $form->getData();
@@ -102,6 +104,7 @@ class ProductKitItemType extends AbstractType
         ];
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -109,6 +112,7 @@ class ProductKitItemType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_kit_item';

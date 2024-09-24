@@ -14,8 +14,8 @@ class DiscountTypeValidator extends ConstraintValidator
      * @param OrderDiscount|object $value
      * @param DiscountType         $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (null === $value) {

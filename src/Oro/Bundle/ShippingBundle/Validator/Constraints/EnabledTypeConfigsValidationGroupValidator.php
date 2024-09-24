@@ -13,6 +13,7 @@ class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
      * @param array $value
      * @param EnabledTypeConfigsValidationGroup|Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!is_array($value) && !($value instanceof \Traversable && $value instanceof \Countable)) {

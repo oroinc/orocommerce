@@ -28,6 +28,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductSelectionGridExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);

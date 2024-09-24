@@ -25,6 +25,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
     /** @var ProductUnitPrecisionType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
@@ -35,9 +36,7 @@ class ProductUnitPrecisionTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

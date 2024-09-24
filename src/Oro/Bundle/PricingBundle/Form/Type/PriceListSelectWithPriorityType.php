@@ -14,6 +14,7 @@ class PriceListSelectWithPriorityType extends AbstractType
     const PRICE_LIST_FIELD = 'priceList';
     const SORT_ORDER_FIELD = 'sort_order';
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -30,22 +31,18 @@ class PriceListSelectWithPriorityType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

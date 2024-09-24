@@ -27,16 +27,19 @@ class RebuildCombinedPriceListsTopic extends AbstractTopic
         $this->registry = $registry;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Updates combined price lists in case of changes in structure of original price lists.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver->define('force')

@@ -28,9 +28,7 @@ class LoadEmployeesToIndex extends AbstractFixture implements ContainerAwareInte
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->data as $reference => $data) {

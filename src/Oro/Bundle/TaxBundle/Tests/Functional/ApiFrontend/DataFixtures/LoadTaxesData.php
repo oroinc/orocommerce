@@ -20,9 +20,7 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -32,9 +30,7 @@ class LoadTaxesData extends AbstractFixture implements DependentFixtureInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->createTaxRule(

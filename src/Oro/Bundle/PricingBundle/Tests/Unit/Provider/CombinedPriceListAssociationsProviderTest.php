@@ -15,6 +15,7 @@ class CombinedPriceListAssociationsProviderTest extends TestCase
     private EventDispatcherInterface|MockObject $eventDispatcher;
     private CombinedPriceListAssociationsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventFactory = $this->createMock(CollectEventFactoryInterface::class);

@@ -25,9 +25,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions(): array
     {
         return [
@@ -72,9 +70,7 @@ class DigitalAssetExtension extends AbstractExtension implements ServiceSubscrib
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

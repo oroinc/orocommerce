@@ -22,9 +22,7 @@ class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCa
     /** @var CategoryStub */
     protected $category;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryFormExtension = new CategoryQuantityToOrderFormExtension();

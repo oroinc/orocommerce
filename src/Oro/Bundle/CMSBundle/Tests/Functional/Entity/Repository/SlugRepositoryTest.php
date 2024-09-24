@@ -25,6 +25,7 @@ class SlugRepositoryTest extends WebTestCase
      */
     protected $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

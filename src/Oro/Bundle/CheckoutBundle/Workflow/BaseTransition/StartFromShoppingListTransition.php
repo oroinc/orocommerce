@@ -30,6 +30,7 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         $shoppingList = $this->getShoppingList($workflowItem);
@@ -66,6 +67,7 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
         return true;
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         $result = $this->startShoppingListCheckout->execute($this->getShoppingList($workflowItem), false, true);

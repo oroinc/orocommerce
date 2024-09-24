@@ -21,9 +21,7 @@ class CodeGenerator implements CodeGeneratorInterface
     const ALPHABETIC_TEMPLATE = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const ALPHANUMERIC_TEMPLATE = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function generateOne(CodeGenerationOptions $options): string
     {
         $string = $this->generateRandomString($options->getCodeLength(), $options->getCodeType());
@@ -35,9 +33,7 @@ class CodeGenerator implements CodeGeneratorInterface
         return $options->getCodePrefix() . $string . $options->getCodeSuffix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function generateUnique(CodeGenerationOptions $options, int $count): array
     {
         $codes = [];

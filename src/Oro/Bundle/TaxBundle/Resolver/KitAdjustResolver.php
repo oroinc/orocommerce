@@ -22,6 +22,7 @@ class KitAdjustResolver implements ResolverInterface
     ) {
     }
 
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         if (!$this->isApplicable($taxable)) {

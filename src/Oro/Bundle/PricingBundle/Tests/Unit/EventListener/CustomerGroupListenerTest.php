@@ -24,9 +24,7 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
      */
     protected $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,25 +39,19 @@ class CustomerGroupListenerTest extends AbstractPriceListCollectionAwareListener
         $this->listener->addFeature('feature1');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRelationClass()
     {
         return PriceListToCustomerGroup::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFallbackClass()
     {
         return PriceListCustomerGroupFallback::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRelationRepositoryClass()
     {
         return PriceListToCustomerGroupRepository::class;

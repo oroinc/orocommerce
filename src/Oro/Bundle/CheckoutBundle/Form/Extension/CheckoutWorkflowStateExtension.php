@@ -19,7 +19,7 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
         $this->checkoutErrorHandler = $checkoutErrorHandler;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         /** @var FormErrorIterator $errors */
@@ -28,7 +28,7 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
         $view->vars['errors'] = $this->checkoutErrorHandler->filterWorkflowStateError($errors);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [WorkflowTransitionType::class];

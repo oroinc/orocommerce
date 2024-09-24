@@ -47,9 +47,7 @@ abstract class AbstractShardQueryExecutor implements ShardQueryExecutorInterface
         $this->uniqueFields[$className] = $fields;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     abstract public function execute($className, array $fields, QueryBuilder $selectQueryBuilder);
 
     /**

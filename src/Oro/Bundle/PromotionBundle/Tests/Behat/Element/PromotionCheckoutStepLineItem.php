@@ -6,9 +6,7 @@ use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStepLineItem;
 
 class PromotionCheckoutStepLineItem extends CheckoutStepLineItem implements DiscountAwareLineItemInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscount()
     {
         $discount = $this->find(

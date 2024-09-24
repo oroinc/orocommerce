@@ -9,10 +9,10 @@ use Psr\Log\LoggerInterface;
 class SetDefaultPaymentMethodsConfigsRuleOrganizationQuery extends ParametrizedSqlMigrationQuery
 {
     /**
-     * {@inheritdoc}
      *
      * @throws \Exception
      */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -22,10 +22,10 @@ class SetDefaultPaymentMethodsConfigsRuleOrganizationQuery extends ParametrizedS
     }
 
     /**
-     * {@inheritdoc}
      *
      * @throws \Exception
      */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

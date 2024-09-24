@@ -24,6 +24,7 @@ class UrlKeyValueCacheTest extends \PHPUnit\Framework\TestCase
     /** @var UrlKeyValueCache */
     private $urlCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->persistentCache = $this->createMock(CacheItemPoolInterface::class);

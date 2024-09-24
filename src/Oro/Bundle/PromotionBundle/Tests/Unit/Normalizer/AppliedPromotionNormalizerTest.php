@@ -35,6 +35,7 @@ class AppliedPromotionNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var AppliedPromotionNormalizer */
     private $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->ruleNormalizer = $this->createMock(RuleNormalizer::class);

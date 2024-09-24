@@ -16,6 +16,7 @@ class ProductPriceCriteriaDataExtractorTest extends TestCase
 
     private ProductPriceCriteriaDataExtractorInterface|MockObject $innerExtractor2;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerExtractor1 = $this->createMock(ProductPriceCriteriaDataExtractorInterface::class);

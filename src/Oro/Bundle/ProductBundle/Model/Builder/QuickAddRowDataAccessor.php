@@ -13,72 +13,72 @@ use Oro\Bundle\ProductBundle\Model\QuickAddRowCollection;
 class QuickAddRowDataAccessor implements ProductMapperDataAccessorInterface
 {
     /**
-     * {@inheritDoc}
      *
      * @param QuickAddRowCollection $collection
      * @param int                   $itemIndex
      *
      * @return QuickAddRow
      */
+    #[\Override]
     public function getItem(object $collection, int $itemIndex): object
     {
         return $collection[$itemIndex];
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param QuickAddRow $item
      *
      * @return string|null
      */
+    #[\Override]
     public function getItemSku(object $item): ?string
     {
         return $item->getSku();
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param QuickAddRow $item
      *
      * @return string|null
      */
+    #[\Override]
     public function getItemOrganizationName(object $item): ?string
     {
         return $item->getOrganization();
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param Product $product
      *
      * @return string|null
      */
+    #[\Override]
     public function getProductSku(mixed $product): ?string
     {
         return $product->getSku();
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param Product $product
      *
      * @return int|null
      */
+    #[\Override]
     public function getProductOrganizationId(mixed $product): ?int
     {
         return $product->getOrganization()?->getId();
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param QuickAddRow $item
      * @param Product     $product
      */
+    #[\Override]
     public function updateItem(object $item, mixed $product): void
     {
         if (null === $item->getProduct()) {

@@ -19,6 +19,7 @@ class OrderPaymentTermAclExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermAssociationProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $authorizationChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTermAssociationProvider = $this->createMock(PaymentTermAssociationProvider::class);

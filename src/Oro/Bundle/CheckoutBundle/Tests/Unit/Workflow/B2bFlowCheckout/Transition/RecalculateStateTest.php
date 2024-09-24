@@ -17,6 +17,7 @@ class RecalculateStateTest extends TestCase
 
     private RecalculateState $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->updateShippingPrice = $this->createMock(UpdateShippingPriceInterface::class);

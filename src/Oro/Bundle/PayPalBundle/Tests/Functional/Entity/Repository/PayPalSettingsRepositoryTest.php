@@ -11,6 +11,7 @@ class PayPalSettingsRepositoryTest extends WebTestCase
 {
     private PayPalSettingsRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

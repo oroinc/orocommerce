@@ -26,9 +26,7 @@ class LoadPriceListToProductWithoutPrices extends AbstractFixture implements Dep
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->relations as $relationData) {
@@ -46,9 +44,7 @@ class LoadPriceListToProductWithoutPrices extends AbstractFixture implements Dep
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

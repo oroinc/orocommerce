@@ -26,9 +26,7 @@ class ProductExpressionServicesPass implements CompilerPassInterface
     const FIELDS_PROVIDER = 'oro_product.expression.fields_provider';
     const AUTOCOMPLETE_FIELDS_PROVIDER = 'oro_product.autocomplete_fields_provider';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if ($container->hasDefinition(self::EXPRESSION_PARSER)) {

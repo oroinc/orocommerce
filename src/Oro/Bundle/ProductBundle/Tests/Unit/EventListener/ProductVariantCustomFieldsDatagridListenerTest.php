@@ -84,6 +84,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
     /** @var \PHPUnit\Framework\MockObject\MockObject|DoctrineHelper */
     private $doctrineHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

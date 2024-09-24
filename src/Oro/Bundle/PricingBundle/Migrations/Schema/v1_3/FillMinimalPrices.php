@@ -12,9 +12,7 @@ class FillMinimalPrices implements MigrationQuery, ConnectionAwareInterface
 {
     use ConnectionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -23,9 +21,7 @@ class FillMinimalPrices implements MigrationQuery, ConnectionAwareInterface
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

@@ -23,9 +23,6 @@ class CategoryTreeHandler extends AbstractTreeHandler
     /** @var MasterCatalogRootProviderInterface */
     private $masterCatalogRootProvider;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(
         $entityClass,
         ManagerRegistry $managerRegistry,
@@ -40,9 +37,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
         $this->masterCatalogRootProvider = $masterCatalogRootProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getNodes($root, $includeRoot)
     {
         return $this->categoryTreeProvider->getCategories(
@@ -64,9 +59,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
         return $this->formatTree($tree, $root, $includeRoot);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function moveProcessing($entityId, $parentId, $position)
     {
         /** @var Category $category */
@@ -101,6 +94,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
      * @param Category $entity
      * @return array
      */
+    #[\Override]
     protected function formatEntity($entity)
     {
         return [

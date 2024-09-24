@@ -31,6 +31,7 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
     /** @var OrderMapper */
     private $mapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);

@@ -49,9 +49,7 @@ class UpdatePriceListLexemes implements ProcessorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         $priceLists = $context->get(self::PRICE_LISTS);

@@ -18,6 +18,7 @@ class ProductUnitFieldsSettingsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->unitVisibility = $this->createMock(ProductUnitFieldsSettingsInterface::class);

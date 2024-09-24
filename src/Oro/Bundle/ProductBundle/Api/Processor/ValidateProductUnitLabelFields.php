@@ -15,9 +15,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ValidateProductUnitLabelFields implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

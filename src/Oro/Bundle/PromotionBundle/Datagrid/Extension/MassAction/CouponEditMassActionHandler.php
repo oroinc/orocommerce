@@ -41,9 +41,7 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
         $this->formFactory = $formFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
         $this->formData = null;
@@ -51,6 +49,7 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
         return parent::handle($args);
     }
 
+    #[\Override]
     protected function execute(Coupon $coupon, MassActionHandlerArgs $args)
     {
         $form = $this->formFactory->create(BaseCouponType::class, $coupon);
@@ -78,9 +77,7 @@ class CouponEditMassActionHandler extends AbstractCouponMassActionHandler
         return $this->formData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getResponse($entitiesCount)
     {
         $successful = $entitiesCount > 0;

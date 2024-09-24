@@ -20,9 +20,7 @@ class NotBlankOneOfValidator extends ConstraintValidator
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof NotBlankOneOf) {

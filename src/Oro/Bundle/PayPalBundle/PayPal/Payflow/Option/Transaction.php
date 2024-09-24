@@ -18,7 +18,7 @@ class Transaction extends AbstractOption
     const VOICE_AUTHORIZATION = 'F';
     const VOID = 'V';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

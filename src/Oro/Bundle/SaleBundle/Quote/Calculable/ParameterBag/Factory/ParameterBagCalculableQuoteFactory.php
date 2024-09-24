@@ -8,9 +8,7 @@ use Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\ParameterBagCalculableQu
 
 class ParameterBagCalculableQuoteFactory implements CalculableQuoteFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createCalculableQuote(ArrayCollection $lineItems)
     {
         return new ParameterBagCalculableQuote(

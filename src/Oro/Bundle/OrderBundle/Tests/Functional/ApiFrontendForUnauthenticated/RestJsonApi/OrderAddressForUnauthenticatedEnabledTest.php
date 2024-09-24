@@ -8,6 +8,7 @@ class OrderAddressForUnauthenticatedEnabledTest extends OrderAddressForUnauthent
 {
     use UnauthenticatedEnabledTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

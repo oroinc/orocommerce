@@ -12,9 +12,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class VisibilityTypeValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createValidator()
     {
         return new VisibilityTypeValidator();

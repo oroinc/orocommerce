@@ -19,6 +19,7 @@ class TimeInTransitCacheProviderFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var TimeInTransitCacheProviderFactory */
     private $timeInTransitCacheProviderFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(AbstractAdapter::class);

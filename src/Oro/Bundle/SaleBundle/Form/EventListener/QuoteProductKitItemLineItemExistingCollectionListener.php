@@ -28,6 +28,7 @@ class QuoteProductKitItemLineItemExistingCollectionListener implements EventSubs
         $this->entryOptions = $entryOptions;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

@@ -22,6 +22,7 @@ class CustomFieldProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CustomFieldProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);

@@ -25,6 +25,7 @@ class DatagridLineItemsDataEventTest extends TestCase
 
     private DatagridLineItemsDataEvent $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItem1 = $this->createMock(ProductLineItemInterface::class);

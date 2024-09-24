@@ -20,6 +20,7 @@ class PriceListsAssignmentProvider implements PriceListsAssignmentProviderInterf
         $this->providers = $providers;
     }
 
+    #[\Override]
     public function getPriceListAssignments(): ?array
     {
         $assignments = [];

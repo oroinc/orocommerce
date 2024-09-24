@@ -52,9 +52,7 @@ class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
         return $this->tableAliasByColumn;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addSelectColumn(
         string $entityClass,
         string $tableAlias,
@@ -69,9 +67,7 @@ class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
         $this->context()->getQueryBuilder()->addSelect($columnExpr);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function saveTableAliases(array $tableAliases): void
     {
         $context = $this->context();
@@ -104,33 +100,25 @@ class QueryConverter extends QueryBuilderGroupingOrmQueryConverter
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addWhereStatement(): void
     {
         // do nothing, conditions restrictions should be added in query compiler
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addGroupByColumn(string $columnAlias): void
     {
         // do nothing, grouping is not allowed
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addOrderByColumn(string $columnAlias, string $columnSorting): void
     {
         // do nothing, order could not change results
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function saveColumnAliases(array $columnAliases): void
     {
         // do nothing

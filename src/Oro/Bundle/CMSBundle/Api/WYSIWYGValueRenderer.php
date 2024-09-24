@@ -31,9 +31,7 @@ class WYSIWYGValueRenderer implements ServiceSubscriberInterface
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         /**

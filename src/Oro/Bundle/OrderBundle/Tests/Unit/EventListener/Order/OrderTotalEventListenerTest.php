@@ -19,6 +19,7 @@ class OrderTotalEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderTotalEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProvider = $this->createMock(TotalProvider::class);

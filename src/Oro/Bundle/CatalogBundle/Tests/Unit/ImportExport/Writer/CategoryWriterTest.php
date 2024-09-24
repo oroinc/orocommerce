@@ -20,6 +20,7 @@ class CategoryWriterTest extends EntityWriterTest
     /** @var CategoryRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $categoryRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +38,7 @@ class CategoryWriterTest extends EntityWriterTest
     /**
      * @dataProvider configurationProvider
      */
+    #[\Override]
     public function testWrite(array $configuration): void
     {
         $this->mockDoctrineHelper();
@@ -54,6 +56,7 @@ class CategoryWriterTest extends EntityWriterTest
         parent::testWrite($configuration);
     }
 
+    #[\Override]
     public function testWriteException(): void
     {
         $this->treeListener->expects($this->exactly(2))
@@ -63,6 +66,7 @@ class CategoryWriterTest extends EntityWriterTest
         parent::testWriteException();
     }
 
+    #[\Override]
     public function testWriteDatabaseExceptionDeadlock(): void
     {
         $this->mockDoctrineHelper();
@@ -74,6 +78,7 @@ class CategoryWriterTest extends EntityWriterTest
         parent::testWriteDatabaseExceptionDeadlock();
     }
 
+    #[\Override]
     public function testMissingClassName(): void
     {
         $this->expectException(\RuntimeException::class);
@@ -86,6 +91,7 @@ class CategoryWriterTest extends EntityWriterTest
         parent::testMissingClassName();
     }
 
+    #[\Override]
     public function testClassResolvedOnce(): void
     {
         $this->mockDoctrineHelper();

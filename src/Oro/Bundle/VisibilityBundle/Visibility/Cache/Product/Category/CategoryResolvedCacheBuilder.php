@@ -44,9 +44,7 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
         $this->positionChangeCategorySubtreeCacheBuilder = $positionChangeCategorySubtreeCacheBuilder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         /** @var CategoryVisibility $visibilitySettings */
@@ -103,26 +101,20 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
         $this->triggerCategoriesReindexation($categories);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         return $visibilitySettings instanceof CategoryVisibility;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function categoryPositionChanged(Category $category)
     {
         $categories = $this->positionChangeCategorySubtreeCacheBuilder->categoryPositionChanged($category);
         $this->triggerCategoriesReindexation($categories);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCache(Scope $scope = null)
     {
         $resolvedRepository = $this->getCategoryRepository();

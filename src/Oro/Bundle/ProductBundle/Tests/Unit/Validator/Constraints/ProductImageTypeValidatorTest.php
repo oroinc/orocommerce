@@ -20,6 +20,7 @@ class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $translator;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -33,6 +34,7 @@ class ProductImageTypeValidatorTest extends ConstraintValidatorTestCase
     /**
      * @return ProductImageTypeValidator
      */
+    #[\Override]
     protected function createValidator()
     {
         $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);

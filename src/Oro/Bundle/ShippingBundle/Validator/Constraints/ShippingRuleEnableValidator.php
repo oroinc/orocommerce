@@ -25,9 +25,7 @@ class ShippingRuleEnableValidator extends ConstraintValidator
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ShippingRuleEnable) {

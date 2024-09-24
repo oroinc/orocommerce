@@ -27,6 +27,7 @@ class VisibilityCacheBuildCommand extends Command
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Rebuilds the product visibility cache.');
@@ -36,6 +37,7 @@ class VisibilityCacheBuildCommand extends Command
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('<info>Start the process of building the cache</info>');

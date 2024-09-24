@@ -34,9 +34,7 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
         $this->imageResizeManager = $imageResizeManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $data = $message->getBody();
@@ -58,9 +56,7 @@ class ResizeProductImageMessageProcessor implements MessageProcessorInterface, T
         return self::ACK;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [ResizeProductImageTopic::getName()];

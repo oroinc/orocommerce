@@ -14,6 +14,7 @@ class MoneyOrderPaymentMethodViewFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new MoneyOrderPaymentMethodViewFactory();

@@ -13,6 +13,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var ContentNodeFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

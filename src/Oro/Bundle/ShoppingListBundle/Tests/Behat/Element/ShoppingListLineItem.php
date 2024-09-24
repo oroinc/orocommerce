@@ -6,9 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class ShoppingListLineItem extends Element implements LineItemInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSKU(): string
     {
         return $this->getElement('ShoppingListLineItemProductSku')->getText();

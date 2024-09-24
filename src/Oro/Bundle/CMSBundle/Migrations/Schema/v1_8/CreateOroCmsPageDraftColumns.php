@@ -11,6 +11,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class CreateOroCmsPageDraftColumns implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroCmsPageDraftColumns($schema);

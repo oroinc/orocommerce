@@ -23,12 +23,14 @@ class QuoteControllerTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
     use OperationAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadQuoteAddressData::class]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = self::getConfigManager();

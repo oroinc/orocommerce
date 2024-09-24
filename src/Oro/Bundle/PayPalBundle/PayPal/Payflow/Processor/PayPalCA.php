@@ -17,17 +17,13 @@ class PayPalCA extends PayPal
      */
     const NAME = 'PayPalCA';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::CODE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCode()
     {
         return self::NAME;

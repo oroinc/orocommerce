@@ -14,9 +14,7 @@ class SetDefaultProductSearchSorting extends SetDefaultSorting
 {
     public const RELEVANCE_SORT_FIELD = 'relevance';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getDefaultValue(EntityDefinitionConfig $config, ?SortersConfig $configOfSorters): array
     {
         $orderBy = $config->getOrderBy();

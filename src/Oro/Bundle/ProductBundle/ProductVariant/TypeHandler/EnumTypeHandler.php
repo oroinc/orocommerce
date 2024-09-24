@@ -23,9 +23,7 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createForm($fieldName, array $availability, array $options = [])
     {
         $options = array_merge($this->getOptions($fieldName, $availability), $options);
@@ -33,6 +31,7 @@ class EnumTypeHandler implements ProductVariantTypeHandlerInterface
         return $this->formFactory->createNamed($fieldName, EnumSelectType::class, null, $options);
     }
 
+    #[\Override]
     public function getType(): string
     {
         return self::TYPE;

@@ -10,17 +10,13 @@ use Oro\Bundle\PricingBundle\Entity\EntityListener\CategoryEntityListener;
 
 class CategoryEntityListenerTest extends AbstractRuleEntityListenerTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClassName(): string
     {
         return Category::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getListener(): AbstractRuleEntityListener
     {
         return new CategoryEntityListener(

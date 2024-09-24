@@ -33,9 +33,7 @@ class ValidateCheckoutAddresses extends AbstractCondition implements ContextAcce
         $this->validator = $validator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('checkout', $options)) {
@@ -51,25 +49,19 @@ class ValidateCheckoutAddresses extends AbstractCondition implements ContextAcce
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function doEvaluate($context)
     {
         return $this->isConditionAllowed($context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var Checkout $checkout */
@@ -103,17 +95,13 @@ class ValidateCheckoutAddresses extends AbstractCondition implements ContextAcce
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->checkout]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->checkout], $factoryAccessor);

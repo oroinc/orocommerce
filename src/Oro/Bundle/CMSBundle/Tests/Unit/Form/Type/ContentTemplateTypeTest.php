@@ -27,9 +27,7 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
 {
     use WysiwygAwareTestTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [
@@ -48,9 +46,7 @@ class ContentTemplateTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);

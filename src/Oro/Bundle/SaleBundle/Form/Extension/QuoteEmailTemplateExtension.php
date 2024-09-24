@@ -32,9 +32,7 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
         $this->featureChecker = $featureChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(
@@ -80,9 +78,7 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [EmailType::class];

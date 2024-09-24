@@ -14,6 +14,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     /** @var Client */
     protected $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
@@ -24,9 +25,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->loadFixtures([LoadCombinedProductPrices::class]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductPricesByCustomerActionDataProvider(): array
     {
         return [

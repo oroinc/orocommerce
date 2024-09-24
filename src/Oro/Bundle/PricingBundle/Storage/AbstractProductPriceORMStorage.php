@@ -32,9 +32,7 @@ abstract class AbstractProductPriceORMStorage implements ProductPriceStorageInte
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
@@ -66,9 +64,7 @@ abstract class AbstractProductPriceORMStorage implements ProductPriceStorageInte
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
         $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);

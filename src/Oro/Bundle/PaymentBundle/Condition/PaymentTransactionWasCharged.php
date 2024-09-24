@@ -31,9 +31,7 @@ class PaymentTransactionWasCharged extends AbstractCondition implements ContextA
         $this->transactionRepository = $transactionRepository;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('transaction', $options)) {
@@ -47,9 +45,7 @@ class PaymentTransactionWasCharged extends AbstractCondition implements ContextA
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var PaymentTransaction $transaction */
@@ -63,9 +59,7 @@ class PaymentTransactionWasCharged extends AbstractCondition implements ContextA
         return !empty($captureTransactions);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;

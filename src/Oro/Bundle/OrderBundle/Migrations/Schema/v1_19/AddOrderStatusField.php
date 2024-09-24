@@ -13,9 +13,7 @@ class AddOrderStatusField implements Migration, ExtendExtensionAwareInterface
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->extendExtension->addEnumField(

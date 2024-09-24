@@ -8,6 +8,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibil
 
 class CustomerGroupProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -16,6 +17,7 @@ class CustomerGroupProductVisibilityRepositoryTest extends AbstractProductVisibi
         $this->repository = self::getContainer()->get('doctrine')->getRepository(CustomerGroupProductVisibility::class);
     }
 
+    #[\Override]
     public function setToDefaultWithoutCategoryDataProvider(): array
     {
         return [

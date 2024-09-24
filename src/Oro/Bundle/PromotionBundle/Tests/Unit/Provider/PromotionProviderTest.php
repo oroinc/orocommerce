@@ -36,6 +36,7 @@ class PromotionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PromotionProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextDataConverter = $this->createMock(ContextDataConverterInterface::class);

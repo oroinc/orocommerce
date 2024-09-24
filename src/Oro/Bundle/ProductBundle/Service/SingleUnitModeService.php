@@ -17,17 +17,13 @@ class SingleUnitModeService implements SingleUnitModeServiceInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSingleUnitMode()
     {
         return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::SINGLE_UNIT_MODE));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSingleUnitModeCodeVisible()
     {
         if (!$this->isSingleUnitMode()) {
@@ -36,9 +32,7 @@ class SingleUnitModeService implements SingleUnitModeServiceInterface
         return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::SINGLE_UNIT_MODE_SHOW_CODE));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultUnitCode()
     {
         return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));

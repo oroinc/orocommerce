@@ -16,24 +16,25 @@ class BasicProductUnitFieldsSettings implements ProductUnitFieldsSettingsInterfa
     ) {
     }
 
+    #[\Override]
     public function isProductUnitSelectionVisible(Product $product): bool
     {
         return true;
     }
 
+    #[\Override]
     public function isProductPrimaryUnitVisible(?Product $product = null): bool
     {
         return true;
     }
 
+    #[\Override]
     public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAvailablePrimaryUnitChoices(?Product $product = null): array
     {
         return $this->doctrineHelper->getEntityRepository(ProductUnit::class)->findAll();

@@ -28,9 +28,7 @@ class CombinedProductPriceORMStorage extends AbstractProductPriceORMStorage
         $this->priceListTreeHandler = $priceListTreeHandler;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getRepository(): BaseProductPriceRepository
     {
         return $this->registry
@@ -38,9 +36,7 @@ class CombinedProductPriceORMStorage extends AbstractProductPriceORMStorage
             ->getRepository(CombinedProductPrice::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPriceListByScopeCriteria(ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
         return $this->priceListTreeHandler->getPriceList($scopeCriteria->getCustomer(), $scopeCriteria->getWebsite());

@@ -36,9 +36,7 @@ class PaymentTermProvider implements PaymentTermProviderInterface
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentTerm(Customer $customer)
     {
         $paymentTerm = $this->getCustomerPaymentTerm($customer);
@@ -50,9 +48,7 @@ class PaymentTermProvider implements PaymentTermProviderInterface
         return $paymentTerm;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCurrentPaymentTerm()
     {
         $token = $this->tokenStorage->getToken();
@@ -80,25 +76,19 @@ class PaymentTermProvider implements PaymentTermProviderInterface
         return $paymentTermEvent->getPaymentTerm();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerPaymentTerm(Customer $customer)
     {
         return $this->paymentTermAssociationProvider->getPaymentTerm($customer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerGroupPaymentTerm(CustomerGroup $customerGroup)
     {
         return $this->paymentTermAssociationProvider->getPaymentTerm($customerGroup);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
         $customer = $customerOwnerAware->getCustomer();
@@ -109,9 +99,7 @@ class PaymentTermProvider implements PaymentTermProviderInterface
         return $this->getCustomerPaymentTerm($customer);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerGroupPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
         $customer = $customerOwnerAware->getCustomer();
@@ -122,9 +110,7 @@ class PaymentTermProvider implements PaymentTermProviderInterface
         return $this->getCustomerGroupPaymentTerm($customer->getGroup());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getObjectPaymentTerm($object)
     {
         if (!is_object($object)) {

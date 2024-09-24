@@ -30,6 +30,7 @@ class OrderLineItemAfterDiscountsMapper implements TaxMapperInterface
     /**
      * @param object|OrderLineItem $lineItem
      */
+    #[\Override]
     public function map(object $lineItem): Taxable
     {
         $taxable = $this->innerMapper->map($lineItem);

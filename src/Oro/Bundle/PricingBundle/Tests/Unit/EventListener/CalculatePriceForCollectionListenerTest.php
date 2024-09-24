@@ -23,6 +23,7 @@ class CalculatePriceForCollectionListenerTest extends \PHPUnit\Framework\TestCas
     /** @var CalculatePriceForCollectionListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quickAddCollectionPriceProvider = $this->createMock(QuickAddCollectionPriceProvider::class);

@@ -16,9 +16,7 @@ class AllowedQuoteDemandQuantity extends Constraint
      */
     public $lessQuantityMessage = 'oro.sale.quoteproductoffer.configurable.quantity.less';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

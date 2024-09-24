@@ -37,6 +37,7 @@ class FrontendShoppingListProductsProviderTest extends TestCase
 
     private FrontendShoppingListProductsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);

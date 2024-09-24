@@ -28,6 +28,7 @@ class ZipCodeMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var ZipCodeMatcher */
     private $matcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);

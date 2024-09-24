@@ -34,6 +34,7 @@ class CheckoutShipUntilFormExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(UpcomingProductProvider::class);

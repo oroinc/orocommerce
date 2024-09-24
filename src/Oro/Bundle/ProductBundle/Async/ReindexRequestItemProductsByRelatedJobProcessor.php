@@ -51,6 +51,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         $this->batchSize = $batchSize;
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
@@ -149,6 +150,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         );
     }
 
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [ReindexRequestItemProductsByRelatedJobIdTopic::getName()];

@@ -13,6 +13,7 @@ class PromotionEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 
     private Promotion $promotion;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new PromotionEntityNameProvider();

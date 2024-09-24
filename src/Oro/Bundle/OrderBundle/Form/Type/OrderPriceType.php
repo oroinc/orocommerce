@@ -13,14 +13,13 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class OrderPriceType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add('is_price_changed', HiddenType::class, ['mapped' => false]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return PriceType::class;

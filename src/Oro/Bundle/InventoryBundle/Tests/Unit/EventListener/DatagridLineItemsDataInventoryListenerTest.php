@@ -31,6 +31,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
     private DatagridLineItemsDataInventoryListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->availabilityDate = new \DateTime();

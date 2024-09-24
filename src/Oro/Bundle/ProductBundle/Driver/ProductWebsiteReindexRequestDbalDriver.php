@@ -26,6 +26,7 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
     /**
      * @throws Exception
      */
+    #[\Override]
     public function insertMultipleRequests(
         int $relatedJobId,
         array $websiteIds,
@@ -60,6 +61,7 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
     /**
      * @throws Exception
      */
+    #[\Override]
     public function deleteProcessedRequestItems(int $relatedJobId, int $websiteId, array $productIds): int
     {
         if (empty($productIds)) {
@@ -85,6 +87,7 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
      * @return array|int[]
      * @throws Exception
      */
+    #[\Override]
     public function getWebsiteIdsByRelatedJobId(int $relatedJobId): array
     {
         $connection = $this->getConnection();
@@ -108,6 +111,7 @@ class ProductWebsiteReindexRequestDbalDriver implements ProductWebsiteReindexReq
     /**
      * @throws Exception
      */
+    #[\Override]
     public function getProductIdIteratorByRelatedJobIdAndWebsiteId(
         int $relatedJobId,
         int $websiteId,

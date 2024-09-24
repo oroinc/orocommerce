@@ -34,9 +34,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEnabledLocalizations(): array
     {
         $ids = array_map(function ($id) {
@@ -46,9 +44,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
         return $this->localizationManager->getLocalizations($ids);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultLocalization(): ?Localization
     {
         $localization = $this->localizationManager->getLocalization(
@@ -59,9 +55,9 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
     }
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function getCurrentLocalization(Website $website = null): ?Localization
     {
         $website = $this->getWebsite($website);
@@ -99,9 +95,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
         return $localization;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCurrentLocalizationByCustomerUser(
         CustomerUser $customerUser,
         Website $website = null
@@ -125,9 +119,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
         return $localization;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setCurrentLocalization(Localization $localization, Website $website = null): void
     {
         $website = $this->getWebsite($website);

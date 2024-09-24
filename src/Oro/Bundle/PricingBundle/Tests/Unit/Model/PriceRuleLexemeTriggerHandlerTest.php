@@ -29,6 +29,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceRuleLexemeTriggerHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceListTriggerHandler = $this->createMock(PriceListTriggerHandler::class);

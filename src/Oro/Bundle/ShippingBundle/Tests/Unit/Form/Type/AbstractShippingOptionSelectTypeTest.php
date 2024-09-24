@@ -175,9 +175,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

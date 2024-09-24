@@ -23,6 +23,7 @@ class RowTotalResolverTest extends TestCase
 
     private RowTotalResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);

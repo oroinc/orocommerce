@@ -10,17 +10,13 @@ use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
 class ProductImageFixture implements TemplateFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass()
     {
         return ProductImage::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData()
     {
         $productImage = new ProductImage();
@@ -42,17 +38,13 @@ class ProductImageFixture implements TemplateFixtureInterface
         return new \ArrayIterator(array($productImage));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntity($key)
     {
         return new ProductImage();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function fillEntityData($key, $entity)
     {
     }

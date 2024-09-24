@@ -13,9 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class UpdateContentVariantTypeWithExcludeSubcategories implements Migration
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateContentVariantEntity($schema);

@@ -12,6 +12,7 @@ class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
     /** @var WorkflowAwareManager|\PHPUnit\Framework\MockObject\MockObject */
     private $workflowAwareManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowAwareManager = $this->createMock(WorkflowAwareManager::class);
@@ -80,9 +81,7 @@ class WorkflowStepMapperTest extends AbstractCheckoutDiffMapperTest
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new WorkflowStepMapper($this->workflowAwareManager);

@@ -18,9 +18,7 @@ class BuildAddShoppingListItemsFormBuilder extends BuildCollectionFormBuilder
         parent::__construct($formHelper, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntryFormOptions(ChangeSubresourceContext $context): array
     {
         $entryFormOptions = parent::getEntryFormOptions($context);

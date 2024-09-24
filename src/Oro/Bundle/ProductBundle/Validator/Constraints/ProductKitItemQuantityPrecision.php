@@ -21,6 +21,7 @@ class ProductKitItemQuantityPrecision extends Constraint
 
     public string $maximumQuantityMessage = 'oro.product.productkititem.maximum_quantity.invalid_precision';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

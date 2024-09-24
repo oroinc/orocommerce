@@ -10,9 +10,7 @@ class ParameterBagShippingMethodValidatorResultError extends ParameterBag implem
 {
     const FIELD_MESSAGE = 'message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMessage()
     {
         return $this->get(self::FIELD_MESSAGE);

@@ -61,9 +61,7 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
         $formatter->format(self::VALUE, $this->createObject('item'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createObject(string $code): MeasureUnitInterface
     {
         $unit = new ProductUnit();
@@ -72,9 +70,7 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
         return $unit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createFormatter(): UnitValueFormatterInterface
     {
         $formatter = new UnitValueFormatter($this->translator, $this->numberFormatter);
@@ -83,9 +79,7 @@ class UnitValueFormatterTest extends UnitValueFormatterTestCase
         return $formatter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTranslationPrefix(): string
     {
         return self::TRANSLATION_PREFIX;

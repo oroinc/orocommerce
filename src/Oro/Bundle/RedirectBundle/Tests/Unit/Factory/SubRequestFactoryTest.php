@@ -15,6 +15,7 @@ class SubRequestFactoryTest extends TestCase
 
     private SubRequestFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);

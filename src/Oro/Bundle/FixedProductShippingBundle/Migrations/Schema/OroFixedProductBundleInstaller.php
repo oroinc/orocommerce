@@ -8,17 +8,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroFixedProductBundleInstaller implements Installation
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
         return 'v1_0';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroFixedProductTransportLabelTable($schema);

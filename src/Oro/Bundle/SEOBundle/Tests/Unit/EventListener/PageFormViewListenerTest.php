@@ -13,6 +13,7 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var PageFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

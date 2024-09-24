@@ -20,17 +20,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PageVariantTypeExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [PageVariantType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $pageContentVariantTypeName = $options['content_variant_type'];
@@ -99,9 +95,7 @@ class PageVariantTypeExtension extends AbstractTypeExtension
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['web_catalog', 'content_variant_type']);

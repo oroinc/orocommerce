@@ -22,6 +22,7 @@ class ProductPriceDeleteHandlerTest extends TestCase
     /** @var ProductPriceDeleteHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

@@ -22,6 +22,7 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
     /** @var ProductStatusVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

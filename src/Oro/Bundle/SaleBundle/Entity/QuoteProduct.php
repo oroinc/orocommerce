@@ -125,6 +125,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->productSku;
@@ -144,9 +145,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->getId();
@@ -285,6 +284,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
      *
      * @return Product
      */
+    #[\Override]
     public function getProduct()
     {
         if ($this->isTypeNotAvailable()) {
@@ -331,6 +331,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
      *
      * @return string
      */
+    #[\Override]
     public function getProductSku()
     {
         if ($this->isTypeNotAvailable()) {
@@ -613,6 +614,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
     /**
      * @return Collection<QuoteProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         return $this->kitItemLineItems;

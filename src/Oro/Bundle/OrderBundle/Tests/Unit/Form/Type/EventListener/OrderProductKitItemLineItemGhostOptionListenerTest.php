@@ -23,6 +23,7 @@ class OrderProductKitItemLineItemGhostOptionListenerTest extends TestCase
 
     private FormFactoryInterface $formFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new OrderProductKitItemLineItemGhostOptionListener();

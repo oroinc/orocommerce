@@ -13,6 +13,7 @@ class BeforeSearchEventTest extends \PHPUnit\Framework\TestCase
     /** @var BeforeSearchEvent */
     private $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->query = new Query();

@@ -11,13 +11,13 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Request\AbstractRequest;
  */
 class AuthorizationRequest extends AbstractRequest
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function getTransactionType()
     {
         return Option\Transaction::AUTHORIZATION;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureRequestOptions()
     {
         $this

@@ -47,6 +47,7 @@ class LoadProductDemoData extends AbstractFixture implements
 
     protected array $productUnits = [];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -58,6 +59,7 @@ class LoadProductDemoData extends AbstractFixture implements
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);

@@ -22,9 +22,7 @@ class OroShoppingListBundle implements
     use ExtendExtensionAwareTrait;
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addShoppingListCustomerVisitorInverseRelation($schema, $queries);

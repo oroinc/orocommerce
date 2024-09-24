@@ -37,17 +37,13 @@ class LoadProductTaxCodesWithAdditionalOrganization extends AbstractFixture impl
         ]
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $organization = $this->getFirstUser($manager)->getOrganization();

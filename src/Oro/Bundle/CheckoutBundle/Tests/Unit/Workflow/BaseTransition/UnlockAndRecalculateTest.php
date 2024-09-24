@@ -11,6 +11,7 @@ class UnlockAndRecalculateTest extends TestCase
 {
     private UnlockAndRecalculate $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transition = new UnlockAndRecalculate();

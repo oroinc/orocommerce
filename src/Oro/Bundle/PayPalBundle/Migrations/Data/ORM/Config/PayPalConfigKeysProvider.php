@@ -28,9 +28,6 @@ class PayPalConfigKeysProvider extends ParameterBag
     const EXPRESS_CHECKOUT_SHORT_LABEL_KEY = 'express_checkout_short_label';
     const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
 
-    /**
-     * {@inheritDoc}
-     */
     public function __construct(array $parameters = [])
     {
         parent::__construct($parameters);

@@ -18,6 +18,7 @@ class CategoryExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryTreeHandler = $this->createMock(CategoryTreeHandler::class);

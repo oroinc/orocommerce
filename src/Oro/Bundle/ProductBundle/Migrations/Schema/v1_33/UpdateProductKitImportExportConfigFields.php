@@ -38,9 +38,7 @@ class UpdateProductKitImportExportConfigFields implements Migration
         'product' => ['immutable' => true, 'identity' => true],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->updateConfigFields($queries, Product::class, self::$productConfigFields);

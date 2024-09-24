@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EmailValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): EmailValidator
     {
         return new EmailValidator();

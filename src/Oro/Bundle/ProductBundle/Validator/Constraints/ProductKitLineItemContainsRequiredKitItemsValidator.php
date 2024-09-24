@@ -28,6 +28,7 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
      * @param ProductKitItemLineItemsAwareInterface|null $value
      * @param ProductKitLineItemContainsRequiredKitItems $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductKitLineItemContainsRequiredKitItems) {

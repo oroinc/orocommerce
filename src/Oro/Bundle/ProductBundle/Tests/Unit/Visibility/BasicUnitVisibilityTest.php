@@ -11,6 +11,7 @@ class BasicUnitVisibilityTest extends \PHPUnit\Framework\TestCase
      */
     private $visibility;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->visibility = new BasicUnitVisibility();

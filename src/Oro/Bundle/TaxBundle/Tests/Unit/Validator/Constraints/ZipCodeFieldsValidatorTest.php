@@ -21,6 +21,7 @@ class ZipCodeFieldsValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var ZipCodeFieldsValidator */
     private $validator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);

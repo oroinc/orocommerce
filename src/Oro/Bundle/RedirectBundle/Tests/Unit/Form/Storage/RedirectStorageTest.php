@@ -12,6 +12,7 @@ class RedirectStorageTest extends \PHPUnit\Framework\TestCase
      */
     protected $redirectStorage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->redirectStorage = new RedirectStorage();

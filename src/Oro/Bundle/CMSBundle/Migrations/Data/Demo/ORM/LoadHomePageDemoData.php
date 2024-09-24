@@ -72,6 +72,7 @@ class LoadHomePageDemoData extends AbstractLoadPageData
         ]
     ];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(
@@ -82,6 +83,7 @@ class LoadHomePageDemoData extends AbstractLoadPageData
         );
     }
 
+    #[\Override]
     protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator('@OroCMSBundle/Migrations/Data/Demo/ORM/data/homepage.yml');

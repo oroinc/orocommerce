@@ -6,17 +6,13 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 
 class CategoryFormExtension extends BaseMetaFormExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [CategoryType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.catalog.category';

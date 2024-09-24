@@ -12,6 +12,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
     /** @var CustomerViewListener */
     protected $customerViewListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -53,9 +54,7 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
         $this->customerViewListener->onCustomerUserView($this->event);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createListenerToTest(): AbstractCustomerViewListener
     {
         return new CustomerViewListener(
@@ -65,33 +64,25 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerViewTemplate(): string
     {
         return '@OroRFP/Customer/rfp_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerLabel(): string
     {
         return 'oro.rfp.datagrid.customer.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserViewTemplate(): string
     {
         return '@OroRFP/CustomerUser/rfp_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserLabel(): string
     {
         return 'oro.rfp.datagrid.customer_user.label';

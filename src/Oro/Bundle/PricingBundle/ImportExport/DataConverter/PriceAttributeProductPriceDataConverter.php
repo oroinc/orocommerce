@@ -6,9 +6,7 @@ use Oro\Bundle\ImportExportBundle\Converter\ConfigurableTableDataConverter;
 
 class PriceAttributeProductPriceDataConverter extends ConfigurableTableDataConverter
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getHeaderConversionRules()
     {
         return [
@@ -20,9 +18,7 @@ class PriceAttributeProductPriceDataConverter extends ConfigurableTableDataConve
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getBackendHeader()
     {
         return [

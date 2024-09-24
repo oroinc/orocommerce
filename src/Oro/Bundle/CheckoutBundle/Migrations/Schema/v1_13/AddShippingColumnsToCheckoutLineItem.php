@@ -11,6 +11,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddShippingColumnsToCheckoutLineItem implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_checkout_line_item');

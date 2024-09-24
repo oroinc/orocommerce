@@ -72,6 +72,7 @@ class OrderTypeTest extends TypeTestCase
 
     private OrderType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderCurrencyHandler = $this->createMock(OrderCurrencyHandler::class);
@@ -244,6 +245,7 @@ class OrderTypeTest extends TypeTestCase
         ];
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         $priceType = new PriceType();

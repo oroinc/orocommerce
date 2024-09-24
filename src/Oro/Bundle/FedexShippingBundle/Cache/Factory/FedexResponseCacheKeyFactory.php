@@ -9,9 +9,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings;
 
 class FedexResponseCacheKeyFactory implements FedexResponseCacheKeyFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(
         FedexRequestInterface $request,
         FedexIntegrationSettings $settings

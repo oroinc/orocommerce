@@ -19,6 +19,7 @@ class OrdersNumberUsageStatsProviderTest extends TestCase
     private OrganizationRestrictionProviderInterface|MockObject $organizationRestrictionProvider;
     private OrdersNumberUsageStatsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

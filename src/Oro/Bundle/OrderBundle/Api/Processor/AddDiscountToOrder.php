@@ -16,9 +16,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class AddDiscountToOrder implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

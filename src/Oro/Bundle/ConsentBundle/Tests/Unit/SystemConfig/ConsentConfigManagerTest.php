@@ -27,6 +27,7 @@ class ConsentConfigManagerTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentConfigManager */
     private $consentConfigManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

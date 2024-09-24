@@ -16,6 +16,7 @@ class TaxProviderTypeTest extends \PHPUnit\Framework\TestCase
     /** @var TaxProviderType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(TaxProviderRegistry::class);

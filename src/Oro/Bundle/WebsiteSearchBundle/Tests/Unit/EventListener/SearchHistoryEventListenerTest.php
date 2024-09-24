@@ -24,6 +24,7 @@ class SearchHistoryEventListenerTest extends TestCase
     private $searchResultHistoryManager;
     private SearchHistoryEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

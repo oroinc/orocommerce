@@ -29,9 +29,7 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -101,9 +99,7 @@ class ProductExtension extends AbstractExtension implements ServiceSubscriberInt
         return $this->getRelatedItemConfigHelper()->getRelatedItemsTranslationKey();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

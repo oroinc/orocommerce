@@ -24,6 +24,7 @@ class WebsiteSearchSegmentListenerTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteSearchSegmentListener */
     private $websiteSearchSegmentListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);

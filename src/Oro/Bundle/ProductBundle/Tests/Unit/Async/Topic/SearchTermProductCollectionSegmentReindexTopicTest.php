@@ -19,6 +19,7 @@ class SearchTermProductCollectionSegmentReindexTopicTest extends AbstractTopicTe
 
     private ManagerRegistry|MockObject $doctrine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -40,11 +41,13 @@ class SearchTermProductCollectionSegmentReindexTopicTest extends AbstractTopicTe
         parent::setUp();
     }
 
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new SearchTermProductCollectionSegmentReindexTopic($this->doctrine);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -61,6 +64,7 @@ class SearchTermProductCollectionSegmentReindexTopicTest extends AbstractTopicTe
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

@@ -33,9 +33,7 @@ class AtLeastOneAvailableProductTest extends \PHPUnit\Framework\TestCase
     /** @var AtLeastOneAvailableProduct */
     private $condition;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->queryBuilder = $this->createMock(QueryBuilder::class);

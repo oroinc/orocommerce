@@ -29,6 +29,7 @@ class CategoryCountsCacheTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryCountsCache */
     private $cache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);

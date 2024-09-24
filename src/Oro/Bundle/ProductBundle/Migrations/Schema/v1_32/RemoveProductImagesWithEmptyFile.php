@@ -11,6 +11,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class RemoveProductImagesWithEmptyFile implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $tableName = 'oro_product_image';

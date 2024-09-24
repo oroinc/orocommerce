@@ -29,9 +29,7 @@ class DiscountConfigurationType extends AbstractType
         $this->discountFormTypeProvider = $discountFormTypeProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -43,9 +41,7 @@ class DiscountConfigurationType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -66,9 +62,7 @@ class DiscountConfigurationType extends AbstractType
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $discountPrototypes = $form->getConfig()->getAttribute('discount_prototypes');
@@ -109,17 +103,12 @@ class DiscountConfigurationType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();

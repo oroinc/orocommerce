@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueConsentValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): UniqueConsentValidator
     {
         return new UniqueConsentValidator();

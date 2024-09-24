@@ -38,6 +38,7 @@ class OrderActions implements OrderActionsInterface
         $this->immediateEmailLineItemsLimit = $limit;
     }
 
+    #[\Override]
     public function placeOrder(Checkout $checkout): Order
     {
         $order = $this->createOrderByCheckout(
@@ -58,11 +59,13 @@ class OrderActions implements OrderActionsInterface
         return $order;
     }
 
+    #[\Override]
     public function flushOrder(Order $order): void
     {
         $this->actionExecutor->executeAction('flush_entity', [$order]);
     }
 
+    #[\Override]
     public function createOrderByCheckout(
         Checkout $checkout,
         OrderAddress $billingAddress,
@@ -95,6 +98,7 @@ class OrderActions implements OrderActionsInterface
         return $order;
     }
 
+    #[\Override]
     public function sendConfirmationEmail(Checkout $checkout, Order $order): void
     {
         $lineItemsCount = \count($order->getLineItems());

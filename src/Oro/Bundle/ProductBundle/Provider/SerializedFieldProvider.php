@@ -7,9 +7,7 @@ use Oro\Bundle\EntityConfigBundle\Provider\SerializedFieldProvider as BaseSerial
 
 class SerializedFieldProvider extends BaseSerializedFieldProvider
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isSerializableType(FieldConfigModel $fieldConfigModel)
     {
         $type = $fieldConfigModel->getType();

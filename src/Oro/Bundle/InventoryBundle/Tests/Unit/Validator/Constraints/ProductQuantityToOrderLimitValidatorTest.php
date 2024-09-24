@@ -16,12 +16,14 @@ class ProductQuantityToOrderLimitValidatorTest extends ConstraintValidatorTestCa
     /** @var QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject */
     private $validatorService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->validatorService = $this->createMock(QuantityToOrderValidatorService::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductQuantityToOrderLimitValidator
     {
         return new ProductQuantityToOrderLimitValidator($this->validatorService);

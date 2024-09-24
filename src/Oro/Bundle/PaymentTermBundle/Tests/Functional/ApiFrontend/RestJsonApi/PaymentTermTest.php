@@ -8,6 +8,7 @@ use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermDa
 
 class PaymentTermTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

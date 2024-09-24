@@ -6,9 +6,7 @@ use Oro\Bundle\OrderBundle\Tests\Behat\Element\BackendOrder;
 
 class TaxBackendOrder extends BackendOrder
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getLineItemsFromTable('TaxBackendOrderLineItem');

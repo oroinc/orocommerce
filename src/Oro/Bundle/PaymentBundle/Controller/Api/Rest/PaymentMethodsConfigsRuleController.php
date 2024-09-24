@@ -99,25 +99,19 @@ class PaymentMethodsConfigsRuleController extends RestController
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getManager()
     {
         return $this->container->get('oro_payment.payment_methods_configs_rule.manager.api');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getForm()
     {
         throw new \LogicException('This method should not be called');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormHandler()
     {
         throw new \LogicException('This method should not be called');

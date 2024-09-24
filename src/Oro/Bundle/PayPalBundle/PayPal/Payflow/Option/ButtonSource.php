@@ -6,7 +6,7 @@ class ButtonSource extends AbstractOption
 {
     const BUTTONSOURCE = 'BUTTONSOURCE';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

@@ -21,6 +21,7 @@ class ComputeWYSIWYGAttributesTest extends CustomizeLoadedDataProcessorTestCase
     /** @var ComputeWYSIWYGAttributes */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

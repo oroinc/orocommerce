@@ -21,6 +21,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
     private static array $expectedProductImageMatrixHeaders = ['File', 'Main', 'Listing', 'Additional'];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

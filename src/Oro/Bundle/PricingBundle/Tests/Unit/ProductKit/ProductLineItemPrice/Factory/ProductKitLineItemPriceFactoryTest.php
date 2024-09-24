@@ -32,6 +32,7 @@ class ProductKitLineItemPriceFactoryTest extends TestCase
 
     private ProductKitLineItemPriceFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productLineItemPriceFactory = $this->createMock(ProductLineItemPriceFactoryInterface::class);

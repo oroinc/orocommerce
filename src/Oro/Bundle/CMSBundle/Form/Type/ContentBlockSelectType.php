@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ContentBlockSelectType extends AbstractType
 {
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -29,6 +30,7 @@ class ContentBlockSelectType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return Select2EntityType::class;

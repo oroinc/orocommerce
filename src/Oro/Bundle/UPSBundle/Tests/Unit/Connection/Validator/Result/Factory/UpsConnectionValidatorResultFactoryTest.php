@@ -16,6 +16,7 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit\Framework\TestCas
      */
     protected $connectionValidatorResultFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->connectionValidatorResultFactory = new UpsConnectionValidatorResultFactory();

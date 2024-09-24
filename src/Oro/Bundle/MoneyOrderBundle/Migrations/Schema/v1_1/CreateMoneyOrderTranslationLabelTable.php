@@ -12,6 +12,7 @@ class CreateMoneyOrderTranslationLabelTable implements Migration
     /**
      * @throws SchemaException
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroMoneyOrderTransportLabelTable($schema);

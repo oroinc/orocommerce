@@ -32,17 +32,13 @@ class AvailableLineItemShippingMethodsProvider implements
         $this->organizationProvider = $organizationProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset(): void
     {
         $this->cachedShippingMethods = [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAvailableShippingMethods(CheckoutLineItem $lineItem): array
     {
         $lineItemId = $lineItem->getId();

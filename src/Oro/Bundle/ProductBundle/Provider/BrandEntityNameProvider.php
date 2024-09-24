@@ -12,9 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Brand;
  */
 class BrandEntityNameProvider implements EntityNameProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof Brand) {
@@ -28,9 +26,7 @@ class BrandEntityNameProvider implements EntityNameProviderInterface
         return $localizedName ?: (string)$entity->getDefaultName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, Brand::class, true)) {

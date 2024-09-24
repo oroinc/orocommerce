@@ -25,6 +25,7 @@ class SelectedOffersQuoteToShippingLineItemConverterTest extends AbstractOffersQ
 
     private SelectedOffersQuoteToShippingLineItemConverter $selectedOffersQuoteToShippingLineItemConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

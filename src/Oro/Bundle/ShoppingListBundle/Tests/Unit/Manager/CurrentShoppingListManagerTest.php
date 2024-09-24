@@ -41,6 +41,7 @@ class CurrentShoppingListManagerTest extends TestCase
     private ConfigManager|MockObject $configManager;
     private CurrentShoppingListManager $currentShoppingListManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);

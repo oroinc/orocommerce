@@ -23,9 +23,7 @@ class GuestQuoteAccessProvider implements GuestQuoteAccessProviderInterface
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isGranted(Quote $quote): bool
     {
         if (!$quote->isAvailableOnFrontend() || !$this->featureChecker->isFeatureEnabled('guest_quote')) {

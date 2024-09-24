@@ -12,6 +12,7 @@ class ProductImportExportConfigurationProviderTest extends TestCase
 {
     private ProductImportExportConfigurationProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new ProductImportExportConfigurationProvider();

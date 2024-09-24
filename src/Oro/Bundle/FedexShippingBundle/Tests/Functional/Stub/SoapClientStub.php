@@ -13,9 +13,7 @@ class SoapClientStub implements SoapClientInterface
     const NO_SERVICES_OPTION = 'no_services';
     const OK_OPTION = 'ok';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function send(SoapClientSettingsInterface $settings, array $data)
     {
         switch ($data['WebAuthenticationDetail']['UserCredential']['Key']) {

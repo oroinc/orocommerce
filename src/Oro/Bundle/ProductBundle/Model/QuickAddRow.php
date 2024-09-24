@@ -45,6 +45,7 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->index;
     }
 
+    #[\Override]
     public function getEntityIdentifier(): ?int
     {
         return $this->index;
@@ -55,6 +56,7 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         return $this->sku;
     }
 
+    #[\Override]
     public function getQuantity(): float
     {
         return $this->quantity;
@@ -65,6 +67,7 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         $this->quantity = $quantity;
     }
 
+    #[\Override]
     public function getProductSku(): ?string
     {
         return $this->product?->getSku();
@@ -80,6 +83,7 @@ class QuickAddRow implements ProductHolderInterface, QuantityAwareInterface
         $this->organization = $organization;
     }
 
+    #[\Override]
     public function getProduct(): ?Product
     {
         return $this->product;

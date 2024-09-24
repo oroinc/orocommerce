@@ -20,6 +20,7 @@ class RuleNormalizer implements NormalizerInterface
      * @param Rule $rule
      * @return array
      */
+    #[\Override]
     public function normalize($rule)
     {
         if (!$rule instanceof Rule) {
@@ -38,6 +39,7 @@ class RuleNormalizer implements NormalizerInterface
      * @param array $ruleData
      * @return Rule
      */
+    #[\Override]
     public function denormalize(array $ruleData)
     {
         $resolver = $this->getOptionResolver();

@@ -11,6 +11,7 @@ class ProductVariantLinksDataTransformerTest extends \PHPUnit\Framework\TestCase
 {
     private ProductVariantLinksDataTransformer $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transformer = new ProductVariantLinksDataTransformer();

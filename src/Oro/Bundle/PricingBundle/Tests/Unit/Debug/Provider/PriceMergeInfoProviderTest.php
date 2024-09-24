@@ -30,6 +30,7 @@ class PriceMergeInfoProviderTest extends TestCase
     private ShardManager $shardManager;
     private PriceMergeInfoProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

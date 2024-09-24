@@ -31,6 +31,7 @@ class DefaultMultiShippingGroupMethodSetter implements DefaultMultiShippingGroup
         $this->lineItemGroupsShippingManager = $lineItemGroupsShippingManager;
     }
 
+    #[\Override]
     public function setDefaultShippingMethods(
         Checkout $checkout,
         ?array $lineItemGroupsShippingMethods = null,

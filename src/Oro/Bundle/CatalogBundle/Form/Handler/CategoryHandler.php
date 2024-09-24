@@ -28,9 +28,7 @@ class CategoryHandler implements FormHandlerInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process($category, FormInterface $form, Request $request)
     {
         $form->setData($category);

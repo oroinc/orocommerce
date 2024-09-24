@@ -35,6 +35,7 @@ class SchemaOrgProductDescriptionCommonProvider implements SchemaOrgProductDescr
         $this->field = $field;
     }
 
+    #[\Override]
     public function getDescription(
         Product $product,
         ?Localization $localization = null,

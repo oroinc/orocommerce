@@ -18,9 +18,7 @@ class WebsiteUrlProvidersServiceIndex implements WebsiteUrlProvidersServiceInter
         $this->urlIndexProviderRegistry = $urlIndexProviderRegistry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWebsiteProvidersIndexedByNames(WebsiteInterface $website)
     {
         return $this->urlIndexProviderRegistry->getProvidersIndexedByNames();

@@ -19,6 +19,7 @@ class PriceListStrategySelectTypeTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListStrategySelectType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->strategyRegister = $this->createMock(StrategyRegister::class);

@@ -18,9 +18,7 @@ class OroOrderBundle implements
     use AttachmentExtensionAwareTrait;
     use ActivityExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/

@@ -30,6 +30,7 @@ class WYSIWYGFieldsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var WYSIWYGFieldsProvider */
     private $wysiwygFieldsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

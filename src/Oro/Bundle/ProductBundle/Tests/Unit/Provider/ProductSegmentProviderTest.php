@@ -25,6 +25,7 @@ class ProductSegmentProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductSegmentProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->segmentManager = $this->createMock(SegmentManager::class);

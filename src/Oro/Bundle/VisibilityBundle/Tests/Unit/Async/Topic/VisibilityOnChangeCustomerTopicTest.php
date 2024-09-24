@@ -12,11 +12,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class VisibilityOnChangeCustomerTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new VisibilityOnChangeCustomerTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -27,6 +29,7 @@ class VisibilityOnChangeCustomerTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

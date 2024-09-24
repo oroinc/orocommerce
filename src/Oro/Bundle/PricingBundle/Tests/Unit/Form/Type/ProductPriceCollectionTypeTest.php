@@ -42,6 +42,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
     /** @var ProductPriceCollectionType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -52,9 +53,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $entityManager = $this->createMock(EntityManager::class);

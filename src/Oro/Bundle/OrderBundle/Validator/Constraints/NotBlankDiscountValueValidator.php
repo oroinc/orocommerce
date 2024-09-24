@@ -12,9 +12,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class NotBlankDiscountValueValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof NotBlankDiscountValue) {

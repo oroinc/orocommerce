@@ -22,6 +22,7 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
     private $repository;
     private $defaultPriceListId;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -36,6 +37,7 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
         $this->repository = $doctrine->getRepository(PriceRuleLexeme::class);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->repository->invalidateCache();

@@ -19,9 +19,7 @@ class CompositeCacheBuilder implements CacheBuilderInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         foreach ($this->builders as $builder) {
@@ -31,9 +29,7 @@ class CompositeCacheBuilder implements CacheBuilderInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         foreach ($this->builders as $builder) {
@@ -45,9 +41,7 @@ class CompositeCacheBuilder implements CacheBuilderInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCache(Scope $scope = null)
     {
         foreach ($this->builders as $builder) {

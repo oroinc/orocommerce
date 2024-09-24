@@ -26,8 +26,8 @@ class NotEmptyConfigurableAttributesValidator extends ConstraintValidator
      * @param string $value
      * @param Constraint|ProductBySku $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof Product) {

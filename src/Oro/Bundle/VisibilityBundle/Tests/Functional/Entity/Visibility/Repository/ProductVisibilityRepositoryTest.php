@@ -22,6 +22,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     /** @var InsertFromSelectQueryExecutor */
     private $insertExecutor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -35,6 +36,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
     /**
      * @dataProvider setToDefaultWithoutCategoryDataProvider
      */
+    #[\Override]
     public function testSetToDefaultWithoutCategory(string $categoryName, array $deletedCategoryProducts)
     {
         /** @var Category $category */
@@ -52,9 +54,7 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setToDefaultWithoutCategoryDataProvider(): array
     {
         return [

@@ -14,6 +14,7 @@ class ProductVirtualRelationProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVirtualRelationProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $repository = $this->createMock(PriceAttributePriceListRepository::class);

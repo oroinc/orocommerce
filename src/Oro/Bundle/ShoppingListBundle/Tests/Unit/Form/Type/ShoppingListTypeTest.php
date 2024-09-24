@@ -14,6 +14,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
     /** @var ShoppingListType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new ShoppingListType();
@@ -21,9 +22,7 @@ class ShoppingListTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

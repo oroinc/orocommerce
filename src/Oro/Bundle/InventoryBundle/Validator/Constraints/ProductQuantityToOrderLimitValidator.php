@@ -22,9 +22,7 @@ class ProductQuantityToOrderLimitValidator extends ConstraintValidator
         $this->validatorService = $validatorService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductQuantityToOrderLimit) {

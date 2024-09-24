@@ -33,9 +33,7 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
         $this->inflector = $inflector;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityAlias($entityClass)
     {
         if (!str_starts_with($entityClass, self::PRODUCT_ATTR_ENUM_CLASS_NAME_PREFIX)) {

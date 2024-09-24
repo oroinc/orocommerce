@@ -40,9 +40,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         $this->rounding = $rounding;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof LineItemsAwareInterface;
@@ -55,6 +53,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
      *
      * @return Subtotal
      */
+    #[\Override]
     public function getSubtotal($entity)
     {
         $amount = $this->isSupported($entity)
@@ -64,9 +63,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         return $this->createSubtotal($entity, $amount);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCachedSubtotal(SubtotalAwareInterface $entity)
     {
         return $this->createSubtotal($entity, $entity->getSubtotal());

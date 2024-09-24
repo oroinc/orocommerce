@@ -17,6 +17,7 @@ class AddSystemPageToSearchTermEditPageListenerTest extends TestCase
 
     private AddSystemPageToSearchTermEditPageListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->environment = $this->createMock(Environment::class);

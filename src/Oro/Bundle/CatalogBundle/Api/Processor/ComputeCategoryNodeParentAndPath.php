@@ -14,9 +14,7 @@ class ComputeCategoryNodeParentAndPath extends ComputeTreeNodePathField
 {
     private const PARENT_FIELD = 'parent';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

@@ -59,6 +59,7 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         try {
@@ -133,6 +134,7 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         $this->contentNodeTreeCache->deleteMultiple($scopeIdsByNodeId);
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [WebCatalogResolveContentNodeSlugsTopic::getName()];

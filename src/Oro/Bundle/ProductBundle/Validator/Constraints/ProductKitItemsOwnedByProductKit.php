@@ -17,6 +17,7 @@ class ProductKitItemsOwnedByProductKit extends Constraint
 
     public string $message = 'oro.product.kit_items.not_owned';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

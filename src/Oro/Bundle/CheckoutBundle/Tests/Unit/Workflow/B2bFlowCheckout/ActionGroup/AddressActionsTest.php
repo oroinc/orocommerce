@@ -34,6 +34,7 @@ class AddressActionsTest extends TestCase
 
     private AddressActions $addressActions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

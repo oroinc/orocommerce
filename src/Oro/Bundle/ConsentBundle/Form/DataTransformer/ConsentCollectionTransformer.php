@@ -24,9 +24,7 @@ class ConsentCollectionTransformer implements DataTransformerInterface
         $this->converter = $converter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($value)
     {
         if (!is_array($value) || empty($value)) {
@@ -36,9 +34,7 @@ class ConsentCollectionTransformer implements DataTransformerInterface
         return $this->converter->convertFromSaved($value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         $value = array_filter(

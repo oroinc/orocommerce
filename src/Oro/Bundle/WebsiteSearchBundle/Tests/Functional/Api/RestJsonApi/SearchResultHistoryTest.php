@@ -8,6 +8,7 @@ class SearchResultHistoryTest extends FeatureAwareRestJsonApiTestCase
 {
     private const API_TYPE = 'searchresulthistories';
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

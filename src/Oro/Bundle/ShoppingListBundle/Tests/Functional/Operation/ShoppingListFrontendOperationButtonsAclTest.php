@@ -12,6 +12,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 
 class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

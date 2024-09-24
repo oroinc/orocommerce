@@ -53,9 +53,7 @@ class FrontendVariantFiledType extends AbstractType
         $this->productClass = (string)$productClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addViewTransformer(new ProductVariantFieldsToProductVariantTransformer(
@@ -116,9 +114,7 @@ class FrontendVariantFiledType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired([
@@ -143,25 +139,18 @@ class FrontendVariantFiledType extends AbstractType
         $resolver->setAllowedTypes('parentProduct', $this->productClass);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         if (!isset($view->vars['attr']['data-page-component-options']['simpleProductVariants'])) {

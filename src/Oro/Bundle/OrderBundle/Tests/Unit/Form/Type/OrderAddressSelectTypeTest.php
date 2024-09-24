@@ -36,6 +36,7 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|Serializer */
     private $serializer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
@@ -172,9 +173,7 @@ class OrderAddressSelectTypeTest extends FormIntegrationTestCase
         $this->assertEquals($key, $view->vars['value']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

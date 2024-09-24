@@ -14,6 +14,7 @@ class CalculateSlugCacheTopicTest extends \PHPUnit\Framework\TestCase
 
     private CalculateSlugCacheTopic $topic;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->directUrlTopicHelper = $this->createMock(DirectUrlTopicHelper::class);

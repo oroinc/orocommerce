@@ -37,9 +37,7 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
         self::assertEquals('oro_product_create', $view->vars['default_input_action']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

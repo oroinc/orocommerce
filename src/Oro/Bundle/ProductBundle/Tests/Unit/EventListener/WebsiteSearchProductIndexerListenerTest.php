@@ -51,6 +51,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     /** @var WebsiteSearchProductIndexerListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);

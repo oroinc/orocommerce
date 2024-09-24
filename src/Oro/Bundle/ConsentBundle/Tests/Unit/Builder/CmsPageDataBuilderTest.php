@@ -38,6 +38,7 @@ class CmsPageDataBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var CmsPageDataBuilder */
     private $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cmsPageHelper = $this->createMock(CmsPageHelper::class);

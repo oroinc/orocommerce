@@ -19,6 +19,7 @@ class PricingStorageVoterTest extends \PHPUnit\Framework\TestCase
      */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

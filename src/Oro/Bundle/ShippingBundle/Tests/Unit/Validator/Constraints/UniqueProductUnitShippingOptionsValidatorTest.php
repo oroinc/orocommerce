@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueProductUnitShippingOptionsValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): UniqueProductUnitShippingOptionsValidator
     {
         return new UniqueProductUnitShippingOptionsValidator();

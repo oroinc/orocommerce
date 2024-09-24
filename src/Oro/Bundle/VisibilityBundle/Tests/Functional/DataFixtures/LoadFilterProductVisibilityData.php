@@ -22,17 +22,13 @@ class LoadFilterProductVisibilityData extends AbstractFixture implements
      */
     protected $container;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -41,9 +37,7 @@ class LoadFilterProductVisibilityData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $product = $this->getReference(LoadProductData::PRODUCT_1);

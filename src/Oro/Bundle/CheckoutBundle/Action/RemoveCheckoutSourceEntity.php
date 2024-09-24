@@ -20,6 +20,7 @@ class RemoveCheckoutSourceEntity extends RemoveEntity
 {
     public const NAME = 'remove_checkout_source_entity';
 
+    #[\Override]
     protected function executeAction($context)
     {
         /** @var $value CheckoutInterface */

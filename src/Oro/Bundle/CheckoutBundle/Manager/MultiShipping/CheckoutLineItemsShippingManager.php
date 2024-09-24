@@ -45,6 +45,7 @@ class CheckoutLineItemsShippingManager implements CheckoutLineItemsShippingManag
      * @param Checkout   $checkout
      * @param bool       $useDefaults
      */
+    #[\Override]
     public function updateLineItemsShippingMethods(
         ?array $shippingData,
         Checkout $checkout,
@@ -70,6 +71,7 @@ class CheckoutLineItemsShippingManager implements CheckoutLineItemsShippingManag
      *
      * @return array ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
      */
+    #[\Override]
     public function getCheckoutLineItemsShippingData(Checkout $checkout): array
     {
         $lineItemsShippingData = [];
@@ -85,6 +87,7 @@ class CheckoutLineItemsShippingManager implements CheckoutLineItemsShippingManag
         return $lineItemsShippingData;
     }
 
+    #[\Override]
     public function updateLineItemsShippingPrices(Checkout $checkout): void
     {
         $groupingFieldPath = $this->groupLineItemHelper->getGroupingFieldPath();
@@ -112,6 +115,7 @@ class CheckoutLineItemsShippingManager implements CheckoutLineItemsShippingManag
         }
     }
 
+    #[\Override]
     public function getLineItemIdentifier(ProductLineItemInterface $lineItem): string
     {
         $key = implode(':', [$lineItem->getProductSku(), $lineItem->getProductUnitCode()]);

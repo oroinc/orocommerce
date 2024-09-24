@@ -22,6 +22,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PayflowExpressCheckoutListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);

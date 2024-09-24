@@ -25,9 +25,7 @@ abstract class AbstractLoadProductPriceDemoData extends AbstractFixture implemen
     private array $products = [];
     private array $productUnis = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [

@@ -11,6 +11,7 @@ class ShippingMethodViewCollectionTest extends \PHPUnit\Framework\TestCase
 {
     private ShippingMethodViewCollection $collection;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->collection = new ShippingMethodViewCollection();

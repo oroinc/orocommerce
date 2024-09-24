@@ -18,6 +18,7 @@ class AddProductCollectionToSearchTermsDatagridListenerTest extends TestCase
 {
     private AddProductCollectionToSearchTermsDatagridListener $datagridListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

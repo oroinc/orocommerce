@@ -18,9 +18,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class OrderDiscountCollectionTableTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $numberFormatter = $this->createMock(NumberFormatter::class);

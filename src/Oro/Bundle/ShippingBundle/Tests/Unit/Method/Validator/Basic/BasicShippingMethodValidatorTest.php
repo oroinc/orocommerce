@@ -15,6 +15,7 @@ class BasicShippingMethodValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var BasicShippingMethodValidator */
     private $validator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->commonShippingMethodValidatorResultFactory = $this->createMock(

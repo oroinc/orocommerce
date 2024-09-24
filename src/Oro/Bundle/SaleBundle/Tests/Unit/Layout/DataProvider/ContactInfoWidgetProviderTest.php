@@ -18,6 +18,7 @@ class ContactInfoWidgetProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ContactInfoWidgetProvider */
     private $widgetProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);

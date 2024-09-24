@@ -20,9 +20,7 @@ class AddOroShoppingListCurrencyColumnStage2Query extends ParametrizedMigrationQ
         $this->defaultCurrency = $defaultCurrency;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription(): array
     {
         $logger = new ArrayLogger();
@@ -31,9 +29,7 @@ class AddOroShoppingListCurrencyColumnStage2Query extends ParametrizedMigrationQ
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger): void
     {
         $this->doExecute($logger);

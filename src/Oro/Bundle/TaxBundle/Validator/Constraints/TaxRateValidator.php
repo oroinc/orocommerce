@@ -15,9 +15,9 @@ class TaxRateValidator extends ConstraintValidator
     const ALIAS = 'oro_tax_tax_rate';
 
     /**
-     * {@inheritdoc}
      * @param TaxRate $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!is_float($value)) {

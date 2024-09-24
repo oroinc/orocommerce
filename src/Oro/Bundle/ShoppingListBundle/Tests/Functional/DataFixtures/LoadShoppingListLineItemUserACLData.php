@@ -13,6 +13,7 @@ class LoadShoppingListLineItemUserACLData extends AbstractLoadACLData
     /**
      * @return string
      */
+    #[\Override]
     protected function getAclResourceClassName()
     {
         return LineItem::class;
@@ -21,6 +22,7 @@ class LoadShoppingListLineItemUserACLData extends AbstractLoadACLData
     /**
      * @return array
      */
+    #[\Override]
     protected function getSupportedRoles()
     {
         return [

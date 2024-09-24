@@ -15,17 +15,13 @@ class OroCheckoutBundle implements Migration, OrderedMigrationInterface, RenameE
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addCheckoutTypeColumn($schema);

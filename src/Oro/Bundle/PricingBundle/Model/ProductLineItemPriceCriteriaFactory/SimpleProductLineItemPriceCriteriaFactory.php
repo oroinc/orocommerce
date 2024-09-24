@@ -20,6 +20,7 @@ class SimpleProductLineItemPriceCriteriaFactory implements ProductLineItemPriceC
         $this->productPriceCriteriaBuilder = $productPriceCriteriaBuilder;
     }
 
+    #[\Override]
     public function createFromProductLineItem(
         ProductLineItemInterface $lineItem,
         ?string $currency
@@ -32,6 +33,7 @@ class SimpleProductLineItemPriceCriteriaFactory implements ProductLineItemPriceC
             ->create();
     }
 
+    #[\Override]
     public function isSupported(ProductLineItemInterface $lineItem, ?string $currency): bool
     {
         return $lineItem->getProduct() !== null

@@ -21,6 +21,7 @@ class ShoppingListManagerTest extends WebTestCase
     private ShoppingListManager $shoppingListManager;
     private ProductKitLineItemFactory $productKitLineItemFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

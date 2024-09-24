@@ -12,6 +12,7 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
     /** @var CacheBuilder */
     protected $cacheBuilder;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,6 +24,7 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
         }
     }
 
+    #[\Override]
     public function testAddBuilder()
     {
         $category = new Category();

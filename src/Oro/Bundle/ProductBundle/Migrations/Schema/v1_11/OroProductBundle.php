@@ -14,9 +14,7 @@ class OroProductBundle implements Migration, ExtendExtensionAwareInterface
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_product');

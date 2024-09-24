@@ -42,9 +42,7 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -74,9 +72,7 @@ class LoadPriceListSchedules extends AbstractFixture implements DependentFixture
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadPriceLists::class, LoadCombinedPriceListWithCustomerRelation::class];

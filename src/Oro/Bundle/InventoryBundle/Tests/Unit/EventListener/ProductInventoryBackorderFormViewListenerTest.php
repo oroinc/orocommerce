@@ -60,6 +60,7 @@ class ProductInventoryBackorderFormViewListenerTest extends \PHPUnit\Framework\T
      */
     protected $doctrine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

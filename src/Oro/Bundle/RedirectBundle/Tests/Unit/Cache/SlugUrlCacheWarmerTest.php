@@ -33,6 +33,7 @@ class SlugUrlCacheWarmerTest extends \PHPUnit\Framework\TestCase
      */
     private $warmer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

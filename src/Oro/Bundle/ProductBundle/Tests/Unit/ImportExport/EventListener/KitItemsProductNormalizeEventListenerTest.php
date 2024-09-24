@@ -10,6 +10,7 @@ class KitItemsProductNormalizeEventListenerTest extends \PHPUnit\Framework\TestC
 {
     private KitItemsProductNormalizeEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new KitItemsProductNormalizeEventListener('|');

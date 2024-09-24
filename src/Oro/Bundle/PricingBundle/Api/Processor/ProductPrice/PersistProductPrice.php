@@ -20,9 +20,7 @@ class PersistProductPrice implements ProcessorInterface
         $this->priceManager = $priceManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

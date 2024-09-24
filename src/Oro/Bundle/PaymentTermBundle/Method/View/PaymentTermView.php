@@ -40,9 +40,7 @@ class PaymentTermView implements PaymentMethodViewInterface
         $this->config = $config;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptions(PaymentContextInterface $context)
     {
         $paymentTerm = $this->getPaymentTerm($context);
@@ -58,41 +56,31 @@ class PaymentTermView implements PaymentMethodViewInterface
         return [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlock()
     {
         return '_payment_methods_payment_term_widget';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return $this->config->getLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShortLabel()
     {
         return $this->config->getShortLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAdminLabel()
     {
         return $this->config->getAdminLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethodIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();

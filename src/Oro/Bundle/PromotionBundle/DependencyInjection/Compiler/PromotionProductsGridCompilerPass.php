@@ -14,9 +14,7 @@ class PromotionProductsGridCompilerPass implements CompilerPassInterface
 {
     const PRODUCT_COLLECTION_DATAGRID_LISTENER = 'oro_product.event_listener.product_collection_datagrid';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $container

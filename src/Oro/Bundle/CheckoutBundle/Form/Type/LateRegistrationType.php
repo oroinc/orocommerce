@@ -23,9 +23,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class LateRegistrationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('is_late_registration_enabled', CheckboxType::class, [
@@ -103,9 +101,7 @@ class LateRegistrationType extends AbstractType
         $event->setData($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

@@ -198,9 +198,7 @@ class QuoteController extends AbstractController
         return $this->container->get(QuoteDemandSubtotalsCalculatorInterface::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

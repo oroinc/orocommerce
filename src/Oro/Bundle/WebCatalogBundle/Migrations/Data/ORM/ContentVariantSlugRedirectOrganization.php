@@ -18,6 +18,7 @@ class ContentVariantSlugRedirectOrganization extends AbstractFixture
 {
     const BATCH_SIZE = 1000;
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addOrganizationToContentVariantSlugRedirect($manager);

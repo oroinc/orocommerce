@@ -29,9 +29,7 @@ class RegardlessDestinationMethodsConfigsRulesByContextProvider implements Metho
         $this->organizationProvider = $organizationProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethodsConfigsRules(ShippingContextInterface $context): array
     {
         if ($context->getShippingAddress()) {

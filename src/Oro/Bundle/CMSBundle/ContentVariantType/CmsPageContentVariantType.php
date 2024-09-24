@@ -33,41 +33,31 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface, ContentV
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTitle()
     {
         return 'oro.cms.page.entity_label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormType()
     {
         return CmsPageVariantType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isAllowed()
     {
         return $this->authorizationChecker->isGranted('oro_cms_page_view');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Page $cmsPage */
@@ -76,25 +66,19 @@ class CmsPageContentVariantType implements ContentVariantTypeInterface, ContentV
         return new RouteData('oro_cms_frontend_page_view', ['id' => $cmsPage->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceClassName()
     {
         return Page::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return sprintf('IDENTITY(%s.cms_page)', $alias);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAttachedEntity(ContentVariantInterface $contentVariant)
     {
         return $this->propertyAccessor->getValue($contentVariant, 'cmsPage');

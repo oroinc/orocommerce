@@ -31,6 +31,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutSubtotalUpdater */
     private $checkoutSubtotalUpdater;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->objectManager = $this->createMock(EntityManagerInterface::class);

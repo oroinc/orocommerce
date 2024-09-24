@@ -10,9 +10,7 @@ use Oro\Bundle\DataGridBundle\Extension\Action\Actions\AbstractAction;
  */
 class AddNotesAction extends AbstractAction
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setOptions(ActionConfiguration $options)
     {
         $options['confirmation'] = false;

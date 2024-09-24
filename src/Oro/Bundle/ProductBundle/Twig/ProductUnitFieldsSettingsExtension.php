@@ -33,9 +33,7 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension implements Se
         return $this->container->get('oro_product.visibility.product_unit_fields_settings');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -84,9 +82,7 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension implements Se
         return $this->getProductUnitFieldsSettings()->isAddingAdditionalUnitsToProductAvailable($product);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

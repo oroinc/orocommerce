@@ -35,39 +35,32 @@ class UpsellProduct implements RelatedItemEntityInterface
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setProduct(Product $product)
     {
         $this->product = $product;
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getRelatedItem()
     {
         return $this->relatedItem;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setRelatedItem(Product $product)
     {
         $this->relatedItem = $product;

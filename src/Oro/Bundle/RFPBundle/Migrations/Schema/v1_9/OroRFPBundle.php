@@ -23,9 +23,7 @@ class OroRFPBundle implements Migration, OutdatedExtendExtensionAwareInterface, 
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroRfpRequestAddNoteTable($schema);

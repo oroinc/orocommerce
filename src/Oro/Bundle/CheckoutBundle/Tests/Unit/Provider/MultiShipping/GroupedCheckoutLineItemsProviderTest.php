@@ -25,6 +25,7 @@ class GroupedCheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var GroupedCheckoutLineItemsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->groupingService = $this->createMock(GroupedLineItemsProviderInterface::class);

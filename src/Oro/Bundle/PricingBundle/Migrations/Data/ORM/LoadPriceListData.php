@@ -20,22 +20,19 @@ class LoadPriceListData extends AbstractFixture implements ContainerAwareInterfa
 
     private ContainerInterface $container;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [SetDefaultCurrencyFromLocale::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organization = $this->hasReference('default_organization')

@@ -21,9 +21,7 @@ class ComputeCategoryImages implements ProcessorInterface
         $this->attachmentManager = $attachmentManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

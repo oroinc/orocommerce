@@ -22,6 +22,7 @@ class InventoryStatusHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryStatusHandler */
     private $inventoryStatusHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

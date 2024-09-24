@@ -8,9 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CategoryInventoryDecrementFormExtension extends AbstractFallbackCategoryTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackProperties()
     {
         return [
@@ -18,9 +16,7 @@ class CategoryInventoryDecrementFormExtension extends AbstractFallbackCategoryTy
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);

@@ -28,6 +28,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
     /** @var BuyXGetYDiscountOptionsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -136,9 +137,7 @@ class BuyXGetYDiscountOptionsTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $productUnitsProvider = $this->createMock(ProductUnitsProvider::class);

@@ -45,9 +45,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     private array $websites = [];
     private array $metadata = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -61,9 +59,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->toggleFeatures(false);

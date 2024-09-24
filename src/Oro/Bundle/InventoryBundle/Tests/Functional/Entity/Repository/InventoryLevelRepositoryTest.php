@@ -19,6 +19,7 @@ class InventoryLevelRepositoryTest extends WebTestCase
      */
     protected $inventoryLevelRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

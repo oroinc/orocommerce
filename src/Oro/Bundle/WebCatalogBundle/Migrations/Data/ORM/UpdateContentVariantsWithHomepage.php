@@ -27,6 +27,7 @@ class UpdateContentVariantsWithHomepage extends AbstractFixture implements
 
     private const BATCH_SIZE = 1000;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -34,9 +35,7 @@ class UpdateContentVariantsWithHomepage extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $homePageId = $this->getHomePageId();

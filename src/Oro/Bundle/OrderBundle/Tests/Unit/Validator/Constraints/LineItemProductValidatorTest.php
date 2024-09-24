@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class LineItemProductValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): LineItemProductValidator
     {
         return new LineItemProductValidator();

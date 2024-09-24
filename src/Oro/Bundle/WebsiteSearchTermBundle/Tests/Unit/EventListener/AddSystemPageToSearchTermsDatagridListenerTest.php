@@ -19,6 +19,7 @@ class AddSystemPageToSearchTermsDatagridListenerTest extends TestCase
 
     private AddSystemPageToSearchTermsDatagridListener $datagridListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

@@ -16,6 +16,7 @@ class RoundingResolverTest extends TestCase
 
     private RoundingResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolver = new RoundingResolver();

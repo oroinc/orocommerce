@@ -20,6 +20,7 @@ class HasSupportedInventoryStatusValidatorTest extends ConstraintValidatorTestCa
 
     private ConfigManager|MockObject $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -27,6 +28,7 @@ class HasSupportedInventoryStatusValidatorTest extends ConstraintValidatorTestCa
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): HasSupportedInventoryStatusValidator
     {
         return new HasSupportedInventoryStatusValidator(

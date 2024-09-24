@@ -23,6 +23,7 @@ class IsUpcomingValidator extends ConstraintValidator
         $this->upcomingLabelCheckoutLineItemValidator = $upcomingLabelCheckoutLineItemValidator;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if ($value === null) {

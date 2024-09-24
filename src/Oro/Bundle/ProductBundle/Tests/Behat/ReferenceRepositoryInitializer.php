@@ -16,9 +16,7 @@ use Oro\Bundle\TranslationBundle\Entity\TranslationKey;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $this->setDefaultProductFamilyReference($doctrine, $referenceRepository);

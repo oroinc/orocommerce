@@ -13,9 +13,7 @@ use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroVisibilityExtension extends Extension implements PrependExtensionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
@@ -32,9 +30,7 @@ class OroVisibilityExtension extends Extension implements PrependExtensionInterf
         $loader->load('mq_processors.yml');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function prepend(ContainerBuilder $container): void
     {
         /** @var ExtendedContainerBuilder $container */

@@ -36,6 +36,7 @@ class CustomerUserConsentProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->consentContextProvider = $this->createMock(ConsentContextProviderInterface::class);

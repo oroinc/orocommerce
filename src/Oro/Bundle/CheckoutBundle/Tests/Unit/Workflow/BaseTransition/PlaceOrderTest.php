@@ -25,6 +25,7 @@ class PlaceOrderTest extends TestCase
 
     private PlaceOrder $placeOrder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

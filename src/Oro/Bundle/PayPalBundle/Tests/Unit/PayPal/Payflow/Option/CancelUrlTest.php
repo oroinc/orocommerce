@@ -7,17 +7,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class CancelUrlTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new CancelUrl(false)];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

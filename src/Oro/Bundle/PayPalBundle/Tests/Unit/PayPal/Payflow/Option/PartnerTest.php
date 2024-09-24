@@ -9,17 +9,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class PartnerTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new Partner()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

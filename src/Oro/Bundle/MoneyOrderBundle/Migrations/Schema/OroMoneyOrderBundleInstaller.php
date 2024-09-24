@@ -14,17 +14,13 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
         return 'v1_1';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         // update system configuration for installed instances

@@ -20,6 +20,7 @@ class QuantityToOrder extends Constraint
     public string $minMessage = '';
     public string $maxMessage = '';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

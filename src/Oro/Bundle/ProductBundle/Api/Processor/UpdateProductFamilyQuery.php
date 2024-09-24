@@ -14,9 +14,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class UpdateProductFamilyQuery implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

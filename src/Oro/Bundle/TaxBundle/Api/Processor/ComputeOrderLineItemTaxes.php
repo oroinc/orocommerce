@@ -42,9 +42,7 @@ class ComputeOrderLineItemTaxes implements ProcessorInterface
         $this->valueTransformer = $valueTransformer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

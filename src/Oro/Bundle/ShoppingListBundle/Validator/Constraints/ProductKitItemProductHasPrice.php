@@ -12,9 +12,7 @@ class ProductKitItemProductHasPrice extends Constraint
     public string $productHasNoPriceMessage
         = 'oro.shoppinglist.product_kit_is_available_for_purchase.product.has_price.message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

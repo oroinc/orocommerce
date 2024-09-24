@@ -11,6 +11,7 @@ class ContentWidgetControllerTest extends WebTestCase
 {
     private const WIDGET_NAME = 'test-widget';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

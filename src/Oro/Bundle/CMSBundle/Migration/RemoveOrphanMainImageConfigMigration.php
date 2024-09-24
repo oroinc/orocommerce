@@ -30,6 +30,7 @@ class RemoveOrphanMainImageConfigMigration implements Migration
         $this->registry = $registry;
     }
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $sql = <<<QUERY

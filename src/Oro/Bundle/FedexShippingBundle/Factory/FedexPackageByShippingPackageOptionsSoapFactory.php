@@ -10,9 +10,7 @@ use Oro\Bundle\ShippingBundle\Model\ShippingPackageOptionsInterface;
  */
 class FedexPackageByShippingPackageOptionsSoapFactory implements FedexPackageByShippingPackageOptionsFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(ShippingPackageOptionsInterface $packageOptions): array
     {
         $data = [

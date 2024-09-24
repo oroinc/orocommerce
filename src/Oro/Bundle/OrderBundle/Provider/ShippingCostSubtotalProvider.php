@@ -43,6 +43,7 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
      * @param ShippingAwareInterface $entity
      * @return Subtotal
      */
+    #[\Override]
     public function getSubtotal($entity)
     {
         if (!$this->isSupported($entity)) {
@@ -69,9 +70,7 @@ class ShippingCostSubtotalProvider extends AbstractSubtotalProvider implements S
         return $subtotal;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof ShippingAwareInterface;

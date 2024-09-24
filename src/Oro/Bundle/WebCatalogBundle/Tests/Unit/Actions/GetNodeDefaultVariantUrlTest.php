@@ -56,6 +56,7 @@ class GetNodeDefaultVariantUrlTest extends \PHPUnit\Framework\TestCase
      */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = new ContextAccessor();

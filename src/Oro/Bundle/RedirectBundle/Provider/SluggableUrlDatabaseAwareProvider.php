@@ -47,9 +47,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrl($routeName, $routeParameters, $localizationId)
     {
         if (!$routeName) {
@@ -87,9 +85,7 @@ class SluggableUrlDatabaseAwareProvider implements SluggableUrlProviderInterface
         return $url;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContextUrl($contextUrl)
     {
         $this->urlCacheProvider->setContextUrl($contextUrl);

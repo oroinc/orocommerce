@@ -23,6 +23,7 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
     private NumberFormatter|MockObject $numberFormatter;
     private OrdersVolumeUsageStatsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

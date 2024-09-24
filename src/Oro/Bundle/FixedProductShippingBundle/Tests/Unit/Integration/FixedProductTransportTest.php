@@ -11,6 +11,7 @@ class FixedProductTransportTest extends TestCase
 {
     protected FixedProductTransport $transport;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transport = new FixedProductTransport();

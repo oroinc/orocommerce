@@ -20,6 +20,7 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
     /** @var ContactInfoUserOptionsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -28,9 +29,7 @@ class ContactInfoUserOptionsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

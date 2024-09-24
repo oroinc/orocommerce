@@ -28,6 +28,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
      *
      * @return string
      */
+    #[\Override]
     public function format($value, MeasureUnitInterface $unit = null)
     {
         return $this->formatCode($value, $unit ? $unit->getCode() : null);
@@ -39,6 +40,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
      *
      * @return string
      */
+    #[\Override]
     public function formatShort($value, MeasureUnitInterface $unit = null)
     {
         return $this->formatCode($value, $unit ? $unit->getCode() : null, true);
@@ -51,6 +53,7 @@ class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueForma
      *
      * @return string
      */
+    #[\Override]
     public function formatCode($value, $unitCode, $isShort = false)
     {
         if (!is_numeric($value) || !$unitCode) {

@@ -12,9 +12,7 @@ use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizedFallbackValueCollec
  */
 class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = []): array
     {
         $result = parent::normalize($object, $format, $context);
@@ -30,9 +28,7 @@ class LocalizedFallbackValueCollectionNormalizer extends BaseNormalizer
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = []): object
     {
         $result = parent::denormalize($data, $type, $format, $context);

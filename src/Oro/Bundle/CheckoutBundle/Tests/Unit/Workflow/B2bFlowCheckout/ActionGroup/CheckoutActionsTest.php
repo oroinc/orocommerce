@@ -31,6 +31,7 @@ class CheckoutActionsTest extends TestCase
     private AddressActionsInterface|MockObject $addressActions;
     private CheckoutActions $checkoutActions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityAliasResolver = $this->createMock(EntityAliasResolver::class);

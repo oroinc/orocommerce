@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class VendorTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new Vendor()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

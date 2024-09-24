@@ -26,6 +26,7 @@ class ShoppingListTotalsDemoDataFixturesListenerTest extends \PHPUnit\Framework\
     /** @var ShoppingListTotalsDemoDataFixturesListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ShoppingListRepository::class);

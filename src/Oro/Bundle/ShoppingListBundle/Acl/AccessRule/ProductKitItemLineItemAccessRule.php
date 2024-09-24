@@ -13,17 +13,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
  */
 class ProductKitItemLineItemAccessRule implements AccessRuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(Criteria $criteria): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(Criteria $criteria): void
     {
         $criteria->andExpression(new Association('lineItem'));

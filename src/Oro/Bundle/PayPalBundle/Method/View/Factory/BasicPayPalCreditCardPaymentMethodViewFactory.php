@@ -25,9 +25,7 @@ class BasicPayPalCreditCardPaymentMethodViewFactory implements PayPalCreditCardP
         $this->transactionProvider = $transactionProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(PayPalCreditCardConfigInterface $config)
     {
         return new PayPalCreditCardPaymentMethodView($this->formFactory, $config, $this->transactionProvider);

@@ -13,6 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddQuoteProductOfferChecksumColumn implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_sale_quote_prod_offer');

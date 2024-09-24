@@ -24,9 +24,7 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
         $this->shipContextProvider = $shipContextProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCurrentState($entity): ?array
     {
         /** @var Checkout $entity */
@@ -45,17 +43,13 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
         return $state;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEntitySupported($entity): bool
     {
         return $entity instanceof Checkout;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isStatesEqual($entity, $state1, $state2): bool
     {
         if (empty($state1)) {
@@ -113,9 +107,7 @@ class ShoppingListLineItemDiffMapper implements CheckoutStateDiffMapperInterface
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName(): string
     {
         return self::DATA_NAME;

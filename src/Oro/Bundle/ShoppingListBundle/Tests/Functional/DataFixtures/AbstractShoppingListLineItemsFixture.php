@@ -20,9 +20,7 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
 
     protected static array $lineItems = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $shoppingLists = [];

@@ -18,6 +18,7 @@ class UrlSafeSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
     /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $externalValidator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->externalValidator = $this->createMock(ValidatorInterface::class);
@@ -25,6 +26,7 @@ class UrlSafeSlugPrototypeValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new UrlSafeSlugPrototypeValidator($this->externalValidator);

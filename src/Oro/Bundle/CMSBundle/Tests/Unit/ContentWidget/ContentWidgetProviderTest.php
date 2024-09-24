@@ -15,6 +15,7 @@ class ContentWidgetProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

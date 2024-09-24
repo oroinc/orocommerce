@@ -14,6 +14,7 @@ class ShoppingListNotesTypeTest extends FormIntegrationTestCase
     /** @var ShoppingListNotesType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new ShoppingListNotesType();

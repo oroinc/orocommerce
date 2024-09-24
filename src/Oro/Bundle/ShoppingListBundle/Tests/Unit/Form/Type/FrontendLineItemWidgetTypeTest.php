@@ -40,6 +40,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         'kg'
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
@@ -52,9 +53,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

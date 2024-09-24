@@ -17,6 +17,7 @@ class PageRepositoryTest extends WebTestCase
 {
     private PageRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

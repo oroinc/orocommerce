@@ -8,17 +8,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LocalizedSlugTypeStub extends LocalizedFallbackValueCollectionTypeStub
 {
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return LocalizedSlugType::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);

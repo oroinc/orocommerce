@@ -43,9 +43,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
      */
     protected $categoryDescriptions = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $category = $this->getCategory($manager);

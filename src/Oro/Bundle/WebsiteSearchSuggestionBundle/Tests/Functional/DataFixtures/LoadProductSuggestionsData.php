@@ -26,9 +26,7 @@ class LoadProductSuggestionsData extends AbstractFixture implements ContainerAwa
 
     public const PRODUCT_SUGGESTION_1 = 'product_suggestion_1';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -36,9 +34,7 @@ class LoadProductSuggestionsData extends AbstractFixture implements ContainerAwa
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /**

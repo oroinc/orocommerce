@@ -38,6 +38,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var ProductMiniBlockContentWidgetType */
     private $contentWidgetType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -148,6 +149,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         );
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         $entityManager = $this->createMock(EntityManager::class);
@@ -209,9 +211,7 @@ class ProductMiniBlockContentWidgetTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTypeExtensions(): array
     {
         return array_merge(

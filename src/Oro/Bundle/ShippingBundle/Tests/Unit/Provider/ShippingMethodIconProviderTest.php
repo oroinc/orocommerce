@@ -21,6 +21,7 @@ class ShippingMethodIconProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingMethodIconProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);

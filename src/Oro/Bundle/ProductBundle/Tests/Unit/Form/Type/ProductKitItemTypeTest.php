@@ -46,6 +46,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
 
     private array $fieldsMap;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldsMapProvider = $this->createMock(FormFieldsMapProvider::class);
@@ -105,6 +106,7 @@ class ProductKitItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

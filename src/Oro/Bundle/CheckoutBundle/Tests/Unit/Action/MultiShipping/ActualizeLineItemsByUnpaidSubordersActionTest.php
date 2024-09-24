@@ -30,6 +30,7 @@ class ActualizeLineItemsByUnpaidSubordersActionTest extends \PHPUnit\Framework\T
     /** @var ActualizeLineItemsByUnpaidSubordersAction */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);

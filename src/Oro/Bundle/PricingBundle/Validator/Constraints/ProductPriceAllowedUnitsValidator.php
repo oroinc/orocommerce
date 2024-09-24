@@ -13,8 +13,8 @@ class ProductPriceAllowedUnitsValidator extends ConstraintValidator
      * @param ProductPrice|object $value
      * @param ProductPriceAllowedUnits $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         $priceProduct = $value->getProduct();

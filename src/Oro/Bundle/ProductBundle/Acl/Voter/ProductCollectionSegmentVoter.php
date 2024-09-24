@@ -15,7 +15,6 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  */
 class ProductCollectionSegmentVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     private ContainerInterface $container;
@@ -28,9 +27,7 @@ class ProductCollectionSegmentVoter extends AbstractEntityVoter implements Servi
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
@@ -38,9 +35,7 @@ class ProductCollectionSegmentVoter extends AbstractEntityVoter implements Servi
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if ($this->isSegmentAttachedToContentVariant($identifier)) {

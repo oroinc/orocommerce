@@ -22,9 +22,7 @@ class ChangeVisibilityDemoDataFixturesListener extends AbstractDemoDataFixturesL
         $this->partialUpdateDriver = $partialUpdateDriver;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function afterEnableListeners(MigrationDataFixturesEvent $event)
     {
         $event->log('updating visibility for all customers');

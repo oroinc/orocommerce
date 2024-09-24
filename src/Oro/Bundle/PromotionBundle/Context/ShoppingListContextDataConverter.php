@@ -56,8 +56,8 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
 
     /**
      * @param ShoppingList $entity
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getContextData($entity): array
     {
         if (!$this->supports($entity)) {
@@ -96,9 +96,7 @@ class ShoppingListContextDataConverter implements ContextDataConverterInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($entity): bool
     {
         return $entity instanceof ShoppingList;

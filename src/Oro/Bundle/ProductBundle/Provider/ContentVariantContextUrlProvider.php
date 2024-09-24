@@ -32,9 +32,7 @@ class ContentVariantContextUrlProvider implements ContextUrlProviderInterface
         $this->localizationProvider = $localizationProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrl($data)
     {
         $contextUrl = $this->getContextUrlFromRequest($data);

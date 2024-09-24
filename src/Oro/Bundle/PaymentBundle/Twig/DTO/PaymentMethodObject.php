@@ -42,6 +42,7 @@ class PaymentMethodObject
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return $this->label;

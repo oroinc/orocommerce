@@ -15,9 +15,7 @@ class BasicUpsClientUrlProvider implements UpsClientUrlProviderInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getUpsUrl($isTestMode): string
     {
         if ($isTestMode) {

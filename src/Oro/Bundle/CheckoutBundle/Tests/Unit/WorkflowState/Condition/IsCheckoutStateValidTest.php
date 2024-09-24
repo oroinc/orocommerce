@@ -19,6 +19,7 @@ class IsCheckoutStateValidTest extends \PHPUnit\Framework\TestCase
     /** @var IsCheckoutStateValid */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutDiffManager = $this->createMock(CheckoutStateDiffManager::class);

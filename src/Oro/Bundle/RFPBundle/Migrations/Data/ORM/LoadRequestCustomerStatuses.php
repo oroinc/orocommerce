@@ -17,6 +17,7 @@ class LoadRequestCustomerStatuses extends AbstractEnumFixture
         'cancelled' => 'Cancelled'
     ];
 
+    #[\Override]
     protected function getData(): array
     {
         return self::$data;
@@ -27,6 +28,7 @@ class LoadRequestCustomerStatuses extends AbstractEnumFixture
         return array_keys(self::$data);
     }
 
+    #[\Override]
     protected function getEnumCode(): string
     {
         return Request::CUSTOMER_STATUS_CODE;

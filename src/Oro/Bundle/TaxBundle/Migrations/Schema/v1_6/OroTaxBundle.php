@@ -17,9 +17,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addCustomerExtendFields($schema);
@@ -112,9 +110,7 @@ class OroTaxBundle implements Migration, ExtendExtensionAwareInterface, OrderedM
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

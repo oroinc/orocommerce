@@ -42,17 +42,13 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function preSetUp(): void
     {
         $this->checkEngine();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function preTearDown(): void
     {
         $this->checkEngine();
@@ -63,14 +59,13 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         self::checkSearchEngine($this);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getResultItems(array $options): array
     {
         return $this->getRepository(Item::class)->findBy(['alias' => $options['alias']]);
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -106,14 +101,13 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->clearIndexTextTable(IndexText::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function assertItemsCount(int $expectedCount): void
     {
         $this->assertEntityCount($expectedCount, Item::class);

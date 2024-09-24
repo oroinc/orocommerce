@@ -115,6 +115,7 @@ class ProductKitItem implements DatesAwareInterface, ExtendEntityInterface
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
+    #[\Override]
     public function __toString(): string
     {
         try {

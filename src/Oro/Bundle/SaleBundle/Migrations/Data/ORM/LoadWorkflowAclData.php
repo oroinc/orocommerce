@@ -9,9 +9,7 @@ use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractLoadAclData;
  */
 class LoadWorkflowAclData extends AbstractLoadAclData
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getDataPath()
     {
         return '@OroSaleBundle/Migrations/Data/ORM/data/workflow_roles.yml';

@@ -7,9 +7,7 @@ use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindForRenamedEntitiesM
 
 class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRenamedEntitiesNames(Schema $schema)
     {
         return [

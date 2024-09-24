@@ -49,9 +49,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
      */
     protected $processedVariantLinks = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function close()
     {
         $this->processedProducts = [];
@@ -75,8 +73,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
     /**
      * @param Product $entity
-     * {@inheritdoc}
      */
+    #[\Override]
     protected function beforeProcessEntity($entity)
     {
         $this->processedVariantLinks = [];
@@ -115,8 +113,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
     /**
      * @param Product $entity
-     * {@inheritdoc}
      */
+    #[\Override]
     protected function afterProcessEntity($entity)
     {
         $this->populateOwner($entity);
@@ -168,9 +166,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         $entity->setOwner($this->doctrineHelper->getEntityReference(BusinessUnit::class, $this->owner));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function findExistingEntity($entity, array $searchContext = [])
     {
         // Ensures that the found ProductKitItem belongs to the same organization as Product.
@@ -185,9 +181,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         return parent::findExistingEntity($entity, $searchContext);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
         if (is_a($entityName, $this->variantLinkClass, true)) {
@@ -218,9 +212,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         return parent::findEntityByIdentityValues($entityName, $identityValues);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function generateSearchContextForRelationsUpdate($entity, $entityName, $fieldName, $isPersistRelation)
     {
         $searchContext = parent::generateSearchContextForRelationsUpdate(
@@ -245,9 +237,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         return $searchContext;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function processEntity(
         $entity,
         $isFullData = false,
@@ -271,8 +261,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
     /**
      * @param Product $entity
      * @param Product $existingEntity
-     * {@inheritdoc}
      */
+    #[\Override]
     protected function importExistingEntity($entity, $existingEntity, $itemData = null, array $excludedFields = [])
     {
         if ($entity instanceof Product) {
@@ -298,9 +288,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         parent::importExistingEntity($entity, $existingEntity, $itemData, $excludedFields);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData)
     {
         // Ensures that ProductKitItem which does not belong to Product will not be changed.
@@ -315,8 +303,8 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
 
     /**
      * Validate unitPrecisions array data before model validation because model merges same codes
-     * {@inheritdoc}
      */
+    #[\Override]
     protected function validateAndUpdateContext($entity)
     {
         $itemData = $this->context->getValue('itemData');
@@ -363,6 +351,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
      * Ensures ProductKitItem::$kitItemProducts and ProductKitItem::$labels are reverted when product entity
      * is invalided.
      */
+    #[\Override]
     protected function invalidateEntity($entity)
     {
         if ($entity->isKit()) {
@@ -378,9 +367,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         parent::invalidateEntity($entity);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function processValidationErrors($entity, array $validationErrors)
     {
         parent::processValidationErrors($entity, $validationErrors);
@@ -399,9 +386,7 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements Clo
         $this->processedVariantLinks = [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function cacheInverseFieldRelation($entityName, $fieldName, $relationEntity)
     {
         parent::cacheInverseFieldRelation($entityName, $fieldName, $relationEntity);

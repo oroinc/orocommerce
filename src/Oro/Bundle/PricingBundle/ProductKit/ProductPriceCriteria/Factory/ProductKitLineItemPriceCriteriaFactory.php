@@ -22,6 +22,7 @@ class ProductKitLineItemPriceCriteriaFactory implements ProductLineItemPriceCrit
         $this->productKitLineItemPriceCriteriaBuilderFactory = $productKitLineItemPriceCriteriaBuilderFactory;
     }
 
+    #[\Override]
     public function createFromProductLineItem(
         ProductLineItemInterface|ProductKitItemLineItemsAwareInterface $lineItem,
         ?string $currency
@@ -35,6 +36,7 @@ class ProductKitLineItemPriceCriteriaFactory implements ProductLineItemPriceCrit
             ?->create();
     }
 
+    #[\Override]
     public function isSupported(ProductLineItemInterface $lineItem, ?string $currency): bool
     {
         return $lineItem instanceof ProductKitItemLineItemsAwareInterface

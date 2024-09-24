@@ -21,6 +21,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
     ) {
     }
 
+    #[\Override]
     public function isProductUnitSelectionVisible(?Product $product): bool
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {
@@ -29,6 +30,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
         return $this->settings->isProductUnitSelectionVisible($product);
     }
 
+    #[\Override]
     public function isProductPrimaryUnitVisible(?Product $product = null): bool
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {
@@ -37,6 +39,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
         return $this->settings->isProductPrimaryUnitVisible($product);
     }
 
+    #[\Override]
     public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null): bool
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {
@@ -46,9 +49,9 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
     }
 
     /**
-     * {@inheritdoc}
      * @throws DefaultUnitNotFoundException
      */
+    #[\Override]
     public function getAvailablePrimaryUnitChoices(Product $product = null): array
     {
         if (!$this->singleUnitModeService->isSingleUnitMode()) {

@@ -44,9 +44,7 @@ class QuoteAddressType extends AbstractType
         $this->serializer = $serializer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $type = $options['addressType'];
@@ -121,9 +119,7 @@ class QuoteAddressType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($options['addressType']);
@@ -148,9 +144,7 @@ class QuoteAddressType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -160,17 +154,13 @@ class QuoteAddressType extends AbstractType
             ->setAllowedTypes('quote', Quote::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return AddressType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_quote_address_type';

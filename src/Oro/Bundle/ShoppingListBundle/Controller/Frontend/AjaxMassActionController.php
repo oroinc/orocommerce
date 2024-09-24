@@ -32,9 +32,7 @@ class AjaxMassActionController extends AbstractController
         return $this->container->get(AddLineItemMassActionProvider::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

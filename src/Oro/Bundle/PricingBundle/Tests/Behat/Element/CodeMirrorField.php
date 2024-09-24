@@ -9,9 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
  */
 class CodeMirrorField extends Element
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($value)
     {
         $this->session->executeScript(

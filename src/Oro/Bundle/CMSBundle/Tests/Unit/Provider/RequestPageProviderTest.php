@@ -16,6 +16,7 @@ final class RequestPageProviderTest extends TestCase
 
     private RequestStack&MockObject $requestStack;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

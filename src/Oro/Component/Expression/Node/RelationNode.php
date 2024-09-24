@@ -38,9 +38,7 @@ class RelationNode implements NodeInterface, ContainerHolderNodeInterface
         $this->containerId = $containerId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContainer()
     {
         return $this->container;
@@ -62,9 +60,7 @@ class RelationNode implements NodeInterface, ContainerHolderNodeInterface
         return $this->relationField;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getNodes()
     {
         return [$this];
@@ -78,9 +74,7 @@ class RelationNode implements NodeInterface, ContainerHolderNodeInterface
         return $this->getContainer() . '::' . $this->getField();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getResolvedContainer()
     {
         $alias = $this->getRelationAlias();
@@ -92,17 +86,13 @@ class RelationNode implements NodeInterface, ContainerHolderNodeInterface
         return $alias;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isBoolean()
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContainerId()
     {
         return $this->containerId;

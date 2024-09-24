@@ -9,32 +9,24 @@ use Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType;
 
 class MoneyOrderTransport implements TransportInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function init(Transport $transportEntity)
     {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSettingsFormType()
     {
         return MoneyOrderSettingsType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSettingsEntityFQCN()
     {
         return MoneyOrderSettings::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.money_order.settings.label';

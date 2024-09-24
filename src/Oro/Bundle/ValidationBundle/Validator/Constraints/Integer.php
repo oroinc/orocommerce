@@ -10,9 +10,7 @@ class Integer extends Constraint implements AliasAwareConstraintInterface
 
     public $message = 'This value should be integer number.';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAlias()
     {
         return self::ALIAS;

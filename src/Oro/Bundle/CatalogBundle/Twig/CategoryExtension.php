@@ -25,9 +25,7 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -82,9 +80,7 @@ class CategoryExtension extends AbstractExtension implements ServiceSubscriberIn
         return array_reverse($categoriesTitles);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

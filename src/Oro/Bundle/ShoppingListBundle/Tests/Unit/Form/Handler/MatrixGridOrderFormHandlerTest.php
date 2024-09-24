@@ -32,9 +32,7 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var MatrixGridOrderFormHandler */
     private $matrixGridOrderFormHandler;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcher::class);

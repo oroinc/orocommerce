@@ -30,6 +30,7 @@ class FrontendShoppingListsViewsListTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendShoppingListsViewsList */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

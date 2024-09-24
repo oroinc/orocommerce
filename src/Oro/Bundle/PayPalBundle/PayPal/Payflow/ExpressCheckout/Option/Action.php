@@ -13,7 +13,7 @@ class Action implements OptionInterface
     const GET_EC_DETAILS = 'G';
     const DO_EC = 'D';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

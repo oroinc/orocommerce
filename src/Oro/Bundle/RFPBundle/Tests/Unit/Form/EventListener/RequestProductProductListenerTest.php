@@ -24,6 +24,7 @@ class RequestProductProductListenerTest extends TestCase
 
     private FormFactoryInterface $formFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityStateChecker = $this->createMock(EntityStateChecker::class);

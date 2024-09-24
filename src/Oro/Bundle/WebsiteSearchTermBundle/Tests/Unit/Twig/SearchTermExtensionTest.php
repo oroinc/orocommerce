@@ -13,6 +13,7 @@ class SearchTermExtensionTest extends TestCase
 
     private SearchTermExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $formatter = new SearchTermPhrasesFormatter(',');

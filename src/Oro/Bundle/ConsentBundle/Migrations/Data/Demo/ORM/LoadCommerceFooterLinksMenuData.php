@@ -35,9 +35,7 @@ class LoadCommerceFooterLinksMenuData extends AbstractFixture implements Contain
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $scope = $this->getScope();

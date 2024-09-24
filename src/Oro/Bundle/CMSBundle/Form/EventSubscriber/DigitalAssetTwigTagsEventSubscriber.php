@@ -23,6 +23,7 @@ class DigitalAssetTwigTagsEventSubscriber implements EventSubscriberInterface
         $this->digitalAssetTwigTagsConverter = $digitalAssetTwigTagsConverter;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

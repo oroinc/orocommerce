@@ -32,6 +32,7 @@ class CheckoutStateListenerTest extends TestCase
 
     private CheckoutStateListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

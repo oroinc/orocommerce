@@ -9,6 +9,7 @@ abstract class AbstractOptionTest extends \PHPUnit\Framework\TestCase
     /** @var Option\AbstractOption[] */
     protected $options;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->options = $this->getOptions();

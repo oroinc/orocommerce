@@ -21,6 +21,7 @@ class PriceListFilterTypeTest extends FormIntegrationTestCase
     /** @var PriceListFilterType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);
@@ -30,9 +31,7 @@ class PriceListFilterTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $translator = $this->createMock(TranslatorInterface::class);

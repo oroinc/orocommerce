@@ -10,6 +10,7 @@ class RecalculateCheckoutSubtotalsMessageFilterTest extends \PHPUnit\Framework\T
 {
     private RecalculateCheckoutSubtotalsMessageFilter $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new RecalculateCheckoutSubtotalsMessageFilter();

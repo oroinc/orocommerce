@@ -37,6 +37,7 @@ class ProductCollectionContentVariantFilteringEventListenerTest extends \PHPUnit
     /** @var ProductCollectionContentVariantFilteringEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $entityManager = $this->createMock(EntityManagerInterface::class);

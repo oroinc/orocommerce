@@ -23,6 +23,7 @@ class FrontendProductExportEventListenerTest extends \PHPUnit\Framework\TestCase
 
     private FrontendProductExportEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPricesExportProvider = $this->createMock(FrontendProductPricesExportProvider::class);

@@ -22,6 +22,7 @@ use Symfony\Component\Validator\Constraints\GroupSequence;
 
 class QuoteTypeTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

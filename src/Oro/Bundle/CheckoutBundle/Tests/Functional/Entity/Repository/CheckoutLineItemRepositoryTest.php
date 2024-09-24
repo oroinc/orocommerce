@@ -14,6 +14,7 @@ class CheckoutLineItemRepositoryTest extends WebTestCase
 
     private CheckoutLineItemRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

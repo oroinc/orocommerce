@@ -13,9 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class ProductPriceDTOHydrator extends AbstractHydrator
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function hydrateAllData()
     {
         $result = [];

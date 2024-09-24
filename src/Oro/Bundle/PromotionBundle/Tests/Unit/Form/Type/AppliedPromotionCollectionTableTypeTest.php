@@ -12,15 +12,14 @@ class AppliedPromotionCollectionTableTypeTest extends FormIntegrationTestCase
 {
     private AppliedPromotionCollectionTableType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new AppliedPromotionCollectionTableType();
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

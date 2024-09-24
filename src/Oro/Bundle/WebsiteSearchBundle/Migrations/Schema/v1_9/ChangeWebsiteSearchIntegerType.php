@@ -10,6 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class ChangeWebsiteSearchIntegerType implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_website_search_integer');

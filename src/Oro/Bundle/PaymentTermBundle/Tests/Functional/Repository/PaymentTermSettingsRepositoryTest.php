@@ -14,6 +14,7 @@ class PaymentTermSettingsRepositoryTest extends WebTestCase
 {
     private PaymentTermSettingsRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

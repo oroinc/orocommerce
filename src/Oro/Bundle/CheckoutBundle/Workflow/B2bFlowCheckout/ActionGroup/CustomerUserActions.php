@@ -32,6 +32,7 @@ class CustomerUserActions implements CustomerUserActionsInterface
     ) {
     }
 
+    #[\Override]
     public function createGuestCustomerUser(
         Checkout $checkout,
         string $email = null,
@@ -57,6 +58,7 @@ class CustomerUserActions implements CustomerUserActionsInterface
         $em->flush();
     }
 
+    #[\Override]
     public function updateGuestCustomerUser(
         Checkout $checkout,
         string $email = null,
@@ -85,6 +87,7 @@ class CustomerUserActions implements CustomerUserActionsInterface
         $em->flush();
     }
 
+    #[\Override]
     public function handleLateRegistration(Checkout $checkout, Order $order, ?array $lateRegistrationData = []): array
     {
         $result = [];

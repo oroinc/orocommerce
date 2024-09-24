@@ -78,9 +78,7 @@ class OrderController extends AbstractController
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [

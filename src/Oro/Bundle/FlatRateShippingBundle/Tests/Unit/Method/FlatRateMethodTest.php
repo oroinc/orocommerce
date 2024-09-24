@@ -15,6 +15,7 @@ class FlatRateMethodTest extends \PHPUnit\Framework\TestCase
 
     private FlatRateMethod $flatRate;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->flatRate = new FlatRateMethod(

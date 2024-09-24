@@ -22,9 +22,7 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
         $this->validator = $validator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApplicableMapping(): array
     {
         return [
@@ -33,9 +31,7 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function processTwigFunctions(WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls): bool
     {
         $ownerEntityId = $processedDTO->requireOwnerEntityId();
@@ -94,9 +90,7 @@ class DigitalAssetTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorI
         return $isFlushNeeded;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function onPreRemove(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $ownerEntityId = $processedDTO->requireOwnerEntityId();

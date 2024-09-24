@@ -296,14 +296,12 @@ class Category implements
     /**
      * @return integer
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultTitle($value)
     {
         $this->setDefaultFallbackValue($this->titles, $value, CategoryTitle::class);
@@ -423,6 +421,7 @@ class Category implements
         $this->updateDenormalizedProperties();
     }
 
+    #[\Override]
     public function updateDenormalizedProperties(): void
     {
         if (!$this->getDefaultTitle()) {
@@ -434,14 +433,12 @@ class Category implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->getDefaultTitle();
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultShortDescription($value)
     {
         $this->setDefaultFallbackValue($this->shortDescriptions, $value, CategoryShortDescription::class);
@@ -487,9 +484,6 @@ class Category implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultLongDescription($value)
     {
         $this->setDefaultFallbackValue($this->longDescriptions, $value, CategoryLongDescription::class);

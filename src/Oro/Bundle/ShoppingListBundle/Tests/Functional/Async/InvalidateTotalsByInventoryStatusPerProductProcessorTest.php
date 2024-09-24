@@ -18,6 +18,7 @@ class InvalidateTotalsByInventoryStatusPerProductProcessorTest extends WebTestCa
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

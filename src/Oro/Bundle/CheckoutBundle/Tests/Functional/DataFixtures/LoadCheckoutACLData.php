@@ -53,9 +53,7 @@ class LoadCheckoutACLData extends AbstractFixture implements
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -68,6 +66,7 @@ class LoadCheckoutACLData extends AbstractFixture implements
     /**
      * Load data fixtures with the passed EntityManager
      */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /* @var WorkflowManager $workflowManager */

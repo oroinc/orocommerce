@@ -18,6 +18,7 @@ class DigitalAssetTwigTagsTransformerTest extends \PHPUnit\Framework\TestCase
 
     private DigitalAssetTwigTagsTransformer $dataTransformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);

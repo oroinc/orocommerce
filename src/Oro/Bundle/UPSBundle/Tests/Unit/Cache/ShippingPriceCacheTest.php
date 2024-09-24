@@ -33,6 +33,7 @@ class ShippingPriceCacheTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingPriceCache */
     private $cache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);

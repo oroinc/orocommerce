@@ -27,6 +27,7 @@ class RelatedItemsHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var RelatedItemsHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

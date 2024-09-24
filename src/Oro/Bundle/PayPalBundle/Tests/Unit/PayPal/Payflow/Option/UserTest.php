@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class UserTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new User()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

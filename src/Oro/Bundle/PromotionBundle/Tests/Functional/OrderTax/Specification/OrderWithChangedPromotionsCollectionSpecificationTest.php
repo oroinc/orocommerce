@@ -16,6 +16,7 @@ class OrderWithChangedPromotionsCollectionSpecificationTest extends WebTestCase
 {
     private OrderWithChangedPromotionsCollectionSpecification $specification;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

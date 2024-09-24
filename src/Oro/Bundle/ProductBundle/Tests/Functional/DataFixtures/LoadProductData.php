@@ -37,9 +37,7 @@ class LoadProductData extends AbstractLoadProductData
     const PRODUCT_8_DEFAULT_SLUG_PROTOTYPE = 'product-8.slugPrototypes.default';
     const PRODUCT_9_DEFAULT_SLUG_PROTOTYPE = 'продукт-9.slugPrototypes.default';
 
-    /**
-     * {@inheritDoc]
-     */
+    #[\Override]
     protected function getFilePath(): string
     {
         return __DIR__ . DIRECTORY_SEPARATOR . 'product_fixture.yml';

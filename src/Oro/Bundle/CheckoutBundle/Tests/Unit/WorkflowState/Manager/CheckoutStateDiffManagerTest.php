@@ -14,6 +14,7 @@ class CheckoutStateDiffManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutStateDiffManager */
     private $checkoutStateDiffManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mapperRegistry = $this->createMock(CheckoutStateDiffMapperRegistry::class);

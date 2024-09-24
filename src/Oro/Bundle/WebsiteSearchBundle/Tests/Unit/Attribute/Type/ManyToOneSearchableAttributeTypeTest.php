@@ -9,9 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 
 class ManyToOneSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return ManyToOneSearchableAttributeType::class;

@@ -30,6 +30,7 @@ class ProductVisibilitySearchQueryModifierTest extends TestCase
 
     private ProductVisibilitySearchQueryModifier $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);

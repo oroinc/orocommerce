@@ -21,6 +21,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
     private MessageProducerInterface|MockObject $producer;
     private CombinedPriceListPostProcessingStepsProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->garbageCollector = $this->createMock(CombinedPriceListGarbageCollector::class);

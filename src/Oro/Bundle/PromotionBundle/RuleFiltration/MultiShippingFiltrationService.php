@@ -23,9 +23,7 @@ class MultiShippingFiltrationService extends AbstractSkippableFiltrationService
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         if (empty($context[OrderContextDataConverter::SUB_ORDERS])

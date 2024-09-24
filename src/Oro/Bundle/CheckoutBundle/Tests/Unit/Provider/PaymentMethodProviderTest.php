@@ -28,6 +28,7 @@ class PaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTransaction */
     protected $transaction;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutPaymentContextProvider = $this->createMock(CheckoutPaymentContextProvider::class);

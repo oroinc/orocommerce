@@ -23,6 +23,7 @@ class UpcomingLabelCheckoutLineItemValidatorTest extends \PHPUnit\Framework\Test
     /** @var UpcomingLabelCheckoutLineItemValidator */
     private $validator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

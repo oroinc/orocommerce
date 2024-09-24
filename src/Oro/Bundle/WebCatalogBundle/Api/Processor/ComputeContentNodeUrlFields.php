@@ -10,9 +10,7 @@ use Oro\Bundle\RedirectBundle\Api\Processor\ComputeUrlFields;
  */
 class ComputeContentNodeUrlFields extends ComputeUrlFields
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getQueryForLoadUrls(
         string $ownerEntityClass,
         string $ownerEntityIdFieldName,

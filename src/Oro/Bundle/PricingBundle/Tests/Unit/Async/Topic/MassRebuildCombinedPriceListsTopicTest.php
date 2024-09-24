@@ -9,11 +9,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class MassRebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new MassRebuildCombinedPriceListsTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -85,6 +87,7 @@ class MassRebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

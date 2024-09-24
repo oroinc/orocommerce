@@ -33,9 +33,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
         $this->splitDeep = $splitDeep > 0 ? $splitDeep : self::DEFAULT_SPLIT_DEEP;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function has($routeName, $routeParameters, $localizationId = null): bool
     {
         $key = $this->getCacheKey($routeName, $routeParameters);
@@ -43,9 +41,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
         return $this->localCache->hasItem($key) || $this->persistentCache->hasItem($key);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrl($routeName, $routeParameters, $localizationId = null)
     {
         $storage = $this->getUrlDataStorage($routeName, $routeParameters);
@@ -53,9 +49,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
         return $storage->getUrl($routeParameters, $localizationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSlug($routeName, $routeParameters, $localizationId = null)
     {
         $storage = $this->getUrlDataStorage($routeName, $routeParameters);
@@ -66,6 +60,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
     /**
      * Set URL to local cache.To save changes to persistent cache call flushAll().
      */
+    #[\Override]
     public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null)
     {
         $storage = $this->getUrlDataStorage($routeName, $routeParameters);
@@ -75,6 +70,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
     /**
      * Remove URL from local and persistent caches. To save changes to persistent cache call flushAll().
      */
+    #[\Override]
     public function removeUrl($routeName, $routeParameters, $localizationId = null)
     {
         $this->getUrlDataStorageFromPersistentStorage($routeName, $routeParameters)
@@ -87,6 +83,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
     /**
      * Move collected changes from local cache to persistent cache and save changes.
      */
+    #[\Override]
     public function flushAll(): void
     {
         foreach (array_keys($this->usedKeys) as $cacheKey) {
@@ -116,6 +113,7 @@ class UrlStorageCache implements UrlCacheInterface, ClearableCacheInterface, Flu
         $this->usedKeys = [];
     }
 
+    #[\Override]
     public function deleteAll(): void
     {
         $this->localCache->clear();

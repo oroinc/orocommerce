@@ -34,6 +34,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
 
     private DefaultContentVariantScopesResolver|\PHPUnit\Framework\MockObject\MockObject $defaultVariantScopesResolver;
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [
@@ -52,9 +53,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);
@@ -84,9 +83,7 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTypes(): array
     {
         $this->defaultVariantScopesResolver = $this->createMock(DefaultContentVariantScopesResolver::class);

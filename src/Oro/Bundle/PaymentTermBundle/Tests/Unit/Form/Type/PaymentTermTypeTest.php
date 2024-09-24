@@ -15,15 +15,14 @@ class PaymentTermTypeTest extends FormIntegrationTestCase
     /** @var PaymentTermType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new PaymentTermType(PaymentTerm::class);
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

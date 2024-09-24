@@ -11,9 +11,7 @@ class LoadDiscountConfigurationData extends AbstractLoadDiscountConfigurationDat
     const DISCOUNT_CONFIGURATION_ORDER_AMOUNT = 'discount_configuration_order_amount';
     const DISCOUNT_CONFIGURATION_SHIPPING_AMOUNT = 'discount_configuration_shipping_amount';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountConfiguration()
     {
         return [

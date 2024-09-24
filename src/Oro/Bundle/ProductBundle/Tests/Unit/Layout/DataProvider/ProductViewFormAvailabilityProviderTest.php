@@ -33,6 +33,7 @@ class ProductViewFormAvailabilityProviderTest extends \PHPUnit\Framework\TestCas
     /** @var ProductViewFormAvailabilityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productFormAvailabilityProvider = $this->createMock(ProductFormAvailabilityProvider::class);

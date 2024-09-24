@@ -13,9 +13,7 @@ use Symfony\Component\Validator\Validation;
 
 class CreditCardTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

@@ -13,14 +13,11 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
  */
 class PromotionMatchedProductSegmentVoter extends AbstractEntityVoter
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
     private array $segmentsStateToPromotions = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if ($this->isSegmentAttachedToPromotion($identifier)) {

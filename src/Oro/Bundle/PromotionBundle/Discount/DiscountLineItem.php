@@ -69,9 +69,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      */
     protected $sourceLineItem;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice()
     {
         return $this->price;
@@ -92,6 +90,7 @@ class DiscountLineItem implements DiscountLineItemInterface
     /**
      * @return null|Product
      */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -101,6 +100,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param Product|null $product
      * @return $this
      */
+    #[\Override]
     public function setProduct(Product $product = null)
     {
         $this->product = $product;
@@ -108,6 +108,7 @@ class DiscountLineItem implements DiscountLineItemInterface
         return $this;
     }
 
+    #[\Override]
     public function getProductSku(): string
     {
         if ($this->getProduct()) {
@@ -121,6 +122,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param string $productSku
      * @return $this
      */
+    #[\Override]
     public function setProductSku($productSku)
     {
         $this->productSku = $productSku;
@@ -131,6 +133,7 @@ class DiscountLineItem implements DiscountLineItemInterface
     /**
      * @return ProductUnit
      */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->productUnit;
@@ -140,6 +143,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param ProductUnit|null $productUnit
      * @return $this
      */
+    #[\Override]
     public function setProductUnit(ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
@@ -147,6 +151,7 @@ class DiscountLineItem implements DiscountLineItemInterface
         return $this;
     }
 
+    #[\Override]
     public function getProductUnitCode(): string
     {
         if ($this->productUnit) {
@@ -160,6 +165,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param string $productUnitCode
      * @return $this
      */
+    #[\Override]
     public function setProductUnitCode($productUnitCode)
     {
         $this->productUnitCode = $productUnitCode;
@@ -167,9 +173,7 @@ class DiscountLineItem implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getQuantity(): float
     {
         return $this->quantity;
@@ -179,6 +183,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param float $quantity
      * @return $this
      */
+    #[\Override]
     public function setQuantity($quantity)
     {
         $this->quantity = $quantity;
@@ -186,6 +191,7 @@ class DiscountLineItem implements DiscountLineItemInterface
         return $this;
     }
 
+    #[\Override]
     public function getSubtotal(): float
     {
         return $this->subtotal;
@@ -195,6 +201,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param float $subtotal
      * @return $this
      */
+    #[\Override]
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
@@ -202,17 +209,13 @@ class DiscountLineItem implements DiscountLineItemInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotalAfterDiscounts(): float
     {
         return $this->subtotalAfterDiscounts ?? $this->getSubtotal();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setSubtotalAfterDiscounts(float $subtotal): self
     {
         $this->subtotalAfterDiscounts = $subtotal;
@@ -224,6 +227,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param DiscountInterface $discount
      * @return $this
      */
+    #[\Override]
     public function addDiscount(DiscountInterface $discount)
     {
         $this->discounts[] = $discount;
@@ -234,14 +238,13 @@ class DiscountLineItem implements DiscountLineItemInterface
     /**
      * @return array|DiscountInterface[]
      */
+    #[\Override]
     public function getDiscounts(): array
     {
         return $this->discounts;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceType(): int
     {
         return $this->priceType;
@@ -251,6 +254,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param int $priceType
      * @return $this
      */
+    #[\Override]
     public function setPriceType($priceType)
     {
         $this->priceType = $priceType;
@@ -262,6 +266,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param DiscountInformation $discountInformation
      * @return $this
      */
+    #[\Override]
     public function addDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->discountsInformation[] = $discountInformation;
@@ -272,11 +277,13 @@ class DiscountLineItem implements DiscountLineItemInterface
     /**
      * @return array|DiscountInformation[]
      */
+    #[\Override]
     public function getDiscountsInformation(): array
     {
         return $this->discountsInformation;
     }
 
+    #[\Override]
     public function getDiscountTotal(): float
     {
         $value = 0.0;
@@ -290,6 +297,7 @@ class DiscountLineItem implements DiscountLineItemInterface
     /**
      * @return object
      */
+    #[\Override]
     public function getSourceLineItem()
     {
         return $this->sourceLineItem;
@@ -299,6 +307,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @param object $sourceLineItem
      * @return $this
      */
+    #[\Override]
     public function setSourceLineItem($sourceLineItem)
     {
         $this->sourceLineItem = $sourceLineItem;

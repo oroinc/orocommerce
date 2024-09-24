@@ -31,6 +31,7 @@ class ProductKitItemPriceDTO extends ProductPriceDTO implements ProductKitItemPr
         $this->kitItem = $productKitItem;
     }
 
+    #[\Override]
     public function getKitItem(): ProductKitItem
     {
         return $this->kitItem;
@@ -43,6 +44,7 @@ class ProductKitItemPriceDTO extends ProductPriceDTO implements ProductKitItemPr
         return $this;
     }
 
+    #[\Override]
     public function toArray(): array
     {
         $array = parent::toArray();

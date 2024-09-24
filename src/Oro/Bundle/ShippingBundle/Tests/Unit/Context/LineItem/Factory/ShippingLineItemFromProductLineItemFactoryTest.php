@@ -38,6 +38,7 @@ class ShippingLineItemFromProductLineItemFactoryTest extends TestCase
 
     private ShippingLineItemFromProductLineItemFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductShippingOptionsRepository::class);

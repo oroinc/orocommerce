@@ -15,9 +15,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
     private array $priceLists = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(
@@ -29,9 +27,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $priceLists = [

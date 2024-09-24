@@ -20,6 +20,7 @@ class CategoryDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var array */
     private $categories;
 
+    #[\Override]
     protected function setUp(): void
     {
         $productUnit = new ProductUnit();

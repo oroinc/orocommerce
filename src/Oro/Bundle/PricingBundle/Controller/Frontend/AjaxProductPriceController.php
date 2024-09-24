@@ -14,18 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
  */
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
-    /**
-     * {@inheritdoc}
-     */
     #[Route(path: '/get-product-prices-by-customer', name: 'oro_pricing_frontend_price_by_customer', methods: ['GET'])]
     public function getProductPricesByCustomerAction(Request $request)
     {
         return parent::getProductPricesByCustomer($request);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     #[Route(path: '/set-current-currency', name: 'oro_pricing_frontend_set_current_currency', methods: ['POST'])]
     #[CsrfProtection()]
     public function setCurrentCurrencyAction(Request $request)
@@ -41,9 +35,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         return new JsonResponse(['success' => $result]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

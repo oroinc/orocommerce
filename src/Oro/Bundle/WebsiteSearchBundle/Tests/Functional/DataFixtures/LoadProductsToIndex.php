@@ -28,9 +28,7 @@ class LoadProductsToIndex extends AbstractFixture implements ContainerAwareInter
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->data as $reference => $productData) {

@@ -6,9 +6,7 @@ use Oro\Bundle\PaymentBundle\Model\Surcharge;
 
 class PaymentShippingSurchargeListener extends AbstractSurchargeListener
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setAmount(Surcharge $model, $amount)
     {
         $model->setShippingAmount($model->getShippingAmount() + $amount);

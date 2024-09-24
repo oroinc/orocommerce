@@ -23,9 +23,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
 
     protected array $nodesConfigs = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var WebCatalog $webCatalog */

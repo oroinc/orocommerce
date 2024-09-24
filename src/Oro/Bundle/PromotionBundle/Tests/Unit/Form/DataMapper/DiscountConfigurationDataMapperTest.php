@@ -23,6 +23,7 @@ class DiscountConfigurationDataMapperTest extends \PHPUnit\Framework\TestCase
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $dispatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);

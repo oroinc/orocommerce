@@ -21,6 +21,7 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 
     private const QUERY = 'web_catalog_entity_indexer_listener_test_query_string';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

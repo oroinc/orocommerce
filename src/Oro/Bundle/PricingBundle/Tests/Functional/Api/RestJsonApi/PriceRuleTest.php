@@ -21,6 +21,7 @@ class PriceRuleTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

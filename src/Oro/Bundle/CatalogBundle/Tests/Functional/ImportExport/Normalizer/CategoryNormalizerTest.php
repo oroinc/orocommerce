@@ -18,6 +18,7 @@ class CategoryNormalizerTest extends WebTestCase
     private Context $context;
     private CategoryNormalizer $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -38,6 +39,7 @@ class CategoryNormalizerTest extends WebTestCase
         $this->normalizer->setDoctrine($container->get('doctrine'));
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->getContainer()->get('oro_importexport.field.database_helper')->onClear();

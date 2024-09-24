@@ -34,6 +34,7 @@ class UnitsWithPrecisionProperty extends AbstractProperty
         $this->twigTemplateProperty = $twigTemplateProperty;
     }
 
+    #[\Override]
     protected function initialize()
     {
         $this->twigTemplateProperty->init($this->params);
@@ -44,6 +45,7 @@ class UnitsWithPrecisionProperty extends AbstractProperty
      *
      * @return string Rendered HTML
      */
+    #[\Override]
     protected function getRawValue(ResultRecordInterface $record)
     {
         $value = $record->getValue($this->getOr(self::DATA_NAME_KEY) ?: $this->get(self::NAME_KEY));

@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class QuoteProductKitItemLineItemCollectionType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $entryOptions = [
@@ -50,6 +51,7 @@ class QuoteProductKitItemLineItemCollectionType extends AbstractType
         $builder->addEventSubscriber(new QuoteProductKitItemLineItemCollectionRemovingListener());
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('by_reference', false);
@@ -61,6 +63,7 @@ class QuoteProductKitItemLineItemCollectionType extends AbstractType
             ->allowedTypes(Product::class, 'null');
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_sale_quote_product_kit_item_line_item_collection';

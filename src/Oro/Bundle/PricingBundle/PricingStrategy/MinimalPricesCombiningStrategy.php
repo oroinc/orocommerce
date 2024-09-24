@@ -28,11 +28,13 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
         parent::__construct($registry, $queryExecutorProvider);
     }
 
+    #[\Override]
     protected function getFallbackCombinedPriceList(CombinedPriceList $combinedPriceList): ?CombinedPriceList
     {
         return $this->getCombinedPriceListRelationsRepository()->findFallbackCpl($combinedPriceList);
     }
 
+    #[\Override]
     protected function getPriceListRelationsNotIncludedInFallback(
         array $combinedPriceListRelation,
         array $fallbackCplRelations
@@ -50,6 +52,7 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
         );
     }
 
+    #[\Override]
     protected function processPriceLists(
         CombinedPriceList $combinedPriceList,
         array $priceListRelations,
@@ -91,6 +94,7 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
         );
     }
 
+    #[\Override]
     protected function processCombinedPriceListRelation(
         CombinedPriceList $combinedPriceList,
         CombinedPriceList $fallbackCpl,
@@ -104,6 +108,7 @@ class MinimalPricesCombiningStrategy extends AbstractPriceCombiningStrategy impl
         );
     }
 
+    #[\Override]
     public function getCombinedPriceListIdentifier(array $priceListsRelations): string
     {
         $key = $this->getUniqueSortedPriceListIds($priceListsRelations);

@@ -32,6 +32,7 @@ class OrderMapperTest extends \PHPUnit\Framework\TestCase
     /** @var PreloadingManager */
     private $preloadingManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderLineItemMapper = $this->createMock(OrderLineItemMapper::class);

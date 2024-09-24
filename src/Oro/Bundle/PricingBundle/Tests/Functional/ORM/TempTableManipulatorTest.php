@@ -32,6 +32,7 @@ class TempTableManipulatorTest extends WebTestCase
     /** @var ShardManager */
     private $shardManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

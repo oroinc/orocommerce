@@ -22,6 +22,7 @@ abstract class AbstractPricesCombiningStrategyTest extends WebTestCase
     /** @var AbstractPriceCombiningStrategy */
     protected $pricingStrategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

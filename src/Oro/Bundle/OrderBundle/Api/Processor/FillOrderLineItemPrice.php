@@ -12,16 +12,19 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
  */
 class FillOrderLineItemPrice extends AbstractFillLineItemPrice
 {
+    #[\Override]
     protected function getOrderLineItem(CustomizeFormDataContext $context): OrderLineItem
     {
         return $context->getData();
     }
 
+    #[\Override]
     protected function getPriceNotFoundErrorMessage(): string
     {
         return $this->translator->trans('oro.order.orderlineitem.product_price.blank', [], 'validators');
     }
 
+    #[\Override]
     protected function getPriceNotMatchErrorMessage($expectedValue): string
     {
         return $this->translator->trans(
@@ -31,6 +34,7 @@ class FillOrderLineItemPrice extends AbstractFillLineItemPrice
         );
     }
 
+    #[\Override]
     protected function getCurrencyNotMatchErrorMessage($expectedValue): string
     {
         return $this->translator->trans(
@@ -40,6 +44,7 @@ class FillOrderLineItemPrice extends AbstractFillLineItemPrice
         );
     }
 
+    #[\Override]
     protected function getSubmittedPriceKey(): string
     {
         return RememberOrderLineItemPrice::SUBMITTED_PRICE;

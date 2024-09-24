@@ -42,9 +42,7 @@ class ProductPriceWriter extends PersistentBatchWriter
         parent::__construct($registry, $eventDispatcher, $contextRegistry, $logger);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function write(array $items)
     {
         $this->clearContext();
@@ -52,6 +50,7 @@ class ProductPriceWriter extends PersistentBatchWriter
         parent::write($items);
     }
 
+    #[\Override]
     protected function saveItems(array $items, EntityManager $em)
     {
         $this->listenerManager->disableListeners($this->listeners);

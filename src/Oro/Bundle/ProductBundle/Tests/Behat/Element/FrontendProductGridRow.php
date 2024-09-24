@@ -11,6 +11,7 @@ class FrontendProductGridRow extends BaseGridRow
      * @param int $number Row index number starting from 0
      * @return NodeElement
      */
+    #[\Override]
     public function getCellByNumber($number)
     {
         if ($number !== 0) {

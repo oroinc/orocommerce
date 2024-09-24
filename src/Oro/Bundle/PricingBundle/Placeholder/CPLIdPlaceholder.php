@@ -34,17 +34,13 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultValue()
     {
         if (!$this->isFeaturesEnabled()) {

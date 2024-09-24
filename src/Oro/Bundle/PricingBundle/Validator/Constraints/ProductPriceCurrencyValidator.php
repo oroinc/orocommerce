@@ -16,8 +16,8 @@ class ProductPriceCurrencyValidator extends ConstraintValidator
      * @param BaseProductPrice|object $value
      * @param ProductPriceCurrency $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof BaseProductPrice) {

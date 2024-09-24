@@ -32,9 +32,7 @@ class ProductEntityListener extends AbstractRuleEntityListener implements Featur
         $this->recalculateByEntity($product);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntityClassName()
     {
         return Product::class;

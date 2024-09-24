@@ -45,9 +45,6 @@ class GetNodeDefaultVariantUrl extends AbstractAction
      */
     private $configManager;
 
-    /**
-     * {@inheritDoc}
-     */
     public function __construct(
         ContextAccessor $contextAccessor,
         CanonicalUrlGenerator $canonicalUrlGenerator,
@@ -61,9 +58,7 @@ class GetNodeDefaultVariantUrl extends AbstractAction
         $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $this->options = $this->getOptionResolver()->resolve($options);
@@ -71,9 +66,7 @@ class GetNodeDefaultVariantUrl extends AbstractAction
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         /** @var ContentNode $contentNode */

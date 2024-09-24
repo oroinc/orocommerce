@@ -11,9 +11,7 @@ use Oro\Bundle\EntityConfigBundle\ImportExport\Writer\AttributeWriter;
  */
 class ProductAttributeWriter extends AttributeWriter
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setAttributeData(FieldConfigModel $fieldConfigModel)
     {
         $className = $fieldConfigModel->getEntity()->getClassName();

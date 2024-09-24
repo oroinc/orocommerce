@@ -31,6 +31,7 @@ class OrderRequiredTaxRecalculationSpecification implements SpecificationInterfa
     /**
      * @param Order|OrderLineItem|object $entity
      */
+    #[\Override]
     public function isSatisfiedBy(object $entity): bool
     {
         if (!$entity instanceof Order) {

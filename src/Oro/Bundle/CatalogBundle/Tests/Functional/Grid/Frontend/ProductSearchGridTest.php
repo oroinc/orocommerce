@@ -20,6 +20,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
     /** @var Client */
     protected $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

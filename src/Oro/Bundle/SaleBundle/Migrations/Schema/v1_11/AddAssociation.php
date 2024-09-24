@@ -15,9 +15,7 @@ class AddAssociation implements Migration, PaymentTermExtensionAwareInterface, O
 {
     use PaymentTermExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_sale_quote');
@@ -46,9 +44,7 @@ class AddAssociation implements Migration, PaymentTermExtensionAwareInterface, O
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;

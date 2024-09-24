@@ -14,9 +14,7 @@ class OroVisibilityBundle implements Migration, RenameExtensionAwareInterface
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameTables($schema, $queries);

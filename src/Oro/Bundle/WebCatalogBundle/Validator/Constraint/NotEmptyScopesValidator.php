@@ -27,8 +27,8 @@ class NotEmptyScopesValidator extends ConstraintValidator
     /**
      * @param NotEmptyScopes $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof Collection || $value->isEmpty()) {

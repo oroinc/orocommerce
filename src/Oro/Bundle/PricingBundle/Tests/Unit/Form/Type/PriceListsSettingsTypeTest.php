@@ -14,9 +14,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class PriceListsSettingsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return (new PriceListCollectionTypeExtensionsProvider())->getExtensions();

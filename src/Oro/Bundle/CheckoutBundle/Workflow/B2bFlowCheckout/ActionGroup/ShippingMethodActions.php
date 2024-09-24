@@ -30,6 +30,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
     ) {
     }
 
+    #[\Override]
     public function hasApplicableShippingRules(Checkout $checkout, ?Collection $errors): bool
     {
         return $this->hasEnabledShippingRules($checkout, $errors)
@@ -37,6 +38,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
             || $this->hasEnabledShippingRulesForMultiShippingPerLineItemGroup($checkout, $errors);
     }
 
+    #[\Override]
     public function updateDefaultShippingMethods(
         Checkout $checkout,
         ?array $lineItemsShippingMethods,
@@ -65,6 +67,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
         }
     }
 
+    #[\Override]
     public function actualizeShippingMethods(
         Checkout $checkout,
         ?array $lineItemsShippingMethods,
@@ -87,6 +90,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
         }
     }
 
+    #[\Override]
     public function updateCheckoutShippingPrices(Checkout $checkout): void
     {
         if ($this->configProvider->isShippingSelectionByLineItemEnabled()) {

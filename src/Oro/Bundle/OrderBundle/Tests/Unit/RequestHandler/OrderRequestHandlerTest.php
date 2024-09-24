@@ -34,6 +34,7 @@ class OrderRequestHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderRequestHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->objectManager = $this->createMock(ObjectManager::class);

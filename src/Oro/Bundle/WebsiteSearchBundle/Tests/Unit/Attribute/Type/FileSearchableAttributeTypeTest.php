@@ -6,9 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\FileSearchableAttributeType;
 
 class FileSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return FileSearchableAttributeType::class;

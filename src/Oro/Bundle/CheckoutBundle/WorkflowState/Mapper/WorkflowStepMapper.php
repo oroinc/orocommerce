@@ -17,7 +17,7 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
         $this->workflowAwareManager = $workflowAwareManager;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function isEntitySupported($entity)
     {
         return is_object($entity) && $entity instanceof Checkout;
@@ -26,12 +26,13 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getName()
     {
         return self::DATA_NAME;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCurrentState($entity)
     {
         $workflowItem = $this->workflowAwareManager->getWorkflowItem($entity);
@@ -47,7 +48,7 @@ class WorkflowStepMapper implements CheckoutStateDiffMapperInterface
         return $workflowItem->getCurrentStep()->getName();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function isStatesEqual($entity, $state1, $state2)
     {
         return $state1 === $state2;

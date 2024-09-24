@@ -18,6 +18,7 @@ class CreateOrderWithPromotionsAndTaxesTest extends FrontendRestJsonApiTestCase
     private string $originalTaxationUseAsBaseOption;
     private bool $originalTaxesAfterPromotionsOption;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -38,6 +39,7 @@ class CreateOrderWithPromotionsAndTaxesTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = $this->getConfigManager();
@@ -48,6 +50,7 @@ class CreateOrderWithPromotionsAndTaxesTest extends FrontendRestJsonApiTestCase
         parent::tearDown();
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

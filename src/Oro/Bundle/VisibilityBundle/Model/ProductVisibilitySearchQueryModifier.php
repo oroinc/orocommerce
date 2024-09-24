@@ -45,9 +45,7 @@ class ProductVisibilitySearchQueryModifier implements QueryModifierInterface
         $this->currentCustomer = $customer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function modify(Query $query)
     {
         $query->getCriteria()->andWhere($this->createProductVisibilityExpression());

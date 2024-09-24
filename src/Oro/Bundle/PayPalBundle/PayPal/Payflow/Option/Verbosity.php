@@ -8,7 +8,7 @@ class Verbosity extends AbstractOption
 
     const HIGH = 'HIGH';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

@@ -53,6 +53,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MenuDataProvider */
     private $menuDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

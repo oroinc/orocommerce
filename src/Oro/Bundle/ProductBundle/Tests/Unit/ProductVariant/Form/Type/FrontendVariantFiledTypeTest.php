@@ -49,6 +49,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /** @var FrontendVariantFiledType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productVariantAvailabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);
@@ -67,9 +68,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

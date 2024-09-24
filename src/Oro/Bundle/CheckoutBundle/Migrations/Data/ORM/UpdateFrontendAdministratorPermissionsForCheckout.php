@@ -17,17 +17,13 @@ class UpdateFrontendAdministratorPermissionsForCheckout extends AbstractUpdatePe
     DependentFixtureInterface,
     RenamedFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCustomerUserRoles::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPreviousClassNames(): array
     {
         return [
@@ -35,9 +31,7 @@ class UpdateFrontendAdministratorPermissionsForCheckout extends AbstractUpdatePe
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $aclManager = $this->getAclManager();

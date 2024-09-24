@@ -31,6 +31,7 @@ class PriceAttributeProductPriceImportResetStrategyTest extends TestCase
 
     private PriceAttributeProductPriceImportResetStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $fieldHelper = $this->createMock(FieldHelper::class);

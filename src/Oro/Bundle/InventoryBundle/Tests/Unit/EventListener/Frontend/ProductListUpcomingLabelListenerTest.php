@@ -13,6 +13,7 @@ class ProductListUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductListUpcomingLabelListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductListUpcomingLabelListener();

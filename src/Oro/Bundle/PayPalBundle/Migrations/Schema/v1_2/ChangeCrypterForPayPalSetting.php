@@ -19,9 +19,7 @@ class ChangeCrypterForPayPalSetting implements Migration, ContainerAwareInterfac
 
     private const INTEGRATION_TABLE = 'oro_integration_transport';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(new ChangeColumnTypeToCryptedStringQuery(

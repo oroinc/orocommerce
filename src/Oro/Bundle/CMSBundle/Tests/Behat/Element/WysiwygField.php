@@ -9,9 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
  */
 class WysiwygField extends Element
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($value)
     {
         $this->session->wait(300);

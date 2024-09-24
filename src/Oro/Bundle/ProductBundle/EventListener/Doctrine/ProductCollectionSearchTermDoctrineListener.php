@@ -70,6 +70,7 @@ class ProductCollectionSearchTermDoctrineListener implements ResetInterface
         $this->scheduledEntities = [];
     }
 
+    #[\Override]
     public function reset(): void
     {
         $this->scheduledEntities = [];

@@ -16,6 +16,7 @@ class PaymentTransactionWasChargedTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTransactionWasCharged */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transactionRepository = $this->createMock(PaymentTransactionRepository::class);

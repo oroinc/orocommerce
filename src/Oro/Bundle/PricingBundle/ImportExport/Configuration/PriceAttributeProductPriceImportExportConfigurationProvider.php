@@ -20,9 +20,7 @@ class PriceAttributeProductPriceImportExportConfigurationProvider implements Imp
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

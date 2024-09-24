@@ -62,9 +62,7 @@ class LoadShoppingListMixedLineItems extends LoadShoppingListProductKitLineItems
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [

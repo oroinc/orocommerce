@@ -34,6 +34,7 @@ class BasicPaymentContextToRulesValueConverterTest extends TestCase
 
     private Price|MockObject $subtotal;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingAddress = $this->createMock(AddressInterface::class);

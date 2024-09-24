@@ -14,6 +14,7 @@ class ShippingOriginTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingOrigin */
     private $shippingOrigin;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingOrigin = new ShippingOrigin();

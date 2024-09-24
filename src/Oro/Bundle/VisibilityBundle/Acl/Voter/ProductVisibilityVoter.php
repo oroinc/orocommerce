@@ -16,7 +16,6 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  */
 class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::VIEW];
 
     private FrontendHelper $frontendHelper;
@@ -32,9 +31,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubsc
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
@@ -42,9 +39,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubsc
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote(TokenInterface $token, $object, array $attributes): int
     {
         if ($this->frontendHelper->isFrontendRequest()) {
@@ -54,9 +49,7 @@ class ProductVisibilityVoter extends AbstractEntityVoter implements ServiceSubsc
         return self::ACCESS_ABSTAIN;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute): int
     {
         return $this->getResolvedProductVisibilityProvider()->isVisible($identifier)

@@ -82,8 +82,8 @@ class ProductType extends AbstractType
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -354,9 +354,7 @@ class ProductType extends AbstractType
         PropertyAccess::createPropertyAccessor()->setValue($product, 'additionalUnitPrecisions', $additionalPrecisions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -375,9 +373,7 @@ class ProductType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

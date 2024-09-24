@@ -47,9 +47,7 @@ class FedexRateServiceRequestSoapFactory implements FedexRequestByRateServiceSet
         $this->convertToFedexUnitsModifier = $convertToFedexUnitsModifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(FedexRateServiceRequestSettingsInterface $settings)
     {
         $context = $settings->getShippingContext();

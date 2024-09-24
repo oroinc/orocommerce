@@ -14,9 +14,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class ExcludeFieldsFromExport implements Migration
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         // Works in case when "availability_date" column does not yet exist.

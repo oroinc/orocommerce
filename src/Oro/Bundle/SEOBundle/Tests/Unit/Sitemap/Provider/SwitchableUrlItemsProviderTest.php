@@ -25,6 +25,7 @@ class SwitchableUrlItemsProviderTest extends TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);

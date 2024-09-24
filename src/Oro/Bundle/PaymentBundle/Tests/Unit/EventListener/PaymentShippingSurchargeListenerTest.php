@@ -8,17 +8,13 @@ use Oro\Bundle\PaymentBundle\EventListener\PaymentShippingSurchargeListener;
 
 class PaymentShippingSurchargeListenerTest extends AbstractSurchargeListenerTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getAmount(CollectSurchargeEvent $event): float|int
     {
         return $event->getSurchargeModel()->getShippingAmount();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getListener(): AbstractSurchargeListener
     {
         return new PaymentShippingSurchargeListener($this->provider);

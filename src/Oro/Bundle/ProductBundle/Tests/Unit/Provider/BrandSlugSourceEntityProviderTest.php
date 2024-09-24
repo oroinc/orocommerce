@@ -20,6 +20,7 @@ class BrandSlugSourceEntityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var BrandSlugSourceEntityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->sluggableEntityFinder = $this->createMock(SluggableEntityFinder::class);

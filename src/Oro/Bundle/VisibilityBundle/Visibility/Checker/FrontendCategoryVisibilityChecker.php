@@ -26,9 +26,7 @@ class FrontendCategoryVisibilityChecker implements FrontendCategoryVisibilityChe
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isCategoryVisible(Category $category): bool
     {
         $user = $this->tokenAccessor->getUser();

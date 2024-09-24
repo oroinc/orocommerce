@@ -22,16 +22,19 @@ class GenerateDirectUrlForEntitiesJobAwareTopic extends AbstractTopic
         $this->innerTopic = $innerTopic;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Generate Slug URLs for the specified entities within a job.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->innerTopic->configureMessageBody($resolver);

@@ -24,6 +24,7 @@ class MergeByPriorityPricesSelectedPriceProviderTest extends TestCase
     private ShardManager|MockObject $shardManager;
     private MergeByPriorityPricesSelectedPriceProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

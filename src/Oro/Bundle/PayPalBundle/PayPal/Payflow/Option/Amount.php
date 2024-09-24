@@ -42,7 +42,7 @@ class Amount implements OptionInterface
         Amount::DISCOUNT
     ];
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $allowedTypes = ['string', 'integer', 'float'];

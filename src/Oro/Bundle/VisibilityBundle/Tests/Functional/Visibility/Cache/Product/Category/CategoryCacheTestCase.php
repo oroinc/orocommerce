@@ -19,6 +19,7 @@ abstract class CategoryCacheTestCase extends WebTestCase
 {
     use LocalizationQueryTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

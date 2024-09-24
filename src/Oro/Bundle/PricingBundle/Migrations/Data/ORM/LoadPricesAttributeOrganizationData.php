@@ -17,6 +17,7 @@ class LoadPricesAttributeOrganizationData extends AbstractFixture
     /**
      * @param ObjectManager|EntityManager $manager
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $organization = $this->getFirstOrganization($manager);

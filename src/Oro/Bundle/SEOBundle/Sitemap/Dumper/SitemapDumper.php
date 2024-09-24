@@ -73,9 +73,7 @@ class SitemapDumper implements SitemapDumperInterface
         return self::createFileName($type, '*') . '*';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function dump(WebsiteInterface $website, $version, $type = null)
     {
         $providers = $this->websiteUrlProvidersService->getWebsiteProvidersIndexedByNames($website);

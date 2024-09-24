@@ -17,6 +17,7 @@ class LineItemsDiscountTest extends \PHPUnit\Framework\TestCase
 
     private LineItemsDiscount $discount;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->discount = new LineItemsDiscount();

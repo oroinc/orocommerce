@@ -24,6 +24,7 @@ class RelatedItemDataProviderTest extends WebTestCase
     private ConfigManager $configManager;
     private RelatedItemDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -41,6 +42,7 @@ class RelatedItemDataProviderTest extends WebTestCase
         $this->provider = self::getContainer()->get('oro_product.tests.related_item.related_product.data_provider');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->configManager->set(

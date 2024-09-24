@@ -33,6 +33,7 @@ class TaxValueManagerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxValueManager */
     private $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

@@ -38,6 +38,7 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         $this->doctrine = $doctrine;
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $messageBody = $message->getBody();
@@ -102,6 +103,7 @@ class ContentNodeCacheProcessor implements MessageProcessorInterface, TopicSubsc
         return $repository->getUsedScopes($webCatalog);
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [Topic::getName()];

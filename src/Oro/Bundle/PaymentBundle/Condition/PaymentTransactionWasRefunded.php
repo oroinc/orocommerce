@@ -29,6 +29,7 @@ class PaymentTransactionWasRefunded extends AbstractCondition implements Context
         $this->transactionRepository = $transactionRepository;
     }
 
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('transaction', $options)) {
@@ -42,6 +43,7 @@ class PaymentTransactionWasRefunded extends AbstractCondition implements Context
         return $this;
     }
 
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var PaymentTransaction $transaction */
@@ -55,6 +57,7 @@ class PaymentTransactionWasRefunded extends AbstractCondition implements Context
         return !empty($refundTransactions);
     }
 
+    #[\Override]
     public function getName()
     {
         return self::NAME;

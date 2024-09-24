@@ -13,9 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class UpdateAttachmentFieldConfigForLoginPageImages implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         foreach (['logoImage', 'backgroundImage'] as $fieldName) {

@@ -23,10 +23,10 @@ class InventoryLevelImportExportConfigurationProvider implements ImportExportCon
     }
 
     /**
-     * {@inheritDoc}
      *
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

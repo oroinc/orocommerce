@@ -28,6 +28,7 @@ class DatagridLineItemsDataValidationListenerTest extends TestCase
 
     private DatagridLineItemsDataValidationListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);

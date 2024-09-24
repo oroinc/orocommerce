@@ -44,9 +44,7 @@ class PriceListAdditionalProductPriceReader extends IteratorBasedReader
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function initializeFromContext(ContextInterface $context)
     {
         $this->priceListId = (int)$context->getOption('price_list_id');

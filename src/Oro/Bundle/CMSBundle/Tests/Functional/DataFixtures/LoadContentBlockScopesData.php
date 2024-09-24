@@ -16,9 +16,7 @@ class LoadContentBlockScopesData extends AbstractFixture implements DependentFix
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Customer $customer */
@@ -40,9 +38,7 @@ class LoadContentBlockScopesData extends AbstractFixture implements DependentFix
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

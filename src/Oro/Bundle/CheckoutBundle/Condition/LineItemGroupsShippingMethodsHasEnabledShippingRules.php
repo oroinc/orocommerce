@@ -43,9 +43,7 @@ class LineItemGroupsShippingMethodsHasEnabledShippingRules extends AbstractCondi
         $this->checkoutFactory = $checkoutFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $valid = true;
@@ -84,17 +82,13 @@ class LineItemGroupsShippingMethodsHasEnabledShippingRules extends AbstractCondi
         return $valid;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'line_item_groups_shipping_methods_has_enabled_shipping_rules';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (\array_key_exists(self::OPTION_ENTITY, $options)) {
@@ -110,17 +104,13 @@ class LineItemGroupsShippingMethodsHasEnabledShippingRules extends AbstractCondi
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->entity]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->entity], $factoryAccessor);

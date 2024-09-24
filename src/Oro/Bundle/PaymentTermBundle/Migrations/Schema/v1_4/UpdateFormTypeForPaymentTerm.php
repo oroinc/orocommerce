@@ -11,9 +11,7 @@ use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSelectType;
 
 class UpdateFormTypeForPaymentTerm implements Migration
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(

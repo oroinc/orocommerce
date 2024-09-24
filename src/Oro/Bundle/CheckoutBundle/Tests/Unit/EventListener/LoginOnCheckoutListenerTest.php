@@ -36,6 +36,7 @@ class LoginOnCheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /** @var LoginOnCheckoutListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);

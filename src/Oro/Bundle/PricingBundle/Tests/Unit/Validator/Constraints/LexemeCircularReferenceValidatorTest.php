@@ -31,6 +31,7 @@ class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $entityRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->parser = $this->createMock(ExpressionParser::class);
@@ -39,6 +40,7 @@ class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         $entityManager = $this->createMock(ObjectManager::class);

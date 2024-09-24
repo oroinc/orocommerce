@@ -24,6 +24,7 @@ class CompositeLineItemChecksumGenerator implements LineItemChecksumGeneratorInt
         $this->checksumGenerators = $checksumGenerators;
     }
 
+    #[\Override]
     public function getChecksum(ProductLineItemInterface $lineItem): ?string
     {
         foreach ($this->checksumGenerators as $checksumGenerator) {

@@ -52,6 +52,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
     /** @var ProductCollectionVariantType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityProvider = $this->createMock(EntityProvider::class);
@@ -65,9 +66,7 @@ class ProductCollectionSegmentTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $this->doctrineHelper->expects($this->any())

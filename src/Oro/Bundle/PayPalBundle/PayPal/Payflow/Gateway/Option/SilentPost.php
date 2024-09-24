@@ -9,7 +9,7 @@ class SilentPost implements OptionInterface
 {
     const SILENTPOSTURL = 'SILENTPOSTURL';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

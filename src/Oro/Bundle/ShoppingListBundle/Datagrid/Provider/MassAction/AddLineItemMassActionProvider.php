@@ -66,9 +66,7 @@ class AddLineItemMassActionProvider implements MassActionProviderInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getActions()
     {
         $actions = [];

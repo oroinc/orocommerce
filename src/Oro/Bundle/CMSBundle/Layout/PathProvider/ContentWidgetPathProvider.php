@@ -22,11 +22,13 @@ class ContentWidgetPathProvider implements PathProviderInterface, ContextAwareIn
         $this->themeManager = $themeManager;
     }
 
+    #[\Override]
     public function setContext(ContextInterface $context): void
     {
         $this->context = $context;
     }
 
+    #[\Override]
     public function getPaths(array $existingPaths): array
     {
         $themeName = $this->context->getOr('theme');

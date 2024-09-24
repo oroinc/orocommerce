@@ -40,9 +40,7 @@ class TaxJurisdictionType extends AbstractType
         $this->countryAndRegionSubscriber = $countryAndRegionSubscriber;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this->countryAndRegionSubscriber);
@@ -77,9 +75,7 @@ class TaxJurisdictionType extends AbstractType
             ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -87,17 +83,12 @@ class TaxJurisdictionType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

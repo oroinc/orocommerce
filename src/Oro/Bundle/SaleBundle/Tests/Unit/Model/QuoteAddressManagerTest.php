@@ -31,6 +31,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     /** @var QuoteAddressManager */
     protected $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(QuoteAddressProvider::class);

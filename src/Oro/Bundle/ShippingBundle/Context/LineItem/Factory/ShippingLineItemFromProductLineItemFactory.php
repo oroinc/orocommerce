@@ -23,6 +23,7 @@ class ShippingLineItemFromProductLineItemFactory implements ShippingLineItemFrom
     ) {
     }
 
+    #[\Override]
     public function create(ProductLineItemInterface $productLineItem): ShippingLineItem
     {
         $this->shippingLineItemOptionsModifier->loadShippingOptions([$productLineItem]);
@@ -39,6 +40,7 @@ class ShippingLineItemFromProductLineItemFactory implements ShippingLineItemFrom
      *
      * @return Collection<ShippingLineItem>
      */
+    #[\Override]
     public function createCollection(iterable $productLineItems): Collection
     {
         $this->shippingLineItemOptionsModifier->loadShippingOptions($productLineItems);

@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class DecimalValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): DecimalValidator
     {
         return new DecimalValidator();

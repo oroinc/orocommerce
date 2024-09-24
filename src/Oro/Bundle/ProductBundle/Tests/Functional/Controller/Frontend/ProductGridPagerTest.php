@@ -14,9 +14,7 @@ class ProductGridPagerTest extends WebTestCase
      */
     protected $client;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

@@ -18,6 +18,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingFiltrationService */
     private $filtrationService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);

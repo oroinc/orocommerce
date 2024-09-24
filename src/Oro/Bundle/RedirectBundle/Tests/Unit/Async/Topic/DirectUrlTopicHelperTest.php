@@ -20,6 +20,7 @@ class DirectUrlTopicHelperTest extends \PHPUnit\Framework\TestCase
 
     private DirectUrlTopicHelper $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

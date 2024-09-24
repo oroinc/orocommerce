@@ -11,9 +11,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class RFPFrontendActionsTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

@@ -19,6 +19,7 @@ class ContentWidgetLayoutSelectTypeTest extends FormIntegrationTestCase
 
     private ContentWidgetLayoutSelectType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->widgetLayoutProvider = $this->createMock(ContentWidgetLayoutProvider::class);
@@ -107,6 +108,7 @@ class ContentWidgetLayoutSelectTypeTest extends FormIntegrationTestCase
         self::assertEquals('hide test', $formView->vars['attr']['class']);
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

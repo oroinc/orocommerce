@@ -18,6 +18,7 @@ class CouponGenerationHandlerTest extends \PHPUnit\Framework\TestCase
      */
     protected $couponGenerationHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->couponGenerator = $this->createMock(CouponGeneratorInterface::class);

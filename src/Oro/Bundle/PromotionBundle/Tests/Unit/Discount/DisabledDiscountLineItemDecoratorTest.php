@@ -28,6 +28,7 @@ class DisabledDiscountLineItemDecoratorTest extends \PHPUnit\Framework\TestCase
      */
     private $decorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItem = $this->createMock(DiscountLineItem::class);

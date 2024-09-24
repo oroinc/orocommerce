@@ -74,9 +74,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (static::$data as $priceRuleData) {
@@ -117,9 +115,7 @@ class LoadPriceRules extends AbstractFixture implements DependentFixtureInterfac
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadPriceLists::class, LoadProductUnits::class];

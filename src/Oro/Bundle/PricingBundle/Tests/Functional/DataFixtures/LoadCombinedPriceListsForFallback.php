@@ -173,6 +173,7 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
         ]
     ];
 
+    #[\Override]
     protected function createCombinedPriceList(array $priceListData, ObjectManager $manager): CombinedPriceList
     {
         $cpl = parent::createCombinedPriceList($priceListData, $manager);
@@ -184,6 +185,7 @@ class LoadCombinedPriceListsForFallback extends AbstractCombinedPriceListsFixtur
         return $cpl;
     }
 
+    #[\Override]
     public function getDependencies()
     {
         return [

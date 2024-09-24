@@ -21,6 +21,7 @@ class ProductVariantsSelectedFieldsProviderTest extends \PHPUnit\Framework\TestC
     /** @var ManagerRegistry|MockObject */
     private $doctrine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

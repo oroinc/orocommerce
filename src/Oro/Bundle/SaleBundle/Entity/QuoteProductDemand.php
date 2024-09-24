@@ -80,17 +80,13 @@ class QuoteProductDemand implements
         $this->kitItemLineItems = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
@@ -116,6 +112,7 @@ class QuoteProductDemand implements
     /**
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -148,6 +145,7 @@ class QuoteProductDemand implements
     /**
      * @return Price
      */
+    #[\Override]
     public function getPrice()
     {
         return $this->getQuoteProductOffer()->getPrice();
@@ -166,46 +164,37 @@ class QuoteProductDemand implements
     /**
      * @return int
      */
+    #[\Override]
     public function getPriceType()
     {
         return $this->getQuoteProductOffer()->getPriceType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->getQuoteProductOffer()->getProduct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->getQuoteProductOffer()->getProductSku();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->getQuoteProductOffer()->getProductUnit();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->getQuoteProductOffer()->getProductUnitCode();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParentProduct()
     {
         return $this->getQuoteProductOffer()->getParentProduct();
@@ -214,6 +203,7 @@ class QuoteProductDemand implements
     /**
      * @return Collection<QuoteProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         if (!$this->kitItemLineItems) {

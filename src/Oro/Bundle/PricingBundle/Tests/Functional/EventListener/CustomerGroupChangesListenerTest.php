@@ -20,6 +20,7 @@ class CustomerGroupChangesListenerTest extends WebTestCase
     use MessageQueueExtension;
     use OperationAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

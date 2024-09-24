@@ -21,6 +21,7 @@ class SearchResultHistoryRepositoryTest extends WebTestCase
 {
     private SearchResultHistoryRepository $repo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

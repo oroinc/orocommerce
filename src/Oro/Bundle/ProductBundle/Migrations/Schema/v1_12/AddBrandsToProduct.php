@@ -18,9 +18,7 @@ class AddBrandsToProduct implements Migration, SlugExtensionAwareInterface, Exte
     use SlugExtensionAwareTrait;
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/

@@ -27,6 +27,7 @@ class ContentNodeTreeCacheTest extends TestCase
 
     private ContentNodeTreeCache $contentNodeTreeCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheItemPoolInterface::class);

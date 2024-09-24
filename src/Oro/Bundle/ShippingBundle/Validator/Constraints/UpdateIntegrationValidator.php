@@ -29,9 +29,7 @@ class UpdateIntegrationValidator extends ConstraintValidator
         $this->violationPath = $violationPath;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof Transport) {

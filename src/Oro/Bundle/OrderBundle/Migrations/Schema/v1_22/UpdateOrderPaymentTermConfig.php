@@ -14,9 +14,7 @@ class UpdateOrderPaymentTermConfig implements Migration, PaymentTermExtensionAwa
 {
     use PaymentTermExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $entityClass = 'Oro\Bundle\OrderBundle\Entity\Order';

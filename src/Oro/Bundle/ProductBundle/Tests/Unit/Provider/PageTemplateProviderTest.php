@@ -22,6 +22,7 @@ class PageTemplateProviderTest extends TestCase
 
     private Product $product;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->themeManager = $this->createMock(ThemeManager::class);

@@ -54,11 +54,13 @@ class CategoryProcessor implements MessageProcessorInterface, TopicSubscriberInt
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [VisibilityOnChangeCategoryPositionTopic::getName(), VisibilityOnRemoveCategoryTopic::getName()];
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();

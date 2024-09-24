@@ -12,17 +12,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PriceListRelationType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('priceList', PriceListSelectType::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

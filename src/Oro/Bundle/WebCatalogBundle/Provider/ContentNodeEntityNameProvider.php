@@ -12,9 +12,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
  */
 class ContentNodeEntityNameProvider implements EntityNameProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof ContentNode) {
@@ -28,9 +26,7 @@ class ContentNodeEntityNameProvider implements EntityNameProviderInterface
         return $localizedTitle ?: (string)$entity->getDefaultTitle();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, ContentNode::class, true)) {

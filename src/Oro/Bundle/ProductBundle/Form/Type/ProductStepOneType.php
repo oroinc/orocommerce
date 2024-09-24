@@ -13,9 +13,7 @@ class ProductStepOneType extends AbstractType
 {
     const NAME = 'oro_product_step_one';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -27,17 +25,13 @@ class ProductStepOneType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('type', ProductTypeType::class, ['label' => 'oro.product.type.label']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['default_input_action'] = 'oro_product_create';
@@ -51,9 +45,7 @@ class ProductStepOneType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

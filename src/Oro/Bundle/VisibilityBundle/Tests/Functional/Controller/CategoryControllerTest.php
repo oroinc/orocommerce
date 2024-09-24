@@ -30,6 +30,7 @@ class CategoryControllerTest extends WebTestCase
 
     private CustomerGroup $group;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

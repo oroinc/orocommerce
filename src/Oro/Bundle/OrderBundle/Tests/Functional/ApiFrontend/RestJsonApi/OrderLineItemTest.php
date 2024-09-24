@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class OrderLineItemTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

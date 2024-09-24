@@ -14,9 +14,7 @@ class RenameTablesSequences implements Migration, DatabasePlatformAwareInterface
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameSequence($schema, $queries, 'oro_shipping_rule_mthd_config', 'oro_ship_method_config');

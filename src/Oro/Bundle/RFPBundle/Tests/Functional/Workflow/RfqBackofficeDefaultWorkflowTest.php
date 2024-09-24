@@ -32,6 +32,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     private WorkflowManager $systemManager;
     private Request $request;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

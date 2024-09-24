@@ -64,6 +64,7 @@ class ContentBlockBuilder extends AbstractChoiceBuilder
         ));
     }
 
+    #[\Override]
     protected function getOptionPreview(array $option, mixed $value = null, bool $default = false): ?string
     {
         if ($value && !$value instanceof ContentBlock && $value !== self::DEFAULT_PREVIEW_KEY) {

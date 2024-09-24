@@ -107,6 +107,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
     private LocalizedFallbackValueAwareDataConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -134,6 +135,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $this->converter->setLocalizationClassName(Localization::class);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->revertFieldConfigImportExportHeader(self::HEADER_FIELD);

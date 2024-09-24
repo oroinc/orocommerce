@@ -24,6 +24,7 @@ class EnumTypeHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var EnumTypeHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactory::class);

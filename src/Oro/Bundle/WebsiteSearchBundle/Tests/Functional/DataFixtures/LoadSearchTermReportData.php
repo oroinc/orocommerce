@@ -22,6 +22,7 @@ class LoadSearchTermReportData extends AbstractFixture
         return __DIR__.'/data/search_term_report.csv';
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organization = $this->getOrganization($manager);

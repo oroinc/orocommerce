@@ -46,6 +46,7 @@ abstract class AbstractPriceCombiningStrategy implements PriceCombiningStrategyI
         $this->allowFallbackCplUsage = $allowFallbackCplUsage;
     }
 
+    #[\Override]
     public function combinePrices(CombinedPriceList $combinedPriceList, array $products = []): void
     {
         $priceListsRelations = $this->getCombinedPriceListRelationsRepository()

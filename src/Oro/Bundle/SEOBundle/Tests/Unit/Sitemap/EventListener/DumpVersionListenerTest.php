@@ -15,6 +15,7 @@ class DumpVersionListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DumpVersionListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filesystemAdapter = $this->createMock(SitemapFilesystemAdapter::class);

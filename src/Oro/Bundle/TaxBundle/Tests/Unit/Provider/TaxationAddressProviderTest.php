@@ -24,6 +24,7 @@ class TaxationAddressProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TaxationAddressProvider */
     private $addressProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);

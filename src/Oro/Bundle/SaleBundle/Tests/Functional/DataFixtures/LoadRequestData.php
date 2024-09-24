@@ -51,17 +51,13 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadUserData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach ($this->requests as $key => $rawRequest) {

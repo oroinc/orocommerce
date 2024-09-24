@@ -16,6 +16,7 @@ class DraftableFilterTest extends WebTestCase
     private QueryTracker $queryTracker;
     private EntityManagerInterface $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,6 +29,7 @@ class DraftableFilterTest extends WebTestCase
         $this->queryTracker->start();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->queryTracker->stop();

@@ -17,6 +17,7 @@ class GeneralLineItemChecksumGeneratorTest extends TestCase
 {
     private GeneralLineItemChecksumGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = new GeneralLineItemChecksumGenerator();

@@ -33,6 +33,7 @@ class PriceListRelationTriggerHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cplHandler = $this->createMock(PriceListRelationTriggerHandlerInterface::class);

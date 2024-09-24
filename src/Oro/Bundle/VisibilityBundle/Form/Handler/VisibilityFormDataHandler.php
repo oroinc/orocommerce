@@ -20,9 +20,7 @@ class VisibilityFormDataHandler implements FormHandlerInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process($entity, FormInterface $form, Request $request)
     {
         $form->setData($entity);

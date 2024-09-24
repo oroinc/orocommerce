@@ -16,6 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class EntityFieldFallbackValueMergeListenerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

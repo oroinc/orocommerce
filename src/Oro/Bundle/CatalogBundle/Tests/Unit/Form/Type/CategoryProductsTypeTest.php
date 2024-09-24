@@ -26,6 +26,7 @@ class CategoryProductsTypeTest extends FormIntegrationTestCase
 
     private EntityIdentifierType $entityIdentifierType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new CategoryProductsType();
@@ -49,6 +50,7 @@ class CategoryProductsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

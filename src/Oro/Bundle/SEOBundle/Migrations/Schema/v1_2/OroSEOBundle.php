@@ -12,9 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class OroSEOBundle implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->moveLocalizationStringsToText($queries);

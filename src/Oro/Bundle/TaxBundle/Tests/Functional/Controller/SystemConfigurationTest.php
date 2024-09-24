@@ -14,6 +14,7 @@ class SystemConfigurationTest extends WebTestCase
 
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

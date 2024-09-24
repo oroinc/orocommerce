@@ -50,6 +50,7 @@ class WebsiteSearchProductPreloadingIndexerListener implements
         $this->fieldsToPreload = $fieldsToPreload;
     }
 
+    #[\Override]
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
         if (!$this->enabled) {

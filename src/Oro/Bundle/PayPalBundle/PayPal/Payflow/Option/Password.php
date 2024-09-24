@@ -6,7 +6,7 @@ class Password extends AbstractOption
 {
     const PASSWORD = 'PWD';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

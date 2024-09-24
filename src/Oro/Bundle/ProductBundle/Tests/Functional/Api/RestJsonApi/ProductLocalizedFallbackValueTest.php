@@ -20,6 +20,7 @@ class ProductLocalizedFallbackValueTest extends RestJsonApiTestCase
     use MessageQueueAssertTrait;
     use DefaultWebsiteIdTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

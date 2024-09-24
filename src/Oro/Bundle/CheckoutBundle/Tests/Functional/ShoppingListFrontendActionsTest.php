@@ -15,6 +15,7 @@ use Symfony\Component\DomCrawler\Crawler;
 
 class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

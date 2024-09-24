@@ -33,6 +33,7 @@ class CombinedPriceListScheduleCommandTest extends WebTestCase
     use MessageQueueAssertTrait;
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

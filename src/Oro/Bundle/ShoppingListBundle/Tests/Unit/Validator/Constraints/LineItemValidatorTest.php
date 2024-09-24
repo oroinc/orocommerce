@@ -25,6 +25,7 @@ class LineItemValidatorTest extends ConstraintValidatorTestCase
     /** @var ShoppingList|\PHPUnit\Framework\MockObject\MockObject */
     private $shoppingList;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);
@@ -39,6 +40,7 @@ class LineItemValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): LineItemValidator
     {
         return new LineItemValidator($this->managerRegistry);

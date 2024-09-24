@@ -16,7 +16,6 @@ use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
  */
 class ContentBlockVoter extends AbstractEntityVoter
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::DELETE];
 
     public function __construct(DoctrineHelper $doctrineHelper)
@@ -25,6 +24,7 @@ class ContentBlockVoter extends AbstractEntityVoter
         $this->setClassName(ContentBlock::class);
     }
 
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute): int
     {
         if (empty($identifier) || BasicPermission::DELETE !== $attribute) {

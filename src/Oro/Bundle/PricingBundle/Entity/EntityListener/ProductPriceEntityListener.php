@@ -11,9 +11,7 @@ use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
  */
 class ProductPriceEntityListener extends BaseProductPriceEntityListener
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntityClassName()
     {
         return ProductPrice::class;

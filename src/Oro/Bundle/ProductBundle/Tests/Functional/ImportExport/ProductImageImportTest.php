@@ -18,6 +18,7 @@ class ProductImageImportTest extends TestCase
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

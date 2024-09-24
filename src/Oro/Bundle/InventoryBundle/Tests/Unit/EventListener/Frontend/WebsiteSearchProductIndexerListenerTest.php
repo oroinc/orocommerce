@@ -23,6 +23,7 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
     /** @var WebsiteSearchProductIndexerListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);

@@ -30,6 +30,7 @@ class FedexRateServiceRestClientTest extends TestCase
     /** @var FedexRateServiceRestClient */
     private $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $responseFactory = new FedexRateServiceResponseFactory();

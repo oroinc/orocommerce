@@ -11,6 +11,7 @@ class DimensionsTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var DimensionsTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transformer = new DimensionsTransformer();

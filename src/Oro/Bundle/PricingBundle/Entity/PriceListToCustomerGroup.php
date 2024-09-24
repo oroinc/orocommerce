@@ -26,6 +26,7 @@ class PriceListToCustomerGroup extends BasePriceListRelation implements Customer
     /**
      * @return CustomerGroup
      */
+    #[\Override]
     public function getCustomerGroup()
     {
         return $this->customerGroup;
@@ -35,6 +36,7 @@ class PriceListToCustomerGroup extends BasePriceListRelation implements Customer
      * @param CustomerGroup $customerGroup
      * @return $this
      */
+    #[\Override]
     public function setCustomerGroup(CustomerGroup $customerGroup)
     {
         $this->customerGroup = $customerGroup;

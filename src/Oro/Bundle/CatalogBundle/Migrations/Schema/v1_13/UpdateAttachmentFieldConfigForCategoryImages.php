@@ -13,9 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class UpdateAttachmentFieldConfigForCategoryImages implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         foreach (['smallImage', 'largeImage'] as $fieldName) {

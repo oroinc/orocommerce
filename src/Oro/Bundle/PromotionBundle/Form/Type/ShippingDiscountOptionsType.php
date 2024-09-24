@@ -12,9 +12,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class ShippingDiscountOptionsType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -28,17 +26,13 @@ class ShippingDiscountOptionsType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_promotion_shipping_discount_options';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return DiscountOptionsType::class;

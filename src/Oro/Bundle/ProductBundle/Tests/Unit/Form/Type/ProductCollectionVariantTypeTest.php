@@ -23,9 +23,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 class ProductCollectionVariantTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $doctrineHelper = $this->createMock(DoctrineHelper::class);

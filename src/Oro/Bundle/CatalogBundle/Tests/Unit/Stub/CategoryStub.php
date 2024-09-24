@@ -21,6 +21,7 @@ class CategoryStub extends Category
         return $this->getDefaultFallbackValue($this->slugPrototypes);
     }
 
+    #[\Override]
     public function __clone()
     {
     }

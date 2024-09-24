@@ -45,6 +45,7 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit\Framework\TestCase
 
     private WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

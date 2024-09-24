@@ -18,6 +18,7 @@ class ApplyAllStrategyTest extends \PHPUnit\Framework\TestCase
 {
     private ApplyAllStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->strategy = new ApplyAllStrategy();

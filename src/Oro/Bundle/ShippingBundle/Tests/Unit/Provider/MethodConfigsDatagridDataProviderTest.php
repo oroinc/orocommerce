@@ -19,6 +19,7 @@ class MethodConfigsDatagridDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MethodConfigsDatagridDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->organizationProvider = $this->createMock(ShippingMethodOrganizationProvider::class);

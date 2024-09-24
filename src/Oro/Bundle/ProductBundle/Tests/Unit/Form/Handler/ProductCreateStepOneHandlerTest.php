@@ -17,6 +17,7 @@ class ProductCreateStepOneHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductCreateStepOneHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);

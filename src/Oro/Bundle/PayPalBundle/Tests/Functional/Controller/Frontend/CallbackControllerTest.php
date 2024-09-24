@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CallbackControllerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

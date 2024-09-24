@@ -14,6 +14,7 @@ class AddUriToSearchTermsDatagridListenerTest extends TestCase
 {
     private AddUriToSearchTermsDatagridListener $datagridListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

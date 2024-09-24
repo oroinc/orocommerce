@@ -22,6 +22,7 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
     /** @var LocalizedSlugWithRedirectType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

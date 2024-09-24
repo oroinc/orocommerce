@@ -19,9 +19,7 @@ class QueryPlaceholderResolver implements QueryPlaceholderResolverInterface
         $this->placeholder = $placeholder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function replace(Query $query)
     {
         $this->replaceInSelect($query);

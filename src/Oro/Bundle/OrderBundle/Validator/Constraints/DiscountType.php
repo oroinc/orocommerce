@@ -11,9 +11,7 @@ class DiscountType extends Constraint
      */
     public $errorMessage = 'oro.order.discounts.type.error.label';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

@@ -13,30 +13,25 @@ class FlatRateTransport implements TransportInterface
     /** @var ParameterBag */
     protected $settings;
 
+    #[\Override]
     public function init(Transport $transportEntity)
     {
         $this->settings = $transportEntity->getSettingsBag();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsFormType()
     {
         return FlatRateSettingsType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsEntityFQCN()
     {
         return FlatRateSettings::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.flat_rate.settings.label';

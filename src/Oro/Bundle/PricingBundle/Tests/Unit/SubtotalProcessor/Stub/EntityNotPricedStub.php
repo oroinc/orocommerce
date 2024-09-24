@@ -34,9 +34,6 @@ class EntityNotPricedStub implements
      */
     protected $website;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
@@ -45,6 +42,7 @@ class EntityNotPricedStub implements
     /**
      * @return ArrayCollection
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->lineItems;
@@ -85,6 +83,7 @@ class EntityNotPricedStub implements
     /**
      * @return Customer
      */
+    #[\Override]
     public function getCustomer()
     {
         return $this->customer;
@@ -95,6 +94,7 @@ class EntityNotPricedStub implements
      *
      * @return $this
      */
+    #[\Override]
     public function setCustomer(Customer $customer)
     {
         $this->customer = $customer;
@@ -105,6 +105,7 @@ class EntityNotPricedStub implements
     /**
      * @return Website
      */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
@@ -115,6 +116,7 @@ class EntityNotPricedStub implements
      *
      * @return $this
      */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;

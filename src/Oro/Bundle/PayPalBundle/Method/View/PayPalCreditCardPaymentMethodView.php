@@ -39,9 +39,7 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
         $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptions(PaymentContextInterface $context)
     {
         $isZeroAmountAuthorizationEnabled = $this->config->isZeroAmountAuthorizationEnabled();
@@ -97,33 +95,25 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
         return substr($acct, -4);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlock()
     {
         return '_payment_methods_paypal_credit_card_widget';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return $this->config->getLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShortLabel()
     {
         return $this->config->getShortLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAdminLabel()
     {
         return $this->config->getAdminLabel();
@@ -137,9 +127,7 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
         return $this->config->getAllowedCreditCards();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethodIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();

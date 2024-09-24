@@ -47,6 +47,7 @@ class WebsiteSearchProductIndexerListener implements WebsiteSearchProductIndexer
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    #[\Override]
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
         if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {

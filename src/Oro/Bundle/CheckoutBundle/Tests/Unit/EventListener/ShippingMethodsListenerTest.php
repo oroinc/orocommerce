@@ -33,6 +33,7 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingMethodsListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);

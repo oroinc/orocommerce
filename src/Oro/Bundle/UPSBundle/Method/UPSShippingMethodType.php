@@ -48,33 +48,25 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         $this->cache = $cache;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSortOrder(): int
     {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptionsConfigurationFormType(): ?string
     {
         return UPSShippingMethodOptionsType::class;
@@ -88,9 +80,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
         return $this->shippingService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function calculatePrice(
         ShippingContextInterface $context,
         array $methodOptions,

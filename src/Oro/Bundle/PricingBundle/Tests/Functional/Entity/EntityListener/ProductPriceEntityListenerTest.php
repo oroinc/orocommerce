@@ -23,6 +23,7 @@ class ProductPriceEntityListenerTest extends WebTestCase
 
     private PriceList $defaultPriceList;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

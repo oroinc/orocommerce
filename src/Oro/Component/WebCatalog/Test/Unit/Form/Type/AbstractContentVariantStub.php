@@ -88,6 +88,7 @@ abstract class AbstractContentVariantStub implements
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -103,14 +104,13 @@ abstract class AbstractContentVariantStub implements
     /**
      * @return string
      */
+    #[\Override]
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setType($type)
     {
         $this->type = $type;
@@ -118,9 +118,7 @@ abstract class AbstractContentVariantStub implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getNode()
     {
         return $this->node;

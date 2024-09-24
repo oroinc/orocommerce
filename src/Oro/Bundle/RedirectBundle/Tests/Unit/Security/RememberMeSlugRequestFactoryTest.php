@@ -16,6 +16,7 @@ class RememberMeSlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var RememberMeSlugRequestFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerFactory = $this->createMock(SlugRequestFactoryInterface::class);

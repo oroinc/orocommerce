@@ -24,9 +24,7 @@ class PlaceholderDecorator implements PlaceholderInterface
         $this->placeholderRegistry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function replace($string, array $values)
     {
         if (empty($this->placeholderTokenCache)) {
@@ -51,9 +49,7 @@ class PlaceholderDecorator implements PlaceholderInterface
         return $string;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function replaceDefault($string)
     {
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {
@@ -63,7 +59,7 @@ class PlaceholderDecorator implements PlaceholderInterface
         return $string;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getPlaceholder()
     {
         throw new \BadMethodCallException('Please use PlaceholderRegistry to get placeholder');

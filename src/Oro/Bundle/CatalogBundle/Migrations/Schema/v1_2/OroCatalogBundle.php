@@ -17,9 +17,7 @@ class OroCatalogBundle implements Migration, AttachmentExtensionAwareInterface
     const THUMBNAIL_WIDTH_SIZE_IN_PX = 100;
     const THUMBNAIL_HEIGHT_SIZE_IN_PX = 100;
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addCategoryImageAssociation($schema, 'largeImage');

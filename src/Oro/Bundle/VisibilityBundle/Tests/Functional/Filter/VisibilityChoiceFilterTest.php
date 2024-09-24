@@ -8,6 +8,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFilterProductV
 
 class VisibilityChoiceFilterTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

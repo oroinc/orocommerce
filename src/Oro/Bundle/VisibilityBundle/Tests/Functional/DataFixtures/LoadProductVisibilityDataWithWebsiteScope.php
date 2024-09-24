@@ -8,6 +8,7 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class LoadProductVisibilityDataWithWebsiteScope extends LoadProductVisibilityData
 {
+    #[\Override]
     protected function getScopeForProductVisibilities(): Scope
     {
         $website = $this->container->get('oro_website.manager')->getDefaultWebsite();
@@ -15,6 +16,7 @@ class LoadProductVisibilityDataWithWebsiteScope extends LoadProductVisibilityDat
             ->getProductVisibilityScope($website);
     }
 
+    #[\Override]
     protected function getScopeForCustomerGroupVisibilities(CustomerGroup $customerGroup): Scope
     {
         $website = $this->container->get('oro_website.manager')->getDefaultWebsite();
@@ -22,6 +24,7 @@ class LoadProductVisibilityDataWithWebsiteScope extends LoadProductVisibilityDat
             ->getCustomerGroupProductVisibilityScope($customerGroup, $website);
     }
 
+    #[\Override]
     protected function getScopeForCustomerVisibilities(Customer $customer): Scope
     {
         $website = $this->container->get('oro_website.manager')->getDefaultWebsite();

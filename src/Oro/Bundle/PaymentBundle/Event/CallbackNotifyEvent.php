@@ -6,7 +6,7 @@ class CallbackNotifyEvent extends AbstractCallbackEvent
 {
     const NAME = 'oro_payment.callback.notify';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getEventName()
     {
         return self::NAME;

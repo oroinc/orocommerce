@@ -31,6 +31,7 @@ class FrontendProductPricesDataProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductPriceCriteriaFactoryInterface|MockObject $productPriceCriteriaFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);

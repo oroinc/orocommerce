@@ -16,6 +16,7 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
      * @param string $subtotalName
      * @return string
      */
+    #[\Override]
     public function getSubtotal($subtotalName)
     {
         /** @var Subtotals $subtotals */
@@ -58,9 +59,7 @@ class CheckoutStep extends Element implements LineItemsAwareInterface, SubtotalA
         return trim($currentTitle->getText());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getElements('CheckoutStepLineItem');

@@ -32,6 +32,7 @@ class DefaultMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
     /** @var DefaultMultiShippingMethodSetter  */
     private $setter;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

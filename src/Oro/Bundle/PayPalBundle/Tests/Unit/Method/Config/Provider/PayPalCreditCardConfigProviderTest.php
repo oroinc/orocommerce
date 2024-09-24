@@ -22,6 +22,7 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalCreditCardConfigProvider */
     private $payPalConfigProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $channel1 = $this->getEntity(Channel::class, ['id' => 1, 'type' => self::TYPE]);

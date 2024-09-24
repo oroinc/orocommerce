@@ -25,6 +25,7 @@ class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterf
     ) {
     }
 
+    #[\Override]
     public function handle(DataStorageInterface $dataStorage)
     {
         $transportId = $dataStorage->get(self::PARAM_TRANSPORT_ID);

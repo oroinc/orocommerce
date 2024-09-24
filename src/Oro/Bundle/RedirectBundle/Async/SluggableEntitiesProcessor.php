@@ -61,9 +61,7 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, LoggerAwa
         $this->batchSize = $batchSize > 0 ? $batchSize : self::BATCH_SIZE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $topicName = $message->getProperty(MessageQueueConfig::PARAMETER_TOPIC_NAME);

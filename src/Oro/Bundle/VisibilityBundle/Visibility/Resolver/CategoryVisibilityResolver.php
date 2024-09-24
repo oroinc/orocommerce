@@ -39,18 +39,14 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
         $this->scopeManager = $scopeManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isCategoryVisible(Category $category)
     {
         return $this->getCategoryRepository()
             ->isCategoryVisible($category, $this->getCategoryVisibilityConfigValue());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVisibleCategoryIds()
     {
         return $this->getCategoryRepository()
@@ -60,9 +56,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getHiddenCategoryIds()
     {
         return $this->getCategoryRepository()
@@ -78,6 +72,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      *
      * @return bool
      */
+    #[\Override]
     public function isCategoryVisibleForCustomerGroup(Category $category, CustomerGroup $customerGroup)
     {
         $scope = $this->getScope(
@@ -98,6 +93,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      *
      * @return array
      */
+    #[\Override]
     public function getVisibleCategoryIdsForCustomerGroup(CustomerGroup $customerGroup)
     {
         $scope = $this->getScope(
@@ -118,6 +114,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      *
      * @return array
      */
+    #[\Override]
     public function getHiddenCategoryIdsForCustomerGroup(CustomerGroup $customerGroup)
     {
         $scope = $this->getScope(
@@ -139,6 +136,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      *
      * @return bool
      */
+    #[\Override]
     public function isCategoryVisibleForCustomer(Category $category, Customer $customer)
     {
         $scope = $this->getScope(
@@ -156,6 +154,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      *
      * @return array
      */
+    #[\Override]
     public function getVisibleCategoryIdsForCustomer(Customer $customer)
     {
         $scope = $this->getScope(
@@ -178,6 +177,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
      *
      * @return array
      */
+    #[\Override]
     public function getHiddenCategoryIdsForCustomer(Customer $customer)
     {
         $scope = $this->getScope(

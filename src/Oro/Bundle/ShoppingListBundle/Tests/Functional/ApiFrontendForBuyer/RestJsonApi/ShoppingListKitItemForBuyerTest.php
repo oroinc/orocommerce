@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,6 +35,7 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
         }
     }
 
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/requests';

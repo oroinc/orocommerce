@@ -51,9 +51,7 @@ class LoadProductCollectionWithSortOrderData extends AbstractFixture implements 
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -61,9 +59,7 @@ class LoadProductCollectionWithSortOrderData extends AbstractFixture implements 
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$products as $reference => $productSku) {

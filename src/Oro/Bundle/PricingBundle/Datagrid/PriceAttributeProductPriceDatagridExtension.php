@@ -58,16 +58,14 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
     /**
      * Must be called before FormatterExtension.
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getPriority()
     {
         return 10;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config)
     {
         return
@@ -76,18 +74,14 @@ class PriceAttributeProductPriceDatagridExtension extends AbstractExtension
             && parent::isApplicable($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config)
     {
         $this->addColumns($config);
         $this->applied = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function visitResult(DatagridConfiguration $config, ResultsObject $result)
     {
         if (!$this->enabledPriceColumns) {

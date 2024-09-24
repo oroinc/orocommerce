@@ -15,6 +15,7 @@ class ValidateConnectionControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

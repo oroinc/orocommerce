@@ -30,6 +30,7 @@ class RedirectListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RedirectListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);

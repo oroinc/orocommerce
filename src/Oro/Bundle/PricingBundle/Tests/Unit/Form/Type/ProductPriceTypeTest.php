@@ -36,6 +36,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
     private array $priceLists = ['Test', 'Test 01'];
     private array $units = ['item', 'kg' ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ProductPriceType();
@@ -43,9 +44,7 @@ class ProductPriceTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $priceType = new PriceType();

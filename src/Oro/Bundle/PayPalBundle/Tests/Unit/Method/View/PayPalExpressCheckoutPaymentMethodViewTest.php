@@ -17,6 +17,7 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit\Framework\Test
     /** @var PayPalExpressCheckoutPaymentMethodView */
     private $methodView;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentConfig = $this->createMock(PayPalExpressCheckoutConfigInterface::class);

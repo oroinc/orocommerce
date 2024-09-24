@@ -24,6 +24,7 @@ class FlatRateMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var FlatRateMethodFromChannelFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

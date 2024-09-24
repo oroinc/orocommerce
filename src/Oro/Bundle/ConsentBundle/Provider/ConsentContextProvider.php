@@ -35,17 +35,13 @@ class ConsentContextProvider implements ConsentContextProviderInterface
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWebsite()
     {
         if ($this->website) {
@@ -56,9 +52,7 @@ class ConsentContextProvider implements ConsentContextProviderInterface
         return $this->websiteManager->getCurrentWebsite() ?: $this->websiteManager->getDefaultWebsite();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getScope()
     {
         return $this->scopeManager->findMostSuitable('web_content');

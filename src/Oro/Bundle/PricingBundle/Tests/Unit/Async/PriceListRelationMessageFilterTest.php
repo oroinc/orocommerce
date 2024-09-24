@@ -29,6 +29,7 @@ class PriceListRelationMessageFilterTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListRelationMessageFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

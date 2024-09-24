@@ -17,9 +17,7 @@ class MainOrderPromotionDiscountsProviderDecorator implements PromotionDiscounts
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array
     {
         if ($sourceEntity instanceof Order && !$sourceEntity->getSubOrders()->isEmpty()) {

@@ -17,9 +17,6 @@ class UrlSafe extends Regex implements AliasAwareConstraintInterface
     /** @var string */
     public $pattern = '/^[a-zA-Z0-9\-\.\_\~]*$/';
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($options = null)
     {
         if ($options['allowSlashes'] ?? false) {
@@ -35,33 +32,25 @@ class UrlSafe extends Regex implements AliasAwareConstraintInterface
         parent::__construct($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultOption(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredOptions(): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'Symfony\Component\Validator\Constraints\RegexValidator';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAlias()
     {
         return self::ALIAS;

@@ -17,6 +17,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     protected string $pricesByCustomerActionUrl = 'oro_pricing_price_by_customer';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -122,9 +123,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertMatchesRegularExpression('/"savedId":"[\w\d-]+"/i', $html);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductPricesByCustomerActionDataProvider(): array
     {
         return [

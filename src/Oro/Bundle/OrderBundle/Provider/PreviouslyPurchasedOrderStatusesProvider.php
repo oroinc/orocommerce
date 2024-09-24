@@ -10,6 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class PreviouslyPurchasedOrderStatusesProvider implements OrderStatusesProviderInterface
 {
+    #[\Override]
     public function getAvailableStatuses(): array
     {
         return ExtendHelper::mapToEnumOptionIds(

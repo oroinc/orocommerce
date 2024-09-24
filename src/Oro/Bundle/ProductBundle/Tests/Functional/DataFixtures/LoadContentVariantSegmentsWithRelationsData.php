@@ -12,9 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadContentVariantSegmentsWithRelationsData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -23,9 +21,7 @@ class LoadContentVariantSegmentsWithRelationsData extends AbstractFixture implem
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->createTestContentVariant(

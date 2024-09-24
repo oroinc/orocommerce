@@ -42,9 +42,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
         ]
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -55,9 +53,7 @@ class LoadTaxRules extends AbstractFixture implements DependentFixtureInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var CustomerTaxCode $customerTaxCode */

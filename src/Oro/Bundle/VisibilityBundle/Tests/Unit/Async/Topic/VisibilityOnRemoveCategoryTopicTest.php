@@ -11,11 +11,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class VisibilityOnRemoveCategoryTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new VisibilityOnRemoveCategoryTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -30,6 +32,7 @@ class VisibilityOnRemoveCategoryTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

@@ -10,9 +10,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryUtil;
 
 class InventoryLevelIteratorStrategy extends IdentifierIterationStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initializeIdentityQuery(Query $query)
     {
         $identifierHydrationMode = 'IdentifierHydrator';
@@ -26,9 +24,7 @@ class InventoryLevelIteratorStrategy extends IdentifierIterationStrategy
         QueryUtil::addTreeWalker($query, InventoryWalker::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initializeDataQuery(Query $query)
     {
         parent::initializeDataQuery($query);

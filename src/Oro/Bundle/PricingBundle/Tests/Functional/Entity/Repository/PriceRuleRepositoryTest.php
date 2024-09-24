@@ -11,6 +11,7 @@ class PriceRuleRepositoryTest extends WebTestCase
 {
     private PriceRuleRepository $repo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

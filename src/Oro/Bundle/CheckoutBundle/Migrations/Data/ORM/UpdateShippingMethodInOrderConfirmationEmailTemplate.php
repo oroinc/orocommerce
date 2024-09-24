@@ -13,17 +13,13 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class UpdateShippingMethodInOrderConfirmationEmailTemplate extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [AddKitItemLineItemsToOrderConfirmationEmailTemplate::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $existingTemplate = $this->findExistingTemplate($manager);

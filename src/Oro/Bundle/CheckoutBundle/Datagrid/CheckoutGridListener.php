@@ -67,9 +67,6 @@ class CheckoutGridListener
         $this->inflector = $inflector;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         $config = $event->getConfig();

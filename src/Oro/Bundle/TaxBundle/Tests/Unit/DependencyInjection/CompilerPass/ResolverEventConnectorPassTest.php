@@ -14,6 +14,7 @@ class ResolverEventConnectorPassTest extends \PHPUnit\Framework\TestCase
     /**@var ResolverEventConnectorPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new ResolverEventConnectorPass();

@@ -10,9 +10,7 @@ class LoadOrganizations extends AbstractFixture
 {
     const ORGANIZATION_1 = 'order.simple_organization_1' ;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organization = new Organization();

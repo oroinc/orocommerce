@@ -12,16 +12,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class InvalidateTotalsByInventoryStatusPerWebsiteTopic extends AbstractTopic
 {
+    #[\Override]
     public static function getName(): string
     {
         return 'oro_shopping_list.invalidate_totals_by_inventory_status_per_website';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Invalidates totals by inventory status per website';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

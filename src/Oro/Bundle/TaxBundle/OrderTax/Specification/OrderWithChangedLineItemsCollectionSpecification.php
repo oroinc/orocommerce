@@ -24,6 +24,7 @@ class OrderWithChangedLineItemsCollectionSpecification implements SpecificationI
     /**
      * @param Order|object $order
      */
+    #[\Override]
     public function isSatisfiedBy(object $order): bool
     {
         if (!$order instanceof Order) {

@@ -36,6 +36,7 @@ class FreightClass implements MeasureUnitInterface, FreightClassInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getCode()
     {
         return $this->code;
@@ -44,6 +45,7 @@ class FreightClass implements MeasureUnitInterface, FreightClassInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->code;

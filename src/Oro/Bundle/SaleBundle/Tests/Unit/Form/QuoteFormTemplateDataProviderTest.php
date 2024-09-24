@@ -20,6 +20,7 @@ class QuoteFormTemplateDataProviderTest extends TestCase
 
     private QuoteFormTemplateDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dispatcher = new EventDispatcher();

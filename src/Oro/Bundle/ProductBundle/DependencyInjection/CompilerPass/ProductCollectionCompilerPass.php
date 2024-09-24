@@ -11,9 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class ProductCollectionCompilerPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition('oro_web_catalog.provider.web_catalog_usage_provider')) {

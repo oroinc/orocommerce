@@ -22,6 +22,7 @@ class ProductVariantsSelectedFieldsProvider implements SelectedFieldsProviderInt
         $this->doctrine = $doctrine;
     }
 
+    #[\Override]
     public function getSelectedFields(
         DatagridConfiguration $datagridConfiguration,
         ParameterBag $datagridParameters

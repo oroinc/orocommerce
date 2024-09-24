@@ -36,6 +36,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
     private ShardQueryExecutorInterface $insertFromSelectQueryExecutor;
     private TempTableManipulatorInterface $tempTableManipulator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

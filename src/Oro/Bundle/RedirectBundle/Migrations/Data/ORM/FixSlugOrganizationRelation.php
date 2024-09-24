@@ -29,6 +29,7 @@ class FixSlugOrganizationRelation extends AbstractFixture implements ContainerAw
     /**
      * @param EntityManagerInterface $manager
      */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getBrokenSlugs($manager) as $slug) {

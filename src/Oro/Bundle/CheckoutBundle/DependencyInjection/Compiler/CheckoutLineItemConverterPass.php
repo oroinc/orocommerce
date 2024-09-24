@@ -15,9 +15,7 @@ class CheckoutLineItemConverterPass implements CompilerPassInterface
 {
     use PriorityTaggedLocatorTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container): void
     {
         $tagName = 'oro.checkout.line_item.converter';

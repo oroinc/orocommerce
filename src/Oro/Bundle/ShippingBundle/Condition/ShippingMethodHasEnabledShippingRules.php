@@ -25,26 +25,20 @@ class ShippingMethodHasEnabledShippingRules extends AbstractCondition implements
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         return (bool)$this->doctrine->getRepository(ShippingMethodsConfigsRule::class)
             ->getEnabledRulesByMethod($this->resolveValue($context, $this->propertyPath, false));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'shipping_method_has_enabled_shipping_rules';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $this->propertyPath = reset($options);
@@ -55,17 +49,13 @@ class ShippingMethodHasEnabledShippingRules extends AbstractCondition implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->propertyPath]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->propertyPath], $factoryAccessor);

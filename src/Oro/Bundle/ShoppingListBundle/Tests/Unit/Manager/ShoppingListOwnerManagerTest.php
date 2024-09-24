@@ -33,6 +33,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit\Framework\TestCase
      */
     protected $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->aclHelper = $this->createMock(AclHelper::class);

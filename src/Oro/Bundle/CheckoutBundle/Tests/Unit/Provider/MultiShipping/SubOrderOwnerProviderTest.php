@@ -42,6 +42,7 @@ class SubOrderOwnerProviderTest extends OrmTestCase
     /** @var SubOrderOwnerProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->subOrderOrganizationProvider = $this->createMock(SubOrderOrganizationProviderInterface::class);

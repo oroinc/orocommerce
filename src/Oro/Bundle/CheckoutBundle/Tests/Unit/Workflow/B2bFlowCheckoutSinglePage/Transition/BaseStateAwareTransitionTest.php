@@ -21,6 +21,7 @@ class BaseStateAwareTransitionTest extends TestCase
     private UpdateShippingPriceInterface|MockObject $updateShippingPrice;
     private BaseStateAwareTransition $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->addressActions = $this->createMock(AddressActionsInterface::class);

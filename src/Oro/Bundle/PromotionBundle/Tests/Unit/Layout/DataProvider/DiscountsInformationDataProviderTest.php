@@ -33,6 +33,7 @@ class DiscountsInformationDataProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);

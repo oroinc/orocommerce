@@ -10,6 +10,7 @@ use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
  */
 class LoadGuestAccessEmailTemplate extends AbstractHashEmailMigration implements VersionedFixtureInterface
 {
+    #[\Override]
     public function getEmailsDir(): string
     {
         return $this->container
@@ -17,11 +18,13 @@ class LoadGuestAccessEmailTemplate extends AbstractHashEmailMigration implements
             ->locateResource('@OroSaleBundle/Migrations/Data/ORM/guest_access_email');
     }
 
+    #[\Override]
     public function getVersion(): string
     {
         return '1.2';
     }
 
+    #[\Override]
     protected function getEmailHashesToUpdate(): array
     {
         return [

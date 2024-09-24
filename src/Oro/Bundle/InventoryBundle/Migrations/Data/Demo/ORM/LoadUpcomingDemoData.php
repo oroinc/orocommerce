@@ -23,6 +23,7 @@ use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
  */
 class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -31,6 +32,7 @@ class LoadUpcomingDemoData extends AbstractEntityReferenceFixture implements Dep
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $accessor = PropertyAccess::createPropertyAccessor();

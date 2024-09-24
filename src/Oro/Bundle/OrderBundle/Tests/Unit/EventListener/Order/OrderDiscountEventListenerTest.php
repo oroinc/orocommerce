@@ -23,6 +23,7 @@ class OrderDiscountEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderAddressEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);

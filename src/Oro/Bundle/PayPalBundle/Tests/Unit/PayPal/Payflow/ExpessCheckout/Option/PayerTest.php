@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class PayerTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new ECOption\Payer(), new ECOption\Action()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

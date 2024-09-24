@@ -13,9 +13,7 @@ class LoadProductUnits extends AbstractFixture
     const MILLILITER = 'product_unit.milliliter';
     const BOX = 'product_unit.box';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->createProductUnit($manager, self::MILLILITER, 0);

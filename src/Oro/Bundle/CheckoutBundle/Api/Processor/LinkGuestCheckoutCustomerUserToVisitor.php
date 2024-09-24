@@ -21,9 +21,7 @@ class LinkGuestCheckoutCustomerUserToVisitor implements ProcessorInterface
         $this->guestCheckoutChecker = $guestCheckoutChecker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

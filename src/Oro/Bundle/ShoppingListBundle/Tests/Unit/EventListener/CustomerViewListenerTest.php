@@ -8,9 +8,7 @@ use Oro\Bundle\ShoppingListBundle\EventListener\CustomerViewListener;
 
 class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createListenerToTest(): AbstractCustomerViewListener
     {
         return new CustomerViewListener(
@@ -20,33 +18,25 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerViewTemplate(): string
     {
         return '@OroShoppingList/Customer/shopping_lists_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerLabel(): string
     {
         return 'oro.shoppinglist.entity_plural_label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserViewTemplate(): string
     {
         return '@OroShoppingList/CustomerUser/shopping_lists_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserLabel(): string
     {
         return 'oro.shoppinglist.entity_plural_label';

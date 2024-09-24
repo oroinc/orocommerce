@@ -34,6 +34,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
      */
     private $dispatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -53,6 +54,7 @@ class ProductVisibilityRestrictionListenerTest extends WebTestCase
         $this->dispatcher->addListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->dispatcher->removeListener(ProductSearchQueryRestrictionEvent::NAME, $this->listener);

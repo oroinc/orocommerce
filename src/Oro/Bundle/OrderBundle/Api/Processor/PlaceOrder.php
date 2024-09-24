@@ -30,9 +30,7 @@ class PlaceOrder implements ProcessorInterface
         $this->orderPurchaseActionGroupName = $orderPurchaseActionGroupName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CreateContext $context */

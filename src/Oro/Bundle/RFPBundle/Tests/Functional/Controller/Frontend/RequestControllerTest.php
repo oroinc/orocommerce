@@ -34,6 +34,7 @@ class RequestControllerTest extends WebTestCase
 
     private WorkflowManager $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

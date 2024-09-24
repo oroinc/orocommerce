@@ -11,6 +11,7 @@ class WebCatalogDependenciesCompilerPassTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogDependenciesCompilerPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new WebCatalogDependenciesCompilerPass();

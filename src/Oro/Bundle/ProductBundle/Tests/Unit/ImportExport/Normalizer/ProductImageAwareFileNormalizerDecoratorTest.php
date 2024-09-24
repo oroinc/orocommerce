@@ -19,6 +19,7 @@ class ProductImageAwareFileNormalizerDecoratorTest extends \PHPUnit\Framework\Te
     /** @var ProductImageAwareFileNormalizerDecorator */
     private $decorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fileNormalizer = $this->createMock(FileNormalizer::class);

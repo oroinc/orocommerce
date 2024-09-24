@@ -16,6 +16,7 @@ class ProductPageTemplateValidatorTest extends ConstraintValidatorTestCase
     /** @var PageTemplatesManager|\PHPUnit\Framework\MockObject\MockObject */
     private $pageTemplatesManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->pageTemplatesManager = $this->createMock(PageTemplatesManager::class);
@@ -35,6 +36,7 @@ class ProductPageTemplateValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new ProductPageTemplateValidator($this->pageTemplatesManager);

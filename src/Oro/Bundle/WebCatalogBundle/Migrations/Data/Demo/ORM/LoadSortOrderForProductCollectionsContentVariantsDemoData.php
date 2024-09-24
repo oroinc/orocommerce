@@ -24,6 +24,7 @@ class LoadSortOrderForProductCollectionsContentVariantsDemoData extends Abstract
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -32,6 +33,7 @@ class LoadSortOrderForProductCollectionsContentVariantsDemoData extends Abstract
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         // Set sort order for category-based product segment the same as for products in the original category

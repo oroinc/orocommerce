@@ -9,13 +9,13 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
  */
 class DelayedCaptureRequest extends AbstractRequest
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function getTransactionType()
     {
         return Option\Transaction::DELAYED_CAPTURE;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureRequestOptions()
     {
         $this

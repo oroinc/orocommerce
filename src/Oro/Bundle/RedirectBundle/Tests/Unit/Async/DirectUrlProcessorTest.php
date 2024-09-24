@@ -47,6 +47,7 @@ class DirectUrlProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var DirectUrlProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

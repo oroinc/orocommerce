@@ -23,6 +23,7 @@ class WebpAwareProductImagesURLsProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $productRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

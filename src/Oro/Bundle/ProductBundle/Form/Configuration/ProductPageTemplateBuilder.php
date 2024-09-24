@@ -14,9 +14,6 @@ class ProductPageTemplateBuilder extends RadioBuilder
         return 'product_page_template';
     }
 
-    /**
-     * {@inheritDoc}
-     */
     #[\Override] protected function getConfiguredOptions($option): array
     {
         return array_merge(parent::getConfiguredOptions($option), [

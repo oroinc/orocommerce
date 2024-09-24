@@ -19,9 +19,7 @@ class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
         $this->productUpcomingProvider = $productUpcomingProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, EntityFieldFallbackValue::class, true) &&
@@ -30,9 +28,7 @@ class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
             $context['fieldName'] === UpcomingProductProvider::IS_UPCOMING;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if ($data === '1') {

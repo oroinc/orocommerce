@@ -43,33 +43,25 @@ class WorkflowRelatedTransitionProvider implements TransitionProviderInterface
         $this->workflowRelatedProviders[$workflowName] = $provider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBackTransition(WorkflowItem $workflowItem)
     {
         return $this->getProvider()->getBackTransition($workflowItem);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBackTransitions(WorkflowItem $workflowItem)
     {
         return $this->getProvider()->getBackTransitions($workflowItem);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getContinueTransition(WorkflowItem $workflowItem, $transitionName = null)
     {
         return $this->getProvider()->getContinueTransition($workflowItem, $transitionName);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function clearCache()
     {
         $this->getProvider()->clearCache();

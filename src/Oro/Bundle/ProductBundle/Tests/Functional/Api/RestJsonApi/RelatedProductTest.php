@@ -25,6 +25,7 @@ class RelatedProductTest extends RestJsonApiTestCase
     use RolePermissionExtension;
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

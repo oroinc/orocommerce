@@ -10,9 +10,7 @@ use Oro\Bundle\SearchBundle\Api\Filter\SearchFieldResolverFactory as BaseFactory
  */
 class SearchFieldResolverFactory extends BaseFactory
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createFieldResolver(string $entityClass, array $fieldMappings): BaseResolver
     {
         return new SearchFieldResolver(

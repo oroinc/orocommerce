@@ -38,6 +38,7 @@ class FrontendProductPriceDatagridListenerTest extends TestCase
 
     private FrontendProductPriceDatagridListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);

@@ -12,6 +12,7 @@ use Symfony\Component\Yaml\Yaml;
  */
 class LoadSortOrderForProductKitsDemoData extends LoadSortOrderForProductCollectionsContentVariantsDemoData
 {
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [
@@ -19,6 +20,7 @@ class LoadSortOrderForProductKitsDemoData extends LoadSortOrderForProductCollect
         ]);
     }
 
+    #[\Override]
     protected function getAllProductData(): array
     {
         $locator = $this->container->get('file_locator');

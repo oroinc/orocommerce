@@ -6,9 +6,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
 
 class SubtotalEntityStub extends EntityStub implements SubtotalAwareInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal()
     {
         return 777;

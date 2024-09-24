@@ -13,9 +13,7 @@ class CacheBuilderTest extends AbstractCacheBuilderTest
      */
     protected $cacheBuilder;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

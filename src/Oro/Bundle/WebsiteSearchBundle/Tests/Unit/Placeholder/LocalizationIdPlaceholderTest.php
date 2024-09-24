@@ -18,6 +18,7 @@ class LocalizationIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationIdPlaceholder */
     private $placeholder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationProvider = $this->createMock(CurrentLocalizationProvider::class);

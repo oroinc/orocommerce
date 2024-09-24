@@ -20,6 +20,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
     /** @var PaymentMethodConfigType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
@@ -69,9 +70,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

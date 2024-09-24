@@ -6,9 +6,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class PaymentMethodConfigType extends Element
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($value)
     {
         $values = is_array($value) ? $value : [$value];

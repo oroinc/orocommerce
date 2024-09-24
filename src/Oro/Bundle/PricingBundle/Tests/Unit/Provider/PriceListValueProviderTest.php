@@ -23,6 +23,7 @@ class PriceListValueProviderTest extends TestCase
 
     private PriceListValueProvider $priceListValueProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shardManager = $this->createMock(ShardManager::class);

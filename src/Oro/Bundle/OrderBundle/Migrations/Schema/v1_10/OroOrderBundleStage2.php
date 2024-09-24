@@ -12,9 +12,7 @@ class OroOrderBundleStage2 implements Migration, OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addOroOrderAddressForeignKeys($schema);
@@ -57,9 +55,7 @@ class OroOrderBundleStage2 implements Migration, OrderedMigrationInterface
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 2;

@@ -22,9 +22,7 @@ class PriceListFilter extends SingleChoiceFilter
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function init($name, array $params)
     {
         $params[FilterUtility::FRONTEND_TYPE_KEY] = 'choice';
@@ -32,9 +30,7 @@ class PriceListFilter extends SingleChoiceFilter
         parent::init($name, $params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function prepareData(array $data): array
     {
         $data = parent::prepareData($data);
@@ -47,9 +43,7 @@ class PriceListFilter extends SingleChoiceFilter
         return $data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
@@ -70,9 +64,7 @@ class PriceListFilter extends SingleChoiceFilter
         return $metadata;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormType(): string
     {
         return PriceListFilterType::class;

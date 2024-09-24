@@ -32,6 +32,7 @@ class ResizeProductImageMessageProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ResizeProductImageMessageProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManagerInterface::class);

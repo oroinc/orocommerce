@@ -28,17 +28,13 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements
      */
     private $newArrivalsSegmentName;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->newArrivalsSegmentName = $container->getParameter(self::NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -47,9 +43,7 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $segmentName = $this->newArrivalsSegmentName;

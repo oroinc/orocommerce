@@ -16,25 +16,19 @@ class Consent extends BaseConsent
         'name' => 'names',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __call($name, $arguments)
     {
         return $this->localizedMethodCall($this->localizedFields, $name, $arguments);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __get($name)
     {
         return $this->localizedFieldGet($this->localizedFields, $name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __set($name, $value)
     {
         return $this->localizedFieldSet($this->localizedFields, $name, $value);

@@ -14,6 +14,7 @@ class WebsiteSearchSuggestionFeatureToggleListenerTest extends \PHPUnit\Framewor
 
     private MessageProducerInterface&MockObject $producer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);

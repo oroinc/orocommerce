@@ -20,6 +20,7 @@ class ActualizeCurrency implements ActualizeCurrencyInterface
     ) {
     }
 
+    #[\Override]
     public function execute(Checkout $checkout): void
     {
         $currentCurrency = $this->userCurrencyManager->getUserCurrency();

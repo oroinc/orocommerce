@@ -8,17 +8,13 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\ProductStub;
 
 class ProductDecrementQuantityFormExtensionTest extends ProductInventoryTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->productFormExtension = new ProductDecrementQuantityFormExtension();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function assertProductFallBack(ProductStub $product, $expectedFallBackId)
     {
         $this->assertInstanceOf(EntityFieldFallbackValue::class, $product->getDecrementQuantity());

@@ -16,6 +16,7 @@ class PaymentMethodActions implements PaymentMethodActionsInterface
     ) {
     }
 
+    #[\Override]
     public function validate(
         Checkout $checkout,
         string $successUrl,
@@ -46,6 +47,7 @@ class PaymentMethodActions implements PaymentMethodActionsInterface
         return $paymentValidateResult['attribute'];
     }
 
+    #[\Override]
     public function isPaymentMethodSupportsValidate(Checkout $checkout): bool
     {
         if (!$checkout->getPaymentMethod()) {

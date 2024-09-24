@@ -28,6 +28,7 @@ class ProductPriceFlatEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FeatureChecker */
     private $featureChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

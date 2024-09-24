@@ -30,9 +30,7 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFunctions(): array
     {
         return [
@@ -41,9 +39,7 @@ class ImageSliderExtension extends AbstractExtension implements ServiceSubscribe
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

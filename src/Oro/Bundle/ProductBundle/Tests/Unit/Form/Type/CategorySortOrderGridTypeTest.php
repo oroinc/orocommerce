@@ -26,6 +26,7 @@ class CategorySortOrderGridTypeTest extends FormIntegrationTestCase
 
     private CategorySortOrderGridType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
@@ -36,9 +37,7 @@ class CategorySortOrderGridTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

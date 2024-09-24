@@ -14,6 +14,7 @@ class DigitalAssetExtensionTest extends \PHPUnit\Framework\TestCase
 
     private DigitalAssetExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fileUrlByUuidProvider = $this->createMock(FileUrlByUuidProvider::class);

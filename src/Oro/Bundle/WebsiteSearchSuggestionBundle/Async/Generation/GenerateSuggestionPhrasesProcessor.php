@@ -30,6 +30,7 @@ class GenerateSuggestionPhrasesProcessor implements MessageProcessorInterface, T
     ) {
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();
@@ -72,6 +73,7 @@ class GenerateSuggestionPhrasesProcessor implements MessageProcessorInterface, T
         );
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [GenerateSuggestionsPhrasesChunkTopic::getName()];

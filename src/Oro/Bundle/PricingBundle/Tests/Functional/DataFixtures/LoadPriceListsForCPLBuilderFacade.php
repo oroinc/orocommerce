@@ -28,9 +28,7 @@ class LoadPriceListsForCPLBuilderFacade extends LoadPriceLists
         'PL_WS2_C4',
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getPriceListData(): array
     {
         $data = [];

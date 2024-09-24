@@ -30,6 +30,7 @@ class CheckoutLineItemGroupsShippingManagerTest extends \PHPUnit\Framework\TestC
     /** @var CheckoutLineItemGroupsShippingManager */
     private $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemGroupShippingMethodsProvider = $this->createMock(

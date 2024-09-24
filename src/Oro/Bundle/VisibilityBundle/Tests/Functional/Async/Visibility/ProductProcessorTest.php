@@ -29,6 +29,7 @@ class ProductProcessorTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
     use VisibilityAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -47,6 +48,7 @@ class ProductProcessorTest extends WebTestCase
             ->buildCache();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::getConfigManager()->set('oro_visibility.product_visibility', VisibilityInterface::VISIBLE);

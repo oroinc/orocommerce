@@ -19,9 +19,7 @@ class OrderDiscountDeleteHandler extends AbstractEntityDeleteHandler
         $this->totalHelper = $totalHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function flush(array $options): void
     {
         /** @var OrderDiscount $discount */
@@ -33,9 +31,7 @@ class OrderDiscountDeleteHandler extends AbstractEntityDeleteHandler
         parent::flush($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function flushAll(array $listOfOptions): void
     {
         $processedOrders = [];
@@ -54,9 +50,7 @@ class OrderDiscountDeleteHandler extends AbstractEntityDeleteHandler
         parent::flushAll($listOfOptions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function deleteWithoutFlush($entity, array $options): void
     {
         /** @var OrderDiscount $entity */

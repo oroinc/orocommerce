@@ -253,9 +253,7 @@ class FedexIntegrationSettings extends Transport
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSettingsBag()
     {
         return new ParameterBag();

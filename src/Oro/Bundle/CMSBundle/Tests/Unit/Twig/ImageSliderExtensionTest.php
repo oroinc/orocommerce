@@ -27,6 +27,7 @@ class ImageSliderExtensionTest extends TestCase
     private ManagerRegistry|MockObject $doctrine;
     private ImageSliderExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);

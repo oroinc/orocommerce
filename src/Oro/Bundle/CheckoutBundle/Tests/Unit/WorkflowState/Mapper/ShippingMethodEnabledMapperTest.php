@@ -11,6 +11,7 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     /** @var CheckoutShippingMethodsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $checkoutShippingMethodsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutShippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);
@@ -71,9 +72,7 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new ShippingMethodEnabledMapper($this->checkoutShippingMethodsProvider);

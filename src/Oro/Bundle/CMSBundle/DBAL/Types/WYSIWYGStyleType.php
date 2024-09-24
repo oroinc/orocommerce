@@ -14,17 +14,13 @@ class WYSIWYGStyleType extends TextType
 
     public const TYPE = WYSIWYGType::TYPE . self::TYPE_SUFFIX;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;

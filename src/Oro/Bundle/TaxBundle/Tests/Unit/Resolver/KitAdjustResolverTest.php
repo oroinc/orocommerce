@@ -18,6 +18,7 @@ class KitAdjustResolverTest extends TestCase
 
     private KitAdjustResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);

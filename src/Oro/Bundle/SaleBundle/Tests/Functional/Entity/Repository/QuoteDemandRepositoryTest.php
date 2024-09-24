@@ -18,9 +18,7 @@ class QuoteDemandRepositoryTest extends WebTestCase
      */
     protected $repository;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

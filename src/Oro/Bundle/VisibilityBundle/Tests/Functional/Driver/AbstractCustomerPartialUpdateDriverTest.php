@@ -33,6 +33,7 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
     private ConfigManager $configManager;
     private CustomerPartialUpdateDriverInterface $driver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

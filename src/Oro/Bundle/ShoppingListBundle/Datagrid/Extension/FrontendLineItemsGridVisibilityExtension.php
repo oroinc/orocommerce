@@ -32,17 +32,13 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config): bool
     {
         return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config): void
     {
         $shoppingListId = $this->getShoppingListId();
@@ -76,6 +72,7 @@ class FrontendLineItemsGridVisibilityExtension extends AbstractExtension
         }
     }
 
+    #[\Override]
     public function visitResult(DatagridConfiguration $config, ResultsObject $result)
     {
         if (!empty($config->offsetGetByPath(self::HIDDEN_LINE_ITEMS_OPTION))) {

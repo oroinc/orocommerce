@@ -25,9 +25,7 @@ class RemoveNotAvailableCategoryNodeFromFilter implements ProcessorInterface
         $this->categoryNodeRepository = $categoryNodeRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

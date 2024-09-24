@@ -37,17 +37,13 @@ class AvailableLineItemGroupShippingMethodsProvider implements
         $this->groupLineItemHelper = $groupLineItemHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset(): void
     {
         $this->cachedShippingMethods = [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAvailableShippingMethods(array $lineItems, string $lineItemGroupKey): array
     {
         if (!$lineItems) {

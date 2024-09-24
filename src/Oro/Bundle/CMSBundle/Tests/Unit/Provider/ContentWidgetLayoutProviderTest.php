@@ -20,6 +20,7 @@ class ContentWidgetLayoutProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetLayoutProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->themeManager = $this->createMock(ThemeManager::class);

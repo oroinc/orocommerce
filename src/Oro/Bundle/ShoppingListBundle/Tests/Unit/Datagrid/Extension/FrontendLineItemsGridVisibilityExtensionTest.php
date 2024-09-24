@@ -44,6 +44,7 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
     private FrontendLineItemsGridVisibilityExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

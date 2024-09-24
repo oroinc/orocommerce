@@ -61,17 +61,13 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         $this->matchSlugsFirst[$pathinfo] = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getContext(): RequestContext
     {
         return $this->context ?? $this->baseMatcher->getContext();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContext(RequestContext $context): void
     {
         $this->context = $context;
@@ -80,9 +76,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function matchRequest(Request $request): array
     {
         $requestContext = new RequestContext();
@@ -105,9 +99,7 @@ class SlugUrlMatcher implements RequestMatcherInterface, UrlMatcherInterface
         return $this->resolveAttributes($matchers, $pathinfo);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function match(string $pathinfo): array
     {
         $matchers = [

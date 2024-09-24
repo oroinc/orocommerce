@@ -11,6 +11,7 @@ class CombinedPriceListBuildActivityRepositoryTest extends WebTestCase
 {
     private CombinedPriceListBuildActivityRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

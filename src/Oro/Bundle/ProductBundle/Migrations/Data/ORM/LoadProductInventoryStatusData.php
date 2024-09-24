@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class LoadProductInventoryStatusData extends AbstractEnumFixture
 {
+    #[\Override]
     protected function getData(): array
     {
         return [
@@ -19,14 +20,13 @@ class LoadProductInventoryStatusData extends AbstractEnumFixture
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEnumCode(): string
     {
         return 'prod_inventory_status';
     }
 
+    #[\Override]
     protected function getDefaultValue(): string
     {
         return Product::INVENTORY_STATUS_IN_STOCK;

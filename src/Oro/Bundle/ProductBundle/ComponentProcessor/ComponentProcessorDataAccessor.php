@@ -13,49 +13,49 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 class ComponentProcessorDataAccessor implements ProductMapperDataAccessorInterface
 {
     /**
-     * {@inheritDoc}
      *
      * @param Collection $collection
      * @param int        $itemIndex
      *
      * @return \ArrayAccess
      */
+    #[\Override]
     public function getItem(object $collection, int $itemIndex): object
     {
         return $collection[$itemIndex];
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param \ArrayAccess $item
      *
      * @return string|null
      */
+    #[\Override]
     public function getItemSku(object $item): ?string
     {
         return $item[ProductDataStorage::PRODUCT_SKU_KEY];
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param \ArrayAccess $item
      *
      * @return string|null
      */
+    #[\Override]
     public function getItemOrganizationName(object $item): ?string
     {
         return $item[ProductDataStorage::PRODUCT_ORGANIZATION_KEY] ?? null;
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param array $product
      *
      * @return string|null
      */
+    #[\Override]
     public function getProductSku(mixed $product): ?string
     {
         if (!\array_key_exists('sku', $product)) {
@@ -66,12 +66,12 @@ class ComponentProcessorDataAccessor implements ProductMapperDataAccessorInterfa
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param array $product
      *
      * @return int|null
      */
+    #[\Override]
     public function getProductOrganizationId(mixed $product): ?int
     {
         if (!\array_key_exists('orgId', $product)) {
@@ -82,11 +82,11 @@ class ComponentProcessorDataAccessor implements ProductMapperDataAccessorInterfa
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param \ArrayAccess $item
      * @param array        $product
      */
+    #[\Override]
     public function updateItem(object $item, mixed $product): void
     {
         if (!isset($item[ProductDataStorage::PRODUCT_ID_KEY])) {

@@ -28,6 +28,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
     ) {
     }
 
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
@@ -59,6 +60,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
         return true;
     }
 
+    #[\Override]
     public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         if (!$this->checkRequest('_wid', 'ajax_checkout')) {
@@ -82,6 +84,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
         return true;
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         if (!$workflowItem->getData()->offsetGet('payment_validate')) {

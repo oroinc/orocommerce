@@ -22,9 +22,7 @@ class FrontendInventorySwitcherFilterType extends AbstractType
     {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [
@@ -49,9 +47,7 @@ class FrontendInventorySwitcherFilterType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if (isset($options['populate_default'])) {
@@ -69,17 +65,13 @@ class FrontendInventorySwitcherFilterType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return FilterType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_type_inventory_switcher_filter';

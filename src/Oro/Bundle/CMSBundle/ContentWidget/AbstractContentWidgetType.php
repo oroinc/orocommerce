@@ -12,9 +12,7 @@ use Twig\Environment;
  */
 abstract class AbstractContentWidgetType implements ContentWidgetTypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         $additionalInformationBlock = $this->getAdditionalInformationBlock($contentWidget, $twig);
@@ -36,9 +34,7 @@ abstract class AbstractContentWidgetType implements ContentWidgetTypeInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): ?FormInterface
     {
         return null;
@@ -49,17 +45,13 @@ abstract class AbstractContentWidgetType implements ContentWidgetTypeInterface
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         return $contentWidget->getSettings();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isInline(): bool
     {
         return false;

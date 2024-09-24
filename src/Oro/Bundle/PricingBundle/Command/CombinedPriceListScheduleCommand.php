@@ -50,6 +50,7 @@ class CombinedPriceListScheduleCommand extends Command implements
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Prepares and activates combined price lists based on their schedules.')
@@ -65,9 +66,7 @@ HELP
         ;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isActive(): bool
     {
         $offsetHours = $this->configManager->get('oro_pricing.offset_of_processing_cpl_prices');
@@ -82,6 +81,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->triggerHandler->startCollect();
@@ -113,9 +113,7 @@ HELP
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultDefinition(): string
     {
         return '*/5 * * * *';

@@ -14,9 +14,7 @@ class TrackingAwareShippingMethodsProvider implements TrackingAwareShippingMetho
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTrackingAwareShippingMethods(): array
     {
         $result = [];

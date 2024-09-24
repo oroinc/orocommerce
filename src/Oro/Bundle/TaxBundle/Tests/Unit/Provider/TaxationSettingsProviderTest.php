@@ -34,6 +34,7 @@ class TaxationSettingsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TaxationSettingsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -35,6 +35,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
     /** @var ProductPriceDatagridExtension */
     protected $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -67,6 +68,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         $this->assertFalse($this->extension->isApplicable($this->datagridConfiguration));
     }
 
+    #[\Override]
     public function testIsApplicable(): void
     {
         $this->featureChecker->expects($this->once())
@@ -80,6 +82,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         parent::testIsApplicable();
     }
 
+    #[\Override]
     public function testIsApplicableWhenAlreadyApplied(): void
     {
         $this->mockAuthorizationChecker(true);
@@ -95,6 +98,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
             ->willReturn($isViewGranted);
     }
 
+    #[\Override]
     public function testProcessConfigsWhenNoPriceListNoCurrencies(): void
     {
         $this->mockAuthorizationChecker(true);
@@ -102,6 +106,7 @@ class ProductPriceDatagridExtensionTest extends AbstractProductsGridPricesExtens
         parent::testProcessConfigsWhenNoPriceListNoCurrencies();
     }
 
+    #[\Override]
     public function testProcessConfigsWhenNoCurrencies(): void
     {
         $this->mockAuthorizationChecker(true);

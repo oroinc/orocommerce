@@ -23,17 +23,13 @@ class PriceListFormExtension extends AbstractTypeExtension
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [PriceListSelectWithPriorityType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if ($this->configManager->get('oro_pricing.price_strategy') === MergePricesCombiningStrategy::NAME) {

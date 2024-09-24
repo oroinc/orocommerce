@@ -15,6 +15,7 @@ class FeatureVoterTest extends \PHPUnit\Framework\TestCase
     /** @var FeatureVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

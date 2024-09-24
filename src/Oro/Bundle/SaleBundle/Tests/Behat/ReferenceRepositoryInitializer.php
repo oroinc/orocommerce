@@ -13,9 +13,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $this->setWorkflowsReference($doctrine, $referenceRepository);

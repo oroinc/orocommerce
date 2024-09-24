@@ -12,6 +12,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
     /** @var DimensionsValueType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new DimensionsValueType();
@@ -19,9 +20,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

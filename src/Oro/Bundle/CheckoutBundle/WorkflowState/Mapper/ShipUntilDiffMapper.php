@@ -8,17 +8,13 @@ class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'ship_until';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isEntitySupported($entity)
     {
         return is_object($entity) && $entity instanceof Checkout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::DATA_NAME;
@@ -28,14 +24,13 @@ class ShipUntilDiffMapper implements CheckoutStateDiffMapperInterface
      * @param Checkout $checkout
      * @return \DateTime
      */
+    #[\Override]
     public function getCurrentState($checkout)
     {
         return $checkout->getShipUntil();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isStatesEqual($entity, $state1, $state2)
     {
         return $state1 == $state2;

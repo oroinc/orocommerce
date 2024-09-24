@@ -72,6 +72,7 @@ class FlatRateSettings extends Transport
     /**
      * @return ParameterBag
      */
+    #[\Override]
     public function getSettingsBag()
     {
         if (null === $this->settings) {

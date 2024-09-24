@@ -16,6 +16,7 @@ class PaymentTransactionWasRefundedTest extends TestCase
     private PaymentTransactionRepository|MockObject $transactionRepository;
     private PaymentTransactionWasRefunded $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transactionRepository = $this->createMock(PaymentTransactionRepository::class);

@@ -19,9 +19,7 @@ class FillLostPriceRuleLexemes extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $lexemeHandler = $this->container->get('oro_pricing.handler.price_rule_lexeme_handler');

@@ -18,6 +18,7 @@ class WebsiteSearchQueryTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteSearchQuery */
     private $websiteSearchQuery;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->engine = $this->createMock(EngineInterface::class);

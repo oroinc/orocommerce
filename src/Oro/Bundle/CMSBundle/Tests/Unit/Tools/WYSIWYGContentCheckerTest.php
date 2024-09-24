@@ -30,6 +30,7 @@ class WYSIWYGContentCheckerTest extends \PHPUnit\Framework\TestCase
     /** @var WYSIWYGContentChecker */
     private $checker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->htmlPurifierScopeProvider = $this->createMock(HTMLPurifierScopeProvider::class);

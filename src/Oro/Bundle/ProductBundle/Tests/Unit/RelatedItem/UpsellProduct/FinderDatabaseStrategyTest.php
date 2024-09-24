@@ -21,6 +21,7 @@ class FinderDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
     /** @var FinderDatabaseStrategy */
     private $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(UpsellProductRepository::class);

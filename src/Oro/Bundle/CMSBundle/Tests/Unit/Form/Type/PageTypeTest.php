@@ -53,6 +53,7 @@ class PageTypeTest extends FormIntegrationTestCase
 
     private PageType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $validator = $this->createMock(ValidatorInterface::class);
@@ -70,6 +71,7 @@ class PageTypeTest extends FormIntegrationTestCase
             ->getFormFactory();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         $metaData = $this->createMock(ClassMetadata::class);

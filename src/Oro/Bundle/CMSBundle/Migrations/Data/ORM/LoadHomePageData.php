@@ -13,6 +13,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
  */
 class LoadHomePageData extends AbstractLoadHomePageData
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         parent::load($manager);
@@ -20,11 +21,13 @@ class LoadHomePageData extends AbstractLoadHomePageData
         $this->setHomepageSystemConfiguration();
     }
 
+    #[\Override]
     protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator('@OroCMSBundle/Migrations/Data/ORM/data/homepage.yml');
     }
 
+    #[\Override]
     protected function getConfigManager(): ConfigManager
     {
         return $this->container->get('oro_config.global');

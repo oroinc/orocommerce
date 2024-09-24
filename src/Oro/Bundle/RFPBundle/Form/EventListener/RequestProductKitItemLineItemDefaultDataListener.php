@@ -22,6 +22,7 @@ class RequestProductKitItemLineItemDefaultDataListener implements EventSubscribe
         $this->kitItemLineItemFactory = $kitItemLineItemFactory;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

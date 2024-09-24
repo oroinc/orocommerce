@@ -41,9 +41,7 @@ class AdminConsentContentNodeValidFilter implements ConsentFilterInterface
         $this->consentAcceptanceProvider = $consentAcceptanceProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isConsentPassedFilter(Consent $consent, array $params = [])
     {
         /**
@@ -89,9 +87,7 @@ class AdminConsentContentNodeValidFilter implements ConsentFilterInterface
         return $params[self::LOG_ERRORS_PARAMETER] ?? true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;

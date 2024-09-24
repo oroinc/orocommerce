@@ -17,25 +17,19 @@ class WYSIWYGPropertiesType extends AbstractType
 {
     public const TYPE_SUFFIX = DBALWYSIWYGPropertiesType::TYPE_SUFFIX;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-grapesjs-properties'] = $form->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addViewTransformer(new ArrayToJsonTransformer(true));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return HiddenType::class;

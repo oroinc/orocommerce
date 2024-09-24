@@ -14,6 +14,7 @@ class BrandSelectTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new BrandSelectType();

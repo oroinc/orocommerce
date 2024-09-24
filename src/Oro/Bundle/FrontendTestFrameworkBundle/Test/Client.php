@@ -12,9 +12,7 @@ class Client extends BaseClient
 {
     private const BACKOFFICE_THEME_PATH = 'build/admin';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function request(
         string $method,
         string $uri,
@@ -31,9 +29,7 @@ class Client extends BaseClient
         return $crawler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isContentResponse($content)
     {
         // no hash navigation at frontend

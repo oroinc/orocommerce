@@ -9,9 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroTaxBundleStage2 implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $schema->dropTable('oro_tax_cus_tax_code_cus');
@@ -19,9 +17,7 @@ class OroTaxBundleStage2 implements Migration, OrderedMigrationInterface
         $schema->dropTable('oro_tax_prod_tax_code_prod');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 2;

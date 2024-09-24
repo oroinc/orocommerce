@@ -23,6 +23,7 @@ class ProductFormListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductFormListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceManager = $this->createMock(PriceManager::class);

@@ -16,9 +16,7 @@ class TransactionPaymentContextFactory implements TransactionPaymentContextFacto
         $this->compositeFactory = $compositeFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(PaymentTransaction $transaction)
     {
         if ($this->compositeFactory->supports($transaction->getEntityClass(), $transaction->getEntityIdentifier())) {

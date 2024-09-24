@@ -18,6 +18,7 @@ class MoneyOrderTest extends \PHPUnit\Framework\TestCase
     /** @var MoneyOrder */
     private $method;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->config = $this->createMock(MoneyOrderConfigInterface::class);

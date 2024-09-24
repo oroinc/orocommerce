@@ -40,6 +40,7 @@ class MatchedUrlDecisionMaker extends BaseMatchedUrlDecisionMaker
         $this->configManager = $configManager;
     }
 
+    #[\Override]
     public function matches(string $pathinfo): bool
     {
         if ($pathinfo !== '/') {

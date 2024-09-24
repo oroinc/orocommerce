@@ -29,6 +29,7 @@ abstract class AbstractProductSearchQueryRestrictionEventListenerTest extends \P
     /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     protected $frontendHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -11,6 +11,7 @@ class ZipCodeTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var ZipCodeTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transformer = new ZipCodeTransformer();

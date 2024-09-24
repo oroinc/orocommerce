@@ -52,6 +52,7 @@ class ShippingExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);

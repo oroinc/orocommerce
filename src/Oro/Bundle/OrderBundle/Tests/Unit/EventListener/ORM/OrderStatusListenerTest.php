@@ -24,6 +24,7 @@ class OrderStatusListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderStatusListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configurationProvider = $this->createMock(OrderConfigurationProviderInterface::class);

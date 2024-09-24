@@ -44,9 +44,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
         $this->customerClassName = $customerClassName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

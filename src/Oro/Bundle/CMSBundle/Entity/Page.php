@@ -141,9 +141,6 @@ class Page implements
     #[ORM\Column(name: 'do_not_render_title', type: Types::BOOLEAN, nullable: false, options: ['default' => false])]
     protected bool $doNotRenderTitle = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->slugPrototypes = new ArrayCollection();
@@ -155,6 +152,7 @@ class Page implements
     /**
      * @return integer
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -242,6 +240,7 @@ class Page implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->getDefaultTitle();

@@ -11,6 +11,7 @@ class ProductKitItemLineItemUnitPrecisionAwareStub extends ProductKitItemLineIte
 {
     protected int $productUnitPrecision = 0;
 
+    #[\Override]
     public function getProductUnitPrecision(): int
     {
         return $this->productUnitPrecision;

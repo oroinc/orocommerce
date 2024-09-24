@@ -12,6 +12,7 @@ class DatagridLineItemsDataListenerTest extends TestCase
 {
     private DatagridLineItemsDataListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new DatagridLineItemsDataListener();

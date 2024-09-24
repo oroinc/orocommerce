@@ -6,9 +6,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingListLineItem;
 
 class PromotionShoppingListLineItem extends ShoppingListLineItem implements DiscountAwareLineItemInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscount()
     {
         $discount = $this->find(

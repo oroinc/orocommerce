@@ -16,6 +16,7 @@ class PriceAttributeProductPriceImportStrategy extends ConfigurableAddOrReplaceS
      *
      * @return PriceAttributeProductPrice
      */
+    #[\Override]
     protected function beforeProcessEntity($entity)
     {
         $this->setPrice($entity);
@@ -30,6 +31,7 @@ class PriceAttributeProductPriceImportStrategy extends ConfigurableAddOrReplaceS
      *
      * @return PriceAttributeProductPrice
      */
+    #[\Override]
     protected function afterProcessEntity($entity)
     {
         $this->setPrice($entity);

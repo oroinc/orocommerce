@@ -39,6 +39,7 @@ abstract class AbstractBasicSalesOrdersChartDataProviderTest extends WebTestCase
     protected SalesOrdersChartScaleProvider $chartScaleProvider;
     protected ?SalesOrdersChartDataProvider $salesOrdersChartDataProvider = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -52,6 +53,7 @@ abstract class AbstractBasicSalesOrdersChartDataProviderTest extends WebTestCase
         $this->salesOrdersChartDataProvider = $this->getSalesOrdersChartDataProvider();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         Carbon::setTestNow();

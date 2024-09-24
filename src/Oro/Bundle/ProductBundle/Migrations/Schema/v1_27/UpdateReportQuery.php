@@ -27,9 +27,9 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     ];
 
     /**
-     * {@inheritdoc}
      * @throws DBALException
      */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -39,9 +39,9 @@ class UpdateReportQuery extends ParametrizedMigrationQuery
     }
 
     /**
-     * {@inheritdoc}
      * @throws DBALException
      */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

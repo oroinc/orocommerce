@@ -14,16 +14,19 @@ class VisibilityOnChangeProductCategoryTopic extends AbstractTopic
 {
     public const NAME = 'oro_visibility.visibility.change_product_category';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolve visibility for a product when its category is changed.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

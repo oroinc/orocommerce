@@ -18,6 +18,7 @@ class CategoryVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /** @var Category */
     private $category;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->category = new Category();

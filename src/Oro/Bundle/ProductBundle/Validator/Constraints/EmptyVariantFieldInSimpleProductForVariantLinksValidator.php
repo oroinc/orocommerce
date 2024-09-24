@@ -37,6 +37,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidator extends Constrain
      * @param Product $value
      * @param UniqueVariantLinksSimpleProduct|Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!is_a($value, Product::class)) {

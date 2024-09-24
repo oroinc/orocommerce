@@ -25,8 +25,8 @@ class PromotionType extends AbstractType
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -90,9 +90,7 @@ class PromotionType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -108,9 +106,7 @@ class PromotionType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

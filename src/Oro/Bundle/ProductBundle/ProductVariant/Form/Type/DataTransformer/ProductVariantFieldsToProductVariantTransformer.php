@@ -32,9 +32,7 @@ class ProductVariantFieldsToProductVariantTransformer implements DataTransformer
         $this->productClass = (string) $productClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($value)
     {
         if ($value === null) {
@@ -54,9 +52,7 @@ class ProductVariantFieldsToProductVariantTransformer implements DataTransformer
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         if (!$value instanceof $this->productClass) {

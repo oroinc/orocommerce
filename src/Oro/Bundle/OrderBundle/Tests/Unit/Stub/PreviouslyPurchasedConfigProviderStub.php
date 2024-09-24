@@ -14,6 +14,7 @@ class PreviouslyPurchasedConfigProviderStub extends PreviouslyPurchasedConfigPro
      *
      * @return \DateTime
      */
+    #[\Override]
     protected function getDateTimeInCurrentLocale(\DateTimeZone $dateTimeZone)
     {
         return \DateTime::createFromFormat(

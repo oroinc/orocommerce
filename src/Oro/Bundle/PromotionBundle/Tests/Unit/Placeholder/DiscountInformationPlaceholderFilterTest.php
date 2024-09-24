@@ -10,6 +10,7 @@ class DiscountInformationPlaceholderFilterTest extends \PHPUnit\Framework\TestCa
 {
     private DiscountInformationPlaceholderFilter $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new DiscountInformationPlaceholderFilter();

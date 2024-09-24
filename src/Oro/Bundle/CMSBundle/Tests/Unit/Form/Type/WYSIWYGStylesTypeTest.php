@@ -15,9 +15,7 @@ class WYSIWYGStylesTypeTest extends FormIntegrationTestCase
 {
     private EventSubscriberInterface $eventSubscriber;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);
@@ -32,6 +30,7 @@ class WYSIWYGStylesTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

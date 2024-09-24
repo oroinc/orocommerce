@@ -12,9 +12,6 @@ class TaxBackendOrderLineItem extends TableRow
     private const INCL_TAX_CELL_HEADER = 'Incl. Tax';
     private const EXCL_TAX_CELL_HEADER = 'Excl. Tax';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProductSKU()
     {
         return $this->getCellValue('SKU');

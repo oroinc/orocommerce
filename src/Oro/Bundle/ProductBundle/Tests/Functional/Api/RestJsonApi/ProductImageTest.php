@@ -18,6 +18,7 @@ class ProductImageTest extends RestJsonApiTestCase
     use ConfigManagerAwareTestTrait;
     use WebpConfigurationTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -21,6 +21,7 @@ class AddProductCollectionToWebsiteSearchTermFormExtensionTest extends WebTestCa
 
     private string $phraseDelimiter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

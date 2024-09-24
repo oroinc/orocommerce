@@ -26,6 +26,7 @@ class RulesShippingMethodDisableHandlerDecoratorTest extends \PHPUnit\Framework\
     /** @var RulesShippingMethodDisableHandlerDecorator */
     private $decorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->handler = $this->createMock(ShippingMethodDisableHandlerInterface::class);

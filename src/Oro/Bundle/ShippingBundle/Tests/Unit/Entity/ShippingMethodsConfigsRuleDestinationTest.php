@@ -19,6 +19,7 @@ class ShippingMethodsConfigsRuleDestinationTest extends \PHPUnit\Framework\TestC
     /** @var ShippingMethodsConfigsRuleDestination */
     private $shippingRuleDestination;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingRuleDestination = $this->getEntity(

@@ -22,6 +22,7 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit\Framework\TestCas
     /** @var PayPalExpressCheckoutConfigProvider */
     private $payPalConfigProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $channel1 = $this->getEntity(Channel::class, ['id' => 1, 'type' => self::TYPE]);

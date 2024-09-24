@@ -17,9 +17,7 @@ class CheckoutSubtotalRepositoryTest extends FrontendWebTestCase
     /** @var CheckoutSubtotalRepository */
     protected $repository;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

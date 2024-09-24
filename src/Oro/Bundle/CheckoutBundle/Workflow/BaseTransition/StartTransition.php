@@ -10,6 +10,7 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
  */
 class StartTransition extends TransitionServiceAbstract
 {
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         $data = $workflowItem->getData();

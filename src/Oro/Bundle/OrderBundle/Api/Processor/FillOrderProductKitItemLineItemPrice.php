@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemP
  */
 class FillOrderProductKitItemLineItemPrice extends AbstractFillLineItemPrice
 {
+    #[\Override]
     protected function getProductLineItemPrice(CustomizeFormDataContext $context): ?ProductLineItemPrice
     {
         $productLineItemPrice = parent::getProductLineItemPrice($context);
@@ -27,22 +28,26 @@ class FillOrderProductKitItemLineItemPrice extends AbstractFillLineItemPrice
         return null;
     }
 
+    #[\Override]
     protected function isPriceCanBeCalculated(OrderLineItem|OrderProductKitItemLineItem $lineItem): bool
     {
         return parent::isPriceCanBeCalculated($lineItem->getLineItem())
             && parent::isPriceCanBeCalculated($lineItem);
     }
 
+    #[\Override]
     protected function getOrderLineItem(CustomizeFormDataContext $context): OrderLineItem
     {
         return $context->getData()->getLineItem();
     }
 
+    #[\Override]
     protected function getPriceNotFoundErrorMessage(): string
     {
         return $this->translator->trans('oro.order.orderproductkititemlineitem.product_price.blank', [], 'validators');
     }
 
+    #[\Override]
     protected function getPriceNotMatchErrorMessage($expectedValue): string
     {
         return $this->translator->trans(
@@ -52,6 +57,7 @@ class FillOrderProductKitItemLineItemPrice extends AbstractFillLineItemPrice
         );
     }
 
+    #[\Override]
     protected function getCurrencyNotMatchErrorMessage($expectedValue): string
     {
         return $this->translator->trans(
@@ -61,6 +67,7 @@ class FillOrderProductKitItemLineItemPrice extends AbstractFillLineItemPrice
         );
     }
 
+    #[\Override]
     protected function getSubmittedPriceKey(): string
     {
         return RememberOrderProductKitItemLineItemPrice::SUBMITTED_PRICE;

@@ -24,9 +24,7 @@ class LineItemGroupShippingMethodsType extends AbstractType
         $this->shippingManager = $shippingManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer(new ArrayToJsonTransformer());
@@ -36,9 +34,7 @@ class LineItemGroupShippingMethodsType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setRequired(['checkout']);
@@ -47,17 +43,13 @@ class LineItemGroupShippingMethodsType extends AbstractType
         $resolver->setAllowedTypes('checkout', Checkout::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_checkout_line_items_group_shipping_methods';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return HiddenType::class;

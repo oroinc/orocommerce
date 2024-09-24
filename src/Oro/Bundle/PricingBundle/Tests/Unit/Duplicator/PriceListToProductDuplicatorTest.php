@@ -24,6 +24,7 @@ class PriceListToProductDuplicatorTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListToProductDuplicator */
     private $priceListToProductDuplicator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->manager = $this->createMock(ObjectManager::class);

@@ -16,6 +16,7 @@ class GenerateSitemapProcessorTest extends WebTestCase
 
     private GenerateSitemapProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -24,6 +25,7 @@ class GenerateSitemapProcessorTest extends WebTestCase
             ->get('oro_seo.async.generate_sitemap_processor');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::clearMessageCollector();

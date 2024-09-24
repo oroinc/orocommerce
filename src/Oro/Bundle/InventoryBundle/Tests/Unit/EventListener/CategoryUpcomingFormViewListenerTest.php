@@ -11,6 +11,7 @@ class CategoryUpcomingFormViewListenerTest extends AbstractFallbackFieldsFormVie
     /** @var CategoryUpcomingFormViewListener */
     protected $fallbackFieldsFormView;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

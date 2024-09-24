@@ -23,6 +23,7 @@ class ContentBlockVoterTest extends WebTestCase
 
     private AuthorizationCheckerInterface $checker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

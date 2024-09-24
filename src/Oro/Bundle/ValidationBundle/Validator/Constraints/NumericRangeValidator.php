@@ -13,9 +13,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class NumericRangeValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof NumericRange) {

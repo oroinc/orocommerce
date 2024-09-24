@@ -12,6 +12,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class CollectEventFactory implements CollectEventFactoryInterface
 {
+    #[\Override]
     public function createEvent(
         bool $force = false,
         Website $website = null,

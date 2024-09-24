@@ -48,9 +48,7 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function updateCustomerVisibility(Customer $customer)
     {
         $this->deleteCustomerVisibility($customer);

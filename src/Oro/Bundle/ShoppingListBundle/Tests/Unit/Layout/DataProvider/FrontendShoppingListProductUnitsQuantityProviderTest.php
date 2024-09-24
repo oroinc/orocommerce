@@ -17,6 +17,7 @@ class FrontendShoppingListProductUnitsQuantityProviderTest extends TestCase
 
     private FrontendShoppingListProductUnitsQuantityProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productShoppingListsDataProvider = $this->createMock(ProductShoppingListsDataProvider::class);

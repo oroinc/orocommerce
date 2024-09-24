@@ -8,49 +8,37 @@ use Oro\Bundle\PayPalBundle\Tests\Functional\Stub\Method\ExpressCheckoutMethodSt
 
 class ExpressCheckoutMethodViewStub implements PaymentMethodViewInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptions(PaymentContextInterface $context)
     {
         return [];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlock()
     {
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'Test';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAdminLabel()
     {
         return 'Test';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShortLabel()
     {
         return 'Test';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethodIdentifier()
     {
         return ExpressCheckoutMethodStub::TYPE;

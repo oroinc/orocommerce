@@ -25,6 +25,7 @@ class ProductDataStorageTest extends TestCase
 
     private ProductDataStorage $productDataStorage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->storage = $this->createMock(Storage::class);

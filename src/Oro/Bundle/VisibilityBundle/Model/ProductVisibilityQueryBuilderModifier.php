@@ -44,6 +44,7 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    #[\Override]
     public function modify(QueryBuilder $queryBuilder)
     {
         $visibilities[] = $this->getProductVisibilityResolvedTerm($queryBuilder);

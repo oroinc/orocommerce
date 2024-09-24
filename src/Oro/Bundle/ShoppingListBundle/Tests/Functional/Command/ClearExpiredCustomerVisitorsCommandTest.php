@@ -17,6 +17,7 @@ class ClearExpiredCustomerVisitorsCommandTest extends WebTestCase
      */
     private $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

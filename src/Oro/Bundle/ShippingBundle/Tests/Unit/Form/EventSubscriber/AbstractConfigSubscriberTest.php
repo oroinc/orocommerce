@@ -47,6 +47,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
     protected MethodConfigCollectionSubscriber $methodConfigCollectionSubscriber;
     protected MethodTypeConfigCollectionSubscriber $methodTypeConfigCollectionSubscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodProvider = new CompositeShippingMethodProvider([]);
@@ -106,9 +107,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
         $this->assertCount(0, $form->get('methodConfigs'));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         $enabledTypeConfigsValidationGroup = new EnabledTypeConfigsValidationGroup();
@@ -122,9 +121,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);

@@ -22,6 +22,7 @@ class DataGridThemeHelperTest extends \PHPUnit\Framework\TestCase
     /** @var DataGridThemeHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

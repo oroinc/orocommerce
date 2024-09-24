@@ -19,9 +19,7 @@ use Symfony\Contracts\Cache\ItemInterface;
  */
 class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createGenerator(): CanonicalUrlGenerator
     {
         return new CanonicalUrlGenerator(

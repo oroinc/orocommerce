@@ -10,17 +10,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroRedirectBundle implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->modifySlugTable($schema, $queries);

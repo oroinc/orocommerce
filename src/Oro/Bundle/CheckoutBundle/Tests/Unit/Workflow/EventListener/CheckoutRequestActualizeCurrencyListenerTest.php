@@ -15,6 +15,7 @@ class CheckoutRequestActualizeCurrencyListenerTest extends TestCase
     private ActualizeCurrencyInterface|MockObject $actualizeCurrency;
     private CheckoutRequestActualizeCurrencyListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actualizeCurrency = $this->createMock(ActualizeCurrencyInterface::class);

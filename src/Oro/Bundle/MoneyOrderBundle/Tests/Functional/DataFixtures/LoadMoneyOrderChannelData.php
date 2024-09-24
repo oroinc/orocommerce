@@ -35,17 +35,13 @@ class LoadMoneyOrderChannelData extends AbstractFixture implements DependentFixt
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadMoneyOrderSettingsData::class, LoadOrganization::class, LoadUser::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach ($this->channelData as $data) {

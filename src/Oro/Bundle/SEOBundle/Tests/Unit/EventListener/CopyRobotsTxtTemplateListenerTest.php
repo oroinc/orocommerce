@@ -23,6 +23,7 @@ class CopyRobotsTxtTemplateListenerTest extends TestCase
 
     private CopyRobotsTxtTemplateListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->website = new Website();

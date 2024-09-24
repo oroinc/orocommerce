@@ -22,6 +22,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
     /** @var LocalizedSlugWithRedirectType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->confirmSlugChangeFormHelper = $this->createMock(ConfirmSlugChangeFormHelper::class);
@@ -30,9 +31,7 @@ class SlugWithRedirectTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);

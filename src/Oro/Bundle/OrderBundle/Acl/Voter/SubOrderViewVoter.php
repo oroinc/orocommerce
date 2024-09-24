@@ -25,6 +25,7 @@ class SubOrderViewVoter extends Voter
         $this->requestStack = $requestStack;
     }
 
+    #[\Override]
     protected function supports(string $attribute, $subject): bool
     {
         return
@@ -34,6 +35,7 @@ class SubOrderViewVoter extends Voter
             && $this->requestStack->getCurrentRequest()->get('_route') === 'oro_order_frontend_view';
     }
 
+    #[\Override]
     protected function voteOnAttribute(string $attribute, $subject, TokenInterface $token): bool
     {
         return $this->multiShippingConfigProvider->isShowSubordersInOrderHistoryEnabled();

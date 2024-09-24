@@ -30,7 +30,7 @@ class ShippingOrigin extends AbstractAddress
         }
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setCountry($country)
     {
         $this->data->offsetSet('country', $country);
@@ -38,13 +38,13 @@ class ShippingOrigin extends AbstractAddress
         return parent::setCountry($country);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCountry()
     {
         return $this->getOffset('country');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setRegion($region)
     {
         $this->data->offsetSet('region', $region);
@@ -52,13 +52,13 @@ class ShippingOrigin extends AbstractAddress
         return parent::setRegion($region);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getRegion()
     {
         return $this->getOffset('region');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setRegionText($regionText)
     {
         $this->data->offsetSet('region_text', $regionText);
@@ -66,13 +66,13 @@ class ShippingOrigin extends AbstractAddress
         return parent::setRegionText($regionText);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getRegionText()
     {
         return $this->getOffset('region_text');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setPostalCode($postalCode)
     {
         $this->data->offsetSet('postalCode', $postalCode);
@@ -80,13 +80,13 @@ class ShippingOrigin extends AbstractAddress
         return parent::setPostalCode($postalCode);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getPostalCode()
     {
         return $this->getOffset('postalCode');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setCity($city)
     {
         $this->data->offsetSet('city', $city);
@@ -94,13 +94,13 @@ class ShippingOrigin extends AbstractAddress
         return parent::setCity($city);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCity()
     {
         return $this->getOffset('city');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setStreet($street)
     {
         $this->data->offsetSet('street', $street);
@@ -108,13 +108,13 @@ class ShippingOrigin extends AbstractAddress
         return parent::setStreet($street);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getStreet()
     {
         return $this->getOffset('street');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function setStreet2($street2)
     {
         $this->data->offsetSet('street2', $street2);
@@ -122,7 +122,7 @@ class ShippingOrigin extends AbstractAddress
         return parent::setStreet2($street2);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getStreet2()
     {
         return $this->getOffset('street2');

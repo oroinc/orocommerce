@@ -11,6 +11,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
  */
 class OrderPaymentStatusProvider extends PaymentStatusProvider
 {
+    #[\Override]
     public function getPaymentStatus($entity)
     {
         if ($entity instanceof Order && !$entity->getSubOrders()->isEmpty()) {

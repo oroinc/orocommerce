@@ -42,6 +42,7 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
         self::CONTENT_VARIANT_2 => LoadProductData::PRODUCT_2,
     ];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -50,6 +51,7 @@ class LoadWebCatalogWithContentNodes extends AbstractFixture implements Dependen
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $webCatalog = new WebCatalog();

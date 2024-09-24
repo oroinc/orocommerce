@@ -420,6 +420,7 @@ class Quote implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->id;
@@ -434,6 +435,7 @@ class Quote implements
     /**
      * @return string
      */
+    #[\Override]
     public function getEmail()
     {
         if (null !== $this->getCustomerUser()) {
@@ -507,6 +509,7 @@ class Quote implements
     /**
      * @return Website
      */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
@@ -516,6 +519,7 @@ class Quote implements
      * @param Website|null $website
      * @return $this
      */
+    #[\Override]
     public function setWebsite(Website $website = null)
     {
         $this->website = $website;
@@ -638,6 +642,7 @@ class Quote implements
     /**
      * @return string
      */
+    #[\Override]
     public function getShippingMethod()
     {
         return $this->shippingMethod;
@@ -657,6 +662,7 @@ class Quote implements
     /**
      * @return string
      */
+    #[\Override]
     public function getShippingMethodType()
     {
         return $this->shippingMethodType;
@@ -676,6 +682,7 @@ class Quote implements
     /**
      * @return Price|null
      */
+    #[\Override]
     public function getShippingCost()
     {
         $amount = $this->estimatedShippingCostAmount;
@@ -773,6 +780,7 @@ class Quote implements
     /**
      * @return bool
      */
+    #[\Override]
     public function isAllowUnlistedShippingMethod()
     {
         return $this->allowUnlistedShippingMethod;
@@ -793,6 +801,7 @@ class Quote implements
     /**
      * @return bool
      */
+    #[\Override]
     public function isShippingMethodLocked()
     {
         return $this->shippingMethodLocked;
@@ -810,17 +819,13 @@ class Quote implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOverriddenShippingCost()
     {
         return null !== $this->overriddenShippingCostAmount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEmailOwner(): EmailOwnerInterface
     {
         return $this->customerUser;

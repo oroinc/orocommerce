@@ -21,6 +21,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 {
     private Order $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new Order();
@@ -49,9 +50,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getTargetEntity(): Order
     {
         return $this->entity;

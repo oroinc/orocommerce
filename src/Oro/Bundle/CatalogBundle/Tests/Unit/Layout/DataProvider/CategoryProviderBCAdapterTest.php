@@ -41,6 +41,7 @@ class CategoryProviderBCAdapterTest extends \PHPUnit\Framework\TestCase
     private TraceableAdapter|\PHPUnit\Framework\MockObject\MockObject $cache;
     private CategoryProviderBCAdapter $providerBCAdapter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestProductHandler = $this->createMock(RequestProductHandler::class);

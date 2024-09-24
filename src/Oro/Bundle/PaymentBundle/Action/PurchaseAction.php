@@ -21,7 +21,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
         $this->paymentStatusProvider = $paymentStatusProvider;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);

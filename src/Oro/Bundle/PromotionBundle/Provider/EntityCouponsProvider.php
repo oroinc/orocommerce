@@ -23,9 +23,7 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCoupons($entity)
     {
         if ($entity instanceof CouponsAwareInterface) {
@@ -40,9 +38,7 @@ class EntityCouponsProvider implements EntityCouponsProviderInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createAppliedCouponByCoupon(Coupon $coupon)
     {
         $appliedCoupon = new AppliedCoupon();

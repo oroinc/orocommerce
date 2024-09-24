@@ -26,6 +26,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
     /** @var OrderDiscountItemType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalHelper = $this->createMock(TotalHelper::class);
@@ -124,9 +125,7 @@ class OrderDiscountItemTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $numberFormatter = $this->createMock(NumberFormatter::class);

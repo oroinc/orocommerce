@@ -31,9 +31,7 @@ class Calculator implements TaxCalculatorInterface
         $this->taxCalculator = $taxCalculator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculate($amount, $taxRate)
     {
         return $this->isProductPricesIncludeTax()
@@ -41,7 +39,7 @@ class Calculator implements TaxCalculatorInterface
             : $this->taxCalculator->calculate($amount, $taxRate);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getAmountKey()
     {
         return $this->isProductPricesIncludeTax()

@@ -65,6 +65,7 @@ class CombinedProductPriceDatagridExtensionTest extends TestCase
     protected $extension;
     private string $supportedGridName;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceListRequestHandler = $this->createMock(DebugProductPricesPriceListRequestHandler::class);

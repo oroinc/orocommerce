@@ -26,9 +26,7 @@ class ProductCollectionExtension extends AbstractTypeExtension
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
@@ -68,9 +66,7 @@ class ProductCollectionExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ContentVariantCollectionType::class];

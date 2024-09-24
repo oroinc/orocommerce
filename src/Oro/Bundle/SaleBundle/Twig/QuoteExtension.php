@@ -39,9 +39,7 @@ class QuoteExtension extends AbstractExtension implements ServiceSubscriberInter
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilters()
     {
         return [
@@ -51,9 +49,7 @@ class QuoteExtension extends AbstractExtension implements ServiceSubscriberInter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -115,9 +111,7 @@ class QuoteExtension extends AbstractExtension implements ServiceSubscriberInter
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

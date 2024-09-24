@@ -20,6 +20,7 @@ class CheckoutErrorHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutErrorHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->flashBag = new FlashBag();

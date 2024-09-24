@@ -33,6 +33,7 @@ class QuoteAddressProvider extends OrderAddressProvider
      * @param string $type
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public static function assertType($type)
     {
         $supportedTypes = [self::ADDRESS_TYPE_SHIPPING];

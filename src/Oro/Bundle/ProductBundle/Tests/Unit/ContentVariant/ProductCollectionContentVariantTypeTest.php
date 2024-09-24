@@ -25,6 +25,7 @@ class ProductCollectionContentVariantTypeTest extends \PHPUnit\Framework\TestCas
      */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

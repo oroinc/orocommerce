@@ -12,6 +12,7 @@ class ProductExpressionServicesPassTest extends \PHPUnit\Framework\TestCase
     /** @var ProductExpressionServicesPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new ProductExpressionServicesPass();

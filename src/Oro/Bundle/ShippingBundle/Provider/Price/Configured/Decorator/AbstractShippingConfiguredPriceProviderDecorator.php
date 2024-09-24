@@ -18,9 +18,7 @@ class AbstractShippingConfiguredPriceProviderDecorator implements ShippingConfig
         $this->shippingConfiguredPriceProvider = $shippingConfiguredPriceProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(
         ComposedShippingMethodConfigurationInterface $configuration,
         ShippingContextInterface $context
@@ -28,9 +26,7 @@ class AbstractShippingConfiguredPriceProviderDecorator implements ShippingConfig
         return $this->shippingConfiguredPriceProvider->getApplicableMethodsViews($configuration, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice(
         $methodId,
         $methodTypeId,

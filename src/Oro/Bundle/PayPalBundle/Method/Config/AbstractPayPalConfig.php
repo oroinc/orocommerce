@@ -10,25 +10,19 @@ abstract class AbstractPayPalConfig extends AbstractParameterBagPaymentConfig im
     const PURCHASE_ACTION_KEY  = 'purchase_action';
     const TEST_MODE_KEY  = 'test_mode';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCredentials()
     {
         return $this->get(self::CREDENTIALS_KEY);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isTestMode()
     {
         return (bool)$this->get(self::TEST_MODE_KEY);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPurchaseAction()
     {
         return (string)$this->get(self::PURCHASE_ACTION_KEY);

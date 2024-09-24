@@ -22,6 +22,7 @@ class OrderPaymentStatusProviderTest extends TestCase
     private TotalProcessorProvider|MockObject $totalProcessorProvider;
     private OrderPaymentStatusProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);

@@ -26,6 +26,7 @@ class MultiShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MultiShippingMethodProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);

@@ -18,6 +18,7 @@ class ScopeQueryBuilderModifier implements ScopeQueryBuilderModifierInterface
         $this->scopeManager = $scopeManager;
     }
 
+    #[\Override]
     public function applyScopeCriteria(QueryBuilder $queryBuilder, string $fieldAlias): void
     {
         $scopeCriteria = $this->scopeManager->getCriteria('web_content_for_sitemap');

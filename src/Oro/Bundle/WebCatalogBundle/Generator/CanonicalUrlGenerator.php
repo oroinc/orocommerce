@@ -27,9 +27,7 @@ class CanonicalUrlGenerator extends BaseGenerator implements FeatureToggleableIn
         $this->contentNodeProvider = $contentNodeProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getUrl(
         SluggableInterface $entity,
         Localization $localization = null,

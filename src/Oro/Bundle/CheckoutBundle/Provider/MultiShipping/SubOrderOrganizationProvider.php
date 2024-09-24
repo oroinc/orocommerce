@@ -11,9 +11,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  */
 class SubOrderOrganizationProvider implements SubOrderOrganizationProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrganization(Collection $lineItems, string $lineItemGroupKey): Organization
     {
         /** @var CheckoutLineItem|false $lineItem */

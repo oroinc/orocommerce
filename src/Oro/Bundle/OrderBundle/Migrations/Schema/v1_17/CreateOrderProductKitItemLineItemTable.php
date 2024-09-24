@@ -13,6 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class CreateOrderProductKitItemLineItemTable implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         if (!$schema->hasTable('oro_order_product_kit_item_line_item')) {

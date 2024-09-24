@@ -24,9 +24,7 @@ class TwigExtension extends AbstractExtension implements ServiceSubscriberInterf
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilters()
     {
         return [
@@ -43,9 +41,7 @@ class TwigExtension extends AbstractExtension implements ServiceSubscriberInterf
         return $this->getSlugEntityGenerator()->getSlugsByEntitySlugPrototypes($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

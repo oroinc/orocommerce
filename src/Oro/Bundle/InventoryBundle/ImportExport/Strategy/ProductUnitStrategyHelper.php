@@ -24,9 +24,7 @@ class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
         parent::__construct($databaseHelper, $translator);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(
         InventoryLevel $importedEntity,
         array $importData = [],
@@ -93,9 +91,7 @@ class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
         return $this->databaseHelper->findOneByIdentity($product->getPrimaryUnitPrecision());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clearCache($deep = false)
     {
         $this->requiredUnitCache = [];

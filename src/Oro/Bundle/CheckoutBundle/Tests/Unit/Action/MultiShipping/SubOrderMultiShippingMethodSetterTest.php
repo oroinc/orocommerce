@@ -15,6 +15,7 @@ class SubOrderMultiShippingMethodSetterTest extends \PHPUnit\Framework\TestCase
     /** @var SubOrderMultiShippingMethodSetter */
     private $setter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

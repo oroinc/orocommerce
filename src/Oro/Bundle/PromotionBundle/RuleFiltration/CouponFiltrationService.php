@@ -24,9 +24,7 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $filteredRuleOwners = $this->doFilterRuleOwners($ruleOwners, $this->getAppliedCouponCodes($context));

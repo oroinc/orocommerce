@@ -30,11 +30,13 @@ class LoadPriceListWithPricesForCPLBuilderFacade extends AbstractFixture impleme
     private const DEFAULT_QUANTITY = 1;
     private const DEFAULT_PRICE = 10;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadPriceListRelationsForCPLBuilderFacade::class, LoadProductUnitPrecisions::class];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var PriceManager $priceManager */

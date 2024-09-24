@@ -41,9 +41,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /* @var User $owner */
@@ -115,9 +113,7 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
         $workflowDefinition->setConfiguration($config);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [

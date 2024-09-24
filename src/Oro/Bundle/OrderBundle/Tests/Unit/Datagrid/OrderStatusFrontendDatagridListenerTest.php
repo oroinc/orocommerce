@@ -23,6 +23,7 @@ class OrderStatusFrontendDatagridListenerTest extends \PHPUnit\Framework\TestCas
     /** @var OrderStatusFrontendDatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configurationProvider = $this->createMock(OrderConfigurationProviderInterface::class);

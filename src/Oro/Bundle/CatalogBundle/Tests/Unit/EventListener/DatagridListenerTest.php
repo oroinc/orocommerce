@@ -67,6 +67,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

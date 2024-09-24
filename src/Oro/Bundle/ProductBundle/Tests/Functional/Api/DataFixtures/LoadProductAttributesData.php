@@ -24,9 +24,7 @@ class LoadProductAttributesData extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -34,9 +32,7 @@ class LoadProductAttributesData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $attributes = [

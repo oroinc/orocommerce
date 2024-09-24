@@ -34,9 +34,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
     /** @var OrderAddressToAddressIdentifierViewTransformer|\PHPUnit\Framework\MockObject\MockObject */
     private $orderAddressToAddressIdentifierViewTransformer;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderAddressManager = $this->createMock(OrderAddressManager::class);
@@ -291,9 +289,7 @@ class CheckoutAddressSelectTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $addressFormatter = $this->createMock(AddressFormatter::class);

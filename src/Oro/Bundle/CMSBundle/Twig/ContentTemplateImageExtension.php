@@ -23,9 +23,7 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -36,9 +34,7 @@ class ContentTemplateImageExtension extends AbstractExtension implements Service
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

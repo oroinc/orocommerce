@@ -23,6 +23,7 @@ class TimeInTransitCacheProviderFactory implements TimeInTransitCacheProviderFac
         $this->lifetimeProvider = $lifetimeProvider;
     }
 
+    #[\Override]
     public function createCacheProviderForTransport(UPSSettings $settings): TimeInTransitCacheProviderInterface
     {
         $settingsId = $settings->getId();

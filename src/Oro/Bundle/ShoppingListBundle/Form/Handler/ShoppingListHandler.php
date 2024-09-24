@@ -28,9 +28,7 @@ class ShoppingListHandler implements FormHandlerInterface
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process($shoppingList, FormInterface $form, Request $request)
     {
         $form->setData($shoppingList);

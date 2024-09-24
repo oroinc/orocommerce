@@ -17,6 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RequestProductKitItemLineItemCollectionType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $entryOptions = $options['entry_options'] + [
@@ -42,6 +43,7 @@ class RequestProductKitItemLineItemCollectionType extends AbstractType
         $builder->addEventSubscriber(new RequestProductKitItemLineItemCollectionRemovingListener());
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('by_reference', false);
@@ -58,6 +60,7 @@ class RequestProductKitItemLineItemCollectionType extends AbstractType
             ->allowedTypes('array');
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_frontend_request_product_kit_item_line_item_collection';
