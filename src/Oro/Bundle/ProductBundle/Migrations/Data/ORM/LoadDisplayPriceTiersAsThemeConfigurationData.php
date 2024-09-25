@@ -17,23 +17,27 @@ use Oro\Bundle\ThemeBundle\Migrations\Data\AbstractLoadThemeConfiguration;
 class LoadDisplayPriceTiersAsThemeConfigurationData extends AbstractLoadThemeConfiguration implements
     DependentFixtureInterface
 {
-    #[\Override] public function getDependencies(): array
+    #[\Override]
+    public function getDependencies(): array
     {
         return [
             LoadGlobalThemeConfigurationData::class
         ];
     }
-    #[\Override] protected function getConfigManager(): ConfigManager
+    #[\Override]
+    protected function getConfigManager(): ConfigManager
     {
         return $this->container->get('oro_config.global');
     }
 
-    #[\Override] protected function getScopes(): iterable
+    #[\Override]
+    protected function getScopes(): iterable
     {
         return [null];
     }
 
-    #[\Override] protected function getThemeConfigurationKeys(): array
+    #[\Override]
+    protected function getThemeConfigurationKeys(): array
     {
         $displayPriceTiersAsKey = ThemeConfiguration::buildOptionKey('product_details', 'display_price_tiers_as');
 
@@ -42,7 +46,8 @@ class LoadDisplayPriceTiersAsThemeConfigurationData extends AbstractLoadThemeCon
         ];
     }
 
-    #[\Override] public function load(ObjectManager $manager): void
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         $this->init($manager);
 
@@ -76,7 +81,8 @@ class LoadDisplayPriceTiersAsThemeConfigurationData extends AbstractLoadThemeCon
         $manager->flush();
     }
 
-    #[\Override] protected function isApplicable(): bool
+    #[\Override]
+    protected function isApplicable(): bool
     {
         return true;
     }

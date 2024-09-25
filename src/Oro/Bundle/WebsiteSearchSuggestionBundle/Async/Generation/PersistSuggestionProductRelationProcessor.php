@@ -19,7 +19,8 @@ class PersistSuggestionProductRelationProcessor implements MessageProcessorInter
     ) {
     }
 
-    #[\Override] public function process(MessageInterface $message, SessionInterface $session): string
+    #[\Override]
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();
 
@@ -30,7 +31,8 @@ class PersistSuggestionProductRelationProcessor implements MessageProcessorInter
         return self::ACK;
     }
 
-    #[\Override] public static function getSubscribedTopics()
+    #[\Override]
+    public static function getSubscribedTopics()
     {
         return [PersistProductsSuggestionRelationChunkTopic::getName()];
     }
