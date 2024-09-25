@@ -101,6 +101,8 @@ oro:
                     accept.label: Save Changes
             actions:
                 update_all: Update All
+                update_configurable_line_item:
+                    select_variant_label: Select Variants
             lineitem:
                 updated.label: 'Product has been updated in "<a href="{{ shoppinglistPath }}">{{ shoppinglistLabel }}</a>"'
                 dialog:

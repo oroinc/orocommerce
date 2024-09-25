@@ -2,14 +2,12 @@
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <% let oroproduct = _.macros('oroproduct') %>
 <% if (obj.isConfigurable) { %>
-    <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable" data-label="<%- _metadata.label %>:">
-        <% if (quantity) { %>
+    <% if (quantity) { %>
+        <div class="mobile-row label-in-mobile-start label-bold-in-mobile line-item-configurable" data-label="<%- _metadata.label %>:">
             <% var formattedQuantity = oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>
             <%- _.__('oro.product.product_unit.' + unit + '.value.full', {count: formattedQuantity}, quantity) %>
-        <% } else { %>
-            <%- _.__('oro.shoppinglist.lineitem.empty_configurable_product') %>
-        <% } %>
-    </div>
+        </div>
+    <% } %>
 <% } else if (obj.kitHasGeneralError || obj._isKitItemLineItem) { %>
     <div class="line-item-container">
         <% var formattedQuantity = oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>

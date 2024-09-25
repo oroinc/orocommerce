@@ -132,7 +132,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I should see "$0.00" in the "Matrix Grid Total Price" element
     And I click "Save Changes" in modal window
     And I should see "ConfigurableProductB" in grid
-    And I click "Configure" on row "ConfigurableProductB" in grid
+    And I click "Select Variants" on row "ConfigurableProductB" in grid
     Then I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
@@ -248,7 +248,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I follow "Source Shopping List" link within flash message "Shopping list \"Source Shopping List\" was updated successfully"
     Then I should see following grid:
       | SKU  | Item                 | Qty Update All                  | Price | Subtotal |
-      | CNFB | ConfigurableProductB | Click "configure" to select variants |       |          |
+      | CNFB | ConfigurableProductB | Select Variants |       |          |
     And I click on "First Line Item Row Checkbox"
     And I click "Move to" link from mass action dropdown in "Frontend Shopping List Edit Grid"
     And I click "Filter Toggle" in "UiDialog" element
@@ -264,10 +264,10 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I open page with shopping list "Shopping List"
     Then I should see following grid:
       | SKU  | Item                 | Qty Update All                  | Price | Subtotal |
-      | CNFB | ConfigurableProductB | Click "configure" to select variants |       |          |
+      | CNFB | ConfigurableProductB | Select Variants |       |          |
 
   Scenario: Order empty matrix form
-    When I click "Configure" on row "CNFB" in grid
+    When I click "Select Variants" on row "CNFB" in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -335,7 +335,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     Given I reload the page
     When I open shopping list widget
     And I click "View Details"
-    And I click "Configure" on row "CNFB" in grid
+    And I click "Select Variants" on row "CNFB" in grid
     And I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |

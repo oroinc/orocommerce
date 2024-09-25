@@ -122,9 +122,8 @@ Feature: Guest Shopping Lists
     And I click "Open List"
     Then I should see following grid:
       | SKU    | Item         | Qty Update All                   | Price | Subtotal |
-      | 1GB83  | Slip-On Clog | Click "configure" to select variants  |       |          |
+      | 1GB83  | Slip-On Clog | Select Variants  |       |          |
     And I should see following actions for 1GB83 in grid:
-      | Configure |
       | Delete    |
     When I click Delete 1GB83 in grid
     Then I should see "Are you sure you want to delete this product?"

@@ -1,4 +1,5 @@
 import _ from 'underscore';
+import __ from 'orotranslation/js/translator';
 import HtmlTemplateCell from 'oro/datagrid/cell/html-template-cell';
 
 const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
@@ -57,6 +58,35 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
 
         data.useInputStepper = this.useInputStepper;
         return data;
+    },
+
+    render() {
+        ShoppinglistLineItemCell.__super__.render.call(this);
+
+        if (this.model.get('isConfigurable') && !this.model.get('quantity')) {
+            this.createConfigurableAction();
+        }
+
+        return this;
+    },
+
+    createConfigurableAction() {
+        const actionsColumn = this.column.collection.find(model => model.get('actions'));
+        const UpdateConfigurableAction = actionsColumn.get('actions').update_configurable;
+
+        if (typeof UpdateConfigurableAction === 'function') {
+            this.updateConfigurableAction = new UpdateConfigurableAction({
+                model: this.model,
+                datagrid: actionsColumn.get('datagrid')
+            });
+
+            const launcher = this.updateConfigurableAction.createLauncher({
+                className: 'btn btn--flat',
+                label: __('oro.frontend.shoppinglist.actions.update_configurable_line_item.select_variant_label')
+            });
+
+            launcher.render().$el.appendTo(this.$el);
+        }
     }
 });
 
