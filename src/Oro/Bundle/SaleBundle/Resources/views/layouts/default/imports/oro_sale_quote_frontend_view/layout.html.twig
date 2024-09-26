@@ -1,3 +1,13 @@
+{% block _quote_view_toolbar_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " controls-list"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _quote_view_controls_list_widget %}
     {% apply spaceless %}
     <ul class="controls-list">
