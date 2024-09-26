@@ -652,3 +652,10 @@ services:
         class: Oro\Bundle\TaxBundle\Provider\TaxRuleEntityNameProvider
         tags:
             - { name: oro_entity.name_provider, priority: 100 }
+
+    oro_tax.access_rule.frontend_organization_for_tax_rule:
+        class: Oro\Bundle\OrganizationBundle\Acl\AccessRule\OrganizationAwareAccessRule
+        arguments:
+            - '@oro_organization.organization_restriction_provider'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\TaxBundle\Entity\TaxRule, frontend: true}
