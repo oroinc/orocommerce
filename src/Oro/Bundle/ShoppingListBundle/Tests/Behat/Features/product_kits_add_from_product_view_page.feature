@@ -75,7 +75,7 @@ Feature: Product kits add from product view page
     Then I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1                                           |
       | Shopping List 1 Label         | Product Kit Shopping List                               |
-      | Shopping List 1 Configuration | Barcode Scanner[x 2] Product 3 Base Unit[x 2] Product 2 |
+      | Shopping List 1 Configuration | Barcode Scanner(x2) Product 3 Base Unit(x2) Product 2 |
     And I close ui dialog
 
   Scenario: Check shopping list widget

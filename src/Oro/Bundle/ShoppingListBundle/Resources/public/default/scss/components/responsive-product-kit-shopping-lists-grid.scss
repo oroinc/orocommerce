@@ -7,8 +7,6 @@
 
     .oro-datagrid {
         margin: 0;
-        border: 1px solid $responsive-product-kit-shopping-lists-grid-border-color;
-        border-radius: $base-ui-element-border-radius;
     }
 
     .grid-main-container {
@@ -16,23 +14,30 @@
         margin: 0;
     }
 
-    .grid-header-cell {
-        background-color: $responsive-product-kit-shopping-lists-grid-border-color;
-        font-weight: font-weight('semi-bold');
-        text-transform: uppercase;
-        border-width: 0;
-        color: $responsive-product-kit-shopping-lists-grid-header-cell-color;
-    }
-
     .grid-body-cell {
         vertical-align: top;
+        border-bottom-color: $responsive-product-kit-shopping-lists-border-color;
 
         &-shoppingListLabel {
+            padding-left: spacing('md');
+
             a {
                 font-weight: $responsive-product-kit-shopping-lists-label-font-weight;
                 color: $responsive-product-kit-shopping-lists-label-color;
                 text-decoration: $responsive-product-kit-shopping-lists-label-text-decoration;
             }
+        }
+
+        &-kitConfiguration {
+            font-size: 13px;
+        }
+
+        &-quantity {
+            min-width: 414px;
+        }
+
+        &.action-cell {
+            padding-right: 0;
         }
     }
 
@@ -40,11 +45,6 @@
         .grid-body-cell {
             border-width: 0;
         }
-    }
-
-    .grid-header-cell-quantity,
-    .grid-body-cell-quantity {
-        padding-right: 0;
     }
 
     .notification-row {
@@ -63,14 +63,63 @@
     }
 }
 
-@include breakpoint('tablet') {
+@include breakpoint('tablet-small') {
     .responsive-product-kit-shopping-lists-grid {
-        .show-in-tablet {
-            display: block;
+        .grid-header,
+        .grid-body,
+        .grid-footer {
+            display: grid;
+            grid-template-areas: $responsive-product-kit-shopping-lists-tablet-small-grid-template-areas;
+            grid-template-columns: $responsive-product-kit-shopping-lists-tablet-small-grid-template-columns;
+            gap: $responsive-product-kit-shopping-lists-tablet-small-gap;
         }
 
-        .grid-header-cell-shoppingListLabel,
-        .grid-body-cell-shoppingListLabel {
+        .grid-row,
+        .grid-header-row {
+            display: grid;
+            grid-template-columns: subgrid;
+            grid-column: label / actions;
+        }
+
+        .grid-header-row {
+            background-color: $table-thead-background-color;
+        }
+
+        .grid-row {
+            padding-bottom: $responsive-product-kit-shopping-lists-grid-row-offset-mobile;
+            border-bottom: $responsive-product-kit-shopping-lists-grid-border-offset-mobile;
+        }
+
+        .grid-header-cell,
+        .grid-body-cell {
+            padding-left: 0;
+            padding-right: 0;
+
+            &-shoppingListLabel {
+                grid-area: label;
+            }
+
+            &-kitConfiguration {
+                grid-area: configuration;
+            }
+
+            &-quantity {
+                grid-area: qty;
+            }
+
+            &.action-column {
+                grid-area: actions;
+                width: auto;
+                padding: $table-th-inner-offset 0;
+            }
+        }
+
+        .grid-body-cell {
+            border: none;
+            padding-bottom: 0;
+        }
+
+        .grid-header-cell-quantity {
             display: none;
         }
     }
@@ -78,82 +127,65 @@
 
 @include breakpoint('mobile-landscape') {
     .responsive-product-kit-shopping-lists-grid {
-        .oro-datagrid {
-            border-width: 0;
+        .grid-body {
+            grid-template-areas: $responsive-product-kit-shopping-lists-mobile-landscape-grid-template-areas;
+            grid-template-columns: $responsive-product-kit-shopping-lists-mobile-landscape-grid-template-columns;
+            gap: $responsive-product-kit-shopping-lists-mobile-landscape-gap;
         }
 
-        .grid-main-container,
-        .grid-body-cell,
-        .grid-header-cell {
-            // reset default tables styles
-            width: auto;
-
-            border-width: 0;
-        }
-
-        .grid-main-container,
         .grid-header,
-        .grid-header-row,
-        .grid-body,
-        .grid-row {
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: row;
-            width: 100%;
-        }
-
-        .grid-row {
-            padding-top: $responsive-product-kit-shopping-lists-grid-row-offset-mobile;
-            padding-bottom: $responsive-product-kit-shopping-lists-grid-row-offset-mobile;
-            border-bottom: $responsive-product-kit-shopping-lists-grid-border-offset-mobile;
-        }
-
-        .grid-header-row {
-            justify-content: space-around;
-            align-items: center;
-            background-color: $responsive-product-kit-shopping-lists-grid-border-color;
-        }
-
-        .grid-body-cell {
-            display: flex;
-            flex-wrap: wrap;
-            flex-direction: column;
-            padding-top: $responsive-product-kit-shopping-lists-grid-cell-offset-mobile;
-            padding-bottom: $responsive-product-kit-shopping-lists-grid-cell-offset-mobile;
-        }
-
-        .grid-header-cell-shoppingListLabel,
-        .grid-body-cell-shoppingListLabel,
-        .grid-header-cell-quantity,
-        .action-column {
+        .grid-footer {
             display: none;
         }
 
+        .grid-body-cell {
+            padding: 0;
+        }
+
+        .grid-row {
+            &:not(:first-child) {
+                padding-top: $responsive-product-kit-shopping-lists-grid-row-offset-mobile;
+            }
+        }
+
         .grid-body-cell-quantity {
-            order: 3;
-            padding-left: 0;
+            padding-top: spacing('base');
         }
 
-        .grid-body-cell-kitConfiguration {
-            display: inline-flex;
-            flex-grow: 1;
-            order: 1;
-            width: calc(100% - #{$responsive-product-kit-shopping-lists-action-cell-width-mobile});
-            padding-left: 0;
-        }
-
-        .action-cell {
-            order: 2;
-            display: inline-flex;
-            align-items: flex-end;
-            align-self: flex-start;
-            width: $responsive-product-kit-shopping-lists-action-cell-width-mobile;
-            padding-left: 0;
-            padding-right: 0;
+        .grid-body-cell-shoppingListLabel,
+        .grid-body-cell.action-cell {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            flex: 1 0 0;
         }
 
         .notification-row {
             padding-top: 0;
+        }
+
+        &.grid-inline-editing-quantity {
+            .view-mode.editable,
+            .edit-mode.editable {
+                width: 100%;
+            }
+
+            .edit-mode {
+                .input {
+                    width: 100%;
+                    min-width: 0;
+                }
+            }
+
+            .line-item-container {
+                .form-quantity-row {
+                    flex: 1 0 auto;
+                }
+
+                .input {
+                    width: 100%;
+                }
+            }
         }
     }
 }

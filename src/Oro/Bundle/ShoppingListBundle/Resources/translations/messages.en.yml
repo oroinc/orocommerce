@@ -51,6 +51,7 @@ oro:
             added.label: 'Product has been added to "%shoppinglist%"'
             kit:
                 add_to_shopping_list.label: Configure and Add to Shopping List
+                add_to_another_shopping_list.label: Add To Another Shopping List
                 in_shopping_lists.label: "{1} In Shopping List|]1,Inf[ In Shopping Lists"
 
         actions:

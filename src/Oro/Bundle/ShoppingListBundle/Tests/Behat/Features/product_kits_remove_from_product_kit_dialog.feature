@@ -31,7 +31,7 @@ Feature: Product kits remove from product kit dialog
     Then I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1                                           |
       | Shopping List 1 Label         | Product Kit Shopping List                               |
-      | Shopping List 1 Configuration | Barcode Scanner[x 2] Product 3 Base Unit[x 2] Product 2 |
+      | Shopping List 1 Configuration | Barcode Scanner(x2) Product 3 Base Unit(x2) Product 2 |
 
   Scenario: Remove product kit line item from "Edit Product Kit Line Item Configuration" dialog
     When I click "Configure" on row "Barcode Scanner" in grid
@@ -41,7 +41,7 @@ Feature: Product kits remove from product kit dialog
     And I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1             |
       | Shopping List 1 Label         | Product Kit Shopping List |
-      | Shopping List 1 Configuration | Base Unit[x 1] Product 1  |
+      | Shopping List 1 Configuration | Base Unit(x1) Product 1  |
 
   Scenario: Check shopping list view page
     Given I open a new browser tab and set "ProductKitShoppingList" alias for it

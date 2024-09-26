@@ -31,14 +31,14 @@ Feature: Product kits add from in shopping list dialog
     Then I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1                                           |
       | Shopping List 1 Label         | Product Kit Shopping List                               |
-      | Shopping List 1 Configuration | Barcode Scanner[x 2] Product 3 Base Unit[x 2] Product 2 |
-    And I should see "Configure and Add to Shopping List" in the "Product Kit In Shopping List Dialog Action Panel" element
+      | Shopping List 1 Configuration | Barcode Scanner(x2) Product 3 Base Unit(x2) Product 2 |
+    And I should see "Add To Another Shopping List" in the "Product Kit In Shopping List Dialog Action Panel" element
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "2"
     And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
 
   Scenario: Configure and Add to Shopping List from "In Shopping List" dialog
-    When I click "Configure and Add to Shopping List" in "Product Kit In Shopping List Dialog Action Panel" element
+    When I click "Add To Another Shopping List" in "Product Kit In Shopping List Dialog Action Panel" element
     Then I should see "Product Kit Dialog" with elements:
       | Title                | Product Kit 1                      |
       | Kit Item 1 Name      | Barcode Scanner                    |
@@ -71,9 +71,9 @@ Feature: Product kits add from in shopping list dialog
     Given I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1                                           |
       | Shopping List 1 Label         | Product Kit Shopping List                               |
-      | Shopping List 1 Configuration | Barcode Scanner[x 2] Product 3 Base Unit[x 2] Product 2 |
+      | Shopping List 1 Configuration | Barcode Scanner(x2) Product 3 Base Unit(x2) Product 2 |
       | Shopping List 2 Label         | Product Kit Shopping List                               |
-      | Shopping List 2 Configuration | Base Unit[x 1] Product 1                                |
+      | Shopping List 2 Configuration | Base Unit(x1) Product 1                                |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "2"
     And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
@@ -120,7 +120,7 @@ Feature: Product kits add from in shopping list dialog
   Scenario: Add one more product kit configuration from "In Shopping List" dialog
     Given I switch to the browser tab "ProductKitViewPage"
     When I click "In Shopping List"
-    And I click "Configure and Add to Shopping List" in "Product Kit In Shopping List Dialog Action Panel" element
+    And I click "Add To Another Shopping List" in "Product Kit In Shopping List Dialog Action Panel" element
     And I click "Kit Item Line Item 2 Product 2"
     And I click "Product Kit Dialog Shopping List Dropdown"
     And I click "Add to Product Kit Shopping List" in "Shopping List Button Group Menu" element
@@ -130,11 +130,11 @@ Feature: Product kits add from in shopping list dialog
     Given I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1                                           |
       | Shopping List 1 Label         | Product Kit Shopping List                               |
-      | Shopping List 1 Configuration | Barcode Scanner[x 2] Product 3 Base Unit[x 2] Product 2 |
+      | Shopping List 1 Configuration | Barcode Scanner(x2) Product 3 Base Unit(x2) Product 2 |
       | Shopping List 2 Label         | Product Kit Shopping List                               |
-      | Shopping List 2 Configuration | Base Unit[x 1] Product 1                                |
+      | Shopping List 2 Configuration | Base Unit(x1) Product 1                                |
       | Shopping List 3 Label         | Product Kit Shopping List                               |
-      | Shopping List 3 Configuration | Base Unit[x 1] Product 2                                |
+      | Shopping List 3 Configuration | Base Unit(x1) Product 2                                |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "2"
     And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element

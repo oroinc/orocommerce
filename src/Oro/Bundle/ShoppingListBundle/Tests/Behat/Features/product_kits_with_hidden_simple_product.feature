@@ -28,10 +28,10 @@ Feature: Product kits with hidden simple product
     And I click "Search Button"
     And I click "View Details" for "Product Kit 1" product
     And I click "In Shopping List"
-    Then I should see "Configure and Add to Shopping List" in the "Product Kit In Shopping List Dialog Action Panel" element
+    Then I should see "Add To Another Shopping List" in the "Product Kit In Shopping List Dialog Action Panel" element
     And I should see an "Product 2 Link" element
     And I should not see an "Product 3 Link" element
-    When I click "Configure and Add to Shopping List" in "Product Kit In Shopping List Dialog Action Panel" element
+    When I click "Add To Another Shopping List" in "Product Kit In Shopping List Dialog Action Panel" element
     Then I should see an "Configure Popup Product 2 Link" element
     And I should not see an "Configure Popup Product 3 Link" element
     And I close ui dialog

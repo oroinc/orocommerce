@@ -59,7 +59,7 @@ Feature: Product kits add with required kit items
     Then I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1             |
       | Shopping List 1 Label         | Product Kit Shopping List |
-      | Shopping List 1 Configuration | Base Unit[x 1] Product 1  |
+      | Shopping List 1 Configuration | Base Unit(x1) Product 1  |
     And I close ui dialog
     And click on "Flash Message Close Button"
 

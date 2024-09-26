@@ -87,7 +87,13 @@
     {% set attr = layout_attr_defaults(attr, {
         'id': form.vars.id ~ 'totals',
         '~class': ' product-totals',
-        'data-role': 'totals'
+        'data-role': 'totals',
+        'data-page-component-module': 'oroproduct/js/app/components/product-unit-select-component',
+        'data-page-component-options': {
+            'singleUnitMode': singleUnitMode,
+            'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+            'configDefaultUnit': defaultUnitCode
+        }|json_encode
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -109,9 +115,7 @@
              data-role="totals-controls"
              data-page-component-view="oroproduct/js/app/views/product-unit-quantity-view"
         >
-            <div class="product-item-quantity product-item-quantity--justify-end fields-row"
-                 data-extra-form="{{ extraFormId }}"
-            >
+            <div class="product-item-quantity fields-row" data-extra-form="{{ extraFormId }}">
                 {{ form_widget(form.quantity, {label: false, attr: {
                     'aria-label': 'oro.product.quantity.aria_label'|trans,
                     'class': 'product-item-quantity__input',
@@ -121,11 +125,20 @@
                     'data-boundaries-element': '[role="dialog"]',
                     'data-input-widget': 'number'
                 }}) }}
-                {{ form_widget(form.unit,{attr: {
-                    'class': 'product-item-quantity__choice',
-                    'data-role': 'unit',
-                    'data-form-element': form.vars.id,
-                }}) }}
+
+                {% if form.unit.vars.choices|length > 1 %}
+                     {{ form_widget(form.unit,{attr: {
+                         'class': 'product-item-quantity__choice invisible',
+                         'data-role': 'unit',
+                         'data-form-element': form.vars.id,
+                     }}) }}
+                {% else %}
+                    <div class="product-view-line-item__unit">
+                        <span data-role="unit-label" data-toggle-type="single">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
+                    </div>
+                    <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-role="unit" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
+                {% endif %}
+
                 <div class="fields-row-error">
                     {{- form_errors(form.quantity) -}}
                     {{- form_errors(form.unit) -}}

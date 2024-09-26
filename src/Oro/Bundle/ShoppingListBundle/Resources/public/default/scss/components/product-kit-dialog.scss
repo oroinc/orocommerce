@@ -38,5 +38,13 @@
         .floating-error-message {
             z-index: $product-kit-dialog-buttonpane-floating-error-message-z-index;
         }
+
+        .form-actions {
+            justify-content: start;
+        }
+    }
+
+    .btn-main {
+        font-weight: font-weight('semi-bold');
     }
 }

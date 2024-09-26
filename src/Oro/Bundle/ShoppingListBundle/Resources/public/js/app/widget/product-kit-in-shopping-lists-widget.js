@@ -17,7 +17,7 @@ const ProductKitInShoppingListsWidget = FrontendDialogWidget.extend({
             modal: true,
             title: null,
             resizable: false,
-            width: 1120,
+            width: 1200,
             minWidth: 367,
             maxWidth: 'auto',
             autoResize: true,

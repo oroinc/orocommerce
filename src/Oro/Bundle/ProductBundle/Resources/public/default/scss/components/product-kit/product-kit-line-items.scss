@@ -3,18 +3,18 @@
 .product-kit-line-items {
     display: flex;
     flex-direction: column;
-    row-gap: spacing('sm');
+    row-gap: spacing('base');
 
     &:empty {
         display: none;
     }
 
     &__item-name {
-        padding-right: spacing('sm');
+        padding-right: spacing('xs');
     }
 
     &__item-quantity {
-        padding-right: spacing('sm');
+        padding-right: spacing('xs');
         color: $product-kit-line-items-quantity-color;
     }
 

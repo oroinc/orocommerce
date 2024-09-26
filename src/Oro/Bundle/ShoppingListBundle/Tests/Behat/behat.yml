@@ -300,6 +300,9 @@ oro_behat_extension:
     Configure and Add to Shopping List:
       selector: '.add-to-shopping-list-button:contains("Configure and Add to Shopping List")'
 
+    Add To Another Shopping List:
+      selector: '.add-to-shopping-list-button:contains("Add To Another Shopping List")'
+
     Add a Note to This Shopping List:
       selector: 'input[name=addANote]'
 
@@ -652,7 +655,10 @@ oro_behat_extension:
       options:
         mapping:
           Quantity: 'oro_product_kit_line_item[quantity]'
-          Unit: 'oro_product_kit_line_item[unit]'
+          Unit:
+            type: 'css'
+            locator: '[name="oro_product_kit_line_item[unit]"]'
+            element: ProductUnitSelector
 
     Kit Item Line Item 1 Product 1:
       selector: 'input[data-ftid="oro_product_kit_line_item_kitItemLineItems_0_product_0"]'
