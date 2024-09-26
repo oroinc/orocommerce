@@ -78,8 +78,7 @@ Feature: Consents with disabled Guest Access
   Scenario: Admin selects consents to be enabled on Storefront
     Given I go to System/ Configuration
     And follow "Commerce/Customer/Consents" on configuration sidebar
-    And fill "Consent Settings Form" with:
-      | Enabled User Consents Use Default | false|
+    And I uncheck "Use default" for "Enabled user consents" field
     And click "Add Consent"
     And I choose Consent "Email Newsletters" in 1 row
     And click "Add Consent"

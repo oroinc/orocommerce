@@ -169,6 +169,8 @@ operations:
 
     oro_sale_frontend_quote_submit_to_order:
         label: oro.sale.quote.actions.submit_to_order
+        groups:
+            - oro_sale_frontend_quote_submit_to_order
         applications: [commerce]
         routes:
             - oro_sale_quote_frontend_view

@@ -8,9 +8,8 @@ Feature: Consents grid filters
     Given I login as administrator
     And go to System/ Configuration
     And follow "Commerce/Customer/Consents" on configuration sidebar
-    When I fill form with:
-      | Use Default                  | false |
-      | Enable User Consents Feature | true  |
+    And I uncheck "Use default" for "Enable user consents feature" field
+    And I check "Enable user consents feature"
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 

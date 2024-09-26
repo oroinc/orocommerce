@@ -82,7 +82,7 @@ layout:
                     blockType: combined_buttons
                     options:
                         visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
-                        buttons: '=data["buttons"].getAll(data["entity"])'
+                        buttons: '=data["buttons"].getByGroup(data["entity"], null, "oro_sale_frontend_quote_submit_to_order")'
                 quote_view_accept_container:
                     blockType: container
                 quote_shipping_address:
@@ -106,3 +106,10 @@ layout:
                         quote_view_accept_container:
                             quote_view_back_link: ~
                             quote_view_accept_button: ~
+        - '@add':
+            id: quote_view_toolbar_actions
+            parentId: quote_view_page_toolbar_actions_container
+            blockType: line_buttons
+            options:
+                visible: '=data["entity"]!=null'
+                buttons: '=data["buttons"].getAll(data["entity"])'

@@ -73,9 +73,8 @@ Feature: Consent management via Management Console UI
     Given go to System/ Configuration
     And follow "Commerce/Customer/Consents" on configuration sidebar
     And I should not see a "Sortable Consent List" element
-    And fill form with:
-      | Use Default                  | false |
-      | Enable User Consents Feature | true  |
+    And I uncheck "Use default" for "Enable user consents feature" field
+    And I check "Enable user consents feature"
     When click "Save settings"
     Then I should see a "Sortable Consent List" element
 
@@ -148,8 +147,7 @@ Feature: Consent management via Management Console UI
   Scenario: Admin User is able to enable/disable consents functionality on System/Website level
     Given go to System/ Configuration
     When follow "Commerce/Customer/Consents" on configuration sidebar
-    And fill "Consent Settings Form" with:
-      | Enabled User Consents Use Default | false |
+    And I uncheck "Use default" for "Enabled user consents" field
     When click "Save settings"
     Then I should see "Configuration saved" flash message
     And click "Add Consent"
