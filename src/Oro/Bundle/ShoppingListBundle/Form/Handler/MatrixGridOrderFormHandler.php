@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Form\Handler;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FormBundle\Event\EventDispatcher;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\Events;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
@@ -17,6 +16,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 /**
  * The handler for the matrix grid order form.
@@ -25,28 +25,12 @@ class MatrixGridOrderFormHandler implements FormHandlerInterface
 {
     use RequestHandlerTrait;
 
-    /** @var EventDispatcher */
-    private $eventDispatcher;
-
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var MatrixGridOrderManager */
-    private $matrixGridOrderManager;
-
-    /** @var ShoppingListManager */
-    private $shoppingListManager;
-
     public function __construct(
-        EventDispatcher $eventDispatcher,
-        DoctrineHelper $doctrineHelper,
-        MatrixGridOrderManager $matrixGridOrderManager,
-        ShoppingListManager $shoppingListManager
+        private EventDispatcherInterface $eventDispatcher,
+        private DoctrineHelper $doctrineHelper,
+        private MatrixGridOrderManager $matrixGridOrderManager,
+        private ShoppingListManager $shoppingListManager
     ) {
-        $this->eventDispatcher = $eventDispatcher;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->matrixGridOrderManager = $matrixGridOrderManager;
-        $this->shoppingListManager = $shoppingListManager;
     }
 
     #[\Override]
