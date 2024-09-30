@@ -4,9 +4,9 @@ define(function(require) {
     const _ = require('underscore');
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
-    const BaseComponent = require('oroui/js/app/views/base/view');
+    const BaseView = require('oroui/js/app/views/base/view');
 
-    const AddressView = BaseComponent.extend({
+    const AddressView = BaseView.extend({
         options: {
             addedAddressOptionClass: 'option_added_address',
             hideNewAddressForm: false,
@@ -15,7 +15,8 @@ define(function(require) {
                 fieldsContainer: null,
                 region: null,
                 shipToBillingCheckbox: null,
-                externalShipToBillingCheckbox: null
+                externalShipToBillingCheckbox: null,
+                addAddressBtn: null
             }
         },
 
@@ -37,12 +38,15 @@ define(function(require) {
             this.$fieldsContainer = this.$el.find(this.options.selectors.fieldsContainer);
             this.$regionSelector = this.$el.find(this.options.selectors.region);
             this.$shipToBillingCheckbox = this.$el.find(this.options.selectors.shipToBillingCheckbox);
+            this.$addAddressBtn = this.$el.find(this.options.selectors.addAddressBtn);
             this.shipToBillingContainer = this.$shipToBillingCheckbox.parent();
 
             this.$addressSelector.on('change', this._onAddressChanged.bind(this));
             this._onAddressChanged();
             this.$regionSelector.on('change', this._onRegionListChanged.bind(this));
             this._onRegionListChanged();
+
+            this.$addAddressBtn.on('click', this._showForm.bind(this));
 
             if (this.options.hideNewAddressForm) {
                 this.$shipToBillingCheckbox.on('change', this._handleShipToBillingAddressCheckbox.bind(this));

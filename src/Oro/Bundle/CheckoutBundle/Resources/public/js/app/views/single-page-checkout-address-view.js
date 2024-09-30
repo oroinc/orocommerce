@@ -109,6 +109,19 @@ define(function(require) {
                 entityId: this.options.entityId
             });
 
+            console.log({
+                title: this._title(addressType),
+                dialogOptions: {
+                    dialogClass: this.options.dialogClass,
+                    width: this.options.dialogWidth,
+                    height: this.options.dialogHeight,
+                    resizable: this.options.resizable,
+                    autoResize: this.options.autoResize
+                },
+                fullscreenDialogOptions: {
+                    dialogTitleIcon: this.options.dialogTitleIcon
+                }
+            });
             const buttonManager = new ButtonManager({
                 hasDialog: true,
                 showDialog: true,
