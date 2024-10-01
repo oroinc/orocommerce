@@ -28,16 +28,19 @@ class WebCatalogCalculateContentNodeTreeCacheTopic extends AbstractTopic
         $this->managerRegistry = $managerRegistry;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.web_catalog.calculate_cache.content_node_tree';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Initiate web catalog content node tree cache calculation.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $entityOptionNormalizer = function (string $className, string $option) {

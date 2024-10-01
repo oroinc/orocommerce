@@ -13,9 +13,7 @@ use Oro\Bundle\WorkflowBundle\Migration\UpdateNotificationRuleWorkflowTransition
  */
 class UpdateTransitionForQuoteAutoExpireNotification implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(new UpdateNotificationRuleWorkflowTransitionQuery(

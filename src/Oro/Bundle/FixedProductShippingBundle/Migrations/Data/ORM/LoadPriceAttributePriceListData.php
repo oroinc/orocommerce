@@ -19,17 +19,13 @@ class LoadPriceAttributePriceListData extends AbstractFixture implements Contain
 
     protected ?ContainerInterface $container;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Organization $organization */

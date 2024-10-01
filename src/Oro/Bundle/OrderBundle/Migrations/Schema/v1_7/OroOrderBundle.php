@@ -12,9 +12,7 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renameShippingCostColumn($schema, $queries);

@@ -9,7 +9,7 @@ class SecureTokenIdentifier extends AbstractOption
 {
     const SECURETOKENID = 'SECURETOKENID';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

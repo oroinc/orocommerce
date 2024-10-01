@@ -42,9 +42,7 @@ class FrontendShoppingListsViewsList extends AbstractViewsList
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getViewsList(): array
     {
         $views = [];

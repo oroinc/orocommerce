@@ -25,17 +25,13 @@ class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isInUse(WebCatalogInterface $webCatalog)
     {
         return $this->getWebCatalogId() === $webCatalog->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAssignedWebCatalogs()
     {
         $webCatalogId = $this->getWebCatalogId();

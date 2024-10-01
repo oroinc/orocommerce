@@ -11,6 +11,7 @@ class InventoryLevelAccessRuleTest extends \PHPUnit\Framework\TestCase
 {
     private InventoryLevelAccessRule $accessRule;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->accessRule = new InventoryLevelAccessRule();

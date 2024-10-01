@@ -10,6 +10,7 @@ class CategoryControllerTest extends WebTestCase
 {
     use FallbackTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

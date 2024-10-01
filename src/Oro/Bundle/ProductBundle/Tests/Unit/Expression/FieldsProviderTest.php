@@ -20,6 +20,7 @@ class FieldsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FieldsProvider */
     private $fieldsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityFieldProvider = $this->createMock(EntityFieldProvider::class);

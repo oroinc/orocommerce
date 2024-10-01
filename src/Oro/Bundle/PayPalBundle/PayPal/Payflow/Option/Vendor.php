@@ -6,7 +6,7 @@ class Vendor extends AbstractOption
 {
     const VENDOR = 'VENDOR';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

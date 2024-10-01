@@ -18,17 +18,13 @@ class LoadOrderTaxesData extends AbstractFixture implements DependentFixtureInte
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return ['@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Order $order1 */

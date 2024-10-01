@@ -38,6 +38,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var MockObject|InventoryManager */
     private $inventoryManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);

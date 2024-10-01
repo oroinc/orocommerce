@@ -23,6 +23,7 @@ class MultiShippingContextConfigurator implements ContextConfiguratorInterface
         $this->configProvider = $configProvider;
     }
 
+    #[\Override]
     public function configureContext(ContextInterface $context): void
     {
         $context->getResolver()

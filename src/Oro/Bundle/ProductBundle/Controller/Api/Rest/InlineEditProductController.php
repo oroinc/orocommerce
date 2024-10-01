@@ -99,6 +99,7 @@ class InlineEditProductController extends AbstractFOSRestController
         return parent::handleView($this->view([], Response::HTTP_OK));
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

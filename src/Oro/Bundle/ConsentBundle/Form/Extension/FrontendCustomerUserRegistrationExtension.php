@@ -19,6 +19,7 @@ class FrontendCustomerUserRegistrationExtension extends AbstractTypeExtension im
 {
     use FeatureCheckerHolderTrait;
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -40,9 +41,7 @@ class FrontendCustomerUserRegistrationExtension extends AbstractTypeExtension im
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [FrontendCustomerUserRegistrationType::class];

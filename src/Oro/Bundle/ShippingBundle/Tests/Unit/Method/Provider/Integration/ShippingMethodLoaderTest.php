@@ -30,6 +30,7 @@ class ShippingMethodLoaderTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingMethodLoader */
     private $shippingMethodLoader;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->memoryCacheProvider = $this->createMock(MemoryCacheProviderInterface::class);

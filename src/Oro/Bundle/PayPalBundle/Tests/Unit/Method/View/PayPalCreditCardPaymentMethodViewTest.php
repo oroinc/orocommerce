@@ -31,6 +31,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit\Framework\TestCase
     /** @var PayPalCreditCardPaymentMethodView */
     private $methodView;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

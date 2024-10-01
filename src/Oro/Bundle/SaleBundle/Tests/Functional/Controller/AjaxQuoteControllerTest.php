@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class AjaxQuoteControllerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

@@ -38,6 +38,7 @@ class CombinedPriceListRelationHelper implements CombinedPriceListRelationHelper
         $this->configManager = $configManager;
     }
 
+    #[\Override]
     public function isFullChainCpl(CombinedPriceList $cpl): bool
     {
         if ($this->isConfigFullChainCpl($cpl)) {

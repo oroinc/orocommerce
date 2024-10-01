@@ -31,6 +31,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingRuleChangeListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceCache = $this->createMock(ShippingPriceCache::class);

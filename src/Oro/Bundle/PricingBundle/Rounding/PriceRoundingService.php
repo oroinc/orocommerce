@@ -20,7 +20,7 @@ class PriceRoundingService extends AbstractRoundingService
     /** @var int|null */
     private $precision;
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getRoundType()
     {
         if ($this->roundType === null) {
@@ -32,7 +32,7 @@ class PriceRoundingService extends AbstractRoundingService
         return $this->roundType;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getPrecision()
     {
         if ($this->precision === null) {

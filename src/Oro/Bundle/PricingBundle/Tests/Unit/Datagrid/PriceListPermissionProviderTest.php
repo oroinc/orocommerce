@@ -11,6 +11,7 @@ class PriceListPermissionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListPermissionProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new PriceListPermissionProvider();

@@ -10,6 +10,7 @@ class CheckoutConfigBuilderExtensionTest extends TestCase
 {
     private CheckoutConfigBuilderExtension $checkoutConfigBuilderExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutConfigBuilderExtension = new CheckoutConfigBuilderExtension();

@@ -18,6 +18,7 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
 {
     private CustomerFlatPricingRelationFormListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -31,9 +32,7 @@ class CustomerFlatPricingRelationFormListenerTest extends AbstractFlatPricingRel
         $this->listener->addFeature('feature1');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function assertGetPriceListRelation(Website $website, $targetEntity, ?BasePriceListRelation $relation)
     {
         $repo = $this->createMock(PriceListToCustomerRepository::class);

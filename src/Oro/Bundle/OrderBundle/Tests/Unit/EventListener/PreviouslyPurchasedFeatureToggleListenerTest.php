@@ -14,6 +14,7 @@ class PreviouslyPurchasedFeatureToggleListenerTest extends \PHPUnit\Framework\Te
     /** @var PreviouslyPurchasedFeatureToggleListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->reindexManager = $this->createMock(ProductReindexManager::class);

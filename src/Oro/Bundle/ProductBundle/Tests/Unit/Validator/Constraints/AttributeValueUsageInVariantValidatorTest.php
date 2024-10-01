@@ -27,6 +27,7 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
     /** @var EnumSynchronizer|\PHPUnit\Framework\MockObject\MockObject */
     private $enumSynchronizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -34,6 +35,7 @@ class AttributeValueUsageInVariantValidatorTest extends ConstraintValidatorTestC
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): AttributeValueUsageInVariantValidator
     {
         return new AttributeValueUsageInVariantValidator(

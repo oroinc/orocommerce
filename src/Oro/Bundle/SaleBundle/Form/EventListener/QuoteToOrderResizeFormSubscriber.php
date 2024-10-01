@@ -11,6 +11,7 @@ class QuoteToOrderResizeFormSubscriber extends ResizeFormListener
     /**
      * Copy-pasted from ResizeFormListener to provide ability to pass data to form
      */
+    #[\Override]
     public function preSetData(FormEvent $event)
     {
         $form = $event->getForm();

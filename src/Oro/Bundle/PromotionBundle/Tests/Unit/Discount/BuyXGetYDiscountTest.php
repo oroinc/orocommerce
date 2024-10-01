@@ -20,6 +20,7 @@ class BuyXGetYDiscountTest extends \PHPUnit\Framework\TestCase
      */
     private $discount;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->discount = new BuyXGetYDiscount();

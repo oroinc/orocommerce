@@ -35,6 +35,7 @@ class UrlStorageCacheTest extends \PHPUnit\Framework\TestCase
      */
     private $storageCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->persistentCache = $this->createMock(PhpFileCache::class);

@@ -20,6 +20,7 @@ class CheckoutFactoryDecoratorTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutFactoryDecorator */
     private $factoryDecorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);

@@ -35,17 +35,13 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isVirtualRelation($className, $fieldName)
     {
         return ($className === Product::class) && $this->isProductAttributeField($fieldName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVirtualRelationQuery($className, $fieldName)
     {
         $relations = $this->getVirtualRelations($className);
@@ -57,9 +53,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVirtualRelations($className)
     {
         $relations = [];
@@ -74,9 +68,7 @@ class ProductVirtualRelationProvider implements VirtualRelationProviderInterface
         return $relations;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargetJoinAlias($className, $fieldName, $selectFieldName = null)
     {
         return $fieldName . 'Price';

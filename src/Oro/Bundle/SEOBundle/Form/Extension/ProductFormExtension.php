@@ -6,17 +6,13 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 
 class ProductFormExtension extends BaseMetaFormExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.product';

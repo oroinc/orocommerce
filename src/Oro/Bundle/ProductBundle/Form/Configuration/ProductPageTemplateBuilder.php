@@ -9,15 +9,14 @@ use Oro\Bundle\ThemeBundle\Form\Configuration\RadioBuilder;
  */
 class ProductPageTemplateBuilder extends RadioBuilder
 {
-    #[\Override] public static function getType(): string
+    #[\Override]
+    public static function getType(): string
     {
         return 'product_page_template';
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    #[\Override] protected function getConfiguredOptions($option): array
+    #[\Override]
+    protected function getConfiguredOptions($option): array
     {
         return array_merge(parent::getConfiguredOptions($option), [
             'choices' => array_flip($option['values']),

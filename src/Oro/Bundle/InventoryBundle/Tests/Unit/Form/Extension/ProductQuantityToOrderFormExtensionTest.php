@@ -15,6 +15,7 @@ class ProductQuantityToOrderFormExtensionTest extends \PHPUnit\Framework\TestCas
      */
     protected $productFormExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productFormExtension = new ProductQuantityToOrderFormExtension();

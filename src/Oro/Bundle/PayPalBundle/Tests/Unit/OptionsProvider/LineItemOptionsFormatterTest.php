@@ -20,6 +20,7 @@ class LineItemOptionsFormatterTest extends TestCase
     /** @var LineItemOptionsFormatter */
     private $lineItemOptionsFormatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->numberFormatter = $this->createMock(NumberFormatter::class);

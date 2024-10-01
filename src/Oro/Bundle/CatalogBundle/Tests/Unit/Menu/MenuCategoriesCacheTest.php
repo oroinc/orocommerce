@@ -16,6 +16,7 @@ class MenuCategoriesCacheTest extends \PHPUnit\Framework\TestCase
 
     private MenuCategoriesCache $menuCategoriesCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = new ArrayAdapter();

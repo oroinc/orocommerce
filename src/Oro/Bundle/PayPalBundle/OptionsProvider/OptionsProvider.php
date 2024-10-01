@@ -31,6 +31,7 @@ class OptionsProvider implements OptionsProviderInterface
         $this->lineItemOptionsProvider = $lineItemOptionsProvider;
     }
 
+    #[\Override]
     public function getShippingAddressOptions(AbstractAddress $address): AddressOptionModel
     {
         return $this->orderShippingAddressOptionsProvider->getShippingAddressOptions($address);
@@ -40,6 +41,7 @@ class OptionsProvider implements OptionsProviderInterface
      * @param LineItemsAwareInterface $entity
      * @return LineItemOptionModel[]
      */
+    #[\Override]
     public function getLineItemOptions(LineItemsAwareInterface $entity): array
     {
         return $this->lineItemOptionsProvider->getLineItemOptions($entity);

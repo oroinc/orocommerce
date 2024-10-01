@@ -27,6 +27,7 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
 
     private OrderRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

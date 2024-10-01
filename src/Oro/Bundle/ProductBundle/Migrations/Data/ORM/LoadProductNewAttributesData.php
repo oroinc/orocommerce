@@ -36,9 +36,7 @@ class LoadProductNewAttributesData extends AbstractFixture implements
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -46,9 +44,7 @@ class LoadProductNewAttributesData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ConfigManager $configManager */

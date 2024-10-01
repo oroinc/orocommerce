@@ -89,6 +89,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productUnitLabelFormatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $defaultProductUnitProvider = $this->createMock(ChainDefaultProductUnitProvider::class);
@@ -116,9 +117,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $productPrimaryUnitPrecision = new ProductPrimaryUnitPrecisionType();

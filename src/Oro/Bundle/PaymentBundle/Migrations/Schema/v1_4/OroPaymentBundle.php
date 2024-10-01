@@ -17,9 +17,7 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, Orde
     use RenameExtensionAwareTrait;
     use UpdateExtendRelationTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->createTable('oro_payment_status');
@@ -56,9 +54,7 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface, Orde
         $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_payment', 'oro_payment'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

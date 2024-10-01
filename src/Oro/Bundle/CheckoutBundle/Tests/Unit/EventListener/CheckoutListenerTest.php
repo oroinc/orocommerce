@@ -23,6 +23,7 @@ class CheckoutListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);

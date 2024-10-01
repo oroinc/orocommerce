@@ -18,6 +18,7 @@ class ProductPriceByMatchingCriteriaTest extends TestCase
 
     private ProductPriceByMatchingCriteriaProviderInterface|MockObject $innerProvider2;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerProvider1 = $this->createMock(ProductPriceByMatchingCriteriaProviderInterface::class);

@@ -16,6 +16,7 @@ class PlaceholderExpressionVisitorTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderExpressionVisitor */
     private $visitor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->placeholder = $this->createMock(PlaceholderInterface::class);

@@ -120,6 +120,7 @@ class QuoteProductKitItemLineItem implements
         return $this->id;
     }
 
+    #[\Override]
     public function getEntityIdentifier(): ?int
     {
         return $this->id;
@@ -144,6 +145,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getLineItem(): ?BaseQuoteProductItem
     {
         return $this->lineItem;
@@ -157,6 +159,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getKitItem(): ?ProductKitItem
     {
         return $this->kitItem;
@@ -206,6 +209,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getProduct(): ?Product
     {
         return $this->product;
@@ -230,6 +234,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getProductSku(): ?string
     {
         return $this->productSku;
@@ -247,11 +252,13 @@ class QuoteProductKitItemLineItem implements
         return $this->productName;
     }
 
+    #[\Override]
     public function getParentProduct(): ?Product
     {
         return null;
     }
 
+    #[\Override]
     public function getProductHolder(): self
     {
         return $this;
@@ -264,6 +271,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getQuantity(): ?float
     {
         return $this->quantity;
@@ -301,6 +309,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getProductUnit(): ?ProductUnit
     {
         return $this->productUnit;
@@ -313,6 +322,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getProductUnitCode(): ?string
     {
         return $this->productUnitCode;
@@ -325,11 +335,13 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getProductUnitPrecision(): int
     {
         return $this->productUnitPrecision;
     }
 
+    #[\Override]
     public function getSortOrder(): int
     {
         return $this->sortOrder;
@@ -342,6 +354,7 @@ class QuoteProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getPrice(): ?Price
     {
         return $this->price;

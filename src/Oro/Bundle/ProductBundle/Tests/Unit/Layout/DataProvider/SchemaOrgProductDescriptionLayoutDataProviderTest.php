@@ -12,6 +12,7 @@ class SchemaOrgProductDescriptionLayoutDataProviderTest extends \PHPUnit\Framewo
 
     private Product $product;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->product = new Product();

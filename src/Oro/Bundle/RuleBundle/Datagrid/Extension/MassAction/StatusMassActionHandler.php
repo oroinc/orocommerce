@@ -50,9 +50,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
         $data = $args->getData();

@@ -32,9 +32,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryMock extends BasicPayPalExpr
         $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(PayPalExpressCheckoutConfigInterface $config)
     {
         $method = new PayPalExpressCheckoutPaymentMethodMock(

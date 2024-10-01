@@ -39,9 +39,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecorator extends AbstractQuoteD
         parent::__construct($quoteDemandSubtotalsCalculator);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculateSubtotals(QuoteDemand $quoteDemand)
     {
         $quote = $quoteDemand->getQuote();

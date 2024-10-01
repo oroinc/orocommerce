@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestTypeTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

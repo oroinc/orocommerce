@@ -11,6 +11,7 @@ class MoneyOrderTransportTest extends \PHPUnit\Framework\TestCase
     /** @var MoneyOrderTransport */
     private $transport;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transport = new MoneyOrderTransport();

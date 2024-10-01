@@ -15,6 +15,7 @@ class ProductsSelectGridFrontendGridListenerTest extends TestCase
 {
     private ProductsSelectGridFrontendGridListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductsSelectGridFrontendGridListener();

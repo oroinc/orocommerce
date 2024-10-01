@@ -29,6 +29,7 @@ class ContentBlockDataProviderTest extends WebTestCase
 
     private ContentBlockDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -41,6 +42,7 @@ class ContentBlockDataProviderTest extends WebTestCase
         $this->provider = self::getContainer()->get('oro_cms.provider.content_block_provider');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::getContainer()->get('security.token_storage')->setToken(null);

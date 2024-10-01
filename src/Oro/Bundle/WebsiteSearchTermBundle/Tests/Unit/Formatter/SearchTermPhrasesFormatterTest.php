@@ -9,6 +9,7 @@ class SearchTermPhrasesFormatterTest extends TestCase
 {
     private SearchTermPhrasesFormatter $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formatter = new SearchTermPhrasesFormatter(',');

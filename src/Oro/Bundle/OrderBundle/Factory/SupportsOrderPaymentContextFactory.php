@@ -29,9 +29,7 @@ class SupportsOrderPaymentContextFactory implements SupportsEntityPaymentContext
         $this->orderPaymentContextFactory = $orderPaymentContextFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create($entityClass, $entityId)
     {
         if ($this->supports($entityClass, $entityId)) {
@@ -43,9 +41,7 @@ class SupportsOrderPaymentContextFactory implements SupportsEntityPaymentContext
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function supports($entityClass, $entityId)
     {
         if ($entityClass === Order::class) {

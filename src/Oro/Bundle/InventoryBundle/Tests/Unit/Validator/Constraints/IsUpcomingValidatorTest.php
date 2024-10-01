@@ -14,6 +14,7 @@ class IsUpcomingValidatorTest extends ConstraintValidatorTestCase
 {
     private UpcomingLabelCheckoutLineItemValidator|MockObject $upcomingLabelCheckoutLineItemValidator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->upcomingLabelCheckoutLineItemValidator = $this->createMock(
@@ -23,6 +24,7 @@ class IsUpcomingValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): IsUpcomingValidator
     {
         return new IsUpcomingValidator($this->upcomingLabelCheckoutLineItemValidator);

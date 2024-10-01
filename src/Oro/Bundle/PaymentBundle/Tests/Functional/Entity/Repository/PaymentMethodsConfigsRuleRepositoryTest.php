@@ -15,6 +15,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
     private PaymentMethodsConfigsRuleRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

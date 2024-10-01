@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class QuickAddCollectionPriceProviderTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

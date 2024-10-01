@@ -26,9 +26,7 @@ class ConfigureGuestCheckoutReadonlyFields implements ProcessorInterface
         $this->fieldNames = $fieldNames;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */

@@ -39,9 +39,7 @@ class CustomerGroupListener extends AbstractPriceListCollectionAwareListener
         $this->fallbackClass = $fallbackClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFallbacks($targetEntity)
     {
         return $this->doctrineHelper->getEntityRepository($this->fallbackClass)
@@ -51,14 +49,13 @@ class CustomerGroupListener extends AbstractPriceListCollectionAwareListener
     /**
      * @return string
      */
+    #[\Override]
     protected function getRelationClass()
     {
         return $this->relationClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createFallback($targetEntity, Website $website)
     {
         $fallback = new PriceListCustomerGroupFallback();
@@ -68,17 +65,13 @@ class CustomerGroupListener extends AbstractPriceListCollectionAwareListener
         return $fallback;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getDefaultFallback()
     {
         return PriceListCustomerGroupFallback::WEBSITE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function handleCollectionChanges($targetEntity, Website $website)
     {
         $this->triggerHandler->handleCustomerGroupChange($targetEntity, $website);

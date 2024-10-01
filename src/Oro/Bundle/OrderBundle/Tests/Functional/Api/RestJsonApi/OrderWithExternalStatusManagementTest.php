@@ -14,6 +14,7 @@ class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,6 +25,7 @@ class OrderWithExternalStatusManagementTest extends RestJsonApiTestCase
         self::getConfigManager()->set('oro_order.order_enable_external_status_management', true);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::getConfigManager()->set('oro_order.order_enable_external_status_management', false);

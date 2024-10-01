@@ -167,30 +167,25 @@ class LineItemController extends RestController
         return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'entity' => $entity]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getManager()
     {
         return $this->container->get(ApiEntityManager::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getForm()
     {
         throw new \LogicException('This method should not be called');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormHandler()
     {
         throw new \LogicException('This method should not be called');
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

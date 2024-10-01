@@ -10,17 +10,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class TokenTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new Token(), new Action()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

@@ -49,6 +49,7 @@ class OrderProductKitItemLineItemCollectionTypeTest extends FormIntegrationTestC
 
     private OrderProductKitItemLineItemCollectionType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->kitItemProduct1 = (new ProductStub())->setId(300);
@@ -83,6 +84,7 @@ class OrderProductKitItemLineItemCollectionTypeTest extends FormIntegrationTestC
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         $kitItemProducts = [

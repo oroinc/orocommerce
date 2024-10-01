@@ -58,6 +58,7 @@ class ContactInfoProvider implements ContactInfoProviderInterface
      *
      * @return ContactInfo
      */
+    #[\Override]
     public function getContactInfo(CustomerUserInterface $customerUser = null)
     {
         $contactInfo = $this->getContactInformationByUserConfiguration($customerUser);

@@ -25,17 +25,13 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
         $this->shippingMethodLoader = $shippingMethodLoader;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethods(): array
     {
         return $this->shippingMethodLoader->loadShippingMethods($this->channelType, $this->shippingMethodFactory);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethod(string $name): ?ShippingMethodInterface
     {
         $shippingMethods = $this->getShippingMethods();
@@ -43,9 +39,7 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
         return $shippingMethods[$name] ?? null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasShippingMethod(string $name): bool
     {
         $shippingMethods = $this->getShippingMethods();

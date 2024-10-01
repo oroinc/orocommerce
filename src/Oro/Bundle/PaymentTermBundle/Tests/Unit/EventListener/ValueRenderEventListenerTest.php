@@ -23,6 +23,7 @@ class ValueRenderEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ValueRenderEventListener */
     private $valueRenderEventListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->associationProvider = $this->createMock(PaymentTermAssociationProvider::class);

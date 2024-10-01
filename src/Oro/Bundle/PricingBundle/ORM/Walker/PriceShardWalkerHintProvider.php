@@ -20,9 +20,7 @@ class PriceShardWalkerHintProvider implements QueryWalkerHintProviderInterface
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getHints($params)
     {
         return [PriceShardOutputResultModifier::ORO_PRICING_SHARD_MANAGER => $this->shardManager];

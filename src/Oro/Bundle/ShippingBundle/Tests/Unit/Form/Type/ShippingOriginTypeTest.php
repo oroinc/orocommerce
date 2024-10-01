@@ -15,6 +15,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 {
     private ShippingOriginType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ShippingOriginType(new AddressCountryAndRegionSubscriberStub());
@@ -165,9 +166,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
         return $shippingOrigin;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge(parent::getExtensions(), [

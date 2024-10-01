@@ -26,6 +26,7 @@ class FormViewListenerTest extends TestCase
     private Environment|MockObject $env;
     private FormViewListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

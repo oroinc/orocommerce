@@ -20,9 +20,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCacheInterface
         $this->localCache = $localCache;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function has($routeName, $routeParameters, $localizationId = null): bool
     {
         return $this->localCache->hasItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
@@ -34,6 +32,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCacheInterface
      * @param null|int $localizationId
      * @return null|string
      */
+    #[\Override]
     public function getUrl($routeName, $routeParameters, $localizationId = null)
     {
         $dataItem = $this->localCache->getItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
@@ -53,6 +52,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCacheInterface
      * @param null|int $localizationId
      * @return null|string
      */
+    #[\Override]
     public function getSlug($routeName, $routeParameters, $localizationId = null)
     {
         $dataItem = $this->localCache->getItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
@@ -75,6 +75,7 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCacheInterface
      * @param string|null $slug
      * @param null|int $localizationId
      */
+    #[\Override]
     public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null)
     {
         $item = $this->localCache->getItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
@@ -90,11 +91,13 @@ class UrlLocalCache implements UrlCacheInterface, ClearableCacheInterface
      * @param array $routeParameters
      * @param null|int $localizationId
      */
+    #[\Override]
     public function removeUrl($routeName, $routeParameters, $localizationId = null)
     {
         $this->localCache->deleteItem($this->getCacheKey($routeName, $routeParameters, $localizationId));
     }
 
+    #[\Override]
     public function deleteAll(): void
     {
         $this->localCache->clear();

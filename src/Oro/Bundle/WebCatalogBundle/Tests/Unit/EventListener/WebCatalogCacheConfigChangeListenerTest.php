@@ -15,6 +15,7 @@ class WebCatalogCacheConfigChangeListenerTest extends \PHPUnit\Framework\TestCas
     /** @var WebCatalogCacheConfigChangeListener */
     private $webCatalogConfigChangeListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

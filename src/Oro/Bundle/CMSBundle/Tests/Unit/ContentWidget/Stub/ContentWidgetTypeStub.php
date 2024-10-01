@@ -11,58 +11,44 @@ use Twig\Environment;
 
 class ContentWidgetTypeStub implements ContentWidgetTypeInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getName(): string
     {
         return 'stub_type';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return 'stub type label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): FormInterface
     {
         return $formFactory->createBuilder(FormType::class, $contentWidget)
             ->getForm();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         return ['settings' => $contentWidget->getSettings()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isInline(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '<b>default template</b>';

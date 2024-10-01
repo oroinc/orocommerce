@@ -34,9 +34,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPriceList()
     {
         $priceListId = $this->getPriceListId();
@@ -58,9 +56,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         return $this->getFirstPriceList();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPriceListSelectedCurrencies(BasePriceList $priceList)
     {
         $priceListCurrencies = $priceList->getCurrencies();
@@ -92,9 +88,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         return $currencies;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShowTierPrices()
     {
         $request = $this->getRequest();

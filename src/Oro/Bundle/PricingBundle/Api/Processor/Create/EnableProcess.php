@@ -19,9 +19,7 @@ class EnableProcess implements ProcessorInterface
         $this->isEnablePriceSharding = $isEnablePriceSharding;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         if ($this->isEnablePriceSharding) {

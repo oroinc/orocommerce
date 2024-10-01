@@ -13,6 +13,7 @@ class QuotePricesComparatorTest extends \PHPUnit\Framework\TestCase
 {
     private QuotePricesComparator $comparator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->comparator = new QuotePricesComparator();

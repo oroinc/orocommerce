@@ -11,6 +11,7 @@ class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsF
     /** @var ProductQuantityToOrderFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,17 +24,13 @@ class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsF
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function callTestMethod(): void
     {
         $this->listener->onProductView($this->event);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExpectedScrollData(): array
     {
         return [
@@ -46,9 +43,7 @@ class ProductQuantityToOrderFormViewListenerTest extends AbstractFallbackFieldsF
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntity(): object
     {
         return new Product();

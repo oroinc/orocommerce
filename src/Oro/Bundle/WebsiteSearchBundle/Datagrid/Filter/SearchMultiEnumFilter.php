@@ -13,9 +13,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
  */
 class SearchMultiEnumFilter extends SearchEnumFilter
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data): bool
     {
         $fieldName = $this->get(FilterUtility::DATA_NAME_KEY);

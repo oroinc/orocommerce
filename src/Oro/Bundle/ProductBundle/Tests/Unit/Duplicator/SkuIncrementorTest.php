@@ -25,6 +25,7 @@ class SkuIncrementorTest extends TestCase
     /** @var SkuIncrementor */
     private $service;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

@@ -16,6 +16,7 @@ class HomePageProviderTest extends TestCase
     private ManagerRegistry|MockObject $doctrine;
     private HomePageProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

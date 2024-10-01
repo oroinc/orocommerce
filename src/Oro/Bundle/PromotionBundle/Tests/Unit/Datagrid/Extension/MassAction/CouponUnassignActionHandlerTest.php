@@ -12,6 +12,7 @@ class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTes
     /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $translator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
@@ -19,9 +20,7 @@ class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTes
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createHandler()
     {
         $this->handler = new CouponUnassignActionHandler(
@@ -31,9 +30,7 @@ class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTes
         $this->handler->setTranslator($this->translator);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function assertExecuteCalled(
         array $coupons,
         MassActionHandlerArgs|\PHPUnit\Framework\MockObject\MockObject $args
@@ -45,9 +42,7 @@ class CouponUnassignActionHandlerTest extends AbstractCouponMassActionHandlerTes
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function assertGetResponseCalled(int $entitiesCount): MassActionResponse
     {
         $translatedMessage = $entitiesCount . ' processed';

@@ -47,6 +47,7 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
 
     private DatagridLineItemsDataPricingListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productLineItemsPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);

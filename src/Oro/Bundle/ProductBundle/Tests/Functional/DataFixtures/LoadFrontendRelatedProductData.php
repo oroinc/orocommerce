@@ -36,9 +36,7 @@ class LoadFrontendRelatedProductData extends AbstractFixture implements Dependen
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -46,9 +44,7 @@ class LoadFrontendRelatedProductData extends AbstractFixture implements Dependen
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$relatedProducts as $sku => $relatedProducts) {

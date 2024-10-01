@@ -13,9 +13,7 @@ class BlankOneOf extends Constraint
 
     public array $fields = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

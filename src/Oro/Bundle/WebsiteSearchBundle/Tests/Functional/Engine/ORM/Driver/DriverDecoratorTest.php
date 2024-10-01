@@ -26,6 +26,7 @@ class DriverDecoratorTest extends WebTestCase
 
     private AbstractPlatform $platform;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -42,6 +43,7 @@ class DriverDecoratorTest extends WebTestCase
         $this->loadFixtures([LoadItemData::class]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->clearIndexTextTable(IndexText::class);

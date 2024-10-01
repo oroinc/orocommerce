@@ -26,6 +26,7 @@ class PriceListToCustomer extends BasePriceListRelation implements CustomerAware
     /**
      * @return Customer
      */
+    #[\Override]
     public function getCustomer()
     {
         return $this->customer;
@@ -35,6 +36,7 @@ class PriceListToCustomer extends BasePriceListRelation implements CustomerAware
      * @param Customer $customer
      * @return $this
      */
+    #[\Override]
     public function setCustomer(Customer $customer)
     {
         $this->customer = $customer;

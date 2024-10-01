@@ -38,6 +38,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit\Framework\TestCas
     /** @var HasPriceInShoppingLineItemsListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);

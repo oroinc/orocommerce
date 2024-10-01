@@ -15,17 +15,13 @@ class ParameterBagShippingMethodValidatorResult implements ShippingMethodValidat
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createCommonFactory()
     {
         return new Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getErrors()
     {
         return $this->errors;

@@ -27,6 +27,7 @@ abstract class AbstractProductSelectTypeTest extends WebTestCase
     /** @var array */
     protected $dataParameters = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

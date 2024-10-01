@@ -14,6 +14,7 @@ class MeasureTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var MeasureTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ObjectRepository::class);

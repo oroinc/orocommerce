@@ -12,6 +12,7 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductKitItemLineItemCollect
 
 class RequestProductKitItemLineItemCollectionTypeTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->markTestSkipped('will be unskipped in BB-23759');

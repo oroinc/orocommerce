@@ -24,6 +24,7 @@ class ContentVariantSlugSourceEntityProviderTest extends \PHPUnit\Framework\Test
     /** @var ContentVariantSlugSourceEntityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->sluggableEntityFinder = $this->createMock(SluggableEntityFinder::class);

@@ -15,6 +15,7 @@ class RemoveSlugDuplicatesQuery extends ParametrizedSqlMigrationQuery
     /**
      * @return string|string[]
      */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -23,6 +24,7 @@ class RemoveSlugDuplicatesQuery extends ParametrizedSqlMigrationQuery
         return $logger->getMessages();
     }
 
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

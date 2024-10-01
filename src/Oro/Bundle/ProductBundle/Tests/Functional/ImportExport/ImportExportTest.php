@@ -22,6 +22,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 {
     use MessageProcessTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -85,6 +86,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         ];
     }
 
+    #[\Override]
     protected function getExportFile(): string
     {
         $result = self::getContainer()->get('oro_importexport.handler.export')
@@ -94,9 +96,7 @@ class ImportExportTest extends AbstractImportExportTestCase
             ->writeToTmpLocalStorage($result['file']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFileContents(string $fileName): array
     {
         $content = file_get_contents($fileName);
@@ -106,9 +106,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         return array_map('str_getcsv', $content);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function validateExportResult(string $exportFile, int $expectedItemsCount): void
     {
         $exportedData = $this->getFileContents($exportFile);
@@ -325,9 +323,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         $this->assertImportResponse($data, 0, 8);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function assertImportResponse(array $data, int $added, int $updated): void
     {
         self::assertEquals(
@@ -340,9 +336,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setSecurityToken(): void
     {
         $token = new OrganizationToken(

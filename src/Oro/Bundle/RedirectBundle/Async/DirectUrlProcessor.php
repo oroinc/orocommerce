@@ -54,9 +54,9 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
     }
 
     /**
-     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $em = null;
@@ -102,6 +102,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [GenerateDirectUrlForEntitiesTopic::getName()];

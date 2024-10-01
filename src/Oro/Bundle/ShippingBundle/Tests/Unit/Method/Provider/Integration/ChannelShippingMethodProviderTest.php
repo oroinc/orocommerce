@@ -20,6 +20,7 @@ class ChannelShippingMethodProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ChannelShippingMethodProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);

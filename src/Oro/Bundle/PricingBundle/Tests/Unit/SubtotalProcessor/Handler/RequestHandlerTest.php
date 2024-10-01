@@ -34,6 +34,7 @@ class RequestHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var RequestHandler */
     private $requestHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProvider = $this->createMock(TotalProcessorProvider::class);

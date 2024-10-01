@@ -23,6 +23,7 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
     /** @var EntityTreeSelectType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->treeHandler = $this->createMock(ContentNodeTreeHandler::class);
@@ -30,9 +31,7 @@ class ContentNodeSelectTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

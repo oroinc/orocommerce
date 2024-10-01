@@ -26,6 +26,7 @@ class MinimalPricesCombiningStrategyTest extends \PHPUnit\Framework\TestCase
     /** @var MinimalPricesCombiningStrategy */
     private $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

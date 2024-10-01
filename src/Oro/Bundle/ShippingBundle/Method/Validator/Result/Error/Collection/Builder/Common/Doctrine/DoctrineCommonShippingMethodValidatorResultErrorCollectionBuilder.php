@@ -13,17 +13,13 @@ class DoctrineCommonShippingMethodValidatorResultErrorCollectionBuilder implemen
      */
     private $errors;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCollection()
     {
         return new Error\Collection\Doctrine\DoctrineShippingMethodValidatorResultErrorCollection($this->errors);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function cloneAndBuild(
         Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $collection
     ) {
@@ -34,9 +30,7 @@ class DoctrineCommonShippingMethodValidatorResultErrorCollectionBuilder implemen
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function addError(Error\ShippingMethodValidatorResultErrorInterface $error)
     {
         $this->errors[] = $error;

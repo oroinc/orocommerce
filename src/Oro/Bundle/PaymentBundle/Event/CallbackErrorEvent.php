@@ -6,7 +6,7 @@ class CallbackErrorEvent extends AbstractCallbackEvent
 {
     const NAME = 'oro_payment.callback.error';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getEventName()
     {
         return self::NAME;

@@ -18,9 +18,7 @@ class WebsiteForSitemapProvider implements WebsiteForSitemapProviderInterface
         $this->websiteProvider = $websiteProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAvailableWebsites(): array
     {
         return $this->websiteProvider->getWebsites();

@@ -11,9 +11,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\ProductCaseCacheBuilderInterfac
  */
 class CacheBuilder extends CompositeCacheBuilder implements ProductCaseCacheBuilderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function productCategoryChanged(Product $product, bool $scheduleReindex)
     {
         foreach ($this->builders as $builder) {

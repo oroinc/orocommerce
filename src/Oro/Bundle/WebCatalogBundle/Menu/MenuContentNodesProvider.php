@@ -40,6 +40,7 @@ class MenuContentNodesProvider implements MenuContentNodesProviderInterface
      *
      * @return ResolvedContentNode|null
      */
+    #[\Override]
     public function getResolvedContentNode(ContentNode $contentNode, array $context = []): ?ResolvedContentNode
     {
         if (!$this->authorizationChecker->isGranted(BasicPermission::VIEW, $contentNode->getWebCatalog())) {

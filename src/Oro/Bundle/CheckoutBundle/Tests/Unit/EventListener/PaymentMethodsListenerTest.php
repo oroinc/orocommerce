@@ -39,6 +39,7 @@ class PaymentMethodsListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodsListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);

@@ -19,81 +19,61 @@ class DisabledDiscountDecorator implements DiscountInterface
         $this->discount = $discount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configure(array $options): array
     {
         return $this->discount->configure($options);
     }
 
-    /**
-     *{@inheritdoc}
-     */
+    #[\Override]
     public function getMatchingProducts()
     {
         return $this->discount->getMatchingProducts();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setMatchingProducts(array $products)
     {
         $this->discount->setMatchingProducts($products);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountType(): string
     {
         return $this->discount->getDiscountType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountValue(): float
     {
         return $this->discount->getDiscountValue();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountCurrency()
     {
         return $this->discount->getDiscountCurrency();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function apply(DiscountContextInterface $discountContext)
     {
         $this->discount->apply(new DisabledDiscountContextDecorator($discountContext));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculate($entity): float
     {
         return 0.0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPromotion()
     {
         return $this->discount->getPromotion();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setPromotion(PromotionDataInterface $promotion)
     {
         $this->discount->setPromotion($promotion);

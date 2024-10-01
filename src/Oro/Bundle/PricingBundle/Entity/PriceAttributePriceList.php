@@ -92,9 +92,7 @@ class PriceAttributePriceList extends BasePriceList implements OrganizationAware
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createPriceListCurrency()
     {
         return new PriceAttributeCurrency();

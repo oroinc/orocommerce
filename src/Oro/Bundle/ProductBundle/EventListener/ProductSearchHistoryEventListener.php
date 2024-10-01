@@ -19,6 +19,7 @@ class ProductSearchHistoryEventListener extends SearchHistoryEventListener
         $this->searchProductHandler = $searchProductHandler;
     }
 
+    #[\Override]
     protected function getSearchTerm(Query $query): ?string
     {
         return $this->searchProductHandler->getSearchString() ?: parent::getSearchTerm($query);

@@ -11,9 +11,7 @@ class UniqueProductUnitShippingOptions extends Constraint
      */
     public $message = 'oro.shipping.validators.product_unit_shipping_options.unique_entity.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_shipping_unique_product_unit_shipping_options_validator';

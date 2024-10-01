@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
  */
 class CheckoutConfigBuilderExtension implements WorkflowDefinitionBuilderExtensionInterface
 {
+    #[\Override]
     public function prepare($workflowName, array $configuration)
     {
         if (empty($configuration['metadata']['is_checkout_workflow'])) {

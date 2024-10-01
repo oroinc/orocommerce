@@ -14,6 +14,7 @@ class OrderMultiShippingLayoutProviderTest extends \PHPUnit\Framework\TestCase
     /** @var OrderMultiShippingLayoutProvider */
     private $layoutDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->multiShippingConfigProvider = $this->createMock(ConfigProvider::class);

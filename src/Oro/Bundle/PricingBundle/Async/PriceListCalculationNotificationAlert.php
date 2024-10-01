@@ -33,11 +33,13 @@ class PriceListCalculationNotificationAlert implements NotificationAlertInterfac
     {
     }
 
+    #[\Override]
     public function getId(): string
     {
         return $this->id;
     }
 
+    #[\Override]
     public function getSourceType(): string
     {
         return self::SOURCE_TYPE;
@@ -71,6 +73,7 @@ class PriceListCalculationNotificationAlert implements NotificationAlertInterfac
         return $item;
     }
 
+    #[\Override]
     public function toArray(): array
     {
         $data = [

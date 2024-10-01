@@ -125,6 +125,7 @@ class QuoteBackofficeApprovalWorkflowTest extends BaseQuoteBackofficeWorkflowTes
         );
     }
 
+    #[\Override]
     protected function activateWorkflow(): void
     {
         $this->manager->deactivateWorkflow('b2b_quote_backoffice_default');

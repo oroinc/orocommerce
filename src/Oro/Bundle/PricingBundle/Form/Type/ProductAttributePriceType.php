@@ -19,6 +19,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     const NAME = 'oro_pricing_product_attribute_price';
     const PRICE = 'price';
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(self::PRICE, NumberType::class, [
@@ -27,9 +28,7 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
             ->setDataMapper($this);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -39,25 +38,18 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         $forms = iterator_to_array($forms);
@@ -69,9 +61,9 @@ class ProductAttributePriceType extends AbstractType implements DataMapperInterf
     }
 
     /**
-     * {@inheritdoc}
      * @param PriceAttributeProductPrice $data
      */
+    #[\Override]
     public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         $forms = iterator_to_array($forms);

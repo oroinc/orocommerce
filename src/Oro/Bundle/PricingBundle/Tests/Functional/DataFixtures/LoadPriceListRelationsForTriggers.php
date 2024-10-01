@@ -8,9 +8,7 @@ class LoadPriceListRelationsForTriggers extends LoadPriceListRelations
 {
     const PRICE_LIST_TO_CUSTOMER_GROUP_6 = 'price_list_2_US_customer_group1';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->data['US']['priceListsToCustomerGroups']['customer_group.group1'][] = [

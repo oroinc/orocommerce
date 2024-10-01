@@ -35,6 +35,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
 
     private EntityProvider|MockObject $entityProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
@@ -334,9 +335,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [
@@ -356,9 +355,7 @@ class WYSIWYGTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         $translator = $this->createMock(TranslatorInterface::class);

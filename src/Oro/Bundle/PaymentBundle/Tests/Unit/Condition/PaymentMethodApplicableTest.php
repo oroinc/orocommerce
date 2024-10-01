@@ -19,6 +19,7 @@ class PaymentMethodApplicableTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodApplicable */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(ApplicablePaymentMethodsProvider::class);

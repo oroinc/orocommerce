@@ -23,6 +23,7 @@ class MultiShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
     /** @var MultiShippingMethodType */
     private $methodType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);

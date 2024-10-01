@@ -30,9 +30,7 @@ class PriceListQueryConverterExtension implements QueryConverterExtensionInterfa
      */
     protected $tableAliasByColumn = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(AbstractQueryDesigner $source, QueryBuilder $queryBuilder)
     {
         $this->tableAliasByColumn = [];

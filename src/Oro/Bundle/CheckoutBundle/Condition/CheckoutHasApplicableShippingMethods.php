@@ -27,9 +27,7 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
         $this->availableShippingMethodChecker = $availableShippingMethodChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (\array_key_exists('checkout', $options)) {
@@ -45,17 +43,13 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'checkout_has_applicable_shipping_methods';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var Checkout $checkout */
@@ -67,17 +61,13 @@ class CheckoutHasApplicableShippingMethods extends AbstractCondition implements 
         return $this->availableShippingMethodChecker->hasAvailableShippingMethods($checkout);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->checkout]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->checkout], $factoryAccessor);

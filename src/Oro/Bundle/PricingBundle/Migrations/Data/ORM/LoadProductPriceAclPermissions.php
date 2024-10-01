@@ -13,9 +13,7 @@ use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractLoadAclData;
  */
 class LoadProductPriceAclPermissions extends AbstractLoadAclData
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {
@@ -25,9 +23,7 @@ class LoadProductPriceAclPermissions extends AbstractLoadAclData
         parent::load($manager);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getDataPath()
     {
         return '@OroPricingBundle/Migrations/Data/ORM/data/product_price_acl_permissions.yml';

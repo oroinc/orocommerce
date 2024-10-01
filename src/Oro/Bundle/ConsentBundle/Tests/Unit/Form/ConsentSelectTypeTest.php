@@ -12,9 +12,7 @@ class ConsentSelectTypeTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentSelectType */
     private $formType;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ConsentSelectType();

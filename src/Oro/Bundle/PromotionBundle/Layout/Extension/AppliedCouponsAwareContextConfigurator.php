@@ -18,9 +18,7 @@ class AppliedCouponsAwareContextConfigurator implements ContextConfiguratorInter
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureContext(ContextInterface $context)
     {
         $isAppliedCouponsAware = false;

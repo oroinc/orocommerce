@@ -39,6 +39,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

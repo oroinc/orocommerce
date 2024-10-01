@@ -28,9 +28,7 @@ class ProductCollectionSegmentHelperStub extends ProductCollectionSegmentHelper
         $this->isWebCatalogUsageProviderEnabled = $isWebCatalogUsageProviderEnabled;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWebsiteIdsBySegment(Segment $segment): array
     {
         return $this->isWebCatalogUsageProviderEnabled
@@ -38,9 +36,7 @@ class ProductCollectionSegmentHelperStub extends ProductCollectionSegmentHelper
             : parent::getWebsiteIdsBySegment($segment);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->isWebCatalogUsageProviderEnabled ? $this->helper->isEnabled() : parent::isEnabled();

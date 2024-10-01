@@ -19,6 +19,7 @@ class PageFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.cms.page';

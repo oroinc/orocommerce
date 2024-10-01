@@ -166,6 +166,7 @@ class EmptySearchResultsPageEventListener implements ResetInterface, FeatureChec
         return true;
     }
 
+    #[\Override]
     public function reset(): void
     {
         $this->totalRecordsCount = 0;

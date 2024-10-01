@@ -25,6 +25,7 @@ class RouterSitemapUrlsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var RouterSitemapUrlsProvider */
     private $sitemapLoginUrlsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);

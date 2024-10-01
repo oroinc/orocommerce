@@ -11,11 +11,11 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 class QuoteProductValidator extends ConstraintValidator
 {
     /**
-     * {@inheritdoc}
      *
      * @param Entity\QuoteProduct $quoteProduct
      * @param Constraints\QuoteProduct $constraint
      */
+    #[\Override]
     public function validate($quoteProduct, Constraint $constraint)
     {
         if (!$quoteProduct instanceof Entity\QuoteProduct) {

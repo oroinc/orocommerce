@@ -9,17 +9,13 @@ class PayPalPaymentsProChannelType implements ChannelInterface, IconAwareIntegra
 {
     const TYPE = 'paypal_payments_pro';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.paypal.channel_type.payments_pro.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIcon()
     {
         return 'bundles/oropaypal/img/paypal-logo.png';

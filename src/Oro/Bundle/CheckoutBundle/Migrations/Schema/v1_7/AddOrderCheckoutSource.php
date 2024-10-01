@@ -14,9 +14,7 @@ class AddOrderCheckoutSource implements Migration, ExtendExtensionAwareInterface
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         if (class_exists('Oro\Bundle\OrderBundle\Entity\Order')) {

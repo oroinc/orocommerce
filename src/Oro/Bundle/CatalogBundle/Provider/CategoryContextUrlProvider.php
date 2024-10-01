@@ -34,9 +34,7 @@ class CategoryContextUrlProvider implements ContextUrlProviderInterface
         $this->localizationProvider = $localizationProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrl($data)
     {
         $request = $this->requestStack->getCurrentRequest();

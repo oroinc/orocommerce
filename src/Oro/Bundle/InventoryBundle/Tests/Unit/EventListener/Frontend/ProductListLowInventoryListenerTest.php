@@ -25,6 +25,7 @@ class ProductListLowInventoryListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductListLowInventoryListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lowInventoryProvider = $this->createMock(LowInventoryProvider::class);

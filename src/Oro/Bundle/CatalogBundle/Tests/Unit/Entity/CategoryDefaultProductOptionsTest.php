@@ -15,6 +15,7 @@ class CategoryDefaultProductOptionsTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryDefaultProductOptions */
     protected $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new CategoryDefaultProductOptions();

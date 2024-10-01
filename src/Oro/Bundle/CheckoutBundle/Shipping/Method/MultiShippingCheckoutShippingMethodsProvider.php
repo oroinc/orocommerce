@@ -24,17 +24,13 @@ class MultiShippingCheckoutShippingMethodsProvider implements CheckoutShippingMe
         $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
         return new ShippingMethodViewCollection();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPrice(Checkout $checkout): ?Price
     {
         if (!$this->multiShippingMethodProvider->hasShippingMethods()) {

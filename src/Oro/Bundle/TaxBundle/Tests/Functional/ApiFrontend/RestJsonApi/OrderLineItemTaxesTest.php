@@ -12,6 +12,7 @@ use Oro\DBAL\Types\MoneyType;
 
 class OrderLineItemTaxesTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

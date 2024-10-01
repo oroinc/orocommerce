@@ -11,9 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManager()->getRepository(PriceListCurrency::class);

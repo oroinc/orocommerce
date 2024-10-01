@@ -11,9 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
  */
 class UpdateFrontendLineItemAndOrderAddressPermissions extends AbstractMassUpdateCustomerUserRolePermissions
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getACLData(): array
     {
         return [

@@ -32,9 +32,7 @@ class AttachmentEntityConfigProvider implements AttachmentEntityConfigProviderIn
         $this->innerAttachmentEntityConfigProvider = $innerAttachmentEntityConfigProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFieldConfig(string $entityClass, string $fieldName): ?ConfigInterface
     {
         if (!$entityClass) {
@@ -58,9 +56,7 @@ class AttachmentEntityConfigProvider implements AttachmentEntityConfigProviderIn
         return $this->innerAttachmentEntityConfigProvider->getFieldConfig($entityClass, $fieldName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityConfig(string $entityClass): ?ConfigInterface
     {
         return $this->innerAttachmentEntityConfigProvider->getEntityConfig($entityClass);

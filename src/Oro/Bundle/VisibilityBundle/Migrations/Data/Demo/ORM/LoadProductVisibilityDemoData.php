@@ -10,17 +10,13 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoData
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [LoadCategoryVisibilityDemoData::class]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         parent::load($manager);
@@ -28,17 +24,13 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
         $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getWebsite(ObjectManager $manager, array $row): Website
     {
         return $this->container->get('oro_website.manager')->getDefaultWebsite();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getDataFile(): string
     {
         return '@OroVisibilityBundle/Migrations/Data/Demo/ORM/data/products-visibility.csv';

@@ -21,6 +21,7 @@ class AddressEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var AddressEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->addressModelFactory = $this->createMock(AddressModelFactory::class);

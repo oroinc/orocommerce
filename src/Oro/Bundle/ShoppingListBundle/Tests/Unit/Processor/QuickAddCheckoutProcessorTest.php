@@ -61,6 +61,7 @@ class QuickAddCheckoutProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddCheckoutProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListLineItemHandler = $this->createMock(ShoppingListLineItemHandler::class);

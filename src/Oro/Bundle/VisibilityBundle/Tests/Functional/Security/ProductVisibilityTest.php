@@ -18,6 +18,7 @@ class ProductVisibilityTest extends FrontendWebTestCase
 
     private const VISIBILITY_SYSTEM_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

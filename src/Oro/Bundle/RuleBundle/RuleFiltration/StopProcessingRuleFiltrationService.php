@@ -15,9 +15,7 @@ class StopProcessingRuleFiltrationService implements RuleFiltrationServiceInterf
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
         $filteredRuleOwners = $this->filterRuleOwners($ruleOwners);

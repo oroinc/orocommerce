@@ -22,9 +22,7 @@ class SelectCouponGridListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->modifier = $this->createMock(CouponApplicabilityQueryBuilderModifier::class);

@@ -19,6 +19,7 @@ class PaymentError extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         $this->baseTrnasition->execute($workflowItem);

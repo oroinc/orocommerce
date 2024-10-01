@@ -14,6 +14,7 @@ class OptionCollection extends CollectionField
     /**
      * @param TableNode $table
      */
+    #[\Override]
     public function setValue($table)
     {
         $this->removeAllRows();
@@ -32,6 +33,7 @@ class OptionCollection extends CollectionField
     /**
      * @return array
      */
+    #[\Override]
     public function getValue()
     {
         /** @var NodeElement[] $rows */

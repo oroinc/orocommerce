@@ -32,25 +32,18 @@ class SlugWithRedirectType extends AbstractType
         $this->confirmSlugChangeFormHelper = $confirmSlugChangeFormHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $constraints = [new UrlSafe(['allowSlashes' => $options['allow_slashes']])];
@@ -80,9 +73,7 @@ class SlugWithRedirectType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -94,9 +85,7 @@ class SlugWithRedirectType extends AbstractType
         $resolver->setRequired('source_field');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->confirmSlugChangeFormHelper->addConfirmSlugChangeOptions($view, $form, $options);

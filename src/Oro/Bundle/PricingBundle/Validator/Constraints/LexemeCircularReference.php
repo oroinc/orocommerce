@@ -21,17 +21,13 @@ class LexemeCircularReference extends Constraint
      */
     public $fields;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_pricing.validator_constraints.lexeme_circular_reference_validator';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

@@ -30,6 +30,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     private CheckoutShippingContextProvider|MockObject $shipContextProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shipContextProvider = $this->createMock(CheckoutShippingContextProvider::class);
@@ -258,9 +259,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getMapper(): ShoppingListLineItemDiffMapper|CheckoutStateDiffMapperInterface
     {
         return new ShoppingListLineItemDiffMapper($this->shipContextProvider);

@@ -9,7 +9,7 @@ class TransparentRedirect extends AbstractBooleanOption
 {
     const SILENTTRAN = 'SILENTTRAN';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

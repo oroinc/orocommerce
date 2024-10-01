@@ -18,9 +18,7 @@ class OroSaleBundle implements Migration, OutdatedExtendExtensionAwareInterface
 {
     use OutdatedExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->dropLockedColumn($schema, $queries);

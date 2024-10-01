@@ -73,6 +73,7 @@ class CheckoutProductKitItemLineItem implements
         return $this->id;
     }
 
+    #[\Override]
     public function getEntityIdentifier(): ?int
     {
         return $this->id;
@@ -85,6 +86,7 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getLineItem(): ?CheckoutLineItem
     {
         return $this->lineItem;
@@ -97,6 +99,7 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getKitItem(): ?ProductKitItem
     {
         return $this->kitItem;
@@ -109,21 +112,25 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getProduct(): ?Product
     {
         return $this->product;
     }
 
+    #[\Override]
     public function getProductSku(): ?string
     {
         return $this->getProduct()?->getSku();
     }
 
+    #[\Override]
     public function getParentProduct(): ?Product
     {
         return null;
     }
 
+    #[\Override]
     public function getProductHolder(): self
     {
         return $this;
@@ -136,6 +143,7 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getQuantity(): float
     {
         return $this->quantity;
@@ -148,16 +156,19 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getProductUnit(): ?ProductUnit
     {
         return $this->productUnit;
     }
 
+    #[\Override]
     public function getProductUnitCode(): ?string
     {
         return $this->getProductUnit()?->getCode();
     }
 
+    #[\Override]
     public function getSortOrder(): int
     {
         return $this->sortOrder;
@@ -182,6 +193,7 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getPrice(): ?Price
     {
         return $this->price;

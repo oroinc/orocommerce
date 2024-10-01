@@ -57,6 +57,7 @@ class QuoteFormSubscriberTest extends FormIntegrationTestCase
 
     private array $tierPrices = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

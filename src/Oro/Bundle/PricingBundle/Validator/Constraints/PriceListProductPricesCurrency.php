@@ -11,17 +11,13 @@ class PriceListProductPricesCurrency extends Constraint
      */
     public $message = 'oro.pricing.validators.price_list.product_price_currency.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_pricing_price_list_product_prices_currency_validator';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

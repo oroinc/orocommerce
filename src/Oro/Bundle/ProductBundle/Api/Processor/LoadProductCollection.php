@@ -41,9 +41,7 @@ class LoadProductCollection implements ProcessorInterface
         $this->valueNormalizer = $valueNormalizer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */

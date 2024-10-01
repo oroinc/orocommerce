@@ -28,9 +28,7 @@ class FrontendInventorySwitcherFilter extends SearchMultiEnumFilter
         parent::__construct($factory, $util, $dictionaryEntityDataProvider);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function init($name, array $params): void
     {
         parent::init($name, $params);
@@ -44,9 +42,7 @@ class FrontendInventorySwitcherFilter extends SearchMultiEnumFilter
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data): bool
     {
         if (in_array(FrontendInventorySwitcherFilterType::TYPE_ENABLED, $data['value'])) {
@@ -62,9 +58,7 @@ class FrontendInventorySwitcherFilter extends SearchMultiEnumFilter
         return parent::applyRestrictions($ds, $data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormType(): string
     {
         return FrontendInventorySwitcherFilterType::class;

@@ -124,6 +124,7 @@ class OrderAddress extends AbstractAddress implements
      *
      * @return OrderAddress
      */
+    #[\Override]
     public function setPhone($phone)
     {
         $this->phone = $phone;
@@ -136,6 +137,7 @@ class OrderAddress extends AbstractAddress implements
      *
      * @return string
      */
+    #[\Override]
     public function getPhone()
     {
         return $this->phone;

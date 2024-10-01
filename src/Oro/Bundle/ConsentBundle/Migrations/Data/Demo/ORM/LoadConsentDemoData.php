@@ -25,9 +25,7 @@ class LoadConsentDemoData extends AbstractLoadWebCatalogDemoData implements Depe
     const MANDATORY_CONSENT = 'Terms and Conditions';
     const OPTIONAL_CONSENT = 'Email subscription';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -95,6 +93,7 @@ class LoadConsentDemoData extends AbstractLoadWebCatalogDemoData implements Depe
         return $consent;
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $webCatalog = $this->getWebCatalog($manager);

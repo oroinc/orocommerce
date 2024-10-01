@@ -58,10 +58,10 @@ class OrderType extends AbstractType
     }
 
     /**
-     * {@inheritDoc}
      * @throws \InvalidArgumentException
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var Order $order */
@@ -163,9 +163,9 @@ class OrderType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
      * @throws AccessException
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -192,9 +192,7 @@ class OrderType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

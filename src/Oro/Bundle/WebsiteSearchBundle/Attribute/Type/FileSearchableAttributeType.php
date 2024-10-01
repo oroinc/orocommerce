@@ -9,57 +9,43 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
  */
 class FileSearchableAttributeType extends AbstractSearchableAttributeType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterStorageFieldTypes(FieldConfigModel $attribute): array
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterType(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterableFieldNames(FieldConfigModel $attribute): array
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSearchableFieldName(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');

@@ -9,6 +9,7 @@ class DefaultTemplate extends ProductTemplate
 {
     const ELEMENT_PREFIX = 'Default Page';
 
+    #[\Override]
     public function assertGroupWithValue($groupName, TableNode $table)
     {
         $this->getPage()->pressButton($groupName);
@@ -20,9 +21,7 @@ class DefaultTemplate extends ProductTemplate
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertPrices(TableNode $table)
     {
         $prices = $this->getPricesElement();

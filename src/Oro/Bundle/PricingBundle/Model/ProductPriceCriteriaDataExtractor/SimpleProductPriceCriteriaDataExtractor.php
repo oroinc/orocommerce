@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
  */
 class SimpleProductPriceCriteriaDataExtractor implements ProductPriceCriteriaDataExtractorInterface
 {
+    #[\Override]
     public function extractCriteriaData(ProductPriceCriteria $productPriceCriteria): array
     {
         return [
@@ -20,6 +21,7 @@ class SimpleProductPriceCriteriaDataExtractor implements ProductPriceCriteriaDat
         ];
     }
 
+    #[\Override]
     public function isSupported(ProductPriceCriteria $productPriceCriteria): bool
     {
         return true;

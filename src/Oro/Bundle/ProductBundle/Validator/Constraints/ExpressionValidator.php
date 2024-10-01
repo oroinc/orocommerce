@@ -52,8 +52,8 @@ class ExpressionValidator extends ConstraintValidator
      * @param string $value
      * @param Expression $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if ($value === null || $value === '') {

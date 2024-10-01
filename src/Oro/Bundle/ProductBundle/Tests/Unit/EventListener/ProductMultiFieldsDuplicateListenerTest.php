@@ -25,6 +25,7 @@ class ProductMultiFieldsDuplicateListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $managerRegistry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

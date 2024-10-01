@@ -20,6 +20,7 @@ final class SuggestionPersisterTest extends \PHPUnit\Framework\TestCase
 
     private EventDispatcherInterface&MockObject $eventDispatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $doctrine = $this->createMock(ManagerRegistry::class);

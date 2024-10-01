@@ -15,9 +15,7 @@ class EnableAllProductsDemoData extends AbstractFixture implements ContainerAwar
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $configManager = $this->container->get('oro_config.global');

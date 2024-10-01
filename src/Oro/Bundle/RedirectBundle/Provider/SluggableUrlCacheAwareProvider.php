@@ -24,17 +24,13 @@ class SluggableUrlCacheAwareProvider implements SluggableUrlProviderInterface
         $this->cache = $cache;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContextUrl($contextUrl)
     {
         $this->contextUrl = $contextUrl;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrl($routeName, $routeParameters, $localizationId)
     {
         $url = false;

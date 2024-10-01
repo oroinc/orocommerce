@@ -38,6 +38,7 @@ class ShoppingListControllerTest extends WebTestCase
 
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -57,6 +58,7 @@ class ShoppingListControllerTest extends WebTestCase
         $this->configManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);

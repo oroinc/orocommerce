@@ -22,6 +22,7 @@ class FixedProductMethodTypeTest extends TestCase
 
     private FixedProductMethodType $fixedProductType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);

@@ -15,9 +15,7 @@ class WebCatalogScopeExtension extends AbstractTypeExtension
 {
     const SCOPE_FIELD = 'webCatalog';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (array_key_exists(self::SCOPE_FIELD, $options['scope_fields'])) {
@@ -34,9 +32,7 @@ class WebCatalogScopeExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('web_catalog', null);
@@ -53,9 +49,7 @@ class WebCatalogScopeExtension extends AbstractTypeExtension
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ScopeType::class];

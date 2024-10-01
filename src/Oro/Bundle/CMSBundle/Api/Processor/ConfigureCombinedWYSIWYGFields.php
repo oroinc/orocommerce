@@ -20,9 +20,7 @@ class ConfigureCombinedWYSIWYGFields extends ConfigureWYSIWYGFields
 {
     public const FIELD_VALUE_RENDERED = 'valueRendered';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function configureWysiwygField(
         ConfigContext $context,
         EntityDefinitionConfig $definition,

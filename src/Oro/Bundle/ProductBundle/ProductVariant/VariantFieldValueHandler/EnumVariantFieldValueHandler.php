@@ -56,6 +56,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         $this->cacheLifeTime = $lifeTime;
     }
 
+    #[\Override]
     public function getPossibleValues(string $fieldName): array
     {
         $key = UniversalCacheKeyGenerator::normalizeCacheKey(sprintf('%s|%s', $fieldName, $this->getLocaleKey()));
@@ -74,6 +75,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         });
     }
 
+    #[\Override]
     public function getScalarValue(mixed $value): mixed
     {
         if (!$value instanceof EnumOptionInterface) {
@@ -83,6 +85,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
         return $this->doctrineHelper->getSingleEntityIdentifier($value);
     }
 
+    #[\Override]
     public function getHumanReadableValue(string $fieldName, mixed $value): mixed
     {
         $fieldIdentifier = $this->getScalarValue($value);
@@ -113,6 +116,7 @@ class EnumVariantFieldValueHandler implements ProductVariantFieldValueHandlerInt
             : $this->localeSettings->getLocale();
     }
 
+    #[\Override]
     public function getType(): string
     {
         return self::TYPE;

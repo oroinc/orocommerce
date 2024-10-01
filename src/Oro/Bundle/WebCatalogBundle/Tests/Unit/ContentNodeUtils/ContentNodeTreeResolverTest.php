@@ -30,6 +30,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeTreeResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

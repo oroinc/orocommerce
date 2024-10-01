@@ -15,9 +15,7 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedM
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_rfp_request');
@@ -55,9 +53,7 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedM
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

@@ -31,6 +31,7 @@ class TopSellingItemsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TopSellingItemsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productRepository = $this->createMock(ProductRepository::class);

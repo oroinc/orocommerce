@@ -11,9 +11,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
 {
     public const UPS_2ND_DAY_AIR_DESCRIPTION = 'UPS 2nd Day Air';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getManager()->getRepository(ShippingService::class);

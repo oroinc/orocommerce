@@ -27,6 +27,7 @@ class SearchEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var SearchEventListener|\PHPUnit\Framework\MockObject\MockObject */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->searchProductHandler = $this->createMock(SearchProductHandler::class);

@@ -16,9 +16,7 @@ class ExpressionPreprocessor implements ExpressionPreprocessorInterface
         $this->preprocessors[] = $preprocessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process($expression)
     {
         $iteration = 0;

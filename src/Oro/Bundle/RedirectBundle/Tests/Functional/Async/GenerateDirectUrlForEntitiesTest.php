@@ -23,6 +23,7 @@ class GenerateDirectUrlForEntitiesTest extends WebTestCase
     use MessageQueueExtension;
     use SlugAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

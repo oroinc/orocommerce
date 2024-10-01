@@ -23,41 +23,31 @@ class ContentNodeStub implements ContentNodeInterface, WebCatalogAwareInterface
         $this->traitConstructor();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getId()
     {
         return 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContentVariants()
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTitles()
     {
         return new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isRewriteVariantTitle()
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWebCatalog()
     {
         return $this->webCatalog;

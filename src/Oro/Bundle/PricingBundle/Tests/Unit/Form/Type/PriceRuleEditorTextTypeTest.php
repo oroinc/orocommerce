@@ -17,6 +17,7 @@ class PriceRuleEditorTextTypeTest extends \PHPUnit\Framework\TestCase
     /** @var PriceRuleEditorTextType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->optionsConfigurator = $this->createMock(PriceRuleEditorOptionsConfigurator::class);

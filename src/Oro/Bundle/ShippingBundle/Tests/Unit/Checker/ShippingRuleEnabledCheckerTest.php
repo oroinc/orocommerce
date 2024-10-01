@@ -15,6 +15,7 @@ class ShippingRuleEnabledCheckerTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingRuleEnabledChecker */
     private $ruleChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->methodEnabledChecker = $this->createMock(

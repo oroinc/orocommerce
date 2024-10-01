@@ -18,9 +18,7 @@ class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements D
 {
     use UserUtilityTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -30,9 +28,7 @@ class LoadWebCatalogDemoData extends AbstractLoadWebCatalogDemoData implements D
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $webCatalog = $this->createCatalog($manager);

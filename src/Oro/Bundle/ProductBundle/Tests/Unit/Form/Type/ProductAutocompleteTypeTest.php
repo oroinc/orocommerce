@@ -15,6 +15,7 @@ class ProductAutocompleteTypeTest extends \PHPUnit\Framework\TestCase
     /** @var ProductAutocompleteType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new ProductAutocompleteType();

@@ -24,6 +24,7 @@ class EmptySearchResultPageContentVariantProviderTest extends TestCase
 
     private EmptySearchResultPageContentVariantProvider $emptySearchResultPageContentVariantProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

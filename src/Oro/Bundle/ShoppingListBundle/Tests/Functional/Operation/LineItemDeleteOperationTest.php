@@ -7,6 +7,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 class LineItemDeleteOperationTest extends ActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

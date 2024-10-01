@@ -22,6 +22,7 @@ class SearchTermTypeTest extends WebTestCase
 
     private string $phraseDelimiter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

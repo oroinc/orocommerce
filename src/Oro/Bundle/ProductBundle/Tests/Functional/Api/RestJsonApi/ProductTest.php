@@ -25,6 +25,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWorkflowDefinitio
  */
 class ProductTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

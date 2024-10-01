@@ -15,7 +15,6 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  */
 class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::DELETE];
 
     private ContainerInterface $container;
@@ -28,9 +27,7 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
@@ -38,9 +35,7 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote(TokenInterface $token, $object, array $attributes): int
     {
         $this->object = $object;
@@ -51,9 +46,7 @@ class PriceListVoter extends AbstractEntityVoter implements ServiceSubscriberInt
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if ($this->getPriceListReferenceChecker()->isReferential($this->object)) {

@@ -19,6 +19,7 @@ class DisplaySimpleVariationsListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DisplaySimpleVariationsListener */
     private $eventListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productCache = $this->createMock(AbstractAdapter::class);

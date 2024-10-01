@@ -24,6 +24,7 @@ class ContentTemplatesInWysiwygFormExtensionTest extends \PHPUnit\Framework\Test
 
     private ContentTemplatesInWysiwygFormExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentTemplatesForWysiwygPreviewProvider = $this->createMock(

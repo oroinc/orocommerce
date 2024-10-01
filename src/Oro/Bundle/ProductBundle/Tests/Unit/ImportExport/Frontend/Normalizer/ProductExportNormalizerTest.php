@@ -26,6 +26,7 @@ class ProductExportNormalizerTest extends \PHPUnit\Framework\TestCase
 
     private ProductExportNormalizer $productNormalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);

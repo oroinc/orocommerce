@@ -12,17 +12,13 @@ class FixedProductChannelType implements ChannelInterface, IconAwareIntegrationI
 {
     public const TYPE = 'fixed_product';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.fixed_product.channel_type.label';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon(): string
     {
         return 'bundles/orofixedproductshipping/img/fixed-product-logo.png';

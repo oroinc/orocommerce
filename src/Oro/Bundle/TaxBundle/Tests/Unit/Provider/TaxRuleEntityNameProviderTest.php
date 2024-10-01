@@ -14,6 +14,7 @@ class TaxRuleEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private TaxRuleEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new TaxRuleEntityNameProvider();

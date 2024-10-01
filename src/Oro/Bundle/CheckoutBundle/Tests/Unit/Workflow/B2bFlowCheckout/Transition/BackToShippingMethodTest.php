@@ -20,6 +20,7 @@ class BackToShippingMethodTest extends TestCase
     private TransitionServiceInterface|MockObject $baseTransition;
     private BackToShippingMethod $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

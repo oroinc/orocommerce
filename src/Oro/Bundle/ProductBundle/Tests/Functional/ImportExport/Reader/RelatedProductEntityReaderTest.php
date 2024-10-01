@@ -17,6 +17,7 @@ class RelatedProductEntityReaderTest extends WebTestCase
     /** @var RelatedProductEntityReader */
     private $reader;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

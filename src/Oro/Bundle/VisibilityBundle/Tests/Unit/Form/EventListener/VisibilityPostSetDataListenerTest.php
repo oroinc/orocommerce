@@ -26,6 +26,7 @@ class VisibilityPostSetDataListenerTest extends \PHPUnit\Framework\TestCase
     /** @var VisibilityPostSetDataListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldDataProvider = $this->createMock(VisibilityFormFieldDataProvider::class);

@@ -34,6 +34,7 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -56,9 +57,7 @@ class FrontendCustomerUserProfileExtension extends AbstractTypeExtension impleme
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [FrontendCustomerUserProfileType::class];

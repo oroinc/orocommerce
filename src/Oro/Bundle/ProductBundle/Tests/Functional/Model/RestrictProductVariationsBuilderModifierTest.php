@@ -13,6 +13,7 @@ class RestrictProductVariationsBuilderModifierTest extends WebTestCase
 {
     private RestrictProductVariationsBuilderModifier $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

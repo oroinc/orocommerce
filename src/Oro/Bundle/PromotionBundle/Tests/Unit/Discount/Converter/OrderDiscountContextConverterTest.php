@@ -25,6 +25,7 @@ class OrderDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
     /** @var OrderDiscountContextConverter */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemsConverter = $this->createMock(OrderLineItemsToDiscountLineItemsConverter::class);

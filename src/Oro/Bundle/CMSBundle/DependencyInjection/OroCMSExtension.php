@@ -22,9 +22,7 @@ class OroCMSExtension extends Extension
         $this->contentRestrictionModes[] = $value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);
@@ -72,9 +70,7 @@ class OroCMSExtension extends Extension
             ->addTag('oro_cms.content_widget.type');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfiguration(array $config, ContainerBuilder $container): ?ConfigurationInterface
     {
         return new Configuration($this->contentRestrictionModes);

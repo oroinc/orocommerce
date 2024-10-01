@@ -23,17 +23,13 @@ class LoadProductRelatedFallbackValuesData extends AbstractFixture implements De
         return "$productName.entity_field_fallback_value.$fieldName";
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadProductData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Product $product */

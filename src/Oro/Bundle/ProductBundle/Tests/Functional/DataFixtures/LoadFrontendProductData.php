@@ -14,9 +14,7 @@ class LoadFrontendProductData implements FixtureInterface, DependentFixtureInter
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -24,9 +22,7 @@ class LoadFrontendProductData implements FixtureInterface, DependentFixtureInter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();

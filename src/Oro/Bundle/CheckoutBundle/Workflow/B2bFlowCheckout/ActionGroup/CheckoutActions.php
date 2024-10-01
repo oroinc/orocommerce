@@ -25,6 +25,7 @@ class CheckoutActions implements CheckoutActionsInterface
     ) {
     }
 
+    #[\Override]
     public function getCheckoutUrl(Checkout $checkout, string $transition = null): string
     {
         $parameters = ['id' => $checkout->getId()];
@@ -35,6 +36,7 @@ class CheckoutActions implements CheckoutActionsInterface
         return $this->urlGenerator->generate('oro_checkout_frontend_checkout', $parameters);
     }
 
+    #[\Override]
     public function purchase(
         Checkout $checkout,
         Order $order,
@@ -70,6 +72,7 @@ class CheckoutActions implements CheckoutActionsInterface
         return ['responseData' => $result->get('responseData')];
     }
 
+    #[\Override]
     public function finishCheckout(
         Checkout $checkout,
         Order $order,
@@ -91,6 +94,7 @@ class CheckoutActions implements CheckoutActionsInterface
         );
     }
 
+    #[\Override]
     public function sendConfirmationEmail(Checkout $checkout, Order $order): void
     {
         $this->actionExecutor->executeActionGroup(
@@ -114,6 +118,7 @@ class CheckoutActions implements CheckoutActionsInterface
         );
     }
 
+    #[\Override]
     public function finalizeSourceEntity(
         Checkout $checkout,
         bool $autoRemoveSource = false,

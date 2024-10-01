@@ -28,6 +28,7 @@ class SingleUnitModeUnitVisibilityDecorator implements UnitVisibilityInterface
      * @param string $code
      * @return bool
      */
+    #[\Override]
     public function isUnitCodeVisible($code)
     {
         if (!$this->singleUnitModeService->isSingleUnitMode()) {

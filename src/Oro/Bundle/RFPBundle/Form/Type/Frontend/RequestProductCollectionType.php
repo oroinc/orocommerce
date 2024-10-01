@@ -11,11 +11,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RequestProductCollectionType extends AbstractType
 {
+    #[\Override]
     public function getParent(): ?string
     {
         return CollectionType::class;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -26,6 +28,7 @@ class RequestProductCollectionType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_frontend_request_product_collection';

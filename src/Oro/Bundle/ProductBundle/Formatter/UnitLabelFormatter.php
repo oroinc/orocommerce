@@ -4,9 +4,7 @@ namespace Oro\Bundle\ProductBundle\Formatter;
 
 class UnitLabelFormatter extends AbstractUnitFormatter implements UnitLabelFormatterInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function format($code, $isShort = false, $isPlural = false)
     {
         if (!$code) {
@@ -24,9 +22,7 @@ class UnitLabelFormatter extends AbstractUnitFormatter implements UnitLabelForma
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function formatChoices(array $units, $isShort = false, $isPlural = false)
     {
         $result = [];

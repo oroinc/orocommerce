@@ -20,7 +20,7 @@ class ShippingAddress extends AbstractOption
     const SHIPTOCOMPANY = 'SHIPTOCOMPANY';
     const SHIPTOPHONE = 'SHIPTOPHONE';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $keys = $this->getAllKeys();

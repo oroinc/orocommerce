@@ -20,6 +20,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
     private QuantityType $formType;
     private QuantityParentTypeStub $parentType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = $this->getQuantityType();
@@ -55,9 +56,7 @@ class QuantityTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $productUnit1 = new ProductUnit();

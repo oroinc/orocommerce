@@ -25,17 +25,13 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
         $this->formatter = $formatter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFieldName(array $data): string
     {
         return 'decimal.' . str_replace(UnitPlaceholder::NAME, $data['unit'], $this->get(FilterUtility::DATA_NAME_KEY));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
@@ -55,9 +51,7 @@ class FrontendProductPriceFilter extends SearchNumberRangeFilter
         return $metadata;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormType(): string
     {
         return ProductPriceFilterType::class;

@@ -25,9 +25,7 @@ class Configuration implements ConfigurationInterface
         $this->contentRestrictionModes = $contentRestrictionModes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('oro_cms');

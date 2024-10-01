@@ -61,6 +61,7 @@ class ProductLineItemPriceProvider implements ProductLineItemPriceProviderInterf
      * @return array<int|string,ProductLineItemPrice> Array of product line item prices, each element
      *  associated with the key of the corresponding line item from $lineItems
      */
+    #[\Override]
     public function getProductLineItemsPrices(
         iterable $lineItems,
         ?ProductPriceScopeCriteriaInterface $priceScopeCriteria = null,
@@ -115,6 +116,7 @@ class ProductLineItemPriceProvider implements ProductLineItemPriceProviderInterf
      * @return array<int|string,ProductLineItemPrice> Array of product line item prices, each element
      *  associated with the key of the corresponding line item from $lineItemsHolder::getLineItems()
      */
+    #[\Override]
     public function getProductLineItemsPricesForLineItemsHolder(
         ProductLineItemsHolderInterface|LineItemsAwareInterface|LineItemsNotPricedAwareInterface $lineItemsHolder,
         ?string $currency = null

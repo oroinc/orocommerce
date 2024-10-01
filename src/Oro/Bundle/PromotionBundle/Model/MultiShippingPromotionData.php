@@ -26,73 +26,55 @@ class MultiShippingPromotionData implements PromotionDataInterface, ShippingAwar
         $this->lineItems = $lineItems;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getId()
     {
         return $this->promotionData->getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDiscountConfiguration()
     {
         return $this->promotionData->getDiscountConfiguration();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isUseCoupons()
     {
         return $this->promotionData->isUseCoupons();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCoupons()
     {
         return $this->promotionData->getCoupons();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductsSegment()
     {
         return $this->promotionData->getProductsSegment();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getRule()
     {
         return $this->promotionData->getRule();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSchedules()
     {
         return $this->promotionData->getSchedules();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getScopes()
     {
         return $this->promotionData->getScopes();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingCost()
     {
         $amount = 0.0;

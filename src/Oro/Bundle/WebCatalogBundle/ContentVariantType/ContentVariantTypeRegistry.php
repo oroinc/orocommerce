@@ -99,9 +99,7 @@ class ContentVariantTypeRegistry implements ResetInterface
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset()
     {
         $this->initializedContentVariantTypes = null;

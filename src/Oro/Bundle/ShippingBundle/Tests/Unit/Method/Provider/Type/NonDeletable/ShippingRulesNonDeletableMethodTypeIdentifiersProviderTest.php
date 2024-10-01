@@ -16,6 +16,7 @@ class ShippingRulesNonDeletableMethodTypeIdentifiersProviderTest extends \PHPUni
     /** @var ShippingRulesNonDeletableMethodTypeIdentifiersProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->methodTypeConfigRepository = $this->createMock(ShippingMethodTypeConfigRepository::class);

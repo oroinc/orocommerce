@@ -27,9 +27,7 @@ class ProductVisibilityQueryModifier implements QueryModifierInterface
         $this->modifier = $modifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {
         if ($skipRootEntity) {

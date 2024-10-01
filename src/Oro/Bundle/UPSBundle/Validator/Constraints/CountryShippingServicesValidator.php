@@ -12,9 +12,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class CountryShippingServicesValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof CountryShippingServices) {

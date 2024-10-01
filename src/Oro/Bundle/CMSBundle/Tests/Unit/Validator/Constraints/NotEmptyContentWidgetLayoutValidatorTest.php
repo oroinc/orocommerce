@@ -16,6 +16,7 @@ class NotEmptyContentWidgetLayoutValidatorTest extends ConstraintValidatorTestCa
 {
     private ContentWidgetLayoutProvider|\PHPUnit\Framework\MockObject\MockObject $contentWidgetLayoutProvider;
 
+    #[\Override]
     protected function createValidator(): NotEmptyContentWidgetLayoutValidator
     {
         $this->contentWidgetLayoutProvider = $this->createMock(ContentWidgetLayoutProvider::class);

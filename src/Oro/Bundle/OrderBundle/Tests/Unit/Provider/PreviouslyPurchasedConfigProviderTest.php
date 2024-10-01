@@ -16,6 +16,7 @@ class PreviouslyPurchasedConfigProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PreviouslyPurchasedConfigProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localeSettings = $this->createMock(LocaleSettings::class);

@@ -21,9 +21,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
     /** @var ShoppingList */
     protected $shoppingList;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

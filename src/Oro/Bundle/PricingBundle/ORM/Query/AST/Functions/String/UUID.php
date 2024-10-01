@@ -9,9 +9,7 @@ use Doctrine\ORM\Query\SqlWalker;
 
 class UUID extends FunctionNode
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function parse(Parser $parser)
     {
         $parser->match(Lexer::T_IDENTIFIER);
@@ -24,6 +22,7 @@ class UUID extends FunctionNode
      *
      * @return string
      */
+    #[\Override]
     public function getSql(SqlWalker $sqlWalker)
     {
         return $sqlWalker->getConnection()->getDatabasePlatform()->getGuidExpression();

@@ -18,6 +18,7 @@ class OrderViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderViewListener */
     protected $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

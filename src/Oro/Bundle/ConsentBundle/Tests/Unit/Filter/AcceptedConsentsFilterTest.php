@@ -23,6 +23,7 @@ class AcceptedConsentsFilterTest extends \PHPUnit\Framework\TestCase
     /** @var AcceptedConsentsFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

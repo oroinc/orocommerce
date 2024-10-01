@@ -21,6 +21,7 @@ class PaymentTransactionWasCanceledTest extends \PHPUnit\Framework\TestCase
      */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transactionRepository = $this->createMock(PaymentTransactionRepository::class);

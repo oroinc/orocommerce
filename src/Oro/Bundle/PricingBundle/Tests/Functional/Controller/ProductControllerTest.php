@@ -35,6 +35,7 @@ class ProductControllerTest extends ProductHelperTestCase
     private const TIER_PRICES_SELECTOR = '//*[contains(@class, "sidebar-items")]//*[@data-ftid="checkbox"]';
     private const TIER_PRICES_CONTAINER_SELECTOR = self::TIER_PRICES_SELECTOR . '/..';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

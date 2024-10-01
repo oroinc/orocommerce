@@ -40,9 +40,7 @@ class LoadMoneyOrderSettingsData extends AbstractFixture implements FixtureInter
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$transportData as $data) {

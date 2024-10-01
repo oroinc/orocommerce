@@ -8,9 +8,7 @@ use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener;
 
 class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createListenerToTest(): AbstractCustomerViewListener
     {
         return new CustomerViewListener(
@@ -20,33 +18,25 @@ class CustomerViewListenerTest extends AbstractCustomerViewListenerTest
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerViewTemplate(): string
     {
         return '@OroSale/Customer/quote_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserViewTemplate(): string
     {
         return '@OroSale/CustomerUser/quote_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer_user.label';

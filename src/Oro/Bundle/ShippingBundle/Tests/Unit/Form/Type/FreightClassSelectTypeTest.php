@@ -18,6 +18,7 @@ class FreightClassSelectTypeTest extends AbstractShippingOptionSelectTypeTest
     /** @var FreightClassSelectType */
     protected $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(FreightClassesProvider::class);

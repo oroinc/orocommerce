@@ -8,9 +8,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\CacheBuilderInterface;
 
 class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCacheDataProvider(): array
     {
         return [
@@ -21,17 +19,13 @@ class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderT
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRepository(): CustomerGroupProductRepository
     {
         return self::getContainer()->get('doctrine')->getRepository(CustomerGroupProductVisibilityResolved::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCacheBuilder(): CacheBuilderInterface
     {
         return self::getContainer()->get(

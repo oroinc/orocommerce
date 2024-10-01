@@ -20,6 +20,7 @@ class RobotsTxtTemplateManagerTest extends TestCase
 
     private RobotsTxtTemplateManager $robotsTxtTemplateManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->robotsTxtDistTemplateManager = $this->createMock(RobotsTxtDistTemplateManager::class);

@@ -9,33 +9,25 @@ use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
  */
 class CustomerViewListener extends AbstractCustomerViewListener
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerViewTemplate()
     {
         return '@OroSale/Customer/quote_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserViewTemplate()
     {
         return '@OroSale/CustomerUser/quote_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserLabel(): string
     {
         return 'oro.sale.quote.datagrid.customer_user.label';

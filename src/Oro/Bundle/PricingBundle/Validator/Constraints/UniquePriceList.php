@@ -11,9 +11,7 @@ class UniquePriceList extends Constraint
 {
     public string $message = 'oro.pricing.validators.price_list.unique_price_list.message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

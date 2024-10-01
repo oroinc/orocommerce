@@ -19,6 +19,7 @@ class SlugListenerTest extends \PHPUnit\Framework\TestCase
     /** @var SlugListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

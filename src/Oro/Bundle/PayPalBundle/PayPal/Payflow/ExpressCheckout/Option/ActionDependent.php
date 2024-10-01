@@ -19,6 +19,7 @@ class ActionDependent implements OptionInterface
         $this->options = $options;
     }
 
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         if (isset($this->options[ECOption\Action::ACTION])) {

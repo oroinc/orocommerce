@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class PriceListSetActiveOperationTest extends ActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

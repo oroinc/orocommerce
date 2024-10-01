@@ -14,14 +14,13 @@ use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
  */
 class UpdateDefaultOrderStatuses extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadOrderInternalStatuses::class];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $defaultStatusId = ExtendHelper::buildEnumOptionId(

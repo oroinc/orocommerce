@@ -25,9 +25,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
         LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2 => LoadCategoryData::THIRD_LEVEL2,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Scope $scope */
@@ -67,9 +65,7 @@ class LoadWebCatalogCategoryVariantsData extends AbstractFixture implements Depe
         $manager->flush();
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

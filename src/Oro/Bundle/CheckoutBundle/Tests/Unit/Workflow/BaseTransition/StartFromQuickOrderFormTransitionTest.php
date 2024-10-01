@@ -21,6 +21,7 @@ class StartFromQuickOrderFormTransitionTest extends TestCase
 
     private StartFromQuickOrderFormTransition $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quickAddCheckoutProcessor = $this->createMock(AbstractShoppingListQuickAddProcessor::class);

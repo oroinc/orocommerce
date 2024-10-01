@@ -9,7 +9,7 @@ class ExpirationDate extends AbstractOption
 {
     const EXPDATE = 'EXPDATE';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

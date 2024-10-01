@@ -27,6 +27,7 @@ class ConsentDataBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentDataBuilder */
     private $consentDataBuilder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->consentAcceptanceProvider = $this->createMock(ConsentAcceptanceProvider::class);

@@ -22,6 +22,7 @@ class PaymentStatusListenerTest extends WebTestCase
     private PaymentStatusProvider $paymentStatusProvider;
     private PaymentTransactionProvider $paymentTransactionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

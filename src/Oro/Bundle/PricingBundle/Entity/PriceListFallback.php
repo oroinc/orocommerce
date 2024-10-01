@@ -58,6 +58,7 @@ class PriceListFallback implements WebsiteAwareInterface
     /**
      * @return Website
      */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
@@ -68,6 +69,7 @@ class PriceListFallback implements WebsiteAwareInterface
      *
      * @return $this
      */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;

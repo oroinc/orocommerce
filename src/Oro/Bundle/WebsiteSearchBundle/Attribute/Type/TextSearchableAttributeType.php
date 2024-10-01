@@ -9,17 +9,13 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
  */
 class TextSearchableAttributeType extends StringSearchableAttributeType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');

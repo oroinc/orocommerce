@@ -26,9 +26,7 @@ class AddressMatcherRegistry implements ResetInterface
         $this->matcherContainer = $matcherContainer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset(): void
     {
         $this->matchers = null;

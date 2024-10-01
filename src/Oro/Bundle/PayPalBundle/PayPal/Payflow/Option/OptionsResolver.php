@@ -39,9 +39,7 @@ class OptionsResolver extends BaseOptionsResolver
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function resolve(array $options = []): array
     {
         $this->addOptionLocked = true;

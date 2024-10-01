@@ -25,6 +25,7 @@ class LoadBrandMetaData extends AbstractFixture implements DependentFixtureInter
         ]
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (self::$metadata as $entityReference => $metadataFields) {
@@ -35,6 +36,7 @@ class LoadBrandMetaData extends AbstractFixture implements DependentFixtureInter
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

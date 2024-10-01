@@ -20,22 +20,18 @@ class PriceListsSettingsType extends AbstractType
     const FALLBACK_CHOICES = 'fallback_choices';
     const PRICE_LIST_RELATION_CLASS = 'price_list_relation_class';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(
@@ -60,9 +56,7 @@ class PriceListsSettingsType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(

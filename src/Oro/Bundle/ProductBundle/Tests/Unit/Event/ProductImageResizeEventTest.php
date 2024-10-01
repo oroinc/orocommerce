@@ -11,6 +11,7 @@ class ProductImageResizeEventTest extends \PHPUnit\Framework\TestCase
 
     private ProductImageResizeEvent $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->event = new ProductImageResizeEvent(self::PRODUCT_IMAGE_ID);

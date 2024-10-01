@@ -19,6 +19,7 @@ class SystemDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SystemDefaultProductUnitProvider */
     private $defaultProductUnitProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

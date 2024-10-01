@@ -7,18 +7,16 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class BillingAddressTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new BillingAddress()];
     }
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

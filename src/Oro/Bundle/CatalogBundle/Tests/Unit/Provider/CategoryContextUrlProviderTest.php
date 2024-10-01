@@ -28,6 +28,7 @@ class CategoryContextUrlProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryContextUrlProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

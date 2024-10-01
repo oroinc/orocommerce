@@ -19,6 +19,7 @@ class WebsiteUrlProvidersServiceIndexTest extends \PHPUnit\Framework\TestCase
      */
     private $websiteUrlProvidersServiceIndex;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlItemsProviderRegistry = $this->createMock(UrlItemsProviderRegistryInterface::class);

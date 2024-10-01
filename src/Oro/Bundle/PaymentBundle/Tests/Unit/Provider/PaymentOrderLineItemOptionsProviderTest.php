@@ -24,9 +24,7 @@ class PaymentOrderLineItemOptionsProviderTest extends TestCase
 
     private HtmlTagHelper|MockObject $htmlTagHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->htmlTagHelper = $this->createMock(HtmlTagHelper::class);

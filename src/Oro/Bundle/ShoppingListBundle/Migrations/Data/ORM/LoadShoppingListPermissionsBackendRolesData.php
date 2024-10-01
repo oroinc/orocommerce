@@ -13,9 +13,7 @@ use Oro\Bundle\UserBundle\Entity\Role;
  */
 class LoadShoppingListPermissionsBackendRolesData extends AbstractUpdatePermissions
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {

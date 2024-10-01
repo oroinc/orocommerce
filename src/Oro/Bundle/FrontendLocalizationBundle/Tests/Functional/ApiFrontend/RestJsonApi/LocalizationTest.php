@@ -18,6 +18,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
     /** @var string */
     private $originalDefaultLocalization;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -62,6 +63,7 @@ class LocalizationTest extends FrontendRestJsonApiTestCase
         $configManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = $this->getConfigManager();

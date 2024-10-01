@@ -21,6 +21,7 @@ class TaxProviderRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var TaxProviderRegistry */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

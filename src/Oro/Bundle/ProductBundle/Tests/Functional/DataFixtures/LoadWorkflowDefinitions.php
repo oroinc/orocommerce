@@ -12,9 +12,7 @@ class LoadWorkflowDefinitions extends AbstractFixture implements ContainerAwareI
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $workflowConfiguration = $this->container

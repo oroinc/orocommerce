@@ -17,6 +17,7 @@ class DefaultShippingMethodSetterDecorator implements DefaultShippingMethodSette
         $this->defaultShippingMethodSetter = $defaultShippingMethodSetter;
     }
 
+    #[\Override]
     public function setDefaultShippingMethod(Checkout $checkout): void
     {
         if ($checkout->getShippingMethod()) {

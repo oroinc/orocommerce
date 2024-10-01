@@ -11,9 +11,7 @@ class Discounts extends Constraint
 {
     public $errorMessage = 'oro.order.discounts.sum.error.label';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];

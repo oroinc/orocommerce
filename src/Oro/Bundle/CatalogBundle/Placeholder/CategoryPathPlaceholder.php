@@ -8,17 +8,13 @@ class CategoryPathPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'CATEGORY_PATH';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultValue()
     {
         return null;

@@ -20,6 +20,7 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendQuotePermissionVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->token = $this->createMock(TokenInterface::class);

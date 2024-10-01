@@ -17,6 +17,7 @@ class CheckoutLineItemsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutLineItemsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);

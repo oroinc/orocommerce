@@ -29,9 +29,7 @@ class PromotionInformationLoadAppliedPromotionData extends AbstractFixture imple
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -41,9 +39,7 @@ class PromotionInformationLoadAppliedPromotionData extends AbstractFixture imple
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $scope = $this->container->get('oro_scope.scope_manager')->findDefaultScope();

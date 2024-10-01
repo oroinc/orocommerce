@@ -17,6 +17,7 @@ class CheckoutSplitterTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutSplitter */
     private $checkoutSplitter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutFactory = $this->createMock(CheckoutFactoryInterface::class);

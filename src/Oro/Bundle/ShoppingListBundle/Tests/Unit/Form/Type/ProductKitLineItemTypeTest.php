@@ -48,6 +48,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
     private ProductUnit $productUnitEach;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemNotPricedSubtotalProvider = $this->createMock(SubtotalProviderInterface::class);
@@ -67,6 +68,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

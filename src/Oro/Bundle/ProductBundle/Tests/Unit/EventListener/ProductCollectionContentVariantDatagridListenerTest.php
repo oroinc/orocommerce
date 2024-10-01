@@ -38,6 +38,7 @@ class ProductCollectionContentVariantDatagridListenerTest extends \PHPUnit\Frame
      */
     protected $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

@@ -26,6 +26,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
 {
     private AddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject $addressProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->addressProvider = $this->createMock(AddressProviderInterface::class);
@@ -35,6 +36,7 @@ class CustomerOrUserAddressGrantedValidatorTest extends ConstraintValidatorTestC
         $this->setPropertyPath('');
     }
 
+    #[\Override]
     protected function createValidator(): CustomerOrUserAddressGrantedValidator
     {
         return new CustomerOrUserAddressGrantedValidator($this->addressProvider);

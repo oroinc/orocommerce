@@ -32,6 +32,7 @@ class ProcessAssociationCustomerEventListenerTest extends TestCase
     private CombinedPriceListTriggerHandler|MockObject $triggerHandler;
     private ProcessAssociationCustomerEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

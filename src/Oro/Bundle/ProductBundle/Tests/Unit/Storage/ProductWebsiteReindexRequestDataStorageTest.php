@@ -25,6 +25,7 @@ class ProductWebsiteReindexRequestDataStorageTest extends TestCase
      */
     private $storage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->driver = $this->createMock(ProductWebsiteReindexRequestDriverInterface::class);

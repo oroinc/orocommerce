@@ -23,6 +23,7 @@ class ProductVisibilityResolvedTest extends \PHPUnit\Framework\TestCase
     /** @var Scope */
     private $scope;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->product = new Product();

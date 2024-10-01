@@ -17,6 +17,7 @@ class OrderProductKitItemLineItemCollectionRemovingListenerTest extends TestCase
 
     private OrderProductKitItemLineItemCollectionRemovingListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new OrderProductKitItemLineItemCollectionRemovingListener();

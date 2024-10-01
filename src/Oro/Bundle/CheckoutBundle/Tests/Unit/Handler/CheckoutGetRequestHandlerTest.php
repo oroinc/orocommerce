@@ -15,6 +15,7 @@ class CheckoutGetRequestHandlerTest extends TestCase
     private WorkflowManager|MockObject $workflowManager;
     private CheckoutGetRequestHandler $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

@@ -12,9 +12,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  */
 class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(
         Website $website = null,
         Customer $customer = null,
@@ -32,9 +30,7 @@ class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFacto
         return $criteria;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createByContext($context, array $data = []): ProductPriceScopeCriteriaInterface
     {
         $website = null;

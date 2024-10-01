@@ -16,6 +16,7 @@ class RestrictIndexEntitiesEventTest extends \PHPUnit\Framework\TestCase
     /** @var RestrictIndexEntityEvent */
     private $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->qb = $this->createMock(QueryBuilder::class);

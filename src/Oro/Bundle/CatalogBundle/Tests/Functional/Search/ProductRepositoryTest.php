@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ProductRepositoryTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

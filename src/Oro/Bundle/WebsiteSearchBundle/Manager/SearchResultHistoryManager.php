@@ -57,6 +57,7 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
         $this->keepDays = $keepDays;
     }
 
+    #[\Override]
     public function saveSearchResult(
         string $searchTerm,
         string $searchType,
@@ -97,11 +98,13 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
         }
     }
 
+    #[\Override]
     public function removeOutdatedHistoryRecords(): void
     {
         $this->historyRepository->removeOldRecords($this->keepDays);
     }
 
+    #[\Override]
     public function actualizeHistoryReport(): void
     {
         foreach ($this->historyRepository->getOrganizationsByHistory() as $organization) {

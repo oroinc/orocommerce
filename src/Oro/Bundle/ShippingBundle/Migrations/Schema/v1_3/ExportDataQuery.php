@@ -9,9 +9,7 @@ use Psr\Log\LoggerInterface;
 
 class ExportDataQuery extends ParametrizedSqlMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -20,9 +18,7 @@ class ExportDataQuery extends ParametrizedSqlMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

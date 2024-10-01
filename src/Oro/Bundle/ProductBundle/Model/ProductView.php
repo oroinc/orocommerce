@@ -62,6 +62,7 @@ class ProductView implements \IteratorAggregate
         return $this->get('id');
     }
 
+    #[\Override]
     public function __toString(): string
     {
         $name = $this->attributes['name'] ?? null;
@@ -72,9 +73,7 @@ class ProductView implements \IteratorAggregate
         return (string)($this->attributes['sku'] ?? '');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIterator(): \Traversable
     {
         return new \ArrayIterator($this->attributes);

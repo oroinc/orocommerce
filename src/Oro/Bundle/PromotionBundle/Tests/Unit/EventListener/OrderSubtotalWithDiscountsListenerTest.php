@@ -24,6 +24,7 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
     private SubtotalProviderInterface|MockObject $subtotalProvider;
     private OrderSubtotalWithDiscountsListener $subtotalWithDiscountsListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->subtotalProvider = $this->createMock(SubtotalProviderInterface::class);

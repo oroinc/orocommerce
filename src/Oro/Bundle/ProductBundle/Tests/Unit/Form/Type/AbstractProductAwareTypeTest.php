@@ -14,6 +14,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     /** @var AbstractProductAwareTypeStub */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -21,9 +22,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
         $this->formType = new AbstractProductAwareTypeStub();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

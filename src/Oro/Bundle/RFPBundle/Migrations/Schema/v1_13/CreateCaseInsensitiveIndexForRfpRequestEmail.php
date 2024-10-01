@@ -14,9 +14,7 @@ class CreateCaseInsensitiveIndexForRfpRequestEmail implements Migration, Databas
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         if ($this->platform instanceof PostgreSqlPlatform) {

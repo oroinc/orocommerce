@@ -19,6 +19,7 @@ class ProductRoutingInformationProviderTest extends \PHPUnit\Framework\TestCase
     /** @var RoutingInformationProviderInterface */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -37,11 +37,13 @@ class RenameImageSlideColumns implements
     private RenameExtension $renameExtension;
     private DataStorageExtension $dataStorageExtension;
 
+    #[\Override]
     public function setRenameExtension(RenameExtension $renameExtension): void
     {
         $this->renameExtension = $renameExtension;
     }
 
+    #[\Override]
     public function setDataStorageExtension(DataStorageExtension $dataStorageExtension)
     {
         $this->dataStorageExtension = $dataStorageExtension;
@@ -50,6 +52,7 @@ class RenameImageSlideColumns implements
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         if ($this->isRequiresConfigUpdates()) {

@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class PriceAttributeProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

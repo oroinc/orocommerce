@@ -24,6 +24,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
     private ProductPriceResetStrategy $strategy;
     private StepExecutionProxyContext $context;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

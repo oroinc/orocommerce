@@ -10,9 +10,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroPaymentBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function boot(): void
     {
         parent::boot();
@@ -31,9 +29,7 @@ class OroPaymentBundle extends Bundle
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);

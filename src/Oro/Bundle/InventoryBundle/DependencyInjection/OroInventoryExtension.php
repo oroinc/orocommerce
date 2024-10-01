@@ -12,9 +12,7 @@ class OroInventoryExtension extends Extension
 {
     public const VALIDATION_CONFIG = 'oro_inventory.validation.config_path';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(array $configs, ContainerBuilder $container): void
     {
         $config = $this->processConfiguration($this->getConfiguration($configs, $container), $configs);

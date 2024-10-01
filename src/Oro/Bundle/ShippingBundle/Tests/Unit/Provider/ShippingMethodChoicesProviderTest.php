@@ -12,6 +12,7 @@ class ShippingMethodChoicesProviderTest extends \PHPUnit\Framework\TestCase
     private ShippingMethodProviderInterface $shippingMethodProvider;
     private ShippingMethodChoicesProvider $choicesProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);

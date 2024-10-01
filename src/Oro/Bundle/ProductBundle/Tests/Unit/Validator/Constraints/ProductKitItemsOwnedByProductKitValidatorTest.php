@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductKitItemsOwnedByProductKitValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): ProductKitItemsOwnedByProductKitValidator
     {
         $localizationHelper = $this->createMock(LocalizationHelper::class);

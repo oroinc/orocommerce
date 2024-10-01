@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Transaction;
 
 class InquiryRequest extends AbstractRequest
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function getTransactionType()
     {
         throw new \BadMethodCallException(

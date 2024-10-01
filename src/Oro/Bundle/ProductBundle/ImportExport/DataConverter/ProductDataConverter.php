@@ -31,9 +31,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setImportExportContext(ContextInterface $context): void
     {
         $this->context = $context;
@@ -44,6 +42,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         $this->tokenAccessor = $tokenAccessor;
     }
 
+    #[\Override]
     protected function isFieldAvailableForExport(string $entityName, string $fieldName): bool
     {
         $isAvailable = parent::isFieldAvailableForExport($entityName, $fieldName);
@@ -68,9 +67,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
             || ($organizationId && $attrConfig->get('organization_id') === $organizationId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getBackendHeader()
     {
         $backendHeader = parent::getBackendHeader();
@@ -105,9 +102,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         return $backendHeader;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToExportFormat(array $exportedRecord, $skipNullValues = true)
     {
         $data = parent::convertToExportFormat($exportedRecord, $skipNullValues);
@@ -123,9 +118,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToImportFormat(array $importedRecord, $skipNullValues = true)
     {
         $data = parent::convertToImportFormat($importedRecord, $skipNullValues);

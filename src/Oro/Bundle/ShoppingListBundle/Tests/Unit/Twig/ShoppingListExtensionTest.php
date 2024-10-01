@@ -30,6 +30,7 @@ class ShoppingListExtensionTest extends TestCase
 
     private ShoppingListExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);

@@ -10,9 +10,7 @@ class LoadLoginPage extends AbstractFixture
 {
     const LOGIN_PAGE_UNIQUE_REFERENCE = 'login_page_unique_test';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $loginPage = new LoginPage();

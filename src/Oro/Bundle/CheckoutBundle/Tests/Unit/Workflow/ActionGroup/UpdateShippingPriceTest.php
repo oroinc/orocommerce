@@ -15,6 +15,7 @@ class UpdateShippingPriceTest extends TestCase
 
     private UpdateShippingPrice $updateShippingPrice;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutShippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);

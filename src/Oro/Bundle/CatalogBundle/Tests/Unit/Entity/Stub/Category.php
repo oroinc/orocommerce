@@ -37,17 +37,13 @@ class Category extends BaseCategory
         $this->products = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __call($name, $arguments)
     {
         return $this->localizedMethodCall($this->localizedFields, $name, $arguments);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __get($name)
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -61,9 +57,7 @@ class Category extends BaseCategory
         throw new \RuntimeException('It\'s not expected to get non-existing property');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __set(string $name, $value): void
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -81,9 +75,7 @@ class Category extends BaseCategory
         throw new \RuntimeException('It\'s not expected to set non-existing property');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __isset(string $name): bool
     {
         if (array_key_exists($name, $this->localizedFields)) {

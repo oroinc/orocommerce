@@ -79,6 +79,7 @@ class LoadContentTemplateData extends AbstractFixture implements DependentFixtur
         ],
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->loadContentTemplates($manager);
@@ -147,6 +148,7 @@ class LoadContentTemplateData extends AbstractFixture implements DependentFixtur
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

@@ -27,9 +27,7 @@ class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitC
      */
     protected $discountProductUnitCode;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configure(array $options): array
     {
         $resolvedOptions = parent::configure($options);
@@ -41,9 +39,7 @@ class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitC
         return $resolvedOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function apply(DiscountContextInterface $discountContext)
     {
         foreach ($discountContext->getLineItems() as $discountLineItem) {
@@ -57,9 +53,7 @@ class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitC
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculate($entity): float
     {
         if (!$entity instanceof DiscountLineItem || (float)$entity->getQuantity() <= 0) {
@@ -84,9 +78,7 @@ class LineItemsDiscount extends AbstractDiscount implements DiscountProductUnitC
         return $discountAmount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getOptionsResolver(): OptionsResolver
     {
         $resolver = parent::getOptionsResolver();

@@ -18,6 +18,7 @@ class ReindexProductFallbackValueChanged implements ProcessorInterface
     {
     }
 
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         $fallbackValue = $context->getData();

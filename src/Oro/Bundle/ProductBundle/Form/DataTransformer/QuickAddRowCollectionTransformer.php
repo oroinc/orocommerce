@@ -21,6 +21,7 @@ class QuickAddRowCollectionTransformer implements DataTransformerInterface
         $this->quickAddRowCollectionBuilder = $quickAddRowCollectionBuilder;
     }
 
+    #[\Override]
     public function transform($value): ?array
     {
         $normalizedData = [];
@@ -39,6 +40,7 @@ class QuickAddRowCollectionTransformer implements DataTransformerInterface
         return $normalizedData;
     }
 
+    #[\Override]
     public function reverseTransform($value): QuickAddRowCollection
     {
         return $this->quickAddRowCollectionBuilder->buildFromArray((array)$value);

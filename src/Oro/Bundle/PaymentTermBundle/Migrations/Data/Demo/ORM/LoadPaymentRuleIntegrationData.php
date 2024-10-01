@@ -29,9 +29,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
 
     public const PAYMENT_TERM_INTEGRATION_CHANNEL_REFERENCE = 'payment_term_integration_channel';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->loadShippingRule($manager, $this->loadIntegration($manager));

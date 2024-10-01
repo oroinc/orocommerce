@@ -14,16 +14,19 @@ class PriceAttributeProductPriceCategoryFilter implements CategoryFilterInterfac
 {
     private const FIELD_NAME = 'productCategory';
 
+    #[\Override]
     public function getName(): string
     {
         return PriceAttributeProductPrice::class;
     }
 
+    #[\Override]
     public function getFieldName(QueryBuilder $qb): string
     {
         return self::FIELD_NAME;
     }
 
+    #[\Override]
     public function prepareQueryBuilder(QueryBuilder $qb): void
     {
         $rootAlias = QueryBuilderUtil::getSingleRootAlias($qb);

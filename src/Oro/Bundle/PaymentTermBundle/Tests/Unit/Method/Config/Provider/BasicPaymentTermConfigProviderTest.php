@@ -25,6 +25,7 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestCase
     /** @var array */
     private $configs;
 
+    #[\Override]
     protected function setUp(): void
     {
         $settingsOne = $this->createMock(PaymentTermSettings::class);

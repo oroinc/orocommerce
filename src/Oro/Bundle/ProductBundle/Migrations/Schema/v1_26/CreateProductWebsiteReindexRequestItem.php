@@ -8,6 +8,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class CreateProductWebsiteReindexRequestItem implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroProductWebsiteReindeRequestItem($schema);

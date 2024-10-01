@@ -22,17 +22,13 @@ class CouponUnassignActionHandler extends AbstractCouponMassActionHandler
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function execute(Coupon $coupon, MassActionHandlerArgs $args)
     {
         $coupon->setPromotion(null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getResponse($entitiesCount)
     {
         $successful = $entitiesCount > 0;

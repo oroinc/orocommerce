@@ -19,23 +19,20 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListSchedule
  */
 class PriceListScheduleTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures([LoadPriceListSchedules::class]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return parent::getRequestDataFolderName() . DIRECTORY_SEPARATOR . 'price_list_schedule';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getResponseDataFolderName(): string
     {
         return parent::getResponseDataFolderName() . DIRECTORY_SEPARATOR . 'price_list_schedule';

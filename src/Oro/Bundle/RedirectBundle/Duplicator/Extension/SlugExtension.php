@@ -29,11 +29,13 @@ class SlugExtension extends AbstractDuplicatorExtension
         $this->managerRegistry = $managerRegistry;
     }
 
+    #[\Override]
     public function getFilter(): Filter
     {
         return new DoctrineEmptyCollectionFilter();
     }
 
+    #[\Override]
     public function getMatcher(): Matcher
     {
         $source = $this->getContext()->offsetGet('source');
@@ -42,6 +44,7 @@ class SlugExtension extends AbstractDuplicatorExtension
         return new PropertiesNameMatcher($properties);
     }
 
+    #[\Override]
     public function isSupport(DraftableInterface $source): bool
     {
         return $source instanceof SlugAwareInterface;

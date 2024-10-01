@@ -32,6 +32,7 @@ class StartFromShoppingListTransitionTest extends TestCase
 
     private StartFromShoppingListTransition $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

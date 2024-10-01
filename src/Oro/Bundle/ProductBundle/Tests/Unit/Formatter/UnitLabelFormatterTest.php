@@ -9,9 +9,7 @@ use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 
 class UnitLabelFormatterTest extends UnitLabelFormatterTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createObject(string $code): MeasureUnitInterface
     {
         $unit = new ProductUnit();
@@ -20,9 +18,7 @@ class UnitLabelFormatterTest extends UnitLabelFormatterTestCase
         return $unit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createFormatter(): UnitLabelFormatterInterface
     {
         $formatter = new UnitLabelFormatter($this->translator);
@@ -31,9 +27,7 @@ class UnitLabelFormatterTest extends UnitLabelFormatterTestCase
         return $formatter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTranslationPrefix(): string
     {
         return 'oro.product_unit';

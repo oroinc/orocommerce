@@ -25,6 +25,7 @@ class VisibilityRootScopesProvider implements VisibilityRootScopesProviderInterf
      * @param Product|null $product
      * @return Scope[]
      */
+    #[\Override]
     public function getScopes(Product $product = null)
     {
         return [$this->scopeManager->findDefaultScope()];

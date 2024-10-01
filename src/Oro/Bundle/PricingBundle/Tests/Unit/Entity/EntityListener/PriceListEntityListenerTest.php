@@ -37,6 +37,7 @@ class PriceListEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListEntityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->triggerHandler = $this->createMock(PriceListRelationTriggerHandler::class);

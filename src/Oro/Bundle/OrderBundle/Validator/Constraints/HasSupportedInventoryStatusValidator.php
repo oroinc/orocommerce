@@ -27,6 +27,7 @@ class HasSupportedInventoryStatusValidator extends ConstraintValidator
      * @param Product $value
      * @param HasSupportedInventoryStatus $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if ($value === null) {

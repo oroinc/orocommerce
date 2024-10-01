@@ -19,9 +19,7 @@ class DropMetaTitleFields implements
 {
     use ExtendNameGeneratorAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(new DropMetaTitleFieldsQuery(Product::class, $this->nameGenerator));
@@ -34,9 +32,7 @@ class DropMetaTitleFields implements
         $queries->addQuery(new DropMetaTitlesEntityConfigValuesQuery(Category::class, 'metaTitles', 'category'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;

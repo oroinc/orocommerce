@@ -21,6 +21,7 @@ class UpdateFlatPriceListSystemConfigListenerTest extends \PHPUnit\Framework\Tes
     /** @var UpdateFlatPriceListSystemConfigListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

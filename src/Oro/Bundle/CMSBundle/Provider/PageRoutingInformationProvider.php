@@ -19,9 +19,7 @@ class PageRoutingInformationProvider implements RoutingInformationProviderInterf
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof Page;
@@ -30,16 +28,14 @@ class PageRoutingInformationProvider implements RoutingInformationProviderInterf
     /**
      * @param Page $entity
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getRouteData($entity)
     {
         return new RouteData('oro_cms_frontend_page_view', ['id' => $entity->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlPrefix($entity)
     {
         return $this->configManager->get('oro_cms.landing_page_direct_url_prefix');

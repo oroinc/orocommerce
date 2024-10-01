@@ -9,9 +9,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
  */
 class CustomerTaxCodeGridListener extends TaxCodeGridListener
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function addColumn(DatagridConfiguration $config): void
     {
         $config->offsetSetByPath(
@@ -20,30 +18,25 @@ class CustomerTaxCodeGridListener extends TaxCodeGridListener
         );
     }
 
+    #[\Override]
     protected function getDataName(): string
     {
         return 'customerGroupTaxCode';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getColumnLabel(): string
     {
         return 'oro.tax.taxcode.customergroup.label';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getJoinAlias(): string
     {
         return 'customerGroupTaxCodes';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getAlias(DatagridConfiguration $configuration): string
     {
         return 'customer_group';

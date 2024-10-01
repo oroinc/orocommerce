@@ -17,9 +17,7 @@ class PaymentResultMessageProvider implements PaymentResultMessageProviderInterf
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getErrorMessage(PaymentTransaction $transaction = null)
     {
         if (!$transaction) {

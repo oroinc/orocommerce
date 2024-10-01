@@ -30,6 +30,7 @@ class PromotionExecutorTest extends FrontendWebTestCase
     private const STRATEGY_APPLY_ALL = 'apply_all';
     private const SHIPPING_METHOD = '';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

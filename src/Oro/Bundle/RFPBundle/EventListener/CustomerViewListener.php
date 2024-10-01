@@ -14,9 +14,7 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function onCustomerView(BeforeListRenderEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -25,9 +23,7 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
         parent::onCustomerView($event);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function onCustomerUserView(BeforeListRenderEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -36,33 +32,25 @@ class CustomerViewListener extends AbstractCustomerViewListener implements Featu
         parent::onCustomerUserView($event);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerViewTemplate()
     {
         return '@OroRFP/Customer/rfp_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerLabel(): string
     {
         return 'oro.rfp.datagrid.customer.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserViewTemplate()
     {
         return '@OroRFP/CustomerUser/rfp_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserLabel(): string
     {
         return 'oro.rfp.datagrid.customer_user.label';

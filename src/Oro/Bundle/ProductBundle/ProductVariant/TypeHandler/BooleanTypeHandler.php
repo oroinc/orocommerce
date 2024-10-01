@@ -18,9 +18,7 @@ class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
         $this->formFactory = $formFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createForm($fieldName, array $availability, array $options = [])
     {
         $options = array_merge(
@@ -34,6 +32,7 @@ class BooleanTypeHandler implements ProductVariantTypeHandlerInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getType()
     {
         return self::TYPE;

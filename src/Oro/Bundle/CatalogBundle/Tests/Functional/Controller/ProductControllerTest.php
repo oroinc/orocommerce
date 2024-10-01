@@ -20,6 +20,7 @@ class ProductControllerTest extends WebTestCase
 
     private const SIDEBAR_ROUTE = 'oro_catalog_category_product_sidebar';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

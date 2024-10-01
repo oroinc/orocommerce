@@ -25,9 +25,7 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
     public const AUTH_USER = 'customer_user@example.com';
     public const AUTH_PW = 'customer_user';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -36,9 +34,7 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var BaseUserManager $userManager */

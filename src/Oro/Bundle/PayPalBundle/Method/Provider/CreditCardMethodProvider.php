@@ -28,9 +28,7 @@ class CreditCardMethodProvider extends AbstractPaymentMethodProvider
         $this->factory = $factory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function collectMethods()
     {
         $configs = $this->configProvider->getPaymentConfigs();

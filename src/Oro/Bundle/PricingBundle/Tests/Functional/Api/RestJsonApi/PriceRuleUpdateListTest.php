@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
  */
 class PriceRuleUpdateListTest extends RestJsonApiUpdateListTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

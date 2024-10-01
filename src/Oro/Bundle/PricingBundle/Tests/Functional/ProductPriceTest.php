@@ -11,6 +11,7 @@ class ProductPriceTest extends WebTestCase
 {
     use ProductPriceReference;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

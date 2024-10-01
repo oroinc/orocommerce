@@ -25,9 +25,7 @@ class RemovedLandingPagesValidator extends ConstraintValidator
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof ArrayCollection) {

@@ -32,6 +32,7 @@ class PriceRuleLexemeHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceRuleLexemeHandler */
     private $priceRuleLexemeHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

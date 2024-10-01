@@ -38,6 +38,7 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
         ],
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         if (!$this->skipIfAppliedPreviously()) {
@@ -73,6 +74,7 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
         return $attributeHelper->isFieldAttribute(Product::class, 'metaKeywords');
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

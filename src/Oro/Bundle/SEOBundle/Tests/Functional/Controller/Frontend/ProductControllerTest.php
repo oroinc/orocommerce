@@ -16,6 +16,7 @@ class ProductControllerTest extends WebTestCase
 {
     use SEOFrontendTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

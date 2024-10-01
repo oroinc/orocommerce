@@ -8,9 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 
 class AttributeGroupCollection extends CollectionField
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($values)
     {
         $existingRows = $this->findAll('xpath', '//div[contains(@data-content,"attribute_family")]');

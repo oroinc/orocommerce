@@ -28,9 +28,7 @@ class SetCustomerProductVisibilityScope extends AbstractSetVisibilityScope
         $this->visibilityProvider = $visibilityProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getScope(CustomizeFormDataContext $context, WebsiteInterface $website): Scope
     {
         $customer = $context->findFormField('customer')->getData();
@@ -38,9 +36,7 @@ class SetCustomerProductVisibilityScope extends AbstractSetVisibilityScope
         return $this->visibilityProvider->getCustomerProductVisibilityScope($customer, $website);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExistingVisibilitySearchCriteria(VisibilityInterface $entity, Scope $scope): array
     {
         return [
@@ -49,9 +45,7 @@ class SetCustomerProductVisibilityScope extends AbstractSetVisibilityScope
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isExistingVisibilityCheckApplicable(VisibilityInterface $entity): bool
     {
         return null !== $entity->getProduct()?->getId();

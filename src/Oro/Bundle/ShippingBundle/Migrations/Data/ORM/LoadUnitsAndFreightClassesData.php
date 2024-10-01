@@ -46,9 +46,7 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
         ['code' => 'parcel']
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addUpdateWeightUnits($manager, $this->weightUnits);
@@ -58,9 +56,7 @@ class LoadUnitsAndFreightClassesData extends AbstractUnitsAndFreightClassesFixtu
         $manager->flush();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getVersion(): string
     {
         return '1.1';

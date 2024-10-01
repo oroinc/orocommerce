@@ -21,6 +21,7 @@ class BasicOrderShippingLineItemConverterTest extends TestCase
 
     private BasicOrderShippingLineItemConverter $orderShippingLineItemConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingLineItemFactory = $this->createMock(ShippingLineItemFromProductLineItemFactoryInterface::class);

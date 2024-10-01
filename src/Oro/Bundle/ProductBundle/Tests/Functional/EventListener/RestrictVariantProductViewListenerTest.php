@@ -17,9 +17,7 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
 {
     private string $displayValue;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
@@ -47,6 +45,7 @@ class RestrictVariantProductViewListenerTest extends FrontendWebTestCase
         );
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();

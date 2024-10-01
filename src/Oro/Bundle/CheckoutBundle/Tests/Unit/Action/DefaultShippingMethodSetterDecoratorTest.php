@@ -16,6 +16,7 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
     /** @var DefaultShippingMethodSetterDecorator */
     private $defaultShippingMethodSetterDecorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultShippingMethodSetter = $this->createMock(DefaultShippingMethodSetter::class);

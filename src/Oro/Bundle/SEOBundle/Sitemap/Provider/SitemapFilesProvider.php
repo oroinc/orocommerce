@@ -34,9 +34,7 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
         $this->webPath = $webPath;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlItems(WebsiteInterface $website, $version)
     {
         $files = $this->filesystemAdapter->getSitemapFiles(

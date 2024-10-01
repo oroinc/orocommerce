@@ -16,9 +16,7 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface, Ordere
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addShippingMethodColumns($schema);
@@ -81,9 +79,7 @@ class OroOrderBundle implements Migration, RenameExtensionAwareInterface, Ordere
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

@@ -18,6 +18,7 @@ class SearchTermReportRepositoryTest extends WebTestCase
 {
     private SearchTermReportRepository $repo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

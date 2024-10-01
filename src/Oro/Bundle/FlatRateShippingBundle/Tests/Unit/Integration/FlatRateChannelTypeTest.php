@@ -9,6 +9,7 @@ class FlatRateChannelTypeTest extends \PHPUnit\Framework\TestCase
     /** @var FlatRateChannelType */
     private $channel;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channel = new FlatRateChannelType();

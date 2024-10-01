@@ -20,6 +20,7 @@ class OrderLineItemGridListenerTest extends \PHPUnit\Framework\TestCase
      */
     protected $orderLineItemGridListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);

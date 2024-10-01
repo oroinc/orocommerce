@@ -35,6 +35,7 @@ class FedexDeleteIntegrationSettingsServicesEntityListenerTest extends \PHPUnit\
     /** @var FedexDeleteIntegrationSettingsServicesEntityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->integrationIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

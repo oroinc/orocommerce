@@ -11,17 +11,13 @@ use Psr\Log\LoggerInterface;
  */
 class InsertDefaultLocalizationTitleQuery extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return ['Adds default titles to migrated (untitled) Localizations'];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         /** @var QueryBuilder $qb */

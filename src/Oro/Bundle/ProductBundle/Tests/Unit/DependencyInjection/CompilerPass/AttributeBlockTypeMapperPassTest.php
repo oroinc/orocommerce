@@ -13,6 +13,7 @@ class AttributeBlockTypeMapperPassTest extends \PHPUnit\Framework\TestCase
     /** @var AttributeBlockTypeMapperPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new AttributeBlockTypeMapperPass();

@@ -42,6 +42,7 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
     /** @var NativeQueryExecutorHelper|MockObject */
     private $nativeQueryExecutorHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

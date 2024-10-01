@@ -10,6 +10,7 @@ class TextContentVariantDefaultScopesExtensionsTest extends \PHPUnit\Framework\T
 {
     private TextContentVariantDefaultScopesExtensions $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extension = new TextContentVariantDefaultScopesExtensions();

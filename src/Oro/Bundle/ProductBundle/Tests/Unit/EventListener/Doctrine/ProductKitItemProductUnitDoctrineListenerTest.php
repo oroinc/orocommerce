@@ -16,6 +16,7 @@ class ProductKitItemProductUnitDoctrineListenerTest extends \PHPUnit\Framework\T
 {
     private ProductKitItemProductUnitDoctrineListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductKitItemProductUnitDoctrineListener();

@@ -33,6 +33,7 @@ class OrderRepositoryTest extends WebTestCase
 
     private OrderRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

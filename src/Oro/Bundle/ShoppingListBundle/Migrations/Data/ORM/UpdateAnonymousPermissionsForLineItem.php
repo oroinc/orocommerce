@@ -14,17 +14,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
  */
 class UpdateAnonymousPermissionsForLineItem extends AbstractUpdatePermissions implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCustomerUserRoles::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $aclManager = $this->getAclManager();

@@ -13,11 +13,13 @@ class MassRebuildCombinedPriceListsTopic extends AbstractTopic implements JobAwa
 {
     public const NAME = 'oro_pricing.price_lists.cpl.mass_rebuild';
 
+    #[\Override]
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
@@ -60,11 +62,13 @@ class MassRebuildCombinedPriceListsTopic extends AbstractTopic implements JobAwa
             ->allowedTypes('null', 'int');
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Updates combined price lists in case of changes in structure of original price lists.';
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         $data = [];

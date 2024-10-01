@@ -15,6 +15,7 @@ class TotalsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TotalsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutTotalsProvider = $this->createMock(CheckoutTotalsProvider::class);

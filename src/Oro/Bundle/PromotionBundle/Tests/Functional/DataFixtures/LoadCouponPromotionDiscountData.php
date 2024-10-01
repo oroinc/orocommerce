@@ -8,9 +8,7 @@ class LoadCouponPromotionDiscountData extends AbstractLoadCouponData
     const COUPON_SHIPPING = 'coupon_shipping';
     const COUPON_WITH_NOT_APPLICABLE_PROMOTION = 'coupon_with_not_applicable_promotion';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -18,9 +16,7 @@ class LoadCouponPromotionDiscountData extends AbstractLoadCouponData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCoupons()
     {
         return [

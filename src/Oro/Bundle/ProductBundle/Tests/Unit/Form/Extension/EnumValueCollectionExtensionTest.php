@@ -40,6 +40,7 @@ class EnumValueCollectionExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var EnumValueCollectionExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

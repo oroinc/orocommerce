@@ -28,6 +28,7 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
 
     private SuggestionRepository $suggestionRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -132,6 +133,7 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
         );
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->getOptionalListenerManager()->disableListener(

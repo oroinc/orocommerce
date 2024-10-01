@@ -30,6 +30,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
     private CategoryBreadcrumbProvider $categoryBreadcrumbProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryProvider = $this->createMock(CategoryProvider::class);

@@ -22,6 +22,7 @@ class ResolvedProductVisibilityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ResolvedProductVisibilityProvider */
     private $resolvedProductVisibilityProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

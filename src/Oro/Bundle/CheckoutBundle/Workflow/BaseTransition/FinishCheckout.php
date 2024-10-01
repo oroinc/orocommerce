@@ -21,6 +21,7 @@ class FinishCheckout extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         $data = $workflowItem->getData();
@@ -36,6 +37,7 @@ class FinishCheckout extends TransitionServiceAbstract
         return true;
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         /** @var Checkout $checkout */

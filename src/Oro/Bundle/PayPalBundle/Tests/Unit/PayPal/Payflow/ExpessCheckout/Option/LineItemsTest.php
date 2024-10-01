@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class LineItemsTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new ECOption\LineItems(), new ECOption\Action()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

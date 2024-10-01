@@ -18,9 +18,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class ProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createValidator(): ProductUnitExistsValidator
     {
         return new ProductUnitExistsValidator();

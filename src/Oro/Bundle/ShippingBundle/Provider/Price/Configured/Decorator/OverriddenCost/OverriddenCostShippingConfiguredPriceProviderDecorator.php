@@ -9,17 +9,12 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 
 class OverriddenCostShippingConfiguredPriceProviderDecorator extends AbstractShippingConfiguredPriceProviderDecorator
 {
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider)
     {
         parent::__construct($shippingConfiguredPriceProvider);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(
         ComposedShippingMethodConfigurationInterface $configuration,
         ShippingContextInterface $context
@@ -47,9 +42,7 @@ class OverriddenCostShippingConfiguredPriceProviderDecorator extends AbstractShi
         return $resultingMethodsViews;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice(
         $methodId,
         $methodTypeId,

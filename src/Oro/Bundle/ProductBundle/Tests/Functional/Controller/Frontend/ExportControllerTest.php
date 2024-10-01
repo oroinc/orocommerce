@@ -18,6 +18,7 @@ class ExportControllerTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
     use DefaultLocalizationIdTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
@@ -30,6 +31,7 @@ class ExportControllerTest extends WebTestCase
         self::getConfigManager()->set('oro_product.product_data_export_enabled', true);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::getConfigManager()->set('oro_product.product_data_export_enabled', false);

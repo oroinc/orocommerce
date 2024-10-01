@@ -12,17 +12,13 @@ use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
 class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFixtures(): array
     {
         return [LoadCategoryData::class, LoadUser::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getHandlerId(): string
     {
         return 'oro_catalog.category_tree_handler';
@@ -259,9 +255,7 @@ class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getActualNodeHierarchy(int $entityId, int $parentId, int $position): array
     {
         $entities = $this->getContainer()->get('doctrine')

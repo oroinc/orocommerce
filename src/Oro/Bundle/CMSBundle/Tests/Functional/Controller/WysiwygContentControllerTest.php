@@ -21,6 +21,7 @@ class WysiwygContentControllerTest extends WebTestCase
 </style>
 HTML;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

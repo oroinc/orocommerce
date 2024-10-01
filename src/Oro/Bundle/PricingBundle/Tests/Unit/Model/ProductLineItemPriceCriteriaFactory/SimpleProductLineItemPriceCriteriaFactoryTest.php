@@ -22,6 +22,7 @@ class SimpleProductLineItemPriceCriteriaFactoryTest extends TestCase
 
     private SimpleProductLineItemPriceCriteriaFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->simpleProductPriceCriteriaBuilder = $this->createMock(ProductPriceCriteriaBuilderInterface::class);

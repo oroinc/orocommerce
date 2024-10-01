@@ -22,6 +22,7 @@ class TestWebCatalog implements WebCatalogInterface
     /**
      * @return integer
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;

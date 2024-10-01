@@ -27,6 +27,7 @@ class AdminConsentContentNodeValidFilterTest extends \PHPUnit\Framework\TestCase
     /** @var AdminConsentContentNodeValidFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

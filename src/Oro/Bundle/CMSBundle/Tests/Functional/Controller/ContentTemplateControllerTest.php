@@ -11,6 +11,7 @@ class ContentTemplateControllerTest extends WebTestCase
 {
     private DigitalAssetTwigTagsConverter $digitalAssetTwigTagsConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

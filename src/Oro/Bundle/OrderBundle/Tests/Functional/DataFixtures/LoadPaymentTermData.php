@@ -11,9 +11,7 @@ class LoadPaymentTermData extends AbstractFixture
     const PAYMENT_TERM_NET_10 = 'payment_term.net_10';
     const PAYMENT_TERM_NET_20 = 'payment_term.net_20';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $paymentTerm = new PaymentTerm();

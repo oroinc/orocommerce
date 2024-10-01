@@ -21,6 +21,7 @@ class WebsiteSearchResetIndexProcessorTest extends WebTestCase
     use MessageQueueExtension;
     use WebsiteSearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

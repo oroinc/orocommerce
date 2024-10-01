@@ -18,9 +18,7 @@ class VisibilityType extends Constraint
      */
     public $path = 'visibility';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

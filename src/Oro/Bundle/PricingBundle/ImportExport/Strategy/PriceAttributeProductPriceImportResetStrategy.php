@@ -17,9 +17,7 @@ class PriceAttributeProductPriceImportResetStrategy extends PriceAttributeProduc
      */
     protected $processedPriceLists = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function beforeProcessEntity($entity)
     {
         if (!$entity instanceof PriceAttributeProductPrice || null === $entity->getPriceList()) {

@@ -18,6 +18,7 @@ class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
     /** @var DependentPriceListProvider */
     private $dependentPriceListProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceRuleLexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);

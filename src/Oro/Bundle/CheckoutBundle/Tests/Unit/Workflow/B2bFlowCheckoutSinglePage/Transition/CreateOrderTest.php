@@ -39,6 +39,7 @@ class CreateOrderTest extends TestCase
 
     private CreateOrder $createOrder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

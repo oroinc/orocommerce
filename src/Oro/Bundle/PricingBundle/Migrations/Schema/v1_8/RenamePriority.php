@@ -16,9 +16,7 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
     const OLD_COLUMN_NAME = 'priority';
     const NEW_COLUMN_NAME = 'sort_order';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->renamePriorityColumn($schema, $queries, 'oro_price_list_to_cus_group');

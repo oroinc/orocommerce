@@ -40,6 +40,7 @@ class AddProductsMassActionHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var AddProductsMassActionHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListLineItemHandler = $this->createMock(ShoppingListLineItemHandler::class);

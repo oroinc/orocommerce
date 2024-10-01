@@ -6,9 +6,7 @@ use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
 
 class InventoryStatusDataConverter extends AbstractTableDataConverter
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getHeaderConversionRules()
     {
         return [
@@ -18,9 +16,7 @@ class InventoryStatusDataConverter extends AbstractTableDataConverter
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getBackendHeader()
     {
         return array_values($this->getHeaderConversionRules());

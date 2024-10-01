@@ -10,10 +10,9 @@ Feature: Consent have the ability to work with tags
   Scenario: Enable consent functionality
     Given I login as administrator
     And go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
-    When I fill form with:
-      | Use Default                  | false |
-      | Enable User Consents Feature | true  |
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
+    And I uncheck "Use default" for "Enable user consents feature" field
+    And I check "Enable user consents feature"
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 

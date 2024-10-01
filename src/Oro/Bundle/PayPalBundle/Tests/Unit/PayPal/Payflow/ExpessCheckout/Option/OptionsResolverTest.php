@@ -12,6 +12,7 @@ class OptionsResolverTest extends \PHPUnit\Framework\TestCase
     /** @var OptionsResolver */
     private $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolver = new OptionsResolver();

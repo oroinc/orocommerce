@@ -26,6 +26,7 @@ class ConfigureSeparateWYSIWYGFieldsTest extends ConfigProcessorTestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

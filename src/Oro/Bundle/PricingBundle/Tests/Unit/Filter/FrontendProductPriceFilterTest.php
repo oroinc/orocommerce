@@ -34,6 +34,7 @@ class FrontendProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     /** @var SearchNumberRangeFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);

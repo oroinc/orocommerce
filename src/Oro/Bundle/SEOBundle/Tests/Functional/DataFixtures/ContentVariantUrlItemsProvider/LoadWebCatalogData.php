@@ -11,9 +11,7 @@ class LoadWebCatalogData extends AbstractFixture
 {
     public const CATALOG_1 = 'web_catalog.1';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $catalog = new WebCatalog();

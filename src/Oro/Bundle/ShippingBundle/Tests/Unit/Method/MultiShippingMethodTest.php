@@ -15,6 +15,7 @@ class MultiShippingMethodTest extends \PHPUnit\Framework\TestCase
 
     private MultiShippingMethod $shippingMethod;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethod = new MultiShippingMethod(

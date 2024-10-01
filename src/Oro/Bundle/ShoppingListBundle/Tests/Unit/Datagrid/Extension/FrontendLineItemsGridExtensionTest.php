@@ -35,6 +35,7 @@ class FrontendLineItemsGridExtensionTest extends TestCase
 
     private FrontendLineItemsGridExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListRepository = $this->createMock(ShoppingListRepository::class);

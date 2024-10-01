@@ -15,6 +15,7 @@ class ProductListEventDispatcherTest extends \PHPUnit\Framework\TestCase
     /** @var ProductListEventDispatcher */
     private $productListEventDispatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

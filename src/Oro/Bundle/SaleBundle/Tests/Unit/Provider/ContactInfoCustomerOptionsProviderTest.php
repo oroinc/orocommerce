@@ -17,6 +17,7 @@ class ContactInfoCustomerOptionsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

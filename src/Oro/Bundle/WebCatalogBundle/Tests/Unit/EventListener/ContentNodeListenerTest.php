@@ -41,6 +41,7 @@ class ContentNodeListenerTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeListener $contentNodeListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->modifier = $this->createMock(ContentNodeMaterializedPathModifier::class);

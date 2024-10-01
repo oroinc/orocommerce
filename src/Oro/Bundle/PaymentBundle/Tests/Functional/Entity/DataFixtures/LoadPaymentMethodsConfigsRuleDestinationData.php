@@ -14,9 +14,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadPaymentMethodsConfigsRuleDestinationData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -24,9 +22,7 @@ class LoadPaymentMethodsConfigsRuleDestinationData extends AbstractFixture imple
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getPaymentMethodsConfigsRulesData() as $reference => $data) {

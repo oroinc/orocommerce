@@ -39,6 +39,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
     /** @var ContentWidgetType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
@@ -281,9 +282,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $contentWidgetTypeProvider = $this->createMock(ContentWidgetTypeProvider::class);
@@ -321,9 +320,7 @@ class ContentWidgetTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTypeExtensions(): array
     {
         return array_merge(

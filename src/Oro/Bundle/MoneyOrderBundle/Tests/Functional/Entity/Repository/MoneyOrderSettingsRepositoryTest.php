@@ -11,6 +11,7 @@ class MoneyOrderSettingsRepositoryTest extends WebTestCase
 {
     private MoneyOrderSettingsRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

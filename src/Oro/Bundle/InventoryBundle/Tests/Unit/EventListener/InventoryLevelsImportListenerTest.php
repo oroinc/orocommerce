@@ -18,6 +18,7 @@ class InventoryLevelsImportListenerTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryLevelsImportListener */
     private $inventoryLevelsImportListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->inventoryLevelStrategy = $this->createMock(InventoryLevelStrategy::class);

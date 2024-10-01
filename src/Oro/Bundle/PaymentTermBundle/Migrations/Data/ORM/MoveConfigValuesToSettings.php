@@ -37,9 +37,7 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
      */
     protected $methodIdentifierGenerator;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         parent::setContainer($container);
@@ -51,9 +49,7 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
         $this->configToSettingsConverter = new PaymentTermConfigToSettingsConverter();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function moveConfigFromSystemConfigToIntegration(
         ObjectManager $manager,
         OrganizationInterface $organization

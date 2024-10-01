@@ -45,6 +45,7 @@ class UPSShippingMethodTest extends \PHPUnit\Framework\TestCase
     /** @var UPSShippingMethod */
     private $upsShippingMethod;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transportProvider = $this->createMock(UPSTransportProvider::class);

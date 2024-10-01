@@ -23,6 +23,7 @@ class ShoppingListUrlProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListUrlProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

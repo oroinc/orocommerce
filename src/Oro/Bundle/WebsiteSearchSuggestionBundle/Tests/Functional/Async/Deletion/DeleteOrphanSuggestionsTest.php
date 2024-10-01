@@ -17,6 +17,7 @@ final class DeleteOrphanSuggestionsTest extends WebTestCase
 
     private EntityManager $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -24,9 +24,7 @@ class MatchingItemsFiltrationService extends AbstractSkippableFiltrationService
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $lineItems = $context[ContextDataConverterInterface::LINE_ITEMS] ?? [];

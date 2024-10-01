@@ -21,6 +21,7 @@ class SortOrderDialogTargetFormHandlerEventListenerTest extends TestCase
     private PropertyAccessorInterface|MockObject $propertyAccessor;
     private SortOrderDialogTargetFormHandlerEventListener $listener;
 
+    #[\Override]
     public function setUp(): void
     {
         $this->sortOrderDialogTargetStorage = $this->createMock(SortOrderDialogTargetStorage::class);

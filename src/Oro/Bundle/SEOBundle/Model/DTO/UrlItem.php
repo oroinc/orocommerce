@@ -44,33 +44,25 @@ class UrlItem implements UrlItemInterface
         $this->lastModification = $lastModification;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLocation()
     {
         return $this->location;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getChangeFrequency()
     {
         return $this->changeFrequency;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriority()
     {
         return $this->priority;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLastModification()
     {
         return $this->lastModification ? $this->lastModification->format(\DateTime::W3C) : null;

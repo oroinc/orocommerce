@@ -27,6 +27,7 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
     ) {
     }
 
+    #[\Override]
     public function execute(
         ShoppingList $shoppingList,
         ?string $transitionName = null

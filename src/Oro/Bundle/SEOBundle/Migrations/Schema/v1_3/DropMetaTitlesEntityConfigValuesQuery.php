@@ -37,9 +37,7 @@ class DropMetaTitlesEntityConfigValuesQuery extends ParametrizedMigrationQuery
         $this->reverseNamePrefix = $reverseNamePrefix;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -48,9 +46,7 @@ class DropMetaTitlesEntityConfigValuesQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

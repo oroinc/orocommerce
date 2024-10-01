@@ -13,6 +13,7 @@ class ProductContentVariantProviderTest extends WebTestCase
 {
     private ProductContentVariantProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

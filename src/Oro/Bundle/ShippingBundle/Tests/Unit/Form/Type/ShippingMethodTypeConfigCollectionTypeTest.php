@@ -15,6 +15,7 @@ class ShippingMethodTypeConfigCollectionTypeTest extends FormIntegrationTestCase
     /** @var ShippingMethodTypeConfigCollectionType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -22,6 +22,7 @@ class ProductUnitChoiceType extends AbstractType
         $this->productUnitFormatter = $productUnitLabelFormatter;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -86,11 +87,13 @@ class ProductUnitChoiceType extends AbstractType
         });
     }
 
+    #[\Override]
     public function getParent(): ?string
     {
         return EntityType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_unit_select';

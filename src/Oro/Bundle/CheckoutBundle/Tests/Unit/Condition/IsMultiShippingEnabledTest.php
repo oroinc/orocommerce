@@ -13,6 +13,7 @@ class IsMultiShippingEnabledTest extends \PHPUnit\Framework\TestCase
     /** @var IsMultiShippingEnabled */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

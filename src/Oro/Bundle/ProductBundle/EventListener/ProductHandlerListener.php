@@ -20,9 +20,6 @@ class ProductHandlerListener
     /** @var LoggerInterface */
     protected $logger;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(PropertyAccessorInterface $propertyAccessor, LoggerInterface $logger)
     {
         $this->propertyAccessor = $propertyAccessor;

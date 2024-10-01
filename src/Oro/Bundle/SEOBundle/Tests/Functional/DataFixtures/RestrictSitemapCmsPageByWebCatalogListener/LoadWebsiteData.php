@@ -10,6 +10,7 @@ class LoadWebsiteData extends AbstractFixture
 {
     public const WEBSITE_DEFAULT = 'website_default';
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $website = $manager->getRepository(Website::class)->findBy([], ['id' => 'ASC'], 1);

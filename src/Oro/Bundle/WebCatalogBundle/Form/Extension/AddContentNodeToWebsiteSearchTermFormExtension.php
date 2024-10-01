@@ -25,11 +25,13 @@ class AddContentNodeToWebsiteSearchTermFormExtension extends AbstractTypeExtensi
     {
     }
 
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [SearchTermType::class];
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $redirectTypeForm = $builder->get('redirectActionType');
@@ -77,6 +79,7 @@ class AddContentNodeToWebsiteSearchTermFormExtension extends AbstractTypeExtensi
         });
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver

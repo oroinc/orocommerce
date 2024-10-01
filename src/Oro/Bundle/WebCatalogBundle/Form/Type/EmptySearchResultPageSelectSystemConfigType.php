@@ -21,6 +21,7 @@ class EmptySearchResultPageSelectSystemConfigType extends AbstractType
     {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $emptySearchResultPageKey = TreeUtils::getConfigKey(

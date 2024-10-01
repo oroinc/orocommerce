@@ -21,9 +21,7 @@ class ContactInfoSourceOptionsType extends AbstractType
         $this->optionsProvider = $optionsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $options = $this->optionsProvider->getOptions();
@@ -38,25 +36,18 @@ class ContactInfoSourceOptionsType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return static::NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return ChoiceType::class;

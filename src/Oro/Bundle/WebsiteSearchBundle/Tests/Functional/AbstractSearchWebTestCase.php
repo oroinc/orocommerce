@@ -91,6 +91,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
     /** Check for engine after test execution */
     abstract protected function preTearDown(): void;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -113,6 +114,7 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         return sprintf('%s.%s', RestrictIndexEntityEvent::NAME, 'testproduct');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->preTearDown();

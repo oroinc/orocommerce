@@ -33,9 +33,7 @@ class CustomerFormExtension extends AbstractTypeExtension
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $customer = $builder->getData();
@@ -72,9 +70,7 @@ class CustomerFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [CustomerType::class];

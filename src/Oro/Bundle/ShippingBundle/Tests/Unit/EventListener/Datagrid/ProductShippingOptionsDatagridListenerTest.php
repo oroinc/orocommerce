@@ -30,6 +30,7 @@ class ProductShippingOptionsDatagridListenerTest extends \PHPUnit\Framework\Test
     /** @var ProductShippingOptionsDatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->config = DatagridConfiguration::create([]);

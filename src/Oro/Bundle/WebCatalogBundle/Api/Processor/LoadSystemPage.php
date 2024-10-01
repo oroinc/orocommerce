@@ -20,9 +20,7 @@ class LoadSystemPage implements ProcessorInterface
         $this->systemPageRepository = $systemPageRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */

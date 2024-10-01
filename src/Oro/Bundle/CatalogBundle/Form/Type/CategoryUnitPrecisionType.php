@@ -39,15 +39,14 @@ class CategoryUnitPrecisionType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->addUnitField($builder);
         $this->addPrecisionField($builder);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -63,9 +62,7 @@ class CategoryUnitPrecisionType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

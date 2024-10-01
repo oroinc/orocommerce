@@ -27,9 +27,7 @@ class RFPListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RFPListener */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);

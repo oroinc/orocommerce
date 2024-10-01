@@ -38,9 +38,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     private SendChangedEntitiesToMessageQueueListener|\PHPUnit\Framework\MockObject\MockObject
         $sendChangedEntitiesToMessageQueueListener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->guestShoppingListMigrationManager = $this->createMock(GuestShoppingListMigrationManager::class);

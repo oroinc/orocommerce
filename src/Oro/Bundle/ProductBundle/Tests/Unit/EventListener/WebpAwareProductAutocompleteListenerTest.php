@@ -21,6 +21,7 @@ class WebpAwareProductAutocompleteListenerTest extends \PHPUnit\Framework\TestCa
 
     private UrlHelper|\PHPUnit\Framework\MockObject\MockObject $urlHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->webpConfiguration = $this->createMock(WebpConfiguration::class);

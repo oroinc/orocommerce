@@ -15,15 +15,14 @@ class AppliedCouponCollectionTypeTest extends FormIntegrationTestCase
 {
     private AppliedCouponCollectionType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new AppliedCouponCollectionType();
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

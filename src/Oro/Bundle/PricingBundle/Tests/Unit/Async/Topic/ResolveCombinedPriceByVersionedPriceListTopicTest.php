@@ -10,11 +10,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class ResolveCombinedPriceByVersionedPriceListTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new ResolveCombinedPriceByVersionedPriceListTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -25,6 +27,7 @@ class ResolveCombinedPriceByVersionedPriceListTopicTest extends AbstractTopicTes
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

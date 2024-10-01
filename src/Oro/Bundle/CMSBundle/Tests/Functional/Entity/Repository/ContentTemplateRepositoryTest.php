@@ -20,6 +20,7 @@ class ContentTemplateRepositoryTest extends WebTestCase
 
     private ContentTemplateRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -41,6 +41,7 @@ class CreateOrder extends BasePlaceOrder
         );
     }
 
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
@@ -72,6 +73,7 @@ class CreateOrder extends BasePlaceOrder
         return parent::isPreConditionAllowed($workflowItem, $errors);
     }
 
+    #[\Override]
     public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
@@ -112,6 +114,7 @@ class CreateOrder extends BasePlaceOrder
         return parent::isConditionAllowed($workflowItem, $errors);
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         /** @var Checkout $checkout */
@@ -145,6 +148,7 @@ class CreateOrder extends BasePlaceOrder
         }
     }
 
+    #[\Override]
     protected function showPaymentInProgressNotification(Checkout $checkout, bool $paymentInProgress): void
     {
         if (!$this->checkRequest()) {

@@ -13,9 +13,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class LoadOrderInternalStatuses extends AbstractFixture
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var EnumOptionRepository $enumRepo */

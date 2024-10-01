@@ -45,9 +45,7 @@ class QuoteDemandLineItemConverter implements CheckoutLineItemConverterInterface
         $this->validationGroups = $validationGroups;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isSourceSupported($source)
     {
         return $source instanceof QuoteDemand;
@@ -55,8 +53,8 @@ class QuoteDemandLineItemConverter implements CheckoutLineItemConverterInterface
 
     /**
      * @param QuoteDemand $source
-     * {@inheritDoc}
      */
+    #[\Override]
     public function convert($source)
     {
         $lineItems = $source->getLineItems();

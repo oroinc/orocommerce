@@ -11,9 +11,7 @@ class ProductUnitSelector extends Element
     const TYPE_SELECT = 'select';
     const TYPE_SINGLE = 'single';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($value)
     {
         $values = $this->getValues();
@@ -64,6 +62,7 @@ class ProductUnitSelector extends Element
         );
     }
 
+    #[\Override]
     public function isVisible()
     {
         $selectorType = $this->getSelectorType();

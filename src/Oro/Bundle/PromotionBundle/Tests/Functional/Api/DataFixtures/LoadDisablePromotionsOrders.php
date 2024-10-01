@@ -35,9 +35,7 @@ class LoadDisablePromotionsOrders extends LoadOrders
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->orders as $name => $order) {

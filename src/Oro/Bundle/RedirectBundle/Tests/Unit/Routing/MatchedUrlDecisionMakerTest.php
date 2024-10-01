@@ -10,6 +10,7 @@ class MatchedUrlDecisionMakerTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

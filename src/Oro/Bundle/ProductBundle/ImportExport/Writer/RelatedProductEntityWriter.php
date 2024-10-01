@@ -10,9 +10,7 @@ use Oro\Bundle\ImportExportBundle\Writer\EntityWriter;
  */
 class RelatedProductEntityWriter extends EntityWriter
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function write(array $items): void
     {
         $items = array_merge(...$items);

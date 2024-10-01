@@ -40,6 +40,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemDataStorageExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

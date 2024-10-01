@@ -16,9 +16,7 @@ class BasicMethodRenamingEventDispatcher implements MethodRenamingEventDispatche
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function dispatch($oldId, $newId)
     {
         $this->eventDispatcher->dispatch(new MethodRenamingEvent($oldId, $newId), MethodRenamingEvent::NAME);

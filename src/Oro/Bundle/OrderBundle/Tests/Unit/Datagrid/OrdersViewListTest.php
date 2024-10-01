@@ -12,6 +12,7 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
 {
     private OrdersViewList $viewList;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

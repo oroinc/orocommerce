@@ -18,6 +18,7 @@ class EntityDependenciesResolverTest extends \PHPUnit\Framework\TestCase
     /** @var EntityDependenciesResolver */
     private $entityDependenciesResolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mappingProvider = $this->createMock(SearchMappingProvider::class);

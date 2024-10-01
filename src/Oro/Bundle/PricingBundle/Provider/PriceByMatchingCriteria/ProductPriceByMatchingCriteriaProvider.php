@@ -24,6 +24,7 @@ class ProductPriceByMatchingCriteriaProvider implements ProductPriceByMatchingCr
         $this->innerProviders = $innerProviders;
     }
 
+    #[\Override]
     public function getProductPriceMatchingCriteria(
         ProductPriceCriteria $productPriceCriteria,
         ProductPriceCollectionDTO $productPriceCollection
@@ -39,6 +40,7 @@ class ProductPriceByMatchingCriteriaProvider implements ProductPriceByMatchingCr
         return null;
     }
 
+    #[\Override]
     public function isSupported(
         ProductPriceCriteria $productPriceCriteria,
         ProductPriceCollectionDTO $productPriceCollection

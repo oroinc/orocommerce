@@ -15,25 +15,19 @@ class ProductHolderStub implements ProductHolderInterface
         $this->product = $product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->product->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->getProduct()->getSku();

@@ -7,9 +7,7 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
  */
 class AutocompleteFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFieldsData($numericalOnly, $withRelations)
     {
         $result = [];
@@ -55,9 +53,7 @@ class AutocompleteFieldsProvider extends AbstractAutocompleteFieldsProvider
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
     {
         $dataProviderConfig = parent::getDataProviderConfig($numericalOnly, $withRelations);

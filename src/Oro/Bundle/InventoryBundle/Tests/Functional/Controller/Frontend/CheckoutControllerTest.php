@@ -35,6 +35,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     private TranslatorInterface $translator;
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,6 +44,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->configManager = self::getConfigManager();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->updateSystemQuantityLimits(null, null);
@@ -195,9 +197,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getInventoryFixtures(): array
     {
         return [

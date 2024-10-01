@@ -28,6 +28,7 @@ class UrlItemsProviderTest extends OrmTestCase
     /** @var UrlItemsProvider */
     private $urlItemsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);

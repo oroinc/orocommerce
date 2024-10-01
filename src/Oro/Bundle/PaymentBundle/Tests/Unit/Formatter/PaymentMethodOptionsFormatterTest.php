@@ -16,6 +16,7 @@ class PaymentMethodOptionsFormatterTest extends \PHPUnit\Framework\TestCase
 
     private PaymentMethodOptionsFormatter $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodViewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);

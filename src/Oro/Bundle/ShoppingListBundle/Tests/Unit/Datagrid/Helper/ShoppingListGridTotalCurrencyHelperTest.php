@@ -23,6 +23,7 @@ class ShoppingListGridTotalCurrencyHelperTest extends \PHPUnit\Framework\TestCas
      */
     protected $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultCurrencyProvider = $this->createMock(DefaultCurrencyProviderInterface::class);

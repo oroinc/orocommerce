@@ -25,9 +25,7 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
     use ContainerAwareTrait;
     use OrderLineItemsDemoDataTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -40,8 +38,8 @@ class LoadCustomerOrderLineItemsDemoData extends AbstractFixture implements
     /**
      * @param EntityManagerInterface $manager
      *
-     * {@inheritDoc}
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $totalHelper = $this->getTotalHelper();

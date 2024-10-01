@@ -11,11 +11,13 @@ use Oro\Bundle\SecurityBundle\AccessRule\Expr\Association;
  */
 class InventoryLevelAccessRule implements AccessRuleInterface
 {
+    #[\Override]
     public function isApplicable(Criteria $criteria): bool
     {
         return true;
     }
 
+    #[\Override]
     public function process(Criteria $criteria): void
     {
         $criteria->andExpression(new Association('product'));

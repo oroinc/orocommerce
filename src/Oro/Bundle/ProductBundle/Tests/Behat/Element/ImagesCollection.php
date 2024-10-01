@@ -7,9 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class ImagesCollection extends CollectionField
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($values)
     {
         $existingRows = $this->findAll('xpath', '//tr[contains(@data-content,"images")]');

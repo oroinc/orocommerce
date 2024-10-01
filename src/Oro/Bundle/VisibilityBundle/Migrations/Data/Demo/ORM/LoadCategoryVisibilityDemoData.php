@@ -25,9 +25,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -36,9 +34,7 @@ class LoadCategoryVisibilityDemoData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');

@@ -18,17 +18,13 @@ class WebsiteSearchQuery extends AbstractSearchQuery
         $this->query  = $query;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function query()
     {
         return $this->engine->search($this->query);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addWhere(Expression $expression, $type = self::WHERE_AND)
     {
         if (self::WHERE_AND === $type) {

@@ -24,6 +24,7 @@ class ProductCollectionContentVariantControllerTest extends WebTestCase
 
     private CollectionSortOrderRepository $sortOrderRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

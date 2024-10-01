@@ -16,6 +16,7 @@ class ProductCollectionContentVariantProviderTest extends WebTestCase
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

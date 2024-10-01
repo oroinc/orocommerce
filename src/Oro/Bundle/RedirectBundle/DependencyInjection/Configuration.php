@@ -27,9 +27,7 @@ class Configuration implements ConfigurationInterface
     public const INSECURE = 'insecure';
     public const SECURE = 'secure';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

@@ -14,6 +14,7 @@ class PaymentMethodActionsTest extends TestCase
     private ActionExecutor|MockObject $actionExecutor;
     private PaymentMethodActions $paymentMethodActions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

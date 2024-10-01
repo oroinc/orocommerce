@@ -21,6 +21,7 @@ class RequiredConsentsValidatorTest extends ConstraintValidatorTestCase
     /** @var EnabledConsentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $enabledConsentProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizedHelper = $this->createMock(LocalizationHelper::class);
@@ -36,6 +37,7 @@ class RequiredConsentsValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new RequiredConsentsValidator($this->enabledConsentProvider, $this->localizedHelper);

@@ -21,9 +21,7 @@ class ChainCurrentCurrencyProvider implements CurrentCurrencyProviderInterface
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCurrentCurrency(): ?string
     {
         if (false === $this->currentCurrency) {

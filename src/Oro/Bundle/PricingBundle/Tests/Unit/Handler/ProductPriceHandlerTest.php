@@ -36,6 +36,7 @@ class ProductPriceHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceManager|\PHPUnit\Framework\MockObject\MockObject */
     private $priceManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);

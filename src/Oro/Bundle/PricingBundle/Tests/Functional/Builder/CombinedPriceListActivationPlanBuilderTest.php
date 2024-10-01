@@ -29,6 +29,7 @@ class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
     /** @var CombinedPriceListActivationRuleRepository */
     private $activationRulesRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         self::markTestSkipped('Must be fixed and unskipped in BB-21195');

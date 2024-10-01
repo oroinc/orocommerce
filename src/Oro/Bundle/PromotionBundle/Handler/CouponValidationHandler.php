@@ -21,9 +21,7 @@ class CouponValidationHandler extends AbstractCouponHandler
         $this->couponApplicabilityValidationService = $couponApplicabilityValidationService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handle(Request $request)
     {
         $coupon = $this->getCouponForValidation($request);
@@ -33,9 +31,7 @@ class CouponValidationHandler extends AbstractCouponHandler
         return new JsonResponse(['success' => empty($errors), 'errors' => $errors]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCouponForValidation(Request $request)
     {
         $couponId = $request->request->get('couponId');

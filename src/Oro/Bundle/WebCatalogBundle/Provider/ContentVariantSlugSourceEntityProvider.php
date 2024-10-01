@@ -26,9 +26,7 @@ class ContentVariantSlugSourceEntityProvider implements SlugSourceEntityProvider
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceEntityBySlug(Slug $slug): ?SlugAwareInterface
     {
         $website = $this->websiteManager->getCurrentWebsite();

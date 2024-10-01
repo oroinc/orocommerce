@@ -20,6 +20,7 @@ class ProductNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductNormalizer */
     private $productNormalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);

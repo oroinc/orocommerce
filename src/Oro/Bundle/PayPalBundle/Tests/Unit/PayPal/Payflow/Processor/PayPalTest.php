@@ -10,6 +10,7 @@ class PayPalTest extends \PHPUnit\Framework\TestCase
     /** @var PayPal */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processor = new PayPal();

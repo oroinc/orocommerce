@@ -29,6 +29,7 @@ class ConsentTypeTest extends FormIntegrationTestCase
     /** @var ConsentType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -41,9 +42,7 @@ class ConsentTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

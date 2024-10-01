@@ -11,6 +11,7 @@ class PricesStrategyPassTest extends \PHPUnit\Framework\TestCase
     /** @var PricesStrategyPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new PricesStrategyPass();

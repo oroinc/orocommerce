@@ -520,6 +520,7 @@ class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         return $visibilities;
     }
 
+    #[\Override]
     protected function getRepository(): CustomerCategoryRepository
     {
         return $this->getContainer()->get('oro_visibility.customer_category_repository');

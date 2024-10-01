@@ -12,9 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel;
  */
 class ProductKitItemEntityNameProvider implements EntityNameProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof ProductKitItem) {
@@ -28,9 +26,7 @@ class ProductKitItemEntityNameProvider implements EntityNameProviderInterface
         return $localizedLabel ?: (string)$entity->getDefaultLabel();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, ProductKitItem::class, true)) {

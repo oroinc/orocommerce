@@ -15,6 +15,7 @@ class ResultTest extends WebTestCase
      */
     protected $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

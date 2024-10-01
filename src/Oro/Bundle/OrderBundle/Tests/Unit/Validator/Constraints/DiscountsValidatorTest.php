@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class DiscountsValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): DiscountsValidator
     {
         return new DiscountsValidator();

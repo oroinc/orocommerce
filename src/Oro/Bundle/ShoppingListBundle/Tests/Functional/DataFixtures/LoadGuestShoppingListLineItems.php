@@ -28,9 +28,7 @@ class LoadGuestShoppingListLineItems extends AbstractShoppingListLineItemsFixtur
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [

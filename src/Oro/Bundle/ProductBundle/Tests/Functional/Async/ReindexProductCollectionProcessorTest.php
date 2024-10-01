@@ -22,6 +22,7 @@ class ReindexProductCollectionProcessorTest extends WebTestCase
 
     private ReindexProductCollectionProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

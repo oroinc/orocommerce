@@ -18,9 +18,7 @@ class ProductMapper implements ProductMapperInterface
         $this->dataLoader = $dataLoader;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function mapProducts(object $collection): void
     {
         $skusUppercase = [];

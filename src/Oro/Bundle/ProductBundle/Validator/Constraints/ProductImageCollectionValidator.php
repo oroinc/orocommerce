@@ -52,8 +52,8 @@ class ProductImageCollectionValidator extends ConstraintValidator
      * @param EntityProductImage[]|Collection $value
      * @param Constraint|ProductImageCollection $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         $imagesByTypeCounter = $this->productImageHelper->countImagesByType($value);

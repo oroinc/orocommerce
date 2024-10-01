@@ -47,9 +47,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
      */
     private $combinedPriceListProvider;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceBuilder = $this->createMock(ProductPriceBuilder::class);
@@ -63,9 +61,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getListener()
     {
         return new BuildPricesDemoDataFixturesListener(
@@ -78,6 +74,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         );
     }
 
+    #[\Override]
     public function testOnPostLoad()
     {
         $this->event->expects($this->once())
@@ -145,6 +142,7 @@ class BuildPricesDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         $this->listener->onPostLoad($this->event);
     }
 
+    #[\Override]
     public function testOnPostLoadWithNoDemoFixtures()
     {
         $this->event->expects($this->once())

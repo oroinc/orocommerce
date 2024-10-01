@@ -27,9 +27,7 @@ class GuestShoppingListAssociationAccessExclusionProvider implements Association
         $this->excludedAssociations = $excludedAssociations;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isIgnoreAssociationAccessCheck(string $entityClass, string $associationName): bool
     {
         if (!is_a($entityClass, $this->entityClass, true)) {

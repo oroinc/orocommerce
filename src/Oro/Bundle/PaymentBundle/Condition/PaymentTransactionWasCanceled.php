@@ -30,9 +30,7 @@ class PaymentTransactionWasCanceled extends AbstractCondition implements Context
         $this->transactionRepository = $transactionRepository;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('transaction', $options)) {
@@ -46,9 +44,7 @@ class PaymentTransactionWasCanceled extends AbstractCondition implements Context
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var PaymentTransaction $transaction */
@@ -62,9 +58,7 @@ class PaymentTransactionWasCanceled extends AbstractCondition implements Context
         return !empty($cancelTransactions);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;

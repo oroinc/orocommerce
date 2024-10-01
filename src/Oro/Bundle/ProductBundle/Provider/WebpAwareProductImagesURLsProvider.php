@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
  */
 class WebpAwareProductImagesURLsProvider extends ProductImagesURLsProvider
 {
+    #[\Override]
     protected function getFilteredImageUrls(
         ProductImage $productImage,
         array $filtersNames,

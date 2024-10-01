@@ -20,6 +20,7 @@ class PriceListTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListTriggerHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

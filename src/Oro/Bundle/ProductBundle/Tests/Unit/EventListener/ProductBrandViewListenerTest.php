@@ -18,6 +18,7 @@ class ProductBrandViewListenerTest extends TestCase
     private ProductBrandViewListener $brandViewListener;
     private AuthorizationCheckerInterface|MockObject $authorizationChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

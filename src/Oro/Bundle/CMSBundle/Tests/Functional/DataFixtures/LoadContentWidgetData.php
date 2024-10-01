@@ -21,9 +21,7 @@ class LoadContentWidgetData extends AbstractFixture implements DependentFixtureI
         self::CONTENT_WIDGET_3,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$contentWidgets as $contentWidgetName) {
@@ -39,9 +37,7 @@ class LoadContentWidgetData extends AbstractFixture implements DependentFixtureI
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

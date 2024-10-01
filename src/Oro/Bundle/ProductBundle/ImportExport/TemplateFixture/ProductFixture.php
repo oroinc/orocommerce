@@ -90,17 +90,13 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass(): string
     {
         return Product::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData(): iterable
     {
         return new \ArrayIterator([
@@ -110,9 +106,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createEntity($key): Product
     {
         return new Product();
@@ -122,6 +116,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
      * @param string  $key
      * @param Product $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity): void
     {
         $this->fillProduct($key, $entity);

@@ -14,9 +14,7 @@ use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\AbstractLoadProductPriceDe
  */
 class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $priceAttributePriceList = $this->getPriceAttribute($manager);

@@ -34,6 +34,7 @@ class SegmentProductsProviderTest extends OrmTestCase
     /** @var SegmentProductsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();

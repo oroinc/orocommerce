@@ -30,6 +30,7 @@ class IntegrationRemovalListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channelType = 'shipping_method';

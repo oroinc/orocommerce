@@ -27,9 +27,7 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
         $this->configProvider = $configProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addRelations(Product $productFrom, array $productsTo)
     {
         if (count($productsTo) === 0) {
@@ -49,9 +47,7 @@ abstract class AbstractAssignerDatabaseStrategy implements AssignerStrategyInter
         $this->getEntityManager()->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function removeRelations(Product $productFrom, array $productsTo)
     {
         if (count($productsTo) === 0) {

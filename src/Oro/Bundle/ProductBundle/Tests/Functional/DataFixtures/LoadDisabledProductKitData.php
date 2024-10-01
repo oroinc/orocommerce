@@ -11,6 +11,7 @@ class LoadDisabledProductKitData extends LoadProductKitData
 {
     public const PRODUCT_KIT_4 = 'product-kit-4';
 
+    #[\Override]
     protected function getProductsData(): array
     {
         return [

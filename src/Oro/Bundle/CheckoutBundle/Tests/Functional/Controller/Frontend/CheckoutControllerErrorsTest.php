@@ -28,6 +28,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
     use EnabledPaymentMethodIdentifierTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

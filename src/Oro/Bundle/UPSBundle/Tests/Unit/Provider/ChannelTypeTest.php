@@ -9,6 +9,7 @@ class ChannelTypeTest extends \PHPUnit\Framework\TestCase
     /** @var ChannelType */
     protected $channel;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channel = new ChannelType();

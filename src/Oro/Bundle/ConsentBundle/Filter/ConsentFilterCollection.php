@@ -18,9 +18,7 @@ class ConsentFilterCollection implements \IteratorAggregate
         $this->filters = $filters;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIterator(): \Traversable
     {
         return (function () {

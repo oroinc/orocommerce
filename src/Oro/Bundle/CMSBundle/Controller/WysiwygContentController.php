@@ -53,9 +53,7 @@ class WysiwygContentController extends AbstractController
         return new JsonResponse(['success' => $success, 'content' => $content], $code);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

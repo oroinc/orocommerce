@@ -28,6 +28,7 @@ class DeleteOrphanSuggestionsProcessor implements MessageProcessorInterface, Top
     ) {
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $suggestionIdsWithEmptyProducts = $this->getSuggestionRepository()
@@ -42,6 +43,7 @@ class DeleteOrphanSuggestionsProcessor implements MessageProcessorInterface, Top
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [DeleteOrphanSuggestionsTopic::getName()];

@@ -9,7 +9,7 @@ class Purchase extends AbstractOption
 {
     const PONUM = 'PONUM';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

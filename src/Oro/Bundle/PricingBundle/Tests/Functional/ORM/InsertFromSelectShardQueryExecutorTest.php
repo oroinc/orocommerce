@@ -15,6 +15,7 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
     private InsertFromSelectShardQueryExecutor $insertSelectExecutor;
     private ShardManager $shardManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

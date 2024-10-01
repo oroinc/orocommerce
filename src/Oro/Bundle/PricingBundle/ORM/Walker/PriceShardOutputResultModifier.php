@@ -14,9 +14,7 @@ class PriceShardOutputResultModifier extends AbstractOutputResultModifier
     public const ORO_PRICING_SHARD_MANAGER = 'oro_pricing.shard_manager';
     public const HINT_PRICE_SHARD = 'HINT_PRICE_SHARD';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkSelectStatement(AST\SelectStatement $AST, string $result)
     {
         if ($this->getQuery()->hasHint(self::ORO_PRICING_SHARD_MANAGER)) {

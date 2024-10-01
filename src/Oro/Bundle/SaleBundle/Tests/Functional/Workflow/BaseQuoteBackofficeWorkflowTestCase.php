@@ -23,6 +23,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     protected WorkflowManager $systemManager;
     protected Quote $quote;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -150,9 +150,7 @@ class LoadCombinedPriceLists extends AbstractCombinedPriceListsFixture
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

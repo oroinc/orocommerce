@@ -20,9 +20,7 @@ class LoadCategoryNode implements ProcessorInterface
         $this->categoryNodeRepository = $categoryNodeRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */

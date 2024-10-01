@@ -6,9 +6,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class OrderLineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountLineItemsConverter
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(array $lineItems): array
     {
         $discountLineItems = [];

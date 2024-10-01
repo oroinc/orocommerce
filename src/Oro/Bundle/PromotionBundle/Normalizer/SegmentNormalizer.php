@@ -20,6 +20,7 @@ class SegmentNormalizer implements NormalizerInterface
      * @param Segment $segment
      * @return array
      */
+    #[\Override]
     public function normalize($segment)
     {
         if (!$segment instanceof Segment) {
@@ -35,6 +36,7 @@ class SegmentNormalizer implements NormalizerInterface
      * @param array $segmentData
      * @return Segment
      */
+    #[\Override]
     public function denormalize(array $segmentData)
     {
         $resolver = $this->getOptionResolver();

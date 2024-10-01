@@ -40,9 +40,7 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
         $this->tokenStorage = $tokenStorage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('acceptedConsents', $options)) {
@@ -52,17 +50,13 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         if (!$this->isFeaturesEnabled()) {

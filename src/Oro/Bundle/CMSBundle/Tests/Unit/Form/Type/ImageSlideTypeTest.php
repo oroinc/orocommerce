@@ -135,9 +135,7 @@ class ImageSlideTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $validator = $this->createMock(ConfigFileValidator::class);

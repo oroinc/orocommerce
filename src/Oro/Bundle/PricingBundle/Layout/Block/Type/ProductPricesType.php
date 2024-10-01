@@ -54,9 +54,7 @@ class ProductPricesType extends AbstractContainerType
         return $this->fetchedAttributes[$code][$attributeName];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildBlock(BlockBuilderInterface $builder, Options $options)
     {
         if (null === $options['attributeFamily']) {
@@ -77,9 +75,7 @@ class ProductPricesType extends AbstractContainerType
         $this->attributeRenderRegistry->setAttributeRendered($attributeFamily, $attribute->getFieldName());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildView(BlockView $view, BlockInterface $block, Options $options)
     {
         BlockUtils::setViewVarsFromOptions(
@@ -89,9 +85,7 @@ class ProductPricesType extends AbstractContainerType
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver
@@ -110,9 +104,7 @@ class ProductPricesType extends AbstractContainerType
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;

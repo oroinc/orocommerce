@@ -26,6 +26,7 @@ class TaxCodeProviderTest extends \PHPUnit\Framework\TestCase
 
     private TaxCodeProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productRepository = $this->createMock(AbstractTaxCodeRepository::class);

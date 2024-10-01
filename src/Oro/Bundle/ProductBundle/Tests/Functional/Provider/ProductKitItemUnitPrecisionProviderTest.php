@@ -11,6 +11,7 @@ class ProductKitItemUnitPrecisionProviderTest extends WebTestCase
 {
     private ProductKitItemUnitPrecisionProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

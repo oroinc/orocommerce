@@ -37,9 +37,7 @@ class DefaultShoppingListEntityIdResolver implements EntityIdResolverInterface
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDescription(): string
     {
         return <<<MARKDOWN
@@ -47,9 +45,7 @@ class DefaultShoppingListEntityIdResolver implements EntityIdResolverInterface
 MARKDOWN;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function resolve(): mixed
     {
         $token = $this->tokenStorage->getToken();

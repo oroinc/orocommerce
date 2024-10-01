@@ -25,6 +25,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends WebTestCase
 
     private FileManager $tmpFileManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -37,6 +38,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends WebTestCase
         $this->tmpFileManager->deleteAllFiles();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->tmpFileManager->deleteAllFiles();

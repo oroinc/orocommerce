@@ -14,6 +14,7 @@ class MultipleChoice extends BaseMultipleChoice
      *
      * @return NodeElement
      */
+    #[\Override]
     protected function getWidget()
     {
         $widgets = $this->getPage()
@@ -32,6 +33,7 @@ class MultipleChoice extends BaseMultipleChoice
         self::fail('Can\'t find widget on page or it\'s not visible');
     }
 
+    #[\Override]
     public function close()
     {
         if ($dropDownMask = $this->getPage()->find('css', '.oro-dropdown-mask')) {

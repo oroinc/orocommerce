@@ -21,6 +21,7 @@ class SkuRegexValidatorTest extends \PHPUnit\Framework\TestCase
     /** @var SkuRegexValidator */
     private $validator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);

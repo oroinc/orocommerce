@@ -24,6 +24,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderPaymentTermEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);

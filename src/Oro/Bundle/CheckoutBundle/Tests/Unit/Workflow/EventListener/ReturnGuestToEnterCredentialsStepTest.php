@@ -23,6 +23,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
     private WorkflowManager|MockObject $workflowManager;
     private ReturnGuestToEnterCredentialsStep $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

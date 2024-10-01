@@ -17,12 +17,14 @@ class SystemPageVariantTypeTest extends FormIntegrationTestCase
 {
     private SystemPageVariantType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new SystemPageVariantType();
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

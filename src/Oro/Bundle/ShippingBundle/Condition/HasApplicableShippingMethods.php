@@ -27,9 +27,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         $this->shippingPriceProvider = $shippingPriceProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (\array_key_exists('shippingContext', $options)) {
@@ -45,17 +43,13 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'has_applicable_shipping_methods';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var ShippingContextInterface $shippingContext */
@@ -67,17 +61,13 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
         return !$this->shippingPriceProvider->getApplicableMethodsViews($shippingContext)->isEmpty();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->shippingContext]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->shippingContext], $factoryAccessor);

@@ -40,9 +40,7 @@ class NoDataMessagesExtension extends AbstractExtension
         $this->searchMappingProvider = $searchMappingProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config)
     {
         if ($this->frontendHelper->isFrontendRequest() && SearchDatasource::TYPE === $config->getDatasourceType()) {

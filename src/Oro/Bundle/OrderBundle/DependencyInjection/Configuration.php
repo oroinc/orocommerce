@@ -22,9 +22,7 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD = 'order_previously_purchased_period';
     public const CONFIG_KEY_ENABLE_PURCHASE_HISTORY = 'enable_purchase_history';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

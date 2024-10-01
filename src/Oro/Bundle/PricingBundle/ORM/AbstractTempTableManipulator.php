@@ -47,27 +47,19 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setInsertSelectExecutor(ShardQueryExecutorNativeSqlInterface $queryExecutor)
     {
         $this->queryExecutor = $queryExecutor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     abstract public function dropTempTableForEntity(string $className, $identifier);
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     abstract public function truncateTempTableForEntity(string $className, $identifier);
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTempTableNameForEntity(string $className, $identifier): string
     {
         QueryBuilderUtil::checkIdentifier($identifier);
@@ -75,17 +67,13 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
         return $this->getTableNameForEntity($className) . '_tmp_' . $identifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTableNameForEntity(string $className): string
     {
         return $this->helper->getTableName($className);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function copyDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
     {
         $columns = $this->helper->getColumns($className, $fields);
@@ -102,18 +90,14 @@ abstract class AbstractTempTableManipulator implements TempTableManipulatorInter
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function moveDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
     {
         $this->copyDataFromTemplateTableToEntityTable($className, $identifier, $fields);
         $this->truncateTempTableForEntity($className, $identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function insertData(
         string $insertToTableName,
         string $className,

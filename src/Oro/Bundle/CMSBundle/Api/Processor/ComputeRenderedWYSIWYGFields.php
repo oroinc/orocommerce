@@ -21,9 +21,7 @@ class ComputeRenderedWYSIWYGFields implements ProcessorInterface
         $this->wysiwygValueRenderer = $wysiwygValueRenderer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

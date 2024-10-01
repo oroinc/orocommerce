@@ -62,9 +62,7 @@ class LoadPageData extends AbstractLoadPageData
         ]
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator('@OroCMSBundle/Migrations/Data/ORM/data/pages.yml');

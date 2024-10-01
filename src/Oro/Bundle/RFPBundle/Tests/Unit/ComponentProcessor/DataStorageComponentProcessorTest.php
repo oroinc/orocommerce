@@ -46,6 +46,7 @@ class DataStorageComponentProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var DataStorageComponentProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->storage = $this->createMock(ProductDataStorage::class);

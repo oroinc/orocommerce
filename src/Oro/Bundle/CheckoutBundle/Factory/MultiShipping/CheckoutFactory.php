@@ -20,9 +20,7 @@ class CheckoutFactory implements CheckoutFactoryInterface
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createCheckout(Checkout $source, iterable $lineItems): Checkout
     {
         $checkout = new Checkout();

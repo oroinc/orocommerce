@@ -20,9 +20,7 @@ class ContextDataConverterRegistry implements ContextDataConverterInterface
         $this->converters = $converters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContextData($sourceEntity): array
     {
         $converter = $this->getConverterForEntity($sourceEntity);
@@ -33,9 +31,7 @@ class ContextDataConverterRegistry implements ContextDataConverterInterface
         return $converter->getContextData($sourceEntity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($sourceEntity): bool
     {
         return $this->getConverterForEntity($sourceEntity) !== null;

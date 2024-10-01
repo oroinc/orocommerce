@@ -6,9 +6,7 @@ use Oro\Bundle\OrderBundle\Tests\Behat\Element\OrderLineItem;
 
 class PromotionOrderLineItem extends OrderLineItem implements DiscountAwareLineItemInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscount()
     {
         $discount = $this->find('css', '.grid-body-cell-rowTotalDiscountAmount');

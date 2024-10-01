@@ -14,6 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 
 class AjaxCheckoutControllerTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

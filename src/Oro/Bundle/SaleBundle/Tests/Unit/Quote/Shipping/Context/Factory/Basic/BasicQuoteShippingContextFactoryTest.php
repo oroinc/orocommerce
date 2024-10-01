@@ -34,6 +34,7 @@ class BasicQuoteShippingContextFactoryTest extends TestCase
 
     private BasicQuoteShippingContextFactory $basicQuoteShippingContextFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingContextBuilderFactory = $this->createMock(ShippingContextBuilderFactoryInterface::class);

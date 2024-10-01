@@ -20,17 +20,13 @@ class OroCalendarCommerceBridgeBundleInstaller implements
     use ActivityExtensionAwareTrait;
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
         return 'v1_1';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         CommerceBridgeBundle_v1_0::addCalendarActivityAssociations($schema, $this->activityExtension);

@@ -20,9 +20,7 @@ class ProductSearchQueryRestrictionEventListenerTest extends AbstractProductSear
         $this->listener->onSearchQuery($this->getEvent());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createListener(): ProductSearchQueryRestrictionEventListener
     {
         return new ProductSearchQueryRestrictionEventListener(

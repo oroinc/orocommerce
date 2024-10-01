@@ -22,6 +22,7 @@ class SelectIdentifierWalkerTest extends \PHPUnit\Framework\TestCase
     /** @var SelectIdentifierWalker */
     private $selectIdentifierWalker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $em = $this->createMock(EntityManager::class);

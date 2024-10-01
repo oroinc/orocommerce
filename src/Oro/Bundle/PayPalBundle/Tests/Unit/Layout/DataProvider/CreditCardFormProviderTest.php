@@ -20,6 +20,7 @@ class CreditCardFormProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CreditCardFormProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

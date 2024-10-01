@@ -45,6 +45,7 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
      *
      * @throws FailedToRunReindexProductCollectionJobException
      */
+    #[\Override]
     public function handle(
         iterable $childJobPartialMessages,
         string $uniqueJobName,

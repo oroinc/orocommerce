@@ -12,6 +12,7 @@ class OroOrderBundle implements Migration
     /**
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_order');

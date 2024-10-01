@@ -33,9 +33,7 @@ class GetOrderLineItems extends AbstractAction
         $this->checkoutLineItemsManager = $checkoutLineItemsManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (empty($options['checkout'])) {
@@ -58,9 +56,7 @@ class GetOrderLineItems extends AbstractAction
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         /** @var Checkout $checkout */

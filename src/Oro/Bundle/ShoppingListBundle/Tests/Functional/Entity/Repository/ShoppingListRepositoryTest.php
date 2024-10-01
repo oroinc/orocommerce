@@ -31,6 +31,7 @@ class ShoppingListRepositoryTest extends WebTestCase
     private CustomerUser $customerUser;
     private AclHelper $aclHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
  */
 class GeneralLineItemChecksumGenerator implements LineItemChecksumGeneratorInterface
 {
+    #[\Override]
     public function getChecksum(ProductLineItemInterface $lineItem): ?string
     {
         if (!$lineItem->getProductUnit() || !$lineItem->getProduct()) {

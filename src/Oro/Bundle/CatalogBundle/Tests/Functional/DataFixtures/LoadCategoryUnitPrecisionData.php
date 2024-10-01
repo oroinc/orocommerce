@@ -17,9 +17,7 @@ class LoadCategoryUnitPrecisionData extends AbstractFixture implements Dependent
         LoadCategoryData::SECOND_LEVEL1 => 'product_unit.box',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -28,9 +26,7 @@ class LoadCategoryUnitPrecisionData extends AbstractFixture implements Dependent
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$relations as $categoryReference => $productUnitReference) {

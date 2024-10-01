@@ -21,9 +21,7 @@ class MigrateBaseUrlToTestModeQuery extends ParametrizedMigrationQuery
         $this->productionUrl = $productionUrl;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -32,9 +30,7 @@ class MigrateBaseUrlToTestModeQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->processQueries($logger);

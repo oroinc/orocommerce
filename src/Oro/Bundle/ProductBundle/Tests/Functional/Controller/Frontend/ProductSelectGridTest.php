@@ -22,6 +22,7 @@ class ProductSelectGridTest extends WebTestCase
     protected $client;
     private AbstractPlatform $platform;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

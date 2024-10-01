@@ -23,6 +23,7 @@ class MatchingProductsProvider implements MatchingProductsProviderInterface
         $this->matchingProductsCache = $matchingProductsCache;
     }
 
+    #[\Override]
     public function hasMatchingProducts(Segment $segment, array $lineItems): bool
     {
         if (empty($lineItems)) {
@@ -37,6 +38,7 @@ class MatchingProductsProvider implements MatchingProductsProviderInterface
         return !empty($queryBuilder->getQuery()->getArrayResult());
     }
 
+    #[\Override]
     public function getMatchingProducts(
         Segment $segment,
         array $lineItems,

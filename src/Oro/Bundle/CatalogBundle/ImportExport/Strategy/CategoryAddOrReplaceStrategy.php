@@ -42,10 +42,10 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param Category $category
      */
+    #[\Override]
     public function process($category)
     {
         /** @var Category|null $category */
@@ -60,10 +60,10 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param Category $category
      */
+    #[\Override]
     protected function afterProcessEntity($category)
     {
         $this->eventDispatcher->dispatch(
@@ -92,12 +92,7 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return $category;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * Adds extra functionality to the base method:
-     * - handles import of parentCategory relation
-     */
+    #[\Override]
     protected function importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData)
     {
         if ($isFullData && $entity instanceof Category) {
@@ -206,9 +201,7 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
             (int) $this->context->getOption('attempts') === (int) $this->context->getOption('max_attempts');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function findExistingEntity($entity, array $searchContext = [])
     {
         $categoryPath = $searchContext['categoryPath'] ?? '';
@@ -225,13 +218,7 @@ class CategoryAddOrReplaceStrategy extends LocalizedFallbackValueAwareStrategy
         return $existingEntity;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * Adds extra functionality to the base method:
-     * - puts a "categoryPath" and "organization" into search context so in ::findExistingMethod() we can find
-     * a parent category by path
-     */
+    #[\Override]
     protected function generateSearchContextForRelationsUpdate($entity, $entityName, $fieldName, $isPersistRelation)
     {
         if ($entityName === Category::class && $fieldName === 'parentCategory') {

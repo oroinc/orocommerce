@@ -13,6 +13,7 @@ class CategoryUnitPrecisionTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryUnitPrecision */
     private $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new CategoryUnitPrecision();

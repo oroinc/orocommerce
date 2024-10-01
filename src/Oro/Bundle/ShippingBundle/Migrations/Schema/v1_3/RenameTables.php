@@ -15,17 +15,13 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 10;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->renameShippingRuleMethodTypeConfig($schema, $queries);

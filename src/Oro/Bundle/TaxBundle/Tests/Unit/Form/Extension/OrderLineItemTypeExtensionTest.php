@@ -32,6 +32,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var SectionProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $sectionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);

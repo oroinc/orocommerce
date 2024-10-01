@@ -38,9 +38,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
         return $this->findOneBy(['customer' => $customer, 'priceList' => $priceList, 'website' => $website]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceLists($customer, Website $website, $sortOrder = Criteria::ASC)
     {
         $qb = $this->createQueryBuilder('relation');
@@ -389,6 +387,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
      * @param array|Customer[]|int[] $holdersIds
      * @return PriceListToCustomer[]
      */
+    #[\Override]
     public function getRelationsByHolders(array $holdersIds)
     {
         $qb = $this->createQueryBuilder('relation');

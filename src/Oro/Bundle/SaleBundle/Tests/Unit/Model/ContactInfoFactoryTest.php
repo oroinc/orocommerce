@@ -15,6 +15,7 @@ class ContactInfoFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var NameFormatter|\PHPUnit\Framework\MockObject\MockObject */
     private $nameFormatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->nameFormatter = $this->createMock(NameFormatter::class);

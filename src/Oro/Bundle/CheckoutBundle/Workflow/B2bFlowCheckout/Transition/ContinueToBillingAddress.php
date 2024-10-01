@@ -17,6 +17,7 @@ class ContinueToBillingAddress extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         $this->actionExecutor->executeAction(

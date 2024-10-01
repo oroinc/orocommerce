@@ -33,9 +33,7 @@ class WebsiteUrlProvidersService implements WebsiteUrlProvidersServiceInterface
         $this->accessDeniedProviderRegistry = $accessDeniedProviderRegistry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWebsiteProvidersIndexedByNames(WebsiteInterface $website)
     {
         if (!$this->configManager->get('oro_frontend.guest_access_enabled', false, false, $website)) {

@@ -17,6 +17,7 @@ class ReindexProductFallbackValueChangedTest extends TestCase
 
     private ReindexProductFallbackValueChanged $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entitiesContainer = $this->createMock(IndexationEntitiesContainer::class);

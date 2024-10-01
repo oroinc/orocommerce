@@ -76,9 +76,7 @@ class AjaxCheckoutController extends AbstractController
         return json_decode($val, true, 512, JSON_THROW_ON_ERROR);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

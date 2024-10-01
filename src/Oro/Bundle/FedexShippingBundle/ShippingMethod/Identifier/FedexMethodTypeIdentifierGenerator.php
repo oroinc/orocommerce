@@ -6,9 +6,7 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
 
 class FedexMethodTypeIdentifierGenerator implements FedexMethodTypeIdentifierGeneratorInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function generate(FedexShippingService $service): string
     {
         return $service->getCode();

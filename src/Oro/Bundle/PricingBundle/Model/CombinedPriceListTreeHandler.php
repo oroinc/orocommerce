@@ -21,17 +21,13 @@ class CombinedPriceListTreeHandler extends AbstractPriceListTreeHandler
      */
     private $priceListRepository;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function loadPriceListByCustomer(Customer $customer, Website $website)
     {
         return $this->getPriceListRepository()->getPriceListByCustomer($customer, $website);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function loadPriceListByCustomerGroup(CustomerGroup $customerGroup, Website $website)
     {
         return $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup, $website);
@@ -41,6 +37,7 @@ class CombinedPriceListTreeHandler extends AbstractPriceListTreeHandler
      * @param Website $website
      * @return CombinedPriceList|null
      */
+    #[\Override]
     protected function getPriceListByWebsite(Website $website)
     {
         return $this->getPriceListRepository()->getPriceListByWebsite($website);
@@ -49,6 +46,7 @@ class CombinedPriceListTreeHandler extends AbstractPriceListTreeHandler
     /**
      * @return null|CombinedPriceList
      */
+    #[\Override]
     protected function getPriceListFromConfig()
     {
         $key = Configuration::getConfigKeyToPriceList();

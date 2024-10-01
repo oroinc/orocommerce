@@ -35,6 +35,7 @@ class CurrentLocalizationExtension implements CurrentLocalizationExtensionInterf
     /**
      * @return Localization|null
      */
+    #[\Override]
     public function getCurrentLocalization()
     {
         if ($this->getLoggedUser() instanceof User) {

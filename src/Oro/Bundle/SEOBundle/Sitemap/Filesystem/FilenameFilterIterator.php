@@ -10,17 +10,13 @@ use Symfony\Component\Finder\Iterator\MultiplePcreFilterIterator;
  */
 class FilenameFilterIterator extends MultiplePcreFilterIterator
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function accept(): bool
     {
         return $this->isAccepted(pathinfo($this->current(), PATHINFO_BASENAME));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function toRegex(string $str): string
     {
         return $this->isRegex($str) ? $str : Glob::toRegex($str);

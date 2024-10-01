@@ -12,9 +12,7 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
 {
     private const VALIDATION_GROUP = 'ProductPriceResetAndAddImport';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function findExistingEntity($entity, array $searchContext = [])
     {
         // no need to search product prices in storage
@@ -25,6 +23,7 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
         return parent::findExistingEntity($entity, $searchContext);
     }
 
+    #[\Override]
     protected function validateAndUpdateContext($entity): ?ProductPrice
     {
         $validationErrors = $this->strategyHelper->validateEntity($entity, null, self::VALIDATION_GROUP);

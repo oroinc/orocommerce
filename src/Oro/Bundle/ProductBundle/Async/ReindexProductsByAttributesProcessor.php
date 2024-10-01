@@ -44,9 +44,7 @@ class ReindexProductsByAttributesProcessor implements
         $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         try {
@@ -75,9 +73,7 @@ class ReindexProductsByAttributesProcessor implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [ReindexProductsByAttributesTopic::getName()];

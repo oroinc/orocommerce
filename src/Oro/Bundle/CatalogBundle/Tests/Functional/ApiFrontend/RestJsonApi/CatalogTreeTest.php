@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class CatalogTreeTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

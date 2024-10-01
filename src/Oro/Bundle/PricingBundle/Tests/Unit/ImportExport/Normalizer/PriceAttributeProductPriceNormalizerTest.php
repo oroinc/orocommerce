@@ -13,6 +13,7 @@ class PriceAttributeProductPriceNormalizerTest extends TestCase
 
     private PriceAttributeProductPriceNormalizer $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);

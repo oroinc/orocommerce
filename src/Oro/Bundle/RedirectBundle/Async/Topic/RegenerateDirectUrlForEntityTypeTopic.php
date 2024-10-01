@@ -21,16 +21,19 @@ class RegenerateDirectUrlForEntityTypeTopic extends AbstractTopic
         $this->directUrlCommonTopicHelper = $directUrlCommonTopicHelper;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Regenerate Slug URLs for the entities of specified type.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->directUrlCommonTopicHelper->configureIdOption($resolver);

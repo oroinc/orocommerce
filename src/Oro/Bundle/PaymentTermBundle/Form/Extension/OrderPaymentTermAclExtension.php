@@ -6,9 +6,7 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 
 class OrderPaymentTermAclExtension extends AbstractPaymentTermAclExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [OrderType::class];

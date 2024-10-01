@@ -18,11 +18,13 @@ class HandlerRegistry implements CheckoutHandlerInterface
     ) {
     }
 
+    #[\Override]
     public function isSupported(Request $request): bool
     {
         return true;
     }
 
+    #[\Override]
     public function handle(WorkflowItem $workflowItem, Request $request): void
     {
         foreach ($this->handlers as $handler) {

@@ -23,6 +23,7 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidatorTest extends
 
     private TranslationMessageSanitizerInterface|MockObject $translationMessageSanitizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
@@ -31,6 +32,7 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidatorTest extends
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductKitItemProductCollectionIsAvailableForPurchaseValidator
     {
         return new ProductKitItemProductCollectionIsAvailableForPurchaseValidator(

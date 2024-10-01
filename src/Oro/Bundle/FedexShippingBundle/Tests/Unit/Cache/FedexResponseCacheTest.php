@@ -29,6 +29,7 @@ class FedexResponseCacheTest extends TestCase
      */
     private $fedexCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheItemPoolInterface::class);

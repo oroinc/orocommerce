@@ -22,9 +22,7 @@ class MoneyOrder implements PaymentMethodWithPostponedCaptureInterface
         $this->config = $config;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
         if (!method_exists($this, $action)) {
@@ -36,25 +34,19 @@ class MoneyOrder implements PaymentMethodWithPostponedCaptureInterface
         return $this->$action($paymentTransaction);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSourceAction(): string
     {
         return self::PENDING;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function useSourcePaymentTransaction(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function purchase(PaymentTransaction $paymentTransaction): array
     {
         $paymentTransaction
@@ -65,9 +57,7 @@ class MoneyOrder implements PaymentMethodWithPostponedCaptureInterface
         return ['successful' => true];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function capture(PaymentTransaction $paymentTransaction): array
     {
         $paymentTransaction
@@ -78,25 +68,19 @@ class MoneyOrder implements PaymentMethodWithPostponedCaptureInterface
         return ['successful' => true];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(PaymentContextInterface $context)
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($actionName)
     {
         return \in_array($actionName, [self::PURCHASE, self::CAPTURE], true);

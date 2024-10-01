@@ -20,9 +20,7 @@ class AddImageSlideColumns implements Migration, AttachmentExtensionAwareInterfa
 
     private RenameExtension $renameExtension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $schema

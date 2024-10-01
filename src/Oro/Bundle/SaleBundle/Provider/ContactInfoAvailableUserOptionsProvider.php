@@ -21,9 +21,7 @@ class ContactInfoAvailableUserOptionsProvider implements OptionsProviderInterfac
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptions()
     {
         return [

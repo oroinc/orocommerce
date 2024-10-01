@@ -23,6 +23,7 @@ final class SuggestionProviderTest extends \PHPUnit\Framework\TestCase
 
     private LocalizationHelper&MockObject $localizationHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->phraseSplitter = $this->createMock(PhraseSplitter::class);

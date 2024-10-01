@@ -13,6 +13,7 @@ class UniquePriceListValidatorTest extends ConstraintValidatorTestCase
 {
     use ConfigsGeneratorTrait;
 
+    #[\Override]
     protected function createValidator(): UniquePriceListValidator
     {
         return new UniquePriceListValidator();

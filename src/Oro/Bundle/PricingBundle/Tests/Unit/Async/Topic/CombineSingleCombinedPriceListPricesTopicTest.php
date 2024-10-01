@@ -22,6 +22,7 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
 
     private CombinedPriceListProvider $combinedPriceListProvider;
 
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 1]);
@@ -103,6 +104,7 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
         self::assertNull($actual['cpl']);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -174,6 +176,7 @@ class CombineSingleCombinedPriceListPricesTopicTest extends AbstractTopicTestCas
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

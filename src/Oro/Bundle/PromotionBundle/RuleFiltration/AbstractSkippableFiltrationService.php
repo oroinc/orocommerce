@@ -12,9 +12,7 @@ abstract class AbstractSkippableFiltrationService implements RuleFiltrationServi
 {
     public const SKIP_FILTERS_KEY = 'skip_filters';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
         if (!empty($context[self::SKIP_FILTERS_KEY][\get_class($this)])) {

@@ -21,6 +21,7 @@ class LoadProductKitForAdditionalOrganizationData extends AbstractFixture implem
     public const ADDITIONAL_ORGANIZATION = 'additional-organization';
     public const ADDITIONAL_PRODUCT_KIT = 'additional-product-kit';
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -29,10 +30,10 @@ class LoadProductKitForAdditionalOrganizationData extends AbstractFixture implem
     }
 
     /**
-     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $organization = new Organization();

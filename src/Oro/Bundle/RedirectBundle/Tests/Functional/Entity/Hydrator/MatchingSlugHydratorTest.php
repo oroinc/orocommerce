@@ -18,6 +18,7 @@ class MatchingSlugHydratorTest extends WebTestCase
      */
     private $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

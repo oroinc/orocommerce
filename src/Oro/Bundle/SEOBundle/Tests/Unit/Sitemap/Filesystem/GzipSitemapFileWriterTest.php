@@ -17,6 +17,7 @@ class GzipSitemapFileWriterTest extends \PHPUnit\Framework\TestCase
      */
     private $sitemapFileWriter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerSitemapFileWriter = $this->createMock(SitemapFileWriterInterface::class);

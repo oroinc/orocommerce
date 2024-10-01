@@ -31,6 +31,7 @@ class BeforeImportChunksListenerTest extends TestCase
 
     private BeforeImportChunksListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

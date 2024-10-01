@@ -32,12 +32,12 @@ class QuickAddRowDataLoader implements ProductMapperDataLoaderInterface
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param string[] $skusUppercase
      *
      * @return Product[]
      */
+    #[\Override]
     public function loadProducts(array $skusUppercase): array
     {
         /** @var EntityManagerInterface $em */

@@ -9,6 +9,7 @@ class ExtraActionEntityStorageTest extends \PHPUnit\Framework\TestCase
     /** @var ExtraActionEntityStorage */
     private $storage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->storage = new ExtraActionEntityStorage();

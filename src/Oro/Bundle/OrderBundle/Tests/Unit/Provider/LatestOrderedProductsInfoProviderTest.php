@@ -33,6 +33,7 @@ class LatestOrderedProductsInfoProviderTest extends TestCase
      */
     private $latestOrderedProductsInfoProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

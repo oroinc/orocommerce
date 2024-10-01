@@ -30,9 +30,7 @@ class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtu
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -40,9 +38,7 @@ class LoadQuoteAddressData extends BaseAbstractFixture implements DependentFixtu
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->addresses as $name => $address) {

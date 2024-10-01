@@ -19,9 +19,7 @@ class RememberMeSlugRequestFactory implements SlugRequestFactoryInterface
         $this->innerFactory = $innerFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createSlugRequest(Request $request): Request
     {
         $slugRequest = $this->innerFactory->createSlugRequest($request);
@@ -34,9 +32,7 @@ class RememberMeSlugRequestFactory implements SlugRequestFactoryInterface
         return $slugRequest;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function updateMainRequest(Request $request, Request $slugRequest): void
     {
         $this->innerFactory->updateMainRequest($request, $slugRequest);

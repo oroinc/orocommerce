@@ -8,6 +8,7 @@ use Oro\Component\MessageQueue\Topic\TopicInterface;
 
 class GenerateSitemapTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new GenerateSitemapTopic();

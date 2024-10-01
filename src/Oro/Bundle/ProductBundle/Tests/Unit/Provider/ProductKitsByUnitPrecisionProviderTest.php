@@ -15,6 +15,7 @@ class ProductKitsByUnitPrecisionProviderTest extends \PHPUnit\Framework\TestCase
 
     protected ProductKitsByUnitPrecisionProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

@@ -25,6 +25,7 @@ class VerifyQuoteTemplateDataProcessorTest extends TestCase
 
     private VerifyQuoteTemplateDataProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);

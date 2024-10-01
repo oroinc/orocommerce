@@ -20,6 +20,7 @@ class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFacto
     ) {
     }
 
+    #[\Override]
     public function create(
         Website $website = null,
         Customer $customer = null,
@@ -29,6 +30,7 @@ class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFacto
         return $this->inner->create($website, $customer, $context, $data);
     }
 
+    #[\Override]
     public function createByContext($context, array $data = []): ProductPriceScopeCriteriaInterface
     {
         $customerUser = $this->customerUserProvider->getLoggedUser();

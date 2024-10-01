@@ -15,9 +15,7 @@ class OroOrderBundle implements Migration, OrderedMigrationInterface, RenameExte
     use MigrationConstraintTrait;
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateOroOrderAddressTable($schema, $queries);
@@ -50,9 +48,7 @@ class OroOrderBundle implements Migration, OrderedMigrationInterface, RenameExte
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

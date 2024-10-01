@@ -12,9 +12,7 @@ class PaymentGuestAccessUrlPass implements CompilerPassInterface
 {
     public const URL_PROVIDER = 'oro_frontend.guest_access.provider.guest_access_urls_provider';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $urlProviderDefinition = $container->getDefinition(self::URL_PROVIDER);

@@ -20,6 +20,7 @@ class ProductPriceDataConverterTest extends TestCase
 
     private ProductPriceDataConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converter = new ProductPriceDataConverter(

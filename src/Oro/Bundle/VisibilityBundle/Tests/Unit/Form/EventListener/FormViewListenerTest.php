@@ -42,9 +42,7 @@ class FormViewListenerTest extends TestCase
      */
     protected $translator;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->env = $this->createMock(Environment::class);

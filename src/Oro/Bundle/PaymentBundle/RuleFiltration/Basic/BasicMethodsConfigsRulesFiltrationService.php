@@ -27,9 +27,7 @@ class BasicMethodsConfigsRulesFiltrationService implements MethodsConfigsRulesFi
         $this->paymentContextToRulesValueConverter = $converter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilteredPaymentMethodsConfigsRules(
         array $paymentMethodsConfigsRules,
         PaymentContextInterface $context

@@ -29,9 +29,7 @@ class ValidateProductCollectionId implements ProcessorInterface
         $this->contentNodeProvider = $contentNodeProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */

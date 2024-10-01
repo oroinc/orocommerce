@@ -25,6 +25,7 @@ class SimpleProductPriceCriteriaBuilderTest extends TestCase
 
     private EntityManager|MockObject $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

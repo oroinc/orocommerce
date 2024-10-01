@@ -33,6 +33,7 @@ class LoadPageSlugPrototypeData extends AbstractFixture implements DependentFixt
         ],
     ];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -41,6 +42,7 @@ class LoadPageSlugPrototypeData extends AbstractFixture implements DependentFixt
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (static::SLUG_PROTOTYPES as $pageReference => $slugPrototypes) {

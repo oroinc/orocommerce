@@ -25,6 +25,7 @@ class LineItemsWithTotalsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemsWithTotalsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);

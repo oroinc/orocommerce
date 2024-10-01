@@ -33,6 +33,7 @@ class TaxValueToResultTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxValueToResultTransformer */
     private $taxValueToResultTransformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxValueManager = $this->createMock(TaxValueManager::class);

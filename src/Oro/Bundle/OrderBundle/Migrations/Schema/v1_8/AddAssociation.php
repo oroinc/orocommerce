@@ -13,9 +13,7 @@ class AddAssociation implements Migration, PaymentTermExtensionAwareInterface, O
 {
     use PaymentTermExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_order');
@@ -23,9 +21,7 @@ class AddAssociation implements Migration, PaymentTermExtensionAwareInterface, O
         $queries->addPostQuery('UPDATE oro_order SET payment_term_7c4f1e8e_id = payment_term_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;

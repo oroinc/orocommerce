@@ -23,6 +23,7 @@ class OrderTaxableListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderTaxableListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);

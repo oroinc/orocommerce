@@ -48,9 +48,7 @@ class LoadProductCollectionData extends AbstractFixture implements DependentFixt
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -58,9 +56,7 @@ class LoadProductCollectionData extends AbstractFixture implements DependentFixt
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$products as $reference => $productSku) {

@@ -20,6 +20,7 @@ class SchemaOrgProductDescriptionCommonProviderTest extends \PHPUnit\Framework\T
 
     private SchemaOrgProductDescriptionCommonProvider $productDescriptionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $htmlTagHelper = $this->createMock(HtmlTagHelper::class);

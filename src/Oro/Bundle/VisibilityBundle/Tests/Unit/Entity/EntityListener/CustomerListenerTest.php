@@ -22,6 +22,7 @@ class CustomerListenerTest extends \PHPUnit\Framework\TestCase
 
     private CustomerListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

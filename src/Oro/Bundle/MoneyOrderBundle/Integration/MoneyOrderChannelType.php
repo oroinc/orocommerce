@@ -9,17 +9,13 @@ class MoneyOrderChannelType implements ChannelInterface, IconAwareIntegrationInt
 {
     const TYPE = 'money_order';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.money_order.channel_type.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIcon()
     {
         return 'bundles/oromoneyorder/img/money-order-icon.png';

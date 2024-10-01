@@ -11,6 +11,7 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
     /** @var CategoryManageInventoryFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,17 +24,13 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function callTestMethod(): void
     {
         $this->listener->onCategoryEdit($this->event);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExpectedScrollData(): array
     {
         return [
@@ -46,9 +43,7 @@ class CategoryManageInventoryFormViewListenerTest extends AbstractFallbackFields
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntity(): object
     {
         return new Category();

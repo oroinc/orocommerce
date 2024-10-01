@@ -32,6 +32,7 @@ class UserProductFiltersSidebarStateManagerTest extends \PHPUnit\Framework\TestC
     private ConfigManager|\PHPUnit\Framework\MockObject\MockObject $configManager;
     private UserProductFiltersSidebarStateManager $sidebarStateManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);

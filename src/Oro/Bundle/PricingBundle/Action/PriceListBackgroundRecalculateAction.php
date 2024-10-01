@@ -51,9 +51,7 @@ class PriceListBackgroundRecalculateAction extends AbstractAction
         parent::__construct($contextAccessor);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (empty($options[self::OPTION_KEY_PRICE_LIST])) {
@@ -65,9 +63,7 @@ class PriceListBackgroundRecalculateAction extends AbstractAction
         $this->priceListOption = $options[self::OPTION_KEY_PRICE_LIST];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         $priceList = $this->contextAccessor->getValue($context, $this->priceListOption);

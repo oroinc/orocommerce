@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class ExportCategoryFilterPass implements CompilerPassInterface
 {
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $registry = 'oro_catalog.datagrid.export.category_filter.registry';

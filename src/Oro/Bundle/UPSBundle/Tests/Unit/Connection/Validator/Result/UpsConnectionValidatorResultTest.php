@@ -16,6 +16,7 @@ class UpsConnectionValidatorResultTest extends \PHPUnit\Framework\TestCase
      */
     protected $connectionValidationResult;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->parameters = [

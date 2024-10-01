@@ -20,27 +20,21 @@ class CustomerGroupDataGridListener extends AbstractPriceListRelationDataGridLis
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getRelations(array $priceListHolderIds): array
     {
         return $this->doctrine->getRepository(PriceListToCustomerGroup::class)
             ->getRelationsByHolders($priceListHolderIds);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getObjectId(BasePriceListRelation $relation): int
     {
         /** @var PriceListToCustomerGroup $relation */
         return $relation->getCustomerGroup()->getId();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getRelationClassName(): string
     {
         return PriceListToCustomerGroup::class;

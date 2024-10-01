@@ -14,6 +14,7 @@ class PriceListMessageFilterTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListMessageFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new PriceListMessageFilter([

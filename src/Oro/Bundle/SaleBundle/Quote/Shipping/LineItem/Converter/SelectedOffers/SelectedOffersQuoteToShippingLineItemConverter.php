@@ -20,6 +20,7 @@ class SelectedOffersQuoteToShippingLineItemConverter implements QuoteToShippingL
         $this->shippingLineItemFactory = $shippingLineItemFactory;
     }
 
+    #[\Override]
     public function convertLineItems(Quote $quote): Collection
     {
         $quoteProductDemandsToConvert = [];

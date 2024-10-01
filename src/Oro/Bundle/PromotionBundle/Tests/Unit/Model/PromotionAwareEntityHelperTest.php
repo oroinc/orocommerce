@@ -18,6 +18,7 @@ class PromotionAwareEntityHelperTest extends \PHPUnit\Framework\TestCase
     /** @var PromotionAwareEntityHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

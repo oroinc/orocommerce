@@ -49,9 +49,7 @@ class RequestUpdateHandler extends UpdateHandlerFacade
         return new RedirectResponse($this->symfonyRouter->generate('oro_rfp_frontend_request_success', []));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function constructResponse(
         UpdateInterface $update,
         HttpRequest $request,

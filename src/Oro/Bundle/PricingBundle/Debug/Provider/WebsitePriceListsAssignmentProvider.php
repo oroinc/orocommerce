@@ -23,6 +23,7 @@ class WebsitePriceListsAssignmentProvider implements PriceListsAssignmentProvide
     ) {
     }
 
+    #[\Override]
     public function getPriceListAssignments(): ?array
     {
         $website = $this->requestHandler->getWebsite();

@@ -14,6 +14,7 @@ class ContentNodeEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private ContentNodeEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new ContentNodeEntityNameProvider();

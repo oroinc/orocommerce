@@ -15,9 +15,7 @@ class RequestProductPricesProviderTest extends TestCase
 
     private RequestProductPricesProvider $requestProductPricesProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestProductLineItemTierPricesProvider = $this->createMock(

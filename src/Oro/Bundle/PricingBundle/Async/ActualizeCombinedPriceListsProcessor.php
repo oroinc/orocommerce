@@ -50,17 +50,13 @@ class ActualizeCombinedPriceListsProcessor implements
         $this->dependentJob = $dependentJob;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [ActualizeCombinedPriceListTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $body = $message->getBody();

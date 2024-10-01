@@ -11,9 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class LoadRelatedProductData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -30,9 +28,7 @@ class LoadRelatedProductData extends AbstractFixture implements DependentFixture
         'product-5' => ['product-4']
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ProductRepository $productRepository */

@@ -11,17 +11,13 @@ use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
  */
 class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadWebsiteData::class, LoadPriceListDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $filePath = $this->getFileLocator()

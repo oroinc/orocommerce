@@ -13,17 +13,13 @@ class DropOldPriceListRelationTables implements Migration, RenameExtensionAwareI
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 2;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $schema->dropTable('orob2b_price_list_to_account');

@@ -12,6 +12,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
 
     private AbstractPlatform $platform;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->setDatagridIndexPath('oro_frontend_datagrid_index');
@@ -28,6 +29,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
     /**
      * @dataProvider restrictionSelectDataProvider
      */
+    #[\Override]
     public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {
         if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
@@ -39,9 +41,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         parent::testSearchRestriction($restrictionParams, $expectedProducts);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function restrictionSelectDataProvider(): array
     {
         return [
@@ -93,9 +93,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function restrictionGridDataProvider(): array
     {
         return [

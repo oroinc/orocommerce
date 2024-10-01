@@ -17,6 +17,7 @@ class CheckoutFactoryTest extends \PHPUnit\Framework\TestCase
 {
     private CheckoutFactory $checkoutFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutFactory = new CheckoutFactory(

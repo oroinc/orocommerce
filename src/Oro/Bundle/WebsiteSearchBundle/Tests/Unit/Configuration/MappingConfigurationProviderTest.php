@@ -19,6 +19,7 @@ class MappingConfigurationProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MappingConfigurationProvider */
     private $configurationProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $bundle1 = new TestBundle1();

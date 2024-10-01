@@ -13,9 +13,7 @@ class Configuration implements ConfigurationInterface
     const ROOT_NODE = 'oro_rfp';
     const DEFAULT_GUEST_RFP_OWNER = 'default_guest_rfp_owner';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

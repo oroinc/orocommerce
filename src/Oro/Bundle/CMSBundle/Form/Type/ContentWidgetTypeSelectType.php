@@ -22,9 +22,7 @@ class ContentWidgetTypeSelectType extends AbstractType
         $this->contentWidgetTypeProvider = $contentWidgetTypeProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         if (empty($options['choices'])) {
@@ -34,9 +32,7 @@ class ContentWidgetTypeSelectType extends AbstractType
         $view->vars = array_replace_recursive($view->vars, ['configs' => $options['configs']]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
@@ -47,17 +43,13 @@ class ContentWidgetTypeSelectType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return Select2ChoiceType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_cms_content_widget_type_select';

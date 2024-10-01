@@ -23,6 +23,7 @@ class CategoryEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryEntityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productIndexScheduler = $this->createMock(ProductIndexScheduler::class);

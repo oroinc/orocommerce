@@ -13,9 +13,7 @@ class LoadWebCatalogData extends AbstractFixture
     const CATALOG_2 = 'web_catalog.2';
     const CATALOG_3 = 'web_catalog.3';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ([self::CATALOG_1, self::CATALOG_2, self::CATALOG_3] as $catalogReference) {

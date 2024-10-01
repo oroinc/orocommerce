@@ -16,9 +16,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
     const ROLE_CHARGE_AUTHORIZED_PAYMENTS_PERMISSION = 'ROLE_CHARGE_PAYMENTS';
     const ROLE_VIEW_HISTORY = 'ROLE_ORDER_VIEW';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRolesData()
     {
         return [
@@ -60,9 +58,7 @@ class LoadChargeAuthorizedPaymentsPermissionUserData extends AbstractLoadMultipl
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getUsersData()
     {
         return [

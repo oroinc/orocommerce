@@ -46,9 +46,7 @@ class ProductSelectionGridExtension extends AbstractExtension
         $this->productListModifier = $productListModifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function visitDatasource(DatagridConfiguration $config, DatasourceInterface $datasource)
     {
         if (!$this->isApplicable($config) || !$datasource instanceof OrmDatasource) {
@@ -69,9 +67,7 @@ class ProductSelectionGridExtension extends AbstractExtension
         $this->applied = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config)
     {
         return

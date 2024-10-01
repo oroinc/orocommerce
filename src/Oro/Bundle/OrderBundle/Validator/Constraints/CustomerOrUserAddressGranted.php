@@ -16,17 +16,13 @@ class CustomerOrUserAddressGranted extends Constraint
     /** @var string The type of an order address (billing or shipping) */
     public $addressType;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_order_customer_or_user_address_granted';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

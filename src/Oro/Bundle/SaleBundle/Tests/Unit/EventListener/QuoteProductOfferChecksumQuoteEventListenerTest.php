@@ -19,6 +19,7 @@ class QuoteProductOfferChecksumQuoteEventListenerTest extends TestCase
 {
     private QuoteProductOfferChecksumQuoteEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new QuoteProductOfferChecksumQuoteEventListener();

@@ -84,6 +84,7 @@ class ProductCollectionSearchTermSegmentDoctrineListener implements ResetInterfa
         $this->scheduledSegments = [];
     }
 
+    #[\Override]
     public function reset(): void
     {
         $this->scheduledSegments = [];

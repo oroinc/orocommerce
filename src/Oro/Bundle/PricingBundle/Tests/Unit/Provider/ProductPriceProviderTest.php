@@ -42,6 +42,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceStorage = $this->createMock(ProductPriceStorageInterface::class);

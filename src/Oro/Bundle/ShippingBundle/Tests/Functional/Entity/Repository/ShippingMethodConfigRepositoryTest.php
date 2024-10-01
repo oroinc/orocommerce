@@ -14,6 +14,7 @@ class ShippingMethodConfigRepositoryTest extends WebTestCase
 {
     private ShippingMethodConfigRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

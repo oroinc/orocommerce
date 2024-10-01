@@ -78,9 +78,7 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         $this->assertCount(1, $visibilities);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function insertByCategoryDataProvider(): array
     {
         return [
@@ -96,9 +94,7 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function insertStaticDataProvider(): array
     {
         return ['expected_rows' => [5]];
@@ -107,14 +103,13 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
     /**
      * @return CustomerProductVisibilityResolved[]
      */
+    #[\Override]
     protected function getResolvedValues(): array
     {
         return $this->doctrine->getRepository(CustomerProductVisibilityResolved::class)->findAll();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getResolvedVisibility(
         array $visibilities,
         Product $product,
@@ -130,9 +125,7 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getSourceVisibilityByResolved(
         ?array $sourceVisibilities,
         BaseProductVisibilityResolved $resolveVisibility
@@ -147,25 +140,19 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getSourceRepository(): EntityRepository
     {
         return $this->getContainer()->get('doctrine')->getRepository(CustomerProductVisibility::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getRepository(): AbstractVisibilityRepository
     {
         return $this->getContainer()->get('oro_visibility.customer_product_repository');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function findByPrimaryKey(
         BaseProductVisibilityResolved $visibilityResolved
     ): BaseProductVisibilityResolved {
@@ -175,9 +162,7 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getScope(string $targetEntityReference): Scope
     {
         return $this->scopeManager->find(

@@ -31,6 +31,7 @@ class VirtualFieldsProductDecoratorFactoryTest extends \PHPUnit\Framework\TestCa
     /** @var VirtualFieldsProductDecoratorFactory */
     private $testedVirtualFieldsProductDecoratorFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converterMock = $this->createMock(VirtualFieldsSelectQueryConverter::class);

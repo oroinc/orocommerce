@@ -38,6 +38,7 @@ class TimeInTransitCacheProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TimeInTransitCacheProvider */
     private $timeInTransitCacheProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->address = new AddressStub();

@@ -22,9 +22,7 @@ class MoveStringToTextQuery extends ParametrizedMigrationQuery
         $this->table = $table;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -33,9 +31,7 @@ class MoveStringToTextQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->processQueries($logger);

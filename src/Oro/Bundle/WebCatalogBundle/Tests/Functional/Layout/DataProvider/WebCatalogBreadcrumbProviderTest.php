@@ -12,9 +12,7 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
 {
     use SearchExtensionTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

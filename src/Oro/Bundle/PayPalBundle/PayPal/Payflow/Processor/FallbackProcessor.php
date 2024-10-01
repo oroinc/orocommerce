@@ -9,18 +9,18 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
  */
 final class FallbackProcessor implements ProcessorInterface
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName()
     {
         throw new \BadMethodCallException('Fallback processor should not be used directly');
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCode()
     {
         throw new \BadMethodCallException('Fallback processor should not be used directly');

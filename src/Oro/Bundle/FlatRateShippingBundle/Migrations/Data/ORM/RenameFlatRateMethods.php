@@ -43,9 +43,7 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
      */
     protected $installed;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->integrationIdentifierGenerator = $container
@@ -55,9 +53,7 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
         $this->installed = $container->get(ApplicationState::class)->isInstalled();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         if ($this->installed) {

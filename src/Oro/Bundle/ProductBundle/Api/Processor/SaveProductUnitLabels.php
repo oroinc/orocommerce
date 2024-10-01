@@ -33,9 +33,7 @@ class SaveProductUnitLabels implements ProcessorInterface
         $this->mapping = $mapping;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

@@ -24,9 +24,7 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
         $this->platform = $platform;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -35,9 +33,7 @@ class ConvertPaymentTransactionOptionsToSecureArrayQuery extends ParametrizedMig
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

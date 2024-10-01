@@ -24,12 +24,14 @@ class PriceForProductUnitExistsValidatorTest extends ConstraintValidatorTestCase
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EntityRepository::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         $em = $this->createMock(ObjectManager::class);

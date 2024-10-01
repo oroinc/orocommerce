@@ -11,9 +11,7 @@ class ProductImageCollection extends Constraint
      */
     public $message = 'oro.product.product_image.type_restriction';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return ProductImageCollectionValidator::ALIAS;

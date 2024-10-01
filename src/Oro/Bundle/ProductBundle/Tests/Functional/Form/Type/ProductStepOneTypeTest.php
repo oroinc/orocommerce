@@ -19,6 +19,7 @@ class ProductStepOneTypeTest extends WebTestCase
     private AttributeFamily $defaultFamily;
     private CsrfTokenManagerInterface $tokenManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

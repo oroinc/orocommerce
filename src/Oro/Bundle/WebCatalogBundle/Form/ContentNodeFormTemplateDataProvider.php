@@ -22,6 +22,7 @@ class ContentNodeFormTemplateDataProvider implements FormTemplateDataProviderInt
         $this->sortOrderDialogTargetStorage = $sortOrderDialogTargetStorage;
     }
 
+    #[\Override]
     public function getData($entity, FormInterface $form, Request $request): array
     {
         if (!$entity instanceof ContentNode) {

@@ -20,9 +20,7 @@ class ProductPriceImportExportConfigurationProvider implements ImportExportConfi
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

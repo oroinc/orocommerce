@@ -28,6 +28,7 @@ class SidebarFormProviderTest extends TestCase
     private CombinedPriceListActivationRulesProvider|MockObject $activationRulesProvider;
     private SidebarFormProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestHandler = $this->createMock(DebugProductPricesPriceListRequestHandler::class);

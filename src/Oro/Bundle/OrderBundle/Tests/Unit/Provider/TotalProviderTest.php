@@ -19,6 +19,7 @@ class TotalProviderTest extends \PHPUnit\Framework\TestCase
 
     private RateConverterInterface $rateConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processorProvider = $this->createMock(TotalProcessorProvider::class);

@@ -13,6 +13,7 @@ class ParentCategoryFallbackProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $parentCategoryFallbackProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->parentCategoryFallbackProvider = new ParentCategoryFallbackProvider();

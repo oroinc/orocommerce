@@ -25,6 +25,7 @@ class OrderLineItemsCollectionTypeExtensionTest extends \PHPUnit\Framework\TestC
     /** @var OrderLineItemsCollectionTypeExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxValueManager = $this->createMock(TaxValueManager::class);

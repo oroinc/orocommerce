@@ -15,9 +15,7 @@ class LoadProductVisibilityScopedData extends LoadProductVisibilityData
      */
     protected $defaultWebsite;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->defaultWebsite = $this
@@ -28,27 +26,21 @@ class LoadProductVisibilityScopedData extends LoadProductVisibilityData
         parent::load($manager);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getScopeForProductVisibilities(): Scope
     {
         return $this->container->get('oro_visibility.provider.visibility_scope_provider')
             ->getProductVisibilityScope($this->defaultWebsite);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getScopeForCustomerGroupVisibilities(CustomerGroup $customerGroup): Scope
     {
         return $this->container->get('oro_visibility.provider.visibility_scope_provider')
             ->getCustomerGroupProductVisibilityScope($customerGroup, $this->defaultWebsite);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getScopeForCustomerVisibilities(Customer $customer): Scope
     {
         return $this->container->get('oro_visibility.provider.visibility_scope_provider')

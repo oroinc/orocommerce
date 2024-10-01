@@ -35,6 +35,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
 
     private array $units = ['item', 'kg'];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new PriceListProductPriceType();
@@ -43,9 +44,7 @@ class PriceListProductPriceTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);

@@ -69,7 +69,7 @@ class Partner extends AbstractOption
         Partner::WPAY => 'World Pay',
     ];
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

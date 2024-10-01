@@ -6,17 +6,13 @@ class EnumIdPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'ENUM_ID';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultValue()
     {
         return null;

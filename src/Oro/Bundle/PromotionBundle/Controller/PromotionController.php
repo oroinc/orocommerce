@@ -105,9 +105,7 @@ class PromotionController extends AbstractController
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

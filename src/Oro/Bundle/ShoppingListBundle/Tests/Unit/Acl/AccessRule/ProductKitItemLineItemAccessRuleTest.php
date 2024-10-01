@@ -12,6 +12,7 @@ class ProductKitItemLineItemAccessRuleTest extends TestCase
 {
     private ProductKitItemLineItemAccessRule $accessRule;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->accessRule = new ProductKitItemLineItemAccessRule();

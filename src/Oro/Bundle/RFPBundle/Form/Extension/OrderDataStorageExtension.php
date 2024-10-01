@@ -40,17 +40,13 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
         $this->productPriceCriteriaFactory = $productPriceCriteriaFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [OrderType::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->isApplicable()) {

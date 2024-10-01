@@ -27,9 +27,7 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
         $this->productAvailabilityProvider = $productAvailabilityProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $lineItems = $this->resolveValue($context, $this->propertyPath);
@@ -55,17 +53,13 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'rfp_allowed';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $option = reset($options);
@@ -83,17 +77,13 @@ class RfpAllowed extends AbstractCondition implements ContextAccessorAwareInterf
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->propertyPath]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->propertyPath], $factoryAccessor);

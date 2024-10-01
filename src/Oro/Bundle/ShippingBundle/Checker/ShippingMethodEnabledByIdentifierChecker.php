@@ -17,9 +17,7 @@ class ShippingMethodEnabledByIdentifierChecker implements ShippingMethodEnabledB
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEnabled(string $identifier): bool
     {
         $shippingMethod = $this->shippingMethodProvider->getShippingMethod($identifier);

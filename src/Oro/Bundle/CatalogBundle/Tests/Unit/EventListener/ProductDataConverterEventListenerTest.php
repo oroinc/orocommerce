@@ -11,6 +11,7 @@ class ProductDataConverterEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductDataConverterEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductDataConverterEventListener();

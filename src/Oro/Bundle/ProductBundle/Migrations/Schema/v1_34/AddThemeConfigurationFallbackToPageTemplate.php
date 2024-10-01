@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class AddThemeConfigurationFallbackToPageTemplate implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->updatePageTemplateFieldConfig($queries);

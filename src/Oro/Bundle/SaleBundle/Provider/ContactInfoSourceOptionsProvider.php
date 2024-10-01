@@ -25,6 +25,7 @@ class ContactInfoSourceOptionsProvider implements OptionsProviderInterface
     /**
      * @return array
      */
+    #[\Override]
     public function getOptions()
     {
         return [

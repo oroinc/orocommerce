@@ -8,9 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\TextFilteredIndexDataProvider;
 
 class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createIndexDataProvider(): IndexDataProvider
     {
         return new TextFilteredIndexDataProvider(
@@ -23,9 +21,9 @@ class TextFilteredIndexDataProviderTest extends IndexDataProviderTest
     }
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function entitiesDataProvider(): array
     {
         return array_merge(

@@ -14,6 +14,7 @@ class ProductSearchFilterByIntFieldWithStringValueTest extends FrontendRestJsonA
 {
     use WebsiteSearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,6 +26,7 @@ class ProductSearchFilterByIntFieldWithStringValueTest extends FrontendRestJsonA
         ]);
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

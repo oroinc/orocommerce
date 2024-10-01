@@ -21,6 +21,7 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
 {
     private CustomerListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -34,25 +35,19 @@ class CustomerListenerTest extends AbstractPriceListCollectionAwareListenerTest
         $this->listener->addFeature('feature1');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRelationClass()
     {
         return PriceListToCustomer::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFallbackClass()
     {
         return PriceListCustomerFallback::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRelationRepositoryClass()
     {
         return PriceListToCustomerRepository::class;

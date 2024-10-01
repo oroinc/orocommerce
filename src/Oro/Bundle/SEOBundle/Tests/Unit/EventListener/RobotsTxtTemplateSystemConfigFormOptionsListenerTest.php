@@ -22,6 +22,7 @@ class RobotsTxtTemplateSystemConfigFormOptionsListenerTest extends TestCase
 
     private RobotsTxtTemplateSystemConfigFormOptionsListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteRepository = $this->createMock(EntityRepository::class);

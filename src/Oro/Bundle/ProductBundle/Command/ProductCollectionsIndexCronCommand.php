@@ -48,6 +48,7 @@ class ProductCollectionsIndexCronCommand extends Command implements CronCommandS
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->addOption('partial-reindex', null, null, 'Perform indexation only for added or removed products')
@@ -69,6 +70,7 @@ HELP
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $hasSchedules = false;
@@ -139,9 +141,7 @@ HELP
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultDefinition(): string
     {
         return $this->configManager->get(ProductCollectionsScheduleConfigurationListener::CONFIG_FIELD);

@@ -18,6 +18,7 @@ class PlaceholderProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->placeholder = $this->createMock(PlaceholderInterface::class);

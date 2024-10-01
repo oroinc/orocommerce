@@ -74,9 +74,7 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (static::$data as $key => $item) {
@@ -109,9 +107,7 @@ class LoadCheckoutSubtotals extends AbstractFixture implements DependentFixtureI
         $manager->flush();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

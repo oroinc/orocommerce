@@ -8,17 +8,13 @@ class AttributeFamilyUsageInVariantField extends Constraint
 {
     public $message = 'oro.product.attribute_family.used_in_product_variant_field.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return AttributeFamilyUsageInVariantFieldValidator::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

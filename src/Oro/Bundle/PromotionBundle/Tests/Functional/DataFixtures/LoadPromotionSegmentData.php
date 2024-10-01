@@ -32,9 +32,7 @@ class LoadPromotionSegmentData extends AbstractFixture implements DependentFixtu
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $segmentTypeRepository = $manager->getRepository(SegmentType::class);
@@ -62,9 +60,7 @@ class LoadPromotionSegmentData extends AbstractFixture implements DependentFixtu
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadProductData::class];

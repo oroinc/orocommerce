@@ -26,9 +26,7 @@ class FedexRateServiceValidateConnectionRequestSoapFactory implements FedexReque
         $this->systemShippingOriginProvider = $systemShippingOriginProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(FedexIntegrationSettings $settings): FedexRequestInterface
     {
         $shippingOrigin = $this->systemShippingOriginProvider->getSystemShippingOrigin();

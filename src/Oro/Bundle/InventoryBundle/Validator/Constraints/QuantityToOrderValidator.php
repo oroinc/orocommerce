@@ -23,6 +23,7 @@ class QuantityToOrderValidator extends ConstraintValidator
         $this->quantityToOrderValidator = $quantityToOrderValidatorService;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof ProductHolderInterface || !$value instanceof QuantityAwareInterface) {

@@ -27,9 +27,7 @@ class AllowUnlistedConfiguredPriceProviderDecorator extends AbstractShippingConf
         parent::__construct($shippingConfiguredPriceProvider);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(
         ComposedShippingMethodConfigurationInterface $configuration,
         ShippingContextInterface $context
@@ -64,9 +62,7 @@ class AllowUnlistedConfiguredPriceProviderDecorator extends AbstractShippingConf
         return $resultingMethodViews;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice(
         $methodId,
         $methodTypeId,

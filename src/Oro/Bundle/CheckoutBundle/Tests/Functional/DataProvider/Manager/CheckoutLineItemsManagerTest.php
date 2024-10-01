@@ -14,6 +14,7 @@ class CheckoutLineItemsManagerTest extends WebTestCase
 {
     private CheckoutLineItemsManager $checkoutLineItemsManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -34,6 +34,7 @@ class CheckoutToOrderConverterTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutToOrderConverter */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);

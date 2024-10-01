@@ -7,6 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Page;
 
 class RequestViewPage extends Page
 {
+    #[\Override]
     public function open(array $parameters = [])
     {
         throw new PendingException('Not implemented');

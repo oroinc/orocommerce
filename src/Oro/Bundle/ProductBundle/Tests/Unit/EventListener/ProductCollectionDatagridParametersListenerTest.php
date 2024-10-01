@@ -15,6 +15,7 @@ class ProductCollectionDatagridParametersListenerTest extends \PHPUnit\Framework
     /** @var ProductCollectionDatagridParametersListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductCollectionDatagridParametersListener();

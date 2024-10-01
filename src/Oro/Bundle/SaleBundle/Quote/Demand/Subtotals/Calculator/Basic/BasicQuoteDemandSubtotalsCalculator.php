@@ -18,9 +18,7 @@ class BasicQuoteDemandSubtotalsCalculator implements QuoteDemandSubtotalsCalcula
         $this->totalProcessorProvider = $totalProcessorProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculateSubtotals(QuoteDemand $quoteDemand)
     {
         return $this->totalProcessorProvider->getTotalWithSubtotalsAsArray($quoteDemand);

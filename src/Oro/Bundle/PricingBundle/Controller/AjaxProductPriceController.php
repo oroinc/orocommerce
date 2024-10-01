@@ -77,10 +77,6 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         );
     }
 
-    /**
-     *
-     * {@inheritdoc}
-     */
     #[Route(
         path: '/delete-product-price/{priceListId}/{productPriceId}',
         name: 'oro_product_price_delete',
@@ -126,9 +122,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         return new JsonResponse($response, $code);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

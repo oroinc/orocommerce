@@ -12,9 +12,7 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
  */
 class LifetimeByInvalidateCacheAtFieldProvider implements LifetimeProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLifetime(UPSSettings $settings, int $lifetime): int
     {
         $interval = 0;
@@ -29,21 +27,7 @@ class LifetimeByInvalidateCacheAtFieldProvider implements LifetimeProviderInterf
         return $interval;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * Explanation:
-     *
-     * UPSSettings invalidateCacheAt field is null.
-     * Value was saved in to the cache at 10:00 PM
-     * and lifetime was set to max value, because invalidateCacheAt was null. See $this->getLifetime()
-     * For example, lifetime is one day.
-     * After that admin set invalidateCacheAt to 12:00 PM.
-     *
-     * As we know, cache of stored value will not be flushed, because we don't have any additional tools.
-     *
-     * For fixing this issue, invalidateCacheAt timestamp is added to cache key.
-     */
+    #[\Override]
     public function generateLifetimeAwareKey(UPSSettings $settings, string $key): string
     {
         $invalidateAt = $settings->getUpsInvalidateCacheAt();

@@ -15,9 +15,7 @@ class Configuration implements ConfigurationInterface
 
     public const ROOT_NODE = 'oro_website_search_suggestion';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

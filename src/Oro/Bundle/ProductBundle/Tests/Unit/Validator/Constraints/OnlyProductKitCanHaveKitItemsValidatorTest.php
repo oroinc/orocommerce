@@ -28,6 +28,7 @@ class OnlyProductKitCanHaveKitItemsValidatorTest extends ConstraintValidatorTest
 
     private UnitOfWork|MockObject $unitOfWork;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
@@ -39,6 +40,7 @@ class OnlyProductKitCanHaveKitItemsValidatorTest extends ConstraintValidatorTest
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): OnlyProductKitCanHaveKitItemsValidator
     {
         return new OnlyProductKitCanHaveKitItemsValidator();

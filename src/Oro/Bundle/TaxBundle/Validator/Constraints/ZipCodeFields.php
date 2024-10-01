@@ -14,9 +14,7 @@ class ZipCodeFields extends Constraint
     public string $onlyNumericRangesSupported = 'oro.tax.validator.constraints.only_numeric_ranges_supported';
     public string $zipCodeCanNotBeEmpty = 'oro.tax.validator.constraints.zip_code_can_not_be_empty';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

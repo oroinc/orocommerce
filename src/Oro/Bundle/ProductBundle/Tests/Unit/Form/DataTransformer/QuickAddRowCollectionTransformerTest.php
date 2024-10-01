@@ -17,6 +17,7 @@ class QuickAddRowCollectionTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddRowCollectionTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);

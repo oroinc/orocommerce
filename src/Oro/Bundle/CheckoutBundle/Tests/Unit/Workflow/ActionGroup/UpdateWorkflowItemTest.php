@@ -18,6 +18,7 @@ class UpdateWorkflowItemTest extends TestCase
     private ActionExecutor|MockObject $actionExecutor;
     private UpdateWorkflowItem $updateWorkflowItem;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

@@ -11,9 +11,7 @@ class WYSIWYGStyle extends Constraint
 {
     public string $message = 'oro.cms.wysiwyg.not_permitted_style.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return WYSIWYGValidator::class;

@@ -17,6 +17,7 @@ class CallbackHandlerTest extends \PHPUnit\Framework\TestCase
 
     private PaymentTransactionProvider|\PHPUnit\Framework\MockObject\MockObject $paymentTransactionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

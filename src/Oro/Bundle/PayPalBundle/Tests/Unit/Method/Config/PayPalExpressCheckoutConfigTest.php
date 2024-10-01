@@ -15,9 +15,7 @@ class PayPalExpressCheckoutConfigTest extends AbstractPayPalConfigTest
     /** @var PayPalExpressCheckoutConfigInterface */
     protected $config;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPaymentConfig(): PaymentConfigInterface
     {
         $params = [

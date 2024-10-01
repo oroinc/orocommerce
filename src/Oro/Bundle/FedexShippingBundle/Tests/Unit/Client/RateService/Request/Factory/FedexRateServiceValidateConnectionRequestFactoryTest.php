@@ -29,6 +29,7 @@ class FedexRateServiceValidateConnectionRequestFactoryTest extends \PHPUnit\Fram
     /** @var FedexRateServiceValidateConnectionRequestFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->systemShippingOriginProvider = $this->createMock(SystemShippingOriginProvider::class);

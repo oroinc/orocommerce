@@ -9,17 +9,16 @@ use Symfony\Component\Form\FormView;
 
 class CollectionSortOrderGridTypeStub extends CollectionSortOrderGridType
 {
-    /** {@inheritdoc} */
     public function __construct()
     {
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['sortOrderConstraints'] = [

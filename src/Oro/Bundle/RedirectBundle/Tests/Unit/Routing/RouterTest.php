@@ -26,6 +26,7 @@ class RouterTest extends \PHPUnit\Framework\TestCase
     /** @var Router|\PHPUnit\Framework\MockObject\MockObject */
     private $router;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlDecisionMaker = $this->createMock(MatchedUrlDecisionMaker::class);

@@ -4,9 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Schema\v1_10;
 
 class UpdateCategoryIdsInProductsMySql extends UpdateCategoryIdsInProductsAbstract
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getQuery()
     {
         return 'UPDATE %s p 

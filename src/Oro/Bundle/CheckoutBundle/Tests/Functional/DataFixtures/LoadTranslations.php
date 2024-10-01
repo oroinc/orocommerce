@@ -10,9 +10,7 @@ use Symfony\Component\Translation\Loader\YamlFileLoader;
 
 class LoadTranslations extends LoadWorkflowTranslations
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $loader = new YamlFileLoader();

@@ -44,6 +44,7 @@ class LoadProductKitData extends AbstractFixture implements
     /** @var Product[] */
     private array $products = [];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -141,10 +142,10 @@ class LoadProductKitData extends AbstractFixture implements
     }
 
     /**
-     * {@inheritdoc}
      *
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var EntityManager $manager */

@@ -19,6 +19,7 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -37,6 +38,7 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         }
     }
 
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/requests';

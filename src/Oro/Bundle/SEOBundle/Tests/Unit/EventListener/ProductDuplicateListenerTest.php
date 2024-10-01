@@ -23,9 +23,7 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductDuplicateListener */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

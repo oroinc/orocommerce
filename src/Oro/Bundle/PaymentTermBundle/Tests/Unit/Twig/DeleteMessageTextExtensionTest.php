@@ -17,6 +17,7 @@ class DeleteMessageTextExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var DeleteMessageTextExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->deleteMessageTextGenerator = $this->createMock(DeleteMessageTextGenerator::class);

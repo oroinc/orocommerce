@@ -34,9 +34,7 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractCategoryResolved
         $this->visibilityChangeCustomerGroupSubtreeCacheBuilder = $visibilityChangeCustomerGroupSubtreeCacheBuilder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         /** @var CustomerGroupCategoryVisibility $visibilitySettings */
@@ -96,17 +94,13 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractCategoryResolved
         $this->triggerCategoriesReindexation($categories);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         return $visibilitySettings instanceof CustomerGroupCategoryVisibility;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCache(Scope $scope = null)
     {
         $resolvedRepository = $this->getCustomerGroupCategoryRepository();

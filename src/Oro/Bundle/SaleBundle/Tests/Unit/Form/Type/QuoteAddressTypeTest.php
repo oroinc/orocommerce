@@ -40,6 +40,7 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
     /** @var QuoteAddressType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $addressFormatter = $this->createMock(AddressFormatter::class);
@@ -68,9 +69,7 @@ class QuoteAddressTypeTest extends AddressFormExtensionTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge(

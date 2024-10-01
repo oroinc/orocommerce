@@ -28,6 +28,7 @@ final class AddSuggestToProductAutocompleteListenerTest extends \PHPUnit\Framewo
 
     private ProcessAutocompleteDataEvent&MockObject $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new AddSuggestToProductAutocompleteListener(

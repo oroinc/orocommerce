@@ -29,6 +29,7 @@ class ScopeNormalizer implements NormalizerInterface
      * @param Scope $scope
      * @return string
      */
+    #[\Override]
     public function normalize($scope)
     {
         if (!$scope instanceof Scope) {
@@ -42,6 +43,7 @@ class ScopeNormalizer implements NormalizerInterface
      * @param array $scopeData
      * @return Scope|null
      */
+    #[\Override]
     public function denormalize(array $scopeData)
     {
         $resolver = $this->getOptionResolver();

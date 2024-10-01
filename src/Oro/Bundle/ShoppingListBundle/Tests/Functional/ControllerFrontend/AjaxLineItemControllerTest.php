@@ -21,6 +21,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     private const LINE_ITEM_3 = 'ajax_line_shopping_list_line_item.3';
     private const LINE_ITEM_4 = 'ajax_line_shopping_list_line_item.4';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

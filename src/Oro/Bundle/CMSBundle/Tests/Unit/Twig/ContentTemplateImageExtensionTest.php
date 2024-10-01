@@ -14,6 +14,7 @@ class ContentTemplateImageExtensionTest extends \PHPUnit\Framework\TestCase
 
     private ContentTemplateImageExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);

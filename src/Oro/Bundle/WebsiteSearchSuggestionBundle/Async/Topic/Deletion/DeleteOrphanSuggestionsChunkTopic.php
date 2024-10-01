@@ -14,16 +14,19 @@ class DeleteOrphanSuggestionsChunkTopic extends AbstractTopic
 
     private const NAME = 'oro_website_search_suggestion.delete_orphan_suggestions_chunk';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return "Execute delete operations for orphan suggestion ids.";
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

@@ -47,17 +47,13 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCustomers::class, LoadGroups::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $accessor = $this->container->get('oro_payment_term.provider.payment_term_association');

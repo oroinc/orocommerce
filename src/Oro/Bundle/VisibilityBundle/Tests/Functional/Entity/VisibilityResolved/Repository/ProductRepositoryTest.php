@@ -33,6 +33,7 @@ class ProductRepositoryTest extends WebTestCase
     private ScopeManager $scopeManager;
     private InsertFromSelectQueryExecutor $insertExecutor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

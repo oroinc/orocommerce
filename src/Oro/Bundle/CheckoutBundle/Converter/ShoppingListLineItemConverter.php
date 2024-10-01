@@ -19,9 +19,7 @@ class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterfac
         $this->productKitItemLineItemConverter = $productKitItemLineItemConverter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isSourceSupported($source)
     {
         return $source instanceof ShoppingList;
@@ -29,8 +27,8 @@ class ShoppingListLineItemConverter implements CheckoutLineItemConverterInterfac
 
     /**
      * @param ShoppingList $source
-     * {@inheritDoc}
      */
+    #[\Override]
     public function convert($source)
     {
         $lineItems = $source->getLineItems();

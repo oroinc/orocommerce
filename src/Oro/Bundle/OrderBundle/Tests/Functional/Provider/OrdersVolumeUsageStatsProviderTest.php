@@ -10,6 +10,7 @@ class OrdersVolumeUsageStatsProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -21,6 +22,7 @@ class OrdersVolumeUsageStatsProviderTest extends WebTestCase
         $configManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = self::getConfigManager();

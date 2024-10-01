@@ -23,17 +23,13 @@ abstract class AbstractApiPriceListRelationTest extends RestJsonApiTestCase
 
     abstract protected function assertFirstRelationMessageSent();
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return parent::getRequestDataFolderName() . DIRECTORY_SEPARATOR . $this->getAliceFilesFolderName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getResponseDataFolderName(): string
     {
         return parent::getResponseDataFolderName() . DIRECTORY_SEPARATOR . $this->getAliceFilesFolderName();

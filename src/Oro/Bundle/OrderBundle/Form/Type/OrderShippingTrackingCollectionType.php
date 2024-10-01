@@ -13,18 +13,16 @@ class OrderShippingTrackingCollectionType extends AbstractType
 {
     const NAME = 'oro_order_shipping_tracking_collection';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return CollectionType::class;
     }
 
     /**
-     * {@inheritdoc}
      * @throws AccessException
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -41,25 +39,18 @@ class OrderShippingTrackingCollectionType extends AbstractType
         $resolver->setAllowedTypes('page_component', 'string');
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['page_component'] = $options['page_component'];

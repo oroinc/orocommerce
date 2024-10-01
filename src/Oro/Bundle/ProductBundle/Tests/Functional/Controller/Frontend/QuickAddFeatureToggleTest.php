@@ -16,6 +16,7 @@ class QuickAddFeatureToggleTest extends WebTestCase
 
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

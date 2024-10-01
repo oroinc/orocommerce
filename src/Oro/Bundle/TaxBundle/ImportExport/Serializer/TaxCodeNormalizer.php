@@ -14,8 +14,8 @@ class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAware
     /**
      * @param AbstractTaxCode $object
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         if (!$object instanceof AbstractTaxCode) {
@@ -34,9 +34,7 @@ class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAware
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         /** @var AbstractTaxCode $object */
@@ -54,17 +52,13 @@ class TaxCodeNormalizer implements ContextAwareNormalizerInterface, ContextAware
         return $object;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, AbstractTaxCode::class, true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof AbstractTaxCode;

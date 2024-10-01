@@ -8,9 +8,7 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\StringSearchableAttributeType;
 
 class StringSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return StringSearchableAttributeType::class;

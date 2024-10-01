@@ -21,9 +21,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
 
     public const PAYMENT_METHOD = 'payment_method';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadCustomerUserData::class];
@@ -124,9 +122,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $propertyAccessor = PropertyAccess::createPropertyAccessor();

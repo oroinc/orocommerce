@@ -24,9 +24,7 @@ class UniqueSlugPrototypeValidator extends ConstraintValidator
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof ContentNode) {

@@ -39,6 +39,7 @@ class QuoteDemandLineItemConverterTest extends TestCase
 
     private QuoteDemandLineItemConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->validationGroupsProvider = $this->createMock(CheckoutValidationGroupsBySourceEntityProvider::class);

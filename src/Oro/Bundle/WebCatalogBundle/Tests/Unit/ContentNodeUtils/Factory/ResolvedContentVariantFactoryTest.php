@@ -20,6 +20,7 @@ class ResolvedContentVariantFactoryTest extends \PHPUnit\Framework\TestCase
 {
     private ResolvedContentVariantFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

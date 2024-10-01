@@ -86,9 +86,7 @@ class PageController extends AbstractController
             ->getChangedSlugsData($page, PageType::class));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [

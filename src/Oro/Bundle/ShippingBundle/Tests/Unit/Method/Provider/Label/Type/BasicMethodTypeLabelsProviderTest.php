@@ -16,6 +16,7 @@ class BasicMethodTypeLabelsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var BasicMethodTypeLabelsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->methodProvider = $this->createMock(ShippingMethodProviderInterface::class);

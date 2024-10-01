@@ -10,9 +10,7 @@ use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMet
 
 class LoadPaymentMethodsConfigsRuleData extends BaseFixture
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         parent::load($manager);
@@ -29,9 +27,7 @@ class LoadPaymentMethodsConfigsRuleData extends BaseFixture
         $manager->flush();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [LoadMoneyOrderChannelData::class]);

@@ -21,16 +21,19 @@ class SearchTermProductCollectionSegmentReindexTopic extends AbstractTopic
     {
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro_product.search_term_product_collection_segment_reindex';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Initiates reindex of the product collection segment of the persisted/updated {@see SearchTerm} entity.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

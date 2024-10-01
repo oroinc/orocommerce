@@ -15,9 +15,7 @@ class Configuration implements ConfigurationInterface
     const CATEGORY_IMAGE_PLACEHOLDER = 'category_image_placeholder';
     const SEARCH_AUTOCOMPLETE_MAX_CATEGORIES = 'search_autocomplete_max_categories';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

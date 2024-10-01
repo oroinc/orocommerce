@@ -22,9 +22,7 @@ class ExpressionLanguageSyntaxValidator extends ConstraintValidator
         $this->innerExpressionLanguageValidator = $innerExpressionLanguageValidator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($expression, Constraint $constraint): void
     {
         if (is_numeric($expression) || is_null($expression)) {
@@ -40,6 +38,7 @@ class ExpressionLanguageSyntaxValidator extends ConstraintValidator
         $this->innerExpressionLanguageValidator->validate($expression, $constraint);
     }
 
+    #[\Override]
     public function initialize(ExecutionContextInterface $context): void
     {
         $this->innerExpressionLanguageValidator->initialize($context);

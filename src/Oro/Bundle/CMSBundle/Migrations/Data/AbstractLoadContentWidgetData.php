@@ -23,17 +23,13 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
 {
     protected ?ContainerInterface $container = null;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -49,9 +45,7 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
         array $row
     ): void;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organization = $this->getOrganization($manager);

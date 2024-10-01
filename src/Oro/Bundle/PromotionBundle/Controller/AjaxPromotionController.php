@@ -54,9 +54,7 @@ class AjaxPromotionController extends AbstractController
         return new JsonResponse($view);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

@@ -26,6 +26,7 @@ class AccessTokenProvider implements AccessTokenProviderInterface
     ) {
     }
 
+    #[\Override]
     public function getAccessToken(
         UPSTransport $transport,
         RestClientInterface $client,

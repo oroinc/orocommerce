@@ -10,32 +10,23 @@ class ReturnUrl extends BaseReturnUrl implements OptionsDependentInterface
 {
     const RETURNURL = 'RETURNURL';
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         parent::__construct(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         return isset($options[Action::ACTION]) && $options[Action::ACTION] === Action::SET_EC;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         parent::configureOption($resolver);

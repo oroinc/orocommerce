@@ -36,9 +36,7 @@ class PromotionExtension extends AbstractExtension implements ServiceSubscriberI
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -143,9 +141,7 @@ class PromotionExtension extends AbstractExtension implements ServiceSubscriberI
         return $this->getCouponCodeGenerator()->generateOne($codeGenerationOptions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

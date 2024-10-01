@@ -20,6 +20,7 @@ class MergeByPriorityPricesSelectedPriceProvider implements SelectedPriceProvide
     ) {
     }
 
+    #[\Override]
     public function getSelectedPricesIds(array $priceListRelations, Product $product): array
     {
         $priceRepo = $this->registry->getRepository(ProductPrice::class);

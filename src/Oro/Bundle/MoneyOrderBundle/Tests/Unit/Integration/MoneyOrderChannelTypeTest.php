@@ -9,6 +9,7 @@ class MoneyOrderChannelTypeTest extends \PHPUnit\Framework\TestCase
     /** @var MoneyOrderChannelType */
     private $channel;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channel = new MoneyOrderChannelType();

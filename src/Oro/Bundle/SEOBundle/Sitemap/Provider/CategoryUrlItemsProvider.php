@@ -9,9 +9,7 @@ class CategoryUrlItemsProvider extends UrlItemsProvider
 {
     use FeatureCheckerHolderTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlItems(WebsiteInterface $website, $version)
     {
         if (!$this->isFeaturesEnabled($website)) {

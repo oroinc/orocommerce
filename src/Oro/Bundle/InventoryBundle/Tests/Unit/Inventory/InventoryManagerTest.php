@@ -21,6 +21,7 @@ class InventoryManagerTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryManager */
     private $inventoryManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

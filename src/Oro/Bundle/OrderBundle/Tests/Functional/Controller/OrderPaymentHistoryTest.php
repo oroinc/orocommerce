@@ -11,6 +11,7 @@ class OrderPaymentHistoryTest extends WebTestCase
 {
     private const PAYMENT_HISTORY_SECTION_NAME = 'Payment History';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

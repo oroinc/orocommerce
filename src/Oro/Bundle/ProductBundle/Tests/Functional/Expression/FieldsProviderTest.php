@@ -10,6 +10,7 @@ class FieldsProviderTest extends WebTestCase
 {
     private FieldsProviderInterface $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([]);

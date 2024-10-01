@@ -39,9 +39,7 @@ class LoadGuestCombinedPriceLists extends AbstractCombinedPriceListsFixture
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $group = $manager->getRepository(CustomerGroup::class)
@@ -52,9 +50,7 @@ class LoadGuestCombinedPriceLists extends AbstractCombinedPriceListsFixture
         parent::load($manager);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

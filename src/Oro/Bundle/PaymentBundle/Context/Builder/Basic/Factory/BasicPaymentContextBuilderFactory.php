@@ -11,6 +11,7 @@ use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
  */
 class BasicPaymentContextBuilderFactory implements PaymentContextBuilderFactoryInterface
 {
+    #[\Override]
     public function createPaymentContextBuilder(
         object $sourceEntity,
         mixed $sourceEntityId

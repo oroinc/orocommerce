@@ -26,9 +26,7 @@ class LoadContentVariantScopes extends AbstractFixture implements DependentFixtu
     public const NODE_2_VARIANT_2 = 'web_catalog.content_variant.subnode_2_with_custom_scopes';
     public const NODE_2_VARIANT_2_SCOPE = 'web_catalog.1.node.2.variant.2.scope1';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -37,9 +35,7 @@ class LoadContentVariantScopes extends AbstractFixture implements DependentFixtu
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var WebCatalog $webCatalog */

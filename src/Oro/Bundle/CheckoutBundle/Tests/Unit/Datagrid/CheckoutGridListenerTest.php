@@ -49,6 +49,7 @@ class CheckoutGridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutRepository = $this->createMock(CheckoutRepository::class);

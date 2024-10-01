@@ -21,6 +21,7 @@ class RestrictedProductFieldsExtension extends AbstractTypeExtension
     {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if (!$this->fieldAclHelper->isFieldAclEnabled(Product::class)) {
@@ -60,6 +61,7 @@ class RestrictedProductFieldsExtension extends AbstractTypeExtension
         FormUtils::replaceFieldOptionsRecursive($form, 'images', $options);
     }
 
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];

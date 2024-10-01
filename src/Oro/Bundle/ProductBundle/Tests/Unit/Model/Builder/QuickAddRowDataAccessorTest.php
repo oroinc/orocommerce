@@ -17,6 +17,7 @@ class QuickAddRowDataAccessorTest extends \PHPUnit\Framework\TestCase
 {
     private QuickAddRowDataAccessor $dataAccessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dataAccessor = new QuickAddRowDataAccessor();

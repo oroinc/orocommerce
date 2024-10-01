@@ -24,6 +24,7 @@ class ProductLineItemsHolderFactory implements ProductLineItemsHolderFactoryInte
      *
      * @return ProductLineItemsHolderInterface
      */
+    #[\Override]
     public function createFromLineItems(Collection|array $lineItems): ProductLineItemsHolderInterface
     {
         if (!$lineItems instanceof Collection) {

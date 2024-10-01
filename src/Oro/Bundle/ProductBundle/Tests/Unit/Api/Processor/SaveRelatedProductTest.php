@@ -25,6 +25,7 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
     /** @var SaveRelatedProduct */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -10,7 +10,7 @@ class PayPal implements Option\OptionsAwareInterface, ProcessorInterface
     const CODE = 'PayPal';
     const NAME = 'PayPal';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOptions(Option\OptionsResolver $resolver)
     {
         if ($resolver->isDefined(GatewayOption\Swipe::SWIPE)) {
@@ -18,13 +18,13 @@ class PayPal implements Option\OptionsAwareInterface, ProcessorInterface
         }
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName()
     {
         return PayPal::CODE;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCode()
     {
         return PayPal::NAME;

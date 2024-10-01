@@ -32,6 +32,7 @@ class ProductKitLineItemPriceFactory implements ProductLineItemPriceFactoryInter
         $this->roundingService = $roundingService;
     }
 
+    #[\Override]
     public function createForProductLineItem(
         ProductLineItemInterface|ProductKitItemLineItemsAwareInterface $lineItem,
         ProductPriceInterface|ProductKitPriceDTO $productPrice
@@ -81,6 +82,7 @@ class ProductKitLineItemPriceFactory implements ProductLineItemPriceFactoryInter
         return $productKitLineItemPrice;
     }
 
+    #[\Override]
     public function isSupported(
         ProductLineItemInterface|ProductKitItemLineItemsAwareInterface $lineItem,
         ProductPriceInterface|ProductKitPriceDTO $productPrice

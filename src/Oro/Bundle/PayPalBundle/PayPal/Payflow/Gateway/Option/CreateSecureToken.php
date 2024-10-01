@@ -10,7 +10,7 @@ class CreateSecureToken extends AbstractBooleanOption
 {
     const CREATESECURETOKEN = 'CREATESECURETOKEN';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

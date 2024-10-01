@@ -211,9 +211,7 @@ class ShoppingListLineItemHandler implements ResetInterface
         return $isAllowed;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset(): void
     {
         $this->productUnits = [];

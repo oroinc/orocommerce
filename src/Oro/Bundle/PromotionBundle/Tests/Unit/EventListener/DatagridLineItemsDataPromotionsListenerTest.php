@@ -35,6 +35,7 @@ class DatagridLineItemsDataPromotionsListenerTest extends TestCase
 
     private DatagridLineItemsDataPromotionsListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);

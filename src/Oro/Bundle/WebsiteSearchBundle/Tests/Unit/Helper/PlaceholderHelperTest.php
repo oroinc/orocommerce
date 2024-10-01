@@ -19,6 +19,7 @@ class PlaceholderHelperTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->placeholderRegistry = $this->createMock(PlaceholderRegistry::class);

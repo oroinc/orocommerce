@@ -18,6 +18,7 @@ class OrderEntityListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->appliedPromotionManager = $this->createMock(AppliedPromotionManager::class);

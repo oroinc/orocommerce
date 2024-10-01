@@ -12,6 +12,7 @@ class QuoteEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private QuoteEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

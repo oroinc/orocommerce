@@ -11,9 +11,7 @@ class RemoveWorkflowFieldsMigration implements Migration
 {
     use RemoveWorkflowFieldsTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->removeWorkflowFields($schema->getTable('oro_checkout'));

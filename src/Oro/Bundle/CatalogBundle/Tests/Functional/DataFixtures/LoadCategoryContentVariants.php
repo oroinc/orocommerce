@@ -10,13 +10,13 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadCategoryContentVariants extends AbstractFixture implements DependentFixtureInterface
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCategoryProductData::class];
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->createTestContentVariant(

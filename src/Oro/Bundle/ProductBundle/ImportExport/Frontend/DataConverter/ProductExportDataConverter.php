@@ -21,9 +21,7 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         $this->configProvider = $configProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isFieldAvailableForExport(string $entityName, string $fieldName): bool
     {
         if (!is_a($entityName, Product::class, true)) {
@@ -54,9 +52,7 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         return [$rules, $backendHeaders];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRelatedEntityRulesAndBackendHeaders(
         $entityName,
         $singleRelationDeepLevel,
@@ -84,9 +80,7 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRelatedEntityRules(
         $entityName,
         $singleRelationDeepLevel,
@@ -110,9 +104,7 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntityRulesAndBackendHeaders(
         $entityName,
         $fullData = false,
@@ -133,6 +125,7 @@ class ProductExportDataConverter extends PropertyPathTitleDataConverter
         return [$rules, $backendHeaders];
     }
 
+    #[\Override]
     protected function getFieldHeader($entityName, $field): string
     {
         if (!is_array($field) || !array_key_exists('name', $field)) {

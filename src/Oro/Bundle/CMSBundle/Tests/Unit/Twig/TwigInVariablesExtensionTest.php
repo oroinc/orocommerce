@@ -21,6 +21,7 @@ class TwigInVariablesExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var TwigInVariablesExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cmsTwigRenderer = $this->createMock(Environment::class);

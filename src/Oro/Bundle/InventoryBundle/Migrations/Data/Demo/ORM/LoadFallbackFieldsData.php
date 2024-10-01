@@ -31,17 +31,13 @@ class LoadFallbackFieldsData extends AbstractEntityReferenceFixture implements D
         'backOrder',
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductCategoryDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var CategoryRepository $categoryRepository */

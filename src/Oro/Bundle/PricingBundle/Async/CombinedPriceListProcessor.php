@@ -50,17 +50,13 @@ class CombinedPriceListProcessor implements MessageProcessorInterface, TopicSubs
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [MassRebuildCombinedPriceListsTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {

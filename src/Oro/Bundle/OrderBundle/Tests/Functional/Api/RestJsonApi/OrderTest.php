@@ -19,6 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class OrderTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

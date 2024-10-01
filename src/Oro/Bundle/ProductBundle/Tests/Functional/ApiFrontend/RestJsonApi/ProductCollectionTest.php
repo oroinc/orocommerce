@@ -17,6 +17,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
 {
     use WebsiteSearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,6 +29,7 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
         $this->switchToWebCatalog();
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

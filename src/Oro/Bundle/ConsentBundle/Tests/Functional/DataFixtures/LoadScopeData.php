@@ -29,9 +29,7 @@ class LoadScopeData extends AbstractFixture implements DependentFixtureInterface
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ScopeManager $scopeManager */
@@ -51,9 +49,7 @@ class LoadScopeData extends AbstractFixture implements DependentFixtureInterface
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

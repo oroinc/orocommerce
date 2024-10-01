@@ -25,25 +25,19 @@ class ProductImageAwareFileNormalizerDecorator implements
         $this->fileManager = $fileManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return $this->fileNormalizer->supportsDenormalization($data, $type, $format, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $this->fileNormalizer->supportsNormalization($data, $format, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (isset($context['entityName']) && $context['entityName'] === ProductImage::class) {
@@ -57,9 +51,7 @@ class ProductImageAwareFileNormalizerDecorator implements
         return $this->fileNormalizer->denormalize($data, $type, $format, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         $result = $this->fileNormalizer->normalize($object, $format, $context);

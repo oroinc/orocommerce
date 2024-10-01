@@ -43,6 +43,7 @@ class ShippingPriceProviderTest extends TestCase
 
     private ShippingPriceProvider $shippingPriceProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingRulesProvider = $this->createMock(MethodsConfigsRulesByContextProviderInterface::class);

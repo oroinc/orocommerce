@@ -13,23 +13,27 @@ class ResolveCombinedPriceByPriceListTopic extends AbstractTopic implements JobA
 {
     public const NAME = 'oro_pricing.price_lists.cpl.resolve_prices';
 
+    #[\Override]
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Combine prices for active and ready to rebuild Combined Price List for a given list of price lists ' .
             'and products.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver->setRequired('product');
         $resolver->setAllowedTypes('product', 'array');
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return self::getName() . ':' . md5(json_encode($messageBody));

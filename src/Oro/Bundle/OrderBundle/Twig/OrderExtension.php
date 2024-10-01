@@ -48,9 +48,7 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
         return $this->container->get('oro_order.formatter.shipping_tracking');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilters()
     {
         return [
@@ -61,9 +59,7 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -153,9 +149,7 @@ class OrderExtension extends AbstractExtension implements ServiceSubscriberInter
         return $shippingTrackings;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

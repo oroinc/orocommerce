@@ -11,17 +11,13 @@ use Oro\Bundle\SecurityBundle\AccessRule\Expr\Association;
  */
 class ShoppingListItemAccessRule implements AccessRuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(Criteria $criteria): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(Criteria $criteria): void
     {
         $criteria->andExpression(new Association('shoppingList'));

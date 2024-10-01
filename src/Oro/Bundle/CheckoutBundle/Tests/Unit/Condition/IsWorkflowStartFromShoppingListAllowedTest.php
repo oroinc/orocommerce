@@ -25,9 +25,7 @@ class IsWorkflowStartFromShoppingListAllowedTest extends \PHPUnit\Framework\Test
      */
     private $condition;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

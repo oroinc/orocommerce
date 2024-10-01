@@ -17,6 +17,7 @@ class WYSIWYGFieldExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extension = new WYSIWYGFieldExtension();

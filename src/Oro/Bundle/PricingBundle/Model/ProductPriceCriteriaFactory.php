@@ -26,6 +26,7 @@ class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterfac
         $this->productLineItemPriceCriteriaFactory = $productLineItemPriceCriteriaFactory;
     }
 
+    #[\Override]
     public function create(
         Product $product,
         ProductUnit $productUnit,
@@ -39,6 +40,7 @@ class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterfac
             ->create();
     }
 
+    #[\Override]
     public function buildFromProduct(Product $product): ProductPriceCriteriaBuilderInterface
     {
         return $this->productPriceCriteriaBuilderRegistry
@@ -46,6 +48,7 @@ class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterfac
             ->setProduct($product);
     }
 
+    #[\Override]
     public function createFromProductLineItem(
         ProductLineItemInterface $productLineItem,
         ?string $currency = null
@@ -59,6 +62,7 @@ class ProductPriceCriteriaFactory implements ProductPriceCriteriaFactoryInterfac
      * @return array<int|string,ProductPriceCriteria> Products price criteria, each element associated
      *  with the key of the corresponding line item from $lineItems.
      */
+    #[\Override]
     public function createListFromProductLineItems(iterable $productLineItems, ?string $currency = null): array
     {
         $productsPriceCriteria = [];

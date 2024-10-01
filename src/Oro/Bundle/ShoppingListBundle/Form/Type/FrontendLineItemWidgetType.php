@@ -34,9 +34,7 @@ class FrontendLineItemWidgetType extends AbstractType
         $this->currentShoppingListManager = $currentShoppingListManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -87,34 +85,25 @@ class FrontendLineItemWidgetType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $currentShoppingList = $this->currentShoppingListManager->getCurrent();
         $view->children['shoppingList']->vars['currentShoppingList'] = $currentShoppingList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_shopping_list_frontend_line_item_widget';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return FrontendLineItemType::class;

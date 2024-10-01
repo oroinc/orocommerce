@@ -34,6 +34,7 @@ class AcceptQuoteAndSubmitToOrderTest extends TestCase
 
     private AcceptQuoteAndSubmitToOrder $service;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);

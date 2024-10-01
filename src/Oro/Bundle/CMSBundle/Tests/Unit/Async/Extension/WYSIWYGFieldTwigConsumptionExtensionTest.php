@@ -14,6 +14,7 @@ class WYSIWYGFieldTwigConsumptionExtensionTest extends \PHPUnit\Framework\TestCa
     /** @var WYSIWYGFieldTwigConsumptionExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->wysiwygFieldTwigListener = $this->createMock(WYSIWYGFieldTwigListener::class);

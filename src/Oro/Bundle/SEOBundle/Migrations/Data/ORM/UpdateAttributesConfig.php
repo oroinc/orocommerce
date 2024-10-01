@@ -32,9 +32,7 @@ class UpdateAttributesConfig extends AbstractFixture implements ContainerAwareIn
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->updateProductAttributes($this->fields);

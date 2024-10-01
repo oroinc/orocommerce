@@ -11,9 +11,7 @@ use Oro\Component\Expression\Node\RelationNode;
  */
 class RelationNodeConverter implements QueryExpressionConverterInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
         $virtualColumnExpressions = $aliasMapping[QueryExpressionConverterInterface::MAPPING_COLUMNS] ?? [];

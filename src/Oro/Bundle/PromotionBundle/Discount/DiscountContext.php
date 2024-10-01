@@ -42,17 +42,13 @@ class DiscountContext implements DiscountContextInterface
      */
     protected $shippingCost = 0.0;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal(): float
     {
         return $this->subtotal;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setSubtotal($subtotal)
     {
         $this->subtotal = $subtotal;
@@ -60,9 +56,7 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addShippingDiscount(DiscountInterface $discount)
     {
         $this->shippingDiscounts[] = $discount;
@@ -70,9 +64,7 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addSubtotalDiscount(DiscountInterface $discount)
     {
         $this->subtotalDiscounts[] = $discount;
@@ -80,17 +72,13 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems(): array
     {
         return $this->lineItems;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setLineItems($lineItems)
     {
         $this->lineItems = $lineItems;
@@ -98,9 +86,7 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addLineItem(DiscountLineItem $lineItem)
     {
         $this->lineItems[] = $lineItem;
@@ -108,25 +94,19 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShippingDiscounts(): array
     {
         return $this->shippingDiscounts;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotalDiscounts(): array
     {
         return $this->subtotalDiscounts;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItemDiscounts()
     {
         $discounts = [];
@@ -139,17 +119,13 @@ class DiscountContext implements DiscountContextInterface
         return array_values($discounts);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShippingCost(): float
     {
         return $this->shippingCost;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setShippingCost($shippingCost)
     {
         $this->shippingCost = $shippingCost;
@@ -157,9 +133,7 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addSubtotalDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->subtotalDiscountsInformation[] = $discountInformation;
@@ -167,17 +141,13 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotalDiscountsInformation(): array
     {
         return $this->subtotalDiscountsInformation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addShippingDiscountInformation(DiscountInformation $discountInformation)
     {
         $this->shippingDiscountsInformation[] = $discountInformation;
@@ -185,17 +155,13 @@ class DiscountContext implements DiscountContextInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShippingDiscountsInformation(): array
     {
         return $this->shippingDiscountsInformation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShippingDiscountTotal(): float
     {
         $value = 0.0;
@@ -206,9 +172,7 @@ class DiscountContext implements DiscountContextInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotalDiscountTotal(): float
     {
         $value = 0.0;
@@ -219,9 +183,7 @@ class DiscountContext implements DiscountContextInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTotalLineItemsDiscount(): float
     {
         $value = 0.0;
@@ -232,9 +194,7 @@ class DiscountContext implements DiscountContextInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountByLineItem($lineItem): float
     {
         $amount = 0.0;
@@ -247,9 +207,7 @@ class DiscountContext implements DiscountContextInterface
         return $amount;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTotalDiscountAmount(): float
     {
         return $this->getTotalLineItemsDiscount()

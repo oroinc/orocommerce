@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class FrontendProductPriceFilterTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

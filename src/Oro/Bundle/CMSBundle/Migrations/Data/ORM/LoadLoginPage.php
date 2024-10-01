@@ -8,9 +8,7 @@ use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
 class LoadLoginPage extends AbstractFixture
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $loginPage = new LoginPage();

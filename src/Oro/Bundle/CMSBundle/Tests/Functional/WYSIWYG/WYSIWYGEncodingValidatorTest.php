@@ -13,6 +13,7 @@ use Symfony\Component\Validator\ConstraintViolation;
 
 class WYSIWYGEncodingValidatorTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

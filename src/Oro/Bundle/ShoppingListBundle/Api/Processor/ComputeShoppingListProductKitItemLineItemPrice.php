@@ -14,6 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
  */
 class ComputeShoppingListProductKitItemLineItemPrice extends AbstractComputeLineItemPrice
 {
+    #[\Override]
     protected function getShoppingListLineItem(CustomizeLoadedDataContext $context): ?LineItem
     {
         $config = $context->getConfig();
@@ -32,6 +33,7 @@ class ComputeShoppingListProductKitItemLineItemPrice extends AbstractComputeLine
         return $kitItemLineItem->getLineItem();
     }
 
+    #[\Override]
     protected function getProductLineItemPrice(CustomizeLoadedDataContext $context): ?ProductLineItemPrice
     {
         $productLineItemPrice = parent::getProductLineItemPrice($context);

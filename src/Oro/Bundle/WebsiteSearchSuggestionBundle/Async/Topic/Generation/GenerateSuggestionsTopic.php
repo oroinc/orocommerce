@@ -14,16 +14,19 @@ class GenerateSuggestionsTopic extends AbstractTopic
 
     private const NAME = 'oro_website_search_suggestion.generate_product_suggestions';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return "Initial product suggestions generation";
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

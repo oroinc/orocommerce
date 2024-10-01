@@ -27,6 +27,7 @@ class RegardlessDestinationMethodsConfigsRulesByContextProviderTest extends \PHP
     /** @var RegardlessDestination\RegardlessDestinationMethodsConfigsRulesByContextProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(MethodsConfigsRulesFiltrationServiceInterface::class);

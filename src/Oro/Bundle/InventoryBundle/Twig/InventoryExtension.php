@@ -37,9 +37,7 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -91,9 +89,7 @@ class InventoryExtension extends AbstractExtension implements ServiceSubscriberI
         return $this->getInventoryStatusProvider()->getLabel($product);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

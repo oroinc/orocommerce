@@ -61,6 +61,7 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * 'Include Landing Pages Not Used In Web Catalog' is unchecked
      * A sitemap for landing pages will not be generated.
      */
+    #[\Override]
     public function isUrlItemsExcluded(WebsiteInterface $website = null): bool
     {
         return $this->isExcludedPagesBelongToWebCatalog($website)

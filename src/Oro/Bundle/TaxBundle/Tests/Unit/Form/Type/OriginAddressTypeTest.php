@@ -15,6 +15,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
 {
     private OriginAddressType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new OriginAddressType(new AddressCountryAndRegionSubscriberStub());
@@ -33,9 +34,7 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
         $this->assertEquals(Address::class, $options['data_class']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function submitDataProvider(): array
     {
         [$country, $region] = $this->getValidCountryAndRegion();
@@ -112,17 +111,13 @@ class OriginAddressTypeTest extends AbstractAddressTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormTypeClass(): string
     {
         return OriginAddressType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge([

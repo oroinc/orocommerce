@@ -21,6 +21,7 @@ class CategoryListenerTest extends WebTestCase
 
     private CategoryRepository $categoryRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

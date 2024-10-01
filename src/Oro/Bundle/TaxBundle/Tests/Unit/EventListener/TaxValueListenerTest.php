@@ -16,6 +16,7 @@ class TaxValueListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxValueListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxValueManager = $this->createMock(TaxValueManager::class);

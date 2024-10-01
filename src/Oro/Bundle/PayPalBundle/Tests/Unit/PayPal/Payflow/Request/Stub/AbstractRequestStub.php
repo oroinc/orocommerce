@@ -9,6 +9,7 @@ class AbstractRequestStub extends AbstractRequest
     /**
      * @return string
      */
+    #[\Override]
     public function getTransactionType()
     {
         return 'some_action';

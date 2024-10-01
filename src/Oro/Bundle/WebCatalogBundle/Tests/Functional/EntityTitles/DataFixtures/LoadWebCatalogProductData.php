@@ -9,9 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData
 
 class LoadWebCatalogProductData extends AbstractLoadWebCatalogData
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -21,33 +19,25 @@ class LoadWebCatalogProductData extends AbstractLoadWebCatalogData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRoute()
     {
         return 'oro_product_frontend_product_view';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getContentVariantType()
     {
         return ProductPageContentVariantType::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntitySetterMethod()
     {
         return 'setProductPageProduct';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntity()
     {
         return $this->getReference(LoadProductData::PRODUCT_1);

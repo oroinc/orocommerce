@@ -33,6 +33,7 @@ class NotificationHelperTest extends \PHPUnit\Framework\TestCase
 
     private EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $registry = $this->createMock(ManagerRegistry::class);

@@ -29,9 +29,7 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
     public const CUSTOMER_VISITOR_1 = 'customer_visitor_1';
     public const CUSTOMER_VISITOR_2 = 'customer_visitor_2';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->createCustomerVisitor($manager, self::CUSTOMER_VISITOR_1)
@@ -45,9 +43,7 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
         parent::load($manager);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getData(): array
     {
         $paymentTermIdentifier = $this->getPaymentMethodIdentifier($this->container);
@@ -68,33 +64,25 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getCheckoutSourceName(): string
     {
         return 'shoppingList';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(

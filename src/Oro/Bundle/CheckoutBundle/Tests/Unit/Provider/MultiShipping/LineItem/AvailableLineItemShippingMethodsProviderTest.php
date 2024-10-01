@@ -26,6 +26,7 @@ class AvailableLineItemShippingMethodsProviderTest extends \PHPUnit\Framework\Te
     /** @var AvailableLineItemShippingMethodsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);

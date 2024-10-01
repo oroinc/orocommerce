@@ -25,6 +25,7 @@ class ShippingRulesNonDeletableMethodTypeIdentifiersProvider implements
      *
      * @return string[]
      */
+    #[\Override]
     public function getMethodTypeIdentifiers(ShippingMethodInterface $shippingMethod)
     {
         $enabledTypes = $this->methodTypeConfigRepository->findEnabledByMethodIdentifier(

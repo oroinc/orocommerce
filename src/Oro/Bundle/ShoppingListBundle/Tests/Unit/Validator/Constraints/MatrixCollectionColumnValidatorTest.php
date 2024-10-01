@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class MatrixCollectionColumnValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): MatrixCollectionColumnValidator
     {
         return new MatrixCollectionColumnValidator();

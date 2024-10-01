@@ -28,9 +28,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -41,9 +39,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->resetVisibilities($manager);

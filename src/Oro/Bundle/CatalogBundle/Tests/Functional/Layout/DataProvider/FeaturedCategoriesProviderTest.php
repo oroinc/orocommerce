@@ -8,9 +8,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 
 class FeaturedCategoriesProviderTest extends FrontendWebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -22,6 +20,7 @@ class FeaturedCategoriesProviderTest extends FrontendWebTestCase
         );
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::getContainer()->get('oro_catalog.layout.data_provider.category.cache')->clear();

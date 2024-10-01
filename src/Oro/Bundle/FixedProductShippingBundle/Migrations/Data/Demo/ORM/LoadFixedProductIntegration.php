@@ -37,6 +37,7 @@ class LoadFixedProductIntegration extends AbstractFixture implements
 
     public const PRODUCT_ID_THRESHOLD = 20;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -45,6 +46,7 @@ class LoadFixedProductIntegration extends AbstractFixture implements
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         if (!$this->container) {

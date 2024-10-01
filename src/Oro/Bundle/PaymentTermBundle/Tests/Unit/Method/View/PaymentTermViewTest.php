@@ -23,6 +23,7 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermView */
     private $methodView;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTermProvider = $this->createMock(PaymentTermProvider::class);

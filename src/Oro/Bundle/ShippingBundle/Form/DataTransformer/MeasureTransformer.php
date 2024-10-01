@@ -16,9 +16,7 @@ class MeasureTransformer implements DataTransformerInterface
         $this->repository = $repository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($values)
     {
         if (!is_array($values)) {
@@ -33,9 +31,7 @@ class MeasureTransformer implements DataTransformerInterface
         return $entities;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($entities)
     {
         if (!is_array($entities)) {

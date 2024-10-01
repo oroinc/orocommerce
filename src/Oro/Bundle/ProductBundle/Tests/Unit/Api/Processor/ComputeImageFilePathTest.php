@@ -28,6 +28,7 @@ class ComputeImageFilePathTest extends CustomizeLoadedDataProcessorTestCase
     /** @var ComputeImageFilePath */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

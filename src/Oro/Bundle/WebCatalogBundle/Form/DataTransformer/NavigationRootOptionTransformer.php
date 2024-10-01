@@ -21,9 +21,7 @@ class NavigationRootOptionTransformer implements DataTransformerInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($value)
     {
         if ($value && !$value instanceof ContentNode) {
@@ -33,9 +31,7 @@ class NavigationRootOptionTransformer implements DataTransformerInterface
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         if ($value instanceof ContentNode) {

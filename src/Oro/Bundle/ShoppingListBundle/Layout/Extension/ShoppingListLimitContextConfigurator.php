@@ -21,9 +21,7 @@ class ShoppingListLimitContextConfigurator implements ContextConfiguratorInterfa
         $this->limitManager = $limitManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureContext(ContextInterface $context)
     {
         $value = $this->limitManager->isOnlyOneEnabled();

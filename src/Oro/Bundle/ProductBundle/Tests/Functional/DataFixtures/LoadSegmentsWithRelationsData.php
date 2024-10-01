@@ -34,9 +34,7 @@ class LoadSegmentsWithRelationsData extends AbstractFixture
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ([self::FIRST_SEGMENT, self::SECOND_SEGMENT, self::THIRD_SEGMENT] as $segmentName) {

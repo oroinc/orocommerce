@@ -31,9 +31,7 @@ class EntityDependenciesResolver implements EntityDependenciesResolverInterface
         $this->mappingProvider = $mappingProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getClassesForReindex($class = null)
     {
         if (null === $class) {

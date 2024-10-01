@@ -60,54 +60,61 @@ class ShippingLineItem extends ParameterBag implements
         ]);
     }
 
+    #[\Override]
     public function getPrice(): ?Price
     {
         return $this->get(self::FIELD_PRICE);
     }
 
+    #[\Override]
     public function getProduct(): Product|VirtualFieldsProductDecorator|null
     {
         return $this->get(self::FIELD_PRODUCT);
     }
 
+    #[\Override]
     public function getProductHolder(): ProductHolderInterface
     {
         return $this->get(self::FIELD_PRODUCT_HOLDER);
     }
 
+    #[\Override]
     public function getProductSku(): ?string
     {
         return $this->get(self::FIELD_PRODUCT_SKU);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->get(self::FIELD_ENTITY_IDENTIFIER);
     }
 
+    #[\Override]
     public function getQuantity(): float|int
     {
         return $this->get(self::FIELD_QUANTITY);
     }
 
+    #[\Override]
     public function getProductUnit(): ProductUnit
     {
         return $this->get(self::FIELD_PRODUCT_UNIT);
     }
 
+    #[\Override]
     public function getProductUnitCode(): string
     {
         return $this->get(self::FIELD_PRODUCT_UNIT_CODE);
     }
 
+    #[\Override]
     public function getWeight(): ?Weight
     {
         return $this->get(self::FIELD_WEIGHT);
     }
 
+    #[\Override]
     public function getDimensions(): ?Dimensions
     {
         return $this->get(self::FIELD_DIMENSIONS);
@@ -116,11 +123,13 @@ class ShippingLineItem extends ParameterBag implements
     /**
      * @return Collection<ShippingKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems(): Collection
     {
         return $this->get(self::FIELD_KIT_ITEM_LINE_ITEMS, new ArrayCollection([]));
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->get(self::FIELD_CHECKSUM, '');

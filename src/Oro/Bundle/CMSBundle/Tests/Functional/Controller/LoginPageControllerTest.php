@@ -16,6 +16,7 @@ class LoginPageControllerTest extends WebTestCase
 
     private const LOGIN_PAGE_ID = 1;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

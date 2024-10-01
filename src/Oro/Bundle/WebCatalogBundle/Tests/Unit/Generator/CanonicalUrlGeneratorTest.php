@@ -23,9 +23,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
      */
     private $featureChecker;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createGenerator(): BaseGenerator
     {
         $generator = new CanonicalUrlGenerator(

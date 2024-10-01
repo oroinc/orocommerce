@@ -51,9 +51,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
 {
     use WysiwygAwareTestTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $visibilityChoicesProvider = $this->createMock(VisibilityChoicesProvider::class);

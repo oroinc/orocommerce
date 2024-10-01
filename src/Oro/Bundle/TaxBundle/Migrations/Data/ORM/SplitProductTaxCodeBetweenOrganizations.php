@@ -16,11 +16,13 @@ use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
  */
 class SplitProductTaxCodeBetweenOrganizations extends AbstractFixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductTaxCodeOrganizationData::class];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $productTaxCodes = $this->getProductTaxCodes($manager);

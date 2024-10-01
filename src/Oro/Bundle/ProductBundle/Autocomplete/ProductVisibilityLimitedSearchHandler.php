@@ -45,9 +45,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function convertItem($item)
     {
         $result = [];
@@ -88,9 +86,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         $this->notAllowedProductTypes = $notAllowedProductTypes;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function checkAllDependenciesInjected()
     {
         if (!$this->entityRepository || !$this->idFieldName) {
@@ -98,9 +94,7 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $request = $this->requestStack->getCurrentRequest();

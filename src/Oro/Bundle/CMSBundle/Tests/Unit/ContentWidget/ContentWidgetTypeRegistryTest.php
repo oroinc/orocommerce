@@ -11,6 +11,7 @@ class ContentWidgetTypeRegistryTest extends \PHPUnit\Framework\TestCase
     private ContentWidgetTypeInterface $widgetType;
     private ContentWidgetTypeRegistry $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->widgetType = new ContentWidgetTypeStub();

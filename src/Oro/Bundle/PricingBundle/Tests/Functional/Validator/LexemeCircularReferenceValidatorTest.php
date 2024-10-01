@@ -21,6 +21,7 @@ class LexemeCircularReferenceValidatorTest extends WebTestCase
      */
     protected $constraint;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

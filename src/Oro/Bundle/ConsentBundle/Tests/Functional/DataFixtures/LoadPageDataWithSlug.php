@@ -36,9 +36,7 @@ class LoadPageDataWithSlug extends AbstractFixture implements ContainerAwareInte
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $slugGenerator = $this->container->get('oro_redirect.generator.slug_entity');

@@ -13,9 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
  */
 class AddProductPriceAcl implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(

@@ -25,6 +25,7 @@ class WebCatalogCacheProcessorTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
     use DefaultWebsiteIdTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

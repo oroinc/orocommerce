@@ -9,11 +9,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class InvalidateTotalsByInventoryStatusPerWebsiteTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new InvalidateTotalsByInventoryStatusPerWebsiteTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -28,6 +30,7 @@ class InvalidateTotalsByInventoryStatusPerWebsiteTopicTest extends AbstractTopic
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

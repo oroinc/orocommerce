@@ -14,6 +14,7 @@ class CustomerGroupCategoryVisibilityRepositoryTest extends WebTestCase
 {
     private CustomerGroupCategoryVisibilityRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

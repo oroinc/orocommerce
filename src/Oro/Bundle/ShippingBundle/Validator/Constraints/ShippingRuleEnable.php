@@ -11,9 +11,7 @@ class ShippingRuleEnable extends Constraint
 {
     public string $message = 'oro.shipping.shippingrule.enabled.message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

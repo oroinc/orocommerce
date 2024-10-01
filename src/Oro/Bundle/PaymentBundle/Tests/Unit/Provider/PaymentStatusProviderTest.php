@@ -18,6 +18,7 @@ class PaymentStatusProviderTest extends TestCase
 
     protected PaymentStatusProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);

@@ -34,9 +34,7 @@ class LoadQuoteDataForPerformance extends AbstractFixture implements DependentFi
         'valid_until'
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -48,9 +46,7 @@ class LoadQuoteDataForPerformance extends AbstractFixture implements DependentFi
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var User $user */

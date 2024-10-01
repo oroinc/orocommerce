@@ -45,6 +45,7 @@ class QuickAddImportFromFileHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddImportFromFileHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quickAddRowCollectionBuilder = $this->createMock(QuickAddRowCollectionBuilder::class);

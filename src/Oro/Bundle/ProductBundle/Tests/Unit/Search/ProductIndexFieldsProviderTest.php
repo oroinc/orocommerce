@@ -9,6 +9,7 @@ class ProductIndexFieldsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductIndexFieldsProvider */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new ProductIndexFieldsProvider();

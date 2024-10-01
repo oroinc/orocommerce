@@ -46,6 +46,7 @@ class OrderSubtotalWithDiscountsListenerTest extends WebTestCase
     private EntityCouponsProviderInterface $entityCouponsProvider;
     private TotalHelper $totalHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

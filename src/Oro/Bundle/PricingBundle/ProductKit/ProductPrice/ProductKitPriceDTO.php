@@ -29,14 +29,13 @@ class ProductKitPriceDTO extends ProductPriceDTO implements ProductKitPriceInter
         parent::__construct($product, $price, $quantity, $unit);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getKitItemPrices(): array
     {
         return $this->kitItemPrices;
     }
 
+    #[\Override]
     public function getKitItemPrice(ProductKitItem $productKitItem): ?ProductKitItemPriceDTO
     {
         return $this->kitItemPrices[$productKitItem->getId()] ?? null;
@@ -56,6 +55,7 @@ class ProductKitPriceDTO extends ProductPriceDTO implements ProductKitPriceInter
         return $this;
     }
 
+    #[\Override]
     public function toArray(): array
     {
         $array = parent::toArray();

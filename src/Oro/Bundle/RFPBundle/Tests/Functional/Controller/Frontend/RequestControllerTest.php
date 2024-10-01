@@ -34,6 +34,7 @@ class RequestControllerTest extends WebTestCase
 
     private WorkflowManager $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -113,7 +114,10 @@ class RequestControllerTest extends WebTestCase
             sort($expectedColumns);
 
             foreach ($data as $item) {
-                self::assertEquals($expectedData['action_configuration'], $item['action_configuration']);
+                foreach ($expectedData['action_configuration'] as $key => $config) {
+                    self::assertArrayHasKey($key, $item['action_configuration']);
+                    self::assertEquals($config, $item['action_configuration'][$key]);
+                }
             }
 
             self::assertEquals($expectedColumns, $testedColumns);

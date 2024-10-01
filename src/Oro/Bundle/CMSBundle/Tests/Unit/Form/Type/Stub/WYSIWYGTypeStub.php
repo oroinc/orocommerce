@@ -13,10 +13,12 @@ class WYSIWYGTypeStub extends WYSIWYGType
     {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
     }

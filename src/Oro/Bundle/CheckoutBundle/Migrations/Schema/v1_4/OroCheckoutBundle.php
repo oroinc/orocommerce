@@ -15,9 +15,7 @@ class OroCheckoutBundle implements Migration, RenameExtensionAwareInterface, Ord
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateCheckoutTable($schema, $queries);
@@ -50,6 +48,7 @@ class OroCheckoutBundle implements Migration, RenameExtensionAwareInterface, Ord
      *
      * @return integer
      */
+    #[\Override]
     public function getOrder()
     {
         return 1;

@@ -30,6 +30,7 @@ class SubtotalProviderRegistry implements ResetInterface
         $this->providerContainer = $providerContainer;
     }
 
+    #[\Override]
     public function reset()
     {
         $this->providers = null;

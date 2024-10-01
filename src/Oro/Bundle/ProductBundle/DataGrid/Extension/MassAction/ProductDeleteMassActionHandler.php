@@ -10,6 +10,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
  */
 class ProductDeleteMassActionHandler extends DeleteMassActionHandler
 {
+    #[\Override]
     protected function isPostponed(object $entity): bool
     {
         return $entity->isSimple() &&

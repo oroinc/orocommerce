@@ -23,6 +23,7 @@ class ConfigPriceListsAssignmentProviderTest extends TestCase
     private UrlGeneratorInterface|MockObject $urlGenerator;
     private ConfigPriceListsAssignmentProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -17,6 +17,7 @@ class CategoryProductsControllerTest extends WebTestCase
 {
     private TranslatorInterface $translator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

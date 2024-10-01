@@ -41,9 +41,7 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
     use UserUtilityTrait;
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -53,9 +51,7 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var EnumOptionInterface[] $enumInventoryStatuses */

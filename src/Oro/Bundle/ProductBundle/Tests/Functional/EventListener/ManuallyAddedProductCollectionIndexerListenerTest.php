@@ -16,6 +16,7 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends FrontendWebTestC
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

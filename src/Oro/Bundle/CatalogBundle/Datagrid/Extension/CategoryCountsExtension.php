@@ -80,17 +80,13 @@ class CategoryCountsExtension extends AbstractExtension
         $this->applicableGrids[] = $gridName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPriority()
     {
         return -250;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config)
     {
         return
@@ -100,9 +96,7 @@ class CategoryCountsExtension extends AbstractExtension
             && in_array($config->getName(), $this->applicableGrids, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data)
     {
         // Skips handling of metadata if datagrid has been already processed.

@@ -29,6 +29,7 @@ class BasicPayPalCreditCardPaymentMethodFactoryTest extends \PHPUnit\Framework\T
     /** @var TransactionOptionProvider */
     private $transactionOptionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->gateway = $this->createMock(Gateway::class);

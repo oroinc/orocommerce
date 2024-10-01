@@ -12,9 +12,7 @@ class LoadProductVisibilityScope extends AbstractFixture implements InitialFixtu
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $visibilityProvider = $this->container->get('oro_visibility.provider.visibility_scope_provider');

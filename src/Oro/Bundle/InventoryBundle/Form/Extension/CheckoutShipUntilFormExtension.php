@@ -42,17 +42,13 @@ class CheckoutShipUntilFormExtension extends AbstractTypeExtension
         $this->dateTimeFormatter = $dateTimeFormatter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [CheckoutShipUntilType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('_products', function (Options $options) {

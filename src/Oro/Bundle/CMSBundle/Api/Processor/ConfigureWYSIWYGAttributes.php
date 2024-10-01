@@ -21,9 +21,7 @@ class ConfigureWYSIWYGAttributes implements ProcessorInterface
         $this->attributesFieldName = $attributesFieldName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */

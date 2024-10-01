@@ -22,9 +22,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
 
     private array $categories = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -33,9 +31,7 @@ class LoadProductCategoryDemoData extends AbstractFixture implements ContainerAw
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $defaultOrganization = $manager->getRepository(Organization::class)->getFirst();

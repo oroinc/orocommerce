@@ -64,6 +64,7 @@ class ManuallyAddedProductCollectionIndexerListener implements WebsiteSearchProd
         $this->productCollectionDefinitionConverter = $productCollectionDefinitionConverter;
     }
 
+    #[\Override]
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         if (!$this->hasContextFieldGroup($event->getContext(), 'main')) {

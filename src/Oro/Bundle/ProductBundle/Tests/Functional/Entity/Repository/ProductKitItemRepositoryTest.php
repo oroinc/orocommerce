@@ -20,6 +20,7 @@ class ProductKitItemRepositoryTest extends WebTestCase
 {
     private ProductKitItemRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

@@ -39,6 +39,7 @@ class OrganizationListenerTest extends \PHPUnit\Framework\TestCase
 
     private OrganizationListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

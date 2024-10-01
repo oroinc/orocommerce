@@ -24,6 +24,7 @@ class UrlCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     private UrlCacheProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageFactory = $this->createMock(MessageFactoryInterface::class);

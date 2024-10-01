@@ -28,105 +28,79 @@ class PaymentContext extends ParameterBag implements PaymentContextInterface
         parent::__construct($params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCustomer()
     {
         return $this->get(self::FIELD_CUSTOMER);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCustomerUser()
     {
         return $this->get(self::FIELD_CUSTOMER_USER);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->get(self::FIELD_LINE_ITEMS);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBillingAddress()
     {
         return $this->get(self::FIELD_BILLING_ADDRESS);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingAddress()
     {
         return $this->get(self::FIELD_SHIPPING_ADDRESS);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingOrigin()
     {
         return $this->get(self::FIELD_SHIPPING_ORIGIN);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethod()
     {
         return $this->get(self::FIELD_SHIPPING_METHOD);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCurrency()
     {
         return $this->get(self::FIELD_CURRENCY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSubtotal()
     {
         return $this->get(self::FIELD_SUBTOTAL);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceEntity()
     {
         return $this->get(self::FIELD_SOURCE_ENTITY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceEntityIdentifier()
     {
         return $this->get(self::FIELD_SOURCE_ENTITY_ID);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWebsite()
     {
         return $this->get(self::FIELD_WEBSITE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTotal()
     {
         return $this->get(self::FIELD_TOTAL);

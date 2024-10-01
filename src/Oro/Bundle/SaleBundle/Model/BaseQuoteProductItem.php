@@ -102,17 +102,13 @@ class BaseQuoteProductItem implements
         $this->kitItemLineItems = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this->getQuoteProduct();
@@ -162,6 +158,7 @@ class BaseQuoteProductItem implements
      *
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -212,6 +209,7 @@ class BaseQuoteProductItem implements
      *
      * @return ProductUnit
      */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->productUnit;
@@ -235,6 +233,7 @@ class BaseQuoteProductItem implements
      *
      * @return string
      */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->productUnitCode;
@@ -260,18 +259,19 @@ class BaseQuoteProductItem implements
      *
      * @return Price|null
      */
+    #[\Override]
     public function getPrice()
     {
         return $this->price;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getProduct()
     {
         return $this->quoteProduct?->getProduct();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getProductSku()
     {
         return $this->getProduct()?->getSku();
@@ -280,6 +280,7 @@ class BaseQuoteProductItem implements
     /**
      * @return null|Product
      */
+    #[\Override]
     public function getParentProduct()
     {
         return $this->quoteProduct?->getParentProduct();
@@ -300,6 +301,7 @@ class BaseQuoteProductItem implements
     /**
      * @return Collection<QuoteProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         if (!$this->kitItemLineItems->count()) {
@@ -316,6 +318,7 @@ class BaseQuoteProductItem implements
         return $this;
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->checksum;

@@ -21,9 +21,7 @@ class ConfigureOrderStatusEntity implements ProcessorInterface
         $this->configurationProvider = $configurationProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */

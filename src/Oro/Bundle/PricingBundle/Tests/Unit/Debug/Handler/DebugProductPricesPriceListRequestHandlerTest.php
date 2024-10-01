@@ -44,6 +44,7 @@ class DebugProductPricesPriceListRequestHandlerTest extends \PHPUnit\Framework\T
     /** @var DebugProductPricesPriceListRequestHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

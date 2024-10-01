@@ -36,6 +36,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     /** @var PayPalSettingsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
@@ -63,9 +64,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

@@ -13,6 +13,7 @@ class ProfitableStrategyTest extends \PHPUnit\Framework\TestCase
 {
     private ProfitableStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->strategy = new ProfitableStrategy();

@@ -62,6 +62,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
         return $this->id;
     }
 
+    #[\Override]
     public function getEntityIdentifier(): ?int
     {
         return $this->id;
@@ -74,6 +75,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
         return $this;
     }
 
+    #[\Override]
     public function getLineItem(): ?LineItem
     {
         return $this->lineItem;
@@ -86,6 +88,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
         return $this;
     }
 
+    #[\Override]
     public function getKitItem(): ?ProductKitItem
     {
         return $this->kitItem;
@@ -98,21 +101,25 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
         return $this;
     }
 
+    #[\Override]
     public function getProduct(): ?Product
     {
         return $this->product;
     }
 
+    #[\Override]
     public function getProductSku(): ?string
     {
         return $this->getProduct()?->getSku();
     }
 
+    #[\Override]
     public function getParentProduct(): ?Product
     {
         return null;
     }
 
+    #[\Override]
     public function getProductHolder(): self
     {
         return $this;
@@ -125,6 +132,7 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
         return $this;
     }
 
+    #[\Override]
     public function getQuantity(): ?float
     {
         return $this->quantity;
@@ -142,16 +150,19 @@ class ProductKitItemLineItem implements ExtendEntityInterface, ProductKitItemLin
         return $this->unit;
     }
 
+    #[\Override]
     public function getProductUnit(): ?ProductUnit
     {
         return $this->getUnit();
     }
 
+    #[\Override]
     public function getProductUnitCode(): ?string
     {
         return $this->getUnit()?->getCode();
     }
 
+    #[\Override]
     public function getSortOrder(): int
     {
         return $this->sortOrder;

@@ -23,11 +23,13 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         $this->tempTableManipulator = $tempTableManipulator;
     }
 
+    #[\Override]
     protected function getFallbackCombinedPriceList(CombinedPriceList $combinedPriceList): ?CombinedPriceList
     {
         return $this->getCombinedPriceListRelationsRepository()->findFallbackCplUsingMergeFlag($combinedPriceList);
     }
 
+    #[\Override]
     protected function getPriceListRelationsNotIncludedInFallback(
         array $combinedPriceListRelation,
         array $fallbackCplRelations
@@ -44,6 +46,7 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         return array_splice($combinedPriceListRelation, 0, -\count($fallbackCplRelations));
     }
 
+    #[\Override]
     protected function processPriceLists(
         CombinedPriceList $combinedPriceList,
         array $priceListRelations,
@@ -70,6 +73,7 @@ class MergePricesCombiningStrategy extends AbstractPriceCombiningStrategy
         }
     }
 
+    #[\Override]
     protected function processCombinedPriceListRelation(
         CombinedPriceList $combinedPriceList,
         CombinedPriceList $fallbackCpl,

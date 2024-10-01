@@ -19,17 +19,13 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
         $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isEntitySupported($entity)
     {
         return is_object($entity) && $entity instanceof Checkout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::DATA_NAME;
@@ -39,6 +35,7 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
      * @param Checkout $checkout
      * @return string
      */
+    #[\Override]
     public function getCurrentState($checkout)
     {
         // This mapper doesn't generate current state
@@ -52,6 +49,7 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
      * @param mixed $state2
      * @return bool
      */
+    #[\Override]
     public function isStatesEqual($entity, $state1, $state2)
     {
         $shippingMethod = $entity->getShippingMethod();

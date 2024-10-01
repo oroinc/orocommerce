@@ -32,6 +32,7 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $messageData = $message->getBody();
@@ -84,6 +85,7 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [SyncSlugRedirectsTopic::getName()];

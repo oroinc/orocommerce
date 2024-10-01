@@ -33,17 +33,13 @@ class ProductPriceAttributeFilter extends NumberRangeFilter
         $this->formatter = $formatter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFormType()
     {
         return ProductPriceFilterType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function apply(FilterDatasourceAdapterInterface $ds, $data)
     {
         $data = $this->parseData($data);
@@ -128,9 +124,7 @@ class ProductPriceAttributeFilter extends NumberRangeFilter
         $ds->setParameter($parameterName, $parameterValue);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function parseData($data)
     {
         $data = parent::parseData($data);
@@ -153,9 +147,7 @@ class ProductPriceAttributeFilter extends NumberRangeFilter
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetadata()
     {
         $metadata = parent::getMetadata();

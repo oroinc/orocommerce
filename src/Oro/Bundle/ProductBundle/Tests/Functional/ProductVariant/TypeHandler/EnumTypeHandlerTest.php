@@ -21,6 +21,7 @@ class EnumTypeHandlerTest extends WebTestCase
     /** @var EnumTypeHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

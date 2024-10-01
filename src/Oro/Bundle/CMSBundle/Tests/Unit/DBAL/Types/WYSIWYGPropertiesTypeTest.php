@@ -9,6 +9,7 @@ class WYSIWYGPropertiesTypeTest extends \PHPUnit\Framework\TestCase
 {
     private WYSIWYGPropertiesType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new WYSIWYGPropertiesType();

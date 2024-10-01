@@ -32,6 +32,7 @@ class ActualizeCouponsStateListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ActualizeCouponsStateListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

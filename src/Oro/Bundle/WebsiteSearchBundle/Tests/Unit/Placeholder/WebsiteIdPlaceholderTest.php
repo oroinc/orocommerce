@@ -15,6 +15,7 @@ class WebsiteIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteIdPlaceholder */
     private $placeholder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteManager = $this->createMock(WebsiteManager::class);

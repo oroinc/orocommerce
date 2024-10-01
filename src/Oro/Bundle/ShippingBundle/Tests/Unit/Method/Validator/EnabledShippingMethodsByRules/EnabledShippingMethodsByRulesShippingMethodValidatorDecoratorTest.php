@@ -37,6 +37,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
     /** @var Validator\EnabledShippingMethodsByRules\EnabledShippingMethodsByRulesShippingMethodValidatorDecorator */
     private $validator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->parentShippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);

@@ -14,6 +14,7 @@ class ProductImageTypesTransformer implements DataTransformerInterface
      * @param mixed $value
      * @return array
      */
+    #[\Override]
     public function transform($value): array
     {
         if ($value instanceof ArrayCollection) {
@@ -27,6 +28,7 @@ class ProductImageTypesTransformer implements DataTransformerInterface
      * @param mixed $value
      * @return array
      */
+    #[\Override]
     public function reverseTransform($value): array
     {
         // Data should not be transformed

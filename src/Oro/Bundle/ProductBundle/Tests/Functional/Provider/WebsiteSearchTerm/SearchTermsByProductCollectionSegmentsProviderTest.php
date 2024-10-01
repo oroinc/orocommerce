@@ -13,6 +13,7 @@ class SearchTermsByProductCollectionSegmentsProviderTest extends WebTestCase
 {
     private SearchTermsByProductCollectionSegmentsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

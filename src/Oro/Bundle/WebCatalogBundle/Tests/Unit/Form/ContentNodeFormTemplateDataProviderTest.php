@@ -20,6 +20,7 @@ class ContentNodeFormTemplateDataProviderTest extends TestCase
 
     private ContentNodeFormTemplateDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->sortOrderDialogTargetStorage = $this->createMock(SortOrderDialogTargetStorage::class);

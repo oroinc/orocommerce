@@ -28,9 +28,7 @@ class LoadConsentConfigData extends AbstractFixture implements DependentFixtureI
         LoadConsentsData::CONSENT_REQUIRED_WITHOUT_NODE,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $consentConfigItems = array_map(
@@ -58,9 +56,7 @@ class LoadConsentConfigData extends AbstractFixture implements DependentFixtureI
         $this->container->get('oro_config.global')->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

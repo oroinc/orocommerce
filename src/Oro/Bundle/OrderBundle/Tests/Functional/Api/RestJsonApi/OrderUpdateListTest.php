@@ -13,6 +13,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
  */
 class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -24,6 +24,7 @@ class RemoveCheckoutWorkflowStatesListenerTest extends \PHPUnit\Framework\TestCa
     /** @var RemoveCheckoutWorkflowStatesListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

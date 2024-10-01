@@ -18,6 +18,7 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
     /** @var BrandStatusType */
     private $brandStatusType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->brandStatusProvider = $this->createMock(BrandStatusProvider::class);
@@ -33,9 +34,7 @@ class BrandStatusTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

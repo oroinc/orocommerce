@@ -18,6 +18,7 @@ class SitemapFileWriterTest extends \PHPUnit\Framework\TestCase
     /** @var SitemapFileWriter */
     private $sitemapFileWriter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fileManager = $this->createMock(FileManager::class);

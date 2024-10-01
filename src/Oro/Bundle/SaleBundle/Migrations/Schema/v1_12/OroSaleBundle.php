@@ -24,9 +24,7 @@ class OroSaleBundle implements
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateOroQuoteAddressTable($schema, $queries);
@@ -130,9 +128,7 @@ class OroSaleBundle implements
         $migration->migrate('Oro\Bundle\SaleBundle\Entity\QuoteDemand', 'accountUser', 'customerUser');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

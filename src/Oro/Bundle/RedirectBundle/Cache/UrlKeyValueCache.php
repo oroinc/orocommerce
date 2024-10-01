@@ -22,6 +22,7 @@ class UrlKeyValueCache implements UrlCacheInterface, FlushableCacheInterface
         $this->localCache = $localCache;
     }
 
+    #[\Override]
     public function has($routeName, $routeParameters, $localizationId = null): bool
     {
         $cacheKey = $this->getCacheKey(self::URL_KEY, $routeName, $routeParameters, $localizationId);
@@ -29,16 +30,19 @@ class UrlKeyValueCache implements UrlCacheInterface, FlushableCacheInterface
         return $this->localCache->hasItem($cacheKey) || $this->persistentCache->hasItem($cacheKey);
     }
 
+    #[\Override]
     public function getUrl($routeName, $routeParameters, $localizationId = null): false|string
     {
         return $this->getFromCacheByType(self::URL_KEY, $routeName, $routeParameters, $localizationId);
     }
 
+    #[\Override]
     public function getSlug($routeName, $routeParameters, $localizationId = null): false|string
     {
         return $this->getFromCacheByType(self::SLUG_KEY, $routeName, $routeParameters, $localizationId);
     }
 
+    #[\Override]
     public function setUrl($routeName, $routeParameters, $url, $slug = null, $localizationId = null): void
     {
         $this->saveToCacheByType($url, self::URL_KEY, $routeName, $routeParameters, $localizationId);
@@ -47,6 +51,7 @@ class UrlKeyValueCache implements UrlCacheInterface, FlushableCacheInterface
         }
     }
 
+    #[\Override]
     public function removeUrl($routeName, $routeParameters, $localizationId = null): void
     {
         // Clear URL cache
@@ -66,6 +71,7 @@ class UrlKeyValueCache implements UrlCacheInterface, FlushableCacheInterface
         $this->clearPersistentCache();
     }
 
+    #[\Override]
     public function flushAll(): void
     {
         $this->saveMultiToPersistentCache($this->getChangedData());

@@ -23,9 +23,7 @@ class ComputeProductLowInventory implements ProcessorInterface
         $this->lowInventoryProvider = $lowInventoryProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

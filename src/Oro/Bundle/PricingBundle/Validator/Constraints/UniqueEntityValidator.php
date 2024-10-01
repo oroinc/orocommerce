@@ -25,9 +25,7 @@ class UniqueEntityValidator extends ConstraintValidator
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UniqueEntity) {

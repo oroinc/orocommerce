@@ -8,17 +8,13 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\ProductStub;
 
 class ProductBackOrderFormExtensionTest extends ProductInventoryTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->productFormExtension = new ProductBackOrderFormExtension();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function assertProductFallBack(ProductStub $product, $expectedFallBackId)
     {
         $this->assertInstanceOf(EntityFieldFallbackValue::class, $product->getBackOrder());

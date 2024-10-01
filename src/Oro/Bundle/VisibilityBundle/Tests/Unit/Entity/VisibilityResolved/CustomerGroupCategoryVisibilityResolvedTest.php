@@ -22,6 +22,7 @@ class CustomerGroupCategoryVisibilityResolvedTest extends \PHPUnit\Framework\Tes
     /** @var Scope */
     private $scope;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->category = new Category();

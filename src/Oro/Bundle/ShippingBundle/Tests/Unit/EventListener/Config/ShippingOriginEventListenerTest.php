@@ -31,6 +31,7 @@ class ShippingOriginEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingOriginEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingOriginFactory = $this->createMock(ShippingOriginModelFactory::class);

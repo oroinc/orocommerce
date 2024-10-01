@@ -22,6 +22,7 @@ class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderIn
     /**
      * @return ProductUnitPrecision|null
      */
+    #[\Override]
     public function getDefaultProductUnitPrecision()
     {
         $category = $this->category;

@@ -27,9 +27,7 @@ class LoadPaymentTermData extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -39,9 +37,7 @@ class LoadPaymentTermData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $channel = $this->loadIntegration($manager);

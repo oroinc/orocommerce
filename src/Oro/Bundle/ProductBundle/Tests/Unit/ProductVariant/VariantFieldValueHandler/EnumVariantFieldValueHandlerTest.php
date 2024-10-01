@@ -43,6 +43,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var LocaleSettings */
     private $localeSettings;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

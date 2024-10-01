@@ -39,6 +39,7 @@ class SingleCplProcessorTest extends TestCase
     private CombinedPriceListScheduleResolver|MockObject $scheduleResolver;
     private SingleCplProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);

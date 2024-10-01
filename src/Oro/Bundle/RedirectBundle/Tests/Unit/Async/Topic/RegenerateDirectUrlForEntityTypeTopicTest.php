@@ -14,6 +14,7 @@ class RegenerateDirectUrlForEntityTypeTopicTest extends \PHPUnit\Framework\TestC
 
     private RegenerateDirectUrlForEntityTypeTopic $topic;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->directUrlTopicHelper = $this->createMock(DirectUrlTopicHelper::class);

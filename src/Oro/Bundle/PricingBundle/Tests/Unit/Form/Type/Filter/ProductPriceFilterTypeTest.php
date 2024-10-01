@@ -26,6 +26,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     private $numberFormatter;
     private string $defaultLocale;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultLocale = \Locale::getDefault();
@@ -66,12 +67,14 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             ->getFormFactory();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         \Locale::setDefault($this->defaultLocale);
         parent::tearDown();
     }
 
+    #[\Override]
     protected function getTypeExtensions(): array
     {
         return [
@@ -79,9 +82,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getTestFormType(): AbstractType
     {
         return $this->type;
@@ -115,9 +116,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         return $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionsDataProvider(): array
     {
         return [
@@ -137,9 +136,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function bindDataProvider(): array
     {
         $bindData = parent::bindDataProvider();

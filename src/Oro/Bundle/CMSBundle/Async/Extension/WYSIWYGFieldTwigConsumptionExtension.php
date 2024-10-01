@@ -20,11 +20,7 @@ class WYSIWYGFieldTwigConsumptionExtension extends AbstractExtension
         $this->wysiwygFieldTwigListener = $wysiwygFieldTwigListener;
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * Makes the wysiwyg field event listener finish its pending operations at the end of message processing.
-     */
+    #[\Override]
     public function onPostReceived(Context $context): void
     {
         $this->wysiwygFieldTwigListener->onTerminate();

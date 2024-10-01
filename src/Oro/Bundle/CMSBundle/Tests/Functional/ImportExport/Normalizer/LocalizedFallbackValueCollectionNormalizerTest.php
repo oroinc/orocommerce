@@ -12,6 +12,7 @@ class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
 {
     private LocalizedFallbackValueCollectionNormalizer $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

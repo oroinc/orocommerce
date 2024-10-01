@@ -11,9 +11,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class IntegerValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (null === $value || '' === $value) {

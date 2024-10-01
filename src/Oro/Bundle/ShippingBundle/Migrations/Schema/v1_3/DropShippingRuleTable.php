@@ -27,17 +27,13 @@ class DropShippingRuleTable implements
     private const NOTE_ASSOCIATION_COLUMN_BEFORE_UPDATE = 'shipping_rule_7b77295b_id';
     private const NOTE_ASSOCIATION_COLUMN_AFTER_UPDATE = 'shipping_rule_fd89fead_id';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 40;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->removeOptionsFromExtendOptionManager();

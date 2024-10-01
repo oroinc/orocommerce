@@ -42,6 +42,7 @@ class LoadSearchTermData extends AbstractFixture implements ContainerAwareInterf
         ],
     ];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -49,6 +50,7 @@ class LoadSearchTermData extends AbstractFixture implements ContainerAwareInterf
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $propertyAccessor = $this->container->get('property_accessor');

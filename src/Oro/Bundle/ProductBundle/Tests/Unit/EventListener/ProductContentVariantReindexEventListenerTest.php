@@ -43,6 +43,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit\Framework\T
     /** @var ProductContentVariantReindexEventListener */
     private $eventListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

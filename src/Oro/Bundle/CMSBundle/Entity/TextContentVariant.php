@@ -60,9 +60,6 @@ class TextContentVariant
     #[ORM\Column(name: 'is_default', type: Types::BOOLEAN, options: ['default' => false])]
     protected ?bool $default = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
@@ -96,9 +93,6 @@ class TextContentVariant
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getScopes()
     {
         return $this->scopes;

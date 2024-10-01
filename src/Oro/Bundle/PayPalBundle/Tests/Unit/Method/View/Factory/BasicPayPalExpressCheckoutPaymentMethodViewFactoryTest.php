@@ -13,6 +13,7 @@ class BasicPayPalExpressCheckoutPaymentMethodViewFactoryTest extends \PHPUnit\Fr
      */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new BasicPayPalExpressCheckoutPaymentMethodViewFactory();

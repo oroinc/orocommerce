@@ -23,6 +23,7 @@ class SearchTermExtension extends AbstractExtension implements ServiceSubscriber
         $this->container = $container;
     }
 
+    #[\Override]
     public function getFilters()
     {
         return [
@@ -54,6 +55,7 @@ class SearchTermExtension extends AbstractExtension implements ServiceSubscriber
         return $phrases;
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

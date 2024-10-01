@@ -23,6 +23,7 @@ class LineItemsMatrixFormOnResultAfterListenerTest extends \PHPUnit\Framework\Te
     /** @var LineItemsMatrixFormOnResultAfterListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productMatrixAvailabilityProvider = $this->createMock(ProductMatrixAvailabilityProvider::class);

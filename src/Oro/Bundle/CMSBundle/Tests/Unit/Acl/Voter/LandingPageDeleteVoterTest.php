@@ -25,6 +25,7 @@ class LandingPageDeleteVoterTest extends TestCase
     private DoctrineHelper|MockObject $doctrineHelper;
     private LandingPageDeleteVoter $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EntityRepository::class);

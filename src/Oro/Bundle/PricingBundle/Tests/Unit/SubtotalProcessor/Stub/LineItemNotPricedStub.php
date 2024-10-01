@@ -42,14 +42,13 @@ class LineItemNotPricedStub implements
     /**
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -67,30 +66,22 @@ class LineItemNotPricedStub implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->unit;
@@ -101,9 +92,7 @@ class LineItemNotPricedStub implements
         $this->unit = $unit;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
     }
@@ -111,6 +100,7 @@ class LineItemNotPricedStub implements
     /**
      * @return Collection<ProductKitItemLineItemInterface>
      */
+    #[\Override]
     public function getKitItemLineItems(): Collection
     {
         return $this->kitItemLineItems;
@@ -133,6 +123,7 @@ class LineItemNotPricedStub implements
         return $this;
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->checksum;
@@ -144,6 +135,7 @@ class LineItemNotPricedStub implements
         return $this;
     }
 
+    #[\Override]
     public function getParentProduct()
     {
         return null;

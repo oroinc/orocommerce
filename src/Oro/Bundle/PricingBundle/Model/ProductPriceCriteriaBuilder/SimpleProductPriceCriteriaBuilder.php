@@ -14,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class SimpleProductPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
 {
+    #[\Override]
     protected function doCreate(): ProductPriceCriteria
     {
         return new ProductPriceCriteria(
@@ -24,6 +25,7 @@ class SimpleProductPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuil
         );
     }
 
+    #[\Override]
     public function isSupported(Product $product): bool
     {
         return true;

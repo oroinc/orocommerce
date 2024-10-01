@@ -15,6 +15,7 @@ class EmailTemplateSystemVariablesProviderTest extends TestCase
 
     private EmailTemplateSystemVariablesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contactInfoProvider = $this->createMock(ContactInfoProviderInterface::class);

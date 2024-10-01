@@ -24,17 +24,13 @@ class LoadProductUnitPrecisionDemoData extends AbstractFixture implements
     private array $products = [];
     private array $productUnis = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');

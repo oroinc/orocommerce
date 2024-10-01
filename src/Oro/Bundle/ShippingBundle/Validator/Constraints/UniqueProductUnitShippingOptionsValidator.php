@@ -9,9 +9,7 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class UniqueProductUnitShippingOptionsValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!is_array($value) && !($value instanceof \Traversable && $value instanceof \ArrayAccess)) {

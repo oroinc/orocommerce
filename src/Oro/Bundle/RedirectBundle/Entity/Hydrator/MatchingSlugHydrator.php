@@ -13,25 +13,19 @@ class MatchingSlugHydrator extends AbstractMatchingEntityHydrator
 {
     public const NAME = 'oro.redirect.entity.hydrator.matching_slug';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getRootEntityAlias(): string
     {
         return 'slug';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClass(): string
     {
         return Slug::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function hasScopes($slugId): bool
     {
         $hasScopeQuery = 'SELECT 1 FROM oro_slug_scope WHERE slug_id = :id LIMIT 1';

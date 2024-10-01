@@ -41,6 +41,7 @@ class ProductKitItemProduct implements ExtendEntityInterface
     #[ORM\JoinColumn(name: 'product_unit_precision_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     protected ?ProductUnitPrecision $productUnitPrecision = null;
 
+    #[\Override]
     public function __toString(): string
     {
         return (string)$this->product;

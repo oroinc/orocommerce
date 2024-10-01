@@ -34,6 +34,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productUnitRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->variantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);

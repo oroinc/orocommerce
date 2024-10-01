@@ -19,6 +19,7 @@ class EnumProductVariantFieldValuesCacheWarmerTest extends \PHPUnit\Framework\Te
     /** @var EnumProductVariantFieldValuesCacheWarmer */
     private $warmer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityWithFieldsProvider = $this->createMock(EntityWithFieldsProvider::class);

@@ -30,6 +30,7 @@ class PriceAttributePriceListType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var PriceAttributePriceList $priceAttributePriceList */
@@ -67,6 +68,7 @@ class PriceAttributePriceListType extends AbstractType
             );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -84,9 +86,7 @@ class PriceAttributePriceListType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

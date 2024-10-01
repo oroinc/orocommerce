@@ -25,6 +25,7 @@ class CheckoutDiscountContextConverterTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutDiscountContextConverter */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutToOrderConverter = $this->createMock(CheckoutToOrderConverter::class);

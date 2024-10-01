@@ -16,9 +16,7 @@ use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
  */
 class RemoveCascadePersistFromTaxCodeRelations implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(new UpdateEntityConfigFieldCascadeQuery(

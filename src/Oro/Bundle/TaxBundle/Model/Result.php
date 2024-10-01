@@ -45,9 +45,7 @@ final class Result extends AbstractResult implements \JsonSerializable
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function jsonSerialize(): array
     {
         // Prevent original object modifying
@@ -106,9 +104,7 @@ final class Result extends AbstractResult implements \JsonSerializable
         return $this->getOffset(self::ITEMS, []);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __serialize(): array
     {
         // Prevent original object modifying

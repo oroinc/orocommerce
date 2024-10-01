@@ -13,9 +13,7 @@ class UpdateProductImageTypeTable implements Migration
     const FOREIGN_COLUMN = 'id';
     const LOCAL_COLUMN = 'product_image_id';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable(self::PRODUCT_IMAGE_TYPE_TABLE);

@@ -44,17 +44,13 @@ class PriceListIdPlaceholder extends AbstractPlaceholder implements FeatureToggl
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultValue()
     {
         if (!$this->isFeaturesEnabled()) {

@@ -30,9 +30,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         self::SHOPPING_LIST_9 => LoadWebsiteData::WEBSITE3,
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -41,9 +39,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach ($this->getData() as $listLabel => $definition) {

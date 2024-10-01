@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
  */
 class ProductTaxCodeGridListener extends TaxCodeGridListener
 {
+    #[\Override]
     public function onBuildBefore(BuildBefore $event): void
     {
         parent::onBuildBefore($event);
@@ -20,9 +21,7 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
         $this->addFieldsAcl($event->getConfig());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function addColumn(DatagridConfiguration $config): void
     {
         $config->offsetSetByPath(
@@ -52,9 +51,7 @@ class ProductTaxCodeGridListener extends TaxCodeGridListener
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function addFilter(DatagridConfiguration $config): void
     {
         parent::addFilter($config);

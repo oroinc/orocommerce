@@ -6,7 +6,7 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\LineItems as BaseLineItems;
 
 class LineItems extends BaseLineItems
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         if (!isset($options[Action::ACTION])) {

@@ -22,6 +22,7 @@ class BaseMetaFormExtensionTest extends FormIntegrationTestCase
      */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -54,6 +55,7 @@ class BaseMetaFormExtensionTest extends FormIntegrationTestCase
     /**
      * @return array
      */
+    #[\Override]
     protected function getExtensions()
     {
         /** @var ManagerRegistry|MockObject $registry */

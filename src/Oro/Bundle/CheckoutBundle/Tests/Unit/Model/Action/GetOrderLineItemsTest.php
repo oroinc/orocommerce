@@ -23,6 +23,7 @@ class GetOrderLineItemsTest extends \PHPUnit\Framework\TestCase
     /** @var GetOrderLineItems */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);

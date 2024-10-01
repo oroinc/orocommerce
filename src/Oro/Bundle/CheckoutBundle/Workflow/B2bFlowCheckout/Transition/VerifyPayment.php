@@ -11,6 +11,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
  */
 class VerifyPayment extends BaseContinueTransition
 {
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         /** @var Checkout $checkout */

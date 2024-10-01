@@ -16,6 +16,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\AbstractBasicSale
  */
 class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersChartDataProviderTest
 {
+    #[\Override]
     protected function getSalesOrdersChartDataProvider(): SalesOrdersChartDataProvider
     {
         return self::getContainer()
@@ -34,6 +35,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function getChartDataDataProvider(): array
     {
         $this->setCurrentDate();

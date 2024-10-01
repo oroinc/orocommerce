@@ -9,9 +9,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
  */
 class PercentSearchableAttributeType extends DecimalSearchableAttributeType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterType(FieldConfigModel $attribute): string
     {
         return self::FILTER_TYPE_PERCENT;

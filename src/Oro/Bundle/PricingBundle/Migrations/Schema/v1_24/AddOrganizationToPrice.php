@@ -13,9 +13,7 @@ use Oro\Bundle\SecurityBundle\Migrations\Schema\SetOwnershipTypeQuery;
  */
 class AddOrganizationToPrice implements Migration
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_price_list');

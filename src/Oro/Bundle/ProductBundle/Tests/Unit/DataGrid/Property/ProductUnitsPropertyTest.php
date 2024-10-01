@@ -15,6 +15,7 @@ class ProductUnitsPropertyTest extends TestCase
 {
     private ProductUnitsProperty $property;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->property = new ProductUnitsProperty();

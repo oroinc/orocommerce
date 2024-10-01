@@ -40,7 +40,7 @@ abstract class AbstractRequest implements RequestInterface
         return $this;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOptions(Option\OptionsResolver $resolver)
     {
         $this

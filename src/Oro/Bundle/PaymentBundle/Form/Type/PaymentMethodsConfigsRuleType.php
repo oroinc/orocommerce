@@ -41,9 +41,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
         $this->methodViewProvider = $methodViewProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -70,15 +68,14 @@ class PaymentMethodsConfigsRuleType extends AbstractType
         $builder->addEventSubscriber(new DestinationCollectionTypeSubscriber());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $choices = $form->get('method')->getConfig()->getOption('choices');
         $view->vars['methods'] = array_flip($choices);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -87,9 +84,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

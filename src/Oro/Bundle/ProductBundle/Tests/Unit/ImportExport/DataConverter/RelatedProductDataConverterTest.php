@@ -9,6 +9,7 @@ class RelatedProductDataConverterTest extends \PHPUnit\Framework\TestCase
 {
     private RelatedProductDataConverter $dataConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dataConverter = new RelatedProductDataConverter();

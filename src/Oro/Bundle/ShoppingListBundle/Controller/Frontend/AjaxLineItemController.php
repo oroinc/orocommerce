@@ -348,9 +348,7 @@ class AjaxLineItemController extends AbstractLineItemController
             : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

@@ -46,9 +46,7 @@ class LoadConfigurableProductOrderLineItemData extends AbstractFixture implement
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -56,9 +54,7 @@ class LoadConfigurableProductOrderLineItemData extends AbstractFixture implement
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->lineItems as $name => $definition) {

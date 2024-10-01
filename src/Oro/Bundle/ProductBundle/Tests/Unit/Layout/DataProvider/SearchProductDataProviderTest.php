@@ -17,6 +17,7 @@ class SearchProductDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SearchProductDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->searchProductHandler = $this->createMock(SearchProductHandler::class);

@@ -29,9 +29,9 @@ class ContentNodeFieldsChangesCompilerPass implements CompilerPassInterface
     }
 
     /**
-     * {@inheritdoc}
      * @throws \Oro\Bundle\ProductBundle\Exception\InvalidArgumentException
      */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition($this->fieldsChangesAwareServiceDefinition)) {

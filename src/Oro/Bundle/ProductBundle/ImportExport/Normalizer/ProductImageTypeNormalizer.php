@@ -17,25 +17,19 @@ class ProductImageTypeNormalizer extends ConfigurableEntityNormalizer
         $this->productImageTypeClass = $productImageTypeClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         return new ProductImageType($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, $this->productImageTypeClass, true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, $this->productImageTypeClass);

@@ -22,14 +22,13 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
         $this->subscriber = $subscriber;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this->subscriber);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -41,6 +40,7 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['is_grouped'] = $options['is_grouped'];
@@ -49,14 +49,13 @@ class ShippingMethodTypeConfigCollectionType extends AbstractType
     /**
      * @return string
      */
+    #[\Override]
     public function getParent(): ?string
     {
         return CollectionType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

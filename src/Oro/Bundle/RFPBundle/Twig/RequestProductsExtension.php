@@ -45,9 +45,7 @@ class RequestProductsExtension extends AbstractExtension implements ServiceSubsc
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [new TwigFunction('rfp_products', [$this, 'getRequestProducts'])];
@@ -104,6 +102,7 @@ class RequestProductsExtension extends AbstractExtension implements ServiceSubsc
         return $kitItemLineItemsData;
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

@@ -14,6 +14,7 @@ class DefaultMultipleShippingMethodProviderTest extends \PHPUnit\Framework\TestC
     /** @var DefaultMultipleShippingMethodProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->multiShippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);

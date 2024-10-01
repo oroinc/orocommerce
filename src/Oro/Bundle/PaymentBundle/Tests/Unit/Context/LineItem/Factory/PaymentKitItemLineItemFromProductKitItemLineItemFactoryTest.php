@@ -19,6 +19,7 @@ class PaymentKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestCa
 {
     private PaymentKitItemLineItemFromProductKitItemLineItemFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new PaymentKitItemLineItemFromProductKitItemLineItemFactory();

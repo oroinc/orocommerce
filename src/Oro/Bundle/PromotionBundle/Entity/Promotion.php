@@ -151,17 +151,13 @@ class Promotion implements
         $this->coupons = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRule()
     {
         return $this->rule;
@@ -246,9 +242,7 @@ class Promotion implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getScopes()
     {
         return $this->scopes;
@@ -293,6 +287,7 @@ class Promotion implements
     /**
      * @return Collection|PromotionSchedule[]
      */
+    #[\Override]
     public function getSchedules()
     {
         return $this->schedules;
@@ -325,9 +320,7 @@ class Promotion implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountConfiguration()
     {
         return $this->discountConfiguration;
@@ -344,9 +337,7 @@ class Promotion implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isUseCoupons()
     {
         return $this->useCoupons;
@@ -363,9 +354,7 @@ class Promotion implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCoupons()
     {
         return $this->coupons;
@@ -400,6 +389,7 @@ class Promotion implements
     /**
      * @return Segment
      */
+    #[\Override]
     public function getProductsSegment()
     {
         return $this->productsSegment;

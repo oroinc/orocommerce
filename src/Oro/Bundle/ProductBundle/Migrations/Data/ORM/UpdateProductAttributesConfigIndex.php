@@ -13,6 +13,7 @@ class UpdateProductAttributesConfigIndex extends AbstractFixture implements Cont
 {
     use MakeProductAttributesTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->synchronizeProductAttributesIndexByScope('attribute');

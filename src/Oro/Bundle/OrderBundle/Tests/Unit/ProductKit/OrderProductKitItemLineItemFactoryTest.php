@@ -21,6 +21,7 @@ class OrderProductKitItemLineItemFactoryTest extends TestCase
 
     private OrderProductKitItemLineItemFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->kitItemProductsProvider = $this->createMock(ProductKitItemProductsProvider::class);

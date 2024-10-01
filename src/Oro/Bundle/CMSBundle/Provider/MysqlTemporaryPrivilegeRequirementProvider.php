@@ -27,9 +27,7 @@ class MysqlTemporaryPrivilegeRequirementProvider extends AbstractRequirementsPro
         $this->registry = $registry;
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function getOroRequirements(): ?RequirementCollection
     {
         $collection = new RequirementCollection();

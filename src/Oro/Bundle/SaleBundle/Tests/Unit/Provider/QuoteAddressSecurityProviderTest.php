@@ -29,6 +29,7 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteAddressSecurityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

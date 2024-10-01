@@ -9,6 +9,7 @@ class PaymentTermChannelTypeTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentTermChannelType */
     private $channel;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channel = new PaymentTermChannelType();

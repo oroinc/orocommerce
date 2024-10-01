@@ -17,6 +17,7 @@ class RedirectGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var RedirectGenerator */
     private $redirectGenerator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

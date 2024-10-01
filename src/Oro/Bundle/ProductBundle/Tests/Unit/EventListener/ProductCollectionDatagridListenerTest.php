@@ -40,6 +40,7 @@ class ProductCollectionDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductCollectionDatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

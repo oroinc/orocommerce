@@ -29,6 +29,7 @@ class ShippingContextToRulesValuesConverterTest extends TestCase
 
     private ShippingContextToRulesValuesConverter $shippingContextToRuleValuesConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->decoratedProductLineItemFactory = $this->createMock(DecoratedProductLineItemFactory::class);

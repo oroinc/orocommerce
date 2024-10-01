@@ -31,6 +31,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ProductVisibilityProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

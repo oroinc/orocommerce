@@ -32,6 +32,7 @@ abstract class AbstractProductsGridPricesExtensionTest extends \PHPUnit\Framewor
 
     protected string $supportedGridName;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceListRequestHandler = $this->createMock(PriceListRequestHandlerInterface::class);

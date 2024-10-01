@@ -77,14 +77,13 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
      * @param Product $product
      * @return string
      */
+    #[\Override]
     public static function getDefault($product)
     {
         return self::CURRENT_PRODUCT;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
@@ -92,9 +91,7 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVisibility()
     {
         return $this->visibility;
@@ -104,6 +101,7 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
      * @param Product $product
      * @return array
      */
+    #[\Override]
     public static function getVisibilityList($product)
     {
         if (EntityPropertyInfo::methodExists($product, 'getCategory') && !$product->getCategory()) {
@@ -122,9 +120,7 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargetEntity()
     {
         return $this->product;
@@ -134,6 +130,7 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
      * @param Product $product
      * @return $this
      */
+    #[\Override]
     public function setTargetEntity($product)
     {
         $this->setProduct($product);
@@ -144,6 +141,7 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
     /**
      * @return Scope
      */
+    #[\Override]
     public function getScope()
     {
         return $this->scope;
@@ -153,6 +151,7 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
      * @param Scope $scope
      * @return $this
      */
+    #[\Override]
     public function setScope(Scope $scope)
     {
         $this->scope = $scope;
@@ -160,9 +159,7 @@ class CustomerGroupProductVisibility implements VisibilityInterface, ScopeAwareI
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getScopeType()
     {
         return self::VISIBILITY_TYPE;

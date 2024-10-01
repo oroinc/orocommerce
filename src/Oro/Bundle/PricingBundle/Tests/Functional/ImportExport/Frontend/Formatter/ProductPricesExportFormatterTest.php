@@ -14,6 +14,7 @@ class ProductPricesExportFormatterTest extends WebTestCase
 {
     private ProductPricesExportFormatter $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

@@ -10,9 +10,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderLineItemData;
  */
 class OrderFrontendOperationsTest extends OrderFrontendOperationsTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFixtures()
     {
         return [

@@ -18,6 +18,7 @@ class AddCategoryToSearchTermViewPageListenerTest extends TestCase
 
     private AddCategoryToSearchTermViewPageListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->environment = $this->createMock(Environment::class);

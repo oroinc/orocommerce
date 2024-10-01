@@ -31,6 +31,7 @@ class ShippingResolverTest extends TestCase
 
     private ShippingResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->excTaxCalculator = $this->createMock(TaxCalculatorInterface::class);

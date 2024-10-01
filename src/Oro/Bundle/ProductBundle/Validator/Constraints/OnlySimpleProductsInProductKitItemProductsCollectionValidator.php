@@ -19,6 +19,7 @@ class OnlySimpleProductsInProductKitItemProductsCollectionValidator extends Cons
      * @param ProductKitItem|null $value
      * @param Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof OnlySimpleProductsInProductKitItemProductsCollection) {

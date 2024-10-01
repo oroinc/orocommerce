@@ -52,9 +52,7 @@ class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
         $this->setUnit($unit);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -71,9 +69,7 @@ class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice()
     {
         return $this->price;
@@ -90,9 +86,7 @@ class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUnit()
     {
         return $this->unit;
@@ -109,9 +103,7 @@ class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -139,9 +131,7 @@ class ProductPriceDTO implements \JsonSerializable, ProductPriceInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return $this->toArray();

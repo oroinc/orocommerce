@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OrderLineItemsGridFrontendTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

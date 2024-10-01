@@ -22,6 +22,7 @@ class ProductKitItemLineItemStub extends ProductLineItem implements ProductKitIt
         parent::__construct($identifier);
     }
 
+    #[\Override]
     public function getLineItem(): ?ProductLineItemInterface
     {
         return $this->lineItem;
@@ -34,6 +35,7 @@ class ProductKitItemLineItemStub extends ProductLineItem implements ProductKitIt
         return $this;
     }
 
+    #[\Override]
     public function getKitItem(): ?ProductKitItem
     {
         return $this->kitItem;
@@ -46,6 +48,7 @@ class ProductKitItemLineItemStub extends ProductLineItem implements ProductKitIt
         return $this;
     }
 
+    #[\Override]
     public function getSortOrder(): int
     {
         return $this->sortOrder;

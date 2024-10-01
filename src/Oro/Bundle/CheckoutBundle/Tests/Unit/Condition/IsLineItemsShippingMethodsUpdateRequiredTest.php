@@ -17,6 +17,7 @@ class IsLineItemsShippingMethodsUpdateRequiredTest extends \PHPUnit\Framework\Te
     /** @var IsLineItemsShippingMethodsUpdateRequired */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessorInterface::class);

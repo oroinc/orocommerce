@@ -21,6 +21,7 @@ class HasAtLeastOneSizeImageValidatorTest extends ConstraintValidatorTestCase
 {
     private MockObject|TranslatorInterface $translator;
 
+    #[\Override]
     protected function createValidator()
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

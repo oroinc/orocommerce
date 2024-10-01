@@ -18,6 +18,7 @@ class ProductIndexFieldsProvider implements ProductIndexAttributeProviderInterfa
         $this->fields = new ArrayCollection();
     }
 
+    #[\Override]
     public function addForceIndexed(string $field): void
     {
         if (!$this->fields->contains($field)) {
@@ -25,6 +26,7 @@ class ProductIndexFieldsProvider implements ProductIndexAttributeProviderInterfa
         }
     }
 
+    #[\Override]
     public function isForceIndexed(string $field): bool
     {
         return $this->fields->contains($field);

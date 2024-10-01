@@ -15,7 +15,6 @@ use Symfony\Contracts\Service\ServiceSubscriberInterface;
  */
 class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberInterface
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::DELETE];
 
     private ContainerInterface $container;
@@ -28,9 +27,7 @@ class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberIn
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [
@@ -38,9 +35,7 @@ class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberIn
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote(TokenInterface $token, $object, array $attributes): int
     {
         $this->object = $object;
@@ -51,9 +46,7 @@ class WebCatalogVoter extends AbstractEntityVoter implements ServiceSubscriberIn
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         return $this->getWebCatalogUsageProvider()->isInUse($this->object)

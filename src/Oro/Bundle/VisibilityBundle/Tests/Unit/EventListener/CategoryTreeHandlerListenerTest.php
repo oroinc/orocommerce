@@ -18,6 +18,7 @@ class CategoryTreeHandlerListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryTreeHandlerListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryVisibilityProvider = $this->createMock(CategoryVisibilityProvider::class);

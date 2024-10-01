@@ -32,6 +32,7 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
     use ContainerAwareTrait;
     use UserUtilityTrait;
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -40,6 +41,7 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $data = Yaml::parseFile($this->getFilePathsFromLocator($this->getDataSource()));

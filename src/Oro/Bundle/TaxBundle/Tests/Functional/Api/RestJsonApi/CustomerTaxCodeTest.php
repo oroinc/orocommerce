@@ -11,6 +11,7 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
  */
 class CustomerTaxCodeTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

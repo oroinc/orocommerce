@@ -30,6 +30,7 @@ class ProcessorTest extends \PHPUnit\Framework\TestCase
      */
     private $mailProcessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->request = new Request();

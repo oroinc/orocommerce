@@ -147,9 +147,6 @@ class ShoppingList implements
     protected ?string $currency = null;
 
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->lineItems = new ArrayCollection();
@@ -159,6 +156,7 @@ class ShoppingList implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->label;
@@ -254,6 +252,7 @@ class ShoppingList implements
     /**
      * @return Collection|LineItem[]
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->lineItems;
@@ -360,6 +359,7 @@ class ShoppingList implements
      *
      * @return $this
      */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;
@@ -370,6 +370,7 @@ class ShoppingList implements
     /**
      * @return Website
      */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
@@ -386,14 +387,13 @@ class ShoppingList implements
     /**
      * @return $this
      */
+    #[\Override]
     public function getSourceDocument()
     {
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceDocumentIdentifier()
     {
         return $this->label;
@@ -412,9 +412,7 @@ class ShoppingList implements
         $this->subtotal = $subtotal;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVisitor()
     {
         if ($this->getVisitors()->isEmpty()) {
@@ -424,9 +422,7 @@ class ShoppingList implements
         return $this->getVisitors()->current();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [

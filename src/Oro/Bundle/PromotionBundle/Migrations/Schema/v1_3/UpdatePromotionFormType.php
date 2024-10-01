@@ -11,9 +11,7 @@ use Oro\Bundle\PromotionBundle\Form\Type\PromotionSelectType;
 
 class UpdatePromotionFormType implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(

@@ -50,6 +50,7 @@ class FedexShippingMethodFactoryTest extends TestCase
     /** @var FedexShippingMethodFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

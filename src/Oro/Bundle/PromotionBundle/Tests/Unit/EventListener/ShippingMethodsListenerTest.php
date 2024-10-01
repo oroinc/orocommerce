@@ -22,6 +22,7 @@ class ShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingMethodsListener */
     private $shippingMethodsListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->promotionExecutor = $this->createMock(PromotionExecutor::class);

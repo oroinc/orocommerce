@@ -16,11 +16,13 @@ class CheckoutGetRequestHandler implements CheckoutHandlerInterface
     ) {
     }
 
+    #[\Override]
     public function isSupported(Request $request): bool
     {
         return $request->isMethod(Request::METHOD_GET);
     }
 
+    #[\Override]
     public function handle(WorkflowItem $workflowItem, Request $request): void
     {
         if (!$request->query->has('transition')) {

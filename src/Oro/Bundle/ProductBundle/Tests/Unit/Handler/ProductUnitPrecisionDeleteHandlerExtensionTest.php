@@ -22,6 +22,7 @@ class ProductUnitPrecisionDeleteHandlerExtensionTest extends \PHPUnit\Framework\
 
     private ProductUnitPrecisionDeleteHandlerExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productKitsByUnitPrecisionProvider = $this->createMock(ProductKitsByUnitPrecisionProvider::class);

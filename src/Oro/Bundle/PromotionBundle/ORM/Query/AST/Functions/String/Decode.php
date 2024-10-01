@@ -14,9 +14,7 @@ class Decode extends FunctionNode
 {
     public mixed $stringPrimary;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function parse(Parser $parser): void
     {
         $parser->match(Lexer::T_IDENTIFIER);
@@ -25,9 +23,7 @@ class Decode extends FunctionNode
         $parser->match(Lexer::T_CLOSE_PARENTHESIS);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSql(SqlWalker $sqlWalker): string
     {
         return "DECODE(" . $sqlWalker->walkArithmeticPrimary($this->stringPrimary) . ", 'base64')";

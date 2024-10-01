@@ -12,16 +12,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class VisibilityOnChangeCustomerTopic extends AbstractTopic
 {
+    #[\Override]
     public static function getName(): string
     {
         return 'oro_visibility.visibility.change_customer';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolve visibility for a customer when it is changed.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

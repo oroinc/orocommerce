@@ -36,6 +36,7 @@ class ProductLineItemProductPriceProviderTest extends TestCase
 
     private ProductLineItemProductPriceProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPriceByMatchingCriteriaProvider = $this

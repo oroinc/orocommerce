@@ -16,9 +16,7 @@ class RemoveRuleAcl implements Migration, ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(

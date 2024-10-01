@@ -9,9 +9,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class NotEmptyContentWidgetLayout extends NotBlank
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

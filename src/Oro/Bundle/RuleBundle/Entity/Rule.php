@@ -73,6 +73,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -81,6 +82,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getName()
     {
         return $this->name;
@@ -90,6 +92,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
      * @param string $name
      * @return $this
      */
+    #[\Override]
     public function setName($name)
     {
         $this->name = $name;
@@ -100,6 +103,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     /**
      * @return bool
      */
+    #[\Override]
     public function isEnabled()
     {
         return $this->enabled;
@@ -110,6 +114,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
      *
      * @return $this
      */
+    #[\Override]
     public function setEnabled($enabled)
     {
         $this->enabled = $enabled;
@@ -120,6 +125,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     /**
      * @return int
      */
+    #[\Override]
     public function getSortOrder()
     {
         return $this->sortOrder;
@@ -129,6 +135,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
      * @param int $sortOrder
      * @return $this
      */
+    #[\Override]
     public function setSortOrder($sortOrder)
     {
         $this->sortOrder = $sortOrder;
@@ -139,6 +146,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     /**
      * @return bool
      */
+    #[\Override]
     public function isStopProcessing()
     {
         return $this->stopProcessing;
@@ -148,6 +156,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
      * @param bool $stopProcessing
      * @return $this
      */
+    #[\Override]
     public function setStopProcessing($stopProcessing)
     {
         $this->stopProcessing = $stopProcessing;
@@ -158,6 +167,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getExpression()
     {
         return $this->expression;
@@ -167,6 +177,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
      * @param string $expression
      * @return $this
      */
+    #[\Override]
     public function setExpression($expression)
     {
         $this->expression = $expression;
@@ -177,6 +188,7 @@ class Rule implements DatesAwareInterface, RuleInterface, ExtendEntityInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string) $this->name;

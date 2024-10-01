@@ -18,9 +18,7 @@ class OrderMapperDecorator implements MapperInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function map(Checkout $checkout, array $data = [], array $skipped = [])
     {
         $skipped['appliedCoupons'] = true;

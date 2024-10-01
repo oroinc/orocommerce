@@ -32,6 +32,7 @@ class SkipOrderTaxRecalculationResolver implements ResolverInterface
     /**
      * @throws StopPropagationException
      */
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         if (!$taxable->getIdentifier() || !$taxable->getClassName()) {

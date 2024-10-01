@@ -27,6 +27,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
     /** @var PaymentMethodConfigCollectionType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->subscriber = new RuleMethodConfigCollectionSubscriberStub();
@@ -85,9 +86,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $methodProvider = $this->createMock(PaymentMethodProviderInterface::class);

@@ -23,6 +23,7 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
 {
     use FeatureCheckerHolderTrait;
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -63,9 +64,7 @@ class FrontendRfqExtension extends AbstractTypeExtension implements FeatureToggl
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [RequestType::class];

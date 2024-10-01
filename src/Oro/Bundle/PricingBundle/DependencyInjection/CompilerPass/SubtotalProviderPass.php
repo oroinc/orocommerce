@@ -15,9 +15,7 @@ class SubtotalProviderPass implements CompilerPassInterface
 {
     use PriorityTaggedLocatorTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container): void
     {
         $tagName = 'oro_pricing.subtotal_provider';

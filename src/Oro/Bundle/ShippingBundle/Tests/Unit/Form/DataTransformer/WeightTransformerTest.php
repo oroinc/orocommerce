@@ -11,6 +11,7 @@ class WeightTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var WeightTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transformer = new WeightTransformer();

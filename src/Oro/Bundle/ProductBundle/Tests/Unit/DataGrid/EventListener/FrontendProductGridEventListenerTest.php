@@ -103,6 +103,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendProductGridEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attributeManager = $this->createMock(AttributeManager::class);

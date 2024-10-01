@@ -20,6 +20,7 @@ class NVPClientTest extends TestCase
     /** @var NVPClient */
     private $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->httpClient = $this->createMock(ClientInterface::class);

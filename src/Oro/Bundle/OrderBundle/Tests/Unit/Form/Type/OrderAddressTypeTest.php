@@ -29,6 +29,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
 {
     private OrderAddressSecurityProvider|MockObject $orderAddressSecurityProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
@@ -197,9 +198,7 @@ class OrderAddressTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $addressManager = $this->createMock(OrderAddressManager::class);

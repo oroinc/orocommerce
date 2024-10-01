@@ -18,17 +18,13 @@ class Brand extends BaseBrand
         'shortDescription' => 'shortDescriptions',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __call(string $name, array $arguments)
     {
         return $this->localizedMethodCall($this->localizedFields, $name, $arguments);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __get(string $name)
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -42,9 +38,7 @@ class Brand extends BaseBrand
         throw new \RuntimeException('It\'s not expected to get non-existing property');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __set(string $name, $value): void
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -62,9 +56,7 @@ class Brand extends BaseBrand
         throw new \RuntimeException('It\'s not expected to set non-existing property');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function __isset(string $name): bool
     {
         if (array_key_exists($name, $this->localizedFields)) {

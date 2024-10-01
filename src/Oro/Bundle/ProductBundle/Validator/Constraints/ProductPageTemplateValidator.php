@@ -21,9 +21,7 @@ class ProductPageTemplateValidator extends ConstraintValidator
         $this->pageTemplatesManager = $pageTemplatesManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($entityFieldFallbackValue, Constraint $constraint)
     {
         if (is_null($entityFieldFallbackValue)) {

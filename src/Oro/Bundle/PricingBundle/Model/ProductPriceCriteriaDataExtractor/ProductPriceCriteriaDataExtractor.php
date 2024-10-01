@@ -22,6 +22,7 @@ class ProductPriceCriteriaDataExtractor implements ProductPriceCriteriaDataExtra
         $this->innerExtractors = $innerExtractors;
     }
 
+    #[\Override]
     public function extractCriteriaData(ProductPriceCriteria $productPriceCriteria): array
     {
         foreach ($this->innerExtractors as $innerProvider) {
@@ -39,6 +40,7 @@ class ProductPriceCriteriaDataExtractor implements ProductPriceCriteriaDataExtra
         ];
     }
 
+    #[\Override]
     public function isSupported(ProductPriceCriteria $productPriceCriteria): bool
     {
         foreach ($this->innerExtractors as $innerExtractor) {

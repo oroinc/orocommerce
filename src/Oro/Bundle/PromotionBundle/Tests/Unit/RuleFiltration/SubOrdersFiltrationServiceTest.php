@@ -22,6 +22,7 @@ class SubOrdersFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     /** @var SubOrdersFiltrationService  */
     private $filtrationService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);

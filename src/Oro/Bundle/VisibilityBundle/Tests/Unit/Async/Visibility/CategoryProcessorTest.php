@@ -39,6 +39,7 @@ class CategoryProcessorTest extends \PHPUnit\Framework\TestCase
 
     private CategoryProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

@@ -35,9 +35,7 @@ class CustomerConsentsTransformer implements DataTransformerInterface
         $this->consentAcceptanceProvider = $frontendConsentAcceptanceProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($consentAcceptances)
     {
         if ($consentAcceptances instanceof Collection) {
@@ -55,9 +53,7 @@ class CustomerConsentsTransformer implements DataTransformerInterface
         return json_encode([]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($encodedConsentAcceptanceData)
     {
         $consentAcceptancesDataArray = is_array($encodedConsentAcceptanceData)

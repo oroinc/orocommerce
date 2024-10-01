@@ -23,6 +23,7 @@ class WebCatalogCalculateContentNodeTreeCacheTopicTest extends AbstractTopicTest
 
     private Scope $scope;
 
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);
@@ -54,6 +55,7 @@ class WebCatalogCalculateContentNodeTreeCacheTopicTest extends AbstractTopicTest
     /**
      * @dataProvider validBodyDataProvider
      */
+    #[\Override]
     public function testConfigureMessageBodyWhenValid(array $body, array $expectedBody): void
     {
         $expectedBody[WebCatalogCalculateContentNodeTreeCacheTopic::CONTENT_NODE] = $this->contentNode;
@@ -62,6 +64,7 @@ class WebCatalogCalculateContentNodeTreeCacheTopicTest extends AbstractTopicTest
         parent::testConfigureMessageBodyWhenValid($body, $expectedBody);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -80,6 +83,7 @@ class WebCatalogCalculateContentNodeTreeCacheTopicTest extends AbstractTopicTest
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

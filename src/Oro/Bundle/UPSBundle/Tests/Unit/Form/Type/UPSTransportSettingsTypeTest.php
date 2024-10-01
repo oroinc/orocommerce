@@ -39,6 +39,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     /** @var UPSTransportSettingsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->systemShippingOriginProvider = $this->createMock(SystemShippingOriginProvider::class);
@@ -57,9 +58,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $country = new Country('US');

@@ -34,6 +34,7 @@ class SegmentProductsQueryCacheTest extends \PHPUnit\Framework\TestCase
     /** @var SegmentProductsQueryCache */
     private $segmentProductsQueryCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

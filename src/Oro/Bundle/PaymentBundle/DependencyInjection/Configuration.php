@@ -15,9 +15,9 @@ class Configuration implements ConfigurationInterface
     const ALLOWED_COUNTRIES_SELECTED = 'selected';
 
     /**
-     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('oro_payment');

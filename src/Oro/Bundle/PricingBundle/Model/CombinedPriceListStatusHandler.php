@@ -20,6 +20,7 @@ class CombinedPriceListStatusHandler implements CombinedPriceListStatusHandlerIn
     /**
      * Building is possible if at least one of the handlers returns a positive result.
      */
+    #[\Override]
     public function isReadyForBuild(CombinedPriceList $cpl): bool
     {
         foreach ($this->handlers as $handler) {

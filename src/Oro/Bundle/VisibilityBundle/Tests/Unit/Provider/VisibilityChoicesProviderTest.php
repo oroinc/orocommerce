@@ -14,6 +14,7 @@ class VisibilityChoicesProviderTest extends \PHPUnit\Framework\TestCase
     /** @var VisibilityChoicesProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);

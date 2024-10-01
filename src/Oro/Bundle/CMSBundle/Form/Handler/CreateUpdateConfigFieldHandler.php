@@ -15,6 +15,7 @@ use Oro\Bundle\EntityConfigBundle\Form\Handler\CreateUpdateConfigFieldHandler as
  */
 class CreateUpdateConfigFieldHandler extends BaseCreateUpdateConfigFieldHandler
 {
+    #[\Override]
     protected function createAndUpdateFieldModel(
         string $entityClassName,
         string $fieldName,

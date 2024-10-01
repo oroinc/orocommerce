@@ -29,6 +29,7 @@ class MultiShippingCostProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MultiShippingCostProvider */
     private $shippingCostProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

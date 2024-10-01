@@ -19,6 +19,7 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
     /** @var OrderDiscountOptionsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,9 +41,7 @@ class OrderDiscountOptionsTypeTest extends FormIntegrationTestCase
         $this->assertEquals(DiscountOptionsType::class, $this->formType->getParent());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

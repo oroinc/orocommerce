@@ -39,17 +39,13 @@ class ContentNodeTreeCacheWarmer implements CacheWarmerInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOptional(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function warmUp(string $cacheDir): array
     {
         $repository = $this->doctrineHelper->getEntityRepository(Website::class);

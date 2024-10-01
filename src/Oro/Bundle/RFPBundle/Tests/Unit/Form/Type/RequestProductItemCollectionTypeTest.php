@@ -15,9 +15,7 @@ class RequestProductItemCollectionTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

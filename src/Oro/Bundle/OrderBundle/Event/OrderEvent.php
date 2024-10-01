@@ -40,9 +40,7 @@ class OrderEvent extends Event implements EntityDataAwareEventInterface
         return $this->order;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData()
     {
         return $this->data;
@@ -56,9 +54,7 @@ class OrderEvent extends Event implements EntityDataAwareEventInterface
         return $this->form;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubmittedData()
     {
         return $this->submittedData;
@@ -67,6 +63,7 @@ class OrderEvent extends Event implements EntityDataAwareEventInterface
     /**
      * @return Order
      */
+    #[\Override]
     public function getEntity()
     {
         return $this->getOrder();

@@ -11,9 +11,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 
 class LoadContentVariantSlugsData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ContentVariant $variant */
@@ -30,9 +28,7 @@ class LoadContentVariantSlugsData extends AbstractFixture implements DependentFi
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

@@ -21,6 +21,7 @@ class ContentNodeDeletionResolverTest extends \PHPUnit\Framework\TestCase
 
     private NotDeletableContentNodeResult $result;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

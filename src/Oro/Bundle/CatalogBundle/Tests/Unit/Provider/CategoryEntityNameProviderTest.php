@@ -14,6 +14,7 @@ class CategoryEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private CategoryEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new CategoryEntityNameProvider();

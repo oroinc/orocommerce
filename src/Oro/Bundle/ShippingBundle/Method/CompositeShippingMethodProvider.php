@@ -18,9 +18,7 @@ class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethods(): array
     {
         $items = [];
@@ -34,9 +32,7 @@ class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
         return $items;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethod(string $name): ?ShippingMethodInterface
     {
         foreach ($this->providers as $provider) {
@@ -48,9 +44,7 @@ class CompositeShippingMethodProvider implements ShippingMethodProviderInterface
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasShippingMethod(string $name): bool
     {
         foreach ($this->providers as $provider) {

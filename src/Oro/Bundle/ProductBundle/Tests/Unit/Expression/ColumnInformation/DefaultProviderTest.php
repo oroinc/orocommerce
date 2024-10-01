@@ -20,6 +20,7 @@ class DefaultProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);

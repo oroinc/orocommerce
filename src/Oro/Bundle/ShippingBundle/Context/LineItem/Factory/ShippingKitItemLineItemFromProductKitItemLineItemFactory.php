@@ -21,12 +21,14 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactory implements
     ) {
     }
 
+    #[\Override]
     public function create(
         ProductKitItemLineItemPriceAwareInterface $productKitItemLineItem
     ): ShippingKitItemLineItem {
         return $this->createShippingKitItemLineItem($productKitItemLineItem);
     }
 
+    #[\Override]
     public function createCollection(iterable $productKitItemLineItems): Collection
     {
         $shippingKitItemLineItems = [];

@@ -26,6 +26,7 @@ class MultiShippingPromotionDataTest extends \PHPUnit\Framework\TestCase
     /** @var MultiShippingPromotionData */
     private $multiShippingPromotionData;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->promotionData = $this->createMock(PromotionDataInterface::class);

@@ -13,6 +13,7 @@ class CurrencyPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var CurrencyPlaceholder */
     private $placeholder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

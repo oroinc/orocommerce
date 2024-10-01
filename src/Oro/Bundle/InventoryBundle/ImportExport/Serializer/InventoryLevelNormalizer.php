@@ -39,17 +39,13 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         $this->roundingService = $roundingService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof InventoryLevel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         $result = $this->dispatchNormalize($object, [], $context, Events::BEFORE_NORMALIZE_ENTITY);
@@ -115,9 +111,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         ]];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (!is_array($data) || !isset($data['product'])) {
@@ -186,9 +180,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = array()): bool
     {
         return !empty($data) && isset($data['product']) && $type === InventoryLevel::class;

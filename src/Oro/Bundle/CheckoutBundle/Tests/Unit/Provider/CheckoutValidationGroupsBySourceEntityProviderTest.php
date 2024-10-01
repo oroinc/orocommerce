@@ -16,6 +16,7 @@ class CheckoutValidationGroupsBySourceEntityProviderTest extends TestCase
 {
     private CheckoutValidationGroupsBySourceEntityProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $entityAliasResolver = $this->createMock(EntityAliasResolver::class);

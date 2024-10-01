@@ -13,6 +13,7 @@ class QuoteProductOfferFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteProductOfferFormatter */
     private $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

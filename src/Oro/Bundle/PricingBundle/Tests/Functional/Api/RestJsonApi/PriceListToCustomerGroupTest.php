@@ -21,6 +21,7 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -148,25 +149,19 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getApiEntityName(): string
     {
         return 'pricelisttocustomergroups';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getAliceFilesFolderName(): string
     {
         return 'price_list_to_customer_group';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFirstRelation()
     {
         return $this->getReference(LoadPriceListRelations::PRICE_LIST_TO_CUSTOMER_GROUP_1);
@@ -177,9 +172,7 @@ class PriceListToCustomerGroupTest extends AbstractApiPriceListRelationTest
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(

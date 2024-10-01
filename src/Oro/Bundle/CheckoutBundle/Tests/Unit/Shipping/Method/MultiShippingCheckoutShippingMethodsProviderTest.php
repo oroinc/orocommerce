@@ -22,6 +22,7 @@ class MultiShippingCheckoutShippingMethodsProviderTest extends \PHPUnit\Framewor
     /** @var MultiShippingCheckoutShippingMethodsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->multiShippingMethodProvider = $this->createMock(DefaultMultipleShippingMethodProvider::class);

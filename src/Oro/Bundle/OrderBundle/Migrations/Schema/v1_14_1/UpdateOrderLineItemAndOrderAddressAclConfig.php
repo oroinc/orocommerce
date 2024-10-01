@@ -14,9 +14,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
  */
 class UpdateOrderLineItemAndOrderAddressAclConfig implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(

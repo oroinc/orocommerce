@@ -8,9 +8,7 @@ use Symfony\Component\HttpKernel\Bundle\Bundle;
 
 class OroPayPalBundle extends Bundle
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContainerExtension(): ?ExtensionInterface
     {
         if (null === $this->extension) {

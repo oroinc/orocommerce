@@ -15,6 +15,7 @@ class RestrictSitemapProductByInventoryStatusListenerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

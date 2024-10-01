@@ -32,6 +32,7 @@ class ProductKitItemQuantityPrecisionValidator extends ConstraintValidator
      * @param ProductKitItem|null $value
      * @param ProductKitItemUnitAvailableForSpecifiedProducts $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductKitItemQuantityPrecision) {

@@ -18,6 +18,7 @@ class RequestProductExtension extends AbstractTypeExtension
     {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
@@ -32,6 +33,7 @@ class RequestProductExtension extends AbstractTypeExtension
         }
     }
 
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [RequestProductType::class];

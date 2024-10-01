@@ -16,6 +16,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
     /** @var QuoteToOrderResizeFormSubscriber */
     private $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

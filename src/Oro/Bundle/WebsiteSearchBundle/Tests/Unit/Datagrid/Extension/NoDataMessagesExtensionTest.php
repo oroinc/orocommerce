@@ -32,9 +32,7 @@ class NoDataMessagesExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $extension;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->noDataMessagesExtension = $this->createMock(AbstractExtension::class);

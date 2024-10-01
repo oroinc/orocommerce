@@ -37,6 +37,7 @@ class CategoryUrlItemsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $urlItemsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);

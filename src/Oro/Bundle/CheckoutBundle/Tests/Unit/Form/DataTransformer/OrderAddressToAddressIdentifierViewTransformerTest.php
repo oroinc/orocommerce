@@ -19,6 +19,7 @@ class OrderAddressToAddressIdentifierViewTransformerTest extends \PHPUnit\Framew
     /** @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject */
     private $addressManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->propertyAccessor = PropertyAccess::createPropertyAccessor();

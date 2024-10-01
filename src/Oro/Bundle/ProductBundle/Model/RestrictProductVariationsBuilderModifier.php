@@ -21,6 +21,7 @@ class RestrictProductVariationsBuilderModifier implements QueryBuilderModifierIn
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    #[\Override]
     public function modify(QueryBuilder $queryBuilder)
     {
         list($rootAlias) = $queryBuilder->getRootAliases();

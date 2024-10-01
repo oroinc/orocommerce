@@ -51,21 +51,25 @@ class ProductPriceCollectionDTO extends \ArrayObject
         });
     }
 
+    #[\Override]
     public function offsetSet($key, $value): void
     {
         throw new \LogicException(__CLASS__ . ' is immutable.');
     }
 
+    #[\Override]
     public function offsetUnset($key): void
     {
         throw new \LogicException(__CLASS__ . ' is immutable.');
     }
 
+    #[\Override]
     public function append(mixed $value): void
     {
         throw new \LogicException(__CLASS__ . ' is immutable.');
     }
 
+    #[\Override]
     public function exchangeArray(object|array $array): array
     {
         throw new \LogicException(__CLASS__ . ' is immutable.');

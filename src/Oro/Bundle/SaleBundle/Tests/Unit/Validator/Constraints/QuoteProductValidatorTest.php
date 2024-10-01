@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class QuoteProductValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): Constraints\QuoteProductValidator
     {
         return new Constraints\QuoteProductValidator();

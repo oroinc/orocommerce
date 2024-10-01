@@ -41,6 +41,7 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $messageBody = $message->getBody();
@@ -69,6 +70,7 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
         return $result ? self::ACK : self::REJECT;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [Topic::getName()];

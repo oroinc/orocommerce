@@ -42,25 +42,18 @@ class SluggableEntityPrefixType extends AbstractType
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -70,9 +63,7 @@ class SluggableEntityPrefixType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -108,9 +99,7 @@ class SluggableEntityPrefixType extends AbstractType
         $event->setData($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['isAskStrategy'] = $this->checkIsAskStrategy();

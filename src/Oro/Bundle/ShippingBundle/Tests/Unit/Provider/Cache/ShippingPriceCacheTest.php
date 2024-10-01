@@ -24,6 +24,7 @@ class ShippingPriceCacheTest extends TestCase
 
     private ShippingPriceCache $cache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(CacheItemPoolInterface::class);

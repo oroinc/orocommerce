@@ -28,6 +28,7 @@ class ContentNodeTreeCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);

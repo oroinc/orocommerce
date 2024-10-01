@@ -15,12 +15,14 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
     /** @var int|null */
     private $originalWebCatalog;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->originalWebCatalog = false;
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         if (false !== $this->originalWebCatalog) {
@@ -31,6 +33,7 @@ class WebCatalogTreeTestCase extends FrontendRestJsonApiTestCase
         parent::tearDown();
     }
 
+    #[\Override]
     protected function preFixtureLoad()
     {
         parent::preFixtureLoad();

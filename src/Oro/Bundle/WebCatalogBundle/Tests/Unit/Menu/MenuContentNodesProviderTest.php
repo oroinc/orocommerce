@@ -27,6 +27,7 @@ class MenuContentNodesProviderTest extends TestCase
 
     private ContentNodeRepository|MockObject $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

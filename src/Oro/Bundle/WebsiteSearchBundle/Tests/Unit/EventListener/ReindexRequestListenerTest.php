@@ -26,6 +26,7 @@ class ReindexRequestListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexMessageGranularizer|\PHPUnit\Framework\MockObject\MockObject */
     private $granularizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->regularIndexer = $this->createMock(IndexerInterface::class);

@@ -13,53 +13,42 @@ class MoneyOrderConfig extends ParameterBag implements MoneyOrderConfigInterface
     const PAY_TO_KEY = 'pay_to';
     const SEND_TO_KEY = 'send_to';
 
-    /**
-     * {@inheritDoc}
-     */
     public function __construct(array $parameters)
     {
         parent::__construct($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return (string)$this->get(self::LABEL_KEY);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShortLabel()
     {
         return (string)$this->get(self::SHORT_LABEL_KEY);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getAdminLabel()
     {
         return (string)$this->get(self::ADMIN_LABEL_KEY);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getPaymentMethodIdentifier()
     {
         return (string)$this->get(self::PAYMENT_METHOD_IDENTIFIER_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPayTo()
     {
         return (string)$this->get(self::PAY_TO_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSendTo()
     {
         return (string)$this->get(self::SEND_TO_KEY);

@@ -15,6 +15,7 @@ class ShoppingListLimitContextConfiguratorTest extends \PHPUnit\Framework\TestCa
     /** @var ShoppingListLimitContextConfigurator */
     private $configurator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->limitManager = $this->createMock(ShoppingListLimitManager::class);

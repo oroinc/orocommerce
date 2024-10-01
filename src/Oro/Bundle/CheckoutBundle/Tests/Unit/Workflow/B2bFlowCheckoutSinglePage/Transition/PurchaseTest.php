@@ -34,6 +34,7 @@ class PurchaseTest extends TestCase
 
     private Purchase $purchase;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

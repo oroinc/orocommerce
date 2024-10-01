@@ -6,6 +6,7 @@ use Oro\Bundle\ProductBundle\Storage\AbstractSessionDataStorage;
 
 class StubAbstractSessionDataStorage extends AbstractSessionDataStorage
 {
+    #[\Override]
     protected function getKey(): string
     {
         return 'key';

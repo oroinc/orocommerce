@@ -17,9 +17,7 @@ class AbstractQuoteDemandSubtotalsCalculatorDecorator implements QuoteDemandSubt
         $this->quoteDemandSubtotalsCalculator = $quoteDemandSubtotalsCalculator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculateSubtotals(QuoteDemand $quoteDemand)
     {
         return $this->quoteDemandSubtotalsCalculator->calculateSubtotals($quoteDemand);

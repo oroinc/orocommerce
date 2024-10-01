@@ -29,6 +29,7 @@ class CombinedPriceListRelationHelperTest extends \PHPUnit\Framework\TestCase
      */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

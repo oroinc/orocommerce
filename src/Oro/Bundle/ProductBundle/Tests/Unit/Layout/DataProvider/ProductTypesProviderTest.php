@@ -14,6 +14,7 @@ class ProductTypesProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductTypesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productTypeProvider = $this->createMock(ProductTypeProvider::class);

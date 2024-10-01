@@ -20,6 +20,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
     /** @var EntityRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $entityRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->partialUpdateDriver = $this->createMock(CustomerPartialUpdateDriverInterface::class);
@@ -29,6 +30,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
         parent::setUp();
     }
 
+    #[\Override]
     protected function getListener()
     {
         return new ChangeVisibilityDemoDataFixturesListener(
@@ -64,6 +66,7 @@ class ChangeVisibilityDemoDataFixturesListenerTest extends DemoDataFixturesListe
         $this->listener->onPostLoad($this->event);
     }
 
+    #[\Override]
     public function testOnPostLoad()
     {
         $customer1 = $this->getEntity(Customer::class, ['id' => 1]);

@@ -26,6 +26,7 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var ResolveNodeSlugsMessageFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

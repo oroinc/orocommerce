@@ -127,17 +127,13 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
      */
     protected $defaultWebsite;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -149,9 +145,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->orders as $name => $order) {

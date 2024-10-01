@@ -49,6 +49,7 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
     }
 
+    #[\Override]
     public function getPriceList(): ?CombinedPriceList
     {
         $rule = $this->getCplActivationRule();
@@ -130,6 +131,7 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
         return null;
     }
 
+    #[\Override]
     public function getPriceListSelectedCurrencies(BasePriceList $priceList)
     {
         $priceListCurrencies = $priceList->getCurrencies();
@@ -157,6 +159,7 @@ class DebugProductPricesPriceListRequestHandler implements PriceListRequestHandl
         return $currencies;
     }
 
+    #[\Override]
     public function getShowTierPrices()
     {
         $request = $this->getRequest();

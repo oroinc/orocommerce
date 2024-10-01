@@ -32,9 +32,7 @@ class InventoryLevelHandler implements FormHandlerInterface
         $this->inventoryManager = $inventoryManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process($data, FormInterface $form, Request $request)
     {
         if ($request->isMethod('POST')) {

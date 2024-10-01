@@ -22,9 +22,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     public const PAYMENTS_PRO_EC_AUTHORIZE_PENDING_TRANSACTION = 'payments_pro_ec_authorize_pending_transaction';
     public const PAYMENTS_PRO_EC_AUTHORIZE_PAID_TRANSACTION = 'payments_pro_ec_authorize_paid_transaction';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -34,9 +32,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $propertyAccessor = PropertyAccess::createPropertyAccessor();

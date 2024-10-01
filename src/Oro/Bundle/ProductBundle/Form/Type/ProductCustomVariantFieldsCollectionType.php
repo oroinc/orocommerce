@@ -29,9 +29,7 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
         $this->variantFieldProvider = $variantFieldProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -45,12 +43,14 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
         $builder->addModelTransformer(new ProductVariantFieldsTransformer());
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $variantFields = [];
@@ -123,6 +123,7 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
     /**
      * @return string
      */
+    #[\Override]
     public function getParent(): ?string
     {
         return CollectionType::class;
@@ -136,9 +137,7 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return static::NAME;

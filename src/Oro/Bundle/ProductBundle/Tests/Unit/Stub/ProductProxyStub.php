@@ -22,17 +22,13 @@ class ProductProxyStub extends Product implements Proxy
     }
 
     // @codingStandardsIgnoreStart
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function __load()
     {
         $this->initialized = true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function __isInitialized()
     {
         return $this->initialized;

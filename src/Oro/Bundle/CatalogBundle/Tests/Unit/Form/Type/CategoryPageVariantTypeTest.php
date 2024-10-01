@@ -22,9 +22,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
     /** @var Category[] */
     private static $categories = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $treeHandler = $this->createMock(AbstractTreeHandler::class);
@@ -52,9 +50,7 @@ class CategoryPageVariantTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         return array_merge(parent::getValidators(), [

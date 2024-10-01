@@ -7,17 +7,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class AmountTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new Option\Amount()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

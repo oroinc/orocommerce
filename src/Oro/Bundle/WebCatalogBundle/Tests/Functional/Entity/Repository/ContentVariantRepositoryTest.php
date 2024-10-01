@@ -20,6 +20,7 @@ class ContentVariantRepositoryTest extends WebTestCase
 {
     private ContentVariantRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

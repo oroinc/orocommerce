@@ -44,6 +44,7 @@ class ProductImageTypeCollectionValidator extends ConstraintValidator
      * @param ProductImageType[]|Collection $value
      * @param Constraint|ProductImageCollection $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if ($value->isEmpty()) {

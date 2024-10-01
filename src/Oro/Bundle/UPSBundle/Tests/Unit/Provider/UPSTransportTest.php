@@ -43,6 +43,7 @@ class UPSTransportTest extends \PHPUnit\Framework\TestCase
     /** @var UPSTransport */
     private $transport;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->client = $this->createMock(RestClientInterface::class);

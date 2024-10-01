@@ -15,6 +15,7 @@ class CheckoutLineItemConverterPassTest extends \PHPUnit\Framework\TestCase
     private Definition $registry;
     private CheckoutLineItemConverterPass $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->container = new ContainerBuilder();

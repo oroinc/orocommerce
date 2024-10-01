@@ -34,6 +34,7 @@ class ImportExportTest extends AbstractImportExportTestCase
         'Unit',
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -466,17 +467,13 @@ class ImportExportTest extends AbstractImportExportTestCase
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getImportStatusFile(): string
     {
         return 'import_status_data.yml';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getImportLevelFile(): string
     {
         return 'import_level_data.yml';

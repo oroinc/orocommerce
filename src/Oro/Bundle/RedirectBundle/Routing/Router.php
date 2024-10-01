@@ -16,9 +16,7 @@ class Router extends BaseRouter
     private MatchedUrlDecisionMaker $urlDecisionMaker;
     private ContainerInterface $container;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
@@ -37,9 +35,7 @@ class Router extends BaseRouter
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getGenerator(): UrlGeneratorInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {
@@ -55,9 +51,7 @@ class Router extends BaseRouter
         return $this->generator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMatcher(): UrlMatcherInterface|RequestMatcherInterface
     {
         if ($this->urlDecisionMaker->matches($this->context->getPathInfo())) {

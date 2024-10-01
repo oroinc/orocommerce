@@ -20,6 +20,7 @@ class OrderProductKitLineItemChecksumGeneratorTest extends TestCase
 {
     private OrderProductKitLineItemChecksumGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = new OrderProductKitLineItemChecksumGenerator();

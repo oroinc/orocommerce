@@ -39,6 +39,7 @@ class ShoppingListDiscountContextConverterTest extends \PHPUnit\Framework\TestCa
      */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemsConverter = $this->createMock(LineItemsToDiscountLineItemsConverter::class);

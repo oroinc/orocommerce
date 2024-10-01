@@ -26,6 +26,7 @@ class SalesOrdersChartWidgetProviderTest extends TestCase
     private WidgetConfigs|MockObject $widgetConfigs;
     private SalesOrdersChartWidgetProvider $salesOrdersChartWidgetProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->salesOrdersChartDataProvider = $this->createMock(SalesOrdersChartDataProvider::class);

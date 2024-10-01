@@ -8,9 +8,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class QuickAddCopyPasteTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

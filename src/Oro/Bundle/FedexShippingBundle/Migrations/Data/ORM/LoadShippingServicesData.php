@@ -12,17 +12,13 @@ use Oro\Bundle\FedexShippingBundle\Entity\FedexShippingService;
  */
 class LoadShippingServicesData extends AbstractFixture implements OrderedFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 20;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach ($this->getData() as $data) {

@@ -36,6 +36,7 @@ class PriceListRuleCompilerTest extends WebTestCase
     private ManagerRegistry $doctrine;
     private PriceListRuleCompiler $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

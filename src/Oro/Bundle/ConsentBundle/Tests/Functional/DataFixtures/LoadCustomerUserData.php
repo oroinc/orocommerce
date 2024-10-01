@@ -22,9 +22,7 @@ class LoadCustomerUserData extends AbstractFixture implements DependentFixtureIn
         self::LEVEL_1_EMAIL
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$customerReferences as $referenceName) {
@@ -38,9 +36,7 @@ class LoadCustomerUserData extends AbstractFixture implements DependentFixtureIn
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

@@ -19,9 +19,7 @@ class ShoppingListCreateVoter implements VoterInterface
         $this->shoppingListLimitManager  = $shoppingListLimitManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote($feature, $scopeIdentifier = null)
     {
         if ($feature === self::FEATURE_NAME) {

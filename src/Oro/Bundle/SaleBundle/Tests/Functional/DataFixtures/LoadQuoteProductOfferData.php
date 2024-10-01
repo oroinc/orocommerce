@@ -33,17 +33,13 @@ class LoadQuoteProductOfferData extends AbstractFixture implements DependentFixt
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadQuoteData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (self::$items as $key => $item) {

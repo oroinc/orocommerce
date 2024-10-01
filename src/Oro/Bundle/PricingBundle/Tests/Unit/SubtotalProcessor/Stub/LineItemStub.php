@@ -27,6 +27,7 @@ class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, Quan
     /**
      * @return int
      */
+    #[\Override]
     public function getPriceType()
     {
         return $this->priceType;
@@ -46,6 +47,7 @@ class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, Quan
     /**
      * @return Price|null
      */
+    #[\Override]
     public function getPrice()
     {
         return $this->price;
@@ -70,6 +72,7 @@ class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, Quan
     /**
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;

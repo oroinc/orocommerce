@@ -36,6 +36,7 @@ class SchemaOrgProductDescriptionProvider implements SchemaOrgProductDescription
         $this->productDescriptionProviders = $productDescriptionProviders;
     }
 
+    #[\Override]
     public function getDescription(
         Product $product,
         ?Localization $localization = null,

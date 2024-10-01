@@ -19,6 +19,7 @@ class CollectionSortOrderTransformerTest extends \PHPUnit\Framework\TestCase
 
     protected CollectionSortOrderTransformer $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

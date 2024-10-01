@@ -11,6 +11,7 @@ class FedexShippingMethodOptionsTypeTest extends FormIntegrationTestCase
 {
     private FedexShippingMethodOptionsType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -45,9 +46,7 @@ class FedexShippingMethodOptionsTypeTest extends FormIntegrationTestCase
         self::assertEquals($submittedData, $form->getData());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

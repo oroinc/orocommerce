@@ -19,6 +19,7 @@ class ContentWidgetLabelsFormEventListenerTest extends TestCase
 {
     private ManagerRegistry|MockObject $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

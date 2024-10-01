@@ -40,6 +40,7 @@ class CompositeProductPriceStorageTest extends \PHPUnit\Framework\TestCase
      */
     private $storage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->flatPricingStorage = $this->createMock(ProductPriceStorageInterface::class);

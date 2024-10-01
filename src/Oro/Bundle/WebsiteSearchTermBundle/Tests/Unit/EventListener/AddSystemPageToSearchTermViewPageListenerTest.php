@@ -20,6 +20,7 @@ class AddSystemPageToSearchTermViewPageListenerTest extends TestCase
 
     private AddSystemPageToSearchTermViewPageListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->routeTitleProvider = $this->createMock(RouteTitleProvider::class);

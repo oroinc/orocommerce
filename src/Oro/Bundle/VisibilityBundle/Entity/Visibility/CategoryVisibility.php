@@ -72,6 +72,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
      * @param Category $category
      * @return string
      */
+    #[\Override]
     public static function getDefault($category)
     {
         if ($category instanceof Category && !$category->getParentCategory()) {
@@ -81,9 +82,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
@@ -91,9 +90,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVisibility()
     {
         return $this->visibility;
@@ -103,6 +100,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
      * @param Category $category
      * @return array
      */
+    #[\Override]
     public static function getVisibilityList($category)
     {
         $visibilityList = [
@@ -118,9 +116,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
         return $visibilityList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargetEntity()
     {
         return $this->getCategory();
@@ -130,6 +126,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
      * @param Category $category
      * @return $this
      */
+    #[\Override]
     public function setTargetEntity($category)
     {
         return $this->setCategory($category);
@@ -139,6 +136,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
      * @param Scope|null $scope
      * @return $this
      */
+    #[\Override]
     public function setScope(Scope $scope = null)
     {
         $this->scope = $scope;
@@ -149,14 +147,13 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
     /**
      * @return Scope
      */
+    #[\Override]
     public function getScope()
     {
         return $this->scope;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getScopeType()
     {
         return self::VISIBILITY_TYPE;

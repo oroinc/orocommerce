@@ -49,17 +49,13 @@ class PriceListAssignedProductsProcessor implements
         $this->dependentPriceListProvider = $dependentPriceListProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [ResolvePriceListAssignedProductsTopic::getName()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $body = $message->getBody();

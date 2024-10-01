@@ -11,11 +11,13 @@ class ResolveCategoryVisibilityTopic extends AbstractResolveVisibilityTopic
 {
     public const NAME = 'oro_visibility.visibility.change_category_visibility';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolve visibility for a category.';

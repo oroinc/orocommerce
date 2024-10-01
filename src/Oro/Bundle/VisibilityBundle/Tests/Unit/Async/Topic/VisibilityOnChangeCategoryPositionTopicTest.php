@@ -11,11 +11,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class VisibilityOnChangeCategoryPositionTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new VisibilityOnChangeCategoryPositionTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -30,6 +32,7 @@ class VisibilityOnChangeCategoryPositionTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

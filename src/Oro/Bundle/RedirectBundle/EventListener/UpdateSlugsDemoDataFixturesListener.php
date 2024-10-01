@@ -38,9 +38,7 @@ class UpdateSlugsDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->urlStorageCache = $urlStorageCache;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function beforeEnableListeners(MigrationDataFixturesEvent $event)
     {
         $event->log('updating slugs');

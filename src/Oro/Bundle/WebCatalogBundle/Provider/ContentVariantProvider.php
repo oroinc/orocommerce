@@ -22,9 +22,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupportedClass($className)
     {
         foreach ($this->providers as $provider) {
@@ -36,9 +34,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function modifyNodeQueryBuilderByEntities(QueryBuilder $queryBuilder, $entityClass, array $entities)
     {
         foreach ($this->providers as $provider) {
@@ -48,9 +44,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getValues(ContentNodeInterface $node)
     {
         $values = [];
@@ -64,9 +58,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
         return $values;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLocalizedValues(ContentNodeInterface $node)
     {
         $values = [];
@@ -80,9 +72,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
         return $values;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRecordId(array $item)
     {
         foreach ($this->providers as $provider) {
@@ -95,9 +85,7 @@ class ContentVariantProvider implements ContentVariantProviderInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRecordSortOrder(array $item)
     {
         foreach ($this->providers as $provider) {

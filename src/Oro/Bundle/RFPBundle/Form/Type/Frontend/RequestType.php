@@ -18,6 +18,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RequestType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -80,6 +81,7 @@ class RequestType extends AbstractType
         $event->setData($data);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -87,6 +89,7 @@ class RequestType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_frontend_request';

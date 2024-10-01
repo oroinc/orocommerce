@@ -23,7 +23,8 @@ class PersistSuggestionPhrasesProcessor implements MessageProcessorInterface, To
     ) {
     }
 
-    #[\Override] public function process(MessageInterface $message, SessionInterface $session): string
+    #[\Override]
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();
 
@@ -39,6 +40,7 @@ class PersistSuggestionPhrasesProcessor implements MessageProcessorInterface, To
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [PersistSuggestionPhrasesChunkTopic::getName()];

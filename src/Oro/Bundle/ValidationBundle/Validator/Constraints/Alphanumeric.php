@@ -15,9 +15,6 @@ class Alphanumeric extends Regex implements AliasAwareConstraintInterface
     public $message = 'This value should contain only latin letters and numbers.';
     public $pattern = '/^[a-zA-Z0-9]*$/';
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(
         $pattern = null,
         string $message = null,
@@ -42,33 +39,25 @@ class Alphanumeric extends Regex implements AliasAwareConstraintInterface
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultOption(): ?string
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRequiredOptions(): array
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return RegexValidator::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAlias()
     {
         return self::ALIAS;

@@ -16,9 +16,7 @@ class UpdatePaymentTermAssociationsFormTypes implements Migration, PaymentTermEx
 {
     use PaymentTermExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateFormTypeForEntity($schema, $queries, Customer::class);

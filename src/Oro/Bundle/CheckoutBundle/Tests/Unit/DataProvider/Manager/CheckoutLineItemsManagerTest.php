@@ -35,6 +35,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
     /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $memoryCacheProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);

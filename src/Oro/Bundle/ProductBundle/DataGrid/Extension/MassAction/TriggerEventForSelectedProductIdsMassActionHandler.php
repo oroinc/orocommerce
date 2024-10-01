@@ -34,9 +34,7 @@ class TriggerEventForSelectedProductIdsMassActionHandler implements MassActionHa
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
         $configKey = Configuration::ROOT_NODE.'.'.Configuration::PRODUCT_COLLECTION_MASS_ACTION_LIMITATION;

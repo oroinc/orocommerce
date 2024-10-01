@@ -14,6 +14,7 @@ class IsLowInventoryLevelValidatorTest extends ConstraintValidatorTestCase
 {
     private LowInventoryCheckoutLineItemValidator|MockObject $lowInventoryCheckoutLineItemValidator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lowInventoryCheckoutLineItemValidator = $this->createMock(LowInventoryCheckoutLineItemValidator::class);
@@ -21,6 +22,7 @@ class IsLowInventoryLevelValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): IsLowInventoryLevelValidator
     {
         return new IsLowInventoryLevelValidator($this->lowInventoryCheckoutLineItemValidator);

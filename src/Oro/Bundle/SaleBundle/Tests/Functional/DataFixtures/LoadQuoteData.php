@@ -252,9 +252,7 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -267,9 +265,7 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var User $user */

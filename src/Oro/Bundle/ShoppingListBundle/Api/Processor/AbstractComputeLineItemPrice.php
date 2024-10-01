@@ -33,9 +33,7 @@ abstract class AbstractComputeLineItemPrice implements ProcessorInterface
         $this->priceScopeCriteriaFactory = $productPriceScopeCriteriaFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

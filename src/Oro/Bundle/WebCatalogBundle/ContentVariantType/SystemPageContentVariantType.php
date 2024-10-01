@@ -16,33 +16,25 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
 {
     const TYPE = 'system_page';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTitle()
     {
         return 'oro.webcatalog.contentvariant.variant_type.system_page.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormType()
     {
         return SystemPageVariantType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isAllowed()
     {
         return true;
@@ -51,24 +43,20 @@ class SystemPageContentVariantType implements ContentVariantTypeInterface
     /**
      * @param ContentVariant $contentVariant
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         return new RouteData($contentVariant->getSystemPageRoute());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceClassName()
     {
         return SystemPage::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return $alias . '.systemPageRoute';

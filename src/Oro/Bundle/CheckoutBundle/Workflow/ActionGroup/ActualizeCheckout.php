@@ -25,6 +25,7 @@ class ActualizeCheckout implements ActualizeCheckoutInterface
     ) {
     }
 
+    #[\Override]
     public function execute(
         Checkout $checkout,
         array $sourceCriteria,

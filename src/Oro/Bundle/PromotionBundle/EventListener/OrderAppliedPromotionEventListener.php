@@ -28,9 +28,7 @@ class OrderAppliedPromotionEventListener extends AbstractFormEventListener
         $this->appliedPromotionManager = $appliedPromotionManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function onOrderEvent(OrderEvent $event)
     {
         $orderForm = $event->getForm();

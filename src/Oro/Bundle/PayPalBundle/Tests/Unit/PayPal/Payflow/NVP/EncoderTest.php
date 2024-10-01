@@ -9,6 +9,7 @@ class EncoderTest extends \PHPUnit\Framework\TestCase
     /** @var Encoder */
     private $encoder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->encoder = new Encoder();

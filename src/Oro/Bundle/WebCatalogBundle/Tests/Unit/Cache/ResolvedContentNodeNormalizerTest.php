@@ -26,6 +26,7 @@ class ResolvedContentNodeNormalizerTest extends \PHPUnit\Framework\TestCase
 
     private ResolvedContentNodeNormalizer $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

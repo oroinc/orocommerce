@@ -17,9 +17,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class SetProductPrimaryUnitPrecision implements ProcessorInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

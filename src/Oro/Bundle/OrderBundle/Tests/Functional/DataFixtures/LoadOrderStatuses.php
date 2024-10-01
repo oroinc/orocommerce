@@ -17,9 +17,7 @@ class LoadOrderStatuses extends AbstractFixture
         'wait_for_approval' => 'Wait For Approval'
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var EnumOptionRepository $enumRepo */

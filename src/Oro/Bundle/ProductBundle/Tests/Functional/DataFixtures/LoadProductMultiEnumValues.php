@@ -25,9 +25,7 @@ class LoadProductMultiEnumValues extends AbstractFixture implements ContainerAwa
         'fourth' => 'Fourth Value'
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var EnumOptionRepository $enumRepo */

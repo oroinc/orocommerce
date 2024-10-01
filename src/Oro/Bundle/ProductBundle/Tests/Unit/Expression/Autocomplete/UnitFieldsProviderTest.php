@@ -10,6 +10,7 @@ class UnitFieldsProviderTest extends AbstractFieldsProviderTest
     /** @var UnitFieldsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -70,9 +71,7 @@ class UnitFieldsProviderTest extends AbstractFieldsProviderTest
         $this->assertEquals($expected, $this->provider->getDataProviderConfig());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getMap(array $fieldsData, bool $numericalOnly, bool $withRelations): array
     {
         $map = [];

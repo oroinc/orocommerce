@@ -27,6 +27,7 @@ class ValidateCheckoutOnStartEventListenerTest extends TestCase
 
     private ValidateCheckoutOnStartEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);

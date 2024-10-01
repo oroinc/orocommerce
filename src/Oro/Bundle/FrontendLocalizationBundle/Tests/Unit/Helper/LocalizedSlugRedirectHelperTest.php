@@ -39,6 +39,7 @@ class LocalizedSlugRedirectHelperTest extends TestCase
 
     private LocalizedSlugRedirectHelper $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->slugSourceEntityProvider = $this->createMock(SlugSourceEntityProviderInterface::class);

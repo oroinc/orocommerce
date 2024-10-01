@@ -16,6 +16,7 @@ class ReindexMessageFilterTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexMessageFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new ReindexMessageFilter(self::TOPIC);

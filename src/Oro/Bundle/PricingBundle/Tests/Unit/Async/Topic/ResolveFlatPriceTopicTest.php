@@ -16,6 +16,7 @@ class ResolveFlatPriceTopicTest extends AbstractTopicTestCase
     /** @var ManagerRegistry */
     private $doctrine;
 
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         $priceListToProductRepository = $this->createMock(PriceListToProductRepository::class);
@@ -33,6 +34,7 @@ class ResolveFlatPriceTopicTest extends AbstractTopicTestCase
         return new ResolveFlatPriceTopic($this->doctrine);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -68,6 +70,7 @@ class ResolveFlatPriceTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [];

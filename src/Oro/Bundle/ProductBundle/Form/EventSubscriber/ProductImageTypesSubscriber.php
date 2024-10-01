@@ -25,9 +25,7 @@ class ProductImageTypesSubscriber implements EventSubscriberInterface
         $this->imageTypes = $imageTypes;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

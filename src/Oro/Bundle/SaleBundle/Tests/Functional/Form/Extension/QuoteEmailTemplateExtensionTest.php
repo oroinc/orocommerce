@@ -17,6 +17,7 @@ class QuoteEmailTemplateExtensionTest extends WebTestCase
     use DefaultWebsiteIdTestTrait;
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -28,6 +29,7 @@ class QuoteEmailTemplateExtensionTest extends WebTestCase
         ]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = self::getConfigManager();

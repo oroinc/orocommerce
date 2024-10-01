@@ -23,6 +23,7 @@ class SidebarFormProvider implements SidebarFormProviderInterface
     ) {
     }
 
+    #[\Override]
     public function getIndexPageSidebarFormElements(): array
     {
         $sidebarData = [];
@@ -37,6 +38,7 @@ class SidebarFormProvider implements SidebarFormProviderInterface
         return $sidebarData;
     }
 
+    #[\Override]
     public function getViewPageSidebarFormElements(?Product $product): array
     {
         $sidebarData = [

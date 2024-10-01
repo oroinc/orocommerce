@@ -63,9 +63,7 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
         'Medical Apparel'             => ['large' => '9_large'],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->categoryDescriptions = Yaml::parse(

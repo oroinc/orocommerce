@@ -38,17 +38,13 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config): bool
     {
         return \in_array($config->getName(), $this->supportedGrids, true) && parent::isApplicable($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setParameters(ParameterBag $parameters): void
     {
         if ($parameters->has(ParameterBag::MINIFIED_PARAMETERS)) {
@@ -64,10 +60,10 @@ class FrontendLineItemsGridExtension extends AbstractExtension
     }
 
     /**
-     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config): void
     {
         $queryPart = 'lineItem.id';
@@ -130,9 +126,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data): void
     {
         $checkoutId = $this->getCheckoutId();
@@ -145,9 +139,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $data->offsetAddToArrayByPath('[state][parameters]', ['group' => $this->isLineItemsGrouped()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function visitResult(DatagridConfiguration $config, ResultsObject $result): void
     {
         $checkoutId = $this->getCheckoutId();

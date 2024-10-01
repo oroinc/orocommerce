@@ -35,6 +35,7 @@ class WebpAwareWebsiteSearchProductIndexerListener implements WebsiteSearchProdu
         $this->websiteContextManager = $websiteContextManager;
     }
 
+    #[\Override]
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
         if (!$this->hasContextFieldGroup($event->getContext(), 'image')) {

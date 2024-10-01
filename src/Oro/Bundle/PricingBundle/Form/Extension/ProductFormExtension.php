@@ -40,9 +40,7 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -110,9 +108,6 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onPostSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -128,9 +123,6 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
         $form->get('prices')->setData($prices);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onPreSubmit(FormEvent $event)
     {
         $form = $event->getForm();
@@ -148,9 +140,6 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onPostSubmit(FormEvent $event)
     {
         /** @var Product|null $product */
@@ -173,9 +162,7 @@ class ProductFormExtension extends AbstractTypeExtension implements FeatureToggl
         $this->processPrices($prices, $product);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];

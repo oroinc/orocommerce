@@ -17,6 +17,7 @@ class InvalidateCheckoutLineItemsGroupingTest extends TestCase
     private CheckoutLineItemGroupingInvalidationHelper|MockObject $helper;
     private InvalidateCheckoutLineItemsGrouping $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutWorkflowHelper = $this->createMock(CheckoutWorkflowHelper::class);

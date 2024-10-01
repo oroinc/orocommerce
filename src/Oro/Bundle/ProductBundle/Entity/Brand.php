@@ -205,9 +205,6 @@ class Brand implements
     #[ConfigField(defaultValues: ['importexport' => ['excluded' => true]], mode: 'hidden')]
     protected ?string $defaultTitle = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->names = new ArrayCollection();
@@ -229,6 +226,7 @@ class Brand implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         try {
@@ -245,6 +243,7 @@ class Brand implements
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -290,6 +289,7 @@ class Brand implements
      * @param OrganizationInterface|null $organization
      * @return Brand
      */
+    #[\Override]
     public function setOrganization(OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
@@ -298,6 +298,7 @@ class Brand implements
     /**
      * @return OrganizationInterface
      */
+    #[\Override]
     public function getOrganization()
     {
         return $this->organization;
@@ -434,6 +435,7 @@ class Brand implements
         $this->updateDenormalizedProperties();
     }
 
+    #[\Override]
     public function updateDenormalizedProperties(): void
     {
         $this->defaultTitle = $this->getName()->getString();

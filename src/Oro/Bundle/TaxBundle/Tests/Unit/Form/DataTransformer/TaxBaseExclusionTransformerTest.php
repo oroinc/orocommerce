@@ -16,6 +16,7 @@ class TaxBaseExclusionTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxBaseExclusionTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxBaseExclusionFactory = $this->createMock(TaxBaseExclusionFactory::class);

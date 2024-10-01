@@ -26,9 +26,7 @@ class LoadCancelledOrders extends LoadOrders
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

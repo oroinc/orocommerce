@@ -58,17 +58,13 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->productsBatchSize = $productsBatchSize;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [ResolveCombinedPriceByPriceListTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $body = $message->getBody();

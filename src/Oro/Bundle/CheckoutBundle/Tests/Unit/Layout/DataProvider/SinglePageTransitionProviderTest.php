@@ -17,6 +17,7 @@ class SinglePageTransitionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SinglePageTransitionProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseProvider = $this->createMock(TransitionProviderInterface::class);

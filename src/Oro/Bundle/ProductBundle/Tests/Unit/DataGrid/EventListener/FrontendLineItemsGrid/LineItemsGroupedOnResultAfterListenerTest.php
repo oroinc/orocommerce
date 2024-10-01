@@ -32,6 +32,7 @@ class LineItemsGroupedOnResultAfterListenerTest extends TestCase
 
     private LineItemsGroupedOnResultAfterListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);

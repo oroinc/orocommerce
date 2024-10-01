@@ -18,9 +18,7 @@ class UpdateRelatedProductsTable implements
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_product_related_products');
@@ -33,9 +31,7 @@ class UpdateRelatedProductsTable implements
         $this->renameExtension->renameColumn($schema, $queries, $table, 'related_product_id', 'related_item_id');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

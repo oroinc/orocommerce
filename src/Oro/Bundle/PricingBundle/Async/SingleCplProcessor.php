@@ -59,17 +59,13 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->scheduleResolver = $scheduleResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [CombineSingleCombinedPriceListPricesTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $messageData = $message->getBody();

@@ -182,9 +182,7 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function toString(): string
     {
         return sprintf(
@@ -194,9 +192,7 @@ class ContentWidget implements DatesAwareInterface, OrganizationAwareInterface, 
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getHash(): string
     {
         return md5($this->toString());

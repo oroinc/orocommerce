@@ -33,11 +33,13 @@ class WebsiteSearchSaveProcessor implements
         $this->eventDispatcher = $eventDispatcher;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [WebsiteSearchSaveTopic::getName()];
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $messageBody = $message->getBody();

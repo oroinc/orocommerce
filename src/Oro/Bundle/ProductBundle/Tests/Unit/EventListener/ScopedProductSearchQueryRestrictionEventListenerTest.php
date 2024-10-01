@@ -22,9 +22,7 @@ class ScopedProductSearchQueryRestrictionEventListenerTest extends
     /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
     private $requestStack;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createListener(): ProductSearchQueryRestrictionEventListener
     {
         $this->requestStack = $this->createMock(RequestStack::class);

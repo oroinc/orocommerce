@@ -17,9 +17,7 @@ class BasicUpsClientFactory implements UpsClientFactoryInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createUpsClient($isTestMode): RestClientInterface
     {
         $url = $this->upsClientUrlProvider->getUpsUrl($isTestMode);

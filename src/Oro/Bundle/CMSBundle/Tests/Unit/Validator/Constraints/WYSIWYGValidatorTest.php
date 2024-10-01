@@ -23,6 +23,7 @@ class WYSIWYGValidatorTest extends ConstraintValidatorTestCase
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
@@ -35,6 +36,7 @@ class WYSIWYGValidatorTest extends ConstraintValidatorTestCase
         $this->setPropertyPath('content');
     }
 
+    #[\Override]
     protected function createValidator()
     {
         $translator = $this->createMock(TranslatorInterface::class);

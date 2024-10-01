@@ -38,7 +38,7 @@ class QuantityType extends AbstractType
         $this->productClass = $productClass;
     }
 
-    /** {@inheritDoc} */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         // Remove default transformer to avoid problems with two times reverse transformation
@@ -73,7 +73,7 @@ class QuantityType extends AbstractType
         }
     }
 
-    /** {@inheritDoc} */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -88,21 +88,18 @@ class QuantityType extends AbstractType
         $resolver->addAllowedTypes('useInputTypeNumberValueFormat', 'bool');
     }
 
-    /** {@inheritDoc} */
+    #[\Override]
     public function getParent(): ?string
     {
         return NumberType::class;
     }
 
-    /** {@inheritDoc} */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

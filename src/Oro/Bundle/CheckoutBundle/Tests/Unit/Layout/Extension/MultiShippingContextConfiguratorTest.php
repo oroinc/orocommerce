@@ -14,6 +14,7 @@ class MultiShippingContextConfiguratorTest extends \PHPUnit\Framework\TestCase
     /** @var MultiShippingContextConfigurator */
     private $contextConfigurator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

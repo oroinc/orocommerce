@@ -8,17 +8,13 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 
 class StubProductAutocompleteType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return ProductAutocompleteType::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return TextType::class;

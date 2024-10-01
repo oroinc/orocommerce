@@ -200,6 +200,7 @@ class ContentNode implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->getDefaultTitle();
@@ -208,6 +209,7 @@ class ContentNode implements
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -273,6 +275,7 @@ class ContentNode implements
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
+    #[\Override]
     public function getTitles()
     {
         return $this->titles;
@@ -309,6 +312,7 @@ class ContentNode implements
     /**
      * @return Collection|Scope[]
      */
+    #[\Override]
     public function getScopes()
     {
         return $this->scopes;
@@ -353,6 +357,7 @@ class ContentNode implements
     /**
      * @return Collection|ContentVariant[]
      */
+    #[\Override]
     public function getContentVariants()
     {
         return $this->contentVariants;
@@ -424,6 +429,7 @@ class ContentNode implements
     /**
      * @return WebCatalog
      */
+    #[\Override]
     public function getWebCatalog()
     {
         return $this->webCatalog;
@@ -462,6 +468,7 @@ class ContentNode implements
     /**
      * @return boolean
      */
+    #[\Override]
     public function isRewriteVariantTitle()
     {
         return $this->rewriteVariantTitle;

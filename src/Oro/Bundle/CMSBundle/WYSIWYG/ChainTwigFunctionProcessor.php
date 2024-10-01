@@ -21,9 +21,7 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
         $this->processors = $processors;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApplicableMapping(): array
     {
         if ($this->applicableMapping === null) {
@@ -45,9 +43,7 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
         return $this->applicableMapping;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processTwigFunctions(WYSIWYGProcessedDTO $processedDTO, array $twigFunctionCalls): bool
     {
         $isFlushNeeded = false;
@@ -71,9 +67,7 @@ class ChainTwigFunctionProcessor implements WYSIWYGTwigFunctionProcessorInterfac
         return $isFlushNeeded;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function onPreRemove(WYSIWYGProcessedDTO $processedDTO): bool
     {
         $isFlushNeeded = false;

@@ -19,17 +19,13 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
 {
     use ConfigurationHandlerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Add fetch mode `extra_lazy` to OneToMany relation between Category and Product entities';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $rows = $this->createEntityConfigQb()
@@ -42,9 +38,6 @@ class UpdateCategoryProductRelationFetchModeQuery extends ParametrizedMigrationQ
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function process(array $row, LoggerInterface $logger)
     {
         $data = $this->connection->convertToPHPValue($row['data'], 'array');

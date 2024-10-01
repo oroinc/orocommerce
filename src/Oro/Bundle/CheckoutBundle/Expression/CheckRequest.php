@@ -34,25 +34,19 @@ class CheckRequest extends AbstractCondition implements ContextAccessorAwareInte
         $this->requestStack = $requestStack;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'check_request';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode($this->options, $factoryAccessor);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $this->options = array_merge(
@@ -65,17 +59,13 @@ class CheckRequest extends AbstractCondition implements ContextAccessorAwareInte
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function toArray()
     {
         $this->convertToArray($this->options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $request = $this->requestStack->getCurrentRequest();

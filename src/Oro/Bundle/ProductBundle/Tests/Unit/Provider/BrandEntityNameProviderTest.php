@@ -14,6 +14,7 @@ class BrandEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private BrandEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new BrandEntityNameProvider();

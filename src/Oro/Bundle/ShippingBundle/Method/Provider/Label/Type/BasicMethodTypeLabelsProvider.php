@@ -17,9 +17,7 @@ class BasicMethodTypeLabelsProvider implements MethodTypeLabelsProviderInterface
         $this->methodProvider = $methodProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabels($methodIdentifier, array $typeIdentifiers)
     {
         $method = $this->methodProvider->getShippingMethod($methodIdentifier);

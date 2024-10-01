@@ -27,6 +27,7 @@ class ShippingContextCacheKeyGeneratorTest extends TestCase
 
     private ShippingContextCacheKeyGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = new ShippingContextCacheKeyGenerator();

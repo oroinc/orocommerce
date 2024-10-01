@@ -9,18 +9,14 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class UpdateProductImageTable implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_product_image');
         $table->getColumn('updated_at')->setNotnull(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 30;

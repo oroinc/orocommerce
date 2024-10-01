@@ -61,12 +61,12 @@ class LexemeCircularReferenceValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      * @param PriceList|PriceRule $object
      * @param LexemeCircularReference $constraint
      *
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function validate($object, Constraint $constraint)
     {
         if (!is_object($object)) {

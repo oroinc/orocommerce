@@ -21,6 +21,7 @@ class TotalResolverTest extends TestCase
 
     private TotalResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);

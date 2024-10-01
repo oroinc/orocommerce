@@ -13,9 +13,7 @@ use Symfony\Component\Form\FormEvents;
  */
 abstract class AbstractTaxExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $this->addTaxCodeField($builder);

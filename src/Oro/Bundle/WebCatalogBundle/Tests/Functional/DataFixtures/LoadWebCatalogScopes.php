@@ -16,9 +16,7 @@ class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureIn
     const SCOPE1 = 'web_catalog.scope1';
     const SCOPE2 = 'web_catalog.scope2';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -27,9 +25,7 @@ class LoadWebCatalogScopes extends AbstractFixture implements DependentFixtureIn
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var WebCatalog $webCatalog */

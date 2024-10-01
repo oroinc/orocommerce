@@ -38,17 +38,13 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
     use RenameExtensionAwareTrait;
     use AddFallbackRelationTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
         return 'v1_6';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->addManageInventoryFieldToProduct($schema);

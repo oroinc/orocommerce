@@ -31,6 +31,7 @@ class FrontendCheckoutLineItemsDatagridEventListenerTest extends \PHPUnit\Framew
     /** @var FrontendCheckoutLineItemsDatagridEventListener */
     private $eventListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

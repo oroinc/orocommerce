@@ -17,6 +17,7 @@ class ProductControllerTest extends WebTestCase
 
     private const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
+    #[\Override]
     protected function setUp(): void
     {
         self::markTestSkipped('Will be fixed in BAP-22773');

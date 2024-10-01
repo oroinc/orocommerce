@@ -10,6 +10,7 @@ class LoadOrderUserACLData extends AbstractLoadACLData
     /**
      * @return string
      */
+    #[\Override]
     protected function getAclResourceClassName()
     {
         return Order::class;
@@ -18,6 +19,7 @@ class LoadOrderUserACLData extends AbstractLoadACLData
     /**
      * @return array
      */
+    #[\Override]
     protected function getSupportedRoles()
     {
         return [

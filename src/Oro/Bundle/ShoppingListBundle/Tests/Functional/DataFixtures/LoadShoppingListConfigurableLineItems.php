@@ -48,9 +48,7 @@ class LoadShoppingListConfigurableLineItems extends AbstractShoppingListLineItem
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [

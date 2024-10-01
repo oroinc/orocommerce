@@ -187,9 +187,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $priceManager = $this->container->get('oro_pricing.manager.price_manager');
@@ -223,9 +221,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -235,9 +231,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;

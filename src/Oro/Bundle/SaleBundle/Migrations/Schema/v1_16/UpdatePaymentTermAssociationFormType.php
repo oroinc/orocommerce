@@ -15,9 +15,7 @@ class UpdatePaymentTermAssociationFormType implements Migration, PaymentTermExte
 {
     use PaymentTermExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $associationName = $this->paymentTermExtension->getAssociationName($schema);

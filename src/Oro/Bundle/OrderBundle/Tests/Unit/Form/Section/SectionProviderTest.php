@@ -18,6 +18,7 @@ class SectionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SectionProvider */
     private $sectionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formRegistry = $this->createMock(FormRegistryInterface::class);

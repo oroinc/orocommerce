@@ -17,6 +17,7 @@ class RequestProductHandlerTest extends \PHPUnit\Framework\TestCase
 
     private RequestProductHandler|\PHPUnit\Framework\MockObject\MockObject $requestProductHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->request = $this->createMock(Request::class);

@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractScopedProductSel
 
 class ProductSelectTypeTest extends AbstractScopedProductSelectTypeTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->setDataParameters(['scope' => 'shopping_list']);

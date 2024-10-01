@@ -12,8 +12,8 @@ class AllowedQuoteDemandQuantityValidator extends ConstraintValidator
      * @param QuoteProductDemand $value
      * @param AllowedQuoteDemandQuantity $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         $offer = $value->getQuoteProductOffer();

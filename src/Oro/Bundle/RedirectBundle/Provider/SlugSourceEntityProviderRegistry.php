@@ -23,9 +23,7 @@ class SlugSourceEntityProviderRegistry implements SlugSourceEntityProviderInterf
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceEntityBySlug(Slug $slug): ?SlugAwareInterface
     {
         foreach ($this->providers as $provider) {

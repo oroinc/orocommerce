@@ -16,6 +16,7 @@ class ProductVariantProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVariantProvider */
     private $productVariantProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->availabilityProvider = $this->createMock(ProductVariantAvailabilityProvider::class);

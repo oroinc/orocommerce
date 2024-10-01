@@ -24,6 +24,7 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->aclHelper = $this->createMock(AclHelper::class);
@@ -79,9 +80,7 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
         $this->assertEquals($submittedData, $form->getData());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [
@@ -95,9 +94,7 @@ class ProductSegmentContentWidgetSettingsTypeTest extends FormIntegrationTestCas
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTypeExtensions(): array
     {
         return array_merge(

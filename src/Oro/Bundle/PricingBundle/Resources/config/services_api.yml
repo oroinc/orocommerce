@@ -1,4 +1,14 @@
 services:
+    oro_pricing.api.customer_price_repository:
+        class: Oro\Bundle\PricingBundle\Api\Repository\CustomerPriceRepository
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_currency.config.currency'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_api.doctrine_helper'
+            - '@security.authorization_checker'
+            - '@oro_api.query_acl_helper'
+
     oro_pricing.api.compute_price_list_currencies:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputePriceListCurrencies
         tags:
@@ -292,11 +302,6 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
 
-    oro_pricing.api.customer_price_repository:
-        class: Oro\Bundle\PricingBundle\Api\Repository\CustomerPriceRepository
-        arguments:
-            - '@oro_pricing.provider.product_price'
-
     oro_pricing.api.handle_customer_price_filters:
         class: Oro\Bundle\PricingBundle\Api\Processor\CustomerPrice\HandleCustomerPriceFilters
         tags:
@@ -306,8 +311,13 @@ services:
         class: Oro\Bundle\PricingBundle\Api\Processor\CustomerPrice\LoadCustomerPrices
         arguments:
             - '@oro_pricing.api.customer_price_repository'
-            - '@oro_currency.config.currency'
-            - '@oro_pricing.model.product_price_scope_criteria_factory'
-            - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: get_list, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Api\Model\CustomerPrice }
+
+    oro_pricing.api.expand_customer_price_associated_entities:
+        class: Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\ExpandAssociatedEntities
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', collection: true, class: Oro\Bundle\PricingBundle\Api\Model\CustomerPrice, priority: 100 }

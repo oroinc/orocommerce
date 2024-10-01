@@ -14,6 +14,7 @@ class ShoppingListTotalsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListTotalsDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);

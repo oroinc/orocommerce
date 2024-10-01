@@ -40,6 +40,7 @@ class FedexRateServiceCachedClientTest extends TestCase
      */
     private $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->rateServiceClient = $this->createMock(FedexRateServiceBySettingsClientInterface::class);

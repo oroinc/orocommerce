@@ -22,9 +22,9 @@ use Symfony\Component\Validator\Constraints\Type;
 class ProductSegmentContentWidgetSettingsType extends AbstractType
 {
     /**
-     * {@inheritdoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(

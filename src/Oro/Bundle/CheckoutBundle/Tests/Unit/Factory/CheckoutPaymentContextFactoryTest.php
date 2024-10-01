@@ -45,6 +45,7 @@ class CheckoutPaymentContextFactoryTest extends TestCase
 
     private CheckoutPaymentContextFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsManager = $this->createMock(CheckoutLineItemsManager::class);

@@ -13,9 +13,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
  */
 class CategoryDataConverter extends LocalizedFallbackValueAwareDataConverter
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function receiveHeaderConversionRules(): array
     {
         $conversionRules = parent::receiveHeaderConversionRules();
@@ -39,9 +37,7 @@ class CategoryDataConverter extends LocalizedFallbackValueAwareDataConverter
         return $conversionRules;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getBackendHeader(): array
     {
         $header = parent::getBackendHeader();

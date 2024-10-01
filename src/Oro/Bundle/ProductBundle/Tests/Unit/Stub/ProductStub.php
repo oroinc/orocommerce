@@ -20,6 +20,7 @@ class ProductStub extends Product
      * @param string $name
      * @param mixed $value
      */
+    #[\Override]
     public function __set($name, $value)
     {
         $this->values[$name] = $value;
@@ -29,11 +30,13 @@ class ProductStub extends Product
      * @param string $name
      * @return mixed
      */
+    #[\Override]
     public function __get($name)
     {
         return isset($this->values[$name]) ? $this->values[$name] : null;
     }
 
+    #[\Override]
     public function set(string $name, mixed $value): static
     {
         $this->__set($name, $value);
@@ -41,6 +44,7 @@ class ProductStub extends Product
         return $this;
     }
 
+    #[\Override]
     public function get(string $name): mixed
     {
         return $this->__get($name);
@@ -50,6 +54,7 @@ class ProductStub extends Product
      * @param string $name
      * @return bool
      */
+    #[\Override]
     public function __isset($name)
     {
         return isset($this->values[$name]);

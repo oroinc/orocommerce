@@ -27,6 +27,7 @@ class ProductRepositoryTest extends WebTestCase
     private bool $originalConfigValue;
     private AbstractPlatform $platform;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -42,6 +43,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->platform = $this->getContainer()->get('doctrine')->getManager()->getConnection()->getDatabasePlatform();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         if ($this->configManager->get($this->configKey) === $this->originalConfigValue) {

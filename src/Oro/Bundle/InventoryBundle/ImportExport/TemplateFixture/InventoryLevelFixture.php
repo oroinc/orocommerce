@@ -25,25 +25,19 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $this->localizationManager = $localizationManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass()
     {
         return InventoryLevel::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData()
     {
         return $this->getEntityData('Example Inventory Level');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createEntity($key)
     {
         return new InventoryLevel();
@@ -53,6 +47,7 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
      * @param string  $key
      * @param InventoryLevel $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity)
     {
         $product = new Product();

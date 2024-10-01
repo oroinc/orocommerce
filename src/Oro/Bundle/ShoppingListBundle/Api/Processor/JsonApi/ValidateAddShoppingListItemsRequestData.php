@@ -20,9 +20,7 @@ class ValidateAddShoppingListItemsRequestData extends ValidateRequestData
         parent::__construct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function validateRequestData(ChangeSubresourceContext $context): array
     {
         $errors = parent::validateRequestData($context);

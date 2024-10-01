@@ -15,6 +15,7 @@ use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
  */
 class OrderCreatedByAccessRule implements AccessRuleInterface
 {
+    #[\Override]
     public function isApplicable(Criteria $criteria): bool
     {
         $options = $criteria->getOption(AclAccessRule::CONDITION_DATA_BUILDER_CONTEXT, []);
@@ -25,6 +26,7 @@ class OrderCreatedByAccessRule implements AccessRuleInterface
             && $criteria->getExpression() instanceof AccessDenied;
     }
 
+    #[\Override]
     public function process(Criteria $criteria): void
     {
         $criteria->setExpression(new Comparison(true, Comparison::EQ, true));

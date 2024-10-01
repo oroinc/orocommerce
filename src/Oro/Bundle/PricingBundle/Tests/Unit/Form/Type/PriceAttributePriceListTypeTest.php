@@ -14,6 +14,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
 {
     private PriceAttributePriceListType $priceAttributePriceListType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceAttributePriceListType = new PriceAttributePriceListType();
@@ -21,9 +22,7 @@ class PriceAttributePriceListTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

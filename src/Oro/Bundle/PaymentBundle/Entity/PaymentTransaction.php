@@ -141,7 +141,6 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         return $this->id;
     }
 
-    /** {@inheritdoc} */
     public function getReference()
     {
         return $this->reference;
@@ -238,7 +237,6 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
         return $this;
     }
 
-    /** {@inheritdoc} */
     public function getResponse()
     {
         if (!$this->response) {

@@ -46,6 +46,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit\Framework\TestCase
     /** @var ArrayCollection */
     private $salesReps;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processor = $this->createMock(Processor::class);

@@ -42,17 +42,13 @@ class LoadProductUpcomingData extends AbstractFixture implements DependentFixtur
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCategoryProductData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $accessor = PropertyAccess::createPropertyAccessor();

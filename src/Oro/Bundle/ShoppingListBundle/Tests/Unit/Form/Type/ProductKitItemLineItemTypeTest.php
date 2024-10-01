@@ -26,6 +26,7 @@ class ProductKitItemLineItemTypeTest extends FormIntegrationTestCase
 
     private Product $kitItemProduct2;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->kitItemProduct1 = (new ProductStub())->setId(142);
@@ -36,6 +37,7 @@ class ProductKitItemLineItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

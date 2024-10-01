@@ -25,6 +25,7 @@ class Item extends AbstractItem
      *
      * @return Item
      */
+    #[\Override]
     public function saveItemData($objectData)
     {
         $this->saveData($objectData, $this->textFields, new IndexText(), SearchQuery::TYPE_TEXT);

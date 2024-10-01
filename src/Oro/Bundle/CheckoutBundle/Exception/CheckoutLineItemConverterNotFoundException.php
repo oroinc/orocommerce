@@ -6,9 +6,6 @@ class CheckoutLineItemConverterNotFoundException extends \RuntimeException
 {
     const MESSAGE_PATTERN = 'Unable to find proper converter for "%s"';
 
-    /**
-     * {@inheritDoc}
-     */
     public function __construct($source, $code = 0, \Throwable $previous = null)
     {
         $message = sprintf(

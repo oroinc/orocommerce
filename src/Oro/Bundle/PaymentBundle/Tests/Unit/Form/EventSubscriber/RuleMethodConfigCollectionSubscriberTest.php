@@ -34,6 +34,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 
     private RuleMethodConfigCollectionSubscriber $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->subscriber = new RuleMethodConfigCollectionSubscriber(
@@ -81,9 +82,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
         $this->assertCount(0, $form->get('methodConfigs'));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -141,9 +140,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         return [

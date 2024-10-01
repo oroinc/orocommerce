@@ -40,9 +40,7 @@ class ShipUntilDiffMapperTest extends AbstractCheckoutDiffMapperTest
         ));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new ShipUntilDiffMapper();

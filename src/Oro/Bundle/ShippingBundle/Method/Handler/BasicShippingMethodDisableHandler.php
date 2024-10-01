@@ -7,9 +7,7 @@ namespace Oro\Bundle\ShippingBundle\Method\Handler;
  */
 class BasicShippingMethodDisableHandler implements ShippingMethodDisableHandlerInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleMethodDisable(string $methodId): void
     {
     }

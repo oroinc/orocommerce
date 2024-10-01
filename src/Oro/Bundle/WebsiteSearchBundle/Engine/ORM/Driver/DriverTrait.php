@@ -14,7 +14,6 @@ use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository;
  */
 trait DriverTrait
 {
-    /** {@inheritdoc} */
     public function initialize(EntityManagerInterface $entityManager)
     {
         $this->initRepo($entityManager, $entityManager->getClassMetadata(Item::class));
@@ -64,7 +63,6 @@ trait DriverTrait
         return $this->getRepository()->removeIndexByClass($entityClass);
     }
 
-    /** {@inheritdoc} */
     public function createItem()
     {
         $className = Item::class;

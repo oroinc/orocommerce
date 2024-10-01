@@ -20,6 +20,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
 {
     use RolePermissionExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -42,6 +43,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $configManager->flush();
     }
 
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/requests';

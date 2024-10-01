@@ -29,6 +29,7 @@ final class CreateProductSuggestionListenerTest extends \PHPUnit\Framework\TestC
 
     private ManagerEventArgs $args;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);

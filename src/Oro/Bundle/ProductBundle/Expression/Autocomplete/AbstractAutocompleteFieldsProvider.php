@@ -68,9 +68,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addSpecialFieldInformation($className, $fieldName, array $information)
     {
         $this->specialFieldsInformation[$className][$fieldName] = $information;
@@ -83,9 +81,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
      */
     abstract protected function getFieldsData($numericalOnly, $withRelations);
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDataProviderConfig($numericalOnly = false, $withRelations = true)
     {
         $optionsFilter = [
@@ -130,9 +126,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         return $dataProviderConfig;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRootEntities()
     {
         return $this->expressionParser->getReverseNameMapping();

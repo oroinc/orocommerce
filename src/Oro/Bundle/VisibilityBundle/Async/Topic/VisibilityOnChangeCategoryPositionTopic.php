@@ -14,16 +14,19 @@ class VisibilityOnChangeCategoryPositionTopic extends AbstractTopic
 {
     public const NAME = 'oro_visibility.visibility.category_position_change';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolve visibility for a category when its position is changed.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

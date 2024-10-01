@@ -26,9 +26,7 @@ class AcceptedConsentsFilter extends DictionaryFilter
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
@@ -51,9 +49,7 @@ class AcceptedConsentsFilter extends DictionaryFilter
         return $metadata;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFilteredFieldName(FilterDatasourceAdapterInterface $ds)
     {
         return $this->get(FilterUtility::DATA_NAME_KEY);

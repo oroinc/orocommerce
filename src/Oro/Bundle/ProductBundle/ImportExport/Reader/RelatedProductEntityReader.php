@@ -41,9 +41,7 @@ class RelatedProductEntityReader extends IteratorBasedReader
         $this->configProvider = $configProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function initializeFromContext(ContextInterface $context): void
     {
         parent::initializeFromContext($context);
@@ -59,9 +57,7 @@ class RelatedProductEntityReader extends IteratorBasedReader
         $this->setSourceIterator(new BufferedQueryResultIterator($this->aclHelper->apply($qb)));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function read(): ?array
     {
         if (!$this->configProvider->isEnabled()) {

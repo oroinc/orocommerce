@@ -17,6 +17,7 @@ class QuickAddRowTypeTest extends FormIntegrationTestCase
 {
     private ProductUnitsProvider|\PHPUnit\Framework\MockObject\MockObject $productUnitsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
@@ -45,6 +46,7 @@ class QuickAddRowTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $data);
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

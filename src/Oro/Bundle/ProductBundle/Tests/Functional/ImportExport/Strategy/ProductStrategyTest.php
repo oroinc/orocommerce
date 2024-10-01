@@ -31,6 +31,7 @@ class ProductStrategyTest extends WebTestCase
 {
     private ProductStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -56,6 +56,7 @@ class QuickAddController extends AbstractController
         return [];
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

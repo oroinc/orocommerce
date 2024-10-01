@@ -16,6 +16,7 @@ use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
  */
 class UpdateAppliedPromotionCascadeConfigToOrder implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $fullRelationName = implode(

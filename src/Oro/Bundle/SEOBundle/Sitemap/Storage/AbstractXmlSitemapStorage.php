@@ -53,9 +53,7 @@ abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
         $this->calculateTemplateSize();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addUrlItem(UrlItemInterface $urlItem)
     {
         if ($this->urlItemsCount === $this->urlsNumberLimit || !$this->appendItem($urlItem)) {
@@ -67,9 +65,7 @@ abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContents()
     {
         $this->finishXmlTemplate($this->xmlWriter);
@@ -78,9 +74,7 @@ abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
         return $this->xmlWriter->outputMemory(false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlItemsCount()
     {
         return $this->urlItemsCount;

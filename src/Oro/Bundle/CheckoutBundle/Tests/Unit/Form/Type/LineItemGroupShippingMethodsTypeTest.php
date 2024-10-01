@@ -19,6 +19,7 @@ class LineItemGroupShippingMethodsTypeTest extends FormIntegrationTestCase
     /** @var LineItemGroupShippingMethodsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingManager = $this->createMock(CheckoutLineItemGroupsShippingManager::class);
@@ -27,9 +28,7 @@ class LineItemGroupShippingMethodsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

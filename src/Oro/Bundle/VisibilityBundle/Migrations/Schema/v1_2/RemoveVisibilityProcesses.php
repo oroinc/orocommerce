@@ -25,9 +25,7 @@ class RemoveVisibilityProcesses implements Migration
         'product_visibility_website_added',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(new RemoveProcessesQuery(self::NAMES));

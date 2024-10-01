@@ -21,6 +21,7 @@ class OrderShippingExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var OrderShippingExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodLabelTranslator = $this->createMock(ShippingMethodLabelTranslator::class);

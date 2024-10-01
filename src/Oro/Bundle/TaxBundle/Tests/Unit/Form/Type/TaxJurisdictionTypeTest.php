@@ -18,6 +18,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
 {
     private TaxJurisdictionType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new TaxJurisdictionType(new AddressCountryAndRegionSubscriberStub());
@@ -40,6 +41,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
     /**
      * @dataProvider submitDataProvider
      */
+    #[\Override]
     public function testSubmit(
         bool $isValid,
         mixed $defaultData,
@@ -66,9 +68,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function submitDataProvider(): array
     {
         $taxJurisdiction = new TaxJurisdiction();
@@ -121,9 +121,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge([
@@ -141,9 +139,7 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         ], parent::getExtensions());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormTypeClass(): string
     {
         return TaxJurisdictionType::class;

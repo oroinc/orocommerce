@@ -39,17 +39,13 @@ class LoadDraftPageSlugData extends AbstractFixture implements DependentFixtureI
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadDraftPageData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var FilterCollection $filters */

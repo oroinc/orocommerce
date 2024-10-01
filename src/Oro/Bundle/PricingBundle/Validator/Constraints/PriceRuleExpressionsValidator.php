@@ -35,10 +35,10 @@ class PriceRuleExpressionsValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      * @param PriceRule $value
      * @param PriceRuleExpressions $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof PriceRule) {

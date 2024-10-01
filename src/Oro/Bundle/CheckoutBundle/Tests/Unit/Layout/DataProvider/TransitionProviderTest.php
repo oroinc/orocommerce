@@ -29,6 +29,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TransitionProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

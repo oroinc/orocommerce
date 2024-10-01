@@ -32,6 +32,7 @@ class ShippingMethodActionsTest extends TestCase
     private UpdateShippingPriceInterface|MockObject $updateShippingPrice;
     private ShippingMethodActions $shippingMethodActions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

@@ -24,6 +24,7 @@ class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit\Framew
     /** @var ParameterBagPaymentTermConfigBySettingsFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

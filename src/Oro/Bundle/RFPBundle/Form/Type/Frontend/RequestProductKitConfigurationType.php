@@ -41,6 +41,7 @@ class RequestProductKitConfigurationType extends AbstractType
         $this->requestProductProductListener = $requestProductProductListener;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -101,6 +102,7 @@ class RequestProductKitConfigurationType extends AbstractType
         );
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         /** @var Product|null $product */
@@ -130,6 +132,7 @@ class RequestProductKitConfigurationType extends AbstractType
         );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -137,6 +140,7 @@ class RequestProductKitConfigurationType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_frontend_request_product_kit_configuration';

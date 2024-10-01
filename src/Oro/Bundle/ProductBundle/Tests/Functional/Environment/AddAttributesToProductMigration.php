@@ -18,9 +18,7 @@ class AddAttributesToProductMigration implements Migration, ExtendExtensionAware
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $productTable = $schema->getTable('oro_product');

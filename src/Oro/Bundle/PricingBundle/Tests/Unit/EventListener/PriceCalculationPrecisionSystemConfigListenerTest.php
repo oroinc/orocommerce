@@ -35,6 +35,7 @@ class PriceCalculationPrecisionSystemConfigListenerTest extends \PHPUnit\Framewo
     /** @var PriceCalculationPrecisionSystemConfigListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

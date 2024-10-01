@@ -33,9 +33,7 @@ class LoadCheckoutWorkflowState extends AbstractFixture
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (static::$states as $referenceName => $state) {

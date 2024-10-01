@@ -27,6 +27,7 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
     /** @var CreateOrder */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mapper = $this->createMock(MapperInterface::class);

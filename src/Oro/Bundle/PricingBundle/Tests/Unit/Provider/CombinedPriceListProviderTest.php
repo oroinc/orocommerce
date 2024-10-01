@@ -42,6 +42,7 @@ class CombinedPriceListProviderTest extends TestCase
     private CombinedPriceListProvider $provider;
     private ShardManager|MockObject $shardManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

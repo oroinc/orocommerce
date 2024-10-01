@@ -19,6 +19,7 @@ class ProductAssignmentRuleExpressionPreprocessorTest extends \PHPUnit\Framework
      */
     protected $preprocessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $registry = $this->createMock(ManagerRegistry::class);

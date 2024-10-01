@@ -17,6 +17,7 @@ class TaxCodeGridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxCodeGridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

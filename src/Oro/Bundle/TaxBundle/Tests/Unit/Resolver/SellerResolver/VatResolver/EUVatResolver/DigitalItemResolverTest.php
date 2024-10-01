@@ -14,6 +14,7 @@ use Oro\Bundle\TaxBundle\Tests\Unit\Resolver\AbstractItemResolverTestCase;
 
 class DigitalItemResolverTest extends AbstractItemResolverTestCase
 {
+    #[\Override]
     protected function createResolver(): AbstractItemResolver
     {
         return new DigitalItemResolver(

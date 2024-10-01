@@ -62,17 +62,13 @@ class BinaryNodeConverter implements QueryExpressionConverterInterface, Converte
         'neq' => self::TYPE_COMPARISON
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setConverter(QueryExpressionConverterInterface $converter)
     {
         $this->converter = $converter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
         if ($node instanceof BinaryNode) {

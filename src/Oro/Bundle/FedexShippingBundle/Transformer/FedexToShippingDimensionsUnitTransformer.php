@@ -9,9 +9,7 @@ class FedexToShippingDimensionsUnitTransformer implements FedexToShippingUnitTra
     const SHIPPING_DIMENSION_CM = 'cm';
     const SHIPPING_DIMENSION_INCH = 'inch';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function transform(string $fedexValue): string
     {
         if ($fedexValue === FedexIntegrationSettings::DIMENSION_IN) {
@@ -21,9 +19,7 @@ class FedexToShippingDimensionsUnitTransformer implements FedexToShippingUnitTra
         return self::SHIPPING_DIMENSION_CM;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reverseTransform(string $shippingValue): string
     {
         if ($shippingValue === self::SHIPPING_DIMENSION_INCH) {

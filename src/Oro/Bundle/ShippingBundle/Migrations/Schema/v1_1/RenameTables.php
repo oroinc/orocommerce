@@ -13,9 +13,7 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -38,9 +36,7 @@ class RenameTables implements Migration, RenameExtensionAwareInterface, OrderedM
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

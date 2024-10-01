@@ -11,6 +11,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 
 class AddIsPromotionAwareConfig implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $queries->addPostQuery(

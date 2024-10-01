@@ -15,6 +15,7 @@ class CategoryUpcomingFormExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryUpcomingFormExtension */
     private $categoryFormExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryFormExtension = new CategoryUpcomingFormExtension();

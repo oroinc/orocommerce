@@ -28,6 +28,7 @@ final class GenerateSuggestionPhrasesProcessorTest extends TestCase
 
     private int $batchSize = 100;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);

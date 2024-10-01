@@ -32,9 +32,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -45,9 +43,7 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $locator = $this->container->get('file_locator');

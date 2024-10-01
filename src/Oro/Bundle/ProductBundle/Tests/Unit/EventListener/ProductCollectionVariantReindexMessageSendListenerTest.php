@@ -24,6 +24,7 @@ class ProductCollectionVariantReindexMessageSendListenerTest extends \PHPUnit\Fr
     private ProductCollectionSegmentHelper $productCollectionSegmentHelper;
     protected ProductCollectionVariantReindexMessageSendListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->collectionIndexationHandler = $this->createMock(AsyncReindexProductCollectionHandler::class);

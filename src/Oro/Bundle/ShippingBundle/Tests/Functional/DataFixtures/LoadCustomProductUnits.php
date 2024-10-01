@@ -10,9 +10,7 @@ class LoadCustomProductUnits extends AbstractFixture
 {
     const WITH_SPECIAL_CHAR = 'product_unit.mètre';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->createProductUnit($manager, self::WITH_SPECIAL_CHAR, 0);

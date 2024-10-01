@@ -26,9 +26,7 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations): \ArrayIterator
     {
         $data = $this->originalProvider->getIndexData($product, $attribute, $localizations);
@@ -37,9 +35,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function buildIndexData(
         Product $product,
         FieldConfigModel $attribute,

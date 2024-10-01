@@ -26,6 +26,7 @@ class ShoppingListLineItemsDataProviderTest extends TestCase
     /** @var ShoppingListLineItemsDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

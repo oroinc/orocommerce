@@ -23,6 +23,7 @@ class ContinueToPaymentTest extends TestCase
 
     private ContinueToPayment $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodActions = $this->createMock(ShippingMethodActionsInterface::class);

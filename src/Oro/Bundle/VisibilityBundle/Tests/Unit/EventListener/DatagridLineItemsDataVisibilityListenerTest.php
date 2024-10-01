@@ -18,6 +18,7 @@ class DatagridLineItemsDataVisibilityListenerTest extends TestCase
 
     private DatagridLineItemsDataVisibilityListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);

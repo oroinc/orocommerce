@@ -23,9 +23,7 @@ class OrderShippingExtension extends AbstractExtension implements ServiceSubscri
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFunctions(): array
     {
         return [
@@ -48,9 +46,7 @@ class OrderShippingExtension extends AbstractExtension implements ServiceSubscri
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

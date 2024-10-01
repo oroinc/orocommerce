@@ -34,6 +34,7 @@ class LoadProductEnumAttributes extends AbstractFixture implements ContainerAwar
         'contact',
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->addProductAttributesToFamily($manager);

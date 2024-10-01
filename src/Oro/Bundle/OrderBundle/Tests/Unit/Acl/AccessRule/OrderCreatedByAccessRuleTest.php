@@ -17,6 +17,7 @@ class OrderCreatedByAccessRuleTest extends TestCase
 {
     private OrderCreatedByAccessRule $accessRule;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->accessRule = new OrderCreatedByAccessRule();

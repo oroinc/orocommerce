@@ -10,9 +10,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class LimitResultsListenerTest extends WebTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -25,6 +25,7 @@ class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvide
         parent::__construct();
     }
 
+    #[\Override]
     protected function buildViews()
     {
         $configs = $this->configProvider->getPaymentConfigs();

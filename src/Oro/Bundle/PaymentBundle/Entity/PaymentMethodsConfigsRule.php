@@ -108,9 +108,7 @@ class PaymentMethodsConfigsRule implements
         $this->websites = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRule()
     {
         return $this->rule;
@@ -243,6 +241,7 @@ class PaymentMethodsConfigsRule implements
     /**
      * @return OrganizationInterface
      */
+    #[\Override]
     public function getOrganization()
     {
         return $this->organization;
@@ -253,6 +252,7 @@ class PaymentMethodsConfigsRule implements
      *
      * @return $this
      */
+    #[\Override]
     public function setOrganization(OrganizationInterface $organization)
     {
         $this->organization = $organization;

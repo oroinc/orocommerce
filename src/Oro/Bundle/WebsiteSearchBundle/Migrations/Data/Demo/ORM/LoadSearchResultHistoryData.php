@@ -20,6 +20,7 @@ use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
  */
 class LoadSearchResultHistoryData extends AbstractFixture implements DependentFixtureInterface
 {
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -44,6 +45,7 @@ class LoadSearchResultHistoryData extends AbstractFixture implements DependentFi
         return __DIR__ . '/data/search_result_history.csv';
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organization = $this->getOrganization($manager);

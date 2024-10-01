@@ -26,9 +26,7 @@ class ShippingMethodsConfigsRuleRepository extends ServiceEntityRepository imple
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset(): void
     {
         $this->memoryCache = [];

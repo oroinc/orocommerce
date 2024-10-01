@@ -14,9 +14,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 
 class UpdateMetaTitleLocalizationsConfigsMigration implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->moveLocalizationTextToString($queries);

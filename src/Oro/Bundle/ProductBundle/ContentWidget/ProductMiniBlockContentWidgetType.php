@@ -26,25 +26,19 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
         $this->productListBuilder = $productListBuilder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getName(): string
     {
         return 'product_mini_block';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.product.content_widget_type.product_mini_block.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         $data = $this->getWidgetData($contentWidget);
@@ -63,17 +57,13 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): ?FormInterface
     {
         return $formFactory->create(ProductMiniBlockContentWidgetSettingsType::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         $data = $contentWidget->getSettings();
@@ -87,17 +77,13 @@ class ProductMiniBlockContentWidgetType implements ContentWidgetTypeInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isInline(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';

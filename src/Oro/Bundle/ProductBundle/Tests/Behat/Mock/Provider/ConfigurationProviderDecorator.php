@@ -15,9 +15,7 @@ class ConfigurationProviderDecorator implements ConfigurationProviderInterface
         $this->configurationProvider = $configurationProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfiguration(string $gridName): DatagridConfiguration
     {
         $configuration = $this->configurationProvider->getConfiguration($gridName);
@@ -37,14 +35,13 @@ class ConfigurationProviderDecorator implements ConfigurationProviderInterface
         return $configuration;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isApplicable(string $gridName): bool
     {
         return $this->configurationProvider->isApplicable($gridName);
     }
 
+    #[\Override]
     public function isValidConfiguration(string $gridName): bool
     {
         try {

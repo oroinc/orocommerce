@@ -27,9 +27,7 @@ class ComputeContentField implements ProcessorInterface
         $this->contentNodeProvider = $contentNodeProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

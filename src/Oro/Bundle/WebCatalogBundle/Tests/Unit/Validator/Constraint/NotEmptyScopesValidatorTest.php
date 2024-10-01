@@ -19,12 +19,14 @@ class NotEmptyScopesValidatorTest extends ConstraintValidatorTestCase
     /** @var ScopeManager|\PHPUnit\Framework\MockObject\MockObject */
     protected $scopeManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): NotEmptyScopesValidator
     {
         return new NotEmptyScopesValidator($this->scopeManager);

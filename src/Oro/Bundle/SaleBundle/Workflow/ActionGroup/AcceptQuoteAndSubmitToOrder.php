@@ -28,6 +28,7 @@ class AcceptQuoteAndSubmitToOrder implements AcceptQuoteAndSubmitToOrderInterfac
     ) {
     }
 
+    #[\Override]
     public function execute(QuoteDemand $data): array
     {
         $quote = $data->getQuote();

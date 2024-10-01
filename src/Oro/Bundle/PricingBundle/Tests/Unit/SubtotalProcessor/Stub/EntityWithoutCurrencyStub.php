@@ -15,6 +15,7 @@ class EntityWithoutCurrencyStub implements LineItemsAwareInterface
     /**
      * @return ArrayCollection
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->lineItems;

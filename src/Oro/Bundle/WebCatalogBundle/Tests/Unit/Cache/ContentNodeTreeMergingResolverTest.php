@@ -25,6 +25,7 @@ class ContentNodeTreeMergingResolverTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeTreeMergingResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerResolver = $this->createMock(ContentNodeTreeResolverInterface::class);

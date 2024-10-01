@@ -10,6 +10,7 @@ class ProductCollectionCompilerPassTest extends \PHPUnit\Framework\TestCase
     /** @var ProductCollectionCompilerPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new ProductCollectionCompilerPass();

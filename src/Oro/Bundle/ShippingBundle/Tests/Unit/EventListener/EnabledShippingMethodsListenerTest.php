@@ -16,6 +16,7 @@ class EnabledShippingMethodsListenerTest extends \PHPUnit\Framework\TestCase
     /** @var EnabledShippingMethodsListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);

@@ -28,9 +28,7 @@ class PaymentMethodDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertEquals(false, $this->mapper->isStatesEqual($this->checkout, 'payflow_gateway', 'payment_term'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new PaymentMethodDiffMapper();

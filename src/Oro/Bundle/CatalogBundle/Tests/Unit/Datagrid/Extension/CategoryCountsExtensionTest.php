@@ -82,6 +82,7 @@ class CategoryCountsExtensionTest extends \PHPUnit\Framework\TestCase
         ],
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->datagridManager = $this->createMock(ManagerInterface::class);

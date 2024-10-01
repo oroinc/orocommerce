@@ -32,9 +32,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
         $this->lineItemsSubtotalProvider = $lineItemsSubtotalProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert($sourceEntity): DiscountContext
     {
         /** @var Order $sourceEntity */
@@ -61,9 +59,7 @@ class OrderDiscountContextConverter implements DiscountContextConverterInterface
         return $discountContext;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($sourceEntity): bool
     {
         return

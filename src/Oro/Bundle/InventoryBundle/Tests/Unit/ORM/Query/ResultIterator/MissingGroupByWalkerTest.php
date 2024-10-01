@@ -19,6 +19,7 @@ class MissingGroupByWalkerTest extends \PHPUnit\Framework\TestCase
 {
     private MissingGroupByWalker $missingGroupByWalker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->missingGroupByWalker = new MissingGroupByWalker(

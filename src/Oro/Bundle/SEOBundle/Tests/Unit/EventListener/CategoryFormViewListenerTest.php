@@ -12,6 +12,7 @@ class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var CategoryFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

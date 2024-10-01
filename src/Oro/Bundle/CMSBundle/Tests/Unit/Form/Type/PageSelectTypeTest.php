@@ -15,9 +15,7 @@ class PageSelectTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new PageSelectType();

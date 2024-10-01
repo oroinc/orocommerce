@@ -14,6 +14,7 @@ use Oro\Bundle\TranslationBundle\Manager\TranslationManager;
  */
 class ProductUnitTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

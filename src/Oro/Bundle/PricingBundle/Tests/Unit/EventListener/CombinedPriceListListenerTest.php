@@ -16,6 +16,7 @@ class CombinedPriceListListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CombinedPriceListListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->activationPlanBuilder = $this->createMock(CombinedPriceListActivationPlanBuilder::class);

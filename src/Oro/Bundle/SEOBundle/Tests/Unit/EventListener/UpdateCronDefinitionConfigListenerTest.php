@@ -15,6 +15,7 @@ class UpdateCronDefinitionConfigListenerTest extends \PHPUnit\Framework\TestCase
     /** @var UpdateCronDefinitionConfigListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->deferredScheduler = $this->createMock(DeferredScheduler::class);

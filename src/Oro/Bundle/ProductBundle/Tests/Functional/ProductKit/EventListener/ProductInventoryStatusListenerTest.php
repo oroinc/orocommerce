@@ -25,6 +25,7 @@ class ProductInventoryStatusListenerTest extends WebTestCase
 {
     private ManagerRegistry $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

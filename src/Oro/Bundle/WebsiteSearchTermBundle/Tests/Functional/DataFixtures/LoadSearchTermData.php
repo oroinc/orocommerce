@@ -82,6 +82,7 @@ class LoadSearchTermData extends AbstractFixture implements
         ],
     ];
 
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -89,6 +90,7 @@ class LoadSearchTermData extends AbstractFixture implements
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $everyoneScope = $this->container->get('oro_scope.scope_manager')->findOrCreate(ScopeManager::BASE_SCOPE);

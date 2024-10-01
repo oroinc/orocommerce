@@ -21,9 +21,7 @@ class AvailableShippingMethodChecker implements AvailableShippingMethodCheckerIn
         $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasAvailableShippingMethods(Checkout $checkout): bool
     {
         $shippingMethodsConfigs = $this->shippingMethodsConfigsRulesProvider->getShippingMethodsConfigsRules(

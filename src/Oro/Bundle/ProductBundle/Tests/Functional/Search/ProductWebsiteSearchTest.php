@@ -24,6 +24,7 @@ class ProductWebsiteSearchTest extends WebTestCase
     private IndexerInterface $indexer;
     private EngineInterface $searchEngine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

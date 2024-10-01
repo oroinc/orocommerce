@@ -37,6 +37,7 @@ class ProductPriceImportStrategyTest extends WebTestCase
      */
     protected $stepExecution;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

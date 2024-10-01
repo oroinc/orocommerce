@@ -26,6 +26,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
     private Context $context;
     private CategoryAddOrReplaceStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -68,6 +69,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         $this->getContainer()->get('security.token_storage')->setToken($token);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->getContainer()->get('oro_importexport.strategy.new_entities_helper')->onClear();

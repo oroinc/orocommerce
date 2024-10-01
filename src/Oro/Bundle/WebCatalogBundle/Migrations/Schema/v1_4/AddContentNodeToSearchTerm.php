@@ -19,6 +19,7 @@ class AddContentNodeToSearchTerm implements Migration, ExtendExtensionAwareInter
 {
     use ExtendExtensionAwareTrait;
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $owningSideTable = $schema->getTable('oro_website_search_search_term');

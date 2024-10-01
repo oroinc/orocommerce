@@ -31,6 +31,7 @@ class EmailTemplateRenderingSubscriberTest extends WebTestCase
 
     private array $originalEnabledLocalizations;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -66,6 +67,7 @@ class EmailTemplateRenderingSubscriberTest extends WebTestCase
         $configManager->flush();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $quote = $this->getReference('quote_1');

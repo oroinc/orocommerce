@@ -23,6 +23,7 @@ class ConsentControllerTest extends WebTestCase
 
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -37,6 +38,7 @@ class ConsentControllerTest extends WebTestCase
         $this->enableConsentFeature();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->disableConsentFeature();

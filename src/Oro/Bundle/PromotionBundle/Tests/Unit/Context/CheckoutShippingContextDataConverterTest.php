@@ -16,6 +16,7 @@ class CheckoutShippingContextDataConverterTest extends \PHPUnit\Framework\TestCa
     /** @var CheckoutShippingContextDataConverter */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutContextDataConverter = $this->createMock(ContextDataConverterInterface::class);

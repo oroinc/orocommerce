@@ -22,6 +22,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
 
     private ProductUnitSelectType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnitLabelFormatter = $this->createMock(UnitLabelFormatterInterface::class);
@@ -32,9 +33,7 @@ class ProductUnitSelectTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

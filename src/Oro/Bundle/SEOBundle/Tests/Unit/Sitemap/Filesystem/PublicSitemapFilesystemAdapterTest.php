@@ -31,6 +31,7 @@ class PublicSitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
     /** @var PublicSitemapFilesystemAdapter */
     private $adapter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fileManager = $this->createMock(FileManager::class);

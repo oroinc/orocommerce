@@ -23,9 +23,7 @@ class PriceListTypeTest extends FormIntegrationTestCase
 {
     use PriceRuleEditorAwareTestTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);

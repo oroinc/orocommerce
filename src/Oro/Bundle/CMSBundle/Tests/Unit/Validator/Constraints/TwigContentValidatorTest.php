@@ -15,12 +15,14 @@ class TwigContentValidatorTest extends ConstraintValidatorTestCase
     /** @var Environment|\PHPUnit\Framework\MockObject\MockObject */
     private $twig;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new TwigContentValidator($this->twig);

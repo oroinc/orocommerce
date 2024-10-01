@@ -17,6 +17,7 @@ class CheckoutRequestPreloadEntitiesListenerTest extends TestCase
     private PreloadingManager|MockObject $preloadingManager;
     private CheckoutRequestPreloadEntitiesListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->preloadingManager = $this->createMock(PreloadingManager::class);

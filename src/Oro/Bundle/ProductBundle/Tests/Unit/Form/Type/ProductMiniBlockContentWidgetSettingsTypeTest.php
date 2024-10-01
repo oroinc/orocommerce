@@ -28,6 +28,7 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
 {
     use EntityTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -52,9 +53,7 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
         $this->assertEquals($submittedData, $form->getData());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $entityManager = $this->createMock(EntityManager::class);
@@ -116,9 +115,7 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getTypeExtensions(): array
     {
         return array_merge(

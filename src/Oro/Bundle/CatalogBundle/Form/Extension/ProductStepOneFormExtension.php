@@ -28,17 +28,13 @@ class ProductStepOneFormExtension extends AbstractTypeExtension
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductStepOneType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {

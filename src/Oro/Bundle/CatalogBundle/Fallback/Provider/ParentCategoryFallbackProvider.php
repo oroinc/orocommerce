@@ -10,9 +10,7 @@ class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
 {
     const FALLBACK_ID = 'parentCategory';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackHolderEntity($object, $objectFieldName)
     {
         if (!$object instanceof Category) {
@@ -22,9 +20,7 @@ class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
         return $object->getParentCategory();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isFallbackSupported($object, $fieldName)
     {
         if (!$object instanceof Category || !$object->getParentCategory()) {
@@ -34,17 +30,13 @@ class ParentCategoryFallbackProvider extends AbstractEntityFallbackProvider
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackLabel()
     {
         return 'oro.catalog.fallback.parent_category.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackEntityClass()
     {
         return Category::class;

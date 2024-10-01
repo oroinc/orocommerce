@@ -21,9 +21,7 @@ class UpdateCloseOrdersDefaultPermissions extends AbstractFixture implements Con
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {

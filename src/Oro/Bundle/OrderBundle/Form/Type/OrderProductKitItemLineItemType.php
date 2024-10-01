@@ -41,6 +41,7 @@ class OrderProductKitItemLineItemType extends AbstractType
         $this->kitItemLineItemGhostOptionListener = $kitItemLineItemGhostOptionListener;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $choices = [];
@@ -125,6 +126,7 @@ class OrderProductKitItemLineItemType extends AbstractType
         FormUtils::replaceField($priceForm, 'currency', ['empty_data' => $defaultCurrency] + $options);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['product_kit_item'] = $options['product_kit_item'];
@@ -150,6 +152,7 @@ class OrderProductKitItemLineItemType extends AbstractType
         }
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('error_mapping', ['.' => 'product']);
@@ -167,6 +170,7 @@ class OrderProductKitItemLineItemType extends AbstractType
             ->allowedTypes('string', 'null');
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_order_line_item';

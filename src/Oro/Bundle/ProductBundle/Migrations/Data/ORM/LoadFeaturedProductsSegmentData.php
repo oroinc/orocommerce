@@ -26,9 +26,7 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
     private const SEGMENT_RECORDS_LIMIT = 10;
     private const FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME = 'oro_product.segment.featured_products.name';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -37,9 +35,7 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $segmentName = $this->container->getParameter(self::FEATURED_PRODUCTS_SEGMENT_NAME_PARAMETER_NAME);

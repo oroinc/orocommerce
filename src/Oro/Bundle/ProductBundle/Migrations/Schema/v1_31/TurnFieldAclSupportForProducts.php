@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class TurnFieldAclSupportForProducts implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addQuery(

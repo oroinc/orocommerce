@@ -20,6 +20,7 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
 
     private ManagerRegistry $registry;
 
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
@@ -44,6 +45,7 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
         return new RebuildCombinedPriceListsTopic($this->registry);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -99,6 +101,7 @@ class RebuildCombinedPriceListsTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

@@ -10,25 +10,24 @@ class AbstractProductAwareTypeStub extends AbstractProductAwareType
 {
     const NAME = 'product_aware';
 
-    /** {@inheritdoc} */
     public function getName()
     {
         return self::NAME;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getProduct(FormInterface $form)
     {
         return parent::getProduct($form);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getProductFromView(FormView $view)
     {
         return parent::getProductFromView($view);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getProductFromFormOrView(FormInterface $form, FormView $view)
     {
         return parent::getProductFromFormOrView($form, $view);

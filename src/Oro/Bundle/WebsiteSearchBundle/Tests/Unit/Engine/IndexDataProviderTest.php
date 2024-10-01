@@ -39,6 +39,7 @@ class IndexDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var IndexDataProvider */
     protected $indexDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

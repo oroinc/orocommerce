@@ -17,6 +17,7 @@ class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
 {
     private ProductResolvedCacheBuilder $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

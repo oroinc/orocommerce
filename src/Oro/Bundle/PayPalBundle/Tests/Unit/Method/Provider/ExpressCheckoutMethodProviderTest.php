@@ -10,6 +10,7 @@ use Oro\Bundle\PayPalBundle\Method\Provider\ExpressCheckoutMethodProvider;
 
 class ExpressCheckoutMethodProviderTest extends AbstractMethodProviderTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(PayPalExpressCheckoutConfigProviderInterface::class);

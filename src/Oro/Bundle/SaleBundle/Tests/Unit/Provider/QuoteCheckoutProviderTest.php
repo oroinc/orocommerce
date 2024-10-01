@@ -29,6 +29,7 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteCheckoutProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManager::class);

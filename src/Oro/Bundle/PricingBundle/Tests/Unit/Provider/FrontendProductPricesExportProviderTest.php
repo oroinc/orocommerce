@@ -48,6 +48,7 @@ class FrontendProductPricesExportProviderTest extends \PHPUnit\Framework\TestCas
     /** @var FrontendProductPricesExportProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

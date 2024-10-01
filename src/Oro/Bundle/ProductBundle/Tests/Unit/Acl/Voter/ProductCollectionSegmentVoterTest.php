@@ -21,6 +21,7 @@ class ProductCollectionSegmentVoterTest extends \PHPUnit\Framework\TestCase
     /** @var ProductCollectionSegmentVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

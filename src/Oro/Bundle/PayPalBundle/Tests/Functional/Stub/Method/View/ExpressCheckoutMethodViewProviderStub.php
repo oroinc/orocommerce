@@ -7,9 +7,7 @@ use Oro\Bundle\PayPalBundle\Tests\Functional\Stub\Method\ExpressCheckoutMethodSt
 
 class ExpressCheckoutMethodViewProviderStub extends AbstractPaymentMethodViewProvider
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function buildViews()
     {
         $this->addView(ExpressCheckoutMethodStub::TYPE, new ExpressCheckoutMethodViewStub());

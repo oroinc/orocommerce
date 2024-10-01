@@ -18,6 +18,7 @@ class ProductKitItemsProviderTest extends TestCase
 
     private ProductKitItemsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->kitItemAvailabilityChecker = $this->createMock(ProductKitItemAvailabilityChecker::class);

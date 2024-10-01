@@ -21,6 +21,7 @@ class ContentNodeTest extends TestCase
 
     private PropertyAccessor $propertyAccessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->propertyAccessor = new PropertyAccessor();

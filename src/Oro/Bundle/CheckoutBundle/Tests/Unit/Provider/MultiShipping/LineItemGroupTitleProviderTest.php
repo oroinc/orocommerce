@@ -23,6 +23,7 @@ class LineItemGroupTitleProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LineItemGroupTitleProvider */
     private $titleProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->propertyAccessor = $this->createMock(PropertyAccessorInterface::class);

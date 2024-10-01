@@ -38,6 +38,7 @@ class ExpireOrdersProcessTest extends WebTestCase
     private ProcessDefinition $processDefinition;
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

@@ -18,6 +18,7 @@ class CheckoutShippingDiscountContextConverterTest extends \PHPUnit\Framework\Te
      */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converter = new CheckoutShippingDiscountContextConverter();

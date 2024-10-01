@@ -23,6 +23,7 @@ class PriceListTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -72,6 +72,7 @@ class TabbedContentItemTypeTest extends FormIntegrationTestCase
         self::assertEquals('updated sample content', $form->getData()->getContent());
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

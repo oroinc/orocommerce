@@ -18,6 +18,7 @@ class PriceListRelationTypeTest extends FormIntegrationTestCase
 {
     private PriceListRelationType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new PriceListRelationType();
@@ -25,9 +26,7 @@ class PriceListRelationTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

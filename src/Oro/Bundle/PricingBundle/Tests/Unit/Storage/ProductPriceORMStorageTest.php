@@ -30,6 +30,7 @@ class ProductPriceORMStorageTest extends \PHPUnit\Framework\TestCase
 
     private FeatureChecker|FlatPriceListTreeHandler|\PHPUnit\Framework\MockObject\MockObject $featureChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

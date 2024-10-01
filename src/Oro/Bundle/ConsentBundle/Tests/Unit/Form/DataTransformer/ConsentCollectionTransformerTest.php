@@ -21,9 +21,7 @@ class ConsentCollectionTransformerTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentCollectionTransformer */
     private $transformer;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

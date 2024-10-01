@@ -11,6 +11,7 @@ class InventoryLevelExportTypeExtension extends InventoryLevelExportTemplateType
     /**
      * @return array
      */
+    #[\Override]
     public static function getProcessorAliases()
     {
         return [
@@ -19,9 +20,7 @@ class InventoryLevelExportTypeExtension extends InventoryLevelExportTemplateType
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ExportType::class];

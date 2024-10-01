@@ -26,6 +26,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
 
     private ScopeManager $scopeManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

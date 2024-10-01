@@ -14,17 +14,13 @@ class LoadProductFamilyData extends AbstractFixture implements DependentFixtureI
     public const PRODUCT_FAMILY_1 = 'product_family_1';
     public const PRODUCT_FAMILY_2 = 'product_family_2';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $families = [self::PRODUCT_FAMILY_1, self::PRODUCT_FAMILY_2];

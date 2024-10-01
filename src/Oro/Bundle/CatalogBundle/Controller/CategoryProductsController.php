@@ -69,6 +69,7 @@ class CategoryProductsController extends AbstractController
             ->widgetAction($request, 'category-products-widget-grid');
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

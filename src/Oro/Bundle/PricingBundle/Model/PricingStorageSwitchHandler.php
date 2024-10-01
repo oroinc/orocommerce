@@ -42,6 +42,7 @@ class PricingStorageSwitchHandler implements PricingStorageSwitchHandlerInterfac
         $this->configConverter = $configConverter;
     }
 
+    #[\Override]
     public function moveAssociationsForFlatPricingStorage(): void
     {
         $this->deleteNonFirstPriceListAssociations(
@@ -55,6 +56,7 @@ class PricingStorageSwitchHandler implements PricingStorageSwitchHandlerInterfac
         $this->moveConfigLevelPriceListToFlat();
     }
 
+    #[\Override]
     public function moveAssociationsForCombinedPricingStorage(): void
     {
         $this->moveConfigLevelPriceListToCombined();

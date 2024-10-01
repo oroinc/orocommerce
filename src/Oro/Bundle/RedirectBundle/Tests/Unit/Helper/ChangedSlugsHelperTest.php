@@ -41,6 +41,7 @@ class ChangedSlugsHelperTest extends \PHPUnit\Framework\TestCase
     /** @var ChangedSlugsHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

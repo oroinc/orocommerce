@@ -20,6 +20,7 @@ class InitializeGroupedLineItemsTest extends TestCase
     private GroupedCheckoutLineItemsProvider|MockObject $checkoutLineItemsProvider;
     private InitializeGroupedLineItems $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->multiShippingConfigProvider = $this->createMock(ConfigProvider::class);

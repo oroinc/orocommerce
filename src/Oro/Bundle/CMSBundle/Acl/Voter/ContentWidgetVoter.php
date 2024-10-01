@@ -21,9 +21,7 @@ class ContentWidgetVoter implements VoterInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote(TokenInterface $token, $subject, array $attributes): int
     {
         if (!$subject instanceof ContentWidget) {

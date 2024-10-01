@@ -14,6 +14,7 @@ use Oro\Bundle\TaxBundle\Entity\ZipCode;
  */
 class TaxJurisdictionTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

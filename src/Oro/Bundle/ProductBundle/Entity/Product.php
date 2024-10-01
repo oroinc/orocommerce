@@ -456,9 +456,6 @@ class Product implements
     )]
     protected ?Collection $kitItems = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->unitPrecisions = new ArrayCollection();
@@ -498,6 +495,7 @@ class Product implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         try {
@@ -514,6 +512,7 @@ class Product implements
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -586,6 +585,7 @@ class Product implements
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -596,6 +596,7 @@ class Product implements
      *
      * @return Product
      */
+    #[\Override]
     public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
@@ -606,6 +607,7 @@ class Product implements
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getUpdatedAt()
     {
         return $this->updatedAt;
@@ -616,6 +618,7 @@ class Product implements
      *
      * @return Product
      */
+    #[\Override]
     public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
@@ -626,6 +629,7 @@ class Product implements
     /**
      * @return bool
      */
+    #[\Override]
     public function isUpdatedAtSet()
     {
         return $this->updatedAtSet;
@@ -676,6 +680,7 @@ class Product implements
      *
      * @return Product
      */
+    #[\Override]
     public function setOrganization(OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
@@ -686,6 +691,7 @@ class Product implements
     /**
      * @return OrganizationInterface
      */
+    #[\Override]
     public function getOrganization()
     {
         return $this->organization;
@@ -824,9 +830,6 @@ class Product implements
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultName($value)
     {
         $this->setDefaultFallbackValue($this->names, $value, ProductName::class);
@@ -893,9 +896,6 @@ class Product implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultDescription($value)
     {
         $this->setDefaultFallbackValue($this->descriptions, $value, ProductDescription::class);
@@ -1092,9 +1092,6 @@ class Product implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultShortDescription($value)
     {
         $this->setDefaultFallbackValue($this->shortDescriptions, $value, ProductShortDescription::class);
@@ -1204,6 +1201,7 @@ class Product implements
         }
     }
 
+    #[\Override]
     public function updateDenormalizedProperties(): void
     {
         $this->skuUppercase = $this->sku
@@ -1327,6 +1325,7 @@ class Product implements
      *
      * @return $this
      */
+    #[\Override]
     public function setAttributeFamily(AttributeFamily $attributeFamily)
     {
         $this->attributeFamily = $attributeFamily;
@@ -1337,6 +1336,7 @@ class Product implements
     /**
      * @return AttributeFamily
      */
+    #[\Override]
     public function getAttributeFamily()
     {
         return $this->attributeFamily;

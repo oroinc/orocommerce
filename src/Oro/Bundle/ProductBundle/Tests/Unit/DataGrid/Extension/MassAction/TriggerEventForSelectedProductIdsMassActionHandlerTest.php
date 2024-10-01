@@ -28,6 +28,7 @@ class TriggerEventForSelectedProductIdsMassActionHandlerTest extends \PHPUnit\Fr
      */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

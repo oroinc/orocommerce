@@ -40,17 +40,13 @@ class OroPaymentTermBundleInstaller implements
     use ExtendExtensionAwareTrait;
     use UpdateExtendRelationTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
         return 'v1_4';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroPaymentTermTransportLabelTable($schema);

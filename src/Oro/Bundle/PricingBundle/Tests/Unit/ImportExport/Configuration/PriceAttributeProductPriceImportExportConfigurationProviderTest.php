@@ -20,6 +20,7 @@ class PriceAttributeProductPriceImportExportConfigurationProviderTest extends Te
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

@@ -45,6 +45,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     /** @var ClassMetadataFactory|\PHPUnit\Framework\MockObject\MockObject */
     private $metadataFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -59,9 +60,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getListener()
     {
         return new UpdateSlugsDemoDataFixturesListener(
@@ -75,6 +74,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function testOnPostLoad()
     {
         $sluggable1 = $this->getEntity(SluggableEntityStub::class, ['id' => 1]);
@@ -254,6 +254,7 @@ class UpdateSlugsDemoDataFixturesListenerTest extends DemoDataFixturesListenerTe
         $this->listener->onPostLoad($this->event);
     }
 
+    #[\Override]
     public function testOnPostLoadWithNoDemoFixtures()
     {
         $this->event->expects($this->once())

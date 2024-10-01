@@ -33,9 +33,7 @@ class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterfac
         $this->calculableQuoteFactory = $calculableQuoteFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(object $entity): ShippingContextInterface
     {
         if (!$entity instanceof Quote) {

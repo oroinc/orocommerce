@@ -16,12 +16,14 @@ class PriceRuleExpressionsValidatorTest extends ConstraintValidatorTestCase
     /** @var PriceListRuleCompiler|\PHPUnit\Framework\MockObject\MockObject */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = $this->createMock(PriceListRuleCompiler::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): PriceRuleExpressionsValidator
     {
         return new PriceRuleExpressionsValidator($this->compiler);

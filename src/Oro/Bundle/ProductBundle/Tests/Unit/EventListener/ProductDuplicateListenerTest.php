@@ -32,6 +32,7 @@ class ProductDuplicateListenerTest extends TestCase
     /** @var ProductDuplicateListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

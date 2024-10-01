@@ -14,33 +14,24 @@ class ProductAutocompleteType extends AbstractProductAwareType
 {
     const NAME = 'oro_product_autocomplete';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return OroAutocompleteType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -61,9 +52,7 @@ class ProductAutocompleteType extends AbstractProductAwareType
         parent::configureOptions($resolver);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $product = $this->getProductFromFormOrView($form, $view);

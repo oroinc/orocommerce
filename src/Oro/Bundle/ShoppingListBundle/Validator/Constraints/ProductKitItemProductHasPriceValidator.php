@@ -26,8 +26,8 @@ class ProductKitItemProductHasPriceValidator extends ConstraintValidator
      * @param Product $value
      * @param Constraint|ProductKitItemProductHasPrice $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof ProductKitItemProductHasPrice) {

@@ -19,9 +19,7 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
         $this->totalManager = $totalManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function flush(array $options): void
     {
         /** @var LineItem $lineItem */
@@ -33,9 +31,7 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
         parent::flush($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function flushAll(array $listOfOptions): void
     {
         $processedShoppingLists = [];
@@ -54,9 +50,7 @@ class ShoppingListLineItemDeleteHandler extends AbstractEntityDeleteHandler
         parent::flushAll($listOfOptions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function deleteWithoutFlush($entity, array $options): void
     {
         /** @var LineItem $entity */

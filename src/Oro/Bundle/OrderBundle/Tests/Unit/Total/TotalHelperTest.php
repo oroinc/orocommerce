@@ -28,6 +28,7 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
     /** @var TotalHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProvider = $this->createMock(TotalProcessorProvider::class);

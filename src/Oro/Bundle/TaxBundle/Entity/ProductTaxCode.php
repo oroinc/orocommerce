@@ -35,7 +35,7 @@ class ProductTaxCode extends AbstractTaxCode implements OrganizationAwareInterfa
 {
     use OrganizationAwareTrait;
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getType()
     {
         return TaxCodeInterface::TYPE_PRODUCT;

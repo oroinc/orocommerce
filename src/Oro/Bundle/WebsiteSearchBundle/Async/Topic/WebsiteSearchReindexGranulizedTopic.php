@@ -18,16 +18,19 @@ class WebsiteSearchReindexGranulizedTopic extends AbstractTopic
         $this->indexerInputValidator = $indexerInputValidator;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.website.search.indexer.reindex_granulized';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Reindex the specified entities by class and ids.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->indexerInputValidator->configureClassOptions($resolver);

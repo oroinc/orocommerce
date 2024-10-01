@@ -9,9 +9,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class SlugRequestFactory implements SlugRequestFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createSlugRequest(Request $request): Request
     {
         $slugRequest = Request::create(
@@ -32,9 +30,7 @@ class SlugRequestFactory implements SlugRequestFactoryInterface
         return $slugRequest;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function updateMainRequest(Request $request, Request $slugRequest): void
     {
     }

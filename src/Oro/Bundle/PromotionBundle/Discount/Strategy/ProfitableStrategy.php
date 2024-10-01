@@ -10,17 +10,13 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
  */
 class ProfitableStrategy extends AbstractStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.promotion.discount.strategy.profitable.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(DiscountContextInterface $discountContext, array $discounts): DiscountContextInterface
     {
         $appliedDiscountContext = $this->getContextCopyWithAppliedDiscounts($discountContext, $discounts);

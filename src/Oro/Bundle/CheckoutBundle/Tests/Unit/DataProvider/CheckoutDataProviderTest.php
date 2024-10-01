@@ -62,6 +62,7 @@ class CheckoutDataProviderTest extends TestCase
 
     private array $processedValidationGroups = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productLineItemPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);

@@ -21,9 +21,7 @@ class ContentBlockExtension extends AbstractExtension implements ServiceSubscrib
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -36,9 +34,7 @@ class ContentBlockExtension extends AbstractExtension implements ServiceSubscrib
         return $this->getContentBlockRenderer()->render($blockAlias);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

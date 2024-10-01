@@ -26,6 +26,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
 
     private QuickAddRowCollectionTransformer $quickAddRowCollectionTransformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new QuickAddType();
@@ -58,6 +59,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getValidators(): array
     {
         $quickAddComponentProcessorValidator = $this->createMock(QuickAddComponentProcessorValidator::class);
@@ -67,6 +69,7 @@ class QuickAddTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

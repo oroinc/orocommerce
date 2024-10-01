@@ -30,6 +30,7 @@ abstract class AbstractBackendFillLineItemPrice implements ProcessorInterface
     ) {
     }
 
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

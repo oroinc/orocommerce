@@ -19,6 +19,7 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -115,6 +116,7 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
         $this->assertFirstRelationMessageSent();
     }
 
+    #[\Override]
     public function testDelete()
     {
         $relationId = $this->getFirstRelation()->getId();
@@ -152,11 +154,13 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
     /**
      * @return PriceListCustomerFallback
      */
+    #[\Override]
     protected function getFirstRelation()
     {
         return $this->getReference(LoadPriceListFallbackSettings::WEBSITE_CUSTOMER_FALLBACK_1);
     }
 
+    #[\Override]
     protected function assertFirstRelationMessageSent()
     {
         static::assertMessageSent(
@@ -177,17 +181,13 @@ class PriceListCustomerFallbackTest extends AbstractApiPriceListRelationTest
         return $this->getEntityManager()->getRepository(Website::class)->getDefaultWebsite();
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     protected function getApiEntityName(): string
     {
         return 'pricelistcustomerfallbacks';
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     protected function getAliceFilesFolderName(): string
     {
         return 'price_list_customer_fallback';

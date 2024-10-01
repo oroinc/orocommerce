@@ -11,6 +11,7 @@ class TaxJurisdictionSelectTypeTest extends \PHPUnit\Framework\TestCase
     /** @var TaxJurisdictionSelectType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new TaxJurisdictionSelectType();

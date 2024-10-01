@@ -25,16 +25,19 @@ class ResolveFlatPriceTopic extends AbstractTopic implements JobAwareTopicInterf
         $this->doctrine = $doctrine;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolves flat product prices.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->configureMessageBodyIncludeProduct($resolver);
@@ -60,6 +63,7 @@ class ResolveFlatPriceTopic extends AbstractTopic implements JobAwareTopicInterf
             });
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return sprintf('%s_%s', self::getName(), UUIDGenerator::v4());

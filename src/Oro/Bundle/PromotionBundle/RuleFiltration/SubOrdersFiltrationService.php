@@ -18,9 +18,7 @@ class SubOrdersFiltrationService extends AbstractSkippableFiltrationService
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
         $subOrders = $context[OrderContextDataConverter::SUB_ORDERS] ?? [];

@@ -18,9 +18,7 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
     const PAYPAL_NAME_LIMIT = 36;
     const PAYPAL_DESC_LIMIT = 35;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         for ($i = 1; $i <= $this->getLineItemCount($options); ++$i) {
@@ -52,9 +50,7 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         return true;

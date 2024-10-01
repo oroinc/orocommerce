@@ -28,6 +28,7 @@ class ContinueToOrderReviewTest extends TestCase
 
     private ContinueToOrderReview $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

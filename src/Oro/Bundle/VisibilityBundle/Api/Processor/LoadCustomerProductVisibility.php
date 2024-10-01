@@ -26,25 +26,19 @@ class LoadCustomerProductVisibility extends AbstractLoadVisibility
         $this->visibilityScopeProvider = $visibilityScopeProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getVisibilityEntityClass(): string
     {
         return CustomerProductVisibility::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getVisibilityAssociationName(): string
     {
         return 'product';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getScopeId(array $visibilityId): ?int
     {
         return $this->visibilityScopeProvider->findCustomerProductVisibilityScopeId(

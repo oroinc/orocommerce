@@ -9,9 +9,7 @@ class FedexToShippingWeightUnitTransformer implements FedexToShippingUnitTransfo
     const SHIPPING_WEIGHT_KG = 'kg';
     const SHIPPING_WEIGHT_LBS = 'lbs';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function transform(string $fedexValue): string
     {
         if ($fedexValue === FedexIntegrationSettings::UNIT_OF_WEIGHT_LB) {
@@ -21,9 +19,7 @@ class FedexToShippingWeightUnitTransformer implements FedexToShippingUnitTransfo
         return self::SHIPPING_WEIGHT_KG;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reverseTransform(string $shippingValue): string
     {
         if ($shippingValue === self::SHIPPING_WEIGHT_LBS) {

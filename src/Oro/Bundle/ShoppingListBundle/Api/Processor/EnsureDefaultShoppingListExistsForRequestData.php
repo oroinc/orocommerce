@@ -28,9 +28,7 @@ class EnsureDefaultShoppingListExistsForRequestData implements ProcessorInterfac
         $this->requestDataAccessor = $requestDataAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ChangeRelationshipContext $context */

@@ -19,6 +19,7 @@ class ContentNodeEntityReferencesChecker implements ContentNodeDeletionCheckerIn
         $this->translator = $translator;
     }
 
+    #[\Override]
     public function check(ContentNode $contentNode): ?NotDeletableContentNodeResult
     {
         $result = new NotDeletableContentNodeResult();

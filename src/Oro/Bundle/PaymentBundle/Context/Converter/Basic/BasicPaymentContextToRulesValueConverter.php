@@ -19,6 +19,7 @@ class BasicPaymentContextToRulesValueConverter implements PaymentContextToRulesV
         $this->decoratedProductLineItemFactory = $decoratedProductLineItemFactory;
     }
 
+    #[\Override]
     public function convert(PaymentContextInterface $paymentContext): array
     {
         $paymentLineItems = $paymentContext->getLineItems()->toArray();

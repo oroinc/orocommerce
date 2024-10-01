@@ -9,9 +9,7 @@ class ParameterBagCalculableQuote extends ParameterBag implements CalculableQuot
 {
     const FIELD_LINE_ITEMS = 'line_items';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->get(self::FIELD_LINE_ITEMS);

@@ -30,9 +30,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
 
     public const PAYMENT_METHOD = 'payment_term';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getData(): array
     {
         $paymentTermIdentifier = $this->getPaymentMethodIdentifier($this->container);
@@ -118,33 +116,25 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getCheckoutSourceName(): string
     {
         return 'shoppingList';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(

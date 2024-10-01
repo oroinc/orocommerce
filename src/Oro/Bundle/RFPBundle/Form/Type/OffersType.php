@@ -15,13 +15,13 @@ class OffersType extends AbstractType
 
     const OFFERS_OPTION = 'offers';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['offers'] = $options['offers'];
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -43,21 +43,18 @@ class OffersType extends AbstractType
         );
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getParent(): ?string
     {
         return ChoiceType::class;
     }
 
-    /** {@inheritdoc} */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

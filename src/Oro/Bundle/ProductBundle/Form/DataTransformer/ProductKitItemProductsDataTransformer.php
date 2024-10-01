@@ -35,6 +35,7 @@ class ProductKitItemProductsDataTransformer implements DataTransformerInterface
      *      // ...
      *  ]
      */
+    #[\Override]
     public function transform($value): ?array
     {
         if (!$value instanceof Collection) {
@@ -65,6 +66,7 @@ class ProductKitItemProductsDataTransformer implements DataTransformerInterface
      *
      * @return Collection<ProductKitItemProduct>|null
      */
+    #[\Override]
     public function reverseTransform($value): ?Collection
     {
         if (!is_array($value)) {

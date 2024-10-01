@@ -26,6 +26,7 @@ class ProductPriceFilterTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);

@@ -36,6 +36,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
         $this->orderLineItemChecksumListener = $orderLineItemChecksumListener;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
@@ -104,6 +105,7 @@ class OrderLineItemType extends AbstractOrderLineItemType
         $builder->addEventSubscriber($this->orderLineItemChecksumListener);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
@@ -123,11 +125,13 @@ class OrderLineItemType extends AbstractOrderLineItemType
     }
 
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_order_line_item';
     }
 
+    #[\Override]
     protected function updateAvailableUnits(FormInterface $form): void
     {
         /** @var OrderLineItem $item */

@@ -15,9 +15,7 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
  */
 class LoadRequestWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -25,9 +23,7 @@ class LoadRequestWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getWorkflows()
     {
         return [
@@ -36,9 +32,7 @@ class LoadRequestWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getIgnoredTransitions()
     {
         return [
@@ -48,34 +42,26 @@ class LoadRequestWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getDeepLevel()
     {
         return 4;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntityUser($request, $workflowName)
     {
         /* @var $request Request */
         return $workflowName === 'b2b_rfq_frontoffice_default' ? $request->getCustomerUser() : $request->getOwner();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntities(ObjectManager $manager)
     {
         return $manager->getRepository(Request::class)->findAll();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function transitWorkflow(WorkflowItem $workflowItem, Transition $transition)
     {
         switch ($transition->getName()) {
@@ -89,9 +75,7 @@ class LoadRequestWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         parent::transitWorkflow($workflowItem, $transition);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function generateTransitionsHistory($workflowName, array $entities)
     {
         /* @var ChainOwnershipMetadataProvider $chainMetadataProvider */

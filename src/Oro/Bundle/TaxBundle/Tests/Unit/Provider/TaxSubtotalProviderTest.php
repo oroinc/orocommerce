@@ -38,6 +38,7 @@ class TaxSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     /** @var AbstractTaxSubtotalProvider */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

@@ -11,6 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
  */
 class ContentNodeHandler extends FormHandler
 {
+    #[\Override]
     protected function submitPostPutRequest(FormInterface $form, Request $request, bool $clearMissing = true)
     {
         parent::submitPostPutRequest($form, $request, false);

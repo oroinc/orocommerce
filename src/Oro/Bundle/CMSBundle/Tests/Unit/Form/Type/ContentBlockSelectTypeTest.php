@@ -14,6 +14,7 @@ class ContentBlockSelectTypeTest extends TestCase
 {
     private ContentBlockSelectType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new ContentBlockSelectType();

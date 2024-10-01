@@ -15,6 +15,7 @@ class PriceListRuleCompilerTest extends \PHPUnit\Framework\TestCase
 {
     private PriceListRuleCompiler $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $expressionParser = $this->createMock(ExpressionParser::class);

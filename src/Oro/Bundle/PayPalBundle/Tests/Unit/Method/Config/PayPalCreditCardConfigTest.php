@@ -15,9 +15,7 @@ class PayPalCreditCardConfigTest extends AbstractPayPalConfigTest
     /** @var PayPalCreditCardConfigInterface */
     protected $config;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPaymentConfig(): PaymentConfigInterface
     {
         $params = [

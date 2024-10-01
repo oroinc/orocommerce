@@ -15,6 +15,7 @@ class TimeInTransitResultTest extends \PHPUnit\Framework\TestCase
 
     private TimeInTransitResult $timeInTransitResult;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->timeInTransitResult = new TimeInTransitResult([

@@ -11,6 +11,7 @@ class ProductVariantLinkCollection extends Constraint
 {
     public ?array $constraints = null;
 
+    #[\Override]
     public function getTargets(): string
     {
         return self::PROPERTY_CONSTRAINT;

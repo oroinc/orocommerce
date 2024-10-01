@@ -39,9 +39,7 @@ class LoadTaxJurisdictions extends AbstractFixture
         ]
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (self::DATA as $code => $item) {

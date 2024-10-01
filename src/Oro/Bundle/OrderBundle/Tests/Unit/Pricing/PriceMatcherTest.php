@@ -32,6 +32,7 @@ class PriceMatcherTest extends TestCase
 
     private PriceMatcher $matcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productLineItemPriceProvider = $this->createMock(ProductLineItemPriceProviderInterface::class);

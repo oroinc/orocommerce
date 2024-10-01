@@ -16,6 +16,7 @@ class LoadCheckoutUserACLData extends AbstractLoadACLData
     /**
      * @return string
      */
+    #[\Override]
     protected function getAclResourceClassName()
     {
         return Checkout::class;
@@ -24,6 +25,7 @@ class LoadCheckoutUserACLData extends AbstractLoadACLData
     /**
      * @return array
      */
+    #[\Override]
     protected function getSupportedRoles()
     {
         return [

@@ -13,6 +13,7 @@ class CMSPageTitleTest extends WebTestCase
 {
     use WebsiteSearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

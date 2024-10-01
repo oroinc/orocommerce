@@ -23,6 +23,7 @@ class ProductKitItemExtension extends AbstractExtension implements ServiceSubscr
         $this->container = $container;
     }
 
+    #[\Override]
     public function getFilters(): array
     {
         return [
@@ -35,6 +36,7 @@ class ProductKitItemExtension extends AbstractExtension implements ServiceSubscr
         return $this->getProductKitItemUnitPrecisionProvider()->getUnitPrecisionByKitItem($productKitItem);
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

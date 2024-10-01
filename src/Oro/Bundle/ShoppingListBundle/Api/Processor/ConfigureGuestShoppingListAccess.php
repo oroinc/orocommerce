@@ -25,9 +25,7 @@ class ConfigureGuestShoppingListAccess implements ProcessorInterface
         $this->associationName = $associationName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */

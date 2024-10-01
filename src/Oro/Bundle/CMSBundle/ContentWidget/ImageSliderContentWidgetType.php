@@ -41,16 +41,19 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
         $this->registry = $registry;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return 'image_slider';
     }
 
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.cms.content_widget_type.image_slider.label';
     }
 
+    #[\Override]
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         $data = $this->getWidgetData($contentWidget);
@@ -82,8 +85,8 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): ?FormInterface
     {
         return $formFactory->create(FormType::class)
@@ -217,9 +220,7 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         $key = spl_object_hash($contentWidget);
@@ -267,17 +268,13 @@ class ImageSliderContentWidgetType implements ContentWidgetTypeInterface
         return new ArrayCollection($repository->findBy(['contentWidget' => $contentWidget], ['slideOrder' => 'ASC']));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isInline(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';

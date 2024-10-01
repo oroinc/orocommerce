@@ -14,9 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 
 class UpdateProductFieldsAuditable implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->enableProductNameAuditable($queries);

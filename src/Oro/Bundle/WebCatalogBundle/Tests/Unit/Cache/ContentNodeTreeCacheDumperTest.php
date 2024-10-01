@@ -28,6 +28,7 @@ class ContentNodeTreeCacheDumperTest extends \PHPUnit\Framework\TestCase
 
     private WebCatalogRepository|\PHPUnit\Framework\MockObject\MockObject $webCatalogRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);

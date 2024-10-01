@@ -15,9 +15,7 @@ class AddCategoryMenuUpdateRelation implements Migration, ExtendExtensionAwareIn
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->extendExtension->addManyToOneRelation(

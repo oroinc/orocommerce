@@ -32,9 +32,7 @@ class DeleteMessageTextExtension extends AbstractExtension implements ServiceSub
         return $this->container->get('oro_payment_term.payment_term.delete_message_generator');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -61,9 +59,7 @@ class DeleteMessageTextExtension extends AbstractExtension implements ServiceSub
         return $this->getDeleteMessageGenerator()->getDeleteMessageTextForDataGrid($paymentTermId);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

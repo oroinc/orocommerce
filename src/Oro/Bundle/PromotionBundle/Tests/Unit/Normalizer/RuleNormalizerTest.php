@@ -10,6 +10,7 @@ class RuleNormalizerTest extends \PHPUnit\Framework\TestCase
 {
     private RuleNormalizer $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->normalizer = new RuleNormalizer();

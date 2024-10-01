@@ -43,6 +43,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
     /** @var CategoryType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
@@ -172,9 +173,7 @@ class CategoryTypeTest extends FormIntegrationTestCase
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

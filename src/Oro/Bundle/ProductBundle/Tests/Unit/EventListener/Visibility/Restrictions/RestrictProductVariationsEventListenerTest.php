@@ -28,6 +28,7 @@ class RestrictProductVariationsEventListenerTest extends \PHPUnit\Framework\Test
     /** @var RestrictProductVariationsEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

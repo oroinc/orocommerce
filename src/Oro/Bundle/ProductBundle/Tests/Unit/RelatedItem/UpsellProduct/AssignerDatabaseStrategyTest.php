@@ -28,6 +28,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
     /** @var AssignerDatabaseStrategy */
     private $assigner;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(RelatedItemConfigProviderInterface::class);

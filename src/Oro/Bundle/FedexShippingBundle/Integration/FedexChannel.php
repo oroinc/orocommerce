@@ -9,17 +9,13 @@ class FedexChannel implements ChannelInterface, IconAwareIntegrationInterface
 {
     const TYPE = 'fedex';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.fedex.integration.channel.label';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon()
     {
         return 'bundles/orofedexshipping/img/fedex-logo.png';

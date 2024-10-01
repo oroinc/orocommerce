@@ -39,33 +39,25 @@ class FedexPackageSettings implements FedexPackageSettingsInterface
         $this->ignorePackageDimensions = $ignorePackageDimensions;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getUnitOfWeight(): string
     {
         return $this->unitOfWeight;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDimensionsUnit(): string
     {
         return $this->dimensionsUnit;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLimitationExpression(): string
     {
         return $this->limitationExpression;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isDimensionsIgnored(): bool
     {
         return $this->ignorePackageDimensions;

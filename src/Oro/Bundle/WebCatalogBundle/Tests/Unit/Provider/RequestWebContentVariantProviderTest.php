@@ -20,6 +20,7 @@ class RequestWebContentVariantProviderTest extends TestCase
 
     private RequestWebContentVariantProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

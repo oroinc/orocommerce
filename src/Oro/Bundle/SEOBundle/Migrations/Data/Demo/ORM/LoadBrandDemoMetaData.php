@@ -15,17 +15,13 @@ class LoadBrandDemoMetaData extends AbstractFixture implements DependentFixtureI
 {
     use LoadDemoMetaDataTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadBrandDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addMetaFieldsData($manager, $manager->getRepository(Brand::class)->findAll());

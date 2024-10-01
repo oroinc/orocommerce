@@ -20,6 +20,7 @@ class SearchProductHandlerTest extends \PHPUnit\Framework\TestCase
      */
     private $requestStack;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

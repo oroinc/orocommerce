@@ -26,17 +26,13 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     public const PAGE_3_DEFAULT = '/localized-slug/en/page3';
     public const PAGE_3_LOCALIZED_EN_CA = '/localized-slug/en_ca/page3';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadPageData::class, LoadLocalizationData::class, LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var Page $page */

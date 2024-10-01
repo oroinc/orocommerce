@@ -16,6 +16,7 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
     /** @var BasicProductUnitFieldsSettings */
     private $settings;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

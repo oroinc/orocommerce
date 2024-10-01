@@ -7,9 +7,7 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
 
 class TrackingAwareShippingMethodStub extends ShippingMethodStub implements ShippingTrackingAwareInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTrackingLink(string $number): ?string
     {
         return null;

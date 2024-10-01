@@ -22,9 +22,7 @@ class OrderAddressQueryModifier implements QueryModifierInterface
         $this->entityClassResolver = $entityClassResolver;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {
         if ($skipRootEntity) {

@@ -12,9 +12,7 @@ use Psr\Log\LoggerInterface;
  */
 class UpdateEmailNotificationQuery extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -25,17 +23,12 @@ class UpdateEmailNotificationQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function doExecute(LoggerInterface $logger, $dryRun = false): void
     {
         $query = 'UPDATE oro_notification_email_notif 

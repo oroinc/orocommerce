@@ -12,6 +12,7 @@ class DashesSequenceTypeTest extends \PHPUnit\Framework\TestCase
      */
     protected $dashesSequenceType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dashesSequenceType = new DashesSequenceType();

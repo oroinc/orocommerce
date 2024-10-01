@@ -17,6 +17,7 @@ class ResolvedContentVariantsLoaderTest extends \PHPUnit\Framework\TestCase
 
     private ResolvedContentVariantsLoader $loader;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

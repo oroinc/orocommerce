@@ -17,9 +17,7 @@ class ProductUnitExistsValidator extends ConstraintValidator
 {
     public const ALIAS = 'oro_product_product_unit_exists';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductUnitExists) {

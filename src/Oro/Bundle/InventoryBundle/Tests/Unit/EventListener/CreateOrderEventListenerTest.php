@@ -34,6 +34,7 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CreateOrderEventListener */
     private $createOrderEventListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quantityManager = $this->createMock(InventoryQuantityManager::class);

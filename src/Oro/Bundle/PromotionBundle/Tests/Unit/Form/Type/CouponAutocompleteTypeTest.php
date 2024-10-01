@@ -14,6 +14,7 @@ class CouponAutocompleteTypeTest extends FormIntegrationTestCase
      */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

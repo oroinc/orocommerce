@@ -59,6 +59,7 @@ class SlugGeneratorTest extends \PHPUnit\Framework\TestCase
      */
     private $uniqueSlugPrototypesResolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);

@@ -15,9 +15,7 @@ use Symfony\Component\Form\FormInterface;
  */
 class DiscountConfigurationDataMapper implements DataMapperInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         if (null === $data) {
@@ -33,9 +31,7 @@ class DiscountConfigurationDataMapper implements DataMapperInterface
         $this->setDataFromOptions($forms, $data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         if (null === $data) {

@@ -102,6 +102,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         ]
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->variantFieldProvider = $this->createMock(VariantFieldProvider::class);
@@ -113,9 +114,7 @@ class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCa
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

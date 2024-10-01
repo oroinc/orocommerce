@@ -21,9 +21,7 @@ class EnsureDefaultShoppingListExistsForParent implements ProcessorInterface
         $this->defaultShoppingListFactory = $defaultShoppingListFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ChangeRelationshipContext $context */

@@ -17,17 +17,13 @@ class RemoveImageRelationOnProduct implements
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder(): int
     {
         return 20;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $productClass = $this->extendExtension->getEntityClassByTableName('oro_product');

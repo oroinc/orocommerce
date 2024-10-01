@@ -22,8 +22,8 @@ class NodeHasNoRestrictionsValidator extends ConstraintValidator
     /**
      * @param NodeHasNoRestrictions $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof NodeHasNoRestrictions) {

@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UniqueProductPricesValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): UniqueProductPricesValidator
     {
         return new UniqueProductPricesValidator();

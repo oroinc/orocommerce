@@ -22,6 +22,7 @@ class DisableQuotesProcessTest extends WebTestCase
     private EntityManagerInterface $quoteEm;
     private DoctrineHelper $doctrineHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

@@ -28,6 +28,7 @@ class LoadCategoryBasedSegmentsDemoData extends AbstractFixture implements Depen
 
     public const NEW_ARRIVALS_PREFIX = 'New Arrivals / ';
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -39,6 +40,7 @@ class LoadCategoryBasedSegmentsDemoData extends AbstractFixture implements Depen
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);

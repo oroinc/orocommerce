@@ -23,16 +23,19 @@ class OrdersNumberUsageStatsProvider extends AbstractUsageStatsProvider
         $this->organizationRestrictionProvider = $organizationRestrictionProvider;
     }
 
+    #[\Override]
     public function getTitle(): string
     {
         return 'oro.order.usage_stats.orders_number.label';
     }
 
+    #[\Override]
     public function getTooltip(): string
     {
         return 'oro.order.usage_stats.orders_number.tooltip';
     }
 
+    #[\Override]
     public function getValue(): ?string
     {
         $queryBuilder = $this->doctrine->getRepository(Order::class)->getSalesOrdersNumberQueryBuilder(

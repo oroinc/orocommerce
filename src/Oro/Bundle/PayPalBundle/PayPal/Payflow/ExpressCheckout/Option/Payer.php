@@ -10,17 +10,13 @@ class Payer extends AbstractOption implements OptionsDependentInterface
 {
     const PAYERID = 'PAYERID';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         return isset($options[Action::ACTION]) && $options[Action::ACTION] === Action::DO_EC;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         $resolver

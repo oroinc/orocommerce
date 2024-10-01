@@ -17,6 +17,7 @@ class ChainTwigFunctionProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var ChainTwigFunctionProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerProcessorA = $this->createMock(WYSIWYGTwigFunctionProcessorInterface::class);

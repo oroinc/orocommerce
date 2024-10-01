@@ -7,16 +7,12 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 
 class DiscountStub extends AbstractDiscount
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function apply(DiscountContextInterface $discountContext)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculate($entity): float
     {
         return 0.0;

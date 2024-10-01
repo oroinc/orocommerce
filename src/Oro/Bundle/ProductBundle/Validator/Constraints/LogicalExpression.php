@@ -21,9 +21,7 @@ class LogicalExpression extends Constraint
      */
     public $logicalExpressionsAllowed = true;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_product.validator_constraints.logical_expression_validator';

@@ -18,6 +18,7 @@ class PrepareCheckoutSettings implements PrepareCheckoutSettingsInterface
     ) {
     }
 
+    #[\Override]
     public function execute(CheckoutSourceEntityInterface $source): array
     {
         $settings = [];

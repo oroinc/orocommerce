@@ -15,6 +15,7 @@ class UpdateShippingPrice implements UpdateShippingPriceInterface
     ) {
     }
 
+    #[\Override]
     public function execute(Checkout $checkout): void
     {
         $checkout->setShippingCost(

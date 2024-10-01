@@ -25,6 +25,7 @@ class FrontendProductListModifierTest extends WebTestCase
     /** @var FrontendProductListModifier */
     private $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

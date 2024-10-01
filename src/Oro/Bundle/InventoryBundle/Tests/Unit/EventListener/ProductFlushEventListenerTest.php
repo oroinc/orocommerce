@@ -25,6 +25,7 @@ class ProductFlushEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductFlushEventListener */
     private $productFlushEventListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->inventoryManager = $this->createMock(InventoryManager::class);

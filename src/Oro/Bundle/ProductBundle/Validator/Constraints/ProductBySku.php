@@ -11,9 +11,7 @@ class ProductBySku extends Constraint
      */
     public $message = 'oro.product.product_by_sku.not_found';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_product_product_by_sku_validator';

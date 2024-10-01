@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class AjaxCurrencyAndLocalizationControllerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

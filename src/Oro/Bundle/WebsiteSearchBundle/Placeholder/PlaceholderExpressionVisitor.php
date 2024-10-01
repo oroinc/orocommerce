@@ -19,9 +19,7 @@ class PlaceholderExpressionVisitor extends ExpressionVisitor
         $this->placeholder = $placeholder;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkComparison(Comparison $comparison)
     {
         return new Comparison(
@@ -31,17 +29,13 @@ class PlaceholderExpressionVisitor extends ExpressionVisitor
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkValue(Value $value)
     {
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkCompositeExpression(CompositeExpression $expr)
     {
         return new CompositeExpression(

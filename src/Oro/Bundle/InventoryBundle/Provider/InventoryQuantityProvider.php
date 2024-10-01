@@ -23,17 +23,13 @@ class InventoryQuantityProvider implements InventoryQuantityProviderInterface
         $this->quantityManager = $quantityManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function canDecrement(Product $product = null)
     {
         return $this->quantityManager->shouldDecrement($product);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAvailableQuantity(Product $product, ProductUnit $unit)
     {
         $inventoryLevel = $this->getInventoryLevel($product, $unit);

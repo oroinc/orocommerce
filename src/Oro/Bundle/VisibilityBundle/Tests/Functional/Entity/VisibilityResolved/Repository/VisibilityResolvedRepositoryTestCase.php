@@ -33,6 +33,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
     /** @var ScopeManager */
     protected $scopeManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -49,6 +50,7 @@ abstract class VisibilityResolvedRepositoryTestCase extends WebTestCase
         return [LoadProductVisibilityData::class];
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->doctrine->getManager()->clear();

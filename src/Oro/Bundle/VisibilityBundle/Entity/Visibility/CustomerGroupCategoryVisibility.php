@@ -72,14 +72,13 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
      * @param Category $category
      * @return string
      */
+    #[\Override]
     public static function getDefault($category)
     {
         return self::CATEGORY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setVisibility($visibility)
     {
         $this->visibility = $visibility;
@@ -87,9 +86,7 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVisibility()
     {
         return $this->visibility;
@@ -99,6 +96,7 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
      * @param Category $category
      * @return array
      */
+    #[\Override]
     public static function getVisibilityList($category)
     {
         $visibilityList = [
@@ -113,9 +111,7 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
         return $visibilityList;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargetEntity()
     {
         return $this->getCategory();
@@ -125,6 +121,7 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
      * @param Category $category
      * @return $this
      */
+    #[\Override]
     public function setTargetEntity($category)
     {
         return $this->setCategory($category);
@@ -134,6 +131,7 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
      * @param Scope|null $scope
      * @return $this
      */
+    #[\Override]
     public function setScope(Scope $scope = null)
     {
         $this->scope = $scope;
@@ -144,14 +142,13 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
     /**
      * @return Scope
      */
+    #[\Override]
     public function getScope()
     {
         return $this->scope;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getScopeType()
     {
         return self::VISIBILITY_TYPE;

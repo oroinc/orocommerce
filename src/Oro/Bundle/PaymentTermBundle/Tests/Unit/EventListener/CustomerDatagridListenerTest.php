@@ -23,6 +23,7 @@ class CustomerDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var SelectedFieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $selectedFieldsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->associationProvider = $this->createMock(PaymentTermAssociationProvider::class);

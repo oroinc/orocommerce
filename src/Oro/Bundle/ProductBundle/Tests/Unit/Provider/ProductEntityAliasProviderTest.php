@@ -22,6 +22,7 @@ class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductEntityAliasProvider */
     private $entityAliasProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

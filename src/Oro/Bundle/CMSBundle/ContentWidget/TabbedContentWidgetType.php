@@ -35,11 +35,13 @@ class TabbedContentWidgetType extends AbstractContentWidgetType
         $this->managerRegistry = $managerRegistry;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return self::CONTENT_WIDGET_NAME;
     }
 
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.cms.content_widget_type.tabbed_content.label';
@@ -50,6 +52,7 @@ class TabbedContentWidgetType extends AbstractContentWidgetType
      * @throws RuntimeError
      * @throws LoaderError
      */
+    #[\Override]
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         $data = $this->getWidgetData($contentWidget);
@@ -71,6 +74,7 @@ class TabbedContentWidgetType extends AbstractContentWidgetType
         ];
     }
 
+    #[\Override]
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): ?FormInterface
     {
         return $formFactory
@@ -94,6 +98,7 @@ class TabbedContentWidgetType extends AbstractContentWidgetType
             );
     }
 
+    #[\Override]
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         $data = $contentWidget->getSettings();
@@ -110,6 +115,7 @@ class TabbedContentWidgetType extends AbstractContentWidgetType
         return array_merge(['tabbedContentItems' => $this->widgetData[$key]['tabbedContentItems']], $data);
     }
 
+    #[\Override]
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';

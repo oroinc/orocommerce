@@ -12,6 +12,7 @@ class ProductTaxCodeAutocompleteTypeTest extends FormIntegrationTestCase
     /** @var ProductTaxCodeAutocompleteType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

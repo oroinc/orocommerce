@@ -10,9 +10,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\Ajax\AjaxMassAction;
  */
 class MoveProductsMassAction extends AjaxMassAction
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setOptions(ActionConfiguration $options)
     {
         if (empty($options['handler'])) {

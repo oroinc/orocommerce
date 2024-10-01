@@ -25,9 +25,7 @@ class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisabl
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleMethodDisable(string $methodId): void
     {
         $this->handler->handleMethodDisable($methodId);

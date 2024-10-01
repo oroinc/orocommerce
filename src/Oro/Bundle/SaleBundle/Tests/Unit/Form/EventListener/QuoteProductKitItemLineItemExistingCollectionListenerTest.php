@@ -22,6 +22,7 @@ class QuoteProductKitItemLineItemExistingCollectionListenerTest extends TestCase
 
     private FormFactoryInterface $formFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new QuoteProductKitItemLineItemExistingCollectionListener(

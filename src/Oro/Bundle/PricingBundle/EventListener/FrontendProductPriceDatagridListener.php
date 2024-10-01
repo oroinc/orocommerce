@@ -109,9 +109,6 @@ class FrontendProductPriceDatagridListener implements FeatureToggleableInterface
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function onBuildBefore(BuildBefore $event)
     {
         if (!$this->isFeaturesEnabled()) {

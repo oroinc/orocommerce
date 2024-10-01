@@ -48,9 +48,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         parent::__construct($attributeManager, $fieldAclHelper);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function onViewList(BeforeListRenderEvent $event)
     {
         $this->eventType = self::EVENT_TYPE_VIEW;
@@ -60,9 +58,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         $this->eventType = null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function moveFieldToBlock(ScrollData $scrollData, $fieldName, $blockId)
     {
         if ($this->eventType === self::EVENT_TYPE_VIEW) {
@@ -82,6 +78,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         return $this->fieldsRestrictedToMove;
     }
 
+    #[\Override]
     protected function addNotEmptyGroupBlocks(ScrollData $scrollData, array $groups)
     {
         parent::addNotEmptyGroupBlocks($scrollData, $groups);
@@ -115,9 +112,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addAttributeEditBlocks(BeforeListRenderEvent $event, AttributeGroup $group, array $attributes)
     {
         parent::addAttributeEditBlocks($event, $group, $attributes);
@@ -131,9 +126,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function renderAttributeEditData(Environment $twig, FormView $attributeView, FieldConfigModel $attribute)
     {
         return $this->isSeparateGroup($attribute->getType())
@@ -141,9 +134,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
             : parent::renderAttributeEditData($twig, $attributeView, $attribute);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addAttributeViewBlocks(BeforeListRenderEvent $event, AttributeGroup $group, array $attributes)
     {
         parent::addAttributeViewBlocks($event, $group, $attributes);
@@ -163,6 +154,7 @@ class AttributeFormViewListener extends BaseAttributeFormViewListener
      * @param FieldConfigModel $attribute
      * @return string
      */
+    #[\Override]
     protected function renderAttributeViewData(Environment $twig, $entity, FieldConfigModel $attribute)
     {
         if ($this->isSeparateGroup($attribute->getType())) {

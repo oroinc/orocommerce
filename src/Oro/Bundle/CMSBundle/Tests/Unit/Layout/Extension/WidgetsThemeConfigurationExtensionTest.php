@@ -19,6 +19,7 @@ final class WidgetsThemeConfigurationExtensionTest extends TestCase
 
     private ConfigurationBuildersProvider $configurationBuildersProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configurationBuildersProvider = $this->createStub(ConfigurationBuildersProvider::class);

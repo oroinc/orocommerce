@@ -40,6 +40,7 @@ class LoadPricesAttributeData extends AbstractFixture implements
     /**
      * @return array
      */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -48,9 +49,7 @@ class LoadPricesAttributeData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $defaultAttributeFamily = $manager->getRepository(AttributeFamily::class)

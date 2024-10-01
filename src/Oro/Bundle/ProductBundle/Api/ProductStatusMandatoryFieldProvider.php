@@ -12,9 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class ProductStatusMandatoryFieldProvider implements MandatoryFieldProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMandatoryFields(string $entityClass): array
     {
         return Product::class === $entityClass

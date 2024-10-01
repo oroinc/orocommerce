@@ -117,9 +117,7 @@ class ContactInfo extends ParameterBag
         return empty($this->all());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function get(string $name): \UnitEnum|float|array|bool|int|string|null
     {
         return $this->has($name) ? parent::get($name) : '';

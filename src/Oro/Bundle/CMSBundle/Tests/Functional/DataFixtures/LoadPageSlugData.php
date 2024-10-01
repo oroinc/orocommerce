@@ -12,17 +12,13 @@ class LoadPageSlugData extends AbstractFixture implements DependentFixtureInterf
 {
     const SLUG1_PAGE1 = 'orocrm.page1.slug1';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadPageData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Page $page */

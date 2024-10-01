@@ -6,17 +6,13 @@ use Oro\Bundle\ProductBundle\Form\Type\BrandType;
 
 class BrandFormExtension extends BaseMetaFormExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [BrandType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.product.brand';

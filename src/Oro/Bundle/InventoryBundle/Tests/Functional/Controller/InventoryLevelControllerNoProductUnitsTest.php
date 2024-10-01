@@ -12,6 +12,7 @@ use Symfony\Component\Routing\RouterInterface;
  */
 class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

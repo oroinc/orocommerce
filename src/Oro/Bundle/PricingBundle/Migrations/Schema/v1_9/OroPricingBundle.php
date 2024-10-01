@@ -14,9 +14,7 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface
 {
     use ConnectionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_price_product');

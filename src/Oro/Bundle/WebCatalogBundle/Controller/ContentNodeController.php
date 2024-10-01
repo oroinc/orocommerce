@@ -151,9 +151,7 @@ class ContentNodeController extends AbstractController
         return $this->container->get(ContentNodeTreeHandler::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [

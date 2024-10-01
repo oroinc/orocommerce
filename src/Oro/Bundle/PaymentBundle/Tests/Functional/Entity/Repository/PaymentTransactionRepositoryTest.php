@@ -12,6 +12,7 @@ class PaymentTransactionRepositoryTest extends WebTestCase
 {
     private PaymentTransactionRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

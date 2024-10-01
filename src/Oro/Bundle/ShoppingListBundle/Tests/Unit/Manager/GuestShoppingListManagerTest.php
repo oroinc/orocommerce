@@ -49,6 +49,7 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
     /** @var GuestShoppingListManager */
     private $guestShoppingListManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

@@ -22,6 +22,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class AjaxProductKitLineItemControllerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

@@ -15,6 +15,7 @@ class ProductNormalizerEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var UpcomingProductProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $productUpcomingProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUpcomingProvider = $this->createMock(UpcomingProductProvider::class);

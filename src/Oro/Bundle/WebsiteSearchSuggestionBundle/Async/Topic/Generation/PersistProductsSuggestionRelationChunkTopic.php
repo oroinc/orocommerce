@@ -14,17 +14,20 @@ class PersistProductsSuggestionRelationChunkTopic extends AbstractTopic
 
     private const NAME = 'oro_website_search_suggestion.persist_product_suggestions';
 
-    #[\Override] public static function getName(): string
+    #[\Override]
+    public static function getName(): string
     {
         return static::NAME;
     }
 
-    #[\Override] public static function getDescription(): string
+    #[\Override]
+    public static function getDescription(): string
     {
         return "Persist to database products suggestions relation records";
     }
 
-    #[\Override] public function configureMessageBody(OptionsResolver $resolver): void
+    #[\Override]
+    public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired(static::PRODUCTS_WRAPPER)

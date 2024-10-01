@@ -12,6 +12,7 @@ class DimensionsValueTest extends \PHPUnit\Framework\TestCase
     /** @var DimensionsValue */
     private $model;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->model = new DimensionsValue();

@@ -14,6 +14,7 @@ class CategoryPageTitleTest extends WebTestCase
 {
     use WebsiteSearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

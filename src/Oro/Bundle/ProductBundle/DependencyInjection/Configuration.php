@@ -98,9 +98,9 @@ class Configuration implements ConfigurationInterface
         'inventory_filter_in_stock_statuses_for_simple_filter';
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(static::ROOT_NODE);

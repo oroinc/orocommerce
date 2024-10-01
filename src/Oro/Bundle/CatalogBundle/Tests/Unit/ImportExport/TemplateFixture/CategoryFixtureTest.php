@@ -26,6 +26,7 @@ class CategoryFixtureTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->templateManager = $this->createMock(TemplateManager::class);

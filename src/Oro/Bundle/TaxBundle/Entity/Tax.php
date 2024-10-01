@@ -130,6 +130,7 @@ class Tax implements DatesAwareInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->code;
@@ -138,6 +139,7 @@ class Tax implements DatesAwareInterface
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -147,6 +149,7 @@ class Tax implements DatesAwareInterface
      * @param \DateTime|null $createdAt
      * @return $this
      */
+    #[\Override]
     public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
@@ -157,6 +160,7 @@ class Tax implements DatesAwareInterface
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getUpdatedAt()
     {
         return $this->updatedAt;
@@ -167,6 +171,7 @@ class Tax implements DatesAwareInterface
      *
      * @return $this
      */
+    #[\Override]
     public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAtSet = false;
@@ -182,6 +187,7 @@ class Tax implements DatesAwareInterface
     /**
      * @return bool
      */
+    #[\Override]
     public function isUpdatedAtSet()
     {
         return $this->updatedAtSet;

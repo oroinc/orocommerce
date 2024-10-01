@@ -149,33 +149,25 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
         static::assertStringContainsString('customer notes', $crawler->html());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getWorkflowName()
     {
         return 'b2b_rfq_frontoffice_default';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserEmail()
     {
         return LoadUserData::ACCOUNT1_USER1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getBasicAuthHeader()
     {
         return self::generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getWsseAuthHeader()
     {
         return self::generateWsseAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);

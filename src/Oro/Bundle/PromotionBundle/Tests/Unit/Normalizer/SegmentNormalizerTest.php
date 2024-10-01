@@ -15,6 +15,7 @@ class SegmentNormalizerTest extends \PHPUnit\Framework\TestCase
      */
     protected $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->normalizer = new SegmentNormalizer();

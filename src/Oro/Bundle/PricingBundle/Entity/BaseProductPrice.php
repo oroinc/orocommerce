@@ -99,9 +99,7 @@ class BaseProductPrice implements
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -119,9 +117,7 @@ class BaseProductPrice implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->productSku;
@@ -160,6 +156,7 @@ class BaseProductPrice implements
     /**
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -168,6 +165,7 @@ class BaseProductPrice implements
     /**
      * @return ProductUnit
      */
+    #[\Override]
     public function getUnit()
     {
         return $this->unit;
@@ -199,6 +197,7 @@ class BaseProductPrice implements
     /**
      * @return Price|null
      */
+    #[\Override]
     public function getPrice()
     {
         if (null === $this->price) {
@@ -230,33 +229,25 @@ class BaseProductPrice implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->getUnit();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->getUnit()->getCode();

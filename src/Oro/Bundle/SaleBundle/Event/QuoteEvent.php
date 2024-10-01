@@ -42,6 +42,7 @@ class QuoteEvent extends Event implements EntityDataAwareEventInterface
     /**
      * @return \ArrayObject
      */
+    #[\Override]
     public function getData()
     {
         return $this->data;
@@ -55,9 +56,7 @@ class QuoteEvent extends Event implements EntityDataAwareEventInterface
         return $this->form;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubmittedData()
     {
         return $this->submittedData;
@@ -66,6 +65,7 @@ class QuoteEvent extends Event implements EntityDataAwareEventInterface
     /**
      * @return Quote
      */
+    #[\Override]
     public function getEntity()
     {
         return $this->getQuote();

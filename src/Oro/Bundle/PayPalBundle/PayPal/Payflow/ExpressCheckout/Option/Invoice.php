@@ -8,16 +8,12 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\OptionsResolver;
 
 class Invoice extends BaseInvoice implements OptionsDependentInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         if (!isset($options[Action::ACTION])) {
@@ -27,9 +23,7 @@ class Invoice extends BaseInvoice implements OptionsDependentInterface
         return in_array($options[Action::ACTION], [Action::SET_EC, Action::DO_EC], true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         parent::configureOption($resolver);

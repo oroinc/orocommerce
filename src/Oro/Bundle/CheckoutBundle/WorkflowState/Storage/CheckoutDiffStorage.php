@@ -33,9 +33,9 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
     }
 
     /**
-     * {@inheritdoc}
      * @throws InvalidEntityException
      */
+    #[\Override]
     public function addState($entity, array $data, $options = [])
     {
         /** @var CheckoutWorkflowState $storageEntity */
@@ -54,9 +54,9 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
     }
 
     /**
-     * {@inheritdoc}
      * @throws InvalidEntityException
      */
+    #[\Override]
     public function getState($entity, $token)
     {
         $storageEntity = $this->getStorageEntity($entity, $token);
@@ -65,9 +65,9 @@ class CheckoutDiffStorage implements CheckoutDiffStorageInterface
     }
 
     /**
-     * {@inheritdoc}
      * @throws InvalidEntityException
      */
+    #[\Override]
     public function deleteStates($entity, $token = null)
     {
         $this

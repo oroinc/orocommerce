@@ -34,9 +34,7 @@ class OrderShippingContextFactory implements ShippingContextFactoryInterface
         $this->systemShippingOriginProvider = $systemShippingOriginProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(object $entity): ShippingContextInterface
     {
         if (!$entity instanceof Order) {

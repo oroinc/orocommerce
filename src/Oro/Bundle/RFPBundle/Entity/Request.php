@@ -232,6 +232,7 @@ class Request implements
      *
      * @return integer
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -255,6 +256,7 @@ class Request implements
      *
      * @return string
      */
+    #[\Override]
     public function getFirstName()
     {
         return $this->firstName;
@@ -278,6 +280,7 @@ class Request implements
      *
      * @return string
      */
+    #[\Override]
     public function getLastName()
     {
         return $this->lastName;
@@ -301,6 +304,7 @@ class Request implements
      *
      * @return string
      */
+    #[\Override]
     public function getEmail()
     {
         return $this->email;
@@ -407,6 +411,7 @@ class Request implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return sprintf('%s: %s %s', $this->id, $this->firstName, $this->lastName);
@@ -590,6 +595,7 @@ class Request implements
     /**
      * @return Website
      */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
@@ -599,6 +605,7 @@ class Request implements
      * @param Website|null $website
      * @return $this
      */
+    #[\Override]
     public function setWebsite(Website $website = null)
     {
         $this->website = $website;
@@ -606,9 +613,7 @@ class Request implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEmailFields()
     {
         return ['email'];

@@ -37,6 +37,7 @@ class SluggableUrlGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var SluggableUrlGenerator */
     private $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseGenerator = $this->createMock(UrlGeneratorInterface::class);

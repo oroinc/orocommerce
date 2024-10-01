@@ -13,6 +13,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
 {
     private TaxBaseExclusionType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new TaxBaseExclusionType(new AddressCountryAndRegionSubscriberStub());
@@ -31,9 +32,7 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         $this->assertEquals(\ArrayObject::class, $options['data_class']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function submitDataProvider(): array
     {
         [$country, $region] = $this->getValidCountryAndRegion();
@@ -106,17 +105,13 @@ class TaxBaseExclusionTypeTest extends AbstractAddressTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormTypeClass(): string
     {
         return TaxBaseExclusionType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge([

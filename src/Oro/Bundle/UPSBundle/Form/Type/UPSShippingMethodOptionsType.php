@@ -25,9 +25,7 @@ class UPSShippingMethodOptionsType extends AbstractType
         $this->roundingService = $roundingService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add(UPSShippingMethod::OPTION_SURCHARGE, NumberType::class, [
@@ -43,9 +41,7 @@ class UPSShippingMethodOptionsType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

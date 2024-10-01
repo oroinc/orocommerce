@@ -21,6 +21,7 @@ class ContentNodeMaterializedPathModifierTest extends \PHPUnit\Framework\TestCas
      */
     protected $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

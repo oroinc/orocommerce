@@ -19,9 +19,7 @@ class EntityStub implements LineItemsAwareInterface
         $this->shippingAddress = $abstractAddress;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return new ArrayCollection([]);

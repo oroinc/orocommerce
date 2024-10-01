@@ -29,9 +29,7 @@ class OptionsProviderTest extends TestCase
      */
     private $lineItemOptionsProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingAddressOptionsProvider = $this->createMock(

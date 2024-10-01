@@ -14,6 +14,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 class ProcessAssociationWebsiteEventListener extends AbstractProcessAssociationEventListener
 {
+    #[\Override]
     public function onProcessAssociations(ProcessEvent $event): void
     {
         $associations = $event->getAssociations();

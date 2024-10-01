@@ -37,9 +37,7 @@ class CheckoutGroupShippingMethodsProvider implements CheckoutGroupShippingMetho
         $this->organizationProvider = $organizationProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getGroupedApplicableMethodsViews(Checkout $checkout, array $groupedLineItemIds): array
     {
         if (!$groupedLineItemIds) {
@@ -74,9 +72,7 @@ class CheckoutGroupShippingMethodsProvider implements CheckoutGroupShippingMetho
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCurrentShippingMethods(Checkout $checkout): array
     {
         return $this->checkoutLineItemGroupsShippingManager->getCheckoutLineItemGroupsShippingData($checkout);

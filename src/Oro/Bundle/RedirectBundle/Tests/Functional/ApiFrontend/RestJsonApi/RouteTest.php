@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RouteTest extends WebCatalogTreeTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,6 +26,7 @@ class RouteTest extends WebCatalogTreeTestCase
         $this->switchToWebCatalog();
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

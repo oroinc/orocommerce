@@ -22,6 +22,7 @@ class ProcessWorkflowRequestEventListenerTest extends TestCase
     private CheckoutHandlerInterface|MockObject $checkoutHandler;
     private ProcessWorkflowRequestEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutWorkflowHelper = $this->createMock(CheckoutWorkflowHelper::class);

@@ -16,6 +16,7 @@ abstract class AbstractOffersQuoteToShippingLineItemConverterTest extends TestCa
 {
     protected ShippingLineItemFromProductLineItemFactoryInterface|MockObject $shippingLineItemFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingLineItemFactory = $this->createMock(ShippingLineItemFromProductLineItemFactoryInterface::class);

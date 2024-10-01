@@ -138,9 +138,7 @@ class ShippingMethodsConfigsRuleController extends AbstractController
         return new JsonResponse(array_merge($data, $response->getOptions()));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

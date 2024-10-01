@@ -30,6 +30,7 @@ class UniqueSlugResolver implements UniqueSlugResolverInterface
         $this->doctrine = $doctrine;
     }
 
+    #[\Override]
     public function resolve(SlugUrl $slugUrl, SluggableInterface $entity): string
     {
         $slug = $slugUrl->getUrl();

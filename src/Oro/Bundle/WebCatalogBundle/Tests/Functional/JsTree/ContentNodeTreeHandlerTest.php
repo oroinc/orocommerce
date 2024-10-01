@@ -15,17 +15,13 @@ use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
  */
 class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFixtures(): array
     {
         return [LoadContentNodesData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getHandlerId(): string
     {
         return 'oro_web_catalog.content_node_tree_handler';
@@ -190,9 +186,7 @@ class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getActualNodeHierarchy(int $entityId, int $parentId, int $position): array
     {
         $entities = $this->getContainer()->get('doctrine')

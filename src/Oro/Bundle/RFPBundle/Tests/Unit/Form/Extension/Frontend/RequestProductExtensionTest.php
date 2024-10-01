@@ -16,6 +16,7 @@ class RequestProductExtensionTest extends TestCase
     private ResolvedProductVisibilityProvider $productVisibilityProvider;
     private RequestProductExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);

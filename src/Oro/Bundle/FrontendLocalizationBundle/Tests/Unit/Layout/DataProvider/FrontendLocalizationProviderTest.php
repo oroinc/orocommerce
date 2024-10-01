@@ -18,6 +18,7 @@ class FrontendLocalizationProviderTest extends TestCase
 
     protected FrontendLocalizationProvider $dataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationProvider = $this->createMock(LocalizationProviderInterface::class);

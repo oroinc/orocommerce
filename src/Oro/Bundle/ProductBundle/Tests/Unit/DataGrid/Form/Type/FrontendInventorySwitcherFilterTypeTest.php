@@ -15,6 +15,7 @@ final class FrontendInventorySwitcherFilterTypeTest extends AbstractTypeTestCase
 {
     private FrontendInventorySwitcherFilterType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMockTranslator();
@@ -27,11 +28,13 @@ final class FrontendInventorySwitcherFilterTypeTest extends AbstractTypeTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getTestFormType(): AbstractType
     {
         return $this->type;
     }
 
+    #[\Override]
     public function configureOptionsDataProvider(): array
     {
         $choices = [
@@ -58,6 +61,7 @@ final class FrontendInventorySwitcherFilterTypeTest extends AbstractTypeTestCase
         ];
     }
 
+    #[\Override]
     public function bindDataProvider(): array
     {
         return [

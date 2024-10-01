@@ -32,9 +32,7 @@ abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implement
      */
     protected $container;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
@@ -43,14 +41,13 @@ abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implement
     /**
      * @return array
      */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadProductKitDemoData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ProductRepository $productRepository */

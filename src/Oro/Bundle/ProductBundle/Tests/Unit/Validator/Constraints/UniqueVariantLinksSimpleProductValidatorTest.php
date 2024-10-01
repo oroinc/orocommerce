@@ -28,6 +28,7 @@ class UniqueVariantLinksSimpleProductValidatorTest extends ConstraintValidatorTe
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->uniqueVariantLinksProductValidatorMock = $this->createMock(ValidatorInterface::class);
@@ -35,6 +36,7 @@ class UniqueVariantLinksSimpleProductValidatorTest extends ConstraintValidatorTe
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): UniqueVariantLinksSimpleProductValidator
     {
         return new UniqueVariantLinksSimpleProductValidator(

@@ -15,6 +15,7 @@ class OrderConfigurationProviderTest extends \PHPUnit\Framework\TestCase
     /** @var OrderConfigurationProvider */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

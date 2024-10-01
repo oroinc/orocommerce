@@ -11,25 +11,19 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
  */
 class RelatedProductNormalizer extends ConfigurableEntityNormalizer
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return is_a($type, RelatedProduct::class, true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (!isset($data['sku'], $data['relatedItem'])) {

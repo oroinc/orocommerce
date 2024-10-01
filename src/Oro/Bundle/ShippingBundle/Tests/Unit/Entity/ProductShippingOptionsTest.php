@@ -20,6 +20,7 @@ class ProductShippingOptionsTest extends \PHPUnit\Framework\TestCase
     /** @var ProductShippingOptions */
     private $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new ProductShippingOptions();

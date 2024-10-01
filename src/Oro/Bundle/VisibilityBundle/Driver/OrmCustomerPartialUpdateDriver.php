@@ -37,9 +37,7 @@ class OrmCustomerPartialUpdateDriver extends AbstractCustomerPartialUpdateDriver
         $this->insertExecutor = $insertExecutor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createCustomerWithoutCustomerGroupVisibility(Customer $customer)
     {
         $queryBuilder = $this->getIndexIntegerQueryBuilder('visibilityNew');
@@ -69,9 +67,7 @@ class OrmCustomerPartialUpdateDriver extends AbstractCustomerPartialUpdateDriver
         $this->insertExecutor->execute(IndexInteger::class, ['item', 'field', 'value'], $queryBuilder);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function updateCustomerVisibility(Customer $customer)
     {
         $connection = $this
@@ -91,9 +87,7 @@ class OrmCustomerPartialUpdateDriver extends AbstractCustomerPartialUpdateDriver
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addCustomerVisibility(
         array $productIds,
         $productAlias,
@@ -116,9 +110,7 @@ class OrmCustomerPartialUpdateDriver extends AbstractCustomerPartialUpdateDriver
         $this->insertExecutor->execute(IndexInteger::class, ['item', 'field', 'value'], $queryBuilder);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function deleteCustomerVisibility(Customer $customer)
     {
         $itemQueryBuilder = $this->getItemQueryBuilder();

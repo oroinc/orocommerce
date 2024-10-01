@@ -23,18 +23,14 @@ class AddCustomerUserRelation implements Migration, ExtendExtensionAwareInterfac
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addConsentAcceptanceCustomerUserRelation($schema);
         $this->updateNewCustomerUserIdFieldWithExistingValues($queries);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

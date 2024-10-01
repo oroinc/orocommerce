@@ -161,30 +161,25 @@ class QuoteDemand implements
     /**
      * @return ArrayCollection|QuoteProductDemand[]
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->demandProducts;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingCost()
     {
         return $this->quote ? $this->quote->getShippingCost() : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethod()
     {
         return $this->quote ? $this->quote->getShippingMethod() : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethodType()
     {
         return $this->quote ? $this->quote->getShippingMethodType() : null;
@@ -202,14 +197,13 @@ class QuoteDemand implements
     /**
      * @return Quote
      */
+    #[\Override]
     public function getSourceDocument()
     {
         return $this->quote;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceDocumentIdentifier()
     {
         return $this->quote->getPoNumber();
@@ -253,9 +247,7 @@ class QuoteDemand implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal()
     {
         return $this->subtotal;
@@ -285,9 +277,7 @@ class QuoteDemand implements
         return $this->total;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVisitor()
     {
         return $this->visitor;

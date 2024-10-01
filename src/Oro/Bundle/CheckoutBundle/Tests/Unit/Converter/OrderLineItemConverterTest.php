@@ -43,6 +43,7 @@ class OrderLineItemConverterTest extends TestCase
 
     private OrderLineItemConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quantityProvider = $this->createMock(InventoryQuantityProviderInterface::class);

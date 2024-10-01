@@ -15,6 +15,7 @@ class PaymentTermControllerTest extends WebTestCase
     private const SAVE_AND_CLOSE_BUTTON = 'Save and Close';
     private const CREATE_UPDATE_SUCCESS_MESSAGE = 'Payment term has been saved';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

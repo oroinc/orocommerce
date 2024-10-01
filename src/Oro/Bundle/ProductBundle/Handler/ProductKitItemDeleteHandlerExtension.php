@@ -26,9 +26,7 @@ class ProductKitItemDeleteHandlerExtension extends AbstractEntityDeleteHandlerEx
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertDeleteGranted($entity): void
     {
         if (!$entity instanceof ProductKitItem) {

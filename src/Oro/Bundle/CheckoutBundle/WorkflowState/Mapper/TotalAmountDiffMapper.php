@@ -19,17 +19,13 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
         $this->totalProcessorProvider = $totalProcessorProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isEntitySupported($entity)
     {
         return is_object($entity) && $entity instanceof Checkout;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::DATA_NAME;
@@ -39,6 +35,7 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      * @param Checkout $checkout
      * @return array
      */
+    #[\Override]
     public function getCurrentState($checkout)
     {
         $total = $this->totalProcessorProvider->getTotal($checkout);
@@ -55,6 +52,7 @@ class TotalAmountDiffMapper implements CheckoutStateDiffMapperInterface
      * @param array $state2
      * @return bool
      */
+    #[\Override]
     public function isStatesEqual($entity, $state1, $state2)
     {
         foreach (['amount', 'currency'] as $field) {

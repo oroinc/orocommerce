@@ -37,9 +37,7 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractProductResolvedCa
         $this->insertExecutor = $insertExecutor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function resolveVisibilitySettings(VisibilityInterface $visibilitySettings)
     {
         /** @var CustomerGroupProductVisibility $visibilitySettings */
@@ -95,17 +93,13 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractProductResolvedCa
         $this->triggerProductReindexation($product, $scope->getWebsite(), false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isVisibilitySettingsSupported(VisibilityInterface $visibilitySettings)
     {
         return $visibilitySettings instanceof CustomerGroupProductVisibility;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function productCategoryChanged(Product $product, bool $scheduleReindex)
     {
         $category = $this->doctrine->getRepository(Category::class)->findOneByProduct($product);
@@ -121,9 +115,7 @@ class CustomerGroupProductResolvedCacheBuilder extends AbstractProductResolvedCa
         $this->triggerProductReindexation($product, null, $scheduleReindex);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildCache(Scope $scope = null)
     {
         $repository = $this->getCustomerGroupProductRepository();

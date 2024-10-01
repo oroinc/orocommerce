@@ -20,6 +20,7 @@ class ProductListEventListenerTest extends \PHPUnit\Framework\TestCase
 
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->imagePlaceholderProvider = $this->createMock(ImagePlaceholderProviderInterface::class);

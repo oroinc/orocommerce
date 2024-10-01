@@ -22,6 +22,7 @@ class LocaleSettingsTest extends TestCase
 
     protected LocaleSettings $localeSettings;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->inner = $this->createMock(BaseLocaleSettings::class);

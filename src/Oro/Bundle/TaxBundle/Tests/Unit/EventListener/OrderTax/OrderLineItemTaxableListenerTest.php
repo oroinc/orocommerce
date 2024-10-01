@@ -20,6 +20,7 @@ class OrderLineItemTaxableListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemTaxableListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->unitOfWork = $this->createMock(UnitOfWork::class);

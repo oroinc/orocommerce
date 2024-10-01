@@ -18,9 +18,7 @@ class CheckoutFactoryDecorator implements CheckoutFactoryInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createCheckout(Checkout $source, iterable $lineItems): Checkout
     {
         $checkout = $this->checkoutFactory->createCheckout($source, $lineItems);

@@ -15,9 +15,7 @@ class LoadConfigValue extends AbstractFixture implements DependentFixtureInterfa
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
@@ -26,9 +24,7 @@ class LoadConfigValue extends AbstractFixture implements DependentFixtureInterfa
         $configManager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

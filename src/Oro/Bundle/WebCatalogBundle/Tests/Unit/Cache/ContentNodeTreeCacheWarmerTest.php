@@ -23,6 +23,7 @@ class ContentNodeTreeCacheWarmerTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeTreeCacheWarmer $warmer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

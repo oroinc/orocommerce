@@ -29,6 +29,7 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
      */
     protected $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

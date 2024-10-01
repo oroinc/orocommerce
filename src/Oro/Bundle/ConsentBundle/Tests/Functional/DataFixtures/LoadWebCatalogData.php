@@ -30,9 +30,7 @@ class LoadWebCatalogData extends AbstractFixture implements ContainerAwareInterf
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$data as $catalogReference => $catalogData) {

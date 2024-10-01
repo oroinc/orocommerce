@@ -13,9 +13,7 @@ class ComputeTaxJurisdictionZipCodes implements ProcessorInterface
 {
     private const ZIP_CODES_FIELD_NAME = 'zipCodes';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

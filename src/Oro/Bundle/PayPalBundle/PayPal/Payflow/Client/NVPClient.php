@@ -22,7 +22,7 @@ class NVPClient implements ClientInterface
         $this->encoder = $encoder;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function send($hostAddress, array $options = [], array $connectionOptions = [])
     {
         $body = $this->encoder->encode($options);

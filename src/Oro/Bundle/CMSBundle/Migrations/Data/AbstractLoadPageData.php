@@ -30,9 +30,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
 
     protected array $imagesMap = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -40,9 +38,7 @@ abstract class AbstractLoadPageData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $organization = $this->getOrganization($manager);

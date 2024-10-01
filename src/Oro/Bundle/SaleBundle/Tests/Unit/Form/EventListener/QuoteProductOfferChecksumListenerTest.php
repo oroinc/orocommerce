@@ -19,6 +19,7 @@ class QuoteProductOfferChecksumListenerTest extends TestCase
 
     private QuoteProductOfferChecksumListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);

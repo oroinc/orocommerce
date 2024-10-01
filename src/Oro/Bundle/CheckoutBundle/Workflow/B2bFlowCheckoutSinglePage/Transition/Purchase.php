@@ -33,6 +33,7 @@ class Purchase extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
@@ -87,6 +88,7 @@ class Purchase extends TransitionServiceAbstract
         return true;
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         /** @var Checkout $checkout */

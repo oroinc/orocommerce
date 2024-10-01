@@ -31,9 +31,7 @@ class LoadDraftPageData extends AbstractFixture implements DependentFixtureInter
         self::BASIC_PAGE_2 => [],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -41,9 +39,7 @@ class LoadDraftPageData extends AbstractFixture implements DependentFixtureInter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         // Remove all built-in pages before tests

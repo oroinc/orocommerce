@@ -8,6 +8,7 @@ class SearchTermReportTest extends FeatureAwareRestJsonApiTestCase
 {
     private const API_TYPE = 'searchtermreports';
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

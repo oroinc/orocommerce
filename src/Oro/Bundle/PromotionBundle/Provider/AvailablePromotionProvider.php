@@ -22,9 +22,7 @@ class AvailablePromotionProvider implements AvailablePromotionProviderInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAvailablePromotions(array $contextData): array
     {
         if (!$this->isFeaturesEnabled()) {

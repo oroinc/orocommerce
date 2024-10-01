@@ -12,6 +12,7 @@ class FullListUrlProvidersCompilerPassTest extends \PHPUnit\Framework\TestCase
     /** @var FullListUrlProvidersCompilerPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new FullListUrlProvidersCompilerPass();

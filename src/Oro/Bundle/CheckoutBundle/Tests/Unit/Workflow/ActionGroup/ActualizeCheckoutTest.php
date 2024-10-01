@@ -30,6 +30,7 @@ class ActualizeCheckoutTest extends TestCase
     private CheckoutSubtotalUpdater|MockObject $checkoutSubtotalUpdater;
     private ActualizeCheckout $actualizeCheckout;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

@@ -25,6 +25,7 @@ class RequestProductProductListener implements EventSubscriberInterface
         $this->entityStateChecker = $entityStateChecker;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

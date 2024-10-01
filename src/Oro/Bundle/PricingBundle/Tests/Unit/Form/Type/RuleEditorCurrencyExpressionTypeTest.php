@@ -14,6 +14,7 @@ class RuleEditorCurrencyExpressionTypeTest extends \PHPUnit\Framework\TestCase
     /** @var RuleEditorCurrencyExpressionType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configurator = $this->createMock(PriceRuleEditorOptionsConfigurator::class);

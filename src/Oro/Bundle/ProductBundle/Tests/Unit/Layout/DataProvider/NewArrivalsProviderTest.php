@@ -45,6 +45,7 @@ class NewArrivalsProviderTest extends OrmTestCase
     /** @var NewArrivalsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();

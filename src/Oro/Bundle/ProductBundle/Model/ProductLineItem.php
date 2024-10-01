@@ -42,17 +42,13 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
         $this->identifier = $identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
@@ -85,25 +81,19 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->getUnit();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->unit ? $this->unit->getCode() : $this->unitCode;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -119,17 +109,13 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParentProduct()
     {
         return null;
@@ -145,14 +131,13 @@ class ProductLineItem implements ProductLineItemInterface, ProductLineItemsHolde
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->product ? $this->product->getSku() : null;
     }
 
+    #[\Override]
     public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
     {
         return $this->lineItemsHolder;

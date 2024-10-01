@@ -18,10 +18,10 @@ class UpdateProductSlugOrganization extends AbstractFixture
     const BATCH_SIZE = 1000;
 
     /**
-     * {@inheritdoc}
      *
      * @param ObjectManager|EntityManager $manager
      */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $organizations = $manager->getRepository(Organization::class)->findAll();

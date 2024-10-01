@@ -23,7 +23,8 @@ class GenerateSuggestionsProcessor implements MessageProcessorInterface, TopicSu
     ) {
     }
 
-    #[\Override] public function process(MessageInterface $message, SessionInterface $session): string
+    #[\Override]
+    public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();
 
@@ -47,7 +48,8 @@ class GenerateSuggestionsProcessor implements MessageProcessorInterface, TopicSu
         return static::ACK;
     }
 
-    #[\Override] public static function getSubscribedTopics(): array
+    #[\Override]
+    public static function getSubscribedTopics(): array
     {
         return [GenerateSuggestionsTopic::getName()];
     }

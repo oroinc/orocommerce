@@ -20,9 +20,7 @@ class CompositeQueryFactory implements QueryFactoryInterface
         $this->websiteQueryFactory = $websiteQueryFactory;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(array $config = [])
     {
         if (!isset($config['search_index']) || $config['search_index'] !== 'website') {

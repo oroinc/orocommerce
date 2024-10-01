@@ -24,17 +24,13 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     /** @var ContainerInterface */
     protected $container;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -44,9 +40,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         // set default fallback to categories

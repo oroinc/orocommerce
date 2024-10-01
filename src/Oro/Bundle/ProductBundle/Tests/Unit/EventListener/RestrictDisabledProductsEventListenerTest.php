@@ -23,6 +23,7 @@ class RestrictDisabledProductsEventListenerTest extends \PHPUnit\Framework\TestC
     /** @var RestrictDisabledProductsEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->searchQueryModifier = $this->createMock(ProductVisibilitySearchQueryModifier::class);

@@ -20,6 +20,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
 
     protected string $configScopeName = 'global';
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,6 +28,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         $this->configManager = self::getConfigManager($this->configScopeName);
     }
 
+    #[\Override]
     public function setUpBeforeRestriction()
     {
         [$availableInventoryStatuses] = func_get_args();
@@ -35,9 +37,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         $this->configManager->flush($this->configScopeIdentifier);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function restrictionSelectDataProvider(): array
     {
         return [
@@ -92,6 +92,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         ];
     }
 
+    #[\Override]
     public function restrictionGridDataProvider(): array
     {
         return [

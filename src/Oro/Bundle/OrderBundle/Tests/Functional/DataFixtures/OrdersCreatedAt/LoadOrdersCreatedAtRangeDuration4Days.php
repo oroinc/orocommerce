@@ -125,6 +125,7 @@ class LoadOrdersCreatedAtRangeDuration4Days extends LoadOrders
      * @param array $orderData
      * @return Order
      */
+    #[\Override]
     protected function createOrder(ObjectManager $manager, $name, array $orderData)
     {
         $orderMetadata = $manager->getClassMetadata(Order::class);

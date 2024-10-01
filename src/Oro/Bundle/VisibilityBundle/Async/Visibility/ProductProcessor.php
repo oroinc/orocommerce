@@ -35,11 +35,13 @@ class ProductProcessor implements MessageProcessorInterface, TopicSubscriberInte
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [VisibilityOnChangeProductCategoryTopic::getName()];
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $messageBody = $message->getBody();

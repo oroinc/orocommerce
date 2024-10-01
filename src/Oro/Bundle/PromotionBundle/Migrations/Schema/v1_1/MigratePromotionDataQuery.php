@@ -23,9 +23,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
      */
     private $dryRun;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -34,9 +32,7 @@ class MigratePromotionDataQuery extends ParametrizedSqlMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger, $dryRun = false)
     {
         $this->logger = $logger;

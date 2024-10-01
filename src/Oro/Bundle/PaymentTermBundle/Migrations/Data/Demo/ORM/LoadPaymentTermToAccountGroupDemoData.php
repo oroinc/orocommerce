@@ -20,9 +20,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     use PaymentTermDemoMigrationTrait;
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -31,9 +29,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $accessor = $this->container->get('oro_payment_term.provider.payment_term_association');

@@ -22,6 +22,7 @@ class ProductStepOneFormExtensionTest extends TestCase
     private AuthorizationCheckerInterface|MockObject $authorizationChecker;
     private ProductStepOneFormExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultProductUnitProvider = $this->createMock(CategoryDefaultProductUnitProvider::class);

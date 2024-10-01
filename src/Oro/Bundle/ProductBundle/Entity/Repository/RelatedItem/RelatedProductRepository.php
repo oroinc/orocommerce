@@ -20,6 +20,7 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
      * @param Product|int $productTo
      * @return bool
      */
+    #[\Override]
     public function exists($productFrom, $productTo)
     {
         return null !== $this->findOneBy(['product' => $productFrom, 'relatedItem' => $productTo]);
@@ -29,6 +30,7 @@ class RelatedProductRepository extends EntityRepository implements AbstractAssig
      * @param int $id
      * @return int
      */
+    #[\Override]
     public function countRelationsForProduct($id)
     {
         return (int) $this->createQueryBuilder('related_products')

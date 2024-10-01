@@ -26,6 +26,7 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit\Framework\TestCase
      */
     private $decorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->discountContext = $this->createMock(DiscountContext::class);

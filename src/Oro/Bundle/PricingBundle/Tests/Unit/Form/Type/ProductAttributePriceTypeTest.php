@@ -10,9 +10,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class ProductAttributePriceTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

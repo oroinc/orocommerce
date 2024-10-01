@@ -15,6 +15,7 @@ class OrderLineItemsNotEmptyTest extends TestCase
     private ActionExecutor|MockObject $actionExecutor;
     private OrderLineItemsNotEmpty $actionGroup;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

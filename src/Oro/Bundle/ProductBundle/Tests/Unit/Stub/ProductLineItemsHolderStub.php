@@ -35,6 +35,7 @@ class ProductLineItemsHolderStub implements
         $this->lineItems = new ArrayCollection();
     }
 
+    #[\Override]
     public function getLineItems(): Collection
     {
         return $this->lineItems;
@@ -68,11 +69,13 @@ class ProductLineItemsHolderStub implements
         return $this;
     }
 
+    #[\Override]
     public function getWebsite(): ?Website
     {
         return $this->website;
     }
 
+    #[\Override]
     public function setWebsite(?Website $website): self
     {
         $this->website = $website;
@@ -80,6 +83,7 @@ class ProductLineItemsHolderStub implements
         return $this;
     }
 
+    #[\Override]
     public function getCustomer(): ?Customer
     {
         return $this->customer;
@@ -92,6 +96,7 @@ class ProductLineItemsHolderStub implements
         return $this;
     }
 
+    #[\Override]
     public function getCustomerUser(): ?CustomerUser
     {
         return $this->customerUser;

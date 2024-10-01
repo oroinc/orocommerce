@@ -19,6 +19,7 @@ class ReindexProductsByAttributesProcessorTest extends WebTestCase
 
     private ReindexProductsByAttributesProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

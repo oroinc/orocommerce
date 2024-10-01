@@ -17,6 +17,7 @@ class ProductKitPriceCriteria extends ProductPriceCriteria
 
     private ?string $identifier = null;
 
+    #[\Override]
     public function getIdentifier(): string
     {
         if (!$this->identifier) {

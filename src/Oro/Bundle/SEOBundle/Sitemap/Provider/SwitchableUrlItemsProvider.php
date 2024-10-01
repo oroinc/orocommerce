@@ -16,9 +16,7 @@ class SwitchableUrlItemsProvider extends UrlItemsProvider
         $this->provider = $provider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlItems(WebsiteInterface $website, $version)
     {
         if ($this->provider->isUrlItemsExcluded($website)) {

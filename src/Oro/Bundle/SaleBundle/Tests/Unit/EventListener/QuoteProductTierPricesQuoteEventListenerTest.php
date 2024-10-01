@@ -17,6 +17,7 @@ class QuoteProductTierPricesQuoteEventListenerTest extends TestCase
 
     private QuoteProductTierPricesQuoteEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quoteProductPricesProvider = $this->createMock(QuoteProductPricesProvider::class);

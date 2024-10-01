@@ -49,11 +49,13 @@ class InvalidateTotalsByInventoryStatusPerWebsiteProcessor implements
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [InvalidateTotalsByInventoryStatusPerWebsiteTopic::getName()];
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $data = $message->getBody();

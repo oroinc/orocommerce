@@ -77,8 +77,8 @@ class OrderContextDataConverter implements ContextDataConverterInterface
 
     /**
      * @param Order $entity
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getContextData($entity): array
     {
         if (!$this->supports($entity)) {
@@ -121,9 +121,7 @@ class OrderContextDataConverter implements ContextDataConverterInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($entity): bool
     {
         return $entity instanceof Order && $entity->getSourceEntityClass() !== Quote::class;

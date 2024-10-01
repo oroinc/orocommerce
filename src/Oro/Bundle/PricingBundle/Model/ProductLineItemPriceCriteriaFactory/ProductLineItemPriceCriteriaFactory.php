@@ -23,6 +23,7 @@ class ProductLineItemPriceCriteriaFactory implements ProductLineItemPriceCriteri
         $this->innerFactories = $innerFactories;
     }
 
+    #[\Override]
     public function createFromProductLineItem(
         ProductLineItemInterface $lineItem,
         ?string $currency
@@ -36,6 +37,7 @@ class ProductLineItemPriceCriteriaFactory implements ProductLineItemPriceCriteri
         return null;
     }
 
+    #[\Override]
     public function isSupported(
         ProductLineItemInterface $lineItem,
         ?string $currency

@@ -22,6 +22,7 @@ class ProductKitItemProductsTypeTest extends FormIntegrationTestCase
 
     private DataTransformerInterface|MockObject $modelDataTransformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
@@ -38,6 +39,7 @@ class ProductKitItemProductsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

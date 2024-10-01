@@ -29,9 +29,7 @@ class CustomerNotesDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertFalse($this->mapper->isStatesEqual($this->checkout, 'testCustomerNotes', 'anotherCustomerNotes'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new CustomerNotesDiffMapper();

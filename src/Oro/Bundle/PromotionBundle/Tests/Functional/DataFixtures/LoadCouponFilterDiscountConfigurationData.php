@@ -11,9 +11,7 @@ class LoadCouponFilterDiscountConfigurationData extends AbstractLoadDiscountConf
     const DISCOUNT_CONFIGURATION_ORDER_20_PERCENT = 'DISCOUNT_CONFIGURATION_ORDER_20_PERCENT';
     const DISCOUNT_CONFIGURATION_ORDER_20_USD = 'DISCOUNT_CONFIGURATION_ORDER_20_USD';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountConfiguration()
     {
         return [

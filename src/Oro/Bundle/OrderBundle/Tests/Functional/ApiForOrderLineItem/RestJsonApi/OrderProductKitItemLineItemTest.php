@@ -15,6 +15,7 @@ use Oro\Bundle\OrderBundle\Total\TotalHelper;
  */
 class OrderProductKitItemLineItemTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

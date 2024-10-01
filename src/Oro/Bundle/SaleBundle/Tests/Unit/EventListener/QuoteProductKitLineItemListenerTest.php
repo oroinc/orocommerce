@@ -22,6 +22,7 @@ class QuoteProductKitLineItemListenerTest extends TestCase
 
     private QuoteProductKitLineItemListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);

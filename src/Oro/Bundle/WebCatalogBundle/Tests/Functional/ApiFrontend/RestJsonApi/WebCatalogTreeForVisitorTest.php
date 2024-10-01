@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCust
 
 class WebCatalogTreeForVisitorTest extends WebCatalogTreeTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -29,6 +29,7 @@ class ProductPriceHandler extends FormHandler
         $this->priceManager = $priceManager;
     }
 
+    #[\Override]
     protected function saveData($data, FormInterface $form)
     {
         $this->priceManager->persist($data);

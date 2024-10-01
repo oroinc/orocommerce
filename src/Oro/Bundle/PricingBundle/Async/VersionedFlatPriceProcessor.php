@@ -50,6 +50,7 @@ class VersionedFlatPriceProcessor implements MessageProcessorInterface, TopicSub
         $this->dataStorage = $dataStorage;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [ResolveVersionedFlatPriceTopic::getName()];
@@ -60,6 +61,7 @@ class VersionedFlatPriceProcessor implements MessageProcessorInterface, TopicSub
         $this->productsBatchSize = $productsBatchSize;
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         try {

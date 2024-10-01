@@ -39,6 +39,7 @@ class SegmentProductsQueryProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SegmentProductsQueryProvider */
     private $segmentProductsQueryProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);

@@ -28,6 +28,7 @@ class OrderExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var OrderExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->environment = $this->createMock(Environment::class);

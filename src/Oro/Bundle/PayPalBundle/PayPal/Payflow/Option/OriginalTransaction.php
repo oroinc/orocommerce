@@ -6,7 +6,7 @@ class OriginalTransaction extends AbstractOption
 {
     const ORIGID = 'ORIGID';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

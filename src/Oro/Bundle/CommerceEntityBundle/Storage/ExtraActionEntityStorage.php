@@ -11,9 +11,7 @@ class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
      */
     protected $entities = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function scheduleForExtraInsert($entity)
     {
         if (! is_object($entity)) {
@@ -23,17 +21,13 @@ class ExtraActionEntityStorage implements ExtraActionEntityStorageInterface
         $this->entities[DoctrineClassUtils::getClass($entity)][] = $entity;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clearScheduledForInsert()
     {
         $this->entities = [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getScheduledForInsert($className = null)
     {
         if ($className) {

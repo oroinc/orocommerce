@@ -61,9 +61,7 @@ abstract class AbstractAjaxProductUnitController extends AbstractController
         return $this->container->get(UnitLabelFormatter::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

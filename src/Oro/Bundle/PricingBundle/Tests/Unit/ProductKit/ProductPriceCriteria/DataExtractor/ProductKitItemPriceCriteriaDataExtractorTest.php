@@ -17,6 +17,7 @@ class ProductKitItemPriceCriteriaDataExtractorTest extends TestCase
 {
     private ProductKitItemPriceCriteriaDataExtractor $extractor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extractor = new ProductKitItemPriceCriteriaDataExtractor();

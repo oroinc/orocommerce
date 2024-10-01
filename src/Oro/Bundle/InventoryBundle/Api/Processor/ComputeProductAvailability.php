@@ -29,9 +29,7 @@ class ComputeProductAvailability implements ProcessorInterface
         $this->valueTransformer = $valueTransformer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

@@ -23,9 +23,7 @@ class ProductListener implements OptionalListenerInterface
         $this->messageProducer = $messageProducer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setEnabled($enabled = true)
     {
         $this->enabled = $enabled;

@@ -15,9 +15,7 @@ class ProductOriginalFileNamesConfigurationVoter implements VoterInterface, Feat
 
     private const FEATURE_NAME = 'product_original_filenames_configuration';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote($feature, $scopeIdentifier = null): int
     {
         if ($feature !== self::FEATURE_NAME) {

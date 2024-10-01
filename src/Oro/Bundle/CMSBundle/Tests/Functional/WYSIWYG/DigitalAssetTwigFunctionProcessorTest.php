@@ -19,6 +19,7 @@ class DigitalAssetTwigFunctionProcessorTest extends WebTestCase
     /** @var FileRepository */
     private $fileRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

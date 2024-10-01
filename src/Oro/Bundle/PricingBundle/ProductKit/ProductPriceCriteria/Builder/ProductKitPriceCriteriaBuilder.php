@@ -21,6 +21,7 @@ class ProductKitPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
 {
     private array $kitItemsProducts = [];
 
+    #[\Override]
     public function addKitItemProduct(
         ProductKitItem $productKitItem,
         Product $product,
@@ -37,6 +38,7 @@ class ProductKitPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
         return $this;
     }
 
+    #[\Override]
     protected function doCreate(): ProductKitPriceCriteria
     {
         $currency = $this->getCurrencyWithFallback();
@@ -56,11 +58,13 @@ class ProductKitPriceCriteriaBuilder extends AbstractProductPriceCriteriaBuilder
         return $productKitPriceCriteria;
     }
 
+    #[\Override]
     public function isSupported(Product $product): bool
     {
         return $product->isKit();
     }
 
+    #[\Override]
     public function reset(): void
     {
         parent::reset();

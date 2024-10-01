@@ -45,9 +45,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSubtotal($entity)
     {
         $discountContext = $this->promotionExecutor->execute($entity);
@@ -62,8 +60,8 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
     /**
      * @param Order $entity
      *
-     * {@inheritDoc}
      */
+    #[\Override]
     public function getCachedSubtotal($entity): array|Subtotal
     {
         if (!$this->supportsCachedSubtotal($entity)) {
@@ -79,17 +77,13 @@ class SubtotalProvider extends AbstractSubtotalProvider implements SubtotalProvi
         return $this->createOrderAndShippingSubtotals($entity, $orderAmount, $shippingAmount);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isSupported($entity): bool
     {
         return $this->isFeaturesEnabled() && $this->promotionExecutor->supports($entity);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function supportsCachedSubtotal($entity): bool
     {
         return $entity instanceof Order && $entity->getId();

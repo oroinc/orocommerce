@@ -14,9 +14,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
  */
 class LoadPaymentTransactions extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -25,9 +23,7 @@ class LoadPaymentTransactions extends AbstractFixture implements DependentFixtur
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $channel = $this->getReference('money_order:channel_1');

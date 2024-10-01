@@ -28,6 +28,7 @@ class RequestProductKitItemLineItemExistingCollectionListener implements EventSu
         $this->entryOptions = $entryOptions;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

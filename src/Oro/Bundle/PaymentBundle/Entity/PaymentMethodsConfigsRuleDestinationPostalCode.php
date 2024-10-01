@@ -89,6 +89,7 @@ class PaymentMethodsConfigsRuleDestinationPostalCode implements ExtendEntityInte
     /**
      * @return mixed
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->getName();

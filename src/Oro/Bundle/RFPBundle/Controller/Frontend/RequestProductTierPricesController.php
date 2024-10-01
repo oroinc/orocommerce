@@ -75,6 +75,7 @@ class RequestProductTierPricesController extends AbstractController
         return new JsonResponse(['successful' => false], 400);
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class PrimaryProductUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): PrimaryProductUnitPrecisionValidator
     {
         return new PrimaryProductUnitPrecisionValidator();

@@ -35,6 +35,7 @@ class PriceListControllerTest extends WebTestCase
 
     protected const CURRENCY = 'USD';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

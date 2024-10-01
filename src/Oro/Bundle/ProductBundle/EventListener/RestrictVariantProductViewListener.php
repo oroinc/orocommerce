@@ -16,6 +16,7 @@ class RestrictVariantProductViewListener extends AbstractRestrictProductViewList
 {
     use FeatureCheckerHolderTrait;
 
+    #[\Override]
     protected function restrictProductView(Product $product, ControllerEvent $event)
     {
         $request = $event->getRequest();

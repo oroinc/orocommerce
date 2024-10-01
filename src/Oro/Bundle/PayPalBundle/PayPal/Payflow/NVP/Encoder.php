@@ -6,7 +6,7 @@ class Encoder implements EncoderInterface
 {
     const DECODE_REGEXP = '/(\w+)(\[(\d+)\])?=/';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function encode(array $data)
     {
         $encodedData = [];
@@ -17,7 +17,7 @@ class Encoder implements EncoderInterface
         return implode('&', $encodedData);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function decode($data)
     {
         $result = [];

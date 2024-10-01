@@ -19,9 +19,7 @@ class ProductRoutingInformationProvider implements RoutingInformationProviderInt
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof Product;
@@ -30,16 +28,14 @@ class ProductRoutingInformationProvider implements RoutingInformationProviderInt
     /**
      * @param Product $entity
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getRouteData($entity)
     {
         return new RouteData('oro_product_frontend_product_view', ['id' => $entity->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlPrefix($entity)
     {
         return $this->configManager->get('oro_product.product_direct_url_prefix');

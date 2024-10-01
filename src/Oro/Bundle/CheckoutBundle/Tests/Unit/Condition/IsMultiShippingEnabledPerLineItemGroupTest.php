@@ -13,6 +13,7 @@ class IsMultiShippingEnabledPerLineItemGroupTest extends \PHPUnit\Framework\Test
     /** @var IsMultiShippingEnabledPerLineItemGroup */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configProvider = $this->createMock(ConfigProvider::class);

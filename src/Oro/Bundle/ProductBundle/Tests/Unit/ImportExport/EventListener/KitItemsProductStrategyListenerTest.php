@@ -27,6 +27,7 @@ class KitItemsProductStrategyListenerTest extends TestCase
 
     private KitItemsProductStrategyListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->strategyHelper = $this->createMock(ImportStrategyHelper::class);

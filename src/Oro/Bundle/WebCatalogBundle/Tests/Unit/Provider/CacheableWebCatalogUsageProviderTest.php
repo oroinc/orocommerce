@@ -14,6 +14,7 @@ class CacheableWebCatalogUsageProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CacheableWebCatalogUsageProvider */
     private $cacheableProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(WebCatalogUsageProviderInterface::class);

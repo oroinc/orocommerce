@@ -14,6 +14,7 @@ class InventoryStatusProviderTest extends WebTestCase
 {
     private InventoryStatusProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

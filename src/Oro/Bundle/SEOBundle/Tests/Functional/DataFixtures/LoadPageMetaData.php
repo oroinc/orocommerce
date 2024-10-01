@@ -25,6 +25,7 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
         ]
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (self::$metadata as $entityReference => $metadataFields) {
@@ -35,6 +36,7 @@ class LoadPageMetaData extends AbstractFixture implements DependentFixtureInterf
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

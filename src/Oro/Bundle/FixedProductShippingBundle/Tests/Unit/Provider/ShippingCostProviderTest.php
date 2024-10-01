@@ -25,6 +25,7 @@ class ShippingCostProviderTest extends TestCase
 
     private ShippingCostProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceProvider = $this->createMock(PriceAttributePricesProvider::class);

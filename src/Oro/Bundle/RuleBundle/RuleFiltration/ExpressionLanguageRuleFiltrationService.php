@@ -18,9 +18,7 @@ class ExpressionLanguageRuleFiltrationService implements RuleFiltrationServiceIn
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
         $filteredRuleOwners = $this->filterRuleOwners($ruleOwners, $context);

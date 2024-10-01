@@ -29,6 +29,7 @@ class RequestProductsExtensionTest extends TestCase
 
     private RequestProductsExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizedHelper = $this->createMock(LocalizationHelper::class);

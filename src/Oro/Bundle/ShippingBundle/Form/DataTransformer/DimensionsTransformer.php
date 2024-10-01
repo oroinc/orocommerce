@@ -12,6 +12,7 @@ class DimensionsTransformer implements DataTransformerInterface
      * @param Dimensions|null $dimensions
      * @return Dimensions|null
      */
+    #[\Override]
     public function transform($dimensions)
     {
         return $dimensions;
@@ -21,6 +22,7 @@ class DimensionsTransformer implements DataTransformerInterface
      * @param Dimensions|null $dimensions
      * @return Dimensions|null
      */
+    #[\Override]
     public function reverseTransform($dimensions)
     {
         if (!$dimensions instanceof Dimensions ||

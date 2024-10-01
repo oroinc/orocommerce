@@ -14,9 +14,7 @@ class OroPricingBundleStage2 implements
 {
     use MigrationConstraintTrait;
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->restoreIndexes($schema);
@@ -83,9 +81,7 @@ class OroPricingBundleStage2 implements
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 2;

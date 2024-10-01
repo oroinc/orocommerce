@@ -17,6 +17,7 @@ class DigitalAssetTwigTagsEventSubscriberTest extends \PHPUnit\Framework\TestCas
 
     private DigitalAssetTwigTagsEventSubscriber $eventSubscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->digitalAssetTwigTagsConverter = $this->createMock(DigitalAssetTwigTagsConverter::class);

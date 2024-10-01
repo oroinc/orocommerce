@@ -10,6 +10,7 @@ class PlaceholderRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var PlaceholderRegistry */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = new PlaceholderRegistry();

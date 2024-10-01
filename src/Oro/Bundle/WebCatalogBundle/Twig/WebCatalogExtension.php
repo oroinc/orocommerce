@@ -41,9 +41,7 @@ class WebCatalogExtension extends AbstractExtension implements ServiceSubscriber
         return $this->container->get(ContentVariantTypeRegistry::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -75,6 +73,7 @@ class WebCatalogExtension extends AbstractExtension implements ServiceSubscriber
         return $type->getTitle();
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

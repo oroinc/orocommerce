@@ -9,9 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroCheckoutBundleStage2 implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateCheckoutTable($schema);
@@ -39,6 +37,7 @@ class OroCheckoutBundleStage2 implements Migration, OrderedMigrationInterface
      *
      * @return integer
      */
+    #[\Override]
     public function getOrder()
     {
         return 2;

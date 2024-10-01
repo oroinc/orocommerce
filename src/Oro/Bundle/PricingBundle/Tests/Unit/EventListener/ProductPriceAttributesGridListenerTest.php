@@ -37,6 +37,7 @@ class ProductPriceAttributesGridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceAttributesGridListener */
     private $productPriceAttributesGridListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

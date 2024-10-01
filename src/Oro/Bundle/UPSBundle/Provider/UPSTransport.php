@@ -44,6 +44,7 @@ class UPSTransport extends AbstractRestTransport
      * @throws \InvalidArgumentException
      * @return string
      */
+    #[\Override]
     protected function getClientBaseUrl(ParameterBag $parameterBag)
     {
         if ($parameterBag->get('client_id')
@@ -55,33 +56,25 @@ class UPSTransport extends AbstractRestTransport
         return $this->upsClientUrlProvider->getUpsUrl($parameterBag->get('test_mode'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getClientOptions(ParameterBag $parameterBag)
     {
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.ups.transport.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsFormType()
     {
         return UPSTransportSettingsType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsEntityFQCN()
     {
         return 'Oro\Bundle\UPSBundle\Entity\UPSTransport';

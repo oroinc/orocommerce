@@ -43,6 +43,7 @@ class ClearExpiredCustomerVisitorsCommand extends Command implements CronCommand
         parent::__construct();
     }
 
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Clears old data in customer visitor database table.')
@@ -59,6 +60,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var Connection $connection */
@@ -114,9 +116,7 @@ HELP
         return $expiredLastVisitDate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultDefinition(): string
     {
         return '0 1 * * *';

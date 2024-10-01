@@ -53,6 +53,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
      */
     abstract public function getMainFormName();
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

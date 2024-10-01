@@ -11,17 +11,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ImageSlideCollectionType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return CollectionType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['entry_type' => ImageSlideType::class]);

@@ -40,6 +40,7 @@ class PaymentContextTest extends TestCase
     /** @var Website|MockObject */
     private $website;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customer = $this->createMock(Customer::class);

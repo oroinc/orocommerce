@@ -20,17 +20,13 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingMethodsConfigsRulesWithConfigs extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadFlatRateIntegration::class, LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach ($this->getShippingRuleData() as $reference => $data) {

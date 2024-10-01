@@ -9,6 +9,7 @@ class WYSIWYGStyleTypeTest extends \PHPUnit\Framework\TestCase
 {
     private WYSIWYGStyleType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new WYSIWYGStyleType();

@@ -14,16 +14,19 @@ class GenerateSitemapIndexTopic extends AbstractTopic
     public const VERSION = 'version';
     public const WEBSITE_IDS = 'websiteIds';
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.seo.generate_sitemap_index';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Generates sitemaps index file';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

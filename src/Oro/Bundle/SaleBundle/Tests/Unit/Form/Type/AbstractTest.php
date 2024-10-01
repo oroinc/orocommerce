@@ -74,9 +74,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     abstract public function submitProvider(): array;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);

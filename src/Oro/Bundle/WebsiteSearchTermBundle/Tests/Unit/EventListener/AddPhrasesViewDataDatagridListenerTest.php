@@ -13,6 +13,7 @@ class AddPhrasesViewDataDatagridListenerTest extends TestCase
 {
     private AddPhrasesViewDataDatagridListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new AddPhrasesViewDataDatagridListener(

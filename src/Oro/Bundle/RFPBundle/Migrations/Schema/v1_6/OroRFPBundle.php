@@ -16,9 +16,7 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedM
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -57,9 +55,7 @@ class OroRFPBundle implements Migration, RenameExtensionAwareInterface, OrderedM
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_rfp', 'oro_rfp'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

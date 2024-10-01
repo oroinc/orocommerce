@@ -14,6 +14,7 @@ class QuickAddRowInputParserTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddRowInputParser */
     private $quickAddRowInputParser;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->numberFormatter = $this->createMock(NumberFormatter::class);

@@ -23,6 +23,7 @@ class OrderAfterDiscountsMapper implements TaxMapperInterface
     /**
      * @param object|Order $order
      */
+    #[\Override]
     public function map(object $order): Taxable
     {
         $taxable = $this->innerMapper->map($order);

@@ -17,6 +17,7 @@ class ProductKitItemUnitAvailableForSpecifiedProducts extends Constraint
 
     public string $message = 'oro.product.productkititem.unit.available_for_all_specified_products';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

@@ -6,9 +6,7 @@ use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
 class XmlSitemapUrlsStorage extends AbstractXmlSitemapStorage
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function startXmlTemplate(\XMLWriter $xmlWriter)
     {
         $xmlWriter->openMemory();
@@ -22,9 +20,7 @@ class XmlSitemapUrlsStorage extends AbstractXmlSitemapStorage
         $xmlWriter->endAttribute();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function fillItem(\XMLWriter $urlItemWriter, UrlItemInterface $urlItem)
     {
         $urlItemWriter->startElement('url');

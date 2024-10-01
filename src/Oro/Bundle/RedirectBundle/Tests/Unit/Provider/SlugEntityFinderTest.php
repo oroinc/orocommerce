@@ -20,6 +20,7 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
     /** @var SlugEntityFinder */
     private $slugEntityFinder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(SlugRepository::class);

@@ -11,6 +11,7 @@ class ExpressionLanguageFunctionCompilerPass implements CompilerPassInterface
     const EXPRESSION_LANGUAGE_SERVICE = 'oro_rule.expression_language';
     const TAG = 'oro_rule.expression_language.function';
 
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition(self::EXPRESSION_LANGUAGE_SERVICE)) {

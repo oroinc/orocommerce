@@ -25,9 +25,7 @@ class ComputeProductSearchMinimalPrices implements ProcessorInterface
         $this->currencyManager = $currencyManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

@@ -32,6 +32,7 @@ class FedexRateServiceRequestFactoryTest extends TestCase
     private ShippingLineItemCollectionBySettingsModifierInterface|MockObject $convertToFedexUnitsModifier;
     private FedexRateServiceRequestFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->packageSettingsFactory = $this->createMock(

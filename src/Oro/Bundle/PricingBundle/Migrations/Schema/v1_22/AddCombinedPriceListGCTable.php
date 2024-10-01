@@ -15,6 +15,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddCombinedPriceListGCTable implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         if ($schema->hasTable('oro_price_list_combined_gc')) {

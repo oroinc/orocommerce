@@ -31,9 +31,7 @@ class ChannelLoader implements ChannelLoaderInterface
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function loadChannels(string $channelType, bool $applyAcl, Organization $organization = null): array
     {
         $organization = $organization ?? $this->tokenAccessor->getOrganization();

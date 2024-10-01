@@ -9,9 +9,7 @@ use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
  */
 class LoadConsentCmsPagesDemoData extends AbstractLoadPageData
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator(__DIR__ . '/data/consent_cms_pages.yml');

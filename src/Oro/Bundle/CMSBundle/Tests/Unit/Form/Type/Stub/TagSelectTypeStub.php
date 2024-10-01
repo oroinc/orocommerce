@@ -7,9 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TagSelectTypeStub extends EntityTypeStub
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);

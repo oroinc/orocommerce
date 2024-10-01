@@ -13,9 +13,7 @@ use Psr\Log\LoggerInterface;
  */
 class UpdateQuoteGuestAccessIdQuery extends ParametrizedMigrationQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -26,17 +24,12 @@ class UpdateQuoteGuestAccessIdQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function doExecute(LoggerInterface $logger, $dryRun = false): void
     {
         $query = 'UPDATE oro_sale_quote SET guest_access_id = :guest_access_id WHERE id = :id';

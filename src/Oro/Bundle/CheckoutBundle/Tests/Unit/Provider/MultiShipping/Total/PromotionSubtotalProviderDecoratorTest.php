@@ -23,6 +23,7 @@ class PromotionSubtotalProviderDecoratorTest extends \PHPUnit\Framework\TestCase
     /** @var PromotionSubtotalProviderDecorator */
     private $subtotalProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseSubtotalProvider = $this->createMock(SubtotalProvider::class);

@@ -24,6 +24,7 @@ class ConvertToFedexUnitsShippingLineItemCollectionModifierTest extends TestCase
 
     private ConvertToFedexUnitsShippingLineItemCollectionModifier $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->measureUnitConverter = $this->createMock(MeasureUnitConversion::class);

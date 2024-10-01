@@ -15,6 +15,7 @@ class ProductVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

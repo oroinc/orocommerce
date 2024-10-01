@@ -71,11 +71,10 @@ Feature: Consent management via Management Console UI
 
   Scenario: Enable consent functionality via feature toggle
     Given go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
     And I should not see a "Sortable Consent List" element
-    And fill form with:
-      | Use Default                  | false |
-      | Enable User Consents Feature | true  |
+    And I uncheck "Use default" for "Enable user consents feature" field
+    And I check "Enable user consents feature"
     When click "Save settings"
     Then I should see a "Sortable Consent List" element
 
@@ -147,9 +146,8 @@ Feature: Consent management via Management Console UI
 
   Scenario: Admin User is able to enable/disable consents functionality on System/Website level
     Given go to System/ Configuration
-    When follow "Commerce/Customer/Consents" on configuration sidebar
-    And fill "Consent Settings Form" with:
-      | Enabled User Consents Use Default | false |
+    When follow "Commerce/Customer/Interactions" on configuration sidebar
+    And I uncheck "Use default" for "Enabled user consents" field
     When click "Save settings"
     Then I should see "Configuration saved" flash message
     And click "Add Consent"
@@ -209,7 +207,7 @@ Feature: Consent management via Management Console UI
 
   Scenario: Disable unnecessary consent
     When go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
     And I remove "Without Landing Page" from Consent
     And click "Save settings"
     Then I should see "Configuration saved" flash message
@@ -373,7 +371,7 @@ Feature: Consent management via Management Console UI
     Given I proceed as the Admin
     And go to System/ Websites
     When click "Configuration" on row "Default" in grid
-    Then follow "Commerce/Customer/Consents" on configuration sidebar
+    Then follow "Commerce/Customer/Interactions" on configuration sidebar
     And uncheck "Use Organization" for "Enabled user consents" field
     When submit form
     Then I should see "Configuration saved" flash message
@@ -387,14 +385,14 @@ Feature: Consent management via Management Console UI
     When I click "Yes, Delete"
     Then I should not see "Receive notifications"
     And go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
     And I should not see "Receive notifications"
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Presenting Personal Data" is in 2 row
     And I should see that "Collecting and storing personal data" is in 3 row
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
-    When follow "Commerce/Customer/Consents" on configuration sidebar
+    When follow "Commerce/Customer/Interactions" on configuration sidebar
     Then I should not see "Receive notifications"
     And I should see that "Email Newsletters" is in 1 row
     And I should see that "Presenting Personal Data" is in 2 row
@@ -426,7 +424,7 @@ Feature: Consent management via Management Console UI
 
   Scenario: Accepted consents can be deleted from system config
     Given go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
     And I remove "Presenting Personal Data" from Consent
     When click "Save settings"
     Then I should see "Configuration saved" flash message
@@ -447,7 +445,7 @@ Feature: Consent management via Management Console UI
     Then I should see "Consent has been created" flash message
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
-    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
     And click "Add Consent"
     And I choose Consent "Test Consent" in 4 row
     And click "Save settings"
@@ -498,7 +496,7 @@ Feature: Consent management via Management Console UI
     Then should see "Consent has been created" flash message
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
-    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
     And click "Add Consent"
     And I choose Consent "Test Consent 2" in 4 row
     And click "Save settings"
@@ -531,7 +529,7 @@ Feature: Consent management via Management Console UI
   Scenario: Disable Test Consent 2 for Default Website
     When I go to System/ Websites
     And I click "Configuration" on row "Default" in grid
-    And I follow "Commerce/Customer/Consents" on configuration sidebar
+    And I follow "Commerce/Customer/Interactions" on configuration sidebar
     And I remove "Test Consent 2" from Consent
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
@@ -615,7 +613,7 @@ Feature: Consent management via Management Console UI
     Then I should see "Consent has been created" flash message
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
-    And follow "Commerce/Customer/Consents" on configuration sidebar
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
     And click "Add Consent"
     And I choose Consent "Test Consent 3" in 4 row
     When click "Save settings"

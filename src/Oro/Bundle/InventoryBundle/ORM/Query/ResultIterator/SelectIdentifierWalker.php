@@ -8,12 +8,10 @@ use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\SelectIdentifierWalker as Ba
 class SelectIdentifierWalker extends BaseWalker
 {
     /**
-     * {@inheritdoc}
-     *
-     * Complexity suppressed due to too complex AST structure
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
+    #[\Override]
     public function walkSelectStatement(AST\SelectStatement $AST)
     {
         $this->validate($AST);

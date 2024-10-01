@@ -15,6 +15,7 @@ class CreateOrderWithPromotionsTest extends FrontendRestJsonApiTestCase
 {
     use OrderResponseTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,6 +27,7 @@ class CreateOrderWithPromotionsTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

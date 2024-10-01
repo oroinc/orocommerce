@@ -28,6 +28,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 {
     private Quote $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new Quote();
@@ -79,6 +80,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         ]);
     }
 
+    #[\Override]
     protected function getTargetEntity(): Quote
     {
         return $this->entity;

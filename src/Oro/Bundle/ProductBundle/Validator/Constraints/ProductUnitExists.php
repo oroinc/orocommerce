@@ -22,17 +22,13 @@ class ProductUnitExists extends Constraint
      */
     public string $path = '';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return ProductUnitExistsValidator::ALIAS;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

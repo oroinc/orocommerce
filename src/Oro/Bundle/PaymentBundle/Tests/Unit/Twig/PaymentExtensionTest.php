@@ -39,6 +39,7 @@ class PaymentExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);

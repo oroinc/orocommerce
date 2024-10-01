@@ -23,9 +23,7 @@ class AddParentEntityIdToCategoryNodeCategorySubresourceQuery implements Process
         $this->entityIdHelper = $entityIdHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */

@@ -29,6 +29,7 @@ class LineItemsShippingMethodsHasEnabledShippingRulesTest extends \PHPUnit\Frame
     /** @var LineItemsShippingMethodsHasEnabledShippingRules */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ShippingMethodsConfigsRuleRepository::class);

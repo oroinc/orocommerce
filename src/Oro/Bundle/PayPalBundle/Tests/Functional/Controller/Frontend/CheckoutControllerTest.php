@@ -12,9 +12,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPaymentFixtures(): array
     {
         return [

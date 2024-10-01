@@ -21,9 +21,7 @@ class AddUpcomingOptions implements Migration, ExtendExtensionAwareInterface
     use AddFallbackRelationTrait;
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->addUpcomingFieldToProduct($schema);

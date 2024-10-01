@@ -12,9 +12,7 @@ class MatrixCollectionColumn extends Constraint
     public $messageOnProductUnavailable = 'oro.product_unavailable';
     public $messageOnNonValidPrecision  = 'oro.non_valid_precision';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

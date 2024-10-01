@@ -30,6 +30,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
     /** @var EntityVisibilityType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->visibilityPostSetDataListener = $this->createMock(VisibilityPostSetDataListener::class);
@@ -42,9 +43,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $validator = $this->createMock(ValidatorInterface::class);

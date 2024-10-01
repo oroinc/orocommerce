@@ -29,9 +29,7 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
         $this->currencyManager = $currencyManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->frontendHelper->isFrontendRequest()) {
@@ -48,9 +46,7 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
             }, 250);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         if ($this->frontendHelper->isFrontendRequest()) {
@@ -62,9 +58,7 @@ class FrontendPriceFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [PriceType::class];

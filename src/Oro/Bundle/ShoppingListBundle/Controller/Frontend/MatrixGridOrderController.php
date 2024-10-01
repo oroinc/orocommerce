@@ -126,6 +126,7 @@ class MatrixGridOrderController extends AbstractLineItemController
     /**
      * @see AjaxLineItemController::getSuccessResponse
      */
+    #[\Override]
     protected function getSuccessResponse(ShoppingList $shoppingList, Product $product, string $message): array
     {
         $productShoppingLists = $this->container->get(ProductShoppingListsDataProvider::class)
@@ -145,9 +146,7 @@ class MatrixGridOrderController extends AbstractLineItemController
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [

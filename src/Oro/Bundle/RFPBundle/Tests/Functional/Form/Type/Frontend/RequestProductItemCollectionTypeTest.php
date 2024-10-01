@@ -14,6 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RequestProductItemCollectionTypeTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

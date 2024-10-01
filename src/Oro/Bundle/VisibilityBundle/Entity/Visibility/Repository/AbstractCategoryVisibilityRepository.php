@@ -8,9 +8,7 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class AbstractCategoryVisibilityRepository extends EntityRepository implements VisibilityRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function findByScopeCriteriaForTarget(ScopeCriteria $criteria, $target)
     {
         if (!is_a($target, Category::class)) {

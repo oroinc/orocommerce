@@ -19,6 +19,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
     /** @var OrderShippingTrackingCollectionType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new OrderShippingTrackingCollectionType();
@@ -76,9 +77,7 @@ class OrderShippingTrackingCollectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $trackingAwareShippingMethodsProvider = $this->createMock(TrackingAwareShippingMethodsProviderInterface::class);

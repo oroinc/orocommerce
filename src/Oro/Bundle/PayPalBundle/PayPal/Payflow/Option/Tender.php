@@ -12,7 +12,7 @@ class Tender extends AbstractOption
     const TELECHECK = 'K';
     const PAYPAL = 'P';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

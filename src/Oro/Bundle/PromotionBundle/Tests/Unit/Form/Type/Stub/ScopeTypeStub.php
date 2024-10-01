@@ -12,17 +12,13 @@ class ScopeTypeStub extends AbstractType
 {
     const NAME = 'oro_scope';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('locale', TextType::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('data_class', ScopeStub::class);
@@ -31,17 +27,12 @@ class ScopeTypeStub extends AbstractType
         $resolver->setDefault('constraints', []);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return $this->getName();

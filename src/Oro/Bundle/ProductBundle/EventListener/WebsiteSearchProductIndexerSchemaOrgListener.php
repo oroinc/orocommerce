@@ -36,6 +36,7 @@ class WebsiteSearchProductIndexerSchemaOrgListener implements WebsiteSearchProdu
         $this->managerRegistry = $managerRegistry;
     }
 
+    #[\Override]
     public function onWebsiteSearchIndex(IndexEntityEvent $event): void
     {
         /** @var Product[] $products */

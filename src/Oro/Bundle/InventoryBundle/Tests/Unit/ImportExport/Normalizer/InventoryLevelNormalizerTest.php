@@ -24,6 +24,7 @@ class InventoryLevelNormalizerTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryLevelNormalizer */
     private $inventoryLevelNormalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formatter = $this->createMock(UnitLabelFormatterInterface::class);

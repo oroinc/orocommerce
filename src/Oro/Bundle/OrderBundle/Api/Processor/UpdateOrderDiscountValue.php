@@ -21,9 +21,7 @@ class UpdateOrderDiscountValue implements ProcessorInterface
         $this->rounding = $rounding;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

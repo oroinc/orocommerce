@@ -14,9 +14,7 @@ class NodeNotEmptyScopes extends Constraint
      */
     public $message = 'oro.webcatalog.contentnode.scope.empty.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

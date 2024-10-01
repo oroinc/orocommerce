@@ -123,9 +123,7 @@ class AjaxProductController extends AbstractController
         return $names;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

@@ -50,6 +50,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         $this->expressionLanguage = $expressionLanguage;
     }
 
+    #[\Override]
     public function init(FedexPackageSettingsInterface $settings)
     {
         $this->settings = $settings;
@@ -58,6 +59,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         $this->resetCurrentPackage();
     }
 
+    #[\Override]
     public function addLineItem(ShippingLineItem $lineItem): bool
     {
         $itemOptions = $this->packageOptionsFactory->create($lineItem->getDimensions(), $lineItem->getWeight());
@@ -77,9 +79,7 @@ class ShippingPackagesByLineItemBuilder implements ShippingPackagesByLineItemBui
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getResult(): array
     {
         $this->packCurrentPackage();
