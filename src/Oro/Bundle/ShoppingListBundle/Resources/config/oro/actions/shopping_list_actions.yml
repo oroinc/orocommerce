@@ -113,6 +113,8 @@ operations:
             - datagrid_options
             - groups
         button_options:
+            data:
+                class: 'dropdown-item--destructive dropdown-item--divider'
             icon: trash
         frontend_options:
             show_dialog: true

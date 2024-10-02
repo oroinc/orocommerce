@@ -499,6 +499,9 @@ datagrids:
                 label: oro.shoppinglist.actions.delete_line_item.label
                 link: deleteLink
                 icon: trash
+                launcherOptions:
+                    className: 'dropdown-item--destructive'
+                    dropdownActionWithDivider: true
                 defaultMessages:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content

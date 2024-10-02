@@ -29,9 +29,10 @@
     {%- for button in buttons -%}
         {%- set options = oro_action_frontend_options(button) -%}
         {%- set buttonOptions = options.options -%}
+        {%- set classes = 'action mode-icon-text dropdown-item ' ~ options.data.class|default('')|trim -%}
         <button
             type="button"
-            class="action mode-icon-text dropdown-item"
+            class="{{ classes }}"
             title="{{ button.label|trans }}"
             aria-label="{{ button.ariaLabel|trans({'%name%': shoppingList.label}) }}"
             data-operation-url="{{ buttonOptions.url }}"
