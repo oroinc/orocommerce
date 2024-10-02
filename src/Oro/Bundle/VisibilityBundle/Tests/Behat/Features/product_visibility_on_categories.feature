@@ -27,7 +27,7 @@ Feature: Product visibility on categories
     And I expand "Retail Supplies" in tree
     And I click "Printers"
     And I click "Visibility" in scrollspy
-    And I click "Visibility to Customer Group Categories" tab
+    And I click "Category Visibility to Customer Groups" tab
     When I fill "Category Form" with:
       | Visibility To Customer First Group | Parent Category |
       | Inventory Threshold                | 1000            |
@@ -39,7 +39,7 @@ Feature: Product visibility on categories
     Given I go to Products/Master Catalog
     And I click "Retail Supplies"
     And I click "Visibility" in scrollspy
-    And I click "Visibility to Customer Group Categories" tab
+    And I click "Category Visibility to Customer Groups" tab
     When I fill "Category Form" with:
       | Visibility To Customer First Group | Hidden |
       | Inventory Threshold                | 1000   |
