@@ -58,7 +58,7 @@ Feature: Product visibility on categories
   Scenario: Show product for customer
     Given I proceed as the Admin
     And I click "Visibility" in scrollspy
-    And I click "Visibility to Customer Categories" tab
+    And I click "Category Visibility to Customers" tab
     When I fill "Category Form" with:
       | Visibility To Customers First | Visible |
     And I submit form
