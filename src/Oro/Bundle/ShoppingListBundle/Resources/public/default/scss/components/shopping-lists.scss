@@ -5,6 +5,7 @@
         display: grid;
         grid-template-columns: minmax(0, auto) repeat(auto-fit, minmax(0, max-content));
         grid-gap: spacing('md') spacing('xl');
+        min-height: 44px;
 
         .page-title {
             gap: spacing('sm');

@@ -71,6 +71,7 @@ layout:
                             - 'shopping-list:refresh'
                             - 'layout-subtree:update:shopping_list_set_default'
                             - 'layout-subtree:update:shopping_list_owner'
+                            - 'shopping-list-notes:sync'
                         showLoading: false
                         onLoadingCssClass: 'loading-blur'
                 __header_owner:

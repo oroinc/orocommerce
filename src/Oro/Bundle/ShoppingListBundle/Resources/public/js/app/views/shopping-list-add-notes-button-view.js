@@ -12,12 +12,6 @@ const ShoppingListAddNotesButtonView = BaseView.extend({
         click: 'onClick'
     },
 
-    listen() {
-        return {
-            [`shopping-list-${this.shoppingList.id}-notes:sync mediator`]: 'onChangeShoppingListNotesSync'
-        };
-    },
-
     constructor: function ShoppingListAddNotesButtonView(...args) {
         ShoppingListAddNotesButtonView.__super__.constructor.apply(this, args);
     },
@@ -46,10 +40,6 @@ const ShoppingListAddNotesButtonView = BaseView.extend({
         });
 
         shoppingListAddNotesModalView.open();
-    },
-
-    onChangeShoppingListNotesSync(model) {
-        this.$el.toggleClass('hide', !model.isEmptyNotes());
     }
 });
 

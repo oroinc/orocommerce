@@ -19,7 +19,7 @@ const ShoppingListNotesEditableModel = BaseModel.extend({
         this.urlRoot = routing.generate(this.route, options.routingOptions);
         this.listenTo(mediator, `shopping-list-${this.id}-notes:update`, this.onShoppingListNotes);
         this.listenTo(this, 'sync',
-            (...args) => mediator.trigger(`shopping-list-${this.id}-notes:sync`, ...args)
+            (...args) => mediator.trigger(`shopping-list-notes:sync`, ...args)
         );
 
         ShoppingListNotesEditableModel.__super__.initialize.call(this, options);

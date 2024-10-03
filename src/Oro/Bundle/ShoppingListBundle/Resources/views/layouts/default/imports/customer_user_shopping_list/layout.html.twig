@@ -123,11 +123,9 @@
         '~class': ' shopping-list-owner-wrapper__actions'
     }) %}
 
-    {% if block.children %}
-        <div{{ block('block_attributes') }}>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block __customer_user_shopping_list__header_owner_widget %}

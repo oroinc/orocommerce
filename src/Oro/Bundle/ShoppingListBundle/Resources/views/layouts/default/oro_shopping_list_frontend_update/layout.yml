@@ -51,6 +51,7 @@ layout:
               siblingId: header_shopping_list_action_assign
               blockType: shopping_list_notes_block
               options:
+                  visible: '=data["entity"].notes == 0'
                   shoppingList: '=data["entity"]'
                   vars:
                       shoppingList: '=data["entity"]'

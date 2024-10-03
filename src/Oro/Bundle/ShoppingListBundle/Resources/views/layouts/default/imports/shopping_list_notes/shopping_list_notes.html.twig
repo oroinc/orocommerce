@@ -29,12 +29,6 @@
         }
     }) %}
 
-    {% if shoppingList.notes|length > 0 %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' hide'
-        }) %}
-    {% endif %}
-
     <button {{ block('block_attributes') }}>
         {{ renderIcon.icon({name: 'add-note'}) }}
         {{ 'oro.frontend.shoppinglist.note.add_note'|trans }}
