@@ -760,9 +760,10 @@ oro_behat_extension:
       selector: 'tr:nth-child(3) td.action-cell a[title="Delete"]'
 
     Product Kit Line Item Totals Form Unit:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductUnitSelector
       selector:
         type: xpath
-        locator: '//select[@name="oro_product_kit_line_item[unit]"]'
+        locator: '//*[@name="oro_product_kit_line_item[unit]"]'
 
     Floating Error Message:
       selector: 'div.floating-error-message'

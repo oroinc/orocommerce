@@ -89,7 +89,7 @@ Feature: Product kits on shopping list page
     And I signed in as AmandaRCole@example.org on the store frontend
     When Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty | Unit   | Price     | Subtotal                   |
+      | SKU               | Product                                       | Availability | Qty | Unit   | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2   | pieces | $124.6845 | $249.37 -$124.6845 $124.69 |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2   | pieces | $37.0368  |                            |
       | simple-product-02 | Base Unit: Product 2                          |              | 2   | pieces | $24.6912  |                            |
@@ -98,9 +98,9 @@ Feature: Product kits on shopping list page
       | product-kit-01    | Product Kit 1                                 | IN STOCK     | 1   | piece  | $25.9245  | $25.92 -$12.96225 $12.96   |
       | simple-product-02 | Base Unit: Product 2                          |              | 1   | piece  | $24.6912  |                            |
       | simple-product-02 | Product 2                                     | IN STOCK     | 1   | piece  | $24.6912  | $24.69 -$12.3456 $12.34    |
-      | simple-product-04 | Configurable Product 1 Color: Red Size: M     | IN STOCK     | 1   | piece  | $49.3824  | $49.38 -$24.6912 $24.69    |
-      | simple-product-05 | Configurable Product 1 Color: Green Size: L   | OUT OF STOCK | 2   | pieces | $61.728   | $123.46 -$61.728 $61.73    |
-      | simple-product-06 | Configurable Product 1 Color: Blue Size: S    | OUT OF STOCK | 3   | pieces | $74.0736  | $222.22 -$111.1104 $111.11 |
+      | simple-product-04 | Configurable Product 1 Red M                  | IN STOCK     | 1   | piece  | $49.3824  | $49.38 -$24.6912 $24.69    |
+      | simple-product-05 | Configurable Product 1 Green L                | OUT OF STOCK | 2   | pieces | $61.728   | $123.46 -$61.728 $61.73    |
+      | simple-product-06 | Configurable Product 1 Blue S                 | OUT OF STOCK | 3   | pieces | $74.0736  | $222.22 -$111.1104 $111.11 |
     And I should see "Summary 7 Items"
     And I should see "Subtotal $708.62"
     And I should see "Discount -$354.31"
@@ -110,7 +110,7 @@ Feature: Product kits on shopping list page
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price     | Subtotal                   |
+      | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $37.0368  |                            |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $24.6912  |                            |
@@ -119,9 +119,9 @@ Feature: Product kits on shopping list page
       | product-kit-01    | Product Kit 1                                 | IN STOCK     | 1 piece        | $25.9245  | $25.92 -$12.96225 $12.96   |
       | simple-product-02 | Base Unit: Product 2                          |              | 1 piece        | $24.6912  |                            |
       | simple-product-02 | Product 2                                     | IN STOCK     | 1 piece        | $24.6912  | $24.69 -$12.3456 $12.34    |
-      | simple-product-04 | Configurable Product 1 Color: Red Size: M     | IN STOCK     | 1 piece        | $49.3824  | $49.38 -$24.6912 $24.69    |
-      | simple-product-05 | Configurable Product 1 Color: Green Size: L   | OUT OF STOCK | 2 piece        | $61.728   | $123.46 -$61.728 $61.73    |
-      | simple-product-06 | Configurable Product 1 Color: Blue Size: S    | OUT OF STOCK | 3 piece        | $74.0736  | $222.22 -$111.1104 $111.11 |
+      | simple-product-04 | Configurable Product 1 Red M                  | IN STOCK     | 1 piece        | $49.3824  | $49.38 -$24.6912 $24.69    |
+      | simple-product-05 | Configurable Product 1 Green L                | OUT OF STOCK | 2 piece        | $61.728   | $123.46 -$61.728 $61.73    |
+      | simple-product-06 | Configurable Product 1 Blue S                 | OUT OF STOCK | 3 piece        | $74.0736  | $222.22 -$111.1104 $111.11 |
     And I should see "Summary 7 Items"
     And I should see "Subtotal $708.62"
     And I should see "Discount -$354.31"
@@ -130,7 +130,7 @@ Feature: Product kits on shopping list page
   Scenario: Check SKU filter
     When I filter SKU as contains "kit"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price     | Subtotal                   |
+      | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $37.0368  |                            |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $24.6912  |                            |
@@ -142,7 +142,7 @@ Feature: Product kits on shopping list page
     When I reset grid
     And I filter SKU as is any of "product-kit-01,simple-product-02"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price     | Subtotal                   |
+      | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $37.0368  |                            |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $24.6912  |                            |
@@ -155,7 +155,7 @@ Feature: Product kits on shopping list page
     When I reset grid
     And I filter SKU as is any of "simple-product-01,simple-product-02,simple-product-06"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price     | Subtotal                   |
+      | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $37.0368  |                            |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $24.6912  |                            |
@@ -164,39 +164,39 @@ Feature: Product kits on shopping list page
       | product-kit-01    | Product Kit 1                                 | IN STOCK     | 1 piece        | $25.9245  | $25.92 -$12.96225 $12.96   |
       | simple-product-02 | Base Unit: Product 2                          |              | 1 piece        | $24.6912  |                            |
       | simple-product-02 | Product 2                                     | IN STOCK     | 1 piece        | $24.6912  | $24.69 -$12.3456 $12.34    |
-      | simple-product-06 | Configurable Product 1 Color: Blue Size: S    | OUT OF STOCK | 3 piece        | $74.0736  | $222.22 -$111.1104 $111.11 |
+      | simple-product-06 | Configurable Product 1 Blue S                 | OUT OF STOCK | 3 piece        | $74.0736  | $222.22 -$111.1104 $111.11 |
 
     When I reset grid
     And I filter SKU as does not contain "kit"
     Then I should see following grid:
-      | SKU               | Item                                        | Availability | Qty Update All | Price    | Subtotal                   |
-      | simple-product-02 | Product 2                                   | IN STOCK     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34    |
-      | simple-product-04 | Configurable Product 1 Color: Red Size: M   | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69    |
-      | simple-product-05 | Configurable Product 1 Color: Green Size: L | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73    |
-      | simple-product-06 | Configurable Product 1 Color: Blue Size: S  | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11 |
+      | SKU               | Product                        | Availability | Qty Update All | Price    | Subtotal                   |
+      | simple-product-02 | Product 2                      | IN STOCK     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34    |
+      | simple-product-04 | Configurable Product 1 Red M   | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69    |
+      | simple-product-05 | Configurable Product 1 Green L | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73    |
+      | simple-product-06 | Configurable Product 1 Blue S  | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11 |
 
     When I reset grid
     And I filter SKU as is not any of "simple-product-01,simple-product-02,simple-product-03"
     Then I should see following grid:
-      | SKU               | Item                                        | Availability | Qty Update All | Price    | Subtotal                   |
-      | simple-product-04 | Configurable Product 1 Color: Red Size: M   | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69    |
-      | simple-product-05 | Configurable Product 1 Color: Green Size: L | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73    |
-      | simple-product-06 | Configurable Product 1 Color: Blue Size: S  | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11 |
+      | SKU               | Product                        | Availability | Qty Update All | Price    | Subtotal                   |
+      | simple-product-04 | Configurable Product 1 Red M   | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69    |
+      | simple-product-05 | Configurable Product 1 Green L | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73    |
+      | simple-product-06 | Configurable Product 1 Blue S  | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11 |
 
     When I reset grid
     And I filter SKU as is not any of "product-kit-01,simple-product-03,simple-product-06"
     Then I should see following grid:
-      | SKU               | Item                                        | Availability | Qty Update All | Price    | Subtotal                |
-      | simple-product-02 | Product 2                                   | IN STOCK     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34 |
-      | simple-product-04 | Configurable Product 1 Color: Red Size: M   | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69 |
-      | simple-product-05 | Configurable Product 1 Color: Green Size: L | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73 |
+      | SKU               | Product                        | Availability | Qty Update All | Price    | Subtotal                |
+      | simple-product-02 | Product 2                      | IN STOCK     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34 |
+      | simple-product-04 | Configurable Product 1 Red M   | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69 |
+      | simple-product-05 | Configurable Product 1 Green L | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73 |
 
   Scenario: Check SKU filter for grouped product variants
     When I reset grid
     And I click "Group Product Variants"
     And I filter SKU as contains "kit"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price     | Subtotal                   |
+      | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $37.0368  |                            |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $24.6912  |                            |
@@ -209,7 +209,7 @@ Feature: Product kits on shopping list page
     And I click "Group Product Variants"
     And I filter SKU as is any of "product-kit-01,simple-product-02"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price     | Subtotal                   |
+      | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69 |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $37.0368  |                            |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $24.6912  |                            |
@@ -223,7 +223,7 @@ Feature: Product kits on shopping list page
     And I click "Group Product Variants"
     And I filter SKU as is any of "simple-product-01,simple-product-02,simple-product-04"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price     | Subtotal                     |
+      | SKU               | Product                                       | Availability | Qty Update All | Price     | Subtotal                     |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $124.6845 | $249.37 -$124.6845 $124.69   |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $37.0368  |                              |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $24.6912  |                              |
@@ -233,36 +233,36 @@ Feature: Product kits on shopping list page
       | simple-product-02 | Base Unit: Product 2                          |              | 1 piece        | $24.6912  |                              |
       | simple-product-02 | Product 2                                     | IN STOCK     | 1 piece        | $24.6912  | $24.69 -$12.3456 $12.34      |
       |                   | Configurable Product 1                        |              | 6 pieces       |           | $395.0596 -$197.5296 $197.53 |
-      | simple-product-04 | Color: Red Size: M                            | IN STOCK     | 1 piece        | $49.3824  | $49.38 -$24.6912 $24.69      |
-      | simple-product-05 | Color: Green Size: L                          | OUT OF STOCK | 2 piece        | $61.728   | $123.46 -$61.728 $61.73      |
-      | simple-product-06 | Color: Blue Size: S                           | OUT OF STOCK | 3 piece        | $74.0736  | $222.22 -$111.1104 $111.11   |
+      | simple-product-04 | Red M                                         | IN STOCK     | 1 piece        | $49.3824  | $49.38 -$24.6912 $24.69      |
+      | simple-product-05 | Green L                                       | OUT OF STOCK | 2 piece        | $61.728   | $123.46 -$61.728 $61.73      |
+      | simple-product-06 | Blue S                                        | OUT OF STOCK | 3 piece        | $74.0736  | $222.22 -$111.1104 $111.11   |
 
     When I reset grid
     And I click "Group Product Variants"
     And I filter SKU as is not any of "product-kit-01,simple-product-03"
     Then I should see following grid:
-      | SKU               | Item                   | Availability | Qty Update All | Price    | Subtotal                     |
+      | SKU               | Product                | Availability | Qty Update All | Price    | Subtotal                     |
       | simple-product-02 | Product 2              | IN STOCK     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34      |
       |                   | Configurable Product 1 |              | 6 pieces       |          | $395.0596 -$197.5296 $197.53 |
-      | simple-product-04 | Color: Red Size: M     | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69      |
-      | simple-product-05 | Color: Green Size: L   | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73      |
-      | simple-product-06 | Color: Blue Size: S    | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11   |
+      | simple-product-04 | Red M                  | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69      |
+      | simple-product-05 | Green L                | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73      |
+      | simple-product-06 | Blue S                 | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11   |
 
     When I reset grid
     And I click "Group Product Variants"
     And I filter SKU as is not any of "simple-product-01,simple-product-02,simple-product-03"
     Then I should see following grid:
-      | SKU               | Item                   | Availability | Qty Update All | Price    | Subtotal                     |
+      | SKU               | Product                | Availability | Qty Update All | Price    | Subtotal                     |
       |                   | Configurable Product 1 |              | 6 pieces       |          | $395.0596 -$197.5296 $197.53 |
-      | simple-product-04 | Color: Red Size: M     | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69      |
-      | simple-product-05 | Color: Green Size: L   | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73      |
-      | simple-product-06 | Color: Blue Size: S    | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11   |
+      | simple-product-04 | Red M                  | IN STOCK     | 1 piece        | $49.3824 | $49.38 -$24.6912 $24.69      |
+      | simple-product-05 | Green L                | OUT OF STOCK | 2 piece        | $61.728  | $123.46 -$61.728 $61.73      |
+      | simple-product-06 | Blue S                 | OUT OF STOCK | 3 piece        | $74.0736 | $222.22 -$111.1104 $111.11   |
 
     When I reset grid
     And I click "Group Product Variants"
     And I filter SKU as is not any of "product-kit-01,simple-product-01,simple-product-03,simple-product-04"
     Then I should see following grid:
-      | SKU               | Item      | Availability | Qty Update All | Price    | Subtotal                |
+      | SKU               | Product   | Availability | Qty Update All | Price    | Subtotal                |
       | simple-product-02 | Product 2 | IN STOCK     | 1 piece        | $24.6912 | $24.69 -$12.3456 $12.34 |
 
   Scenario: Inline edit product kit line item
@@ -272,7 +272,7 @@ Feature: Product kits on shopping list page
       | Quantity | 2 |
     And I click "Update All"
     Then I should see following grid containing rows:
-      | SKU               | Item                                          | Availability | Qty Update All | Price    | Subtotal                |
+      | SKU               | Product                                       | Availability | Qty Update All | Price    | Subtotal                |
       | product-kit-01    | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 2 piece        | $13.5845 | $27.17 -$13.5845 $13.59 |
       | simple-product-01 | Base Unit: Product 1                          |              | 1 piece        | $12.3456 |                         |
 

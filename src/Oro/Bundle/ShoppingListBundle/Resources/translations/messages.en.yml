@@ -358,7 +358,7 @@ oro:
                     removed.label: 'Product has been removed from "%shoppinglist%"'
                     cant_remove.label: 'No current ShoppingList or no Product in current ShoppingList'
                 sku.label: 'SKU'
-                item.label: 'Item'
+                item.label: 'Product'
                 # used in old themes
                 inventory_status.label: ''
                 inventory_status.full_label: 'Availability'
@@ -407,7 +407,7 @@ oro:
                         columns:
                             shopping_list.label: 'Shopping List'
                             kit_configuration.label: 'Configuration'
-                            quantity.label: 'QTY #'
+                            quantity.label: 'QTY'
                     button:
                         close.label: 'Close'
 

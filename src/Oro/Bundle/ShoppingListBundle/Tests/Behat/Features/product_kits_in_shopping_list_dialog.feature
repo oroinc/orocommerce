@@ -59,7 +59,7 @@ Feature: Product kits in shopping list dialog
     Given I open a new browser tab and set "ProductKitShoppingList" alias for it
     When Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty | Unit   | Price   | Subtotal |
+      | SKU               | Product                                       | Availability | Qty | Unit   | Price   | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 3   | pieces | $134.00 | $402.00  |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2   | pieces | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                          |              | 2   | pieces | $31.00  |          |
@@ -76,7 +76,7 @@ Feature: Product kits in shopping list dialog
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price   | Subtotal |
+      | SKU               | Product                                       | Availability | Qty Update All | Price   | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 3 piece        | $134.00 | $402.00  |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $31.00  |          |
@@ -200,7 +200,7 @@ Feature: Product kits in shopping list dialog
     Given I switch to the browser tab "ProductKitShoppingList"
     And Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU               | Item                                                                                  | Availability | Qty | Unit   | Price   | Subtotal |
+      | SKU               | Product                                                                               | Availability | Qty | Unit   | Price   | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes                                         | IN STOCK     | 3   | pieces | $134.00 | $402.00  |
       | simple-product-03 | Barcode Scanner: Product 3                                                            |              | 2   | pieces | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                                                                  |              | 2   | pieces | $31.00  |          |
@@ -214,7 +214,7 @@ Feature: Product kits in shopping list dialog
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                                                                  | Availability | Qty Update All | Price   | Subtotal |
+      | SKU               | Product                                                                               | Availability | Qty Update All | Price   | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes                                         | IN STOCK     | 3 piece        | $134.00 | $402.00  |
       | simple-product-03 | Barcode Scanner: Product 3                                                            |              | 2 pieces       | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                                                                  |              | 2 pieces       | $31.00  |          |

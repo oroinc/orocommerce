@@ -1,12 +1,13 @@
-<%
-    const statusesMap = {
-        'in_stock': 'success',
-        'out_of_stock': 'destructive',
-        'discontinued': 'destructive'
-    };
-    const status = statusesMap[name] ? `status-label--${statusesMap[name]}` : '';
-%>
-<div class="status-label <%- status %>"><%- label %></div>
+<% let oroui = _.macros('oroui') %>
+<%= oroui.renderStatus({
+    label: label,
+    map: {
+        'prod_inventory_status.in_stock': 'success',
+        'prod_inventory_status.out_of_stock': 'destructive',
+        'prod_inventory_status.discontinued': 'destructive'
+    },
+    currentStatus: name
+}) %>
 <% if (isLowInventory) { %>
     <p class="product-low-inventory"><%- _.__('oro.inventory.low_inventory.label')  %></p>
 <% } %>

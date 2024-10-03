@@ -21,7 +21,7 @@ Feature: Product kits merge same configurations
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price   | Subtotal |
+      | SKU               | Product                                       | Availability | Qty Update All | Price   | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $134.00 | $268.00  |
       | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $31.00  |          |
@@ -95,7 +95,7 @@ Feature: Product kits merge same configurations
 
   Scenario: Check shopping list edit page
     Then I should see following grid:
-      | SKU               | Item                                                                                          | Availability | Qty Update All | Price   | Subtotal |
+      | SKU               | Product                                                                                       | Availability | Qty Update All | Price   | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes Updated Product Kit 1 Line Item 2 Notes Updated | IN STOCK     | 3 piece        | $134.00 | $402.00  |
       | simple-product-03 | Barcode Scanner: Product 3                                                                    |              | 2 pieces       | $31.00  |          |
       | simple-product-02 | Base Unit: Product 2                                                                          |              | 2 pieces       | $31.00  |          |

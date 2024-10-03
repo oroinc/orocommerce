@@ -69,7 +69,7 @@ Feature: Product kits add without kit items
   Scenario: Check shopping list view page
     When Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU           | Item          | Availability | Qty | Unit  | Price  | Subtotal |
+      | SKU           | Product       | Availability | Qty | Unit  | Price  | Subtotal |
       | product-kit-2 | Product Kit 2 | IN STOCK     | 1   | piece | $10.00 | $10.00   |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $10.00"
@@ -79,7 +79,7 @@ Feature: Product kits add without kit items
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU           | Item          | Availability | Qty Update All | Price  | Subtotal |
+      | SKU           | Product       | Availability | Qty Update All | Price  | Subtotal |
       | product-kit-2 | Product Kit 2 | IN STOCK     | 1 piece        | $10.00 | $10.00   |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $10.00"

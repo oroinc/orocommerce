@@ -51,9 +51,9 @@
         </div>
     {% else %}
         <div class="product-view-line-item__unit">
+            <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
             <span data-role="unit-label" data-toggle-type="single">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
         </div>
-        <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
     {% endif %}
 {% endblock %}
 

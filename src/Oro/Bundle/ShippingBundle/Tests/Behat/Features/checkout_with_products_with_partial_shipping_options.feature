@@ -14,7 +14,7 @@ Feature: Checkout with Products with Partial Shipping Options
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list ShoppingList1
     And I should see following grid:
-      | SKU  | Item      | Price  | Subtotal |
+      | SKU  | Product   | Price  | Subtotal |
       | BB01 | Product1  | $1.00  | $1.00    |
       | BB02 | Product2  | $2.00  | $4.00    |
       | BB03 | Product3  | $3.00  | $9.00    |

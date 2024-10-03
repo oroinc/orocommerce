@@ -1,9 +1,11 @@
-<% let oroproduct = _.macros('oroproduct') %>
-<% let oroshoppinglist = _.macros('oroshoppinglist') %>
-<% let singleMode = obj.singleMode ?? {displayInput: true}%>
-<% let selectMode = obj.selectMode ?? {displaySelect: true}%>
-<% let toggleMode = obj.toggleMode ?? {} %>
-<% const _formattedUnit = oroshoppinglist.renderUnit({unit: unit, quantity: 1}) %>
+<%
+const oroproduct = _.macros('oroproduct');
+const oroshoppinglist = _.macros('oroshoppinglist');
+const singleMode = {displayInput: true, ...(obj.singleMode ?? {})};
+const selectMode = {displaySelect: true, ...(obj.selectMode ?? {})};
+const toggleMode = {radioAttrs: null, labelAttrs: null, ...(obj.toggleMode ?? {})};
+const _formattedUnit = oroshoppinglist.renderUnit({unit: unit, quantity: 1});
+%>
 <div class="unit-select-root" data-role="toggle-type-root">
     <% if (oroproduct.isSingleUnitMode(units)) { %>
         <span class="single-unit"
@@ -19,14 +21,14 @@
             units: units,
             radioGroupName: name,
             markSelectedLabel: true,
-            radioAttrs: toggleMode.radioAttrs ?? {},
-            labelAttrs: toggleMode.labelAttrs ?? {}
+            radioAttrs: toggleMode.radioAttrs,
+            labelAttrs: toggleMode.labelAttrs
         }) %>
     <% } else { %>
         <% if (selectMode.displaySelect) { %>
             <select name="<%- name %>"
                     class="select <%- selectMode.class ?? ''%>"
-                    aria-label="select <%- selectMode.ariaLabel ?? ''%>"
+                    aria-label="<%- selectMode.ariaLabel ?? ''%>"
                     required
                 <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SELECT %>
             >

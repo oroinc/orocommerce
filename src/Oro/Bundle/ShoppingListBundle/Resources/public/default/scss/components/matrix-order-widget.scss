@@ -430,6 +430,7 @@
             align-items: $matrix-order-widget-form-col-wrapper-align-items;
 
             margin: $matrix-order-widget-form-col-wrapper-offset;
+            padding-left: $input-padding-y;
             color: $matrix-order-widget-form-col-wrapper-color;
 
             white-space: $matrix-order-widget-form-col-wrapper-white-space;
@@ -513,6 +514,11 @@
 
             padding: $matrix-order-widget-item-content-wrapper-offset-inner;
             width: $matrix-order-widget-item-content-wrapper-width;
+        }
+
+        &-quantity,
+        &-not-available {
+            padding-left: $input-padding-y;
         }
     }
 

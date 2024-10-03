@@ -1,13 +1,40 @@
 /* @theme: default; */
 
 .responsive-shopping-list-grid {
-    .show-in-tablet,
-    .show-in-mobile {
+    .show-on-tablet,
+    .show-on-tablet-small,
+    .show-on-mobile {
         display: none;
+    }
+
+    .grid-row {
+        &.hover,
+        &:hover {
+            background-color: $responsive-shopping-row-color-hover;
+        }
+    }
+
+    .btn-expand-kit-items {
+        align-self: flex-start;
+
+        &.collapsed {
+            .theme-icon {
+                transform: rotate(-90deg);
+            }
+        }
     }
 
     .checkbox-placeholder {
         width: $checkbox-size;
+    }
+
+    .grid-header-cell {
+        padding-left: $datagrid-body-cell-offset;
+        padding-right: $datagrid-body-cell-offset;
+    }
+
+    .select-all-header-cell {
+        padding-left: $datagrid-body-cell-offset / 2;
     }
 
     .grid-body-cell {
@@ -22,12 +49,25 @@
     }
 
     .grid-header-cell-quantity,
+    .grid-body-cell-quantity {
+        padding-right: spacing('xs');
+        color: $responsive-shopping-grid-quantity-unit-color;
+    }
+
+    .grid-header-cell-quantity,
     .grid-header-cell-price,
-    .grid-header-cell-subtotal,
-    .grid-body-cell-quantity,
+    // Cell with inline editing or "Select Variants" action
+    .grid-body-cell-quantity:not(:has(.btn, .input)),
     .grid-body-cell-price,
     .grid-body-cell-subtotal {
         text-align: right;
+    }
+
+    .grid-body-cell-item,
+    .grid-body-cell-price,
+    .grid-body-cell-subtotal {
+        font-size: $responsive-shopping-list-cell-item-font-size;
+        line-height: $responsive-shopping-list-cell-item-line-height;
     }
 
     .grid-body-cell-sku {
@@ -43,17 +83,6 @@
 
     .grid-body-cell-item {
         width: $responsive-shopping-grid-body-cell-item-width;
-
-        .grid-line-items {
-            font-size: $responsive-shopping-list-cell-item-font-size;
-            line-height: $responsive-shopping-list-cell-item-line-height;
-        }
-    }
-
-    .grid-header-cell-quantity,
-    .grid-body-cell-quantity {
-        padding-right: spacing('xs');
-        color: $responsive-shopping-grid-quantity-unit-color;
     }
 
     .grid-header-cell-unit,
@@ -69,6 +98,19 @@
 
     .notification-container {
         margin-top: $responsive-shopping-list-notification-container-offset;
+    }
+
+    .product-kit-row-collapsed {
+        .grid-cell {
+            border-bottom-color: $base-table-border-color;
+        }
+
+        .grid-body-cell-sku,
+        .select-row-cell {
+            &::after {
+                display: none;
+            }
+        }
     }
 
     .sub-row {
@@ -131,7 +173,8 @@
     .responsive-shopping-list-grid-desktop-alignment {
         .grid-body-cell-sku,
         .grid-body-cell-inventoryStatus,
-        .grid-body-cell-quantity:not(.editable),
+        // Cell with inline editing or "Select Variants" action
+        .grid-body-cell-quantity:not(:has(.btn, .input)),
         .grid-body-cell-unit,
         .grid-body-cell-price,
         .grid-body-cell-subtotal {
@@ -147,7 +190,6 @@
             .grid-body-cell-inventoryStatus,
             .grid-body-cell-price,
             .grid-body-cell-subtotal,
-            .grid-body-cell-quantity,
             .grid-body-cell-unit,
             .action-cell {
                 &:not(:empty) {
@@ -159,12 +201,9 @@
 }
 
 @mixin responsive-shopping-list-grid-tablet {
-    .grid-body-cell-item {
-        width: 360px;
-    }
-
-    .show-in-tablet {
-        display: block;
+    .show-on-tablet {
+        display: flex;
+        flex-wrap: wrap;
     }
 
     .highlighted-in-mobile {
@@ -184,19 +223,29 @@
 
     .grid-header-cell-inventoryStatus,
     .grid-header-cell-sku,
-    .grid-body-cell-sku,
+    // Skip cells with error messages as they have same class
+    .grid-body-cell-sku:not(:has(.notification-container)),
     .grid-body-cell-inventoryStatus {
         display: none;
     }
 }
 
 @mixin responsive-shopping-list-grid-tablet-alignment {
-    .group-row {
-        .grid-body-cell-quantity,
-        .grid-body-cell-subtotal,
-        .grid-body-cell-unit,
-        .action-cell {
-            padding-top: $responsive-shopping-group-cell-offset-tablet;
+    .grid-row {
+        .grid-body-cell {
+            &-price,
+            &-subtotal {
+                padding-top: $responsive-shopping-body-cell-offset-y-tablet;
+            }
+        }
+    }
+
+    .sub-row {
+        .grid-body-cell {
+            &-price,
+            &-subtotal {
+                padding-top: $responsive-shopping-subrow-body-cell-offset-y-tablet;
+            }
         }
     }
 }
@@ -220,26 +269,18 @@
     }
 }
 
-@include breakpoint('tablet-small') {
+@include breakpoint('tablet') {
     .responsive-shopping-list-grid {
-        .grid-body-cell-item {
-            width: 300px;
-        }
-    }
-}
-
-@include breakpoint('mobile-big') {
-    .responsive-shopping-list-grid {
-        .page-size,
-        .oro-pagination {
-            display: block;
+        .show-on-tablet-small {
+            display: flex;
+            flex-wrap: wrap;
         }
     }
 }
 
 @include breakpoint('mobile-landscape') {
     .responsive-shopping-list-grid {
-        .show-in-mobile {
+        .show-on-mobile {
             display: inline-flex;
         }
 
@@ -248,8 +289,8 @@
         .grid-header-cell {
             // reset default tables styles
             width: auto;
-
             border-width: 0;
+            text-align: left;
         }
 
         .grid-body-cell {
@@ -278,13 +319,15 @@
             align-items: center;
 
             background-color: $table-thead-background-color;
-            border-top: $responsive-shopping-header-row-border-mobile;
-            border-bottom: $responsive-shopping-header-row-border-mobile;
+        }
+
+        .grid-header-cell-item {
+            flex-grow: 1;
         }
 
         .grid-row {
             padding-top: $responsive-shopping-grid-row-offset-mobile;
-            padding-bottom: $responsive-shopping-grid-row-offset-mobile;
+            padding-bottom: $responsive-shopping-grid-row-offset-bottom-mobile;
             border-bottom: $responsive-shopping-grid-row-border-mobile;
 
             .grid-cell {
@@ -390,18 +433,20 @@
             right: auto;
             vertical-align: top;
             order: -1;
-        }
-
-        .label-bold-in-mobile {
-            &::before,
-            &::after {
-                font-weight: font-weight('bold');
-            }
+            padding: 0;
+            min-height: initial;
         }
 
         .label-in-mobile-start::before,
         .label-in-mobile-end::after {
             content: attr(data-label);
+            color: $responsive-shopping-grid-label-in-mobile-color;
+        }
+
+        .view-mode.editable,
+        .edit-mode.editable,
+        .grid-line-items {
+            padding-bottom: $responsive-shopping-grid-line-items-offset;
         }
     }
 }

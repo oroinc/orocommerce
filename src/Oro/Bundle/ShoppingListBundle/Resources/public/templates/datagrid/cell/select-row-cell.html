@@ -13,9 +13,11 @@
     </label>
 <% } %>
 <% if (obj.isKit) { %>
-    <%= oroshoppinglist.renderExpandKitsButton({
-        productName: obj.name,
-        productId: obj.productId,
-        btnClass: 'btn btn--size-small btn--simple-colored hide-on-mobile-landscape'
-    }) %>
+    <span class="action-holder hide-on-mobile-landscape">
+        <%= oroshoppinglist.renderExpandKitsButton({
+            productName: obj.name,
+            productId: obj.productId,
+            btnClass: 'btn btn--size-small btn--simple'
+        }) %>
+    </span>
 <% } %>

@@ -121,7 +121,7 @@ Feature: Guest Shopping Lists
     When I open shopping list widget
     And I click "Open List"
     Then I should see following grid:
-      | SKU    | Item         | Qty Update All                   | Price | Subtotal |
+      | SKU    | Product      | Qty Update All   | Price | Subtotal |
       | 1GB83  | Slip-On Clog | Select Variants  |       |          |
     And I should see following actions for 1GB83 in grid:
       | Delete    |

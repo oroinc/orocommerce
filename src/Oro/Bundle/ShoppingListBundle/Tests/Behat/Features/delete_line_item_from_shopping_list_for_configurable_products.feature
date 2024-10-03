@@ -68,13 +68,13 @@ Feature: Delete line item from shopping list for configurable products
     And I click "Shopping List Actions"
     And I click "Edit"
     And I should see following grid:
-      | SKU      | Item                                       | Qty Update All |
-      | PROD_A_1 | ConfigurableProductA BooleanAttribute: Yes | 5 item         |
-      | PROD_A_2 | ConfigurableProductA BooleanAttribute: No  | 2 item         |
+      | SKU      | Product                  | Qty Update All |
+      | PROD_A_1 | ConfigurableProductA Yes | 5 item         |
+      | PROD_A_2 | ConfigurableProductA No  | 2 item         |
     And I click Delete PROD_A_1 in grid
     And I click "Yes, Delete" in modal window
     Then I should see 'The "ConfigurableProductA" product was successfully deleted' flash message
     And I should see following grid:
-      | SKU      | Item                                      | Qty Update All |
-      | PROD_A_2 | ConfigurableProductA BooleanAttribute: No | 2 item         |
+      | SKU      | Product                 | Qty Update All |
+      | PROD_A_2 | ConfigurableProductA No | 2 item         |
     And I should not see "BooleanAttribute: Yes"

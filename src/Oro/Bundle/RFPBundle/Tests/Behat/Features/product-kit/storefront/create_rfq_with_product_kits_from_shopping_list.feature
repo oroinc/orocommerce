@@ -14,7 +14,7 @@ Feature: Create RFQ with Product Kits from Shopping List
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list "Product Kit Shopping List"
     Then I should see following grid:
-      | SKU               | Item                              | Availability | Qty Update All | Price     | Subtotal |
+      | SKU               | Product                           | Availability | Qty Update All | Price     | Subtotal |
       | product-kit-01    | Product Kit 01                    | IN STOCK     | 1 piece        | $124.6867 | $124.69  |
       | simple-product-01 | Mandatory Item: Simple Product 01 |              | 1 piece        | $1.2345   |          |
 

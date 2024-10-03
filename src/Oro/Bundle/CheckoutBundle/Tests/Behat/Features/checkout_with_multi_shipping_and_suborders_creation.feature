@@ -29,7 +29,7 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price  | Subtotal |
+      | SKU  | Product                             | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
       | SKU2 | iPhone 13                           | $2.00  | $20.00   |
       | SKU3 | iPhone X                            | $2.00  | $20.00   |
@@ -40,12 +40,12 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     Then Page title equals to "Billing Information - Checkout"
     # Grouped line items grids should be visible starting from first step.
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -55,12 +55,12 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal | Shipping         |
+      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping         |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate: $3.00 |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal | Shipping         |
+      | SKU  | Product   | Qty | Price  | Subtotal | Shipping         |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate: $3.00 |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate: $3.00 |
     And records in "Second Checkout Shipping Grid" should be 2

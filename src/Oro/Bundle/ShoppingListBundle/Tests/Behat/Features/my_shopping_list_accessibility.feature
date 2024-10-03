@@ -108,14 +108,14 @@ Feature: My Shopping List Accessibility
     When I press "PageDown" key on "Shopping List Edit Grid Select Row 1 Input" element
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
     And I should see following grid containing rows:
-      | SKU  | Item                    | Availability | Qty Update All | Price  | Subtotal |
+      | SKU  | Product                 | Availability | Qty Update All | Price  | Subtotal |
       | CC29 | Product 29 Note 29 text | IN STOCK     | 13 piece       | $31.00 | $403.00  |
       | CC30 | Product 30 Note 30 text | IN STOCK     | 13 piece       | $31.00 | $403.00  |
       | CC31 | Product 31 Note 31 text | IN STOCK     | 13 piece       | $31.00 | $403.00  |
     And I press "PageUp" key on "Shopping List Edit Grid Header Mass Action" element
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
     And I should see following grid containing rows:
-      | SKU  | Item                               | Availability | Qty Update All | Price  | Subtotal              |
+      | SKU  | Product                            | Availability | Qty Update All | Price  | Subtotal              |
       | BB04 | Configurable Product 1 Note 4 text | IN STOCK     | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
       | BB05 | Configurable Product 1 Note 5 text | OUT OF STOCK | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
       | BB06 | Configurable Product 2 Note 6 text | IN STOCK     | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
@@ -140,5 +140,5 @@ Feature: My Shopping List Accessibility
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
     And I should see "Shopping List Edit Grid Select Row 1 Item" element focused
     Then I should see following grid containing rows:
-      | SKU  | Item                                      | Availability | Qty Update All | Price  | Subtotal              |
+      | SKU  | Product                                   | Availability | Qty Update All | Price  | Subtotal              |
       | BB05 | Configurable Product 1 Update Note 5 text | OUT OF STOCK | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |

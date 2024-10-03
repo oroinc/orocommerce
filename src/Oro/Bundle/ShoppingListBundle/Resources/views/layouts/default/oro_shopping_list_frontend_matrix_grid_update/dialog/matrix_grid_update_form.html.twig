@@ -125,7 +125,7 @@
 
 {% block _matrix_collection_widget_body_row_qty_widget %}
     {% set rowsQty = form.vars.rowsQty %}
-    <div data-rows-quantity="{{ rowIndex }}">{{ rowsQty[rowKey] }}</div>
+    <div class="matrix-order-widget__item-quantity" data-rows-quantity="{{ rowIndex }}">{{ rowsQty[rowKey] }}</div>
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row_subtotal_widget %}

@@ -84,7 +84,7 @@ define(function(require) {
 
         getUnitsLabel: function(model) {
             const units = {};
-            _.each(model.get('product_units'), function(precision, unitCode) {
+            _.each(model.get('product_units') || model.get('units'), function(precision, unitCode) {
                 units[unitCode] = UnitsUtil.getUnitLabel(model, unitCode);
             });
             return units;

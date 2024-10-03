@@ -96,6 +96,8 @@
         }|json_encode
     }) %}
 
+    {% set avaibleUnits = product.unitPrecisions|map(v => v)|filter(v => v.sell) %}
+
     <div {{ block('block_attributes') }}>
         <div class="product-totals__wrapper">
             <div class="product-totals__total-price">
@@ -126,17 +128,17 @@
                     'data-input-widget': 'number'
                 }}) }}
 
-                {% if form.unit.vars.choices|length > 1 %}
-                     {{ form_widget(form.unit,{attr: {
+                {% if avaibleUnits|length > 1 %}
+                     {{ form_widget(form.unit, {attr: {
                          'class': 'product-item-quantity__choice invisible',
                          'data-role': 'unit',
                          'data-form-element': form.vars.id,
                      }}) }}
                 {% else %}
                     <div class="product-view-line-item__unit">
+                        <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-role="unit" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
                         <span data-role="unit-label" data-toggle-type="single">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
                     </div>
-                    <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-role="unit" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
                 {% endif %}
 
                 <div class="fields-row-error">

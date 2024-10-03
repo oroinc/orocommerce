@@ -72,7 +72,7 @@ Feature: Product kits add with required kit items
   Scenario: Check shopping list view page
     When Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU             | Item                 | Availability | Qty | Unit  | Price  | Subtotal |
+      | SKU             | Product              | Availability | Qty | Unit  | Price  | Subtotal |
       | productkit1     | Product Kit 1        | IN STOCK     | 1   | piece | $41.00 | $41.00   |
       | simpleproduct01 | Base Unit: Product 1 |              | 1   | piece | $31.00 |          |
     And I should see "Summary 1 Item"
@@ -83,7 +83,7 @@ Feature: Product kits add with required kit items
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU             | Item                 | Availability | Qty Update All | Price  | Subtotal |
+      | SKU             | Product              | Availability | Qty Update All | Price  | Subtotal |
       | productkit1     | Product Kit 1        | IN STOCK     | 1 piece        | $41.00 | $41.00   |
       | simpleproduct01 | Base Unit: Product 1 |              | 1 piece        | $31.00 |          |
     And I should see "Summary 1 Item"

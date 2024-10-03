@@ -49,7 +49,7 @@ Feature: Product kits remove from in shopping list dialog
     Given I open a new browser tab and set "ProductKitShoppingList" alias for it
     And Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty | Unit  | Price  | Subtotal |
+      | SKU               | Product                                       | Availability | Qty | Unit  | Price  | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1   | piece | $41.00 | $41.00   |
       | simple-product-01 | Base Unit: Product 1                          |              | 1   | piece | $31.00 |          |
     And I should see "Summary 1 Item"
@@ -59,7 +59,7 @@ Feature: Product kits remove from in shopping list dialog
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          | Availability | Qty Update All | Price  | Subtotal |
+      | SKU               | Product                                       | Availability | Qty Update All | Price  | Subtotal |
       | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1 piece        | $41.00 | $41.00   |
       | simple-product-01 | Base Unit: Product 1                          |              | 1 piece        | $31.00 |          |
     And I should see "Summary 1 Item"

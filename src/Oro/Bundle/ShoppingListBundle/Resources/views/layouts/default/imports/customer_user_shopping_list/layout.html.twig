@@ -9,10 +9,21 @@
 
 {% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
     <div class="datagrid-toolbar__end" data-section="right-side">
-        <% if (toolbarPosition !== 'bottom') { %>
-            {{ block_widget(block) }}
-        <% } %>
+        {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_page_size_widget %}
+    <% if (toolbarPosition !== 'top') { %>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-size',
+        'data-grid-pagesize': ''
+    }) %}
+
+    <div class="datagrid-tool">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </div>
+    <% } %>
 {% endblock %}
 
 {% block __customer_user_shopping_list__container_widget %}
@@ -84,9 +95,11 @@
         '~class': ' status-label status-label--info'
     }) %}
 
-    <span {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </span>
+    {% if shoppingLists|length > 1 %}
+        <span {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </span>
+    {% endif %}
 {%- endblock -%}
 
 {% block __customer_user_shopping_list__header_owner_wrapper_widget %}

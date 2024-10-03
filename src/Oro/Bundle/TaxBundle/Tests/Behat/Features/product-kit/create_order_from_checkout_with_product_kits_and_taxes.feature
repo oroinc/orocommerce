@@ -42,7 +42,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $12.35"
     And I should see "Total: $127.57"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 1   | $124.6867 | $124.69 -$12.46867 $112.22 |
       | simple-product-01 | Mandatory Item: Simple Product 01 | 1   | $1.2345   |                            |
 
@@ -62,7 +62,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $24.69"
     And I should see "Total: $252.12"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $124.6867 | $249.37 -$24.93734 $224.43 |
       | simple-product-01 | Mandatory Item: Simple Product 01 | 1   | $1.2345   |                            |
 
@@ -84,7 +84,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $25.43"
     And I should see "Total: $259.52"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $128.3867 | $256.77 -$25.67734 $231.09 |
       | simple-product-03 | Optional Item: Simple Product 03  | 1   | $3.7035   |                            |
       | simple-product-01 | Mandatory Item: Simple Product 01 | 1   | $1.2345   |                            |
@@ -107,7 +107,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $25.92"
     And I should see "Total: $262.24"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $129.6267 | $259.25 -$25.92534 $233.32 |
       | simple-product-03 | Optional Item: Simple Product 03  | 1   | $3.7035   |                            |
       | simple-product-02 | Mandatory Item: Simple Product 02 | 1   | $2.469    |                            |
@@ -132,7 +132,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $27.65"
     And I should see "Total: $279.54"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 2   | $138.2767 | $276.55 -$27.65534 $248.89 |
       | simple-product-03 | Optional Item: Simple Product 03  | 2   | $3.7035   |                            |
       | simple-product-02 | Mandatory Item: Simple Product 02 | 3   | $2.469    |                            |
@@ -156,7 +156,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $41.48"
     And I should see "Total: $417.83"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |
       | simple-product-03 | Optional Item: Simple Product 03  | 2   | $3.7035   |                            |
       | simple-product-02 | Mandatory Item: Simple Product 02 | 3   | $2.469    |                            |
@@ -171,7 +171,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $37.71"
     And I should see "Total: $376.35"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |
       | simple-product-03 | Optional Item: Simple Product 03  | 2   | $3.7035   |                            |
       | simple-product-02 | Mandatory Item: Simple Product 02 | 3   | $2.469    |                            |
@@ -188,7 +188,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $37.33"
     And I should see "Total: $413.68"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |
       | simple-product-03 | Optional Item: Simple Product 03  | 2   | $3.7035   |                            |
       | simple-product-02 | Mandatory Item: Simple Product 02 | 3   | $2.469    |                            |
@@ -203,7 +203,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $33.94"
     And I should see "Total: $376.35"
     And I should see following grid:
-      | SKU               | Item                              | Qty | Price     | Subtotal                   |
+      | SKU               | Product                           | Qty | Price     | Subtotal                   |
       | product-kit-01    | Product Kit 01                    | 3   | $138.2767 | $414.83 -$41.48301 $373.35 |
       | simple-product-03 | Optional Item: Simple Product 03  | 2   | $3.7035   |                            |
       | simple-product-02 | Mandatory Item: Simple Product 02 | 3   | $2.469    |                            |

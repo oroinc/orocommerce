@@ -115,6 +115,7 @@ oro:
                     edit.label: Save
                     edit_note.label: Save Note
                     notes.success: Line item note has been successfully updated
+                sku.label: 'QTY'
 
             inline_editing:
                 quantity:

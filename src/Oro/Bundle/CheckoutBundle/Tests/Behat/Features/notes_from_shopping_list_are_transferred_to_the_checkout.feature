@@ -25,27 +25,27 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
     Then I should see following grid:
-      | SKU    | Item                                         |
+      | SKU    | Product                                      |
       | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
     And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
     Then I should see following grid:
-      | SKU    | Item                                         |
+      | SKU    | Product                                      |
       | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
     And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
     Then I should see following grid:
-      | SKU    | Item                                         |
+      | SKU    | Product                                      |
       | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
     And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
     Then I should see following grid:
-      | SKU    | Item                                         |
+      | SKU    | Product                                      |
       | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
     And I should see "My shopping list notes" in the "Checkout Order Summary Notes" element
     And I click "Continue"
     Then I should see following grid:
-      | SKU    | Item                                         |
+      | SKU    | Product                                      |
       | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
     And I should not see a "Checkout Order Summary Notes" element
     And "Checkout Order Review Form" must contains values:
@@ -73,7 +73,7 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see "Line item note has been successfully updated" flash message
     And I click "Create Order"
     Then I should see following grid:
-      | Item                                                         |
+      | Product                                                      |
       | 400-Watt Bulb Work Light SKU123 IN STOCK SKU123 Product Note |
     And I should not see a "Checkout Order Summary Notes" element
     And "Checkout Order Review Form" must contains values:

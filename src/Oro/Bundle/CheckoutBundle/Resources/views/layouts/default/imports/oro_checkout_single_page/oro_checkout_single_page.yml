@@ -240,7 +240,7 @@ layout:
         - '@appendOption':
             id: checkout_order_summary_line_items_datagrid
             optionName: grid_render_parameters.cssClass
-            optionValue: 'responsive-shopping-list-grid-tablet'
+            optionValue: 'responsive-shopping-list-grid-tablet blank-content-text'
 
         - '@appendOption':
               id: checkout_order_summary_line_items_datagrid

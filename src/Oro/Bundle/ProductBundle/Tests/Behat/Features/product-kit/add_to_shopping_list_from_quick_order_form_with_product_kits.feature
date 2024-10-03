@@ -25,11 +25,10 @@ Feature: Add to Shopping List from Quick order form with Product Kits
     Then I should see "2 products were added (view shopping list)" flash message
     When I click "view shopping list"
     Then I should see following grid:
-      | SKU               | Item                                                                           | Availability | Qty Update All | Price     | Subtotal |
-      | product-kit-01    | Product Kit 01                                                                 | IN STOCK     | 3 piece        | $123.4567 | $370.37  |
-      |                   | Product kit "product-kit-01" is missing the required kit item "Mandatory Item" |              |                |           |          |
-
-      | simple-product-01 | Simple Product 01                                                              | IN STOCK     | 2 piece        | $1.2345   | $2.47    |
+      | SKU                                                                            | Product           | Availability | Qty Update All | Price     | Subtotal |
+      | product-kit-01                                                                 | Product Kit 01    | IN STOCK     | 3 piece        | $123.4567 | $370.37  |
+      | Product kit "product-kit-01" is missing the required kit item "Mandatory Item" |                   |              |                |           |          |
+      | simple-product-01                                                              | Simple Product 01 | IN STOCK     | 2 piece        | $1.2345   | $2.47    |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $372.84"
     And I should see "Total $372.84"
@@ -55,7 +54,7 @@ Feature: Add to Shopping List from Quick order form with Product Kits
 
   Scenario: Check Shopping List
     Given I should see following grid:
-      | SKU               | Item                              | Availability | Qty Update All | Price     | Subtotal |
+      | SKU               | Product                           | Availability | Qty Update All | Price     | Subtotal |
       | product-kit-01    | Product Kit 01                    | IN STOCK     | 3 piece        | $124.6867 | $374.06  |
       | simple-product-01 | Mandatory Item: Simple Product 01 |              | 1 piece        | $1.2345   |          |
 

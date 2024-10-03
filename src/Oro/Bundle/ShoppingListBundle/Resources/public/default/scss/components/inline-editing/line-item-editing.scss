@@ -10,28 +10,42 @@
             width: $edit-mode-cell-width;
             min-width: $edit-mode-cell-width;
             background: $edit-mode-cell-background-color;
+
+            // Quantity inputs with stepper buttons
+            &:has(.form-quantity-row) {
+                width: $edit-mode-cell-stepper-width;
+                min-width: $edit-mode-cell-stepper-width;
+            }
         }
     }
 
     .view-mode {
         &.editable {
-            width: $view-mode-cell-width;
-            min-width: $view-mode-cell-width;
-            background: $view-mode-cell-background-color;
+            width: $edit-mode-cell-width;
+            min-width: $edit-mode-cell-width;
+            background: $edit-mode-cell-background-color;
+
+            // Quantity inputs with stepper buttons
+            &:has(.form-quantity-row) {
+                width: $edit-mode-cell-stepper-width;
+                min-width: $edit-mode-cell-stepper-width;
+            }
         }
     }
 }
 
 .inline-editor {
+    &__inner {
+        width: 100%;
+    }
+
     &__inner,
     &__fields {
         display: flex;
         align-items: center;
-        width: 100%;
     }
 
     &__fields {
-        width: 100%;
         gap: spacing('sm');
     }
 
@@ -72,6 +86,7 @@
         position: relative;
         width: $edit-mode-cell-stepper-input-width;
         min-width: $edit-mode-cell-stepper-input-width;
+        max-width: $edit-mode-cell-stepper-input-width;
 
         text-align: center;
 
@@ -122,11 +137,6 @@
             z-index: z('base') + 2;
         }
     }
-
-    .single-unit {
-        padding-left: $input-padding-x;
-        color: $base-ui-element-placeholder-color;
-    }
 }
 
 .line-item-container {
@@ -150,8 +160,6 @@
             &.editable {
                 width: auto;
                 min-width: auto;
-                padding-top: $edit-mode-cell-top-offset-mobile;
-                padding-bottom: $edit-mode-cell-bottom-offset-mobile;
 
                 background: $edit-mode-cell-background-color;
             }
@@ -193,11 +201,20 @@
 
             &.editable {
                 width: 100%;
+                min-width: 100%;
+
+                &:has(.form-quantity-row) {
+                    width: 100%;
+                    min-width: 100%;
+                }
             }
         }
 
+        // Quantity inputs with stepper buttons
         .form-quantity-row {
             flex-grow: 1;
+
+            max-width: $edit-mode-cell-stepper-input-width;
 
             .input {
                 width: 100%;

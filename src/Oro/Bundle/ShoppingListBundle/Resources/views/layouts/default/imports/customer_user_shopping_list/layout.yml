@@ -53,6 +53,8 @@ layout:
                     options:
                         visible: '=data["oro_shopping_list_customer_user_shopping_lists"].isCurrent(data["entity"])'
                         text: 'oro.frontend.shoppinglist.view.is_default.label'
+                        vars:
+                            shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
                 __header_owner_wrapper:
                     blockType: layout_subtree_update
                     options:

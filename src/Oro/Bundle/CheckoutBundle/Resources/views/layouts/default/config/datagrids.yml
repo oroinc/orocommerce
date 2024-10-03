@@ -254,7 +254,10 @@ datagrids:
                 renderable: false
             sku:
                 label:         oro.checkout.order_summary.sku
-                frontend_type: shoppinglist-string
+                frontend_type: shoppinglist-sku
+                frontend_template:
+                    default: tpl-loader!orocheckout/templates/datagrid/cell/sku.html
+                    message: tpl-loader!orocheckout/templates/datagrid/cell/sku-message.html
             item:
                 label:         oro.checkout.order_summary.item
                 frontend_type: shoppinglist-item

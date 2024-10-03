@@ -15,9 +15,9 @@ const ShoppingListRow = Row.extend({
 
     _attributes() {
         return {
-            ...this.model.get('row_attributes'),
+            'data-row-id': this.model.get('productUID'),
             'aria-rowindex': this.getAriaRowIndex(),
-            'data-row-id': this.model.get('rowId') ?? this.model.get('productId')
+            ...this.model.get('row_attributes')
         };
     },
 

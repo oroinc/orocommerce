@@ -29,11 +29,11 @@ Feature: Promotions for multi shipping checkout amount
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price  | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
-      | SKU2 | iPhone 13                           | $2.00  | $20.00   |
-      | SKU3 | iPhone X                            | $2.00  | $20.00   |
-      | SKU4 | Round Meeting Table, 30 in. x 30in. |        |          |
+      | SKU  | Product                             | Price | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light            | $2.00 | $10.00   |
+      | SKU2 | iPhone 13                           | $2.00 | $20.00   |
+      | SKU3 | iPhone X                            | $2.00 | $20.00   |
+      | SKU4 | Round Meeting Table, 30 in. x 30in. |       |          |
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see notification "This product will be available later" for "SKU3" line item "Checkout Line Item"
     When I click "Create Order"

@@ -20,7 +20,7 @@
         <% } %>
 
         <% let productUrl = function (productId, variantId) { %>
-            <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
+          <% return oroshoppinglist.routing.generate('oro_product_frontend_product_view', variantId ? {id: productId, variantProductId: variantId} : {id: productId} ) %>
         <% } %>
 
         <% if (obj._isVariant) { %>
@@ -30,20 +30,15 @@
             </div>
             <div class="grid-line-items__configuration shift-mobile-row">
                 <% _.each(productConfiguration, function(field) { %>
-                    <div class="grid-line-items__field">
-                        <span class="grid-line-items__field-label show-on-tablet-small"><%- field.label %>:</span>
-                        <span class="grid-line-items__field-val"><%- field.value %></span>
-                    </div>
+                <div class="grid-line-items__field">
+                    <span class="grid-line-items__field-label show-on-tablet-small"><%- field.label %>:</span>
+                    <span class="grid-line-items__field-val"><%- field.value %></span>
+                </div>
                 <% }) %>
             </div>
-            <%= oroshoppinglist.renderQuantityUnit({
-                unit: obj.unit,
-                quantity: obj.quantity,
-                precision: obj.precision
-            }) %>
             <% if (notes) { %>
                 <div class="shift-mobile-row">
-                    <%= oroshoppinglist.renderNotes(obj) %>
+                    <%= oroshoppinglist.renderNotes({...obj, editMode: true}) %>
                 </div>
             <% } %>
         <% } else { %>
@@ -57,13 +52,13 @@
                     <% if (name && name.length <= clipLength) { %>
                         <%= oroshoppinglist.renderProductItemName({...obj, link: productUrl(productId, variantId)}) %>
                     <% } else { %>
-                        <div class="grid-line-items__clip-container">
-                            <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrl(productId, variantId)}) %>
-                        </div>
+                    <div class="grid-line-items__clip-container">
+                        <%= oroshoppinglist.renderProductItemName({...obj, clip: true, link: productUrl(productId, variantId)}) %>
+                    </div>
                     <% } %>
                 </div>
-            <% } %>
-            <% if (obj.sku || obj.inventoryStatus) { %>
+        <% } %>
+        <% if (obj.sku || obj.inventoryStatus) { %>
             <div class="grid-line-items__row-entry show-on-tablet shift-mobile-row<% if (!obj.inventoryStatus) { %> shift-start-mobile-row <% } %>">
                 <% if (obj.sku) { %>
                     <span class="highlighted-in-mobile break-all"><%- sku %></span>
@@ -72,30 +67,25 @@
                     <%= oroshoppinglist.renderInventoryStatus({name: inventoryStatus, label: inventoryStatusLabel(inventoryStatus), isLowInventory: isLowInventory}) %>
                 <% } %>
             </div>
-            <% } %>
-            <% if (obj.subTitle) { %>
-                <div class="grid-line-items__sub-title shift-mobile-row">
-                    <%= obj.subTitle %>
-                </div>
         <% } %>
-            <% if (obj.productConfiguration) { %>
-                <div class="grid-line-items__configuration shift-mobile-row">
-                    <% _.each(productConfiguration, function(field) { %>
-                        <div class="grid-line-items__field">
-                            <span class="grid-line-items__field-label show-on-tablet-small"><%- field.label %>:</span>
-                            <span class="grid-line-items__field-val"><%- field.value %></span>
-                        </div>
-                    <% }) %>
-                </div>
-            <% } %>
-            <%= oroshoppinglist.renderQuantityUnit({
-                unit: obj.unit,
-                quantity: obj.quantity,
-                precision: obj.precision
-            }) %>
+        <% if (obj.subTitle) { %>
+            <div class="grid-line-items__sub-title shift-mobile-row">
+                <%= obj.subTitle %>
+            </div>
+        <% } %>
+        <% if (obj.productConfiguration) { %>
+            <div class="grid-line-items__configuration shift-mobile-row">
+                <% _.each(productConfiguration, function(field) { %>
+                    <div class="grid-line-items__field">
+                        <span class="grid-line-items__field-label show-on-tablet-small"><%- field.label %>:</span>
+                        <span class="grid-line-items__field-val"><%- field.value %></span>
+                    </div>
+                <% }) %>
+            </div>
+        <% } %>
             <% if (obj.notes) { %>
                 <div class="shift-mobile-row">
-                    <%= oroshoppinglist.renderNotes(obj) %>
+                    <%= oroshoppinglist.renderNotes({...obj, editMode: true}) %>
                 </div>
             <% } %>
         <% } %>

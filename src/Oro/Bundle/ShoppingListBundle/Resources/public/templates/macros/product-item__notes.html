@@ -6,12 +6,18 @@
 <% } %>
 
 <div class="grid-line-items__clip-notes-container" data-page-component-init-on="click,mouseover,focusin"
-     data-page-component-view="oroshoppinglist/js/app/views/shopping-list-item-edit-notes-view"
-     data-page-component-options="<%- JSON.stringify({
-        itemId: obj.id
-     }) %>">
+    <% if (obj.editMode !== void 0 && obj.editMode) { %>
+         data-page-component-view="oroshoppinglist/js/app/views/shopping-list-item-edit-notes-view"
+         data-page-component-options="<%- JSON.stringify({
+            itemId: obj.id
+         }) %>"
+    <% } else { %>
+        data-toggle="popover" data-content="<%- notes %>" data-placement="bottom" data-close="false"
+    <% } %>
+>
     <div class="<%- notes.length > clipLength ? 'grid-line-items__clip-placeholder' : '' %> grid-line-items__notes-container">
         <% renderNotes(notes.length > clipLength) %>
     </div>
 </div>
+
 

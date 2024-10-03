@@ -18,12 +18,6 @@ layout:
             optionValue: frontend-customer-user-shopping-list-edit-grid
 
         - '@appendOption':
-            id: datagrid
-            optionName: grid_render_parameters.themeOptions
-            optionValue:
-                useInputStepper: '=data["theme_configuration"].getThemeConfigurationOption("shopping_list__quantity_inputs") === "with_stepper_buttons"'
-
-        - '@appendOption':
               id: datagrid
               optionName: grid_render_parameters.cssClass
               optionValue: 'responsive-shopping-list-grid-desktop-alignment responsive-shopping-list-grid-tablet-alignment responsive-shopping-list-grid-edit'

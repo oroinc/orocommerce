@@ -26,7 +26,7 @@ Feature: Checkout With Multi Shipping
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price  | Subtotal |
+      | SKU  | Product                             | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
       | SKU2 | iPhone 13                           | $2.00  | $20.00   |
       | SKU3 | iPhone X                            | $2.00  | $20.00   |
@@ -37,7 +37,7 @@ Feature: Checkout With Multi Shipping
     Then Page title equals to "Billing Information - Checkout"
     And I should not see an "Lighting Products Checkout Category Name" element
     And I should see following "Multi Shipping Checkout Line Items Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                   | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
       | SKU2 | iPhone 13                | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X                 | 10  | $2.00  | $20.00   |
@@ -67,17 +67,17 @@ Feature: Checkout With Multi Shipping
     Then Page title equals to "Billing Information - Checkout"
     And I should see "SKU1" in the "First Checkout Shipping Grid Title" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "SKU2" in the "Second Checkout Shipping Grid Title" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 1
     And I should see "SKU3" in the "Third Checkout Shipping Grid Title" element
     And I should see following "Third Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Third Checkout Shipping Grid" should be 1
 
@@ -94,13 +94,13 @@ Feature: Checkout With Multi Shipping
     Then Page title equals to "Billing Information - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -109,13 +109,13 @@ Feature: Checkout With Multi Shipping
     Then Page title equals to "Shipping Information - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -124,12 +124,12 @@ Feature: Checkout With Multi Shipping
     Then Page title equals to "Shipping Method - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal | Shipping         |
+      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping         |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate: $3.00 |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal | Shipping                            |
+      | SKU  | Product   | Qty | Price  | Subtotal | Shipping                            |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -142,12 +142,12 @@ Feature: Checkout With Multi Shipping
     Then Page title equals to "Payment - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -155,12 +155,12 @@ Feature: Checkout With Multi Shipping
     Then Page title equals to "Order Review - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2

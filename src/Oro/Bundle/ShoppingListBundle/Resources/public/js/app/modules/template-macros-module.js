@@ -36,6 +36,15 @@ macros('oroshoppinglist', {
     renderInventoryStatus: require('tpl-loader!oroshoppinglist/templates/macros/product-item__inventory_status.html'),
 
     /**
+     * Renders quantity and unit for product item
+     *
+     * @param {string} unit
+     * @param {number} quantity
+     * @param {number} [perrsition]
+     */
+    renderQuantityUnit: require('tpl-loader!oroshoppinglist/templates/macros/product-item__quantity-unit.html'),
+
+    /**
      * Renders notes for product item
      *
      * @param {string} notes
