@@ -17,7 +17,7 @@ Feature: Categories visibility after changing Customer for Customer User
     When I go to Products/Master Catalog
     And I click "Medical Apparel"
     And I click "Visibility" in scrollspy
-    And I click "Visibility to Customer Categories" tab
+    And I click "Category Visibility to Customers" tab
     And I fill "Category Form" with:
       | Visibility To Customers First  | Visible |
       | Visibility To Customers Second | Hidden  |
