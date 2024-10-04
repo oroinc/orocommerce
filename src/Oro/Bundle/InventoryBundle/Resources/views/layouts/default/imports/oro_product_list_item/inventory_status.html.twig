@@ -1,12 +1,14 @@
 {% block __oro_product_list_item__product_inventory_status_label_widget %}
+    {% import '@OroUI/layouts/renderStatus.html.twig' as renderStatus %}
     {% if product.inventory_status is defined %}
-        {% set inventoryStatus = oro_inventory_status_code(product) %}
-        {% set statusesMap = {
-            'in_stock': 'success',
-            'out_of_stock': 'destructive',
-            'discontinued': 'destructive'
-        } %}
-        {% set status = attribute(statusesMap, inventoryStatus) is defined ? ' status-label--' ~ statusesMap[inventoryStatus] : '' %}
-        <span class="status-label{{ status }}">{{- oro_inventory_status_label(product) -}}</span>
+        {{ renderStatus.status({
+            label: oro_inventory_status_label(product),
+            code: oro_inventory_status_code(product),
+            map: {
+                'prod_inventory_status.in_stock': 'success',
+                'prod_inventory_status.out_of_stock': 'destructive',
+                'prod_inventory_status.discontinued': 'destructive'
+            }
+        }) }}
     {% endif %}
 {% endblock %}
