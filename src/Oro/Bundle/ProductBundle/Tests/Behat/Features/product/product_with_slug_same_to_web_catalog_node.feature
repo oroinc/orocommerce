@@ -19,8 +19,9 @@ Feature: Product with slug same to web catalog node
     And I click "Create Subcategory"
     And I fill "Category Form" with:
       | Title    | Test Category |
-      | URL Slug | test          |
+    And I fill in URL Slug field with "test"
     And I click "Save"
+    And I should see URL Slug field filled with "test"
     Then I should see "Category has been saved" flash message
 
   Scenario: Create web catalog node
@@ -44,10 +45,11 @@ Feature: Product with slug same to web catalog node
     And I click "Add Category"
     And I fill "Content Node Form" with:
       | Titles   | Test Node |
-      | Url Slug | test-1    |
     And I click "Test Category"
+    And I fill in URL Slug field with "test-1"
     And I click "Save"
     Then I should see "Content Node has been saved" flash message
+    And I should see URL Slug field filled with "test-1"
     And I set "Default Web Catalog" as default web catalog
 
   Scenario: Create product
@@ -61,8 +63,8 @@ Feature: Product with slug same to web catalog node
     And I fill "ProductForm" with:
       | Sku      | test_product |
       | Name     | Test Product |
-      | URL Slug | test         |
       | Status   | Enabled      |
+    And I fill in URL Slug field with "test"
     And I save and close form
     Then I should see "Product has been saved" flash message
 
@@ -72,7 +74,7 @@ Feature: Product with slug same to web catalog node
     When I click "Test Node"
     And should see "Test Product"
     And click "View Details" for "Test Product" product
-    Then the url should match "/test-node/_item/test-1"
+    Then the url should match "/test-1/_item/test-1"
     And I should see "Home page / Test Node / Test Product"
     And I should see "Is Featured: No"
     And I should not see "View Details"
