@@ -18,9 +18,10 @@ Feature: Product with slug same to web catalog node
     And I click "All Products"
     And I click "Create Subcategory"
     And I fill "Category Form" with:
-      | Title    | Test Category |
-      | URL Slug | test          |
+      | Title | Test Category |
+    And I fill in URL Slug field with "test"
     And I click "Save"
+    And I should see URL Slug field filled with "test"
     Then I should see "Category has been saved" flash message
 
   Scenario: Create web catalog node
@@ -45,8 +46,8 @@ Feature: Product with slug same to web catalog node
     And I click "Add Category"
     And I fill "Content Node Form" with:
       | Titles   | Test Node |
-    And I fill in URL Slug field with "test-1"
     And I click "Test Category"
+    And I fill in URL Slug field with "test-1"
     And I click "Save"
     Then I should see "Content Node has been saved" flash message
     And I should see URL Slug field filled with "test-1"
@@ -63,8 +64,8 @@ Feature: Product with slug same to web catalog node
     And I fill "ProductForm" with:
       | Sku      | test_product |
       | Name     | Test Product |
-      | URL Slug | test         |
       | Status   | Enabled      |
+    And I fill in URL Slug field with "test"
     And I save and close form
     Then I should see "Product has been saved" flash message
 
