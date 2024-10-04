@@ -905,6 +905,16 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    oro_checkout.listener.remove_order_after_invalid_payment:
+        class: Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutOrderAfterInvalidPaymentListener
+        arguments:
+            - '@doctrine'
+        calls:
+            - ['addTransitionName', ['create_order']]
+            - ['addTransitionName', ['place_order']]
+        tags:
+            - { name: kernel.event_subscriber }
+
     oro_checkout.listener.checkout_transition_purchase:
         class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionPurchase
         arguments:
