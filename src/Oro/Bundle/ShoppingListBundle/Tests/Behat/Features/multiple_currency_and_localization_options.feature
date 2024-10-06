@@ -1,7 +1,7 @@
 @fixture-OroLocaleBundle:LocalizationFixture.yml
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
-Feature: Sidebar menu footer with multiple currency and multiple localization options
+Feature: Multiple currency and localization options
   Sidebar footer should contain switcher with currency options and select with localization options
 
   Scenario: Create different window session

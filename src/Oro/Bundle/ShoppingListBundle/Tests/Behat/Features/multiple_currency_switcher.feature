@@ -1,6 +1,6 @@
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
-Feature: Sidebar menu footer with multiple currency options
+Feature: Multiple currency switcher
   Sidebar footer should contain select with currency options
 
   Scenario: Create different window session

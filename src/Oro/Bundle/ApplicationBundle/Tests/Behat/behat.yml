@@ -16,6 +16,8 @@ oro_behat_extension:
         - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
       paths:
         - '@OroApplicationBundle/Tests/Behat/Features'
   elements:

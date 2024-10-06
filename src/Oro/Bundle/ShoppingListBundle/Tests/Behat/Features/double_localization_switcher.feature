@@ -1,7 +1,7 @@
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
-Feature: Sidebar menu localization footer
+Feature: Double localization switcher
   Double localization should renders inside a footer content
 
   Scenario: Create different window session
