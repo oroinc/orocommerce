@@ -5,6 +5,20 @@
     flex-direction: column;
     gap: spacing('base');
 
+    &__billing-address,
+    &__shipping-address {
+        grid-gap: #{spacing('xs')} #{spacing('base')};
+    }
+
+    &__address-form {
+        --grid-auto-rows: max-content;
+        --grid-gap: #{spacing('xl')} #{spacing('base')};
+
+        grid-gap: #{spacing('xl')} #{spacing('xxxl')};
+        max-width: 850px;
+        margin-bottom: spacing('lg');
+    }
+
     &__select-container {
         display: $checkout-form-select-container-display;
         flex-direction: $checkout-form-select-container-flex-direction;

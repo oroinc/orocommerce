@@ -4,3 +4,27 @@
     {% set parentClass = "grid-col-12" %}
     {{ parent() }}
 {% endblock %}
+
+{% block oro_checkout_address_select_label %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% import '@OroUI/macros.html.twig' as UI %}
+
+    <div class="label--button">
+        {{ form_label(form) }}
+        <button type="button" class="btn btn--flat"
+            {{ UI.renderPageComponentAttributes({
+                view: 'orocheckout/js/app/views/add-address-button-view',
+                options: {
+                    fieldId: form.vars.id,
+                    entityId: entity_id|default(null)
+                }
+            }) }}
+        >
+            {{ renderIcon.icon({
+                name: 'plus'
+            }) }}
+            Add
+        </button>
+    </div>
+
+{% endblock %}

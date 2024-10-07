@@ -1,7 +1,6 @@
 define(function(require) {
     'use strict';
 
-    const _ = require('underscore');
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
     const BaseView = require('oroui/js/app/views/base/view');
@@ -15,9 +14,12 @@ define(function(require) {
                 fieldsContainer: null,
                 region: null,
                 shipToBillingCheckbox: null,
-                externalShipToBillingCheckbox: null,
-                addAddressBtn: null
+                externalShipToBillingCheckbox: null
             }
+        },
+
+        events: {
+            forceChange: 'onForceChange'
         },
 
         /**
@@ -38,7 +40,6 @@ define(function(require) {
             this.$fieldsContainer = this.$el.find(this.options.selectors.fieldsContainer);
             this.$regionSelector = this.$el.find(this.options.selectors.region);
             this.$shipToBillingCheckbox = this.$el.find(this.options.selectors.shipToBillingCheckbox);
-            this.$addAddressBtn = this.$el.find(this.options.selectors.addAddressBtn);
             this.shipToBillingContainer = this.$shipToBillingCheckbox.parent();
 
             this.$addressSelector.on('change', this._onAddressChanged.bind(this));
@@ -46,7 +47,10 @@ define(function(require) {
             this.$regionSelector.on('change', this._onRegionListChanged.bind(this));
             this._onRegionListChanged();
 
-            this.$addAddressBtn.on('click', this._showForm.bind(this));
+            const $option = this.$addressSelector.find('[value="0"]');
+            $option.addClass('hide');
+            this.enterManuallyOriginLabel = $option.text();
+            this._changeEnterManualValueLabel();
 
             if (this.options.hideNewAddressForm) {
                 this.$shipToBillingCheckbox.on('change', this._handleShipToBillingAddressCheckbox.bind(this));
@@ -73,7 +77,6 @@ define(function(require) {
             const disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
             const isFormVisible = this._isFormVisible();
             const showNewAddressForm = !disabled && isFormVisible;
-            this._handleNewAddressForm(showNewAddressForm);
 
             if (!showNewAddressForm) {
                 this.$addressSelector.trigger('focus');
@@ -101,15 +104,33 @@ define(function(require) {
             }
         },
 
+        onForceChange() {
+            mediator.trigger('checkout:new-address-update');
+        },
+
         /**
-         * @param {Boolean} show
-         * @private
+         * @param {string} val
+         * @return boolean
          */
-        _handleNewAddressForm: function(show) {
-            if (show) {
-                this._showForm();
-            } else {
-                this._hideForm();
+        isManual: function(val) {
+            return parseInt(val) === 0;
+        },
+
+        _changeEnterManualValueLabel: function(customLabel) {
+            if (this.isManual(this.$addressSelector.val())) {
+                let newAddressLabel = this.$addressSelector.data('new-address-label');
+                if (newAddressLabel) {
+                    newAddressLabel = this.enterManuallyOriginLabel + ' (' + newAddressLabel + ')';
+                }
+
+                const label = customLabel || newAddressLabel;
+                if (label) {
+                    const $option = this.$el.find('[value="0"]');
+                    $option.removeClass('hide');
+                    $option.text(label);
+                }
+
+                this.$addressSelector.inputWidget('refresh');
             }
         },
 
@@ -129,11 +150,6 @@ define(function(require) {
         },
 
         _onAddressChanged: function() {
-            if (this._isFormVisible()) {
-                this._showForm();
-            } else {
-                this._hideForm();
-            }
             mediator.trigger('checkout:address:updated', this.$addressSelector);
         },
 
@@ -174,31 +190,6 @@ define(function(require) {
 
         _isOnlyOneOption: function() {
             return this.$addressSelector[0].length === 1;
-        },
-
-        _showForm: function() {
-            if (this.$externalShipToBillingCheckbox === undefined) {
-                this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
-                this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
-            }
-            this.$fieldsContainer.removeClass('hidden');
-        },
-
-        _hideForm: function(showCheckbox) {
-            if (this.$externalShipToBillingCheckbox === undefined) {
-                if (showCheckbox ||
-                    this.$addressSelector.val() === '0' ||
-                    _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
-                    this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
-                    this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
-                } else {
-                    this.$shipToBillingCheckbox.prop('checked', false);
-                    this.$shipToBillingCheckbox.trigger('change');
-                    this.shipToBillingContainer.addClass('hidden').trigger('changeHiddenClass');
-                }
-            }
-
-            this.$fieldsContainer.addClass('hidden');
         },
 
         _onRegionListChanged: function(e) {

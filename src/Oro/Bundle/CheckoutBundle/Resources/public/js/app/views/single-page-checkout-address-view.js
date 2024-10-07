@@ -2,10 +2,7 @@ define(function(require) {
     'use strict';
 
     const _ = require('underscore');
-    const __ = require('orotranslation/js/translator');
-    const routing = require('routing');
     const BaseView = require('oroui/js/app/views/base/view');
-    const ButtonManager = require('oroaction/js/button-manager');
     const $ = require('jquery');
 
     const SinglePageCheckoutAddressView = BaseView.extend({
@@ -23,22 +20,11 @@ define(function(require) {
 
         enterManuallyOriginLabel: null,
 
-        operations: {
-            billing: 'b2b_flow_checkout_single_page_new_billing_address',
-            shipping: 'b2b_flow_checkout_single_page_new_shipping_address'
-        },
-
-        titles: {
-            billing: __('oro.checkout.billing_address.label'),
-            shipping: __('oro.checkout.shipping_address.label')
-        },
-
         /**
          * @inheritdoc
          */
         events: {
-            'change': 'onChange',
-            'select2-selecting': 'onSelecting'
+            change: 'onChange'
         },
 
         /**
@@ -54,7 +40,9 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.enterManuallyOriginLabel = this.$el.find('[value="0"]').text();
+            const $option = this.$el.find('[value="0"]');
+            $option.addClass('hide');
+            this.enterManuallyOriginLabel = $option.text();
             this._changeEnterManualValueLabel();
 
             SinglePageCheckoutAddressView.__super__.initialize.call(this, options);
@@ -71,16 +59,6 @@ define(function(require) {
             }
         },
 
-        /**
-         * @param {jQuery.Event} event
-         */
-        onSelecting: function(event) {
-            const previousVal = $(event.target).val();
-            if (this.isManual(event.val)) {
-                this.openDialog(event, previousVal);
-            }
-        },
-
         onEnableState: function() {
             this._changeEnterManualValueLabel();
         },
@@ -94,74 +72,6 @@ define(function(require) {
                 this._changeEnterManualValueLabel(label);
             } else {
                 this.$el.prop('disabled', false);
-            }
-        },
-
-        /**
-         * @param {jQuery.Event} event
-         * @param {string} previousVal
-         */
-        openDialog: function(event, previousVal) {
-            const addressType = $(event.target).data('address-type');
-            const dialogUrl = routing.generate(this.options.dialogRoute, {
-                operationName: this._operationName(addressType),
-                entityClass: this.options.entityClass,
-                entityId: this.options.entityId
-            });
-
-            console.log({
-                title: this._title(addressType),
-                dialogOptions: {
-                    dialogClass: this.options.dialogClass,
-                    width: this.options.dialogWidth,
-                    height: this.options.dialogHeight,
-                    resizable: this.options.resizable,
-                    autoResize: this.options.autoResize
-                },
-                fullscreenDialogOptions: {
-                    dialogTitleIcon: this.options.dialogTitleIcon
-                }
-            });
-            const buttonManager = new ButtonManager({
-                hasDialog: true,
-                showDialog: true,
-                hasForm: true,
-                dialogUrl: dialogUrl,
-                jsDialogWidget: this.options.jsDialogWidget,
-                onDialogResult: this.onDialogResult.bind(this, event, previousVal),
-                dialogOptions: {
-                    title: this._title(addressType),
-                    dialogOptions: {
-                        dialogClass: this.options.dialogClass,
-                        width: this.options.dialogWidth,
-                        height: this.options.dialogHeight,
-                        resizable: this.options.resizable,
-                        autoResize: this.options.autoResize
-                    },
-                    fullscreenDialogOptions: {
-                        dialogTitleIcon: this.options.dialogTitleIcon
-                    }
-                }
-            });
-
-            buttonManager.execute(event);
-        },
-
-        /**
-         * @param {jQuery.Event} openDialogEvent
-         * @param {string} previousVal
-         * @param {object} dialogResultEvent
-         */
-        onDialogResult: function(openDialogEvent, previousVal, dialogResultEvent) {
-            if (dialogResultEvent.result) {
-                if (!$(openDialogEvent.target).hasClass('custom-address')) {
-                    $(openDialogEvent.target).addClass('custom-address');
-                }
-
-                $(openDialogEvent.target).trigger('forceChange');
-            } else {
-                $(openDialogEvent.target).val(previousVal);
-                $(openDialogEvent.target).inputWidget('refresh');
             }
         },
 
@@ -194,6 +104,7 @@ define(function(require) {
                 const label = customLabel || newAddressLabel;
                 if (label) {
                     const $option = this.$el.find('[value="0"]');
+                    $option.removeClass('hide');
                     $option.text(label);
                 }
 
@@ -210,33 +121,10 @@ define(function(require) {
                 const $option = $element.find('[value="0"]');
 
                 $option.text(this.enterManuallyOriginLabel);
+                $option.addClass('hide');
 
                 $element.inputWidget('refresh');
             }
-        },
-
-        /**
-         * @param {string} type
-         * @return string
-         */
-        _title: function(type) {
-            if (this.titles.hasOwnProperty(type)) {
-                return this.titles[type];
-            }
-
-            return this.titles.billing;
-        },
-
-        /**
-         * @param {string} type
-         * @return string
-         */
-        _operationName: function(type) {
-            if (this.operations.hasOwnProperty(type)) {
-                return this.operations[type];
-            }
-
-            return this.operations.billing;
         }
     });
 

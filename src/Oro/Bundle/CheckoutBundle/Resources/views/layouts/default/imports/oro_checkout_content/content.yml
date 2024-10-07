@@ -46,7 +46,9 @@ layout:
                         stepOrder: '=data["oro_checkout_steps"].getStepOrder(data["workflowItem"], context["workflowStepName"], excludedSteps)'
                         excludedSteps: '=["enter_credentials_step"]'
                 __checkout_information_body:
-                    blockType: container
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: [ 'checkout:new-address-update' ]
                 __checkout_form:
                     blockType: checkout_form
                     options:

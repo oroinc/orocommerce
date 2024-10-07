@@ -2,7 +2,6 @@
     {% from '@OroAddress/macros.html.twig' import renderAddress %}
     {% import '@OroUI/layouts/macros.html.twig' as UI %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-
     {% if workflowItem.data.get('disallow_billing_address_edit') %}
         {% set billingAddress = checkout.billingAddress %}
         <div class="grid">
@@ -12,10 +11,7 @@
         </div>
     {% else %}
         {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
-        {% set hasCustomAddress = false %}
-        {% if form.billing_address.id.vars.value %}
-            {% set hasCustomAddress = not form.billing_address.vars.value.customerUserAddress and not form.billing_address.vars.value.customerAddress %}
-        {% endif %}
+        {% set hasCustomAddress = checkout.customerUser == null or checkout.customerUser.isGuest %}
         {% set billingAddress = form.billing_address.vars.value %}
         <div class="grid" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
@@ -24,17 +20,21 @@
                      address: '#' ~ form.billing_address.customerAddress.vars.id,
                      region: '#' ~ form.billing_address.region.vars.id,
                      shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
-                     addAddressBtn: '#' ~ form.billing_address.customerAddress.vars.id ~ '-btn',
                      fieldsContainer: '#checkout-address-fields-container'
                  }
              }|json_encode }}">
 
             <div class="grid-col-6 grid-col-tablet-12">
-                {{ form_row(form.billing_address.customerAddress) }}
+                {% set renderedAddress = checkout.billingAddress ? checkout.billingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
+                {{ form_row(form.billing_address.customerAddress, {
+                    attr: {
+                        'data-new-address-label': renderedAddress
+                    }
+                }) }}
             </div>
 
-            <div class="grid-col-12">
-                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email) }}
+            <div class="grid grid-columns-1 grid-col-12 checkout-form__billing-address">
+                {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress, form.email, true) }}
 
                 {% set hideShipping = true %}
                 {% if billingAddress %}
@@ -47,35 +47,28 @@
                 {% endif %}
 
                 {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-                    <div data-ship-to-billing-container>
+                    <div class="selectable-group__item" data-ship-to-billing-container>
                         {{ form_row(form.ship_to_billing_address) }}
                     </div>
                 {% endif %}
 
-                {{ UI.clientBtn({
-                    'btnCss': 'btn btn--flat',
-                    'label' : 'Add Address',
-                    'iconName': 'plus',
-                    'dataUrl': path('oro_frontend_action_widget_form', {
-                        operationName: 'b2b_flow_checkout_single_page_new_billing_address',
-                        entityClass: 'Oro\\Bundle\\CheckoutBundle\\Entity\\Checkout',
-                        entityId: checkout.id
-                    }),
-                    'widget' : {
-                        'type' : 'dialog',
-                        'options' : {
-                            'hasForm': true,
-                            'dialogOptions' : {
-                                title: 'oro.checkout.billing_address.label'|trans,
-                                width: 1000,
-                                height: 'auto',
-                                resizable: false,
-                                modal: true,
-                                dialogTitleIcon: 'map-pin'
+                {% if hasCustomAddress != true %}
+                    <div class="grid-col">
+                        {{ UI.clientBtn({
+                            'id': form.billing_address.customerAddress.vars.id ~ '-btn',
+                            'btnCss': 'btn btn--flat',
+                            'label' : 'Add Address'|trans,
+                            'iconName': 'plus',
+                            'pageComponent': {
+                                'view': 'orocheckout/js/app/views/add-address-button-view',
+                                'options': {
+                                    fieldId: form.billing_address.customerAddress.vars.id,
+                                    entityId: checkout.id
+                                }
                             }
-                        }
-                    }
-                }) }}
+                        }) }}
+                    </div>
+                {% endif %}
             </div>
         </div>
     {% endif %}
