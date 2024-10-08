@@ -39,7 +39,7 @@ class OroWebCatalogBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     #[\Override]

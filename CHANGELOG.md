@@ -2,29 +2,6 @@ The upgrade instructions are available at [Oro documentation website](https://do
 
 The current file describes significant changes in the code that may affect the upgrade of your customizations.
 
-## UNRELEASED
-
-### Added
-
-### ProductBundle
-* Added a new frontend `inventory-switcher` filter.
-
-#### PricingBundle
-* Added a new backend `customerprices` API resource.
-
-### Removed
-
-### ProductBundle
-* Removed `oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view`
-* Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.
-* Removed `oro_product.product_details_display_price_tiers_as` system configuration option.
-
-### Changed
-
-### ProductBundle
-* Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
-* Filtering for the `inventory status` product attribute was enabled.
-
 ## Changes in the Commerce package versions
 
 - [6.0.0](#600-2024-03-30)
@@ -48,6 +25,12 @@ The current file describes significant changes in the code that may affect the u
 ## UNRELEASED
 
 ### Added
+
+#### ProductBundle
+* Added a new frontend `inventory-switcher` filter.
+
+#### PricingBundle
+* Added a new backend `customerprices` API resource.
 
 #### WebsiteSearchSuggestionBundle
 * Added the ability to show users in the search autocomplete field on the storefront suggestions
@@ -78,6 +61,22 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\SuggestionIndexationListener` take into account suggestion fields for the search engine for the storefront.
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
+
+### Removed
+
+#### ProductBundle
+* Removed `oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view`
+* Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.
+* Removed `oro_product.product_details_display_price_tiers_as` system configuration option.
+
+### Changed
+
+#### ProductBundle
+* Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
+* Filtering for the `inventory status` product attribute was enabled.
+
+#### WebCatalogBundle
+* Changed the type of `oro_web_catalog.empty_search_result_page` system config setting from `array` to `scalar` to get rid of serialized objects in `oro_config_value` table.
 
 ## 6.0.0 (2024-03-30)
 [Show detailed list of changes](incompatibilities-6-0.md)
