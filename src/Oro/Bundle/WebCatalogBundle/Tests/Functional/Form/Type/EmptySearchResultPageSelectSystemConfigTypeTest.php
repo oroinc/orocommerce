@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Form\Type;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ConfigBundle\Utils\TreeUtils;
 use Oro\Bundle\TestFrameworkBundle\Test\Form\FormAwareTestTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebCatalogBundle\DependencyInjection\Configuration;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeFromWebCatalogSelectType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\EmptySearchResultPageSelectSystemConfigType;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogSelectType;
-use Oro\Bundle\WebCatalogBundle\Validator\Constraint\NodeHasNoRestrictions;
+use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
+use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantScopes;
+use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantsData;
 use Symfony\Component\Form\FormFactoryInterface;
-use Symfony\Component\Validator\Constraints\NotBlank;
-use Symfony\Component\Validator\Constraints\When;
 
 class EmptySearchResultPageSelectSystemConfigTypeTest extends WebTestCase
 {
@@ -22,68 +20,179 @@ class EmptySearchResultPageSelectSystemConfigTypeTest extends WebTestCase
 
     private FormFactoryInterface $formFactory;
 
-    private ConfigManager $configManager;
-
     protected function setUp(): void
     {
         $this->initClient();
 
         $this->formFactory = self::getContainer()->get(FormFactoryInterface::class);
-        $this->configManager = self::getContainer()->get('oro_config.manager');
     }
 
-    /**
-     * @dataProvider getFormContainsFieldsDataProvider
-     */
-    public function testFormContainsFields(?WebCatalog $webCatalog): void
+    public function testCanBeCreatedWithNoInitialData(): void
     {
-        $emptySearchResultPageKey = TreeUtils::getConfigKey(
-            Configuration::ROOT_NODE,
-            Configuration::EMPTY_SEARCH_RESULT_PAGE
-        );
-        $this->configManager->set($emptySearchResultPageKey, ['webCatalog' => $webCatalog]);
-
         $form = $this->formFactory->create(EmptySearchResultPageSelectSystemConfigType::class);
 
-        self::assertFormHasField(
-            $form,
-            'webCatalog',
-            WebCatalogSelectType::class,
-            [
-                'label' => false,
-                'create_enabled' => false,
-                'data' => $webCatalog,
-            ]
+        self::assertNull($form->getData());
+    }
+
+    public function testCanBeCreatedWithInitialData(): void
+    {
+        $contentNode = new ContentNode();
+        $form = $this->formFactory->create(EmptySearchResultPageSelectSystemConfigType::class, $contentNode);
+
+        self::assertSame($contentNode, $form->getData());
+    }
+
+    public function testHasFields(): void
+    {
+        $form = $this->formFactory->create(EmptySearchResultPageSelectSystemConfigType::class);
+
+        self::assertArrayIntersectEquals(
+            ['data_class' => null, 'error_bubbling' => false],
+            $form->getConfig()->getOptions()
         );
 
-        self::assertFormHasField(
-            $form,
-            'contentNode',
-            ContentNodeFromWebCatalogSelectType::class,
-            array_merge(
-                [
-                    'label' => false,
-                    'required' => true,
-                    'error_bubbling' => false,
-                    'constraints' => [
-                        new NodeHasNoRestrictions(),
-                        new When('this.getParent().get("webCatalog").getData()', new NotBlank()),
-                    ],
-                ],
-                $webCatalog instanceof WebCatalog ? ['web_catalog' => $webCatalog] : []
-            )
+        self::assertFormHasField($form, 'webCatalog', WebCatalogSelectType::class, [
+            'label' => false,
+            'required' => false,
+            'create_enabled' => false,
+        ]);
+
+        self::assertFormHasField($form, 'contentNode', ContentNodeFromWebCatalogSelectType::class, [
+            'label' => false,
+            'required' => true,
+        ]);
+    }
+
+    public function testWebCatalogIsSetFromContentNode(): void
+    {
+        $webCatalog = new WebCatalog();
+        $contentNode = new ContentNode();
+        $contentNode->setWebCatalog($webCatalog);
+
+        $form = $this->formFactory->create(EmptySearchResultPageSelectSystemConfigType::class, $contentNode);
+
+        self::assertSame($webCatalog, $form->get('webCatalog')->getData());
+    }
+
+    public function testHasViewVars(): void
+    {
+        $form = $this->formFactory->create(
+            EmptySearchResultPageSelectSystemConfigType::class,
+            null,
+            ['csrf_protection' => false]
+        );
+
+        $formView = $form->createView();
+
+        self::assertArrayHasKey('data-page-component-module', $formView->vars['attr']);
+        self::assertEquals(
+            'oroui/js/app/components/view-component',
+            $formView->vars['attr']['data-page-component-module']
+        );
+
+        self::assertArrayHasKey('data-page-component-options', $formView->vars['attr']);
+        $pageComponentOptions = json_decode($formView->vars['attr']['data-page-component-options'], true);
+
+        self::assertEquals(
+            [
+                'view' => 'orowebcatalog/js/app/views/content-node-from-webcatalog-view',
+                'listenedFieldName' => $formView['webCatalog']->vars['full_name'],
+                'triggeredFieldName' => $formView['contentNode']->vars['full_name'],
+            ],
+            $pageComponentOptions
         );
     }
 
-    public function getFormContainsFieldsDataProvider(): array
+    public function testSubmitWithEmptyDataWhenNoInitialData(): void
     {
-        return [
-            [
-                'webCatalog' => null,
-            ],
-            [
-                'webCatalog' => new WebCatalog(),
-            ],
-        ];
+        $form = $this->formFactory->create(
+            EmptySearchResultPageSelectSystemConfigType::class,
+            null,
+            ['csrf_protection' => false]
+        );
+
+        $form->submit([]);
+
+        self::assertTrue($form->isValid(), $form->getErrors(true, true));
+        self::assertTrue($form->isSynchronized());
+
+        self::assertNull($form->getData());
+    }
+
+    public function testSubmitWithEmptyDataWhenHasInitialData(): void
+    {
+        $this->loadFixtures([LoadContentNodesData::class]);
+
+        $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
+
+        $form = $this->formFactory->create(
+            EmptySearchResultPageSelectSystemConfigType::class,
+            $contentNode,
+            ['csrf_protection' => false]
+        );
+
+        $form->submit([]);
+
+        self::assertTrue($form->isValid(), $form->getErrors(true, true));
+        self::assertTrue($form->isSynchronized());
+
+        self::assertNull($form->getData());
+    }
+
+    public function testSubmitWithNonEmptyDataWhenNoInitialData(): void
+    {
+        $this->loadFixtures([LoadContentVariantsData::class, LoadContentVariantScopes::class]);
+
+        $newContentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_2);
+
+        $form = $this->formFactory->create(
+            EmptySearchResultPageSelectSystemConfigType::class,
+            null,
+            ['csrf_protection' => false]
+        );
+
+        $form->submit(['contentNode' => $newContentNode->getId()]);
+
+        self::assertTrue($form->isValid(), $form->getErrors(true, true));
+        self::assertTrue($form->isSynchronized());
+
+        self::assertSame($newContentNode, $form->getData());
+    }
+
+    public function testSubmitWithNonEmptyDataWhenHasInitialData(): void
+    {
+        $this->loadFixtures([LoadContentVariantsData::class, LoadContentVariantScopes::class]);
+
+        $initialContentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
+        $newContentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_2);
+
+        $form = $this->formFactory->create(
+            EmptySearchResultPageSelectSystemConfigType::class,
+            $initialContentNode,
+            ['csrf_protection' => false]
+        );
+
+        $form->submit(['contentNode' => $newContentNode->getId()]);
+
+        self::assertTrue($form->isValid(), $form->getErrors(true, true));
+        self::assertTrue($form->isSynchronized());
+
+        self::assertSame($newContentNode, $form->getData());
+    }
+
+    public function testSubmitWithInvalidData(): void
+    {
+        $form = $this->formFactory->create(
+            EmptySearchResultPageSelectSystemConfigType::class,
+            null,
+            ['csrf_protection' => false]
+        );
+
+        $form->submit(['contentNode' => PHP_INT_MAX]);
+
+        self::assertFalse($form->isValid());
+        self::assertTrue($form->isSynchronized());
+
+        self::assertNull($form->getData());
     }
 }

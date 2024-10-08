@@ -41,7 +41,7 @@ class OroWebCatalogBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_3_1';
+        return 'v1_3_2';
     }
 
     /**
