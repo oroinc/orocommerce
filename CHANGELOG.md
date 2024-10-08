@@ -151,6 +151,9 @@ The current file describes significant changes in the code that may affect the u
 * Made use of `\Symfony\Component\Validator\Constraints\GroupSequence` in `\Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController` when creating/updating a product kit line item.
 * Made use of nested validation groups transforming into `\Symfony\Component\Validator\Constraints\GroupSequence` for `shoppinglistitem` and `shoppinglistkititem` storefront API resources.
 
+#### WebCatalogBundle
+* Changed the type of `oro_web_catalog.empty_search_result_page` system config setting from `array` to `scalar` to get rid of serialized objects in `oro_config_value` table.
+
 ### Deprecated
 
 #### CheckoutBundle

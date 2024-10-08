@@ -40,9 +40,12 @@ system_configuration:
             options:
                 label: oro.webcatalog.system_configuration.fields.empty_search_result_page.label
                 tooltip: oro.webcatalog.system_configuration.fields.empty_search_result_page.tooltip
-                attr:
-                    'data-page-component-module': 'oroui/js/app/components/view-component'
-                    'data-page-component-options': '{"view": "orowebcatalog/js/app/views/content-node-from-webcatalog-view","listenedFieldName":"website_search_terms[oro_web_catalog___empty_search_result_page][value][webCatalog]","triggeredFieldName":"website_search_terms[oro_web_catalog___empty_search_result_page][value][contentNode]"}'
+                constraints:
+                    - Oro\Bundle\WebCatalogBundle\Validator\Constraint\NodeHasNoRestrictions: ~
+                    - Oro\Bundle\PlatformBundle\Validator\Constraints\When:
+                          expression: 'this.get("webCatalog").getData()'
+                          constraints:
+                              - NotBlank: ~
 
     tree:
         system_configuration:

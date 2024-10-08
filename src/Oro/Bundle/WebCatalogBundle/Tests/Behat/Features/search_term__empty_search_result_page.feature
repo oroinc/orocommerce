@@ -31,20 +31,20 @@ Feature: Search Term - empty search result page
       | Web Catalog | Default Web Catalog |
     And I click "Save settings"
     Then I should see "Empty Search Result Page System Configuration Form" validation errors:
-      | Content Node | This value should not be blank. |
+      | Empty Search Result Page | This value should not be blank. |
 
-  Scenario: Only the web-nodes without restrictions by customer group, customer and localization could be selected
+  Scenario: Only the content nodes without restrictions by customer group, customer and localization could be selected
     When I click on "By Brand"
     And I click "Save settings"
     Then I should see "Empty Search Result Page System Configuration Form" validation errors:
-      | Content Node | Content node cannot have restrictions |
+      | Empty Search Result Page | Content node cannot have restrictions |
 
   Scenario: Save Empty Search Result page configuration value on global level
     When I click on "New Arrivals"
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
 
-  Scenario: Only the web-nodes without restrictions by customer group, customer, localization and website could be selected
+  Scenario: Only the content nodes without restrictions by customer group, customer, localization and website could be selected
     When I set "Default Web Catalog" as default web catalog
     And I go to System/ Websites
     And I click "Configuration" on row "Default" in grid
@@ -53,7 +53,7 @@ Feature: Search Term - empty search result page
     Then I should not see "Please choose a Web Catalog"
     When I click "Save settings"
     Then I should see "Empty Search Result Page System Configuration Form" validation errors:
-      | Content Node | Content node cannot have restrictions |
+      | Empty Search Result Page | Content node cannot have restrictions |
 
   Scenario: Save Empty Search Result page configuration value on website level
     When I click on "Clearance"
@@ -88,18 +88,19 @@ Feature: Search Term - empty search result page
   Scenario: Unauthorized user will be forwarded to Empty Search Result Content Node when search term is not found
     When I type "noresults" in "search"
     And I click "Search Button"
+    And I wait for action
     Then Page title equals to "Clearance"
     And I should see "Default Web Catalog / Clearance"
     And the url should match "/product/search"
 
-  Scenario: Authorized user will be forwarded to Empty Search Result Content Node when search term is not found
+  Scenario: Authenticated user will be forwarded to Empty Search Result Content Node when search term is not found
     Given I signed in as AmandaRCole@example.org on the store frontend
     When I type "search_term" in "search"
     And I click "Search Button"
     Then number of records in "Product Frontend Grid" should be 0
     And the url should match "/product/search"
 
-  Scenario: Authorized user will not be forwarded to Empty Search Result Content Node when search term is found
+  Scenario: Authenticated user will not be forwarded to Empty Search Result Content Node when search term is found
     When I type "noresults" in "search"
     And I click "Search Button"
     Then Page title equals to "Clearance"

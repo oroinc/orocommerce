@@ -56,6 +56,11 @@ services:
             - '@oro_config.manager'
             - '@oro_web_catalog.content_node_tree_resolver'
             - '@oro_web_catalog.request_web_content_scope_provider'
+        calls:
+            - [setDoctrine, ['@doctrine']]
+            - [setLogger, ['@logger']]
+        tags:
+            - { name: monolog.logger, channel: oro_web_catalog }
 
     oro_web_catalog.event_listener.empty_search_results_page_listener:
         class: Oro\Bundle\WebCatalogBundle\EventListener\EmptySearchResultsPageEventListener
@@ -71,3 +76,13 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
             - { name: oro_featuretogle.feature, feature: oro_website_search_terms_management }
             - { name: monolog.logger, channel: oro_web_catalog }
+
+    oro_web_catalog.event_listener.system_config.empty_search_result_page:
+        class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener
+        arguments:
+            - '@doctrine'
+            - 'Oro\Bundle\WebCatalogBundle\Entity\ContentNode'
+            - 'oro_web_catalog.empty_search_result_page'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
