@@ -32,8 +32,8 @@ Feature: Single Page Checkout From Quote Quantity Errors
     And I click "Submit"
     Then I should see "There is not enough quantity for this product"
 
-    When I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+    When I select "Fifth avenue, 10115 Berlin, Germany" from "Billing Address"
+    And I select "Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     Then I should see "There is not enough quantity for this product"

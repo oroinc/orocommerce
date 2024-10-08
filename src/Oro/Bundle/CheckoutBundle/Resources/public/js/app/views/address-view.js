@@ -1,6 +1,7 @@
 define(function(require) {
     'use strict';
 
+    const _ = require('underscore');
     const $ = require('jquery');
     const mediator = require('oroui/js/mediator');
     const BaseView = require('oroui/js/app/views/base/view');
@@ -77,6 +78,7 @@ define(function(require) {
             const disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
             const isFormVisible = this._isFormVisible();
             const showNewAddressForm = !disabled && isFormVisible;
+            this._handleNewAddressForm(showNewAddressForm);
 
             if (!showNewAddressForm) {
                 this.$addressSelector.trigger('focus');
@@ -101,6 +103,18 @@ define(function(require) {
                     'change',
                     this._handleExternalShipToBillingAddressCheckbox.bind(this)
                 );
+            }
+        },
+
+        /**
+         * @param {Boolean} show
+         * @private
+         */
+        _handleNewAddressForm: function(show) {
+            if (show) {
+                this._showForm();
+            } else {
+                this._hideForm();
             }
         },
 
@@ -190,6 +204,31 @@ define(function(require) {
 
         _isOnlyOneOption: function() {
             return this.$addressSelector[0].length === 1;
+        },
+
+        _showForm: function() {
+            if (this.$externalShipToBillingCheckbox === undefined) {
+                this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
+                this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
+            }
+            this.$fieldsContainer.removeClass('hidden');
+        },
+
+        _hideForm: function(showCheckbox) {
+            if (this.$externalShipToBillingCheckbox === undefined) {
+                if (showCheckbox ||
+                    this.$addressSelector.val() === '0' ||
+                    _.indexOf(this.typesMapping[this.$addressSelector.val()], 'shipping') > -1) {
+                    this.shipToBillingContainer.parents('[data-ship-to-billing-container]').removeClass('hidden');
+                    this.shipToBillingContainer.removeClass('hidden').trigger('changeHiddenClass');
+                } else {
+                    this.$shipToBillingCheckbox.prop('checked', false);
+                    this.$shipToBillingCheckbox.trigger('change');
+                    this.shipToBillingContainer.addClass('hidden').trigger('changeHiddenClass');
+                }
+            }
+
+            this.$fieldsContainer.addClass('hidden');
         },
 
         _onRegionListChanged: function(e) {

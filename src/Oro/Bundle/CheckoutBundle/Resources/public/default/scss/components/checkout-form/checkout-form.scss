@@ -17,6 +17,10 @@
         grid-gap: #{spacing('xl')} #{spacing('xxxl')};
         max-width: 850px;
         margin-bottom: spacing('lg');
+
+        .ui-dialog & {
+            max-width: 100%;
+        }
     }
 
     &__select-container {

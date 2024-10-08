@@ -159,8 +159,8 @@ oro:
             id.label: Id
             deleted.label: Deleted
 
-        billing_information: Billing Information
-        shipping_information: Shipping Information
+        billing_information: Billing
+        shipping_information: Shipping
         shipping_method: Shipping Method
         payment: Payment
 

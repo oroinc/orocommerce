@@ -109,16 +109,12 @@ Feature: Single page checkout with consents
     And I scroll to top
     And I click "Create Order"
     And I uncheck "Save my data and create an account" on the checkout page
-    And I click on "Billing Address Select"
-    And I click on "New Address Option"
+    And I click on "Add Address Single Page Checkout Btn" with title "Add" in element "Single Page Checkout Billing Section"
     And I fill "New Address Popup Form" with:
       | Email        | test@example.com |
       | Label        | B Address        |
-      | Name Prefix  | B Prefix         |
       | First Name   | B Fname          |
-      | Middle Name  | B Mname          |
       | Last Name    | B Lname          |
-      | Name Suffix  | B Suffix         |
       | Organization | B Organization   |
       | Phone        | 12345            |
       | Street       | B Street         |

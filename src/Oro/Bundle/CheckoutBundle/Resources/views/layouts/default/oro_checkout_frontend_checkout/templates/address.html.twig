@@ -40,6 +40,10 @@
                     {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
                 </div>
             {% endif %}
+
+            <div class="grid-col-12">
+                {{ form_row(save_address_checkbox) }}
+            </div>
         </div>
         <div class="grid grid-col-6" {{ UI.attributes(address_form.vars.attr) }}>
             <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
@@ -57,8 +61,6 @@
             <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
                 {{ form_row(address_form.phone, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.phone'|trans}}) }}
             </div>
-
-            {{ form_row(save_address_checkbox) }}
 
             <div class="hidden">
                 {{ form_widget(address_form.id) }}

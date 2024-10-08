@@ -11,7 +11,7 @@
         </div>
     {% else %}
         {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
-        {% set hasCustomAddress = checkout.customerUser == null or checkout.customerUser.isGuest %}
+        {% set hasCustomAddress = form.billing_address.customerAddress.vars.choices|length < 2 or checkout.customerUser == null or checkout.customerUser.isGuest %}
         {% set billingAddress = form.billing_address.vars.value %}
         <div class="grid" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
