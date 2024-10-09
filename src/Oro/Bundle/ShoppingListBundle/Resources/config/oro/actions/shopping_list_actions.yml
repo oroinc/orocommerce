@@ -195,6 +195,8 @@ operations:
                         required: true
                         constraints:
                             - NotBlank: ~
+                            - Length:
+                                  max: 255
         datagrid_options:
             aria_label: oro.frontend.shoppinglist.btn.rename.aria_label
         groups:

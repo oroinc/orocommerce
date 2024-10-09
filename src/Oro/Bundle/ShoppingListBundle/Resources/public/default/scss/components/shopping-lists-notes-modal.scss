@@ -9,6 +9,11 @@
 
 @include breakpoint('mobile-big') {
     .shopping-list-notes-modal {
+        &__form {
+            display: flex;
+            flex-direction: column;
+        }
+
         &__form,
         &__editor {
             height: 100%;
