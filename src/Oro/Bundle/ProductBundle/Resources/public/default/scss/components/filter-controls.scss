@@ -62,10 +62,18 @@
     &.in-sticky {
         background: $catalog-filter-controls-toolbar-sticky-container-background;
         z-index: $sticky-panel-z-index;
-        box-shadow: $sticky-panel-box-shadow;
 
-        padding: spacing('sm') spacing('lg') spacing('sm') spacing('xl');
-        margin: 0 -#{spacing('lg')} spacing('base') -#{spacing('xl')};
+        padding: spacing('sm') spacing('lg') + 4px spacing('sm') spacing('xl');
+        margin: 0 -#{spacing('lg') + 4px} spacing('base') -#{spacing('xl')};
+
+        &:after {
+            content: '';
+            display: block;
+            position: absolute;
+            background-image: $sticky-panel-shadow-gradient;
+            inset: 100% 0 auto;
+            height: $sticky-panel-gradient-size;
+        }
 
         .ui-dialog & {
             z-index: z();

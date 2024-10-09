@@ -21,7 +21,6 @@
     height: 100%;
 
     &.in-sticky {
-        z-index: 101;
         max-height: calc(100vh - var(--sticky-page-header-element-height));
     }
 
