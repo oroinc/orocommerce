@@ -11,7 +11,8 @@
         </div>
     {% else %}
         {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
-        {% set hasCustomAddress = form.billing_address.customerAddress.vars.choices|length < 2 or checkout.customerUser == null or checkout.customerUser.isGuest %}
+        {% set addresses = form.billing_address.customerAddress.vars.choices %}
+        {% set hasCustomAddress = checkout.customerUser == null or checkout.customerUser.isGuest or addresses|length <= 1 %}
         {% set billingAddress = form.billing_address.vars.value %}
         <div class="grid" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
@@ -47,7 +48,7 @@
                 {% endif %}
 
                 {% if not workflowItem.data.get('disallow_shipping_address_edit') %}
-                    <div class="selectable-group__item" data-ship-to-billing-container>
+                    <div class="selectable-group__item checkout-form__ship-to-billing-container" data-ship-to-billing-container>
                         {{ form_row(form.ship_to_billing_address) }}
                     </div>
                 {% endif %}

@@ -49,7 +49,7 @@
             {{ form_row(form.country) }}
         </div>
     </div>
-    <div class="grid">
+    <div class="grid" {{ UI.attributes(form.vars.attr) }}>
         <div class="grid-col-12">
             {{ form_row(form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}
         </div>

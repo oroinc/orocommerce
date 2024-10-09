@@ -10,6 +10,10 @@
         grid-gap: #{spacing('xs')} #{spacing('base')};
     }
 
+    &__ship-to-billing-container:has(.hidden) {
+        min-height: 0;
+    }
+
     &__address-form {
         --grid-auto-rows: max-content;
         --grid-gap: #{spacing('xl')} #{spacing('base')};

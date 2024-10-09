@@ -77,7 +77,7 @@ define(function(require) {
         _handleShipToBillingAddressCheckbox: function(e) {
             const disabled = this.options.hideNewAddressForm ? this.$shipToBillingCheckbox.prop('checked') : false;
             const isFormVisible = this._isFormVisible();
-            const showNewAddressForm = !disabled && isFormVisible;
+            const showNewAddressForm = !disabled && isFormVisible && this.$addressSelector.prop('options').length <= 1;
             this._handleNewAddressForm(showNewAddressForm);
 
             if (!showNewAddressForm) {
@@ -164,6 +164,7 @@ define(function(require) {
         },
 
         _onAddressChanged: function() {
+            this.toggleShipToBillingCheckout();
             mediator.trigger('checkout:address:updated', this.$addressSelector);
         },
 
@@ -215,6 +216,12 @@ define(function(require) {
         },
 
         _hideForm: function(showCheckbox) {
+            this.toggleShipToBillingCheckout(showCheckbox);
+
+            this.$fieldsContainer.addClass('hidden');
+        },
+
+        toggleShipToBillingCheckout(showCheckbox) {
             if (this.$externalShipToBillingCheckbox === undefined) {
                 if (showCheckbox ||
                     this.$addressSelector.val() === '0' ||
@@ -227,8 +234,6 @@ define(function(require) {
                     this.shipToBillingContainer.addClass('hidden').trigger('changeHiddenClass');
                 }
             }
-
-            this.$fieldsContainer.addClass('hidden');
         },
 
         _onRegionListChanged: function(e) {
