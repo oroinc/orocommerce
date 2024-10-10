@@ -39,8 +39,8 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     protected const ANOTHER_ACCOUNT_ADDRESS = 'customer.level_1.address_1';
     protected const DEFAULT_BILLING_ADDRESS = 'customer.level_1.address_2';
 
-    protected const SHIPPING_ADDRESS_SIGN = 'Select Shipping Address';
-    protected const BILLING_ADDRESS_SIGN = 'Select Billing Address';
+    protected const SHIPPING_ADDRESS_SIGN = 'Shipping Address';
+    protected const BILLING_ADDRESS_SIGN = 'Billing Address';
     protected const SHIPPING_METHOD_SIGN = 'Select a Shipping Method';
     protected const PAYMENT_METHOD_SIGN = 'Payment - Checkout';
     protected const ORDER_REVIEW_SIGN = 'Do not ship later than';
