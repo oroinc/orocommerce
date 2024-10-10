@@ -127,10 +127,16 @@
 
         @include ellipsis();
 
+        display: flex;
+
         &:hover,
         &:focus,
         &.error {
             z-index: z('base');
+        }
+
+        .select2-choice {
+            width: 100%;
         }
 
         &.select2-container-active {
