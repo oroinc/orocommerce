@@ -268,10 +268,14 @@ oro:
             address.group_label:
                 customer: Global Address Book
                 customer_user: My address book
-            address.select.billing.label: Billing Address
-            address.enter.billing.label: Billing Address
-            address.select.shipping.label: Shipping Address
-            address.enter.shipping.label: Shipping Address
+            address.select.billing.label: Select Billing Address
+            address.select.billing.label.short: Billing Address
+            address.enter.billing.label: Enter Billing Address
+            address.enter.billing.label.short: Billing Address
+            address.select.shipping.label: Select Shipping Address
+            address.select.shipping.label.short: Shipping Address
+            address.enter.shipping.label: Enter Shipping Address
+            address.enter.shipping.label.short: Shipping Address
             address.enter.new_address.placeholder.label: Please select an address
 
         grid:
