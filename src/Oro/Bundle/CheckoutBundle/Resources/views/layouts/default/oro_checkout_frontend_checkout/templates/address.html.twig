@@ -1,7 +1,7 @@
 {% macro address_form(address_form, save_address_checkbox, hasCustomAddress, email_form, compact) %}
     {% import '@OroUI/macros.html.twig' as UI %}
     <div id="checkout-address-fields-container" class="grid{% if not hasCustomAddress %} hidden{% endif %} checkout-form__address-form">
-        <div class="grid grid-col-6">
+        <div class="grid grid-col-6 grid-col-mobile-big-12">
             {% if email_form %}
                 <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12 grid-col-mobile-landscape-12{% endif %}">
                     {{ form_row(email_form, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.email'|trans}}) }}
@@ -17,10 +17,10 @@
                 <div class="grid-col-12">
                     {{ form_row(address_form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
                 </div>
-                <div class="grid-col-7">
+                <div class="grid-col-7 grid-col-tablet-6">
                     {{ form_row(address_form.region) }}
                 </div>
-                <div class="grid-col-5 col-zip-error">
+                <div class="grid-col-5 grid-col-tablet-6 col-zip-error">
                     {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
                 </div>
                 <div class="grid-col-12">
@@ -40,12 +40,8 @@
                     {{ form_row(address_form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
                 </div>
             {% endif %}
-
-            <div class="grid-col-12">
-                {{ form_row(save_address_checkbox) }}
-            </div>
         </div>
-        <div class="grid grid-col-6" {{ UI.attributes(address_form.vars.attr) }}>
+        <div class="grid grid-col-6 grid-col-mobile-big-12" {{ UI.attributes(address_form.vars.attr) }}>
             <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
                 {{ form_row(address_form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}
             </div>
@@ -63,6 +59,7 @@
             </div>
 
             <div class="hidden">
+                {{ form_row(save_address_checkbox) }}
                 {{ form_widget(address_form.id) }}
                 {{ form_widget(address_form.region_text) }}
             </div>

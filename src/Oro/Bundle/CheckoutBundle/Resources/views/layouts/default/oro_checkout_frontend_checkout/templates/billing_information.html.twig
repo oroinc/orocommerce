@@ -14,7 +14,7 @@
         {% set addresses = form.billing_address.customerAddress.vars.choices %}
         {% set hasCustomAddress = checkout.customerUser == null or checkout.customerUser.isGuest or addresses|length <= 1 %}
         {% set billingAddress = form.billing_address.vars.value %}
-        <div class="grid" data-page-component-module="oroui/js/app/components/view-component"
+        <div class="grid checkout-form__container" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orocheckout/js/app/views/address-view',
                  selectors: {
@@ -28,6 +28,7 @@
             <div class="grid-col-6 grid-col-tablet-12">
                 {% set renderedAddress = checkout.billingAddress ? checkout.billingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
                 {{ form_row(form.billing_address.customerAddress, {
+                    parentClass: 'checkout-form__customer-address',
                     attr: {
                         'data-new-address-label': renderedAddress
                     }

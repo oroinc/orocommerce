@@ -5,13 +5,25 @@
     flex-direction: column;
     gap: spacing('base');
 
+    &__container {
+        grid-gap: 0 #{spacing('base')};
+    }
+
     &__billing-address,
     &__shipping-address {
         grid-gap: #{spacing('xs')} #{spacing('base')};
     }
 
+    &__ship-to-billing-address {
+        //margin-block-end: spacing('lg');
+    }
+
     &__ship-to-billing-container:has(.hidden) {
         min-height: 0;
+    }
+
+    &__customer-address {
+        margin-block-end: spacing('xs');
     }
 
     &__address-form {
@@ -195,6 +207,10 @@
     .checkout-form {
         &__payment-methods {
             max-width: 100%;
+        }
+
+        &__address-form {
+            grid-gap: #{spacing('xl')} 0;
         }
     }
 }

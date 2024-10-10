@@ -24,7 +24,7 @@
 
 {% block _oro_action_operation_address_row %}
     {% import '@OroUI/macros.html.twig' as UI %}
-    <div class="grid">
+    <div class="grid grid-col-mobile-big-2">
         {% if emailField is not null %}
             <div class="grid-col-12">
                 {{ emailField }}
@@ -39,17 +39,17 @@
         <div class="grid-col-12">
             {{ form_row(form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
         </div>
-        <div class="grid-col-7">
+        <div class="grid-col-7 grid-col-mobile-6">
             {{ form_row(form.region) }}
         </div>
-        <div class="grid-col-5">
+        <div class="grid-col-5 grid-col-mobile-6">
             {{ form_row(form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
         </div>
         <div class="grid-col-12">
             {{ form_row(form.country) }}
         </div>
     </div>
-    <div class="grid" {{ UI.attributes(form.vars.attr) }}>
+    <div class="grid grid-col-mobile-big-2" {{ UI.attributes(form.vars.attr) }}>
         <div class="grid-col-12">
             {{ form_row(form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}
         </div>

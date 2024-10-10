@@ -11,7 +11,7 @@
         {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
         {% set addresses = form.shipping_address.customerAddress.vars.choices %}
         {% set hasCustomAddress = checkout.customerUser == null or checkout.customerUser.isGuest or addresses|length <= 1 %}
-        <div class="grid" data-page-component-module="oroui/js/app/components/view-component"
+        <div class="grid checkout-form__container" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orocheckout/js/app/views/address-view',
                  hideNewAddressForm: true,
@@ -24,18 +24,23 @@
              }|json_encode }}">
 
             <div class="grid-col-6 grid-col-tablet-12">
-                {{ form_row(form.shipping_address.customerAddress) }}
+                {{ form_row(form.shipping_address.customerAddress, {
+                    parentClass: 'checkout-form__customer-address'
+                }) }}
+            </div>
+
+            <div class="grid-col-12">
+                {% if workflowItem.data.get('billing_address_has_shipping') or checkout.shipToBillingAddress %}
+                    <div class="selectable-group__item checkout-form__ship-to-billing-address">
+                        {{ form_row(form.ship_to_billing_address) }}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="grid-col-12">
                 {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress, null, true) }}
 
-                {% if workflowItem.data.get('billing_address_has_shipping') or checkout.shipToBillingAddress %}
-                    <div class="selectable-group__item">
-                        {{ form_row(form.ship_to_billing_address) }}
-                    </div>
-                {% endif %}
-                {%  if  form.state_token is defined %}
+                {%  if form.state_token is defined %}
                     {{ form_row(form.state_token) }}
                 {% endif %}
 
