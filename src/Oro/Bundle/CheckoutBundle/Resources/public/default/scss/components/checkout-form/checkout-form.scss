@@ -14,10 +14,6 @@
         grid-gap: #{spacing('xs')} #{spacing('base')};
     }
 
-    &__ship-to-billing-address {
-        //margin-block-end: spacing('lg');
-    }
-
     &__ship-to-billing-container:has(.hidden) {
         min-height: 0;
     }
