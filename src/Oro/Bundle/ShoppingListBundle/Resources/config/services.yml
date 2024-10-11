@@ -593,12 +593,16 @@ services:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, frontend: true }
 
     oro_shopping_list.access_rule.frontend_shopping_list_item:
-        class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ShoppingListItemAccessRule
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'shoppingList'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\LineItem, frontend: true }
 
     oro_shopping_list.access_rule.frontend_product_kit_item_line_item:
-        class: Oro\Bundle\ShoppingListBundle\Acl\AccessRule\ProductKitItemLineItemAccessRule
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'lineItem'
         tags:
             - {name: oro_security.access_rule, entityClass: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, frontend: true}
 

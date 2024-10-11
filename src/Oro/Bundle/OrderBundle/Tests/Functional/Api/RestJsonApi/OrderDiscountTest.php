@@ -6,6 +6,10 @@ use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
+use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
+use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -13,14 +17,18 @@ use Oro\Bundle\OrderBundle\Total\TotalHelper;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OrderDiscountTest extends RestJsonApiTestCase
 {
+    use RolePermissionExtension;
+
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->loadFixtures(['@OroOrderBundle/Tests/Functional/Api/DataFixtures/order_discounts.yml']);
+
         /** @var TotalHelper $totalHelper */
         $totalHelper = self::getContainer()->get('oro_order.order.total.total_helper');
         $totalHelper->fill($this->getOrderReference('order1'));
@@ -28,6 +36,17 @@ class OrderDiscountTest extends RestJsonApiTestCase
         // guard
         $this->clearEntityManager();
         $this->assertOrderTotals($this->getOrderReference('order1'), '200.0000', '119.6000', '80.4000');
+
+        $this->updateRolePermissions(
+            User::ROLE_ADMINISTRATOR,
+            Order::class,
+            [
+                'VIEW'   => AccessLevel::BASIC_LEVEL,
+                'CREATE' => AccessLevel::BASIC_LEVEL,
+                'EDIT'   => AccessLevel::BASIC_LEVEL,
+                'DELETE' => AccessLevel::BASIC_LEVEL
+            ]
+        );
     }
 
     private function getOrderDiscountReference(string $reference): OrderDiscount
@@ -132,11 +151,28 @@ class OrderDiscountTest extends RestJsonApiTestCase
 
     public function testGet(): void
     {
-        $discountId = $this->getOrderDiscountReference('order_discount.percent')->getId();
-
-        $response = $this->get(['entity' => 'orderdiscounts', 'id' => (string)$discountId]);
+        $response = $this->get(['entity' => 'orderdiscounts', 'id' => '<toString(@order_discount.percent->id)>']);
 
         $this->assertResponseContains('get_discount.yml', $response);
+    }
+
+    public function testTryToGetForUnaccessibleOrder(): void
+    {
+        $response = $this->get(
+            ['entity' => 'orderdiscounts', 'id' => '<toString(@order_discount.another_user->id)>'],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testCreateForAmountDiscountType(): void
@@ -649,6 +685,38 @@ class OrderDiscountTest extends RestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateForUnaccessibleOrder(): void
+    {
+        $response = $this->post(
+            ['entity' => 'orderdiscounts'],
+            [
+                'data' => [
+                    'type'          => 'orderdiscounts',
+                    'attributes'    => [
+                        'description'       => 'New Discount By Amount',
+                        'amount'            => '15.0000',
+                        'orderDiscountType' => OrderDiscount::TYPE_AMOUNT
+                    ],
+                    'relationships' => [
+                        'order' => ['data' => ['type' => 'orders', 'id' => '<toString(@order3->id)>']]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access granted constraint',
+                'detail' => 'The "VIEW" permission is denied for the related resource.',
+                'source' => ['pointer' => '/data/relationships/order/data']
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
     public function testUpdateDescription(): void
     {
         $discountId = $this->getOrderDiscountReference('order_discount.amount')->getId();
@@ -902,6 +970,33 @@ class OrderDiscountTest extends RestJsonApiTestCase
         );
     }
 
+    public function testTryToUpdateForUnaccessibleOrder(): void
+    {
+        $response = $this->patch(
+            ['entity' => 'orderdiscounts', 'id' => '<toString(@order_discount.another_user->id)>'],
+            [
+                'data' => [
+                    'type'       => 'orderdiscounts',
+                    'id'         => '<toString(@order_discount.another_user->id)>',
+                    'attributes' => [
+                        'description' => 'New Description'
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
     public function testDelete(): void
     {
         $discount = $this->getOrderDiscountReference('order_discount.amount');
@@ -912,6 +1007,25 @@ class OrderDiscountTest extends RestJsonApiTestCase
 
         self::assertTrue(null === $this->getEntityManager()->find(OrderDiscount::class, $discountId));
         $this->assertOrderTotals($this->getOrder($orderId), '200.0000', '159.8000', '40.2000');
+    }
+
+    public function testDeleteForUnaccessibleOrder(): void
+    {
+        $response = $this->delete(
+            ['entity' => 'orderdiscounts', 'id' => '<toString(@order_discount.another_user->id)>'],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
     }
 
     public function testDeleteList(): void

@@ -185,8 +185,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.product.duplicate.after, method: onDuplicateAfter }
 
-    oro_inventory.acl.access_rule.inventory_level:
-        class: Oro\Bundle\InventoryBundle\Acl\AccessRule\InventoryLevelAccessRule
+    oro_inventory.access_rule.inventory_level:
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'product'
         tags:
             -
                 name: oro_security.access_rule

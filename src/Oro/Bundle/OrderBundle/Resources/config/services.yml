@@ -302,6 +302,40 @@ services:
         tags:
             - { name: security.voter }
 
+    oro_order.access_rule.order_discount:
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'order'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderDiscount, permission: VIEW }
+
+    oro_order.acl.voter.order_discount:
+        class: Oro\Bundle\SecurityBundle\Acl\Voter\AssociationAwareVoter
+        arguments:
+            - '@security.authorization_checker'
+            - '@property_accessor'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderDiscount'
+            - 'order'
+        tags:
+            - { name: security.voter }
+
+    oro_order.access_rule.order_shipping_tracking:
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'order'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderShippingTracking, permission: VIEW }
+
+    oro_order.acl.voter.order_shipping_tracking:
+        class: Oro\Bundle\SecurityBundle\Acl\Voter\AssociationAwareVoter
+        arguments:
+            - '@security.authorization_checker'
+            - '@property_accessor'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'
+            - 'order'
+        tags:
+            - { name: security.voter }
+
     oro_order.datagrid.sub_orders_frontend_datagrid_listener:
         class: 'Oro\Bundle\OrderBundle\Datagrid\SubOrdersFrontendDatagridListener'
         arguments:
@@ -476,12 +510,16 @@ services:
             - { name: kernel.event_listener, event: oro_config.update_after, method: reindexProducts }
 
     oro_order.access_rule.frontend_order_line_item:
-        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderLineItemAccessRule
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'order'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderLineItem, frontend: true }
 
     oro_order.access_rule.frontend_order_product_kit_item_line_item:
-        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderProductKitItemLineItemAccessRule
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'lineItem'
         tags:
             - {name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, frontend: true}
 

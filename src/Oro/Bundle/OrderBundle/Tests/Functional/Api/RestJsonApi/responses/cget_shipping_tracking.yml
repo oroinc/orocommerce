@@ -9,7 +9,7 @@ data:
             order:
                 data:
                     type: orders
-                    id: '<toString(@simple_order->id)>'
+                    id: '<toString(@order1->id)>'
     -
         type: ordershippingtrackings
         id: '<toString(@order_shipping_tracking.2->id)>'
@@ -20,4 +20,4 @@ data:
             order:
                 data:
                     type: orders
-                    id: '<toString(@my_order->id)>'
+                    id: '<toString(@order2->id)>'

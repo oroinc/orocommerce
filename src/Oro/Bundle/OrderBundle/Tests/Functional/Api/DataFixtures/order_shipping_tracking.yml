@@ -111,22 +111,16 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         value: 20
         currency: USD
 
-Oro\Bundle\OrderBundle\Entity\OrderDiscount:
-    order_discount.percent:
-        description: 'Discount 1'
-        type: oro_order_discount_item_type_percent
-        percent: 20.1
-        amount: 40.2
+Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
+    order_shipping_tracking.1:
+        method: 'method 1'
+        number: 'number 1'
         order: '@order1'
-    order_discount.amount:
-        description: 'Discount 2'
-        type: oro_order_discount_item_type_amount
-        percent: 20.1
-        amount: 40.2
-        order: '@order1'
-    order_discount.another_user:
-        description: 'Discount 3'
-        type: oro_order_discount_item_type_amount
-        percent: 20.1
-        amount: 40.2
+    order_shipping_tracking.2:
+        method: 'method 2'
+        number: 'number 3'
+        order: '@order2'
+    order_shipping_tracking.3:
+        method: 'method 3'
+        number: 'number 3'
         order: '@order3'
