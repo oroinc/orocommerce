@@ -66,6 +66,29 @@ data:
                 data:
                      type: customers
                      id: '<toString(@simple_order->customer->id)>'
+            orderSubtotals:
+                data:
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order->id, "subtotal", "0"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order->id, "discount", "1"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order->id, "shipping_cost", "2"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order->id, "discount", "3"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order->id, "tax", "4"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order->id, "tax", "5"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order->id, "tax", "6"]))>'
     -
         type: orders
         id: '<toString(@simple_order2->id)>'
@@ -128,6 +151,29 @@ data:
                 data:
                      type: customers
                      id: '<toString(@simple_order2->customer->id)>'
+            orderSubtotals:
+                data:
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order2->id, "subtotal", "0"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order2->id, "discount", "1"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order2->id, "shipping_cost", "2"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order2->id, "discount", "3"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order2->id, "tax", "4"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order2->id, "tax", "5"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order2->id, "tax", "6"]))>'
     -
         type: orders
         id: '<toString(@simple_order3->id)>'
@@ -190,6 +236,29 @@ data:
                 data:
                      type: customers
                      id: '<toString(@simple_order3->customer->id)>'
+            orderSubtotals:
+                data:
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order3->id, "subtotal", "0"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order3->id, "discount", "1"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order3->id, "shipping_cost", "2"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order3->id, "discount", "3"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order3->id, "tax", "4"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order3->id, "tax", "5"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order3->id, "tax", "6"]))>'
     -
         type: orders
         id: '<toString(@simple_order4->id)>'
@@ -247,6 +316,29 @@ data:
                 data:
                      type: customers
                      id: '<toString(@simple_order4->customer->id)>'
+            orderSubtotals:
+                data:
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order4->id, "subtotal", "0"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order4->id, "discount", "1"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order4->id, "shipping_cost", "2"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order4->id, "discount", "3"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order4->id, "tax", "4"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order4->id, "tax", "5"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order4->id, "tax", "6"]))>'
     -
         type: orders
         id: '<toString(@simple_order5->id)>'
@@ -304,6 +396,29 @@ data:
                 data:
                      type: customers
                      id: '<toString(@simple_order5->customer->id)>'
+            orderSubtotals:
+                data:
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order5->id, "subtotal", "0"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order5->id, "discount", "1"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order5->id, "shipping_cost", "2"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order5->id, "discount", "3"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order5->id, "tax", "4"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order5->id, "tax", "5"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order5->id, "tax", "6"]))>'
     -
         type: orders
         id: '<toString(@simple_order6->id)>'
@@ -363,6 +478,29 @@ data:
                 data:
                      type: customers
                      id: '<toString(@simple_order6->customer->id)>'
+            orderSubtotals:
+                data:
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order6->id, "subtotal", "0"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order6->id, "discount", "1"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order6->id, "shipping_cost", "2"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order6->id, "discount", "3"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order6->id, "tax", "4"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order6->id, "tax", "5"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@simple_order6->id, "tax", "6"]))>'
     -
         type: orders
         id: '<toString(@my_order->id)>'
@@ -420,3 +558,26 @@ data:
                 data:
                      type: customers
                      id: '<toString(@my_order->customer->id)>'
+            orderSubtotals:
+                data:
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@my_order->id, "subtotal", "0"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@my_order->id, "discount", "1"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@my_order->id, "shipping_cost", "2"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@my_order->id, "discount", "3"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@my_order->id, "tax", "4"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@my_order->id, "tax", "5"]))>'
+                    -
+                        type: ordersubtotals
+                        id: '<(implode("-", [@my_order->id, "tax", "6"]))>'

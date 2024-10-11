@@ -6,10 +6,14 @@ api:
         Extend\Entity\EV_Order_Internal_Status:
             alias: orderinternalstatus
             plural_alias: orderinternalstatuses
+        Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal:
+            alias: ordersubtotal
+            plural_alias: ordersubtotals
 
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
+            enable_validation: true
             fields:
                 paymentTerm:
                     property_path: payment_term_7c4f1e8e
@@ -31,6 +35,14 @@ api:
                         mapped: false
                 internalStatus:
                     property_path: internal_status
+                    form_options:
+                        mapped: false
+                orderSubtotals:
+                    exclude: false
+                    target_class: Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal
+                    target_type: to-many
+                    max_results: -1 # no limit for the number of orderSubtotals
+                    property_path: _
                     form_options:
                         mapped: false
             filters:
@@ -72,6 +84,7 @@ api:
                 internalStatus:
                     actions:
                         update_relationship: false
+                orderSubtotals: false
 
         Extend\Entity\EV_Order_Status:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
@@ -200,3 +213,49 @@ api:
         Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_shipping_tracking.md'
             disable_meta_properties: [ title ]
+
+        Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order_subtotal.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                orderSubtotalType:
+                    data_type: string
+                label:
+                    data_type: string
+                order:
+                    property_path: orderId
+                    target_class: Oro\Bundle\OrderBundle\Entity\Order
+                    target_type: to-one
+                amount:
+                    data_type: money
+                signedAmount:
+                    data_type: money
+                currency:
+                    data_type: string
+                priceList:
+                    property_path: priceListId
+                    target_class: Oro\Bundle\PricingBundle\Entity\PriceList
+                    target_type: to-one
+                visible:
+                    data_type: boolean
+                data:
+                    data_type: array
+            filters:
+                fields:
+                    order:
+                        data_type: integer
+                        operators: ['=']
+            actions:
+                get: false
+                get_list:
+                    page_size: -1 # disable paging
+                    disable_sorting: true
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+                get_subresource: false
+                get_relationship: false

@@ -26,6 +26,11 @@ The current file describes significant changes in the code that may affect the u
 
 ### Added
 
+#### OrderBundle
+* Added a new backend `ordersubtotals` API resource representing calculated subtotals for a specific order.
+* Added an `orderSubtotals` relation for the backend `orders` API resource.
+* Enabled an `enable_validation` flag for the backend `orders` API resource.
+
 #### ProductBundle
 * Added a new frontend `inventory-switcher` filter.
 

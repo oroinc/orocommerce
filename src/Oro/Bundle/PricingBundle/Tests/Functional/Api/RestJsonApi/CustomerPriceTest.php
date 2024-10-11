@@ -356,7 +356,7 @@ class CustomerPriceTest extends RestJsonApiTestCase
             ['filter' => ['website' => 999999, 'customer' => '@customer.level_1->id', 'product' => ['@product-1->id']]]
         );
 
-        $this->assertResponseContains([], $response);
+        $this->assertResponseContains(['data' => []], $response);
     }
 
     public function testGetListForNotExistingCustomer(): void
@@ -366,7 +366,7 @@ class CustomerPriceTest extends RestJsonApiTestCase
             ['filter' => ['customer' => 999999, 'website' => '@US->id', 'product' => ['@product-1->id']]]
         );
 
-        $this->assertResponseContains([], $response);
+        $this->assertResponseContains(['data' => []], $response);
     }
 
     public function testGetListForNotExistingProduct(): void
@@ -376,7 +376,7 @@ class CustomerPriceTest extends RestJsonApiTestCase
             ['filter' => ['product' => 999999, 'customer' => '@customer.level_1->id', 'website' => '@US->id']]
         );
 
-        $this->assertResponseContains([], $response);
+        $this->assertResponseContains(['data' => []], $response);
     }
 
     public function testTryToGet(): void

@@ -18,7 +18,7 @@ final readonly class CustomerPrice
         private float $value,
         private string $unit
     ) {
-        $this->id = implode('-', [$customerId ?? 0, $websiteId, $productId, $currency, $unit, $quantity]);
+        $this->id = \implode('-', [$customerId ?? 0, $websiteId, $productId, $currency, $unit, $quantity]);
     }
 
     public function getId(): string

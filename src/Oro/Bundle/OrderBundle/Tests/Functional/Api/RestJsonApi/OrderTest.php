@@ -2,23 +2,31 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
+use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SearchBundle\Async\Topic\IndexEntitiesByIdTopic;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
+ * @nestTransactionsWithSavepoints
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OrderTest extends RestJsonApiTestCase
 {
+    use MessageQueueAssertTrait;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -390,6 +398,16 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_order.yml', $response);
     }
 
+    public function testGetIncludeOrderSubtotals(): void
+    {
+        $response = $this->get(
+            ['entity' => 'orders', 'id' => '<toString(@simple_order->id)>'],
+            ['include' => 'orderSubtotals']
+        );
+
+        $this->assertResponseContains('get_order_include_order_subtotals.yml', $response);
+    }
+
     public function testCreate(): void
     {
         $organizationId = $this->getReference(LoadOrders::ORDER_1)->getOrganization()->getId();
@@ -633,32 +651,8 @@ class OrderTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
         $this->getEntityManager()->clear();
 
-        $this->patch(
-            ['entity' => 'orders', 'id' => $orderId],
-            [
-                'data' => [
-                    'type'          => 'orders',
-                    'id'            => (string)$orderId,
-                    'attributes'    => [
-                        'customerNotes' => 'test notes'
-                    ],
-                    'relationships' => [
-                        'paymentTerm' => [
-                            'data' => [
-                                'type' => 'paymentterms',
-                                'id'   => '<toString(@payment_term.net_20->id)>'
-                            ]
-                        ],
-                        'status'      => [
-                            'data' => [
-                                'type' => 'orderstatuses',
-                                'id'   => 'open'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        );
+        $requestParameters = $this->getPatchRequestParameters($orderId);
+        $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
@@ -1162,5 +1156,230 @@ class OrderTest extends RestJsonApiTestCase
 
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertTrue(null === $order);
+    }
+
+    public function testCreateWhenValidateEqualsToTrue(): void
+    {
+        $parameters = $this->getRequestData('create_order.yml');
+        $parameters[JsonApiDoc::DATA]['meta']['validate'] = true;
+
+        $response = $this->post(['entity' => 'orders'], $parameters);
+        $content = self::jsonToArray($response->getContent());
+
+        self::assertEquals('new_order', $content[JsonApiDoc::DATA]['attributes']['identifier']);
+        self::assertEquals('2345678', $content[JsonApiDoc::DATA]['attributes']['poNumber']);
+        self::assertAllMessagesSent([]);
+
+        $orderId = (int)$this->getResourceId($response);
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+
+        self::assertNull($order);
+    }
+
+    public function testCreateWhenValidateEqualsToFalse(): void
+    {
+        $parameters = $this->getRequestData('create_order.yml');
+        $parameters[JsonApiDoc::DATA]['meta']['validate'] = false;
+
+        $response = $this->post(['entity' => 'orders'], $parameters);
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+
+        self::assertNotNull($order);
+
+        self::assertEquals('new_order', $order->getIdentifier());
+        self::assertEquals('2345678', $order->getPoNumber());
+        self::assertAllMessagesSent([
+            [
+                'topic' => IndexEntitiesByIdTopic::getName(),
+                'message' => [
+                    'class' => Order::class,
+                    'entityIds' => [$order->getId() => $order->getId()]
+                ]
+            ]
+        ]);
+    }
+
+    public function testCreateWithIncludeFilterWhenValidateEqualsToTrue(): void
+    {
+        $parameters = $this->getRequestData('create_order.yml');
+        $parameters[JsonApiDoc::DATA]['meta']['validate'] = true;
+        $parameters['include'] = 'include=orderSubtotals';
+
+        $response = $this->post(['entity' => 'orders'], $parameters);
+        $content = self::jsonToArray($response->getContent());
+
+        self::assertEquals('new_order', $content[JsonApiDoc::DATA]['attributes']['identifier']);
+        self::assertEquals('2345678', $content[JsonApiDoc::DATA]['attributes']['poNumber']);
+        self::assertAllMessagesSent([]);
+
+        $orderId = (int)$this->getResourceId($response);
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+
+        self::assertNull($order);
+
+        $this->assertOrderSubtotalsRelationshipsByOrder($response, $orderId);
+        $this->assertIncludedOrderSubtotalsByOrder(
+            'create_order_with_included_order_subtotals.yml',
+            $response,
+            $orderId
+        );
+    }
+
+    public function testUpdateWhenValidateEqualsToTrue(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+        $order->setSubtotal(11);
+        $order->setTotal(10);
+        $order->setTotalDiscounts(Price::create(1, $order->getCurrency()));
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
+
+        $requestParameters = $this->getPatchRequestParameters($orderId);
+        $requestParameters[JsonApiDoc::DATA]['meta']['validate'] = true;
+
+        $response = $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertNull($updatedOrder->getCustomerNotes());
+        $paymentTermProvider = self::getContainer()->get('oro_payment_term.provider.payment_term');
+        self::assertEquals('net 10', $paymentTermProvider->getObjectPaymentTerm($updatedOrder)->getLabel());
+        self::assertSame('11.0000', $updatedOrder->getSubtotal());
+        self::assertSame('10.0000', $updatedOrder->getTotal());
+        self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
+        self::assertAllMessagesSent([]);
+
+        $data = self::jsonToArray($response->getContent());
+        self::assertSame('test notes', $data['data']['attributes']['customerNotes']);
+    }
+
+    public function testUpdateWhenValidateEqualsToFalse(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+        $order->setSubtotal(11);
+        $order->setTotal(10);
+        $order->setTotalDiscounts(Price::create(1, $order->getCurrency()));
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
+
+        $requestParameters = $this->getPatchRequestParameters($orderId);
+        $requestParameters[JsonApiDoc::DATA]['meta']['validate'] = false;
+
+        $response = $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertEquals('test notes', $updatedOrder->getCustomerNotes());
+        $paymentTermProvider = self::getContainer()->get('oro_payment_term.provider.payment_term');
+        self::assertEquals('net 20', $paymentTermProvider->getObjectPaymentTerm($updatedOrder)->getLabel());
+        self::assertSame('444.5000', $updatedOrder->getSubtotal());
+        self::assertSame('444.5000', $updatedOrder->getTotal());
+        self::assertNull($updatedOrder->getTotalDiscounts());
+        self::assertNull($updatedOrder->getStatus());
+        self::assertAllMessagesSent([]);
+
+        $data = self::jsonToArray($response->getContent());
+        self::assertSame('test notes', $data['data']['attributes']['customerNotes']);
+    }
+
+    public function testUpdateWithIncludeFilterWhenValidateEqualsToTrue(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+        $order->setSubtotal(11);
+        $order->setTotal(10);
+        $order->setTotalDiscounts(Price::create(1, $order->getCurrency()));
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
+
+        $requestParameters = $this->getPatchRequestParameters($orderId);
+        $requestParameters[JsonApiDoc::DATA]['meta']['validate'] = true;
+        $requestParameters['include'] = 'include=orderSubtotals';
+
+        $response = $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertNull($updatedOrder->getCustomerNotes());
+        $paymentTermProvider = self::getContainer()->get('oro_payment_term.provider.payment_term');
+        self::assertEquals('net 10', $paymentTermProvider->getObjectPaymentTerm($updatedOrder)->getLabel());
+        self::assertSame('11.0000', $updatedOrder->getSubtotal());
+        self::assertSame('10.0000', $updatedOrder->getTotal());
+        self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
+        self::assertAllMessagesSent([]);
+
+        $data = self::jsonToArray($response->getContent());
+        self::assertSame('test notes', $data['data']['attributes']['customerNotes']);
+
+        $this->assertOrderSubtotalsRelationshipsByOrder($response, $orderId);
+        $this->assertIncludedOrderSubtotalsByOrder(
+            'update_order_with_included_order_subtotals.yml',
+            $response,
+            $orderId
+        );
+    }
+
+    private function assertOrderSubtotalsRelationshipsByOrder(Response $response, int $orderId): void
+    {
+        $data['data']['relationships']['orderSubtotals']['data'] = [
+            ['type' => 'ordersubtotals', 'id' => $orderId . '-subtotal-0'],
+            ['type' => 'ordersubtotals', 'id' => $orderId . '-discount-1'],
+            ['type' => 'ordersubtotals', 'id' => $orderId . '-shipping_cost-2'],
+            ['type' => 'ordersubtotals', 'id' => $orderId . '-discount-3'],
+            ['type' => 'ordersubtotals', 'id' => $orderId . '-tax-4'],
+            ['type' => 'ordersubtotals', 'id' => $orderId . '-tax-5'],
+            ['type' => 'ordersubtotals', 'id' => $orderId . '-tax-6'],
+        ];
+
+        $this->assertResponseContains($data, $response);
+    }
+
+    private function assertIncludedOrderSubtotalsByOrder(string $path, Response $response, int $orderId): void
+    {
+        $data = $this->getResponseData($path);
+        foreach ($data['included'] as &$datum) {
+            $orderSubtotalId = sprintf('%s-%s', $orderId, $datum['id']);
+            $datum['id'] = $orderSubtotalId;
+            $datum['relationships']['order']['data']['id'] = (string)$orderId;
+        }
+
+        $this->assertResponseContains($data, $response);
+    }
+
+    private function getPatchRequestParameters(string $orderId): array
+    {
+        return [
+            'data' => [
+                'meta'          => ['validate' => false],
+                'type'          => 'orders',
+                'id'            => $orderId,
+                'attributes'    => [
+                    'customerNotes' => 'test notes'
+                ],
+                'relationships' => [
+                    'paymentTerm' => [
+                        'data' => [
+                            'type' => 'paymentterms',
+                            'id'   => '<toString(@payment_term.net_20->id)>'
+                        ]
+                    ],
+                    'status'      => [
+                        'data' => [
+                            'type' => 'orderstatuses',
+                            'id'   => 'open'
+                        ]
+                    ]
+                ]
+            ]
+        ];
     }
 }

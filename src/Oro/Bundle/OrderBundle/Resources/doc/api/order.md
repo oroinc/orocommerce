@@ -239,6 +239,16 @@ The entity from which this order was created.
 
 **The read-only field when "Enable External Status Management" configuration option is disabled. A passed value will be ignored in this case.**
 
+### orderSubtotals
+
+Calculated order subtotal records for a specific order.
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ## SUBRESOURCES
 
 ### billingAddress
