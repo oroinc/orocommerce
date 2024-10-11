@@ -3,30 +3,46 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
-use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
+use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
+use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
+use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class OrderShippingTrackingTest extends RestJsonApiTestCase
 {
+    use RolePermissionExtension;
+
     protected function setUp(): void
     {
         parent::setUp();
-        $this->loadFixtures([
-            '@OroOrderBundle/Tests/Functional/DataFixtures/order_shipping_tracking.yml'
-        ]);
+        $this->loadFixtures(['@OroOrderBundle/Tests/Functional/Api/DataFixtures/order_shipping_tracking.yml']);
+
+        $this->updateRolePermissions(
+            User::ROLE_ADMINISTRATOR,
+            Order::class,
+            [
+                'VIEW'   => AccessLevel::BASIC_LEVEL,
+                'CREATE' => AccessLevel::BASIC_LEVEL,
+                'EDIT'   => AccessLevel::BASIC_LEVEL,
+                'DELETE' => AccessLevel::BASIC_LEVEL
+            ]
+        );
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(['entity' => 'ordershippingtrackings']);
 
         $this->assertResponseContains('cget_shipping_tracking.yml', $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'ordershippingtrackings', 'id' => '<toString(@order_shipping_tracking.1->id)>']
@@ -35,9 +51,28 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_shipping_tracking.yml', $response);
     }
 
-    public function testCreate()
+    public function testTryToGetForUnaccessibleOrder(): void
     {
-        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->get(
+            ['entity' => 'ordershippingtrackings', 'id' => '<toString(@order_shipping_tracking.3->id)>'],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
+    public function testCreate(): void
+    {
+        $orderId = $this->getReference('order1')->getId();
         $data = [
             'data' => [
                 'type'          => 'ordershippingtrackings',
@@ -72,7 +107,38 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
         self::assertEquals($orderId, $shippingTracking->getOrder()->getId());
     }
 
-    public function testUpdateMethod()
+    public function testTryToCreateForUnaccessibleOrder(): void
+    {
+        $response = $this->post(
+            ['entity' => 'ordershippingtrackings'],
+            [
+                'data' => [
+                    'type'          => 'ordershippingtrackings',
+                    'attributes'    => [
+                        'method' => 'method 3',
+                        'number' => 'number 3'
+                    ],
+                    'relationships' => [
+                        'order' => ['data' => ['type' => 'orders', 'id' => '<toString(@order3->id)>']]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access granted constraint',
+                'detail' => 'The "VIEW" permission is denied for the related resource.',
+                'source' => ['pointer' => '/data/relationships/order/data']
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
+    public function testUpdateMethod(): void
     {
         $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
 
@@ -94,7 +160,7 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
         self::assertEquals('method 4', $shippingTracking->getMethod());
     }
 
-    public function testUpdateNumber()
+    public function testUpdateNumber(): void
     {
         $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
 
@@ -116,7 +182,62 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
         self::assertEquals('number 4', $shippingTracking->getNumber());
     }
 
-    public function testDeleteList()
+    public function testTryToUpdateForUnaccessibleOrder(): void
+    {
+        $response = $this->patch(
+            ['entity' => 'ordershippingtrackings', 'id' => '<toString(@order_shipping_tracking.3->id)>'],
+            [
+                'data' => [
+                    'type'       => 'ordershippingtrackings',
+                    'id'         => '<toString(@order_shipping_tracking.3->id)>',
+                    'attributes' => [
+                        'method' => 'method 4'
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
+    public function testDelete(): void
+    {
+        $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
+
+        $this->delete(['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId]);
+
+        self::assertTrue(null === $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId));
+    }
+
+    public function testDeleteForUnaccessibleOrder(): void
+    {
+        $response = $this->delete(
+            ['entity' => 'ordershippingtrackings', 'id' => '<toString(@order_shipping_tracking.3->id)>'],
+            [],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
+    public function testDeleteList(): void
     {
         $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
 
@@ -125,11 +246,22 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
             ['filter' => ['id' => (string)$shippingTrackingId]]
         );
 
-        $shippingTracking = $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId);
-        self::assertTrue(null === $shippingTracking);
+        self::assertTrue(null === $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId));
     }
 
-    public function testGetRelationshipForOrder()
+    public function testDeleteListForUnaccessibleOrder(): void
+    {
+        $shippingTrackingId = $this->getReference('order_shipping_tracking.3')->getId();
+
+        $this->cdelete(
+            ['entity' => 'ordershippingtrackings'],
+            ['filter' => ['id' => (string)$shippingTrackingId]]
+        );
+
+        self::assertTrue(null !== $this->getEntityManager()->find(OrderShippingTracking::class, $shippingTrackingId));
+    }
+
+    public function testGetRelationshipForOrder(): void
     {
         /** @var OrderShippingTracking $shippingTracking */
         $shippingTracking = $this->getReference('order_shipping_tracking.1');
@@ -146,10 +278,10 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateRelationshipForOrder()
+    public function testUpdateRelationshipForOrder(): void
     {
         $shippingTrackingId = $this->getReference('order_shipping_tracking.1')->getId();
-        $targetOrderId = $this->getReference(LoadOrders::MY_ORDER)->getId();
+        $targetOrderId = $this->getReference('order2')->getId();
 
         $this->patchRelationship(
             ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId, 'association' => 'order'],
