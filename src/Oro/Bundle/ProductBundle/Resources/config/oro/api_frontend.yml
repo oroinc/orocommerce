@@ -104,7 +104,7 @@ api:
                         allow_array: true
             actions:
                 get_list:
-                    page_size: -1 # disable paging
+                    disable_paging: true
                     disable_sorting: true
                 create: false
                 update: false
@@ -191,21 +191,21 @@ api:
                 variantProducts:
                     actions:
                         get_subresource:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                         get_relationship:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                 parentProducts:
                     actions:
                         get_subresource:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                         get_relationship:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                 kitItems:
                     actions:
                         get_subresource:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                         get_relationship:
-                            page_size: -1 # disable paging
+                            disable_paging: true
 
         Oro\Bundle\ProductBundle\Api\Model\ProductSearch:
             documentation_resource: '@OroProductBundle/Resources/doc/api_frontend/product_search.md'
@@ -401,9 +401,9 @@ api:
                 kitItemProducts:
                     actions:
                         get_subresource:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                         get_relationship:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                 productUnit:
                     actions:
                         get_subresource: true

@@ -60,7 +60,7 @@ api:
                     description: Get Master Catalog Tree Node
                 get_list:
                     description: Get Master Catalog Tree Nodes
-                    page_size: -1 # disable paging
+                    disable_paging: true
                     disable_sorting: true
                 create: false
                 update: false
@@ -73,10 +73,10 @@ api:
                         exclusion_policy: all
                     actions:
                         get_relationship:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                             disable_sorting: true
                         get_subresource:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                             disable_sorting: true
 
         Oro\Bundle\CatalogBundle\Entity\Category:
@@ -154,10 +154,10 @@ api:
                         exclusion_policy: all
                     actions:
                         get_relationship:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                             disable_sorting: true
                         get_subresource:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                             disable_sorting: true
 
         Oro\Bundle\ProductBundle\Entity\Product:

@@ -273,7 +273,7 @@ api:
                         allow_array: true
             actions:
                 get_list:
-                    page_size: -1 # disable paging because ProductPriceProvider doesn't support pagination
+                    disable_paging: true
                     disable_sorting: true
                 get: false
                 create: false

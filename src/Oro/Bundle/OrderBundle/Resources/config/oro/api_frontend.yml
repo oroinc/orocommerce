@@ -132,7 +132,7 @@ api:
                     exclude: true
             actions:
                 get_list:
-                    page_size: -1 # disable paging
+                    disable_paging: true
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order_line_item.md'

@@ -90,13 +90,13 @@ api:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
             actions:
                 get_list:
-                    page_size: -1 # disable paging
+                    disable_paging: true
 
         Extend\Entity\EV_Order_Internal_Status:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
             actions:
                 get_list:
-                    page_size: -1 # disable paging
+                    disable_paging: true
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_line_item.md'
@@ -251,7 +251,7 @@ api:
             actions:
                 get: false
                 get_list:
-                    page_size: -1 # disable paging
+                    disable_paging: true
                     disable_sorting: true
                 create: false
                 update: false
