@@ -10,6 +10,8 @@ oro_behat_extension:
       selector: "input[name='oro_product[additionalUnitPrecisions][0][precision]']"
     ProductAdditionalSellField:
       selector: "input[name='oro_product[additionalUnitPrecisions][0][sell]']"
+    ProductAdditionalSellFieldSecondRow:
+      selector: "input[name='oro_product[additionalUnitPrecisions][1][sell]']"
     ProductUnitLabel:
       selector: "[data-role='unit-label']"
     ProductUnitSelect:
@@ -1140,6 +1142,27 @@ oro_behat_extension:
             locator: '[name="oro_product_frontend_line_item[unit]"]'
             element: ProductUnitSelector
 
+    Product Kit Row In Shopping List:
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridRow
+      selector:
+        locator: '//*[contains(@class, "grid-row-product-kit") and not(contains(@class, "notification-row"))]'
+        type: xpath
+
+    Product Kit Row 2 In Shopping List:
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridRow
+      selector:
+        locator: '(//*[contains(@class, "grid-row-product-kit") and not(contains(@class, "notification-row"))])[2]'
+        type: xpath
+
+    Decrement Product Quantity In Row 1:
+      selector:
+        locator: '//button[@data-type="decrement"][1]'
+        type: 'xpath'
+
+    Increment Product Quantity In Row 1:
+      selector:
+        locator: '//button[@data-type="increment"][1]'
+        type: 'xpath'
 
     Product Shopping List Dropdown:
       selector:
@@ -1971,6 +1994,11 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//select[@name="oro_product[kitItems][0][productUnit]"]'
+
+    Expand Kit Items:
+      selector:
+        type: 'xpath'
+        locator: '//*[contains(@class, "action-holder")]//button[@data-role="expand-kits"]'
 
     Simple Product 03 Link:
       selector:

@@ -219,3 +219,30 @@ Feature: My Shopping List with products unit of quantity is more than zero
       | BB14 | Product 14 Note 14 text                     | IN STOCK     | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
       | BB15 | Product 15 Note 15 text                     | OUT OF STOCK | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
       | BB16 | Product 16 Note 16 text                     | IN STOCK     | 9             | items  | $23.00 | $207.00 -$103.50 $103.50                   |
+
+  Scenario: Removing a configurable product when editing it in the dialog
+    When I click "Shopping List Actions"
+    And I click "Edit"
+    And I click "Group Product Variants"
+    And I select 10 from per page list dropdown in "Frontend Customer User Shopping List Edit Grid"
+    And I sort grid by "SKU"
+    And I click "Configure" on row "Configurable Product 1" in grid
+    And I click "Remove From Shopping List"
+    And I should see "Are you sure you want to delete this product?"
+    And click "Yes, Delete"
+    Then I should see 'The "Configurable Product 1" product was successfully deleted' flash message
+    And I should not see "Configurable Product 1"
+    And I should see following "Frontend Customer User Shopping List Edit Grid" grid:
+      | SKU  | Product                                     |
+      | BB06 | Configurable Product 2 Blue S Note 6 text   |
+      | BB07 | Configurable Product 2 Red M Note 7 text    |
+      | BB11 | Configurable Product 2 Green L Note 11 text |
+      |      | Configurable Product 3                      |
+      | BB08 | Green L Note 8 text                         |
+      | BB09 | Blue S Note 9 text                          |
+      | BB10 | Configurable Product 3 Red M Note 10 text   |
+      | BB13 | Product 13 Note 13 text                     |
+      | BB14 | Product 14 Note 14 text                     |
+      | BB15 | Product 15 Note 15 text                     |
+      | BB16 | Product 16 Note 16 text                     |
+      | BB17 | Product 17 Note 17 text                     |

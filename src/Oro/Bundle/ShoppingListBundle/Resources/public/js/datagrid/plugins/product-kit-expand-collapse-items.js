@@ -21,7 +21,7 @@ const ProductKitExpandCollapseItems = BasePlugin.extend({
             return;
         }
 
-        this.main.$el.on(`click${this.eventNamespace()}`, '[data-role="expand-kids"]', this.onClick.bind(this));
+        this.main.$el.on(`click${this.eventNamespace()}`, '[data-role="expand-kits"]', this.onClick.bind(this));
         ProductKitExpandCollapseItems.__super__.enable.call(this);
     },
 
@@ -34,14 +34,19 @@ const ProductKitExpandCollapseItems = BasePlugin.extend({
     },
 
     onClick(event) {
-        const id = this.main.$(event.currentTarget).data('groupId');
         const $row = this.main.$(event.currentTarget).parents('.grid-row');
         const isCollapsed = $row.hasClass(this.collapsedClass);
-        const rowSelector = `tr[data-product-group="${id}"]`;
-        const buttonsSelector = `button[data-group-id="${id}"]`;
+        const buttonsSelector = '[data-role="expand-kits"]';
+
+        let $subRows = $();
+        let $nextRow = $row.next();
+        while ($nextRow.is('.sub-row-product-kit')) {
+            $subRows = $subRows.add($nextRow);
+            $nextRow = $nextRow.next();
+        }
 
         if (isCollapsed) {
-            this.main.$(buttonsSelector).each((i, el) => {
+            $row.find(buttonsSelector).each((i, el) => {
                 const $label = $(el).find('[data-label]');
 
                 $(el).removeClass('collapsed');
@@ -49,16 +54,16 @@ const ProductKitExpandCollapseItems = BasePlugin.extend({
             });
 
             $row.removeClass(this.collapsedClass);
-            this.main.$(rowSelector).removeClass(this.hideClass);
+            $subRows.removeClass(this.hideClass);
         } else {
-            this.main.$(buttonsSelector).each((i, el) => {
+            $row.find(buttonsSelector).each((i, el) => {
                 const $label = $(el).find('[data-label]');
 
                 $(el).addClass('collapsed');
                 $label.text($label.data('labelCollapsed'));
             });
             $row.addClass(this.collapsedClass);
-            this.main.$(rowSelector).addClass(this.hideClass);
+            $subRows.addClass(this.hideClass);
         }
     }
 });

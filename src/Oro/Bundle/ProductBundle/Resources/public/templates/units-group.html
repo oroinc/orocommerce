@@ -30,7 +30,7 @@ const _formattedUnit = oroshoppinglist.renderUnit({unit: unit, quantity: 1});
                     class="select <%- selectMode.class ?? ''%>"
                     aria-label="<%- selectMode.ariaLabel ?? ''%>"
                     required
-                <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SELECT %>
+                <%- oroproduct.UNIT_SELECT_NAME %>="<%- oroproduct.UNIT_SELECT_TYPE.SELECT %>"
             >
                 <% _.each(units, function(unit, value) { %>
                 <option value="<%- value %>"<% if (unit.selected) { %> selected<% } %><% if (unit.disabled) { %> disabled<% } %>>
