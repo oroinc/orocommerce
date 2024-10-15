@@ -54,6 +54,56 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_product_kit_line_item.yml', $response);
     }
 
+    public function testGetListCheckThatFilteringByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            [
+                'filter[createdAt]' => '@order_line_item.1->createdAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@order_line_item.1->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orderlineitems', 'id' => '<toString(@order_line_item.1->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatFilteringByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            [
+                'filter[updatedAt]' => '@order_line_item.1->updatedAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@order_line_item.1->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orderlineitems', 'id' => '<toString(@order_line_item.1->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatSortingByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            ['sort' => '-createdAt', 'filter[order]' => '<toString(@simple_order->id)>']
+        );
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(2, $responseData['data']);
+    }
+
+    public function testGetListCheckThatSortingByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            ['sort' => '-updatedAt', 'filter[order]' => '<toString(@simple_order->id)>']
+        );
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(2, $responseData['data']);
+    }
+
     public function testCreateWithFreeFormProduct(): void
     {
         $productUnitId = $this->getReference(LoadProductUnits::BOTTLE)->getCode();
@@ -210,6 +260,25 @@ class OrderLineItemTest extends RestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateWithCreatedAtAndUpdatedAt(): void
+    {
+        $createdAt = (new \DateTime('now - 10 day'))->format('Y-m-d\TH:i:s\Z');
+        $updatedAt = (new \DateTime('now - 9 day'))->format('Y-m-d\TH:i:s\Z');
+        $data = $this->getRequestData('create_line_item_with_product_sku.yml');
+        $data['data']['attributes']['createdAt'] = $createdAt;
+        $data['data']['attributes']['updatedAt'] = $updatedAt;
+
+        $response = $this->post(['entity' => 'orderlineitems'], $data);
+
+        $lineItemId = (int)$this->getResourceId($response);
+
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
+        // createdAt and updatedAt fields are read-only for order line items
+        self::assertNotEquals($createdAt, $lineItem->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+        self::assertNotEquals($updatedAt, $lineItem->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
+    }
+
     public function testUpdate(): void
     {
         $lineItemId = $this->getReference('order_line_item.1')->getId();
@@ -240,6 +309,47 @@ class OrderLineItemTest extends RestJsonApiTestCase
         self::assertSame('5366.0000', $order->getSubtotal());
         self::assertSame('5366.0000', $order->getTotal());
         self::assertNull($order->getTotalDiscounts());
+    }
+
+    public function testTryToUpdateCreatedAtAndUpdatedAt(): void
+    {
+        /** @var OrderLineItem $lineItem */
+        $lineItem = $this->getReference('order_line_item.1');
+        $lineItemId = $lineItem->getId();
+        $lineItemCreatedAt = $lineItem->getCreatedAt()->format('Y-m-d\TH:i:s\Z');
+        $lineItemNewUpdatedAt = (new \DateTime('now - 9 day'))->format('Y-m-d\TH:i:s\Z');
+
+        $response = $this->patch(
+            ['entity' => 'orderlineitems', 'id' => $lineItemId],
+            [
+                'data' => [
+                    'type'          => 'orderlineitems',
+                    'id'            => (string)$lineItemId,
+                    'attributes' => [
+                        'createdAt' => (new \DateTime('now - 10 day'))->format('Y-m-d\TH:i:s\Z'),
+                        'updatedAt' => $lineItemNewUpdatedAt
+                    ]
+                ]
+            ]
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'          => 'orderlineitems',
+                    'id'            => (string)$lineItemId,
+                    'attributes' => [
+                        'createdAt' => $lineItemCreatedAt
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        /** @var OrderLineItem $updatedLineItem */
+        $updatedLineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
+        // createdAt and updatedAt fields are read-only for order line items
+        self::assertEquals($lineItemCreatedAt, $updatedLineItem->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+        self::assertNotEquals($lineItemNewUpdatedAt, $updatedLineItem->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
     }
 
     public function testGetSubresourceForOrder(): void

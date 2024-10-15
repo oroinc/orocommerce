@@ -39,7 +39,7 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_22';
+        return 'v1_23';
     }
 
     #[\Override]
@@ -260,6 +260,8 @@ class OroOrderBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['product_id'], 'idx_de9136094584665a');
         $table->addIndex(['product_unit_id'], 'idx_de91360929646bbd');

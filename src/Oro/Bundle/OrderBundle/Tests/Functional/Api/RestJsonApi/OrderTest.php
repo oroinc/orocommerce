@@ -389,6 +389,50 @@ class OrderTest extends RestJsonApiTestCase
         );
     }
 
+    public function testGetListCheckThatFilteringByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orders'],
+            [
+                'filter[createdAt]' => '@simple_order->createdAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@simple_order->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orders', 'id' => '<toString(@simple_order->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatFilteringByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orders'],
+            [
+                'filter[updatedAt]' => '@simple_order->updatedAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@simple_order->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orders', 'id' => '<toString(@simple_order->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatSortingByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['sort' => '-createdAt']);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(7, $responseData['data']);
+    }
+
+    public function testGetListCheckThatSortingByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['sort' => '-updatedAt']);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(7, $responseData['data']);
+    }
+
     public function testGet(): void
     {
         $response = $this->get(
@@ -437,6 +481,25 @@ class OrderTest extends RestJsonApiTestCase
         /** @var OrderLineItem $productKitLineItem */
         $productKitLineItem = $lineItems->get(1);
         self::assertEquals(1, $productKitLineItem->getKitItemLineItems()->count());
+    }
+
+    public function testTryToCreateWithCreatedAtAndUpdatedAt(): void
+    {
+        $createdAt = (new \DateTime('now - 10 day'))->format('Y-m-d\TH:i:s\Z');
+        $updatedAt = (new \DateTime('now - 9 day'))->format('Y-m-d\TH:i:s\Z');
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['attributes']['createdAt'] = $createdAt;
+        $data['data']['attributes']['updatedAt'] = $updatedAt;
+
+        $response = $this->post(['entity' => 'orders'], $data);
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        // createdAt and updatedAt fields are read-only for orders
+        self::assertNotEquals($createdAt, $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+        self::assertNotEquals($updatedAt, $order->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
     }
 
     public function testCreateWhenLineItemDoesNotHaveProductRelationshipButHaveProductSku(): void
@@ -664,6 +727,47 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($updatedOrder->getTotalDiscounts());
         // the status should be read-only when "Enable External Status Management" configuration option is disabled
         self::assertNull($updatedOrder->getStatus());
+    }
+
+    public function testTryToUpdateCreatedAtAndUpdatedAt(): void
+    {
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+        $orderCreatedAt = $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z');
+        $orderNewUpdatedAt = (new \DateTime('now - 9 day'))->format('Y-m-d\TH:i:s\Z');
+
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => $orderId],
+            [
+                'data' => [
+                    'type'          => 'orders',
+                    'id'            => (string)$orderId,
+                    'attributes' => [
+                        'createdAt' => (new \DateTime('now - 10 day'))->format('Y-m-d\TH:i:s\Z'),
+                        'updatedAt' => $orderNewUpdatedAt
+                    ]
+                ]
+            ]
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'          => 'orders',
+                    'id'            => (string)$orderId,
+                    'attributes' => [
+                        'createdAt' => $orderCreatedAt
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        // createdAt and updatedAt fields are read-only for orders
+        self::assertEquals($orderCreatedAt, $updatedOrder->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+        self::assertNotEquals($orderNewUpdatedAt, $updatedOrder->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
     }
 
     public function testTryToUpdateCreatedBy(): void

@@ -115,6 +115,10 @@ api:
                         allow_array: true
                         options:
                             case_insensitive: true
+                    updatedAt: ~
+            sorters:
+                fields:
+                    updatedAt: ~
             actions:
                 create:
                     form_options:
@@ -161,6 +165,14 @@ api:
                     exclude: true
                 shippingMethodType:
                     exclude: true
+            filters:
+                fields:
+                    createdAt: ~
+                    updatedAt: ~
+            sorters:
+                fields:
+                    createdAt: ~
+                    updatedAt: ~
             actions:
                 create:
                     form_options:

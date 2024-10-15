@@ -41,6 +41,56 @@ class OrderLineItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_line_item_filter_by_order.yml', $response);
     }
 
+    public function testGetListCheckThatFilteringByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            [
+                'filter[createdAt]' => '@order1_line_item1->createdAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@order1_line_item1->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatFilteringByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            [
+                'filter[updatedAt]' => '@order1_line_item1->updatedAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@order1_line_item1->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatSortingByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            ['sort' => '-createdAt', 'filter[order]' => '<toString(@order1->id)>']
+        );
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(2, $responseData['data']);
+    }
+
+    public function testGetListCheckThatSortingByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orderlineitems'],
+            ['sort' => '-updatedAt', 'filter[order]' => '<toString(@order1->id)>']
+        );
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(2, $responseData['data']);
+    }
+
     public function testGet(): void
     {
         $response = $this->get(
