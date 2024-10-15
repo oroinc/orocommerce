@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
 
 /**
@@ -117,6 +118,34 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $responseContent['included'][1]['relationships']['customerAddress']['data'] = null;
         $responseContent = $this->updateResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
+    }
+
+    public function testTryToCreateWithCreatedAtAndUpdatedAt(): void
+    {
+        $createdAt = (new \DateTime('now - 10 day'))->format('Y-m-d\TH:i:s\Z');
+        $updatedAt = (new \DateTime('now - 9 day'))->format('Y-m-d\TH:i:s\Z');
+        $data = $this->getRequestData('create_order_min.yml');
+        $data['data']['attributes']['createdAt'] = $createdAt;
+        $data['data']['attributes']['updatedAt'] = $updatedAt;
+        $data['included'][0]['attributes']['createdAt'] = $createdAt;
+        $data['included'][0]['attributes']['updatedAt'] = $updatedAt;
+
+        $response = $this->post(['entity' => 'orders'], $data);
+
+        $orderId = (int)$this->getResourceId($response);
+
+        $responseContent = $this->updateResponseContent('create_order_min.yml', $response);
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        // createdAt and updatedAt fields are read-only for orders and line items
+        self::assertNotEquals($createdAt, $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+        self::assertNotEquals($updatedAt, $order->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
+        foreach ($order->getLineItems() as $lineItem) {
+            self::assertNotEquals($createdAt, $lineItem->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
+            self::assertNotEquals($updatedAt, $lineItem->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
+        }
     }
 
     public function testTryToCreateEmpty(): void

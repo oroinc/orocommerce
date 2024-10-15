@@ -202,6 +202,50 @@ class OrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testGetListCheckThatFilteringByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orders'],
+            [
+                'filter[createdAt]' => '@order2->createdAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@order2->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orders', 'id' => '<toString(@order2->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatFilteringByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'orders'],
+            [
+                'filter[updatedAt]' => '@order2->updatedAt->format("Y-m-d\TH:i:s\Z")',
+                'filter[id]' => '<toString(@order2->id)>'
+            ]
+        );
+        $this->assertResponseContains(
+            ['data' => [['type' => 'orders', 'id' => '<toString(@order2->id)>']]],
+            $response
+        );
+    }
+
+    public function testGetListCheckThatSortingByCreatedAtIsSupported(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['sort' => '-createdAt']);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(5, $responseData['data']);
+    }
+
+    public function testGetListCheckThatSortingByUpdatedAtIsSupported(): void
+    {
+        $response = $this->cget(['entity' => 'orders'], ['sort' => '-updatedAt']);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(5, $responseData['data']);
+    }
+
     public function testGet(): void
     {
         $response = $this->get(

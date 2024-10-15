@@ -32,9 +32,11 @@ api:
                         options:
                             case_insensitive: true
                     external: ~
+                    updatedAt: ~
             sorters:
                 fields:
                     external: ~
+                    updatedAt: ~
             actions:
                 create:
                     form_options:
@@ -67,6 +69,14 @@ api:
                 productUnitCode:
                     form_options:
                         mapped: false
+            filters:
+                fields:
+                    createdAt: ~
+                    updatedAt: ~
+            sorters:
+                fields:
+                    createdAt: ~
+                    updatedAt: ~
             actions:
                 create:
                     form_options:

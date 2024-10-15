@@ -100,7 +100,7 @@ This value can be omitted if the **productSku** field is specified in the reques
 
 ### checksum
 
-#### create, update
+#### create
 
 {@inheritdoc}
 
