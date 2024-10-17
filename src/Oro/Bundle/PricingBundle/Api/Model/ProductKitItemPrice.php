@@ -3,12 +3,10 @@
 namespace Oro\Bundle\PricingBundle\Api\Model;
 
 /**
- * Represents a customer's price.
+ * Represents a product kit's item price.
  */
-final readonly class CustomerPrice
+final readonly class ProductKitItemPrice
 {
-    public const int CUSTOMER_GUEST_FILTER_VALUE = 0;
-
     private string $id;
 
     public function __construct(
@@ -18,10 +16,12 @@ final readonly class CustomerPrice
         private string $currency,
         private float $quantity,
         private float $value,
-        private string $unit
+        private string $unit,
+        private int $kitItemId
     ) {
-        $this->id = \implode('-', [
-            $customerId ?? self::CUSTOMER_GUEST_FILTER_VALUE,
+        $this->id = implode('-', [
+            $kitItemId,
+            $customerId ?? CustomerPrice::CUSTOMER_GUEST_FILTER_VALUE,
             $websiteId,
             $productId,
             $currency,
@@ -68,5 +68,10 @@ final readonly class CustomerPrice
     public function getUnit(): string
     {
         return $this->unit;
+    }
+
+    public function getKitItemId(): int
+    {
+        return $this->kitItemId;
     }
 }

@@ -6,7 +6,8 @@
 
 Retrieve a collection of customer's product price records.
 
-**Note:** It is required to provide the **customer**, **product**  and **website** filters with request.
+**Note:**
+It is required to provide the **customer**, **product** and **website** filters with request.
 
 ## FIELDS
 
@@ -28,7 +29,7 @@ The product.
 
 ### customer
 
-The customer.
+The customer. To get prices for an unauthorized user, use a **0** value.
 
 ### website
 

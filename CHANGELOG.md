@@ -36,6 +36,7 @@ The current file describes significant changes in the code that may affect the u
 
 #### PricingBundle
 * Added a new backend `customerprices` API resource.
+* Added a new backend `productkitprices` API resource.
 
 #### WebsiteSearchSuggestionBundle
 * Added the ability to show users in the search autocomplete field on the storefront suggestions

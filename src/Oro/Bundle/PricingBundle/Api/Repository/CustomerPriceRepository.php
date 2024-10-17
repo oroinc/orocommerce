@@ -10,6 +10,7 @@ use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ApiBundle\Util\QueryAclHelper;
 use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Api\Model\CustomerPrice;
 use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
@@ -31,7 +32,8 @@ class CustomerPriceRepository
         private ProductPriceScopeCriteriaFactoryInterface $productPriceScopeCriteriaFactory,
         private DoctrineHelper $doctrineHelper,
         private AuthorizationCheckerInterface $authorizationChecker,
-        private QueryAclHelper $queryAclHelper
+        private QueryAclHelper $queryAclHelper,
+        private CustomerUserRelationsProvider $customerUserRelationsProvider
     ) {
     }
 
@@ -101,6 +103,9 @@ class CustomerPriceRepository
         if (!\array_key_exists('productId', $filters)) {
             throw new \InvalidArgumentException('The "product" filter is required.');
         }
+        if (!\array_key_exists('websiteId', $filters)) {
+            throw new \InvalidArgumentException('The "website" filter is required.');
+        }
 
         $filters['customer'] = $this->getCustomer($filters['customerId']);
         $filters['website'] = $this->getWebsite($filters['websiteId']);
@@ -121,6 +126,10 @@ class CustomerPriceRepository
 
     private function getCustomer(int $customerId): ?Customer
     {
+        if ($customerId === CustomerPrice::CUSTOMER_GUEST_FILTER_VALUE) {
+            return $this->customerUserRelationsProvider->getCustomerIncludingEmpty();
+        }
+
         $customer = $this->doctrineHelper->getEntity(Customer::class, $customerId);
         if (!$this->authorizationChecker->isGranted(BasicPermission::VIEW, $customer)) {
             return null;
