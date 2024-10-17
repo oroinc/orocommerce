@@ -573,6 +573,7 @@ services:
             - '@oro_layout.theme_manager'
             - '@oro_redirect.slug_entity_finder'
             - '@oro_config.manager'
+            - '@oro_distribution.handler.application_status'
 
     oro_cms.layout.data_provider.title_data:
         class: Oro\Bundle\CMSBundle\Layout\DataProvider\TitleDataProvider

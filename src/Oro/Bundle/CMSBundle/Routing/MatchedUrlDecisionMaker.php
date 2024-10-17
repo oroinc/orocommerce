@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Routing;
 
 use Oro\Bundle\CMSBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
 use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker as BaseMatchedUrlDecisionMaker;
@@ -24,13 +25,16 @@ class MatchedUrlDecisionMaker extends BaseMatchedUrlDecisionMaker
 
     private ConfigManager $configManager;
 
+    private ApplicationState $applicationState;
+
     public function __construct(
         array $skippedUrlPatterns,
         FrontendHelper $frontendHelper,
         ThemeConfigurationProvider $themeConfigurationProvider,
         ThemeManager $themeManager,
         SlugEntityFinder $slugEntityFinder,
-        ConfigManager $configManager
+        ConfigManager $configManager,
+        ApplicationState $applicationState
     ) {
         parent::__construct($skippedUrlPatterns, $frontendHelper);
 
@@ -38,11 +42,16 @@ class MatchedUrlDecisionMaker extends BaseMatchedUrlDecisionMaker
         $this->themeManager = $themeManager;
         $this->slugEntityFinder = $slugEntityFinder;
         $this->configManager = $configManager;
+        $this->applicationState = $applicationState;
     }
 
     #[\Override]
     public function matches(string $pathinfo): bool
     {
+        if (!$this->applicationState->isInstalled()) {
+            return parent::matches($pathinfo);
+        }
+
         if ($pathinfo !== '/') {
             return parent::matches($pathinfo);
         }
