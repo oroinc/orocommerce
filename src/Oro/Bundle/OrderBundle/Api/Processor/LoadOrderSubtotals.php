@@ -1,9 +1,11 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Api\Processor\OrderSubtotal;
+namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\ListContext;
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Api\Repository\OrderSubtotalRepository;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -13,6 +15,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class LoadOrderSubtotals implements ProcessorInterface
 {
     public function __construct(
+        private DoctrineHelper $doctrineHelper,
         private OrderSubtotalRepository $orderSubtotalRepository
     ) {
     }
@@ -27,9 +30,22 @@ class LoadOrderSubtotals implements ProcessorInterface
             return;
         }
 
-        $orderId = $context->getFilterValues()->getOne('order')?->getValue();
-        $orderSubtotals = $orderId ? $this->orderSubtotalRepository->getOrderSubtotals($orderId) : [];
+        $context->setResult(
+            $this->getOrderSubtotals($context->getFilterValues()->getOne('order')->getValue())
+        );
+    }
 
-        $context->setResult($orderSubtotals);
+    private function getOrderSubtotals(?int $orderId): array
+    {
+        if (!$orderId) {
+            return [];
+        }
+
+        $order = $this->doctrineHelper->getEntity(Order::class, $orderId);
+        if (null === $order) {
+            return [];
+        }
+
+        return $this->orderSubtotalRepository->getOrderSubtotals($order);
     }
 }

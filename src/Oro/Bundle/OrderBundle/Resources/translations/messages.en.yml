@@ -112,6 +112,9 @@ oro:
         status:
             label:                        Status
             description:                  An order status is managed by an external system and visible when "Enable External Status Management" configuration option is enabled.
+        shipping_status:
+            label:                        Shipping Status
+            description:                  Indicates whether an order is partially or fully shipped.
         recency.label:                    'Recency'
         parent:
             label:                        'Parent Order'

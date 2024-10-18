@@ -6,6 +6,9 @@ api:
         Extend\Entity\EV_Order_Internal_Status:
             alias: orderinternalstatus
             plural_alias: orderinternalstatuses
+        Extend\Entity\EV_Order_Shipping_Status:
+            alias: ordershippingstatus
+            plural_alias: ordershippingstatuses
         Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal:
             alias: ordersubtotal
             plural_alias: ordersubtotals
@@ -99,6 +102,12 @@ api:
             actions:
                 get_list:
                     disable_paging: true
+
+        Extend\Entity\EV_Order_Shipping_Status:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
+            actions:
+                get_list:
+                    page_size: -1 # disable paging
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_line_item.md'
@@ -259,10 +268,10 @@ api:
                         data_type: integer
                         operators: ['=']
             actions:
-                get: false
                 get_list:
                     disable_paging: true
                     disable_sorting: true
+                get: false
                 create: false
                 update: false
                 delete: false

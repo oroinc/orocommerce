@@ -32,7 +32,11 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
             [
                 'internal_status' => [
                     'type'  => EnumFilterType::TYPE_IN,
-                    'value' => ['order_internal_status.open']
+                    'value' => [
+                        'order_internal_status.pending',
+                        'order_internal_status.open',
+                        'order_internal_status.processing'
+                    ]
                 ]
             ]
         );

@@ -1,7 +1,7 @@
 data:
     -
-        type: 'ordersubtotals'
-        id: '<(implode("-", [@simple_order->id, "subtotal", "0"]))>'
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "subtotal-0"]))>'
         attributes:
             orderSubtotalType: 'subtotal'
             label: 'Subtotal'
@@ -13,13 +13,13 @@ data:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
                     id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
-        type: 'ordersubtotals'
-        id: '<(implode("-", [@simple_order->id, "discount", "1"]))>'
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "discount-1"]))>'
         attributes:
             orderSubtotalType: 'discount'
             label: 'Discount'
@@ -31,13 +31,13 @@ data:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
                     id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
-        type: 'ordersubtotals'
-        id: '<(implode("-", [@simple_order->id, "shipping_cost", "2"]))>'
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>'
         attributes:
             orderSubtotalType: 'shipping_cost'
             label: 'Shipping'
@@ -49,13 +49,13 @@ data:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
                     id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
-        type: 'ordersubtotals'
-        id: '<(implode("-", [@simple_order->id, "discount", "3"]))>'
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "discount-3"]))>'
         attributes:
             orderSubtotalType: 'discount'
             label: 'Shipping Discount'
@@ -67,13 +67,13 @@ data:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
                     id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
-        type: 'ordersubtotals'
-        id: '<(implode("-", [@simple_order->id, "tax", "4"]))>'
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "tax-4"]))>'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Subtotal Tax'
@@ -114,13 +114,13 @@ data:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
                     id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
-        type: 'ordersubtotals'
-        id: '<(implode("-", [@simple_order->id, "tax", "5"]))>'
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "tax-5"]))>'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Shipping Tax'
@@ -132,13 +132,13 @@ data:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
                     id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
-        type: 'ordersubtotals'
-        id: '<(implode("-", [@simple_order->id, "tax", "6"]))>'
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Tax'
@@ -150,7 +150,7 @@ data:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
                     id: '<toString(@simple_order->id)>'
             priceList:
                 data: null

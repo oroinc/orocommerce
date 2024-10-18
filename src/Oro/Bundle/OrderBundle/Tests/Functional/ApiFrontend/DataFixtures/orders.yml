@@ -13,6 +13,7 @@ dependencies:
     - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses
     - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses
     - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderInternalStatuses
+    - Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderShippingStatuses
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     payment_term_net_10:
@@ -492,6 +493,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         shippingAddress: '@order1_shipping_address'
         status: '@order_status.wait_for_approval'
         internal_status: '@order_internal_status.cancelled'
+        shippingStatus: '@order_shipping_status.not_shipped'
     order2:
         identifier: order2
         currency: 'EUR'

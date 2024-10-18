@@ -1,0 +1,2 @@
+imports:
+    - { resource: 'workflows/order_processing_flow.yml' }

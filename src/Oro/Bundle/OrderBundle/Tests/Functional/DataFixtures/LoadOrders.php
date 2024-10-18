@@ -16,10 +16,12 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     const ORDER_1 = 'simple_order';
     const ORDER_2 = 'simple_order2';
     const ORDER_3 = 'simple_order3';
@@ -44,6 +46,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+            'shippingStatus' => 'not_shipped',
         ],
         self::ORDER_2 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -88,7 +91,8 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
-            'external' => false
+            'external' => false,
+            'internalStatus' => 'closed'
         ],
         self::ORDER_6 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -117,21 +121,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * @var Website
-     */
-    protected $defaultWebsite;
-
-    #[\Override]
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
+    private ?Website $defaultWebsite = null;
 
     #[\Override]
     public function getDependencies()
@@ -223,6 +213,12 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
                     ->find(ExtendHelper::buildEnumOptionId(Order::STATUS_CODE, $orderData['status']))
             );
         }
+        if (isset($orderData['shippingStatus'])) {
+            $order->setShippingStatus(
+                $manager->getRepository(EnumOption::class)
+                    ->find(ExtendHelper::buildEnumOptionId(Order::SHIPPING_STATUS_CODE, $orderData['shippingStatus']))
+            );
+        }
 
         $this->container->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($order, $paymentTerm);
@@ -243,12 +239,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         return $order;
     }
 
-    /**
-     * @return Website
-     */
-    protected function getDefaultWebsite()
+    protected function getDefaultWebsite(): Website
     {
-        if (!$this->defaultWebsite) {
+        if (null === $this->defaultWebsite) {
             $this->defaultWebsite = $this->container->get('doctrine')
                 ->getRepository(Website::class)
                 ->findOneBy(['default' => true]);

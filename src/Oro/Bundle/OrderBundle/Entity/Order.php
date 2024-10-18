@@ -52,6 +52,8 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @method $this setInternalStatus(EnumOptionInterface $status)
  * @method EnumOptionInterface|null getStatus()
  * @method $this setStatus(EnumOptionInterface|null $status)
+ * @method EnumOptionInterface|null getShippingStatus()
+ * @method $this setShippingStatus(EnumOptionInterface|null $status)
  * @mixin OroOrderBundle_Entity_Order
  */
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -110,6 +112,7 @@ class Order implements
 
     public const INTERNAL_STATUS_CODE = 'order_internal_status';
     public const STATUS_CODE = 'order_status';
+    public const SHIPPING_STATUS_CODE = 'order_shipping_status';
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]

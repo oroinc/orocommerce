@@ -65,3 +65,7 @@ data:
             data:
                 type: orderstatuses
                 id: cancelled
+        shippingStatus:
+            data:
+                type: ordershippingstatuses
+                id: not_shipped

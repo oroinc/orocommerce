@@ -11,6 +11,7 @@ Feature: Order Internal Statuses
     When I click view "SimpleOrder" in grid
     Then I should see that order internal status is "Open"
     And I should see following buttons:
+      | Edit                 |
       | Cancel               |
       | Close                |
       | Add Special Discount |
@@ -21,6 +22,7 @@ Feature: Order Internal Statuses
     Then I should see "Order #SimpleOrder has been closed." flash message
     And I should see that order internal status is "Closed"
     And I should not see following buttons:
+      | Edit                 |
       | Cancel               |
       | Close                |
       | Add Special Discount |
@@ -62,6 +64,7 @@ Feature: Order Internal Statuses
     And I should see following buttons:
       | Close |
     And I should not see following buttons:
+      | Edit                 |
       | Cancel               |
       | Add Special Discount |
 
@@ -71,6 +74,7 @@ Feature: Order Internal Statuses
     Then I should see "Order #SecondOrder has been closed." flash message
     And I should see that order internal status is "Closed"
     And I should not see following buttons:
+      | Edit                 |
       | Cancel               |
       | Close                |
       | Add Special Discount |

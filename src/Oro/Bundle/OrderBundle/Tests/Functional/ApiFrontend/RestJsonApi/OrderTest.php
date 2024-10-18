@@ -954,4 +954,37 @@ class OrderTest extends FrontendRestJsonApiTestCase
         );
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
+
+    public function testGetSubresourceForShippingStatus(): void
+    {
+        $response = $this->getSubresource(
+            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingStatus']
+        );
+        $this->assertResponseContains(
+            ['data' => ['type' => 'ordershippingstatuses', 'id' => 'not_shipped']],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForShippingStatus(): void
+    {
+        $response = $this->getRelationship(
+            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingStatus']
+        );
+        $this->assertResponseContains(
+            ['data' => ['type' => 'ordershippingstatuses', 'id' => 'not_shipped']],
+            $response
+        );
+    }
+
+    public function testTryToUpdateRelationshipForShippingStatus(): void
+    {
+        $response = $this->patchRelationship(
+            ['entity' => 'orders', 'id' => '<toString(@order1->id)>', 'association' => 'shippingStatus'],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
 }

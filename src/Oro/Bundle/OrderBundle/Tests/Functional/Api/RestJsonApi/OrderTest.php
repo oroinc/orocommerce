@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Api\RestJsonApi;
 
-use Oro\Bundle\ApiBundle\Request\JsonApi\JsonApiDocumentBuilder as JsonApiDoc;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
@@ -35,6 +34,9 @@ class OrderTest extends RestJsonApiTestCase
         $this->loadFixtures([
             '@OroOrderBundle/Tests/Functional/DataFixtures/order_line_items.yml'
         ]);
+
+        $this->getOptionalListenerManager()
+            ->enableListener('oro_order.order.listener.orm.order_shipping_status_listener');
     }
 
     public function testGetList(): void
@@ -42,6 +44,8 @@ class OrderTest extends RestJsonApiTestCase
         $response = $this->cget(['entity' => 'orders']);
 
         $this->assertResponseContains('cget_order.yml', $response);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertArrayNotHasKey('included', $responseData);
     }
 
     public function testGetListFilteredByIdentifier(): void
@@ -52,11 +56,11 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order2->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order2->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order2',
-                            'poNumber'   => 'PO2'
+                            'poNumber' => 'PO2'
                         ]
                     ]
                 ]
@@ -92,19 +96,19 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order2->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order2->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order2',
-                            'poNumber'   => 'PO2'
+                            'poNumber' => 'PO2'
                         ]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order3->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order3->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order3',
-                            'poNumber'   => 'PO3'
+                            'poNumber' => 'PO3'
                         ]
                     ]
                 ]
@@ -139,11 +143,11 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order2->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order2->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order2',
-                            'poNumber'   => 'PO2'
+                            'poNumber' => 'PO2'
                         ]
                     ]
                 ]
@@ -179,35 +183,35 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order2->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order2->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order2',
-                            'poNumber'   => 'PO2'
+                            'poNumber' => 'PO2'
                         ]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order3->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order3->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order3',
-                            'poNumber'   => 'PO3'
+                            'poNumber' => 'PO3'
                         ]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order4->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order4->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order4',
-                            'poNumber'   => 'PO3'
+                            'poNumber' => 'PO3'
                         ]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order5->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order5->id)>',
                         'attributes' => [
                             'identifier' => 'simple_order5',
-                            'poNumber'   => 'PO3'
+                            'poNumber' => 'PO3'
                         ]
                     ]
                 ]
@@ -240,8 +244,8 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order6->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order6->id)>',
                         'attributes' => ['identifier' => 'simple_order6', 'external' => true]
                     ]
                 ]
@@ -258,33 +262,33 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order->id)>',
                         'attributes' => ['identifier' => 'simple_order', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order2->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order2->id)>',
                         'attributes' => ['identifier' => 'simple_order2', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order3->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order3->id)>',
                         'attributes' => ['identifier' => 'simple_order3', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order4->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order4->id)>',
                         'attributes' => ['identifier' => 'simple_order4', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order5->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order5->id)>',
                         'attributes' => ['identifier' => 'simple_order5', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@my_order->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@my_order->id)>',
                         'attributes' => ['identifier' => 'my_order', 'external' => false]
                     ]
                 ]
@@ -301,38 +305,38 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order->id)>',
                         'attributes' => ['identifier' => 'simple_order', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order2->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order2->id)>',
                         'attributes' => ['identifier' => 'simple_order2', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order3->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order3->id)>',
                         'attributes' => ['identifier' => 'simple_order3', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order4->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order4->id)>',
                         'attributes' => ['identifier' => 'simple_order4', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order5->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order5->id)>',
                         'attributes' => ['identifier' => 'simple_order5', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@my_order->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@my_order->id)>',
                         'attributes' => ['identifier' => 'my_order', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order6->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order6->id)>',
                         'attributes' => ['identifier' => 'simple_order6', 'external' => true]
                     ]
                 ]
@@ -349,38 +353,38 @@ class OrderTest extends RestJsonApiTestCase
             [
                 'data' => [
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order6->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order6->id)>',
                         'attributes' => ['identifier' => 'simple_order6', 'external' => true]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order->id)>',
                         'attributes' => ['identifier' => 'simple_order', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order2->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order2->id)>',
                         'attributes' => ['identifier' => 'simple_order2', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order3->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order3->id)>',
                         'attributes' => ['identifier' => 'simple_order3', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order4->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order4->id)>',
                         'attributes' => ['identifier' => 'simple_order4', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@simple_order5->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@simple_order5->id)>',
                         'attributes' => ['identifier' => 'simple_order5', 'external' => false]
                     ],
                     [
-                        'type'       => 'orders',
-                        'id'         => '<toString(@my_order->id)>',
+                        'type' => 'orders',
+                        'id' => '<toString(@my_order->id)>',
                         'attributes' => ['identifier' => 'my_order', 'external' => false]
                     ]
                 ]
@@ -440,6 +444,8 @@ class OrderTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseContains('get_order.yml', $response);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertArrayNotHasKey('included', $responseData);
     }
 
     public function testGetIncludeOrderSubtotals(): void
@@ -452,9 +458,60 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_order_include_order_subtotals.yml', $response);
     }
 
+    public function testGetIncludeOrderSubtotalsAndWithFieldsFilters(): void
+    {
+        $response = $this->get(
+            ['entity' => 'orders', 'id' => '<toString(@simple_order->id)>'],
+            [
+                'include' => 'orderSubtotals',
+                'fields[orders]' => 'poNumber,customerNotes,orderSubtotals',
+                'fields[ordersubtotals]' => 'label,amount,currency,data'
+            ]
+        );
+
+        $this->assertResponseContains('get_order_partially_include_order_subtotals.yml', $response);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(2, $responseData['data']['attributes'], 'attributes');
+        self::assertCount(1, $responseData['data']['relationships'], 'relationships');
+        foreach ($responseData['included'] as $i => $item) {
+            self::assertCount(4, $item['attributes'], sprintf('included.%d.attributes', $i));
+            self::assertArrayNotHasKey('relationships', $item, sprintf('included.%d.relationships', $i));
+        }
+    }
+
+    public function testCreateWithRequiredDataOnly(): void
+    {
+        $ownerId = $this->getReference('user')->getId();
+        $organizationId = $this->getReference('organization')->getId();
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            'create_order_min.yml'
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertEquals((string)$orderId, $order->getIdentifier());
+        self::assertNull($order->getPoNumber());
+        self::assertNull($order->getCreatedBy());
+        self::assertSame('10.0000', $order->getSubtotal());
+        self::assertSame('10.0000', $order->getTotal());
+        self::assertNull($order->getTotalDiscounts());
+        self::assertEquals('USD', $order->getCurrency());
+        self::assertEquals($ownerId, $order->getOwner()->getId());
+        self::assertEquals($organizationId, $order->getOrganization()->getId());
+        // the status should be read-only when "Enable External Status Management" configuration option is disabled
+        self::assertNull($order->getStatus());
+        self::assertEquals('open', $order->getInternalStatus()->getInternalId());
+        self::assertEquals('not_shipped', $order->getShippingStatus()->getInternalId());
+        self::assertEquals(1, $order->getLineItems()->count());
+    }
+
     public function testCreate(): void
     {
-        $organizationId = $this->getReference(LoadOrders::ORDER_1)->getOrganization()->getId();
+        $organizationId = $this->getReference('organization')->getId();
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -465,6 +522,7 @@ class OrderTest extends RestJsonApiTestCase
 
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertEquals('new_order', $order->getIdentifier());
         self::assertEquals('2345678', $order->getPoNumber());
         self::assertSame($this->getReference(LoadOrderUsers::ORDER_USER_1), $order->getCreatedBy());
         self::assertSame('73.5400', $order->getSubtotal());
@@ -475,6 +533,8 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals($organizationId, $order->getOrganization()->getId());
         // the status should be read-only when "Enable External Status Management" configuration option is disabled
         self::assertNull($order->getStatus());
+        self::assertEquals('open', $order->getInternalStatus()->getInternalId());
+        self::assertEquals('not_shipped', $order->getShippingStatus()->getInternalId());
         $lineItems = $order->getLineItems();
         self::assertEquals(2, $lineItems->count());
 
@@ -564,7 +624,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $this->assertResponseValidationError(
             [
-                'title'  => 'line item product constraint',
+                'title' => 'line item product constraint',
                 'detail' => 'Please choose Product.',
                 'source' => ['pointer' => '/included/0/relationships/product/data']
             ],
@@ -626,7 +686,7 @@ class OrderTest extends RestJsonApiTestCase
         $data['included'][0]['attributes']['productSku'] = 'product-2';
         $data['included'][0]['relationships']['product']['data'] = [
             'type' => 'products',
-            'id'   => (string)$productId
+            'id' => (string)$productId
         ];
         $response = $this->post(
             ['entity' => 'orders'],
@@ -656,7 +716,7 @@ class OrderTest extends RestJsonApiTestCase
         $data['included'][0]['attributes']['productSku'] = 'product-2';
         $data['included'][0]['relationships']['product']['data'] = [
             'type' => 'products',
-            'id'   => (string)$productId
+            'id' => (string)$productId
         ];
         $response = $this->post(
             ['entity' => 'orders'],
@@ -688,8 +748,8 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'orders',
-                    'id'         => (string)$orderId,
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
                     'attributes' => [
                         'external' => true
                     ]
@@ -703,6 +763,39 @@ class OrderTest extends RestJsonApiTestCase
         self::assertTrue($order->isExternal());
     }
 
+    public function testCreateWithShippingStatus(): void
+    {
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['relationships']['shippingStatus']['data'] = [
+            'type' => 'ordershippingstatuses',
+            'id' => 'shipped'
+        ];
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'relationships' => [
+                        'shippingStatus' => [
+                            'data' => ['type' => 'ordershippingstatuses', 'id' => 'shipped']
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        /** @var Order $updatedOrder */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertEquals('shipped', $order->getShippingStatus()->getInternalId());
+    }
+
     public function testUpdate(): void
     {
         /** @var Order $order */
@@ -714,8 +807,38 @@ class OrderTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
         $this->getEntityManager()->clear();
 
-        $requestParameters = $this->getPatchRequestParameters($orderId);
-        $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
+        $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'attributes' => [
+                        'customerNotes' => 'test notes'
+                    ],
+                    'relationships' => [
+                        'paymentTerm' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id' => '<toString(@payment_term.net_20->id)>'
+                            ]
+                        ],
+                        'status' => [
+                            'data' => [
+                                'type' => 'orderstatuses',
+                                'id' => 'open'
+                            ]
+                        ],
+                        'shippingStatus' => [
+                            'data' => [
+                                'type' => 'ordershippingstatuses',
+                                'id' => 'shipped'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
@@ -727,6 +850,7 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($updatedOrder->getTotalDiscounts());
         // the status should be read-only when "Enable External Status Management" configuration option is disabled
         self::assertNull($updatedOrder->getStatus());
+        self::assertEquals('shipped', $updatedOrder->getShippingStatus()->getInternalId());
     }
 
     public function testTryToUpdateCreatedAtAndUpdatedAt(): void
@@ -775,16 +899,16 @@ class OrderTest extends RestJsonApiTestCase
         $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
 
         $response = $this->patch(
-            ['entity' => 'orders', 'id' => $orderId],
+            ['entity' => 'orders', 'id' => (string)$orderId],
             [
                 'data' => [
-                    'type'          => 'orders',
-                    'id'            => (string)$orderId,
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
                     'relationships' => [
                         'createdBy' => [
                             'data' => [
                                 'type' => 'users',
-                                'id'   => '<toString(@order.simple_user2->id)>'
+                                'id' => '<toString(@order.simple_user2->id)>'
                             ]
                         ]
                     ]
@@ -794,8 +918,8 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'          => 'orders',
-                    'id'            => (string)$orderId,
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
                     'relationships' => [
                         'createdBy' => [
                             'data' => null
@@ -816,11 +940,11 @@ class OrderTest extends RestJsonApiTestCase
         $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
 
         $response = $this->patch(
-            ['entity' => 'orders', 'id' => $orderId],
+            ['entity' => 'orders', 'id' => (string)$orderId],
             [
                 'data' => [
-                    'type'       => 'orders',
-                    'id'         => (string)$orderId,
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
                     'attributes' => [
                         'external' => true
                     ]
@@ -830,8 +954,8 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    'type'       => 'orders',
-                    'id'         => (string)$orderId,
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
                     'attributes' => [
                         'external' => false
                     ]
@@ -845,6 +969,34 @@ class OrderTest extends RestJsonApiTestCase
         self::assertFalse($updatedOrder->isExternal());
     }
 
+    public function testTryToUpdateClosedOrder(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_5)->getId();
+
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'attributes' => [
+                        'customerNotes' => 'test notes'
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access by "EDIT" permission to the entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
     public function testAddProductKitLineItem(): void
     {
         $orderId = $this->getReference(LoadOrders::ORDER_4)->getId();
@@ -854,19 +1006,18 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals(200, $data['included'][0]['attributes']['value']);
 
         $response = $this->patch(
-            ['entity' => 'orders', 'id' => $orderId],
+            ['entity' => 'orders', 'id' => (string)$orderId],
             $data
         );
 
-        $responseContent = $this->updateResponseContent('add_product_kit_line_item_to_order.yml', $response);
+        $responseData = $this->updateResponseContent('add_product_kit_line_item_to_order.yml', $response);
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
         /** @var OrderLineItem $lineItem */
         foreach ($updatedOrder->getLineItems() as $k => $lineItem) {
-            $responseContent['data']['relationships']['lineItems']['data'][$k]['id'] =
-                (string)$lineItem->getId();
+            $responseData['data']['relationships']['lineItems']['data'][$k]['id'] = (string)$lineItem->getId();
         }
-        $this->assertResponseContains($responseContent, $response);
+        $this->assertResponseContains($responseData, $response);
     }
 
     public function testGetSubresourceForOwner(): void
@@ -1076,13 +1227,95 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($updatedOrder->getStatus());
     }
 
+    public function testGetSubresourceForShippingStatus(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+
+        $response = $this->getSubresource(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'shippingStatus']
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'ordershippingstatuses', 'id' => 'not_shipped']],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForShippingStatus(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+
+        $response = $this->getRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'shippingStatus']
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'ordershippingstatuses', 'id' => 'not_shipped']],
+            $response
+        );
+    }
+
+    public function testUpdateShippingStatusViaRelationship(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'shippingStatus'],
+            ['data' => ['type' => 'ordershippingstatuses', 'id' => 'shipped']]
+        );
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertEquals('shipped', $updatedOrder->getShippingStatus()->getInternalId());
+    }
+
+    public function testUpdateShippingStatusViaRelationshipForClosedOrder(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_5)->getId();
+
+        $response = $this->patchRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'shippingStatus'],
+            ['data' => ['type' => 'ordershippingstatuses', 'id' => 'not_shipped']],
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access denied exception',
+                'detail' => 'No access by "EDIT" permission to the parent entity.'
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
+        );
+    }
+
+    public function testTryToCreateWithoutCurrency(): void
+    {
+        $data = $this->getRequestData('create_order_min.yml');
+        unset($data['data']['attributes']);
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+        $this->assertResponseValidationError(
+            [
+                'title' => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/currency']
+            ],
+            $response
+        );
+    }
+
     public function testTryToCreateWithoutLineItems(): void
     {
         $data = [
             'data' => [
-                'type'          => 'orders',
-                'attributes'    => [
-                    'identifier' => 'new_order1'
+                'type' => 'orders',
+                'attributes' => [
+                    'currency' => 'USD'
                 ],
                 'relationships' => [
                     'customer' => [
@@ -1099,7 +1332,7 @@ class OrderTest extends RestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'count constraint',
+                'title' => 'count constraint',
                 'detail' => 'Please add at least one Line Item',
                 'source' => ['pointer' => '/data/relationships/lineItems/data']
             ],
@@ -1111,8 +1344,8 @@ class OrderTest extends RestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type'          => 'orders',
-                'id'            => '<toString(@simple_order2->id)>',
+                'type' => 'orders',
+                'id' => '<toString(@simple_order2->id)>',
                 'relationships' => [
                     'lineItems' => [
                         'data' => []
@@ -1128,7 +1361,7 @@ class OrderTest extends RestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'count constraint',
+                'title' => 'count constraint',
                 'detail' => 'Please add at least one Line Item',
                 'source' => ['pointer' => '/data/relationships/lineItems/data']
             ],
@@ -1151,7 +1384,7 @@ class OrderTest extends RestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'count constraint',
+                'title' => 'count constraint',
                 'detail' => 'Please add at least one Line Item'
             ],
             $response
@@ -1162,12 +1395,12 @@ class OrderTest extends RestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type'          => 'orders',
-                'attributes'    => [
-                    'identifier' => 'new_order1'
+                'type' => 'orders',
+                'attributes' => [
+                    'currency' => 'USD'
                 ],
                 'relationships' => [
-                    'customer'  => [
+                    'customer' => [
                         'data' => ['type' => 'customers', 'id' => '<toString(@my_order->customer->id)>']
                     ],
                     'lineItems' => [
@@ -1186,7 +1419,7 @@ class OrderTest extends RestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'unchangeable field constraint',
+                'title' => 'unchangeable field constraint',
                 'detail' => 'Line Item order cannot be changed once set.',
                 'source' => ['pointer' => '/data/relationships/lineItems/data/0']
             ],
@@ -1198,8 +1431,8 @@ class OrderTest extends RestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type'          => 'orders',
-                'id'            => '<toString(@my_order->id)>',
+                'type' => 'orders',
+                'id' => '<toString(@my_order->id)>',
                 'relationships' => [
                     'lineItems' => [
                         'data' => [
@@ -1217,7 +1450,7 @@ class OrderTest extends RestJsonApiTestCase
         );
         $this->assertResponseValidationError(
             [
-                'title'  => 'unchangeable field constraint',
+                'title' => 'unchangeable field constraint',
                 'detail' => 'Line Item order cannot be changed once set.',
                 'source' => ['pointer' => '/data/relationships/lineItems/data/0']
             ],
@@ -1255,7 +1488,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $this->cdelete(
             ['entity' => 'orders'],
-            ['filter' => ['id' => $orderId]]
+            ['filter' => ['id' => (string)$orderId]]
         );
 
         $order = $this->getEntityManager()->find(Order::class, $orderId);
@@ -1264,14 +1497,13 @@ class OrderTest extends RestJsonApiTestCase
 
     public function testCreateWhenValidateEqualsToTrue(): void
     {
-        $parameters = $this->getRequestData('create_order.yml');
-        $parameters[JsonApiDoc::DATA]['meta']['validate'] = true;
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['meta']['validate'] = true;
 
-        $response = $this->post(['entity' => 'orders'], $parameters);
-        $content = self::jsonToArray($response->getContent());
-
-        self::assertEquals('new_order', $content[JsonApiDoc::DATA]['attributes']['identifier']);
-        self::assertEquals('2345678', $content[JsonApiDoc::DATA]['attributes']['poNumber']);
+        $response = $this->post(['entity' => 'orders'], $data);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertEquals('new_order', $responseData['data']['attributes']['identifier']);
+        self::assertEquals('2345678', $responseData['data']['attributes']['poNumber']);
         self::assertAllMessagesSent([]);
 
         $orderId = (int)$this->getResourceId($response);
@@ -1282,10 +1514,10 @@ class OrderTest extends RestJsonApiTestCase
 
     public function testCreateWhenValidateEqualsToFalse(): void
     {
-        $parameters = $this->getRequestData('create_order.yml');
-        $parameters[JsonApiDoc::DATA]['meta']['validate'] = false;
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['meta']['validate'] = false;
 
-        $response = $this->post(['entity' => 'orders'], $parameters);
+        $response = $this->post(['entity' => 'orders'], $data);
 
         $orderId = (int)$this->getResourceId($response);
 
@@ -1309,28 +1541,60 @@ class OrderTest extends RestJsonApiTestCase
 
     public function testCreateWithIncludeFilterWhenValidateEqualsToTrue(): void
     {
-        $parameters = $this->getRequestData('create_order.yml');
-        $parameters[JsonApiDoc::DATA]['meta']['validate'] = true;
-        $parameters['include'] = 'include=orderSubtotals';
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['meta']['validate'] = true;
+        $data['filters'] = 'include=orderSubtotals';
 
-        $response = $this->post(['entity' => 'orders'], $parameters);
-        $content = self::jsonToArray($response->getContent());
-
-        self::assertEquals('new_order', $content[JsonApiDoc::DATA]['attributes']['identifier']);
-        self::assertEquals('2345678', $content[JsonApiDoc::DATA]['attributes']['poNumber']);
+        $response = $this->post(['entity' => 'orders'], $data);
         self::assertAllMessagesSent([]);
 
         $orderId = (int)$this->getResourceId($response);
-        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertNull($this->getEntityManager()->find(Order::class, $orderId));
 
-        self::assertNull($order);
+        $responseData = $this->getResponseData('create_order_with_included_order_subtotals.yml');
+        foreach ($responseData['data']['relationships']['orderSubtotals']['data'] as &$item) {
+            $item['id'] = sprintf('%s-%s', $orderId, $item['id']);
+        }
+        unset($item);
+        foreach ($responseData['included'] as &$item) {
+            $item['id'] = sprintf('%s-%s', $orderId, $item['id']);
+            $item['relationships']['order']['data']['id'] = (string)$orderId;
+        }
+        unset($item);
+        $this->assertResponseContains($responseData, $response);
+    }
 
-        $this->assertOrderSubtotalsRelationshipsByOrder($response, $orderId);
-        $this->assertIncludedOrderSubtotalsByOrder(
-            'create_order_with_included_order_subtotals.yml',
-            $response,
-            $orderId
-        );
+    public function testCreateWithIncludeAndFieldsFiltersWhenValidateEqualsToTrue(): void
+    {
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['meta']['validate'] = true;
+        $data['filters'] = 'include=orderSubtotals'
+            . '&fields[orders]=poNumber,customerNotes,orderSubtotals'
+            . '&fields[ordersubtotals]=label,amount,currency,data';
+
+        $response = $this->post(['entity' => 'orders'], $data);
+        self::assertAllMessagesSent([]);
+
+        $orderId = (int)$this->getResourceId($response);
+        self::assertNull($this->getEntityManager()->find(Order::class, $orderId));
+
+        $responseData = $this->getResponseData('create_order_with_partially_included_order_subtotals.yml');
+        foreach ($responseData['data']['relationships']['orderSubtotals']['data'] as &$item) {
+            $item['id'] = sprintf('%s-%s', $orderId, $item['id']);
+        }
+        unset($item);
+        foreach ($responseData['included'] as &$item) {
+            $item['id'] = sprintf('%s-%s', $orderId, $item['id']);
+        }
+        unset($item);
+        $this->assertResponseContains($responseData, $response);
+
+        self::assertCount(2, $responseData['data']['attributes'], 'attributes');
+        self::assertCount(1, $responseData['data']['relationships'], 'relationships');
+        foreach ($responseData['included'] as $i => $item) {
+            self::assertCount(4, $item['attributes'], sprintf('included.%d.attributes', $i));
+            self::assertArrayNotHasKey('relationships', $item, sprintf('included.%d.relationships', $i));
+        }
     }
 
     public function testUpdateWhenValidateEqualsToTrue(): void
@@ -1344,10 +1608,33 @@ class OrderTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
         $this->getEntityManager()->clear();
 
-        $requestParameters = $this->getPatchRequestParameters($orderId);
-        $requestParameters[JsonApiDoc::DATA]['meta']['validate'] = true;
-
-        $response = $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            [
+                'data' => [
+                    'meta' => ['validate' => true],
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'attributes' => [
+                        'customerNotes' => 'test notes'
+                    ],
+                    'relationships' => [
+                        'paymentTerm' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id' => '<toString(@payment_term.net_20->id)>'
+                            ]
+                        ],
+                        'status' => [
+                            'data' => [
+                                'type' => 'orderstatuses',
+                                'id' => 'open'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
@@ -1359,8 +1646,9 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
         self::assertAllMessagesSent([]);
 
-        $data = self::jsonToArray($response->getContent());
-        self::assertSame('test notes', $data['data']['attributes']['customerNotes']);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertSame('test notes', $responseData['data']['attributes']['customerNotes']);
+        self::assertArrayNotHasKey('included', $responseData);
     }
 
     public function testUpdateWhenValidateEqualsToFalse(): void
@@ -1374,10 +1662,33 @@ class OrderTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
         $this->getEntityManager()->clear();
 
-        $requestParameters = $this->getPatchRequestParameters($orderId);
-        $requestParameters[JsonApiDoc::DATA]['meta']['validate'] = false;
-
-        $response = $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            [
+                'data' => [
+                    'meta' => ['validate' => false],
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'attributes' => [
+                        'customerNotes' => 'test notes'
+                    ],
+                    'relationships' => [
+                        'paymentTerm' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id' => '<toString(@payment_term.net_20->id)>'
+                            ]
+                        ],
+                        'status' => [
+                            'data' => [
+                                'type' => 'orderstatuses',
+                                'id' => 'open'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
@@ -1390,8 +1701,8 @@ class OrderTest extends RestJsonApiTestCase
         self::assertNull($updatedOrder->getStatus());
         self::assertAllMessagesSent([]);
 
-        $data = self::jsonToArray($response->getContent());
-        self::assertSame('test notes', $data['data']['attributes']['customerNotes']);
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertSame('test notes', $responseData['data']['attributes']['customerNotes']);
     }
 
     public function testUpdateWithIncludeFilterWhenValidateEqualsToTrue(): void
@@ -1405,11 +1716,28 @@ class OrderTest extends RestJsonApiTestCase
         $this->getEntityManager()->flush();
         $this->getEntityManager()->clear();
 
-        $requestParameters = $this->getPatchRequestParameters($orderId);
-        $requestParameters[JsonApiDoc::DATA]['meta']['validate'] = true;
-        $requestParameters['include'] = 'include=orderSubtotals';
-
-        $response = $this->patch(['entity' => 'orders', 'id' => $orderId], $requestParameters);
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            [
+                'filters' => 'include=orderSubtotals',
+                'data' => [
+                    'meta' => ['validate' => true],
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'attributes' => [
+                        'customerNotes' => 'test notes'
+                    ],
+                    'relationships' => [
+                        'paymentTerm' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id' => '<toString(@payment_term.net_20->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
 
         /** @var Order $updatedOrder */
         $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
@@ -1421,69 +1749,63 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
         self::assertAllMessagesSent([]);
 
-        $data = self::jsonToArray($response->getContent());
-        self::assertSame('test notes', $data['data']['attributes']['customerNotes']);
-
-        $this->assertOrderSubtotalsRelationshipsByOrder($response, $orderId);
-        $this->assertIncludedOrderSubtotalsByOrder(
-            'update_order_with_included_order_subtotals.yml',
-            $response,
-            $orderId
-        );
+        $this->assertResponseContains('update_order_with_included_order_subtotals.yml', $response);
     }
 
-    private function assertOrderSubtotalsRelationshipsByOrder(Response $response, int $orderId): void
+    public function testUpdateWithIncludeAndFieldsFiltersWhenValidateEqualsToTrue(): void
     {
-        $data['data']['relationships']['orderSubtotals']['data'] = [
-            ['type' => 'ordersubtotals', 'id' => $orderId . '-subtotal-0'],
-            ['type' => 'ordersubtotals', 'id' => $orderId . '-discount-1'],
-            ['type' => 'ordersubtotals', 'id' => $orderId . '-shipping_cost-2'],
-            ['type' => 'ordersubtotals', 'id' => $orderId . '-discount-3'],
-            ['type' => 'ordersubtotals', 'id' => $orderId . '-tax-4'],
-            ['type' => 'ordersubtotals', 'id' => $orderId . '-tax-5'],
-            ['type' => 'ordersubtotals', 'id' => $orderId . '-tax-6'],
-        ];
+        /** @var Order $order */
+        $order = $this->getReference(LoadOrders::ORDER_1);
+        $orderId = $order->getId();
+        $order->setSubtotal(11);
+        $order->setTotal(10);
+        $order->setTotalDiscounts(Price::create(1, $order->getCurrency()));
+        $this->getEntityManager()->flush();
+        $this->getEntityManager()->clear();
 
-        $this->assertResponseContains($data, $response);
-    }
-
-    private function assertIncludedOrderSubtotalsByOrder(string $path, Response $response, int $orderId): void
-    {
-        $data = $this->getResponseData($path);
-        foreach ($data['included'] as &$datum) {
-            $orderSubtotalId = sprintf('%s-%s', $orderId, $datum['id']);
-            $datum['id'] = $orderSubtotalId;
-            $datum['relationships']['order']['data']['id'] = (string)$orderId;
-        }
-
-        $this->assertResponseContains($data, $response);
-    }
-
-    private function getPatchRequestParameters(string $orderId): array
-    {
-        return [
-            'data' => [
-                'meta'          => ['validate' => false],
-                'type'          => 'orders',
-                'id'            => $orderId,
-                'attributes'    => [
-                    'customerNotes' => 'test notes'
-                ],
-                'relationships' => [
-                    'paymentTerm' => [
-                        'data' => [
-                            'type' => 'paymentterms',
-                            'id'   => '<toString(@payment_term.net_20->id)>'
-                        ]
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            [
+                'filters' => 'include=orderSubtotals'
+                    . '&fields[orders]=poNumber,customerNotes,orderSubtotals'
+                    . '&fields[ordersubtotals]=label,amount,currency,data',
+                'data' => [
+                    'meta' => ['validate' => true],
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'attributes' => [
+                        'customerNotes' => 'test notes'
                     ],
-                    'status'      => [
-                        'data' => [
-                            'type' => 'orderstatuses',
-                            'id'   => 'open'
+                    'relationships' => [
+                        'paymentTerm' => [
+                            'data' => [
+                                'type' => 'paymentterms',
+                                'id' => '<toString(@payment_term.net_20->id)>'
+                            ]
                         ]
                     ]
                 ]
             ]
-        ];
+        );
+
+        /** @var Order $updatedOrder */
+        $updatedOrder = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertNull($updatedOrder->getCustomerNotes());
+        $paymentTermProvider = self::getContainer()->get('oro_payment_term.provider.payment_term');
+        self::assertEquals('net 10', $paymentTermProvider->getObjectPaymentTerm($updatedOrder)->getLabel());
+        self::assertSame('11.0000', $updatedOrder->getSubtotal());
+        self::assertSame('10.0000', $updatedOrder->getTotal());
+        self::assertEquals(Price::create('1.0000', 'USD'), $updatedOrder->getTotalDiscounts());
+        self::assertAllMessagesSent([]);
+
+        $this->assertResponseContains('update_order_with_partially_included_order_subtotals.yml', $response);
+
+        $responseData = self::jsonToArray($response->getContent());
+        self::assertCount(2, $responseData['data']['attributes'], 'attributes');
+        self::assertCount(1, $responseData['data']['relationships'], 'relationships');
+        foreach ($responseData['included'] as $i => $item) {
+            self::assertCount(4, $item['attributes'], sprintf('included.%d.attributes', $i));
+            self::assertArrayNotHasKey('relationships', $item, sprintf('included.%d.relationships', $i));
+        }
     }
 }

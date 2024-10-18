@@ -8,6 +8,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\EntityExtendBundle\Form\Type\EnumIdChoiceType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
@@ -22,47 +23,26 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\Range;
 
 /**
- * Represents order form type
+ * The form type for Order entity.
  */
 class OrderType extends AbstractType
 {
-    const NAME = 'oro_order_type';
-    const DISCOUNTS_FIELD_NAME = 'discounts';
-
-    /** @var string */
-    protected $dataClass;
-
-    /** @var OrderAddressSecurityProvider */
-    protected $orderAddressSecurityProvider;
-
-    /** @var OrderCurrencyHandler */
-    protected $orderCurrencyHandler;
-
-    /** @var SubtotalSubscriber */
-    protected $subtotalSubscriber;
+    public const NAME = 'oro_order_type';
+    public const DISCOUNTS_FIELD_NAME = 'discounts';
 
     public function __construct(
-        OrderAddressSecurityProvider $orderAddressSecurityProvider,
-        OrderCurrencyHandler $orderCurrencyHandler,
-        SubtotalSubscriber $subtotalSubscriber
+        private OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        private OrderCurrencyHandler $orderCurrencyHandler,
+        private SubtotalSubscriber $subtotalSubscriber
     ) {
-        $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
-        $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->subtotalSubscriber = $subtotalSubscriber;
     }
 
-    /**
-     * @throws \InvalidArgumentException
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     */
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Order $order */
         $order = $options['data'];
@@ -73,13 +53,20 @@ class OrderType extends AbstractType
             ->add(
                 'customerUser',
                 CustomerUserSelectType::class,
-                [
-                    'label' => 'oro.order.customer_user.label',
-                    'required' => false,
-                ]
+                ['required' => false, 'label' => 'oro.order.customer_user.label']
             )
             ->add('poNumber', TextType::class, ['required' => false, 'label' => 'oro.order.po_number.label'])
             ->add('shipUntil', OroDateType::class, ['required' => false, 'label' => 'oro.order.ship_until.label'])
+            ->add(
+                'shippingStatus',
+                EnumIdChoiceType::class,
+                [
+                    'required' => false,
+                    'label' => 'oro.order.shipping_status.label',
+                    'enum_code' => Order::SHIPPING_STATUS_CODE,
+                    'multiple' => false
+                ]
+            )
             ->add(
                 'customerNotes',
                 TextareaType::class,
@@ -108,88 +95,34 @@ class OrderType extends AbstractType
                 [
                     'mapped' => false,
                     //range should be used, because this type also is implemented with JS
-                    'constraints' => [new Range(
-                        [
-                            'min' => PHP_INT_MAX * (-1), //use some big negative number
-                            'max' => $order->getSubtotal(),
-                            'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
-                        ]
-                    )],
+                    'constraints' => [new Range([
+                        'min' => PHP_INT_MAX * (-1), //use some big negative number
+                        'max' => $order->getSubtotal(),
+                        'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
+                    ])],
                     'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
                 ]
             )
             ->add('sourceEntityClass', HiddenType::class)
             ->add('sourceEntityId', HiddenType::class)
-            ->add('sourceEntityIdentifier', HiddenType::class)
-            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
-                if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING)) {
-                    $event->getForm()->remove('billingAddress');
-                }
-                if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_SHIPPING)) {
-                    $event->getForm()->remove('shippingAddress');
-                }
-            });
+            ->add('sourceEntityIdentifier', HiddenType::class);
+
         $this->addShippingFields($builder, $order);
         $this->addAddresses($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
         $this->addShippingAddress($builder, $order, $options);
 
+        $this->addPreSubmitEventListener($builder);
         $builder->addEventSubscriber($this->subtotalSubscriber);
     }
 
-    /**
-     * @param FormBuilderInterface|FormInterface $form
-     * @param Order $order
-     * @throws \InvalidArgumentException
-     */
-    protected function addAddresses($form, Order $order)
-    {
-        if (!$form instanceof FormInterface && !$form instanceof FormBuilderInterface) {
-            throw new \InvalidArgumentException('Invalid form');
-        }
-
-        foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
-            if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
-                $options = [
-                    'label' => sprintf('oro.order.%s_address.label', $type),
-                    'object' => $order,
-                    'required' => false,
-                    'addressType' => $type,
-                ];
-
-                $form->add(sprintf('%sAddress', $type), OrderAddressType::class, $options);
-            }
-        }
-    }
-
-    /**
-     * @throws AccessException
-     */
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
-        $resolver->setDefaults(
-            [
-                'data_class' => $this->dataClass,
-                'csrf_token_id' => 'order'
-            ]
-        );
-    }
-
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
-    {
-        $this->dataClass = $dataClass;
-    }
-
-    /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
+        $resolver->setDefaults([
+            'data_class' => Order::class,
+            'csrf_token_id' => 'order'
+        ]);
     }
 
     #[\Override]
@@ -198,12 +131,22 @@ class OrderType extends AbstractType
         return self::NAME;
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param Order $order
-     * @param array $options
-     */
-    protected function addBillingAddress(FormBuilderInterface $builder, Order $order, $options)
+    private function addAddresses(FormBuilderInterface $builder, Order $order): void
+    {
+        foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
+            if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
+                $options = [
+                    'label' => sprintf('oro.order.%s_address.label', $type),
+                    'object' => $order,
+                    'required' => false,
+                    'addressType' => $type,
+                ];
+                $builder->add(sprintf('%sAddress', $type), OrderAddressType::class, $options);
+            }
+        }
+    }
+
+    private function addBillingAddress(FormBuilderInterface $builder, Order $order, array $options): void
     {
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_BILLING)) {
             $builder
@@ -220,12 +163,7 @@ class OrderType extends AbstractType
         }
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param Order $order
-     * @param array $options
-     */
-    protected function addShippingAddress(FormBuilderInterface $builder, Order $order, $options)
+    private function addShippingAddress(FormBuilderInterface $builder, Order $order, array $options): void
     {
         if ($this->orderAddressSecurityProvider->isAddressGranted($order, AddressType::TYPE_SHIPPING)) {
             $builder
@@ -242,12 +180,7 @@ class OrderType extends AbstractType
         }
     }
 
-    /**
-     * @param FormBuilderInterface $builder
-     * @param Order $order
-     * @return $this
-     */
-    protected function addShippingFields(FormBuilderInterface $builder, Order $order)
+    private function addShippingFields(FormBuilderInterface $builder, Order $order): void
     {
         $builder
             ->add(PossibleShippingMethodEventListener::CALCULATE_SHIPPING_KEY, HiddenType::class, [
@@ -268,9 +201,19 @@ class OrderType extends AbstractType
                 function ($price) {
                     return $price instanceof Price ? $price->getValue() : $price;
                 }
-            ))
-        ;
+            ));
+    }
 
-        return $this;
+    private function addPreSubmitEventListener(FormBuilderInterface $builder): void
+    {
+        $builder
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+                if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING)) {
+                    $event->getForm()->remove('billingAddress');
+                }
+                if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_SHIPPING)) {
+                    $event->getForm()->remove('shippingAddress');
+                }
+            });
     }
 }

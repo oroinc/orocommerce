@@ -45,6 +45,10 @@ data:
                 id: open
         status:
             data: null
+        shippingStatus:
+            data:
+                type: ordershippingstatuses
+                id: not_shipped
         source:
             data: null
         owner:
@@ -67,22 +71,22 @@ data:
             data:
                 -
                     type: ordersubtotals
-                    id: '<(implode("-", [@simple_order->id, "subtotal", "0"]))>'
+                    id: '<(implode("-", [@simple_order->id, "subtotal-0"]))>'
                 -
                     type: ordersubtotals
-                    id: '<(implode("-", [@simple_order->id, "discount", "1"]))>'
+                    id: '<(implode("-", [@simple_order->id, "discount-1"]))>'
                 -
                     type: ordersubtotals
-                    id: '<(implode("-", [@simple_order->id, "shipping_cost", "2"]))>'
+                    id: '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>'
                 -
                     type: ordersubtotals
-                    id: '<(implode("-", [@simple_order->id, "discount", "3"]))>'
+                    id: '<(implode("-", [@simple_order->id, "discount-3"]))>'
                 -
                     type: ordersubtotals
-                    id: '<(implode("-", [@simple_order->id, "tax", "4"]))>'
+                    id: '<(implode("-", [@simple_order->id, "tax-4"]))>'
                 -
                     type: ordersubtotals
-                    id: '<(implode("-", [@simple_order->id, "tax", "5"]))>'
+                    id: '<(implode("-", [@simple_order->id, "tax-5"]))>'
                 -
                     type: ordersubtotals
-                    id: '<(implode("-", [@simple_order->id, "tax", "6"]))>'
+                    id: '<(implode("-", [@simple_order->id, "tax-6"]))>'

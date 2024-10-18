@@ -1,80 +1,119 @@
+data:
+    type: orders
+    attributes:
+        identifier: 'new_order'
+        poNumber: '2345678'
+        customerNotes: null
+        currency: 'USD'
+        subtotalValue: '73.5400'
+        totalValue: '73.5400'
+    relationships:
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                -
+                    type: orderlineitems
+        orderSubtotals:
+            data:
+                -
+                    type: ordersubtotals
+                    id: 'subtotal-0'
+                -
+                    type: ordersubtotals
+                    id: 'discount-1'
+                -
+                    type: ordersubtotals
+                    id: 'shipping_cost-2'
+                -
+                    type: ordersubtotals
+                    id: 'discount-3'
+                -
+                    type: ordersubtotals
+                    id: 'tax-4'
+                -
+                    type: ordersubtotals
+                    id: 'tax-5'
+                -
+                    type: ordersubtotals
+                    id: 'tax-6'
 included:
     -
         type: ordersubtotals
-        id: '<(implode("-", ["subtotal", "0"]))>'
+        id: 'subtotal-0'
         attributes:
             orderSubtotalType: 'subtotal'
             label: 'Subtotal'
-            amount: 73.54
-            signedAmount: 73.54
+            amount: '73.5400'
+            signedAmount: '73.5400'
             currency: 'USD'
             visible: true
             data: []
         relationships:
             order:
                 data:
-                      type: 'orders'
+                      type: orders
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["discount", "1"]))>'
+        id: 'discount-1'
         attributes:
             orderSubtotalType: 'discount'
             label: 'Discount'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: 'USD'
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["shipping_cost", "2"]))>'
+        id: 'shipping_cost-2'
         attributes:
             orderSubtotalType: 'shipping_cost'
             label: 'Shipping'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: 'USD'
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["discount", "3"]))>'
+        id: 'discount-3'
         attributes:
             orderSubtotalType: 'discount'
             label: 'Shipping Discount'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: 'USD'
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["tax", "4"]))>'
+        id: 'tax-4'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Subtotal Tax'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: ''
             visible: false
             data:
@@ -110,40 +149,40 @@ included:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["tax", "5"]))>'
+        id: 'tax-5'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Shipping Tax'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: null
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["tax", "6"]))>'
+        id: 'tax-6'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Tax'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: 'USD'
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
             priceList:
                 data: null

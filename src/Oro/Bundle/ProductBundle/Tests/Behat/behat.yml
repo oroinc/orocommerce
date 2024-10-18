@@ -21,9 +21,9 @@ oro_behat_extension:
     OptionCollection:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\OptionCollection
     InStockInventoryStatus:
-      selector: 'span[class="product-inventory-status-prod_inventory_status.in_stock"]'
+      selector: 'span[class="product-inventory-status-in_stock"]'
     OutOfStockInventoryStatus:
-      selector: 'span[class="product-inventory-status-prod_inventory_status.out_of_stock"]'
+      selector: 'span[class="product-inventory-status-out_of_stock"]'
     Configurable Attributes:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\ProductCustomVariantFieldsCollection
       selector: 'div[id^="oro_product_variantFields"]'

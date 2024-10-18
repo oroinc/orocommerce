@@ -26,7 +26,7 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'ordersubtotals'],
-            ['filter' => ['order' => '@simple_order->id']],
+            ['filter' => ['order' => '@simple_order->id']]
         );
 
         $this->assertResponseContains('get_order_subtotals.yml', $response);
@@ -39,7 +39,7 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
             [
                 'filter' => ['order' => '@simple_order->id'],
                 'fields[ordersubtotals]' => 'label,amount'
-            ],
+            ]
         );
 
         $this->assertResponseContains(
@@ -47,37 +47,37 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
                 'data' => [
                     [
                         'type' => 'ordersubtotals',
-                        'id' => '<(implode("-", [@simple_order->id, "subtotal", "0"]))>',
+                        'id' => '<(implode("-", [@simple_order->id, "subtotal-0"]))>',
                         'attributes' => ['label' => 'Subtotal', 'amount' => '789.0000']
                     ],
                     [
                         'type' => 'ordersubtotals',
-                        'id' => '<(implode("-", [@simple_order->id, "discount", "1"]))>',
+                        'id' => '<(implode("-", [@simple_order->id, "discount-1"]))>',
                         'attributes' => ['label' => 'Discount', 'amount' => '0.0000']
                     ],
                     [
                         'type' => 'ordersubtotals',
-                        'id' => '<(implode("-", [@simple_order->id, "shipping_cost", "2"]))>',
+                        'id' => '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>',
                         'attributes' => ['label' => 'Shipping', 'amount' => '0.0000']
                     ],
                     [
                         'type' => 'ordersubtotals',
-                        'id' => '<(implode("-", [@simple_order->id, "discount", "3"]))>',
+                        'id' => '<(implode("-", [@simple_order->id, "discount-3"]))>',
                         'attributes' => ['label' => 'Shipping Discount', 'amount' => '0.0000']
                     ],
                     [
                         'type' => 'ordersubtotals',
-                        'id' => '<(implode("-", [@simple_order->id, "tax", "4"]))>',
+                        'id' => '<(implode("-", [@simple_order->id, "tax-4"]))>',
                         'attributes' => ['label' => 'Subtotal Tax', 'amount' => '0.0000']
                     ],
                     [
                         'type' => 'ordersubtotals',
-                        'id' => '<(implode("-", [@simple_order->id, "tax", "5"]))>',
+                        'id' => '<(implode("-", [@simple_order->id, "tax-5"]))>',
                         'attributes' => ['label' => 'Shipping Tax', 'amount' => '0.0000']
                     ],
                     [
                         'type' => 'ordersubtotals',
-                        'id' => '<(implode("-", [@simple_order->id, "tax", "6"]))>',
+                        'id' => '<(implode("-", [@simple_order->id, "tax-6"]))>',
                         'attributes' => ['label' => 'Tax', 'amount' => '0.0000']
                     ]
                 ]
@@ -102,13 +102,13 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
         $this->assertResponseContains(
             [
                 'data' => [
-                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal", "0"]))>'],
-                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "discount", "1"]))>'],
-                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "shipping_cost", "2"]))>'],
-                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "discount", "3"]))>'],
-                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "tax", "4"]))>'],
-                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "tax", "5"]))>'],
-                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "tax", "6"]))>']
+                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal-0"]))>'],
+                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "discount-1"]))>'],
+                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>'],
+                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "discount-3"]))>'],
+                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "tax-4"]))>'],
+                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "tax-5"]))>'],
+                    ['type' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "tax-6"]))>']
                 ],
                 'included' => [
                     [
@@ -126,12 +126,10 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
     {
         $response = $this->cget(['entity' => 'ordersubtotals'], [], [], false);
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'filter constraint',
-                    'detail' => 'The "order" filter is required.',
-                ],
+                'title' => 'filter constraint',
+                'detail' => 'The "order" filter is required.'
             ],
             $response
         );
@@ -169,7 +167,7 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
     public function testTryToGet(): void
     {
         $response = $this->get(
-            ['entity' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal", "0"]))>'],
+            ['entity' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal-0"]))>'],
             [],
             [],
             false
@@ -191,7 +189,7 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
     public function testTryToUpdate(): void
     {
         $response = $this->patch(
-            ['entity' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal", "0"]))>'],
+            ['entity' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal-0"]))>'],
             [],
             [],
             false
@@ -202,7 +200,7 @@ class OrderSubtotalsTest extends RestJsonApiTestCase
     public function testTryToDelete(): void
     {
         $response = $this->delete(
-            ['entity' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal", "0"]))>'],
+            ['entity' => 'ordersubtotals', 'id' => '<(implode("-", [@simple_order->id, "subtotal-0"]))>'],
             [],
             [],
             false

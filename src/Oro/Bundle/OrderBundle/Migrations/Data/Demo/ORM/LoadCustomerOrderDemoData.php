@@ -18,6 +18,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
+use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
@@ -63,6 +64,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $orderMetadata = $manager->getClassMetadata(Order::class);
         $this->disablePrePersistCallback($orderMetadata);
         $this->toggleFeatures(false);
+        $this->toggleListeners(false);
 
         /** @var CustomerUser[] $customerUsers */
         $customerUsers = $manager->getRepository(CustomerUser::class)
@@ -77,9 +79,15 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $defaultUser = $manager->getRepository(User::class)->findOneBy([]);
 
         /** @var EnumOptionInterface[] $internalStatuses */
-        $internalStatuses = $manager
-            ->getRepository(EnumOption::class)
-            ->findBy(['enumCode' => Order::INTERNAL_STATUS_CODE]);
+        $internalStatuses = $manager->getRepository(EnumOption::class)
+            ->findBy([
+                'enumCode' => Order::INTERNAL_STATUS_CODE,
+                'internalId' => [
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                ]
+            ]);
 
         $paymentTerm = $manager->getRepository(PaymentTerm::class)->findOneBy([]);
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
@@ -125,6 +133,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
 
         $this->enablePrePersistCallback($orderMetadata);
         $this->toggleFeatures(true);
+        $this->toggleListeners(true);
 
         $this->countries = [];
         $this->regions = [];
@@ -235,5 +244,15 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $configManager = $this->container->get('oro_config.global');
         $configManager->set('oro_promotion.feature_enabled', $enable ?? false);
         $configManager->flush();
+    }
+
+    private function toggleListeners(?bool $enable): void
+    {
+        $listenerManager = $this->container->get('oro_platform.optional_listeners.manager');
+        if ($enable) {
+            $listenerManager->enableListener('oro_order.order.listener.orm.order_shipping_status_listener');
+        } else {
+            $listenerManager->disableListener('oro_order.order.listener.orm.order_shipping_status_listener');
+        }
     }
 }

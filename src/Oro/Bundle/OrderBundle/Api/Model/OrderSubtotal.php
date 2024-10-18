@@ -4,15 +4,16 @@ namespace Oro\Bundle\OrderBundle\Api\Model;
 
 /**
  * Represents an order subtotal.
- *
- * @SuppressWarnings(PHPMD.ExcessiveParameterList)
  */
 final readonly class OrderSubtotal
 {
-    public const string API_RELATION_KEY = 'orderSubtotals';
+    private string $id;
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveParameterList)
+     */
     public function __construct(
-        private string $id,
+        int $orderSubtotalNumber,
         private string $orderSubtotalType,
         private string $label,
         private int $orderId,
@@ -23,6 +24,7 @@ final readonly class OrderSubtotal
         private bool $visible,
         private array $data
     ) {
+        $this->id = sprintf('%s-%s-%s', $orderId, $orderSubtotalType, $orderSubtotalNumber);
     }
 
     public function getId(): string
@@ -73,10 +75,5 @@ final readonly class OrderSubtotal
     public function getData(): array
     {
         return $this->data;
-    }
-
-    public static function buildOrderSubtotalId(int $orderId, string $type, int $number): string
-    {
-        return \sprintf('%s-%s-%s', $orderId, $type, $number);
     }
 }

@@ -143,6 +143,13 @@ layout:
                             organization: '=data["order"].getOrganization()'
                         label: 'oro.order.shipping_method.label'
                         additional_block_prefixes: ['order_body_column_element']
+                order_shipping_status:
+                    blockType: text
+                    options:
+                        visible: '=data["order"].getShippingStatus()!=null'
+                        text: '=data["order"].getShippingStatus()'
+                        label: 'oro.order.shipping_status.label'
+                        additional_block_prefixes: ['order_body_column_element']
                 order_payment_method:
                     blockType: text
                     options:
@@ -206,6 +213,7 @@ layout:
                                         order_sub_orders: ~
                                         order_status: ~
                                         order_shipping_method: ~
+                                        order_shipping_status: ~
                                         order_payment_method: ~
                                         order_payment_term: ~
                                         order_payment_status: ~

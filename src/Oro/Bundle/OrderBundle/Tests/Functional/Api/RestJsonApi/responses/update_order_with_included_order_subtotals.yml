@@ -1,80 +1,126 @@
+data:
+    type: orders
+    id: '<toString(@simple_order->id)>'
+    attributes:
+        identifier: 'simple_order'
+        poNumber: '1234567890'
+        customerNotes: 'test notes'
+        currency: 'USD'
+        subtotalValue: '444.5000'
+        totalValue: '444.5000'
+    relationships:
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: '<toString(@order_line_item.1->id)>'
+                -
+                    type: orderlineitems
+                    id: '<toString(@order_line_item.2->id)>'
+        orderSubtotals:
+            data:
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "subtotal-0"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "discount-1"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "discount-3"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "tax-4"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "tax-5"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
 included:
     -
         type: ordersubtotals
-        id: '<(implode("-", ["subtotal", "0"]))>'
+        id: '<(implode("-", [@simple_order->id, "subtotal-0"]))>'
         attributes:
             orderSubtotalType: 'subtotal'
             label: 'Subtotal'
-            amount: 444.5
-            signedAmount: 444.5
+            amount: '444.5000'
+            signedAmount: '444.5000'
             currency: 'USD'
             visible: true
             data: []
         relationships:
             order:
                 data:
-                      type: 'orders'
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["discount", "1"]))>'
+        id: '<(implode("-", [@simple_order->id, "discount-1"]))>'
         attributes:
             orderSubtotalType: 'discount'
             label: 'Discount'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: 'USD'
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["shipping_cost", "2"]))>'
+        id: '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>'
         attributes:
             orderSubtotalType: 'shipping_cost'
             label: 'Shipping'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: 'USD'
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["discount", "3"]))>'
+        id: '<(implode("-", [@simple_order->id, "discount-3"]))>'
         attributes:
             orderSubtotalType: 'discount'
             label: 'Shipping Discount'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: 'USD'
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["tax", "4"]))>'
+        id: '<(implode("-", [@simple_order->id, "tax-4"]))>'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Subtotal Tax'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: ''
             visible: false
             data:
@@ -110,40 +156,43 @@ included:
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["tax", "5"]))>'
+        id: '<(implode("-", [@simple_order->id, "tax-5"]))>'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Shipping Tax'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: null
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
             priceList:
                 data: null
     -
         type: ordersubtotals
-        id: '<(implode("-", ["tax", "6"]))>'
+        id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
         attributes:
             orderSubtotalType: 'tax'
             label: 'Tax'
-            amount: 0
-            signedAmount: 0
+            amount: '0.0000'
+            signedAmount: '0.0000'
             currency: null
             visible: false
             data: []
         relationships:
             order:
                 data:
-                    type: 'orders'
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
             priceList:
                 data: null

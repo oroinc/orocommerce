@@ -22,11 +22,15 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
     protected function setUp(): void
     {
         parent::setUp();
+
         $this->loadFixtures([
             LoadAdminCustomerUserData::class,
             '@OroOrderBundle/Tests/Functional/ApiFrontend/DataFixtures/orders.yml',
             LoadPaymentTermData::class
         ]);
+
+        $this->getOptionalListenerManager()
+            ->enableListener('oro_order.order.listener.orm.order_shipping_status_listener');
     }
 
     #[\Override]
@@ -92,8 +96,10 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $data = $this->getRequestData('create_order_min.yml');
         $data['included'][0]['attributes']['productSku'] = '@product1->sku';
         $data['included'][3]['attributes']['productSku'] = '@product-kit-1->sku';
-        unset($data['included'][0]['relationships']['product']);
-        unset($data['included'][3]['relationships']['product']);
+        unset(
+            $data['included'][0]['relationships']['product'],
+            $data['included'][3]['relationships']['product']
+        );
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -129,6 +135,34 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $responseContent['included'][1]['relationships']['customerAddress']['data'] = null;
         $responseContent = $this->updateOrderResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
+    }
+
+    public function testCreateWithShippingStatus(): void
+    {
+        $data = $this->getRequestData('create_order_min.yml');
+        $data['data']['relationships']['shippingStatus']['data'] = [
+            'type' => 'ordershippingstatuses',
+            'id' => 'shipped'
+        ];
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data
+        );
+
+        $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
+        $responseContent['data']['relationships']['shippingStatus']['data'] = [
+            'type' => 'ordershippingstatuses',
+            'id' => 'shipped'
+        ];
+
+        $orderId = (int)$this->getResourceId($response);
+
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var Order $item */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertEquals('shipped', $order->getShippingStatus()->getInternalId());
     }
 
     public function testTryToCreateWithCreatedAtAndUpdatedAt(): void
@@ -199,8 +233,10 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
     public function testTryToCreateWithoutProduct(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
-        unset($data['included'][0]['relationships']['product']);
-        unset($data['included'][3]['relationships']['product']);
+        unset(
+            $data['included'][0]['relationships']['product'],
+            $data['included'][3]['relationships']['product']
+        );
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -252,8 +288,10 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
     public function testTryToCreateWithoutProductUnit(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
-        unset($data['included'][0]['relationships']['productUnit']);
-        unset($data['included'][3]['relationships']['productUnit']);
+        unset(
+            $data['included'][0]['relationships']['productUnit'],
+            $data['included'][3]['relationships']['productUnit']
+        );
 
         $response = $this->post(
             ['entity' => 'orders'],

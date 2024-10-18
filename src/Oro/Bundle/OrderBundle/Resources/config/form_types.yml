@@ -7,8 +7,6 @@ services:
             - '@oro_order.form.type.event_listener.subtotals_subscriber'
         tags:
             - { name: form.type, alias: oro_order_type }
-        calls:
-            - [setDataClass, ['Oro\Bundle\OrderBundle\Entity\Order']]
 
     oro_order.form.type.order_address_select:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType'
