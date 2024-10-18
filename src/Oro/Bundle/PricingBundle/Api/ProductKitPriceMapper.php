@@ -51,10 +51,10 @@ class ProductKitPriceMapper
                 continue;
             }
 
-            $productKitPrice = new ProductKitPrice(...static::collectPriceFields($productPrice, $website, $customer));
+            $productKitPrice = new ProductKitPrice(...self::collectPriceFields($productPrice, $website, $customer));
             foreach ($productPrice->getKitItemPrices() as $kitItemPrice) {
                 $productKitPrice->addKitItemPrice(
-                    new ProductKitItemPrice(...static::collectPriceFields($kitItemPrice, $website, $customer))
+                    new ProductKitItemPrice(...self::collectPriceFields($kitItemPrice, $website, $customer))
                 );
             }
 

@@ -20,14 +20,15 @@ final class ProductKitPrice
         private readonly string $unit,
         private array $kitItemPrices = []
     ) {
-        $this->id = implode('-', [
-            $customerId ?? CustomerPrice::CUSTOMER_GUEST_FILTER_VALUE,
+        $this->id = \sprintf(
+            '%d-%d-%d-%s-%s-%s',
+            $customerId ?? 0,
             $websiteId,
             $productId,
             $currency,
             $unit,
             $quantity
-        ]);
+        );
     }
 
     public function getId(): string
@@ -76,10 +77,8 @@ final class ProductKitPrice
         return $this->kitItemPrices;
     }
 
-    public function addKitItemPrice(ProductKitItemPrice $kitItemPrice): self
+    public function addKitItemPrice(ProductKitItemPrice $kitItemPrice): void
     {
         $this->kitItemPrices[$kitItemPrice->getId()] = $kitItemPrice;
-
-        return $this;
     }
 }

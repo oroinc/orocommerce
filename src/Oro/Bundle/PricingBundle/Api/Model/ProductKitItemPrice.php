@@ -19,15 +19,16 @@ final readonly class ProductKitItemPrice
         private string $unit,
         private int $kitItemId
     ) {
-        $this->id = implode('-', [
+        $this->id = \sprintf(
+            '%d-%d-%d-%d-%s-%s-%s',
             $kitItemId,
-            $customerId ?? CustomerPrice::CUSTOMER_GUEST_FILTER_VALUE,
+            $customerId ?? 0,
             $websiteId,
             $productId,
             $currency,
             $unit,
             $quantity
-        ]);
+        );
     }
 
     public function getId(): string

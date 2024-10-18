@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Api\Processor\ProductKitPrice;
 
 use Oro\Bundle\ApiBundle\Filter\FilterValue;
 use Oro\Bundle\ApiBundle\Model\Error;
+use Oro\Bundle\ApiBundle\Processor\Context;
 use Oro\Bundle\ApiBundle\Processor\ListContext;
 use Oro\Bundle\ApiBundle\Request\Constraint;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
@@ -20,8 +21,9 @@ class HandleProductKitPriceFilters implements ProcessorInterface
     private const string KIT_ITEM_PRODUCT_FILTER_KEY = 'kitItems.%s.product';
     private const string KIT_ITEM_QUANTITY_FILTER_KEY = 'kitItems.%s.quantity';
 
-    public function __construct(private DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        private DoctrineHelper $doctrineHelper
+    ) {
     }
 
     #[\Override]
@@ -40,7 +42,7 @@ class HandleProductKitPriceFilters implements ProcessorInterface
         $this->checkOnBelongingKitItemToKitProduct($context, $product);
     }
 
-    private function checkOnRequiredFilters(ContextInterface $context): void
+    private function checkOnRequiredFilters(Context $context): void
     {
         $filterValues = $context->getFilterValues();
         if (!$filterValues->getOne('customer')) {
@@ -60,7 +62,7 @@ class HandleProductKitPriceFilters implements ProcessorInterface
         }
     }
 
-    private function checkOnProductKitRequiredFilters(ContextInterface $context, Product $product): void
+    private function checkOnProductKitRequiredFilters(Context $context, Product $product): void
     {
         if ($product->isKit() === false) {
             $context->addError(
@@ -77,7 +79,7 @@ class HandleProductKitPriceFilters implements ProcessorInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
-    private function checkOnProductKitItemRequiredFilters(ContextInterface $context, ProductKitItem $kitItem): void
+    private function checkOnProductKitItemRequiredFilters(Context $context, ProductKitItem $kitItem): void
     {
         $filterValues = $context->getFilterValues();
         $isRequired = $this->isRequiredKitItem($kitItem);
@@ -130,7 +132,7 @@ class HandleProductKitPriceFilters implements ProcessorInterface
         }
     }
 
-    private function checkOnBelongingKitItemToKitProduct(ContextInterface $context, Product $product): void
+    private function checkOnBelongingKitItemToKitProduct(Context $context, Product $product): void
     {
         $filters = $context->getFilterValues()->getAll();
         $kitItemIds = $product->getKitItems()->map(static fn (ProductKitItem $kitItem) => $kitItem->getId())->toArray();

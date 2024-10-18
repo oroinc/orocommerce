@@ -289,7 +289,6 @@ api:
                 get_subresource: false
 
         Oro\Bundle\PricingBundle\Api\Model\ProductKitItemPrice:
-            actions: false
             identifier_field_names: [id]
             fields:
                 id:
@@ -319,6 +318,8 @@ api:
                     property_path: kitItemId
                     target_class: Oro\Bundle\ProductBundle\Entity\ProductKitItem
                     target_type: to-one
+            # ProductKitItemPrice does not have own API resource, it is a part of ProductKitPrice API resource
+            actions: false
 
         Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/product_kit_price.md'

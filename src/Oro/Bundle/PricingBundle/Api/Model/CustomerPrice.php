@@ -7,8 +7,6 @@ namespace Oro\Bundle\PricingBundle\Api\Model;
  */
 final readonly class CustomerPrice
 {
-    public const int CUSTOMER_GUEST_FILTER_VALUE = 0;
-
     private string $id;
 
     public function __construct(
@@ -20,14 +18,15 @@ final readonly class CustomerPrice
         private float $value,
         private string $unit
     ) {
-        $this->id = \implode('-', [
-            $customerId ?? self::CUSTOMER_GUEST_FILTER_VALUE,
+        $this->id = \sprintf(
+            '%d-%d-%d-%s-%s-%s',
+            $customerId ?? 0,
             $websiteId,
             $productId,
             $currency,
             $unit,
             $quantity
-        ]);
+        );
     }
 
     public function getId(): string

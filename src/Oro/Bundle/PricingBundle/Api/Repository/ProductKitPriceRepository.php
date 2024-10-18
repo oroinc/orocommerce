@@ -8,7 +8,6 @@ use Oro\Bundle\ApiBundle\Util\ComparisonExpressionsVisitor;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
-use Oro\Bundle\PricingBundle\Api\Model\CustomerPrice;
 use Oro\Bundle\PricingBundle\Api\Processor\ProductKitPrice\AddKitItemFilters;
 use Oro\Bundle\PricingBundle\Api\ProductKitPriceMapper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -28,6 +27,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class ProductKitPriceRepository
 {
+    private const int CUSTOMER_GUEST_FILTER_VALUE = 0;
+
     public function __construct(
         private UserCurrencyManager $currencyManager,
         private AuthorizationCheckerInterface $authorizationChecker,
@@ -92,7 +93,7 @@ class ProductKitPriceRepository
         $filters = [];
         foreach ($comparisons as $comparison) {
             if ($comparison->getOperator() !== Comparison::EQ && $comparison->getOperator() !== Comparison::IN) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new \InvalidArgumentException(\sprintf(
                     'The "%s" operator is not supported for the "%s" filter.',
                     $comparison->getOperator(),
                     $comparison->getField()
@@ -120,10 +121,10 @@ class ProductKitPriceRepository
         $product = $this->getProduct($filters['productId']);
 
         $filters['customer'] = $this->getCustomer($filters['customerId']);
-        $filters['website']  = $this->getWebsite($filters['websiteId']);
-        $filters['product']  = $product;
+        $filters['website'] = $this->getWebsite($filters['websiteId']);
+        $filters['product'] = $product;
         $filters['currency'] = $this->getCurrency($filters['currency'] ?? null);
-        $filters['unit']     = $this->getProductUnit($filters['unit']);
+        $filters['unit'] = $this->getProductUnit($filters['unit']);
         $filters['kitItems'] = $product ? $this->getKitItemFilters($filterValues, $product) : [];
 
         unset(
@@ -193,7 +194,7 @@ class ProductKitPriceRepository
 
     private function getCustomer(int $customerId): ?Customer
     {
-        if ($customerId === CustomerPrice::CUSTOMER_GUEST_FILTER_VALUE) {
+        if (self::CUSTOMER_GUEST_FILTER_VALUE === $customerId) {
             return $this->customerUserRelationsProvider->getCustomerIncludingEmpty();
         }
 

@@ -26,6 +26,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class CustomerPriceRepository
 {
+    private const int CUSTOMER_GUEST_FILTER_VALUE = 0;
+
     public function __construct(
         private ProductPriceProviderInterface $productPriceProvider,
         private CurrencyProviderInterface $currencyProvider,
@@ -88,7 +90,7 @@ class CustomerPriceRepository
         $filters = [];
         foreach ($comparisons as $comparison) {
             if ($comparison->getOperator() !== Comparison::EQ && $comparison->getOperator() !== Comparison::IN) {
-                throw new \InvalidArgumentException(sprintf(
+                throw new \InvalidArgumentException(\sprintf(
                     'The "%s" operator is not supported for the "%s" filter.',
                     $comparison->getOperator(),
                     $comparison->getField()
@@ -126,7 +128,7 @@ class CustomerPriceRepository
 
     private function getCustomer(int $customerId): ?Customer
     {
-        if ($customerId === CustomerPrice::CUSTOMER_GUEST_FILTER_VALUE) {
+        if (self::CUSTOMER_GUEST_FILTER_VALUE === $customerId) {
             return $this->customerUserRelationsProvider->getCustomerIncludingEmpty();
         }
 
