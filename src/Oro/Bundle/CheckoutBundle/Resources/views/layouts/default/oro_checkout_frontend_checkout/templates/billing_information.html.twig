@@ -54,7 +54,7 @@
                     </div>
                 {% endif %}
 
-                {% if hasCustomAddress != true %}
+                {% if hasCustomAddress != true and is_granted('oro_order_address_billing_allow_manual') %}
                     <div class="grid-col">
                         {{ UI.clientBtn({
                             'id': form.billing_address.customerAddress.vars.id ~ '-btn',
