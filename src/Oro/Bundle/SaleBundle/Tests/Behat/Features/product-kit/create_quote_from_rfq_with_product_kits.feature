@@ -2,6 +2,8 @@
 @feature-BB-22730
 @fixture-OroSaleBundle:product-kit/existing_quote_with_product_kits_validation__product.yml
 @fixture-OroSaleBundle:product-kit/create_quote_from_rfq_with_product_kits__rfq.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroCheckoutBundle:Shipping.yml
 
 Feature: Create Quote from RFQ with Product Kits
 
@@ -27,7 +29,7 @@ Feature: Create Quote from RFQ with Product Kits
       | LineItemPrice               | 2.0000                                |
       | Line Item 2 Product         | product-kit-01 - Product Kit 01       |
       | Line Item 2 Quantity        | 1                                     |
-      | Line Item 2 Price           | 104.6900                              |
+      | Line Item 2 Price           | 134.5667                              |
       | Line Item 2 Item 1 Product  | simple-product-03 - Simple Product 03 |
       | Line Item 2 Item 1 Quantity | 2                                     |
       | Line Item 2 Item 2 Product  | simple-product-01 - Simple Product 01 |
@@ -42,6 +44,6 @@ Feature: Create Quote from RFQ with Product Kits
       | PO Number       | PO013       |
       | Internal Status | Draft       |
     And I should see next rows in "Quote Line Items Table" table
-      | SKU               | Product                                                                                                 | Quantity     | Price   |
-      | simple-product-01 | Simple Product 01                                                                                       | 1 pc or more | $2.00   |
-      | product-kit-01    | Product Kit 01 Optional Item [piece x 2] Simple Product 03 Mandatory Item [piece x 3] Simple Product 01 | 1 pc or more | $104.69 |
+      | SKU               | Product                                                                                                 | Quantity     | Price     |
+      | simple-product-01 | Simple Product 01                                                                                       | 1 pc or more | $2.00     |
+      | product-kit-01    | Product Kit 01 Optional Item [piece x 2] Simple Product 03 Mandatory Item [piece x 3] Simple Product 01 | 1 pc or more | $134.5667 |

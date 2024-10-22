@@ -58,6 +58,8 @@ services:
             - '@doctrine'
             - '@oro_product.line_item_checksum_generator'
             - '@logger'
+        calls:
+            - [ setQuoteProductPricesProvider, [ '@oro_sale.provider.quote_product_prices' ] ]
         tags:
             - { name: form.type_extension }
 

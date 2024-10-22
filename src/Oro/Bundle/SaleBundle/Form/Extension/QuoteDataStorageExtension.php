@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Form\Extension;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
@@ -13,6 +14,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -23,6 +25,7 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
 {
     private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator;
+    private QuoteProductPricesProvider $quoteProductPricesProvider;
 
     public function __construct(
         RequestStack $requestStack,
@@ -35,6 +38,11 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         parent::__construct($requestStack, $storage, $propertyAccessor, $doctrine, $logger);
 
         $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
+    }
+
+    public function setQuoteProductPricesProvider(QuoteProductPricesProvider $quoteProductPricesProvider): void
+    {
+        $this->quoteProductPricesProvider = $quoteProductPricesProvider;
     }
 
     protected function addItem(Product $product, object $entity, array $itemData): void
@@ -52,6 +60,66 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         }
 
         $entity->addQuoteProduct($quoteProduct);
+    }
+
+    /**
+     * @param object|Quote $entity
+     * @param array $itemsData
+     * @return void
+     */
+    protected function fillItemsData(object $entity, array $itemsData): void
+    {
+        parent::fillItemsData($entity, $itemsData);
+
+        $prices = $this->quoteProductPricesProvider->getProductLineItemsTierPrices($entity);
+        foreach ($entity->getQuoteProducts() as $quoteProduct) {
+            if ($quoteProduct->getProduct()->isKit()) {
+                foreach ($quoteProduct->getQuoteProductOffers() as $productOffer) {
+                    if (!isset($prices[$productOffer->getProduct()->getId()])) {
+                        $productOffer->setPrice(null);
+                        continue;
+                    }
+                    $pricesByOffer = $prices[$productOffer->getProduct()->getId()][$productOffer->getChecksum()] ?? [];
+
+                    $priceDto = $this->getPricesByScopeCriteria(
+                        $pricesByOffer,
+                        $productOffer->getQuantity(),
+                        $productOffer->getProductUnit()->getCode(),
+                        $productOffer->getPrice()->getCurrency()
+                    );
+
+                    $productOffer->setPrice($priceDto?->getPrice());
+                }
+            }
+        }
+    }
+
+    private function getPricesByScopeCriteria(
+        array $prices,
+        float $qty,
+        string $unit,
+        string $currency
+    ): ?ProductPriceDTO {
+        $prices = array_filter(
+            $prices,
+            function (ProductPriceDTO $priceDto) use ($unit, $currency) {
+                return $priceDto->getUnit()->getCode() === $unit
+                    && $priceDto->getPrice()->getCurrency() === $currency;
+            }
+        );
+
+        $countPrices = count($prices);
+        if ($countPrices === 0) {
+            return null;
+        }
+
+        for ($i = 0; $i <= $countPrices - 1; $i++) {
+            if (!isset($prices[$i + 1]) || $prices[$i + 1]->getQuantity() > $qty) {
+                return $prices[$i];
+            }
+        }
+
+        return null;
     }
 
     private function addItems(Product $product, QuoteProduct $quoteProduct, array $itemsData): void
