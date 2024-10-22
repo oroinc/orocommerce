@@ -22,6 +22,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\ShippingBundle\Form\Type\ProductKitShippingCalculationMethodType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -281,18 +282,27 @@ class ProductType extends AbstractType
         }
 
         if ($product->isKit()) {
-            $form->add(
-                'kitItems',
-                ProductKitItemCollectionType::class,
-                [
-                    'label' => false,
-                    'attr' => [
-                        'class' => 'product-kit-control-group'
-                    ],
-                    'prototype_data' => (new ProductKitItem())->setProductKit($product),
-                    'error_bubbling'=> false
-                ]
-            );
+            $form
+                ->add(
+                    'kitItems',
+                    ProductKitItemCollectionType::class,
+                    [
+                        'label' => false,
+                        'attr' => [
+                            'class' => 'product-kit-control-group'
+                        ],
+                        'prototype_data' => (new ProductKitItem())->setProductKit($product),
+                        'error_bubbling'=> false
+                    ]
+                )
+                ->add(
+                    'kitShippingCalculationMethod',
+                    ProductKitShippingCalculationMethodType::class,
+                    [
+                        'label' => 'oro.product.kit_shipping_calculation_method.label',
+                        'tooltip' => 'oro.product.kit_shipping_calculation_method.tooltip',
+                    ]
+                );
         }
 
         if (!$product->getImages()->isEmpty()) {

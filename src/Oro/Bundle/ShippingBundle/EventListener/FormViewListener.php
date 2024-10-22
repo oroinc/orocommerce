@@ -47,29 +47,12 @@ class FormViewListener
 
     public function onProductView(BeforeListRenderEvent $event)
     {
-        $request = $this->requestStack->getCurrentRequest();
-        if (!$request) {
-            return;
-        }
-
-        $productId = (int)$request->get('id');
-        if (!$productId) {
-            return;
-        }
-
         /** @var Product $product */
-        $product = $this->doctrineHelper->getEntityReference('OroProductBundle:Product', $productId);
-        if (!$product) {
-            return;
-        }
+        $product = $event->getEntity();
 
         $shippingOptions = $this->doctrineHelper
             ->getEntityRepositoryForClass('OroShippingBundle:ProductShippingOptions')
-            ->findBy(['product' => $productId]);
-
-        if (0 === count($shippingOptions)) {
-            return;
-        }
+            ->findBy(['product' => $product]);
 
         if (!$this->fieldAclHelper->isFieldViewGranted($product, 'unitPrecisions')) {
             return;
@@ -79,7 +62,11 @@ class FormViewListener
             '@OroShipping/Product/shipping_options_view.html.twig',
             [
                 'entity' => $product,
-                'shippingOptions' => $shippingOptions
+                'shippingOptions' => $shippingOptions,
+                'kitShippingCalculationMethodValue' => $product->isKit() ? $this->translator->trans(sprintf(
+                    'oro.product.kit_shipping_calculation_method.choices.%s',
+                    $product->getKitShippingCalculationMethod()
+                )) : null
             ]
         );
 
@@ -88,13 +75,23 @@ class FormViewListener
 
     public function onProductEdit(BeforeListRenderEvent $event)
     {
-        if (!$this->fieldAclHelper->isFieldAvailable($event->getEntity(), 'unitPrecisions')) {
+        $product = $event->getEntity();
+        $isKit = $product?->isKit();
+        $isShippingOptionsFieldAvailable = $this
+            ->fieldAclHelper
+            ->isFieldAvailable($product, 'unitPrecisions');
+
+        if (!$isShippingOptionsFieldAvailable && !$isKit) {
             return;
         }
 
         $template = $event->getEnvironment()->render(
             '@OroShipping/Product/shipping_options_update.html.twig',
-            ['form' => $event->getFormView()]
+            [
+                'form' => $event->getFormView(),
+                'isKit' => $isKit,
+                'isShippingOptionsFieldAvailable' => $isShippingOptionsFieldAvailable
+            ]
         );
 
         $this->addBlock($event->getScrollData(), $template, self::SHIPPING_BLOCK_LABEL, self::SHIPPING_BLOCK_PRIORITY);

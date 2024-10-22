@@ -1,0 +1,21 @@
+parameters:
+  payment_term_type: 'payment_term'
+  payment_term_label: 'Payment Term Net 10'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+  paymentTermLabel:
+    string: '<{payment_term_label}>'
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings:
+  paymentTermSettings:
+    __calls:
+      - addLabel: ['@paymentTermLabel']
+      - addShortLabel: ['@paymentTermLabel']
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+  paymentTermIntegration:
+    type: '<{payment_term_type}>'
+    name: 'Payment Term One'
+    enabled: true
+    organization: '@organization'
+    transport: '@paymentTermSettings'

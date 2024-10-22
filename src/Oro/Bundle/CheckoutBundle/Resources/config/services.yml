@@ -692,6 +692,8 @@ services:
             - '@oro_pricing.model.price_list_tree_handler'
             - '@oro_pricing.subtotal_processor.provider.arguments'
             - '@oro_pricing.model.product_price_scope_criteria_factory'
+        calls:
+            - [ setSubtotalProvider, ['@oro_checkout.provider.subtotal'] ]
         tags:
             - { name: oro_pricing.subtotal_provider, alias: oro.checkout.subtotals.checkout_subtotal }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }

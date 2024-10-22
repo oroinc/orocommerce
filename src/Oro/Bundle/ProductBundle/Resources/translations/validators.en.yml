@@ -42,6 +42,9 @@ oro:
         type:
             not_allowed: '{1} Type {{ type }} is not allowed. The only allowed type is {{ allowed_types }}.|]1,Inf[ Type {{ type }} is not allowed. Allowed types are {{ allowed_types }}.'
 
+        shipping_calculation_method:
+            not_allowed: 'Calculation method {{ method }} is not allowed for {{ type }}. The only allowed method is {{ allowed_methods }}.'
+
         kit_items:
             not_owned: 'Kit item {{ kit_item_label }} cannot be used because it already belongs to the product kit {{ product_kit_sku }}.'
             last_one: 'Kit item {{ kit_item_label }} cannot be deleted because it is the last one in the product kit {{ product_kit_sku }}.'

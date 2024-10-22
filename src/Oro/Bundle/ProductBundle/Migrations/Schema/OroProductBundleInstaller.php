@@ -96,7 +96,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_33_1';
+        return 'v1_33_2';
     }
 
     /**
@@ -162,6 +162,8 @@ class OroProductBundleInstaller implements
         $this->addPageTemplateField($schema);
         $this->addProductToSearchTermTable($schema);
         $this->addProductCollectionSegmentToSearchTermTable($schema);
+
+        $this->addKitShippingCalculationMethod($schema);
     }
 
     /**
@@ -1034,5 +1036,14 @@ class OroProductBundleInstaller implements
                 'form' => ['is_enabled' => false],
             ]
         );
+    }
+
+    private function addKitShippingCalculationMethod(Schema $schema): void
+    {
+        if ($schema->hasTable('oro_product')) {
+            $schema
+                ->getTable('oro_product')
+                ->addColumn('kit_shipping_calculation_method', 'string', ['length' => 32, 'notnull' => false]);
+        }
     }
 }

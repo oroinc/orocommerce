@@ -151,3 +151,8 @@ services:
             - '@assets.packages'
         tags:
             - { name: form.type }
+
+    oro_shipping.form.type.product_kit_shipping_calculation_method:
+        class: Oro\Bundle\ShippingBundle\Form\Type\ProductKitShippingCalculationMethodType
+        tags:
+            - { name: form.type }

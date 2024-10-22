@@ -16,6 +16,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitPrecisionsCollectionReferencedByProductKitItems: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\OnlyProductKitCanHaveKitItems:
             groups: [Import]
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitShippingCalculationMethod:
+            allowedShippingCalculationMethods: [ ~, kit_shipping_all, kit_shipping_product, kit_shipping_items ]
     properties:
         sku:
             - NotBlank:

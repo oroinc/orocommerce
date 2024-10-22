@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FixedProductShippingBundle\Method;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\FixedProductShippingBundle\Form\Type\FixedProductOptionsType;
@@ -68,31 +69,51 @@ class FixedProductMethodType implements ShippingMethodTypeInterface
         array $methodOptions,
         array $typeOptions
     ): ?Price {
-        $subtotal = $context->getSubtotal();
-        if (!$subtotal->getValue()) {
-            return null;
-        }
+        $currency = $context->getCurrency();
+        $subtotalWithShipping = $this->shippingCostProvider
+            ->getCalculatedProductShippingCostWithSubtotal(
+                $context->getSourceEntity(),
+                $context->getLineItems(),
+                $currency
+            );
 
-        $surchargeAmount = (float)$typeOptions[self::SURCHARGE_AMOUNT];
-        $shippingCost = $this->shippingCostProvider->getCalculatedProductShippingCost(
-            $context->getLineItems(),
-            $context->getCurrency()
+        [$subtotal, $shipping] = $subtotalWithShipping;
+
+        $value = $this->recalculateShippingCostWithSurcharge($shipping, $subtotal, $typeOptions);
+
+        return Price::create($this->roundingService->round($value->toFloat()), $currency);
+    }
+
+    private function recalculateShippingCostWithSurcharge(
+        BigDecimal $shippingCost,
+        BigDecimal $price,
+        array $typeOptions
+    ): BigDecimal {
+        $surchargeAmount = BigDecimal::of(
+            $typeOptions[FixedProductMethodType::SURCHARGE_AMOUNT] ?? ShippingCostProvider::DEFAULT_COST
         );
 
-        if ($this->isPercentType($typeOptions)) {
-            $value = match ($typeOptions[self::SURCHARGE_ON]) {
-                self::PRODUCT_PRICE => $shippingCost + ($subtotal->getValue() * ($surchargeAmount / 100)),
-                self::PRODUCT_SHIPPING_COST => $shippingCost + ($shippingCost * ($surchargeAmount / 100)),
-            };
-        } else {
-            $value = $shippingCost + $surchargeAmount;
+        if ($surchargeAmount->isEqualTo(0)) {
+            return $shippingCost;
         }
 
-        return Price::create($this->roundingService->round($value), $context->getCurrency());
+        if ($this->isPercentType($typeOptions)) {
+            $surchargeAmount = $surchargeAmount->exactlyDividedBy(100.00);
+            $value = match ($typeOptions[FixedProductMethodType::SURCHARGE_ON]) {
+                FixedProductMethodType::PRODUCT_PRICE =>
+                    $shippingCost->plus($price->multipliedBy($surchargeAmount)),
+                FixedProductMethodType::PRODUCT_SHIPPING_COST =>
+                    $shippingCost->plus($shippingCost->multipliedBy($surchargeAmount)),
+            };
+        } else {
+            $value = $shippingCost->plus($surchargeAmount);
+        }
+
+        return $value;
     }
 
     private function isPercentType(array $typeOptions): bool
     {
-        return $typeOptions[self::SURCHARGE_TYPE] === self::PERCENT;
+        return $typeOptions[FixedProductMethodType::SURCHARGE_TYPE] === FixedProductMethodType::PERCENT;
     }
 }

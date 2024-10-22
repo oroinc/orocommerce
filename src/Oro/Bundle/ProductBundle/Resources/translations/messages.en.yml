@@ -138,6 +138,14 @@ oro:
         kit_items:
             label: Kit Items
             description: Items of the product kit
+        kit_shipping_calculation_method:
+            label: Calculate Shipping Based On
+            tooltip: This option is only applied when calculating fixed product shipping costs for product kits
+            description: 'Specifies how to calculate fixed shipping price for product kit, available values: kit_shipping_all, kit_shipping_product, kit_shipping_items'
+            choices:
+                kit_shipping_all: Kit product and kit items
+                kit_shipping_product: Only kit product itself
+                kit_shipping_items: Only kit items
 
         simplified_preview:
             message: Current content view is simplified, please check the page on the Storefront to see the actual result
