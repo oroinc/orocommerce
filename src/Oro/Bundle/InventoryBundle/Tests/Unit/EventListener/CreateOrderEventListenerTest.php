@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
@@ -13,7 +14,6 @@ use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -121,14 +121,10 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
     {
         $workflowData = $this->createMock(WorkflowData::class);
         /** @var ExtendableActionEvent|\PHPUnit\Framework\MockObject\MockObject $event */
-        $event = $this->getMockBuilder(ExtendableActionEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $event = $this->createMock(ExtendableActionEvent::class);
         $event->expects($this->any())
-            ->method('getContext');
-        $workflowData->expects($this->never())
-            ->method('get')
-            ->with('order');
+            ->method('getContext')
+            ->willReturn(new ActionData([]));
         $this->quantityManager->expects($this->never())
             ->method('shouldDecrement');
 
@@ -271,12 +267,8 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
     protected function prepareEvent()
     {
         $numberOfItems = 5;
-        $event = $this->getMockBuilder(ExtendableActionEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowData = $this->createMock(WorkflowData::class);
-        $order = $this->createMock(Order::class);
+        $event = $this->createMock(ExtendableActionEvent::class);
+
         $product = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
         $lineItem = $this->createMock(OrderLineItem::class);
@@ -293,23 +285,10 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->checkoutLineItemsManager->expects($this->once())
             ->method('getData')
             ->willReturn([$lineItem]);
-        $workflowData->expects($this->once())
-            ->method('has')
-            ->with('order')
-            ->willReturn(true);
-        $workflowData->expects($this->any())
-            ->method('get')
-            ->with('order')
-            ->willReturn($order);
-        $workflowItem->expects($this->any())
-            ->method('getData')
-            ->willReturn($workflowData);
-        $workflowItem->expects($this->any())
-            ->method('getEntity')
-            ->willReturn($checkout);
+
         $event->expects($this->any())
             ->method('getContext')
-            ->willReturn($workflowItem);
+            ->willReturn(new ActionData(['checkout' => $checkout]));
 
         return $event;
     }

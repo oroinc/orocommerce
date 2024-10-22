@@ -365,6 +365,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         customerNotes: 'Test customer user notes for order 2'
         estimatedShippingCostAmount: '5.0000'
         payment_term_7c4f1e8e: '@payment_term_net_20'
+        external: false
         customer: '@customer'
         customerUser: '@customer_user'
         website: '@website'
@@ -377,6 +378,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
         subtotal: '123.4567'
         total: '123.4567'
         payment_term_7c4f1e8e: '@payment_term_net_10'
+        external: true
         customer: '@customer1'
         customerUser: '@customer_user1'
         website: '@website'

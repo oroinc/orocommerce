@@ -163,6 +163,14 @@ Delete a collection of order records.
 
 **The required field.**
 
+### external
+
+#### update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### lineItems
 
 #### create
