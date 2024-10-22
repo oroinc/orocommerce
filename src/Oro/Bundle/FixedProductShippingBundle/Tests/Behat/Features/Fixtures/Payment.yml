@@ -1,0 +1,26 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+  paymentRule:
+    name: 'Default'
+    enabled: true
+    sortOrder: 4
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
+  paymentMethodConfig:
+    type: '<("payment_term_".@paymentTermIntegration->getId())>'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination:
+  paymentMethodsConfigsRuleDestination:
+    country: '@germany'
+    region: '@berlin'
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+  paymentMethodsConfigsRule:
+    rule: '@paymentRule'
+    methodConfigs: ['@paymentMethodConfig']
+    currency: 'USD'
+    organization: '@organization'
+    destinations: ['@paymentMethodsConfigsRuleDestination']
+
+Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
+  paymentTerm:
+    label: net 10

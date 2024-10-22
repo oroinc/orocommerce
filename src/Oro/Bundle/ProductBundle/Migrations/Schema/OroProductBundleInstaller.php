@@ -45,7 +45,7 @@ class OroProductBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_34';
+        return 'v1_35';
     }
 
     #[\Override]
@@ -109,6 +109,8 @@ class OroProductBundleInstaller implements
         $this->addPageTemplateField($schema);
         $this->addProductToSearchTermTable($schema);
         $this->addProductCollectionSegmentToSearchTermTable($schema);
+
+        $this->addKitShippingCalculationMethod($schema);
     }
 
     /**
@@ -973,5 +975,14 @@ class OroProductBundleInstaller implements
                 'form' => ['is_enabled' => false],
             ]
         );
+    }
+
+    private function addKitShippingCalculationMethod(Schema $schema): void
+    {
+        if ($schema->hasTable('oro_product')) {
+            $schema
+                ->getTable('oro_product')
+                ->addColumn('kit_shipping_calculation_method', 'string', ['length' => 32, 'notnull' => false]);
+        }
     }
 }

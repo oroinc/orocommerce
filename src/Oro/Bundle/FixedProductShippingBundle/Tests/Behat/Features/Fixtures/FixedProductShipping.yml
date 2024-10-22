@@ -1,0 +1,63 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+  shippingRule1:
+    name: 'Default Shipping Rule 1'
+    enabled: true
+    sortOrder: 1
+  shippingRule2:
+    name: 'Default Shipping Rule 2'
+    enabled: true
+    sortOrder: 2
+  shippingRule3:
+    name: 'Default Shipping Rule 3'
+    enabled: true
+    sortOrder: 3
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+  shippingMethodTypeConfig1:
+    type: 'primary'
+    enabled: true
+    options:
+      surcharge_type: 'percent'
+      surcharge_on: 'product_price'
+      surcharge_amount: 10
+  shippingMethodTypeConfig2:
+    type: 'primary'
+    enabled: true
+    options:
+      surcharge_type: 'percent'
+      surcharge_on: 'product_shipping_cost'
+      surcharge_amount: 15
+  shippingMethodTypeConfig3:
+    type: 'primary'
+    enabled: true
+    options:
+      surcharge_type: 'fixed_amount'
+      surcharge_amount: 20
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+  shippingMethodConfig1:
+    method: '<("fixed_product_".@fixedProductIntegration1->getId())>'
+    typeConfigs: ['@shippingMethodTypeConfig1']
+  shippingMethodConfig2:
+    method: '<("fixed_product_".@fixedProductIntegration2->getId())>'
+    typeConfigs: [ '@shippingMethodTypeConfig2' ]
+  shippingMethodConfig3:
+    method: '<("fixed_product_".@fixedProductIntegration3->getId())>'
+    typeConfigs: [ '@shippingMethodTypeConfig3' ]
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+  shippingMethodsConfigsRule1:
+    rule: '@shippingRule1'
+    methodConfigs: ['@shippingMethodConfig1']
+    currency: 'USD'
+    organization: '@organization'
+  shippingMethodsConfigsRule2:
+    rule: '@shippingRule2'
+    methodConfigs: [ '@shippingMethodConfig2' ]
+    currency: 'USD'
+    organization: '@organization'
+  shippingMethodsConfigsRule3:
+    rule: '@shippingRule3'
+    methodConfigs: [ '@shippingMethodConfig3' ]
+    currency: 'USD'
+    organization: '@organization'
