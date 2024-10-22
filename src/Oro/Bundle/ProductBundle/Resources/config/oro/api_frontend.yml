@@ -172,6 +172,8 @@ api:
                     property_path: _
                 inventoryStatus:
                     property_path: inventory_status
+                kitShippingCalculationMethod:
+                    data_type: string
             filters:
                 fields:
                     sku:

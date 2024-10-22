@@ -1,0 +1,246 @@
+parameters:
+  kitShippingCalculationMethods:
+    - 'kit_shipping_all'
+    - 'kit_shipping_items'
+    - 'kit_shipping_product'
+    - 'kit_shipping_all'
+    - 'kit_shipping_items'
+    - 'kit_shipping_product'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+  all_customers:
+    name: 'All Customers'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  customer:
+    name: 'Company A'
+    organization: '@organization'
+    owner: '@admin'
+    group: '@all_customers'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  amanda:
+    email: 'AmandaRCole@example.org'
+    username: 'AmandaRCole@example.org'
+    password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+    salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+    firstName: 'AmandaMu'
+    lastName: 'Cole'
+    enabled: '1'
+    confirmed: '1'
+    customer: '@customer'
+    organization: '@organization'
+    userRoles: [ '@buyer' ]
+    owner: '@admin'
+    website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+  address:
+    country: '@germany'
+    region: '@berlin'
+    label: 'Primary address'
+    street: 'Fifth avenue'
+    city: 'Berlin'
+    postalCode: '10115'
+    frontendOwner: '@amanda'
+    owner: '@admin'
+    __calls:
+      - setDefaults: ['@shippingType', '@billingType']
+    systemOrganization: '@organization'
+    primary: true
+    organization: 'ORO'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings:
+  customerUserSetting:
+    customerUser: '@amanda'
+    __construct: ['@website1']
+    currency: 'USD'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+  billing:
+    address: '@address'
+    type: '@billingType'
+    default: true
+  shipping:
+    address: '@address'
+    type: '@shippingType'
+    default: true
+
+Oro\Bundle\ProductBundle\Entity\ProductDescription:
+  product_kit_description{1..6}:
+    wysiwyg: 'Product Kit Description <current()>'
+  simple_product_description{1..3}:
+    wysiwyg: 'Simple Product Description <current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+  product_kit{1..6}:
+    sku: 'productkit<current()>'
+    type: 'kit'
+    attributeFamily: '@defaultProductFamily'
+    __calls:
+      -   addName: [ '@product_kit_name<current()>' ]
+      -   addDescription: [ '@product_kit_description<current()>' ]
+      -   addKitItem: [ '@product_kit_item1_<current()>' ]
+      -   addKitItem: [ '@product_kit_item2_<current()>' ]
+    status: 'enabled'
+    organization: '@organization'
+    owner: '@business_unit'
+    inventoryStatus: '@enumInventoryStatuses'
+    primaryUnitPrecision: '@product_kit_precision<current()>'
+    unitPrecisions: [ '@product_kit_precision<current()>' ]
+    kitShippingCalculationMethod: '<($kitShippingCalculationMethods[$current-1])>'
+  simple_product{1..3}:
+    type: 'simple'
+    organization: '@organization'
+    owner: '@business_unit'
+    sku: 'simpleproduct<sprintf("%02d", $current)>'
+    attributeFamily: '@defaultProductFamily'
+    primaryUnitPrecision: '@simple_product_precision<current()>'
+    inventoryStatus: '@enumInventoryStatuses'
+    status: 'enabled'
+    __calls:
+      -   addName: [ '@simple_product_name<current()>' ]
+      -   addDescription: [ '@simple_product_description<current()>' ]
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+  product_kit_precision{1..6}:
+    unit: '@piece'
+    precision: '0'
+  simple_product_precision{1..3}:
+    unit: '@piece'
+    precision: '0'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+  product_kit_name{1..6}:
+    string: 'ProductTheKit <current()>'
+  simple_product_name{1..3}:
+    string: 'Simple Product <current()>'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItem:
+  product_kit_item1_{1..6}:
+    optional: false
+    sortOrder: 2
+    minimumQuantity: 1
+    maximumQuantity: 10
+    productUnit: '@piece'
+    __calls:
+      -   addLabel: [ '@product_kit_item1_label_<current()>' ]
+      -   addKitItemProduct: [ '@product_kit_item1_product1_<current()>' ]
+      -   addKitItemProduct: [ '@product_kit_item1_product2_<current()>' ]
+  product_kit_item2_{1..6}:
+    optional: false
+    sortOrder: 1
+    minimumQuantity: 0
+    maximumQuantity: 5
+    productUnit: '@piece'
+    __calls:
+      -   addLabel: [ '@product_kit_item2_label_<current()>' ]
+      -   addKitItemProduct: [ '@product_kit_item2_product3_<current()>' ]
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel:
+  product_kit_item1_label_{1..6}:
+    string: 'Base Unit <current()> 1'
+  product_kit_item2_label_{1..6}:
+    string: 'Barcode Scanner <current()> 2'
+
+Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
+  product_kit_item1_product1_{1..6}:
+    kitItem: '@product_kit_item1_<current()>'
+    product: '@simple_product1'
+    sortOrder: 1
+    productUnitPrecision: '@product_kit_precision<current()>'
+  product_kit_item1_product2_{1..6}:
+    kitItem: '@product_kit_item1_<current()>'
+    product: '@simple_product2'
+    sortOrder: 2
+    productUnitPrecision: '@product_kit_precision<current()>'
+  product_kit_item2_product3_{1..6}:
+    kitItem: '@product_kit_item2_<current()>'
+    product: '@simple_product3'
+    sortOrder: 3
+    productUnitPrecision: '@product_kit_precision<current()>'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToWebsite:
+  priceListToWebsite:
+    pricelist: '@defaultPriceList'
+    website: '@website1'
+    sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+  priceListToCustomer:
+    customer: '@customer'
+    pricelist: '@defaultPriceList'
+    website: '@website1'
+    sortOrder: 200
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+  price_product_kit{1..6}:
+    product: '@product_kit<current()>'
+    priceList: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@piece'
+    value: '<($current + 10)>'
+  price_simple_product{1..3}:
+    product: '@simple_product<current()>'
+    priceList: '@defaultPriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@piece'
+    value: 20
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+  priceRelationDefaultPriceListToProductKit{1..6}:
+    product: '@product_kit<current()>'
+    priceList: '@defaultPriceList'
+  priceRelationDefaultPriceListToProduct{1..3}:
+    product: '@simple_product<current()>'
+    priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+  priceAttributePriceList:
+    name: 'Shipping Cost'
+    fieldName: 'shippingCost'
+    organization: '@organization'
+    __calls:
+      - setCurrencies: [ [ 'USD' ] ]
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+  priceAttributeProductPrice{1..3}:
+    product: '@simple_product<current()>'
+    priceList: '@priceAttributePriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@piece'
+    value: '<current()>'
+  priceAttributeProductKitPrice{4..6}:
+    product: '@product_kit<current()>'
+    priceList: '@priceAttributePriceList'
+    currency: 'USD'
+    quantity: 1
+    unit: '@piece'
+    value: '<current()>'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+  shoppinglist{1..6}:
+    label: 'List <current()>'
+    customerUser: '@amanda'
+    organization: '@organization'
+    website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+  lineitem{1..6}:
+    product: '@product_kit<current()>'
+    quantity: '<current()>'
+    unit: '@piece'
+    customerUser: '@amanda'
+    shoppingList: '@shoppinglist<current()>'
+    organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+  shoppingListTotal{1..6}:
+    __construct: ['@shoppinglist<current()>','USD']
+    shoppingList: '@shoppinglist<current()>'
+    currency: 'USD'
+    subtotalValue: '<(($current + 50) * $current)>'
+    valid: true

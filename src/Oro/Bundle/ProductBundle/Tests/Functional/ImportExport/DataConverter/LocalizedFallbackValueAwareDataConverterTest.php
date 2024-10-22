@@ -98,7 +98,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'extend.entity.test.wysiwyg' => '',
         'extend.entity.test.wysiwyg_attr' => '',
         'Upcoming.value' => '',
-        'Kit Items' => ''
+        'Kit Items' => '',
+        'Calculate Shipping Based On' => ''
     ];
 
     private const HEADER_FIELD = 'sku';

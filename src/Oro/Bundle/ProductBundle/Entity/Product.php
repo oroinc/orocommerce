@@ -171,6 +171,10 @@ class Product implements
     const TYPE_CONFIGURABLE = 'configurable';
     const TYPE_KIT = 'kit';
 
+    const KIT_SHIPPING_ALL = 'kit_shipping_all';
+    const KIT_SHIPPING_ONLY_PRODUCT = 'kit_shipping_product';
+    const KIT_SHIPPING_ONLY_ITEMS = 'kit_shipping_items';
+
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]
@@ -454,6 +458,15 @@ class Product implements
         ]
     )]
     protected ?Collection $kitItems = null;
+
+    #[ORM\Column(
+        name: 'kit_shipping_calculation_method',
+        type: Types::STRING,
+        length: 32,
+        nullable: true
+    )]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 100]])]
+    protected ?string $kitShippingCalculationMethod = null;
 
     /**
      * {@inheritdoc}
@@ -1184,6 +1197,10 @@ class Product implements
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
+        if ($this->isKit() && !$this->kitShippingCalculationMethod) {
+            $this->kitShippingCalculationMethod = self::KIT_SHIPPING_ALL;
+        }
+
         $this->updateDenormalizedProperties();
     }
 
@@ -1194,6 +1211,10 @@ class Product implements
     public function preUpdate()
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+
+        if ($this->isKit() && !$this->kitShippingCalculationMethod) {
+            $this->kitShippingCalculationMethod = self::KIT_SHIPPING_ALL;
+        }
 
         $this->updateDenormalizedProperties();
 
@@ -1465,5 +1486,17 @@ class Product implements
         }
 
         return $this->kitItems;
+    }
+
+    public function getKitShippingCalculationMethod(): ?string
+    {
+        return $this->kitShippingCalculationMethod;
+    }
+
+    public function setKitShippingCalculationMethod(string $kitShippingCalculation): self
+    {
+        $this->kitShippingCalculationMethod = $kitShippingCalculation;
+
+        return $this;
     }
 }

@@ -2,293 +2,402 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Form\FieldAclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository;
 use Oro\Bundle\ShippingBundle\EventListener\FormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormView;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Translation\TranslatorInterface;
 use Twig\Environment;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class CustomerViewListenerTest extends TestCase
 {
-    /** @var TranslatorInterface|MockObject */
-    protected $translator;
+    private FormViewListener $formViewListener;
+    private TranslatorInterface|MockObject $translator;
+    private DoctrineHelper|MockObject $doctrineHelper;
+    private ProductShippingOptionsRepository|MockObject $productShippingOptionsRepository;
+    private FieldAclHelper|MockObject $fieldAclHelper;
+    private Environment|MockObject $twig;
 
-    /** @var DoctrineHelper|MockObject */
-    protected $doctrineHelper;
-
-    /** @var Environment|MockObject */
-    protected $env;
-
-    /** @var Request|MockObject */
-    protected $request;
-
-    /** @var RequestStack|MockObject */
-    protected $requestStack;
-
-    /** @var FieldAclHelper|MockObject */
-    private $fieldAclHelper;
-
-    /** @var FormViewListener */
-    protected $listener;
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->translator->expects($this->any())
-            ->method('trans')
-            ->willReturnCallback(fn ($id) => $id . '.trans');
-
-        $this->env = $this->createMock(Environment::class);
+        $this->translator->expects(self::any())->method('trans')->willReturnArgument(0);
+        $this->productShippingOptionsRepository = $this->createMock(ProductShippingOptionsRepository::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
-        $this->request = $this->createMock(Request::class);
-        $this->requestStack = $this->createMock(RequestStack::class);
-
         $this->fieldAclHelper = $this->createMock(FieldAclHelper::class);
-        $this->fieldAclHelper
-            ->expects($this->any())
-            ->method('isFieldAvailable')
-            ->willReturn(true);
-        $this->fieldAclHelper
-            ->expects($this->any())
-            ->method('isFieldViewGranted')
-            ->willReturn(true);
-
-        $this->listener = new FormViewListener(
+        $this->twig = $this->createMock(Environment::class);
+        $this->formViewListener = new FormViewListener(
             $this->translator,
             $this->doctrineHelper,
-            $this->requestStack,
+            $this->createMock(RequestStack::class),
             $this->fieldAclHelper
         );
     }
 
-    public function testOnProductViewWithoutRequest()
+    /** @dataProvider onProductViewDataProvider */
+    public function testOnProductView(array $data, array $expectedResult): void
     {
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn(null);
-
-        $this->request->expects($this->never())
-            ->method('get');
-
-        $event = new BeforeListRenderEvent(
-            $this->env,
-            new ScrollData(),
-            new \stdClass()
-        );
-
-        $this->listener->onProductView($event);
-    }
-
-    public function testOnProductViewWithEmptyRequest()
-    {
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-
-        $this->request->expects($this->once())
-            ->method('get')
-            ->willReturn(null);
-
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityReference');
-
-        $event = new BeforeListRenderEvent(
-            $this->env,
-            new ScrollData(),
-            new \stdClass()
-        );
-
-        $this->listener->onProductView($event);
-    }
-
-    public function testOnProductViewWithoutProduct()
-    {
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($this->request);
-        $this->request->expects($this->once())->method('get')->with('id')->willReturn(42);
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with(Product::class, 42)
-            ->willReturn(null);
-
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityRepositoryForClass');
-
-        $event = new BeforeListRenderEvent(
-            $this->env,
-            new ScrollData(),
-            new \stdClass()
-        );
-
-        $this->listener->onProductView($event);
-    }
-
-    public function testOnProductViewWithEmptyShippingOptions()
-    {
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-
-        $this->request->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn(47);
-
+        $scrollData = new ScrollData();
         $product = new Product();
+        $product
+            ->setType($data['productType'])
+            ->setSku($data['sku']);
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with(Product::class, 47)
-            ->willReturn($product);
+        if ($data['productType'] === Product::TYPE_KIT) {
+            $product->setKitShippingCalculationMethod($data['kitShippingCalculationMethod']);
+        }
 
-        $productShippingOptionsRepository = $this->createMock(EntityRepository::class);
-        $productShippingOptionsRepository->expects($this->once())
+        $event = new BeforeListRenderEvent($this->twig, $scrollData, $product);
+
+        $this->productShippingOptionsRepository
+            ->expects(self::once())
             ->method('findBy')
-            ->with(['product' => 47])
             ->willReturn([]);
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper
+            ->expects(self::once())
             ->method('getEntityRepositoryForClass')
             ->with(ProductShippingOptions::class)
-            ->willReturn($productShippingOptionsRepository);
+            ->willReturn($this->productShippingOptionsRepository);
 
-        $this->env->expects($this->never())
-            ->method('render');
+        $this->fieldAclHelper
+            ->expects(self::once())
+            ->method('isFieldViewGranted')
+            ->with($product, 'unitPrecisions')
+            ->willReturn($data['isFieldViewGranted']);
 
-        $event = new BeforeListRenderEvent(
-            $this->env,
-            new ScrollData(),
-            $product
-        );
+        $this->twig
+            ->expects($data['isFieldViewGranted'] ? self::once() : self::never())
+            ->method('render')
+            ->willReturnCallback(function (string $template, array $parameters) use ($product): string {
+                self::assertEquals([
+                    'entity' => $product,
+                    'shippingOptions' => [],
+                    'kitShippingCalculationMethodValue' => $product->isKit() ? sprintf(
+                        'oro.product.kit_shipping_calculation_method.choices.%s',
+                        $product->getKitShippingCalculationMethod()
+                    ) : null
+                ], $parameters);
 
-        $this->listener->onProductView($event);
+                return sprintf(
+                    '%s_%s_%s',
+                    $parameters['entity']?->getSku(),
+                    implode('+', $parameters['shippingOptions']) ?: 'null',
+                    $parameters['kitShippingCalculationMethodValue'] ?? 'null'
+                );
+            });
+
+        $this->formViewListener->onProductView($event);
+
+        self::assertEquals($expectedResult, $event->getScrollData()->getData());
     }
 
-    public function testOnProductView()
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    public function onProductViewDataProvider(): array
     {
-        $this->requestStack->expects($this->once())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-
-        $this->request->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn(47);
-
-        $product = new Product();
-
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityReference')
-            ->with(Product::class, 47)
-            ->willReturn($product);
-
-        $productShippingOptionsRepository = $this->createMock(EntityRepository::class);
-
-        $productShippingOptionsRepository->expects($this->once())
-            ->method('findBy')
-            ->with(['product' => 47])
-            ->willReturn(
-                [
-                    new ProductShippingOptions(),
-                    new ProductShippingOptions(),
+        return [
+            'Simple product without fieldView permissions' => [
+                'data' => [
+                    'sku' => 'SSKU-1',
+                    'isFieldViewGranted' => false,
+                    'productType' => Product::TYPE_SIMPLE,
+                ],
+                'expectedResult' => []
+            ],
+            'Simple product with fieldView permissions' => [
+                'data' => [
+                    'sku' => 'SSKU-2',
+                    'isFieldViewGranted' => true,
+                    'productType' => Product::TYPE_SIMPLE,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => ['SSKU-2_null_null']
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
                 ]
+            ],
+            'Product kit without fieldView permissions' => [
+                'data' => [
+                    'sku' => 'KSKU-1',
+                    'isFieldViewGranted' => false,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ALL
+                ],
+                'expectedResult' => []
+            ],
+            'Product kit with fieldView permissions and product kit shipping all calculation method' => [
+                'data' => [
+                    'sku' => 'KSKU-2',
+                    'isFieldViewGranted' => true,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ALL,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'KSKU-2'.
+                                        '_null_'.
+                                        'oro.product.kit_shipping_calculation_method.choices.kit_shipping_all'
+                                    ]
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
+            ],
+            'Product kit with fieldView permissions and product kit shipping only product calculation method' => [
+                'data' => [
+                    'sku' => 'KSKU-3',
+                    'isFieldViewGranted' => true,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ONLY_PRODUCT,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'KSKU-3'.
+                                        '_null_'.
+                                        'oro.product.kit_shipping_calculation_method.choices.kit_shipping_product'
+                                    ]
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
+            ],
+            'Product kit with fieldView permissions and product kit shipping only items calculation method' => [
+                'data' => [
+                    'sku' => 'KSKU-4',
+                    'isFieldViewGranted' => true,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ONLY_ITEMS,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => [
+                                        'KSKU-4'.
+                                        '_null_'.
+                                        'oro.product.kit_shipping_calculation_method.choices.kit_shipping_items'
+                                    ]
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
+            ],
+        ];
+    }
+
+    /** @dataProvider onProductEditDataProvider */
+    public function testOnProductEdit(array $data, array $expectedResult): void
+    {
+        $formView = new FormView();
+        $formView->children['data'] = $data;
+        $scrollData = new ScrollData();
+        $product = new Product();
+        $product
+            ->setType($data['productType'])
+            ->setSku($data['sku']);
+
+        if ($data['productType'] === Product::TYPE_KIT) {
+            $product->setKitShippingCalculationMethod($data['kitShippingCalculationMethod']);
+        }
+
+        $event = new BeforeListRenderEvent($this->twig, $scrollData, $product, $formView);
+
+        $this->fieldAclHelper
+            ->expects(self::once())
+            ->method('isFieldAvailable')
+            ->with($product, 'unitPrecisions')
+            ->willReturn($data['isFieldAvailable']);
+
+        $this->twig
+            ->expects(self::any())
+            ->method('render')
+            ->willReturnCallback(
+                function (string $template, array $parameters) use ($product, $formView, $data): string {
+                    self::assertEquals([
+                        'form' => $formView,
+                        'isKit' => $product->isKit(),
+                        'isShippingOptionsFieldAvailable' => $data['isFieldAvailable']
+                    ], $parameters);
+
+                    return sprintf(
+                        '%s_%s_%s',
+                        $data['sku'],
+                        $product->isKit() ? 'kit' : 'not_kit',
+                        $data['isFieldAvailable'] ? 'field_available' : 'field_not_available'
+                    );
+                }
             );
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(ProductShippingOptions::class)
-            ->willReturn($productShippingOptionsRepository);
+        $this->formViewListener->onProductEdit($event);
 
-        $renderedHtml = 'rendered_html';
-
-        /** @var Environment|MockObject $twig */
-        $this->env->expects($this->any())
-            ->method('render')
-            ->with(
-                '@OroShipping/Product/shipping_options_view.html.twig',
-                [
-                    'entity' => $product,
-                    'shippingOptions' => [new ProductShippingOptions(), new ProductShippingOptions()]
-                ]
-            )
-            ->willReturn($renderedHtml);
-
-        $scrollData = new ScrollData();
-
-        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass());
-
-        $this->listener->onProductView($event);
-
-        $expectedData = [
-            ScrollData::DATA_BLOCKS => [
-                'shipping' => [
-                    ScrollData::SUB_BLOCKS => [
-                        0 => [
-                            ScrollData::DATA => [
-                                0 => $renderedHtml,
-                            ],
-                        ],
-                    ],
-                    ScrollData::TITLE => 'oro.shipping.product.section.shipping_options.trans',
-                    ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                    ScrollData::PRIORITY => 1800
-                ],
-            ],
-        ];
-
-        $this->assertEquals($expectedData, $scrollData->getData());
+        self::assertEquals($expectedResult, $event->getScrollData()->getData());
     }
 
-    public function testOnProductEdit()
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    public function onProductEditDataProvider(): array
     {
-        $formView = $this->createMock(FormView::class);
-        $renderedHtml = 'rendered_html';
-
-        $this->env->expects($this->once())
-            ->method('render')
-            ->with('@OroShipping/Product/shipping_options_update.html.twig', ['form' => $formView])
-            ->willReturn($renderedHtml);
-
-        $scrollData = new ScrollData();
-
-        $event = new BeforeListRenderEvent($this->env, $scrollData, new \stdClass(), $formView);
-
-        $this->listener->onProductEdit($event);
-
-        $expectedData = [
-            ScrollData::DATA_BLOCKS => [
-                'shipping' => [
-                    ScrollData::SUB_BLOCKS => [
-                        0 => [
-                            ScrollData::DATA => [
-                                0 => $renderedHtml,
-                            ],
-                        ],
-                    ],
-                    ScrollData::TITLE => 'oro.shipping.product.section.shipping_options.trans',
-                    ScrollData::USE_SUB_BLOCK_DIVIDER => true,
-                    ScrollData::PRIORITY => 1800
+        return [
+            'Simple product with not available shipping options field' => [
+                'data' => [
+                    'sku' => 'SSKU-1',
+                    'isFieldAvailable' => false,
+                    'productType' => Product::TYPE_SIMPLE,
                 ],
+                'expectedResult' => []
+            ],
+            'Simple product with available shipping options field' => [
+                'data' => [
+                    'sku' => 'SSKU-2',
+                    'isFieldAvailable' => true,
+                    'productType' => Product::TYPE_SIMPLE,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => ['SSKU-2_not_kit_field_available']
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
+            ],
+            'Product kit with not available shipping options field' => [
+                'data' => [
+                    'sku' => 'KSKU-1',
+                    'isFieldAvailable' => false,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ALL
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => ['KSKU-1_kit_field_not_available']
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
+            ],
+            'Product kit with available shipping options field and product kit and shipping all method' => [
+                'data' => [
+                    'sku' => 'KSKU-2',
+                    'isFieldAvailable' => true,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ALL,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => ['KSKU-2_kit_field_available']
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
+            ],
+            'Product kit with available shipping options field and product kit and shipping only product method' => [
+                'data' => [
+                    'sku' => 'KSKU-3',
+                    'isFieldAvailable' => true,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ONLY_PRODUCT,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => ['KSKU-3_kit_field_available']
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
+            ],
+            'Product kit with available shipping options field and product kit and shipping only items method' => [
+                'data' => [
+                    'sku' => 'KSKU-4',
+                    'isFieldAvailable' => true,
+                    'productType' => Product::TYPE_KIT,
+                    'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ONLY_ITEMS,
+                ],
+                'expectedResult' => [
+                    'dataBlocks' => [
+                        FormViewListener::SHIPPING_BLOCK_NAME => [
+                            'subblocks' => [
+                                [
+                                    'data' => ['KSKU-4_kit_field_available']
+                                ]
+                            ],
+                            'title' => FormViewListener::SHIPPING_BLOCK_LABEL,
+                            'priority' => FormViewListener::SHIPPING_BLOCK_PRIORITY,
+                            'useSubBlockDivider' => true,
+                        ]
+                    ]
+                ]
             ],
         ];
-
-        $this->assertEquals($expectedData, $scrollData->getData());
     }
 }
