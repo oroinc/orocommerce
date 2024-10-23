@@ -19,7 +19,6 @@ workflows:
                 is_unavailable_hidden: true
                 transition_service: 'oro_checkout.workflow.base_transition.start_from_shopping_list'
                 frontend_options:
-                    icon: fa-briefcase
                     data:
                       component_name: oro_shopping_list_matrix_to_create_order
                       page-component-module: oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
@@ -37,7 +36,7 @@ workflows:
                 is_unavailable_hidden: true
                 transition_service: 'oro_checkout.workflow.base_transition.start_from_quick_order_form'
                 frontend_options:
-                    icon: fa-clipboard
+                    icon: shopping-cart
                     data:
                         component_name: oro_shopping_list_to_checkout_quick_add_processor
                         transition_name: start_from_quickorderform

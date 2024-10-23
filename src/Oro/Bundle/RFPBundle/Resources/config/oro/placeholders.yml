@@ -5,10 +5,6 @@ placeholders:
                 rfp_view_buttons:
                     order: 200
 
-        oro_product_quick_add_buttons:
-            items:
-                rfp_quick_add: ~
-
     items:
         rfp_view_buttons:
             template: '@@OroRFP/Request/block/viewButtons.html.twig'
