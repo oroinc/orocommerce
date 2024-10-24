@@ -1,0 +1,7 @@
+/* @theme: default; */
+
+$order-created-by-display: flex !default;
+$order-created-by-flex-basis: 100% !default;
+$order-created-by-align-items: flex-start !default;
+$order-created-by-gap: spacing('sm') !default;
+$order-created-by-color: get-var-color('info', 'dark') !default;

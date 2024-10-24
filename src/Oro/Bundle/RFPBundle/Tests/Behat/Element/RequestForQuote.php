@@ -23,8 +23,8 @@ class RequestForQuote extends Element
      */
     public function assertStatus($text)
     {
-        $el = $this->find('css', 'section.page-content');
-        preg_match('/Status: ([^\n]+)/', $el->getHtml(), $matches);
+        $el = $this->find('css', 'section.page-content .status-label');
+        preg_match('/([^\n]+)/', $el->getHtml(), $matches);
 
         self::assertArrayHasKey(1, $matches, 'No status present on page.');
 

@@ -144,7 +144,7 @@ Feature: Quote for guest
     Then I should see "Subtotal $3,000.00"
     And I should see "Total $3,000.00"
 
-    When click "Submit"
+    When click "Checkout"
     And I should see "Checkout"
 
   Scenario: Enable Guest Checkout
@@ -173,9 +173,9 @@ Feature: Quote for guest
     And I click on empty space
     Then I should see "Subtotal $2,000.00"
     And I should see "Total $2,000.00"
-    And I should see "Submit"
+    And I should see "Checkout"
 
-    When I click "Submit"
+    When I click "Checkout"
     And I should see "Checkout"
 
   Scenario: Accepted and submitted Guest Quote is still available for guest user

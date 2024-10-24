@@ -1,0 +1,9 @@
+/* @theme: default; */
+
+.order-created-by {
+    display: $order-created-by-display;
+    flex-basis: $order-created-by-flex-basis;
+    align-items: $order-created-by-align-items;
+    gap: $order-created-by-gap;
+    color: $order-created-by-color;
+}

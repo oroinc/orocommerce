@@ -25,7 +25,7 @@ Feature: Order Backoffice grid with chinese localization
 
   Scenario: Check order`s dates formatting
     Given I go to Sales/Orders
-    And I show column Do Not Ship Later Than in grid
+    And I show column Ship by in grid
     And I should see following grid containing rows:
-       | Order Number | DNSLT        |
+       | Order Number | Ship by      |
        | SimpleOrder  | 2022年9月26日 |

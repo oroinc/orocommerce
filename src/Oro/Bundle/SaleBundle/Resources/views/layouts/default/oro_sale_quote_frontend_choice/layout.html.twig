@@ -1,5 +1,69 @@
+{% block _page_title_widget %}
+    {% set hasActions = true %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block _quote_choice_page_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__order"
+    }) %}
+
     <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_choice_data_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__data"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_choice_total_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__total"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_choice_actions_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': attr.class|default('') ~ "page-title-actions"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <div class="page-title-actions__actions_list">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _quote_choice_submit_button_wrapper_widget %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_choice_back_button_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' ',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    viewport: 'mobile-landscape',
+                    moveTo: '.page-title-wrapper',
+                    prepend: true
+                }
+            ]
+        }|json_encode
+    }) %}
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -35,49 +99,53 @@
 {% endblock %}
 
 {% block _quote_choice_submit_button_widget %}
-    <div class=" order-checkout-widget">
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% if form.vars.id is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            'form': form.vars.id
+        }) %}
+    {% endif %}
+    <div class=" order-checkout-widget" >
         <div class=" text-right">
-            <button class="btn" type="submit">{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
+            <button {{ block('block_attributes') }} type="submit"> {{ renderIcon.icon({name: 'shopping-cart'}) }}{{ 'oro.frontend.sale.quote.submit_to_order.submit'|trans }}</button>
         </div>
     </div>
 {% endblock %}
 
 {% block _quote_choice_subtotals_widget %}
-    <div id="quote-choice-subtotal" class="order-checkout-widget__container-wrapper">
-        <div class="order-checkout-widget__container order-checkout-widget__container--fixed-width">
-            <div class="summary-widget">
-                <div class="summary-widget__summary">
-                    <table class="summary-table">
-                        {% for subtotal in subtotals %}
-                            {% if subtotal.visible %}
-                                <tr>
-                                    <th>{{ subtotal.label }}</th>
-                                    <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
-                                </tr>
-                            {% endif %}
-                        {% endfor %}
+    <div id="quote-choice-subtotal" class="summary-widget__inner">
+        <div class="summary-widget__summary">
+            <table class="summary-table">
+                {% for subtotal in subtotals %}
+                    {% if subtotal.visible %}
                         <tr>
-                            <th class="summary-table__total">{{ total.label }}</th>
-                            <td class="summary-table__total"><span class="summary-table__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
+                            <th>{{ subtotal.label }}</th>
+                            <td>{{ subtotal.amount|oro_format_currency({'currency': subtotal.currency}) }}</td>
                         </tr>
-                    </table>
-                </div>
-            </div>
+                    {% endif %}
+                {% endfor %}
+                <tr aria-hidden="true" class="summary-table__presentation">
+                    <td colspan="2">
+                        <hr class="summary-table__divider">
+                    </td>
+                </tr>
+                <tr class="summary-table__total-row">
+                    <th class="summary-table__total">{{ total.label }}</th>
+                    <td class="summary-table__total"><span class="summary-table__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
+                </tr>
+            </table>
         </div>
     </div>
 {% endblock %}
 
-{% block _quote_view_information_widget %}
+{% block _quote_choice_information_widget %}
     <div class="customer-info-grid">
-        <h2 class="customer-info-grid__title">
-            {{- 'oro.frontend.sale.quote.sections.general'|trans -}}
-        </h2>
-        <div class="grid">
-            <div class="grid-col-6 grid-col-mobile-landscape-12">
-                <table class="customer-info-grid__table">
+        <div class="grid grid-columns-2">
+            <div class="grid-col grid-col-mobile-landscape-12">
+                <table class="customer-info-grid__list">
                     <tbody>
                         {% if quote.assignedUsers | length %}
-                            <tr>
+                            <tr class="customer-info-grid__row">
                                 <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
                                 <td class="customer-info-grid__element-content">
                                     {% set assigned_users = [] %}
@@ -99,8 +167,8 @@
                     </tbody>
                 </table>
             </div>
-            <div class="grid-col-6 grid-col-mobile-landscape-12">
-                <table class="customer-info-grid__table">
+            <div class="grid-col grid-col-mobile-landscape-12">
+                <table class="customer-info-grid__list">
                     <tbody>
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
@@ -120,16 +188,9 @@
     </div>
 {% endblock %}
 
-{% block _quote_view_page_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " quote"}) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _quote_view_container_content_widget %}
+{% block _quote_choice_info_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': attr.class|default('') ~ " order-checkout-widget-content"
+        'class': attr.class|default('') ~ " customer-info-grid__container"
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}

@@ -42,7 +42,7 @@
 
     .summary-collapse-content:not(.show) {
         .summary-widget {
-            &__summary {
+            &__summary:has(.summary-widget__combined-bottons) {
                 grid-template-columns: $summary-widget-summary-shown-tablet-grid-template-columns;
                 align-items: $summary-widget-summary-shown-tablet-align-items;
                 gap: $summary-widget-summary-shown-tablet-gap;

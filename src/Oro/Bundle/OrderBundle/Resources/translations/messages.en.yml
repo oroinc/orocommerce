@@ -69,7 +69,7 @@ oro:
             label:                        PO Number
             description:                  A purchase order number provided by the buyer, if any.
         ship_until:
-            label:                        Do Not Ship Later Than
+            label:                        Ship by
             description:                  The latest shipping date that is acceptable to the customer user.
         payment_method.label:             Payment Method
         payment_status.label:             Payment Status

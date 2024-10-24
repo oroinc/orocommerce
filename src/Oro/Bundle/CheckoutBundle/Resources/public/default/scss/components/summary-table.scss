@@ -62,13 +62,16 @@
     }
 }
 
-@include breakpoint('desktop-small') {
-    .summary-collapse {
-        &--show-desktop-small & {
-            &-content:not(.show) {
-                .summary-table {
-                    tr:not(.summary-table__total-row) {
-                        display: table-row;
+// Auto-Generated rules for responsive alwaysShow collapse
+@each $key, $value in $breakpoints {
+    @include breakpoint($key) {
+        .summary-collapse {
+            &--show-#{$key} & {
+                &-content:not(.show) {
+                    .summary-table {
+                        tr:not(.summary-table__total-row) {
+                            display: table-row;
+                        }
                     }
                 }
             }

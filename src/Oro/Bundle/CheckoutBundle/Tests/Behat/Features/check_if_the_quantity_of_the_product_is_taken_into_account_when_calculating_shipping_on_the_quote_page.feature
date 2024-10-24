@@ -117,7 +117,7 @@ Feature: Check if the quantity of the product is taken into account when calcula
       | ORO_PRODUCT SKU #: ORO_PRODUCT | 2 ea or more | $100.00    |
     And click "Accept and Submit to Order"
     And click "First Product Second Offer"
-    When I click "Submit"
+    When I click "Checkout"
     Then Page title equals to "Billing Information - Checkout"
     When I click "Ship to This Address"
     And click "Continue"

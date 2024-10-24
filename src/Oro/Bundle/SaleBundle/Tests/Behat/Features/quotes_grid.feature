@@ -93,14 +93,14 @@ Feature: Quotes Grid
 
   Scenario: Check Ship Until filter
     Given records in grid should be 20
-    When I filter Do Not Ship Later Than as between "today-2" and "today-1"
+    When I filter Ship By as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Do Not Ship Later Than as between "today" and "today+1"
+    When I filter Ship By as between "today" and "today+1"
     Then I should see following grid:
       | Quote # |
       | Quote13 |
     And records in grid should be 1
-    And I reset "Do Not Ship Later Than" filter
+    And I reset "Ship By" filter
 
   Scenario: Check Created At filter
     Given records in grid should be 20

@@ -24,11 +24,6 @@
     [data-toggle='tooltip'] {
         display: inline-block;
     }
-
-    &-content {
-        display: flex;
-        justify-content: space-between;
-    }
 }
 
 @include breakpoint('tablet-small') {

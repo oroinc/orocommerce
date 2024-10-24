@@ -8,6 +8,7 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroOrder/layouts/default/imports/oro_line_items_grid/layout.html.twig'
+
         - '@addTree':
             items:
                 __grid_container:
@@ -25,7 +26,7 @@ layout:
                 __grid_container_body:
                     blockType: container
                     options:
-                        additional_block_prefixes: ['order_body_block_container']
+                        additional_block_prefixes: ['order_info_block_container']
             tree:
                 __root:
                     __grid_container:
@@ -33,10 +34,6 @@ layout:
                             __grid_container_head_title:
                                 __grid_container_head_title_text: ~
                         __grid_container_body: ~
-
-        - '@move':
-            id: __grid_container
-            siblingId: order_body
 
         - '@setOption':
             id: __grid_container_datagrid

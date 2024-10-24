@@ -90,7 +90,11 @@ operations:
             aria_label: start_from_order_aria_label
         acl_resource: [CHECKOUT_CREATE, $.data]
         button_options:
-            icon: fa-shopping-cart
+            class: text-nowrap
+            icon: 'shopping-cart'
+        frontend_options:
+            options:
+                icon: 'shopping-cart'
         preconditions:
             '@and':
                 - '@workflow_available_by_record_group':
