@@ -9,7 +9,7 @@ Feature: Product attributes
       | Field Name | Color  |
       | Type       | Select |
     And click "Continue"
-    And I click "Backoffice options"
+    And I click "Back-Office options"
     Then I should not see "Applicable Organizations"
     And set Options with:
       | Label  |

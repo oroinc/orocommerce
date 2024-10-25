@@ -162,7 +162,7 @@ class AttributeConfigExtensionTest extends FormIntegrationTestCase
         ];
         $frontendBlockConfig = [
             'frontend' => [
-                'title' => 'Frontend options',
+                'title' => 'Storefront options',
                 'priority' => 30,
                 'subblocks' => ['frontend_config']
             ]

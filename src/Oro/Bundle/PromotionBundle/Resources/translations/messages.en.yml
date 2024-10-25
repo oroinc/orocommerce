@@ -17,7 +17,7 @@ oro:
                     percent: Percent
             value:
                 label: Discount Value
-                tooltip: The discount will be applied only if the currency during checkout matches the currency specified here. Please create separate promotions for each currency if multiple display currencies are enabled on the store frontend.
+                tooltip: The discount will be applied only if the currency during checkout matches the currency specified here. Please create separate promotions for each currency if multiple display currencies are enabled on the storefront.
         line_item_type:
             product_unit:
                 label: Unit of Quantity

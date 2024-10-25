@@ -104,7 +104,7 @@ Feature: Override product variations functionality
     And I check "Enable all products page"
     And save form
     Then I should see "Configuration saved" flash message
-    When I go to System/Frontend Menus
+    When I go to System/Storefront Menus
     And I click view "commerce_main_menu" in grid
     And I click "Create Menu Item"
     And I fill "Commerce Menu Form" with:
