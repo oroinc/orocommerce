@@ -18,7 +18,7 @@ oro:
             label: Declined Consent Notification
             yes.label: Yes
             no.label: No
-            description: If the consent is declined by a customer user in the storefront, a notification is created in the management console as a contact request.
+            description: If the consent is declined by a customer user in the storefront, a notification is created in the back-office as a contact request.
         mandatory.label: Mandatory
         id.label: Id
         content_source.label: Content Source
@@ -51,7 +51,7 @@ oro:
         status:
             not_apply: Consent is not applied
             apply: Consent is applied
-            
+
         system_configuration:
             fields:
                 consent:

@@ -43,7 +43,7 @@ Feature: Product mini-block content widget
     And I should see URL Slug field filled with "product-mini-block-page"
 
   Scenario: Create Menu Item
-    Given I go to System/Frontend Menus
+    Given I go to System/Storefront Menus
     And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:

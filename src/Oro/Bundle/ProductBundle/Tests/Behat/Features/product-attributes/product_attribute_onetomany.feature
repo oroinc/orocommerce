@@ -15,9 +15,9 @@ Feature: Product attribute one-to-many
       | Field Name | OneToManyField |
       | Type       | One to many    |
     And I click "Continue"
-    Then I should see that "Product Attribute Frontend Options" contains "Searchable"
-    And I should see that "Product Attribute Frontend Options" contains "Filterable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
+    Then I should see that "Product Attribute Storefront Options" contains "Searchable"
+    And I should see that "Product Attribute Storefront Options" contains "Filterable"
+    And I should see that "Product Attribute Storefront Options" does not contain "Sortable"
 
     When I fill form with:
       | Target entity              | Customer User          |

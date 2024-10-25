@@ -198,10 +198,10 @@ oro_behat_extension:
           Type: 'oro_product_step_one[type]'
           Attribute Family: 'oro_product_step_one[attributeFamily]'
 
-    Product Attribute Frontend Options:
+    Product Attribute Storefront Options:
       selector:
         type: xpath
-        locator: '//div[contains(@class, "responsive-section")]//h4[contains(., "Frontend options")]/..'
+        locator: '//div[contains(@class, "responsive-section")]//h4[contains(., "Storefront options")]/..'
 
     ProductStatus:
       selector: 'th.grid-header-cell-status > a'

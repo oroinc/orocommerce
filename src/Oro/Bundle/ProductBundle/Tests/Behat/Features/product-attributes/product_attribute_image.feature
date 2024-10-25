@@ -21,9 +21,9 @@ Feature: Product attribute image
       | Field Name | ImageField |
       | Type       | Image      |
     And I click "Continue"
-    Then I should see that "Product Attribute Frontend Options" does not contain "Searchable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Filterable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
+    Then I should see that "Product Attribute Storefront Options" does not contain "Searchable"
+    And I should see that "Product Attribute Storefront Options" does not contain "Filterable"
+    And I should see that "Product Attribute Storefront Options" does not contain "Sortable"
 
     When I fill form with:
       | File Size (MB)    | 10                  |
