@@ -54,6 +54,10 @@ class ProductKitPriceRepository
             return [];
         }
 
+        if (!$this->isSupportedProductUnit($product, $filters['unit'])) {
+            return [];
+        }
+
         $scope = $this->productPriceScopeCriteriaFactory->create($website, $customer);
         if (!$this->isSupportedCurrency($scope, $filters['currency'])) {
             return [];
@@ -165,6 +169,11 @@ class ProductKitPriceRepository
         }
 
         return $kitItemFilters;
+    }
+
+    private function isSupportedProductUnit(Product $product, string $unit): bool
+    {
+        return \in_array($unit, $product->getAvailableUnitCodes(), true);
     }
 
     private function isSupportedCurrency(ProductPriceScopeCriteriaInterface $scope, string $currency): bool

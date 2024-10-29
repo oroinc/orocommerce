@@ -13,6 +13,7 @@ use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
@@ -457,7 +458,7 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                 [
                     'title' => 'value constraint',
                     'detail' => "The \"filter[kitItems][$kitItemId2][quantity]\"" .
-                        " filter value should be equal to or exceed 2.",
+                        " filter value should be equals to or exceed 2.",
                 ],
                 [
                     'title' => 'value constraint',
@@ -729,6 +730,27 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                 'unit' => 'milliliter',
                 'quantity' => 1,
                 'currency' => 'EUR',
+                "kitItems.$kitItemId.product" => '@product-1->id',
+                "kitItems.$kitItemId.quantity" => 1,
+            ]],
+        );
+
+        $this->assertResponseContains(['data' => []], $response);
+    }
+
+    public function testGetListWithNoSupportedProductUnit(): void
+    {
+        $kitItemId = $this->getReference('product-kit-1')->getKitItems()->first()->getId();
+
+        $response = $this->cget(
+            ['entity' => 'productkitprices'],
+            ['filter' => [
+                'website' => '@US->id',
+                'customer' => '@customer.level_1->id',
+                'product' => '@product-kit-1->id',
+                'unit' => 'box',
+                'quantity' => 1,
+                'currency' => 'USD',
                 "kitItems.$kitItemId.product" => '@product-1->id',
                 "kitItems.$kitItemId.quantity" => 1,
             ]],

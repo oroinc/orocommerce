@@ -199,7 +199,7 @@ class HandleProductKitPriceFilters implements ProcessorInterface
         }
 
         if ($kitItem->getMinimumQuantity()) {
-            $message .= \sprintf(' equal to or exceed %s.', $kitItem->getMinimumQuantity());
+            $message .= \sprintf(' equals to or exceed %s.', $kitItem->getMinimumQuantity());
         }
 
         if ($kitItem->getMaximumQuantity()) {
