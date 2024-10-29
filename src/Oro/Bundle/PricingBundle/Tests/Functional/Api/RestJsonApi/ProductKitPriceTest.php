@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
 /**
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductKitPriceTest extends RestJsonApiTestCase
@@ -24,7 +25,6 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     #[\Override]
     protected function setUp(): void
     {
-        self::markTestSkipped('Must be fixed and unskipped in BB-24757');
         parent::setUp();
 
         $this->loadFixtures([
