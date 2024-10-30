@@ -10,7 +10,7 @@ $consent-list-item-word-break: break-word !default;
 $consent-list-status-position: absolute !default;
 $consent-list-status-left: 0 !default;
 
-$consent-list-status-enabled: $fa-var-check !default;
+$consent-list-status-enabled: '' !default;
 $consent-list-status-enabled-color: get-color('success', 'dark') !default;
-$consent-list-status-disabled: $fa-var-minus-circle !default;
+$consent-list-status-disabled: '' !default;
 $consent-list-status-disabled-color: get-color('destructive', 'base') !default;

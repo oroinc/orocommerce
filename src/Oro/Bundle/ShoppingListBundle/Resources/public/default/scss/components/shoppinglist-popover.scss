@@ -21,8 +21,5 @@
         left: $shoppinglist-popover-loader-left;
         right: $shoppinglist-popover-loader-right;
         bottom: $shoppinglist-popover-loader-bottom;
-
-        @extend %fa-spinner;
-        @extend %fa-pulse;
     }
 }
