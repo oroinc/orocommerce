@@ -9,6 +9,7 @@ use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi\OrderResponseTrait;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
@@ -25,6 +26,7 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCase
 {
     use RolePermissionExtension;
+    use OrderResponseTrait;
 
     private ?bool $originalGuestCheckoutOptionValue;
 
@@ -130,7 +132,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
     {
         $response = $this->post(['entity' => 'orders'], 'create_order_guest_checkout.yml');
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -146,7 +148,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['data']['relationships']['customerUser']['data']['id'] = (string)$customerUserId;
         unset($data['included'][5]);
         $response = $this->post(['entity' => 'orders'], $data);
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         unset($responseContent['included'][5]);
         $this->assertResponseContains($responseContent, $response);
 
@@ -268,7 +270,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['data']['relationships']['customer'] = ['data' => ['type' => 'customers', 'id' => '1']];
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -279,7 +281,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         unset($data['included'][0]['relationships']['product']);
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -437,7 +439,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['data']['attributes']['currency'] = 'EUR';
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -447,7 +449,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['included'][0]['attributes']['currency'] = null;
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -473,7 +475,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $data['included'][0]['attributes']['price'] = null;
         $response = $this->post(['entity' => 'orders'], $data);
 
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -799,7 +801,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
             ]
         ];
         $response = $this->post(['entity' => 'orders'], $data);
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         unset($responseContent['included'][5]);
         $responseContent['included'][1]['attributes'] = [
             'phone'        => $customerUserAddressData['attributes']['phone'],
@@ -856,7 +858,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
             ]
         ];
         $response = $this->post(['entity' => 'orders'], $data);
-        $responseContent = $this->updateResponseContent('create_order_guest_checkout.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_guest_checkout.yml', $response);
         unset($responseContent['included'][5]);
         $responseContent['included'][2]['attributes'] = [
             'phone'        => $customerUserAddressData['attributes']['phone'],

@@ -16,6 +16,8 @@ use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPayment
  */
 class CreateOrderTest extends FrontendRestJsonApiTestCase
 {
+    use OrderResponseTrait;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -65,7 +67,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             'create_order_min.yml'
         );
 
-        $responseContent = $this->updateResponseContent('create_order_min.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -79,7 +81,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             $data
         );
 
-        $responseContent = $this->updateResponseContent('create_order_min.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -96,7 +98,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             $data
         );
 
-        $responseContent = $this->updateResponseContent('create_order_min.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -123,7 +125,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
 
         $responseContent = $this->getResponseData('create_order_min.yml');
         $responseContent['included'][1]['relationships']['customerAddress']['data'] = null;
-        $responseContent = $this->updateResponseContent($responseContent, $response);
+        $responseContent = $this->updateOrderResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
     }
 
@@ -141,7 +143,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        $responseContent = $this->updateResponseContent('create_order_min.yml', $response);
+        $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
 
         /** @var Order $item */
