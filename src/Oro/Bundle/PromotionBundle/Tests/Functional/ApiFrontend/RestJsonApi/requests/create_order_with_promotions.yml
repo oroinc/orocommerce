@@ -1,5 +1,7 @@
 data:
     type: orders
+    attributes:
+        identifier: order#1
     relationships:
         billingAddress:
             data:
