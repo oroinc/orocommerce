@@ -19,9 +19,26 @@ Feature: Category with slash in the url slug
     And I click "Create Subcategory"
     And I fill "Category Form" with:
       | Title    | SubCategory  |
+    And I fill "Category Form" with:
       | URL Slug | /foo/bar/baz |
     And I click "Save"
     Then I should see "This value should not start or end with \"/\" and should contain only latin letters, numbers and symbols \"-._~/\""
+    When I fill "Category Form" with:
+      | URL Slug | _item |
+    And I click "Save"
+    Then I should see "This value should not contain reserved keyword \"_item\""
+    When I fill "Category Form" with:
+      | URL Slug | _item/foo |
+    And I click "Save"
+    Then I should see "This value should not contain reserved keyword \"_item\""
+    When I fill "Category Form" with:
+      | URL Slug | foo/_item |
+    And I click "Save"
+    Then I should see "This value should not contain reserved keyword \"_item\""
+    When I fill "Category Form" with:
+      | URL Slug | foo/_item/bar |
+    And I click "Save"
+    Then I should see "This value should not contain reserved keyword \"_item\""
 
   Scenario: Create new subcategory
     Given I fill "Category Form" with:

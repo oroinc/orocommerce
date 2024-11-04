@@ -35,15 +35,16 @@ Feature: Product import validation
       | Name.default.value                                                                                                | Product Family.Code | SKU   | Status  | Type   | Inventory Status.Id | Unit of Quantity.Unit.Code | Unit of Quantity.Precision | URL Slug.default.value |
       | <b>Test</b><br><img src="http://test.jpg"><strong>Test</strong><a href="http://test.pdf" target="_blank">Test</a> | default_family      | PSKU1 | enabled | simple | in_stock            | set                        | 1                          | invalid,slug^&         |
       |                                                                                                                   | default_family      | PSKU2 | enabled | simple | in_stock            | set                        | 1                          | valid-slug             |
-      | Product 3                                                                                                         | default_family      | PSKU3 | enabled | simple | in_stock            | set                        | 1                          | valid-slug             |
+      | Product 3                                                                                                         | default_family      | PSKU3 | enabled | simple | in_stock            | set                        | 1                          | _item                  |
       | Product 4                                                                                                         | default_family      | PSKU4 | enabled | simple | in_stock            | set                        | 1                          |                        |
 
   Scenario: Check import error page from the email after validating import file
     Given I validate file
-    Then Email should contains the following "Errors: 2 processed: 2, read: 4" text
+    Then Email should contains the following "Errors: 3 processed: 1, read: 4" text
     When I follow "Error log" link from the email
     Then I should see "Error in row #1. slugPrototypes[default]: This value should contain only latin letters, numbers and symbols \"-._~\""
     Then I should see "Error in row #2. Name Localization Name: Product default name is blank"
+    Then I should see "Error in row #3. slugPrototypes[default]: This value should not contain reserved keyword \"_item\""
     And I login as administrator
 
   Scenario: Import file with few invalid records
