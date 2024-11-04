@@ -42,7 +42,7 @@ workflows:
                 step_to: submitted
                 transition_definition: __start___definition
                 frontend_options:
-                    icon: fa-envelope-o
+                    icon: send
             more_information_requested_transition:
                 step_to: requires_attention
                 transition_definition: more_information_requested_transition_definition
@@ -55,7 +55,7 @@ workflows:
                         field: serialized_data
                         require: "entity.getInternalStatus().getInternalId() === 'more_info_requested'"
                 frontend_options:
-                    icon: fa-question-circle-o
+                    icon: help-circle
             provide_more_information_transition:
                 step_to: submitted
                 transition_definition: provide_more_information_transition_definition
@@ -69,12 +69,13 @@ workflows:
                                 constraints:
                                   - NotBlank: ~
                 frontend_options:
-                    icon: fa-comment-o
+                    icon: message-circle
+
             cancel_transition:
                 step_to: cancelled
                 transition_definition: cancel_transition_definition
                 frontend_options:
-                    icon: fa-times
+                    icon: close
             decline_transition:
                 step_to: cancelled
                 transition_definition: decline_transition_definition
@@ -104,7 +105,7 @@ workflows:
                             entity.getCustomerStatus().getInternalId() === 'submitted' &&
                             prevEntity.getCustomerStatus().getInternalId() === 'cancelled'
                 frontend_options:
-                    icon: fa-external-link
+                    icon: external-link
 
         transition_definitions:
             __start___definition:
