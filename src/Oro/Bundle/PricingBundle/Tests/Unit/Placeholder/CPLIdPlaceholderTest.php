@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -18,7 +19,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
-
 
     /**
      * @var CPLIdPlaceholder
@@ -41,6 +41,11 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     private $featureChecker;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var CustomerUserRelationsProvider|\PHPUnit\Framework\MockObject\MockObject
      */
     private $customerUserRelationsProvider;
@@ -51,12 +56,14 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
         $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
         $this->customerUserRelationsProvider = $this->createMock(CustomerUserRelationsProvider::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
 
         $this->placeholder = new CPLIdPlaceholder(
             $this->priceListTreeHandler,
             $this->tokenStorage,
             $this->customerUserRelationsProvider
         );
+        $this->placeholder->setLogger($this->logger);
         $this->placeholder->setFeatureChecker($this->featureChecker);
         $this->placeholder->addFeature('oro_price_lists_combined');
     }
@@ -176,11 +183,8 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
             ->with('oro_price_lists_combined')
             ->willReturn(true);
 
-        $this->expectException(\RuntimeException::class);
-        $this->expectExceptionMessage("Can't get current cpl");
-
         $user = new CustomerUser();
-        $customer = new Customer();
+        $customer = $this->getEntity(Customer::class, ['id' => 1]);
         $user->setCustomer($customer);
 
         $token = $this->createMock(TokenInterface::class);
@@ -191,6 +195,16 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
             ->method('getPriceList')
             ->with($customer)
             ->willReturn(null);
+
+        $this->logger->expects($this->once())
+            ->method('warning')
+            ->with(
+                'Can\'t get current cpl',
+                [
+                    'customer_id' => 1,
+                    'is_anonymous' => false
+                ]
+            );
 
         $this->placeholder->replaceDefault("test_CPL_ID");
     }
