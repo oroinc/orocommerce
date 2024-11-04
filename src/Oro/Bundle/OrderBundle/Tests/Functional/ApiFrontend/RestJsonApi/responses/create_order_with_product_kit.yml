@@ -10,7 +10,7 @@ data:
         subtotalValue: '783.4500'
         totalValue: '783.4500'
         shippingCostAmount: null
-        disablePromotions: null
+        disablePromotions: false
         shippingMethod: null
         paymentStatus:
             code: pending

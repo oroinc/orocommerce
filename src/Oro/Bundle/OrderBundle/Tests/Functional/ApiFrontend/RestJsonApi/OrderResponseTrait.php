@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 trait OrderResponseTrait
 {
-    protected function updateOrderResponseContent(array|string $expectedContent, Response $response): array
+    private function updateOrderResponseContent(array|string $expectedContent, Response $response): array
     {
         $responseContent = $this->updateResponseContent($expectedContent, $response);
 

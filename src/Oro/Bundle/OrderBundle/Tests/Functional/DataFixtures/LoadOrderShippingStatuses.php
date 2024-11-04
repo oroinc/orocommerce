@@ -1,6 +1,6 @@
 <?php
 
-namespace Functional\DataFixtures;
+namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
