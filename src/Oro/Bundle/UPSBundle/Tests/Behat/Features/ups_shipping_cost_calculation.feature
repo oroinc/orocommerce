@@ -37,6 +37,7 @@ Feature: UPS shipping cost calculation
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I should see "UPS 2nd Day Air: $1,199.75"
     And I check "UPS 2nd Day Air" on the "Shipping Method" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then I see next subtotals for "Checkout Step":
       | Subtotal | Amount    |
       | Shipping | $1,199.75 |

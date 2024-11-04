@@ -55,6 +55,7 @@ Feature: Order submission with PayPal PayFlow Gateway and  zero "authorization a
     Then I should not see "Invalid Expiration date."
     When I click "Continue"
     Then I should see "Invalid Expiration date."
+    And I scroll to top
     When I fill credit card form with next data:
       | Year | 2027 |
     And I click "Continue"

@@ -1,44 +1,61 @@
 /* @theme: default; */
 
 .checkout-navigation {
-    @include list-normalize();
-
-    margin: 0 0 0 13px;
-    border-left: $checkout-navigation-border-left;
-
-    word-wrap: break-word;
+    list-style: $checkout-navigation-list-style;
+    margin: $checkout-navigation-margin;
+    padding: $checkout-navigation-padding;
+    display: $checkout-navigation-display;
 
     &__step {
-        position: relative;
-
-        padding: 0 0 28px 20px;
-
-        &:last-child {
-            padding-bottom: 0;
-        }
+        min-height: $checkout-navigation-step-min-height;
+        display: $checkout-navigation-step-display;
+        grid-template-columns: $checkout-navigation-step-grid-template-columns;
+        gap: $checkout-navigation-step-gap;
 
         &--past {
-            padding-bottom: 20px;
+            min-height: $checkout-navigation-step-past-min-height;
         }
+
+        &--placeholder {
+            display: none;
+        }
+    }
+
+    &__step:not(:last-child) &__side {
+        background-image: $checkout-navigation-divider-background-image;
+        background-repeat: $checkout-navigation-divider-background-repeat;
+        background-size: $checkout-navigation-divider-background-size;
+        background-position: $checkout-navigation-divider-background-position;
+    }
+
+    &__base {
+        padding-block: 0 spacing('md');
     }
 
     &__content {
         font-style: italic;
+        font-weight: font-weight('light');
     }
 
     &__title {
-        display: flex;
+        display: grid;
         align-items: center;
-        gap: spacing('sm');
+        gap: spacing('md');
 
         color: $checkout-navigation-title-color;
         min-height: $checkout-navigation-icon-size;
+        margin-bottom: spacing('xs');
+
+        &:has(.transition-step-edit-button) {
+            grid-template-columns: minmax(0, 1fr) auto;
+        }
 
         .transition-step-edit-button {
-            height: 20px;
-            width: 20px;
-            min-height: auto;
-            margin-left: auto;
+            min-height: 20px;
+            border-width: 0;
+            margin-top: spacing('xs');
+            padding: 0;
+            align-self: start;
         }
     }
 
@@ -48,10 +65,6 @@
     }
 
     &__icon {
-        position: absolute;
-        top: 0;
-        left: -$checkout-navigation-icon-size * .5;
-
         font-weight: font-weight('bold');
 
         border-radius: 100%;
@@ -78,28 +91,43 @@
 }
 
 @include breakpoint('mobile-big') {
-    .checkout-navigation {
-        display: flex;
-        justify-content: space-between;
-        margin: 13px 13px -13px;
+    @at-root {
+        .multistep-checkout {
+            .checkout-navigation {
+                background-image: $checkout-navigation-divider-background-image;
+                background-repeat: $checkout-navigation-divider-background-repeat;
+                background-size: $checkout-navigation-divider-mobile-big-background-size;
+                background-position: $checkout-navigation-divider-mobile-big-background-position;
+                grid-auto-flow: column;
+                justify-content: space-between;
 
-        border-top: $checkout-navigation-border-left;
-        border-left: none;
+                &__step {
+                    min-height: initial;
+                    grid-template-columns: initial;
 
-        &__icon {
-            top: -13px;
-        }
+                    &--placeholder {
+                        display: grid;
 
-        &__step {
-            padding: 13px 0;
-        }
+                        &.checkout-navigation__step--past {
+                            ~ .checkout-navigation__step--past {
+                                &:not(:nth-last-child(-n + 3)) {
+                                    display: none;
+                                }
+                            }
+                        }
 
-        &__title {
-            display: none;
-        }
+                        &:not(.checkout-navigation__step--past) {
+                            ~ .checkout-navigation__step:not(:last-child) {
+                                display: none;
+                            }
+                        }
+                    }
+                }
 
-        &__content {
-            display: none;
+                &__base {
+                    display: none;
+                }
+            }
         }
     }
 }

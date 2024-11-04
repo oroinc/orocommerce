@@ -26,6 +26,6 @@ layout:
             root: page_content
         -
             id: oro_checkout_sidebar
-            root: __checkout_content_main_top
+            root: __checkout_steps
 
     conditions: 'context["workflowStepName"]!="order_created" && context["workflowStepName"]!="enter_credentials_step"'

@@ -1,0 +1,46 @@
+/* @theme: default; */
+
+.checkout-summary-widget {
+    display: grid;
+    padding: spacing('lg') spacing('lg') spacing('base');
+
+    &__combined-buttons {
+        display: grid;
+        grid-auto-flow: column;
+        justify-content: end;
+        gap: spacing('sm');
+    }
+}
+
+.summary-collapse-content:not(.show) {
+    .checkout-summary-widget {
+        grid-template-columns: minmax(160px, auto) 1fr;
+        align-items: center;
+        gap: spacing('base') spacing('xxxl');
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .checkout-summary-widget {
+        padding: spacing('base');
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .checkout-summary-widget {
+        &__combined-buttons {
+            justify-content: initial;
+        }
+
+        .checkout-form__buttons {
+            justify-content: initial;
+        }
+    }
+
+    .summary-collapse-content:not(.show) {
+        .checkout-summary-widget {
+            grid-template-columns: initial;
+            gap: spacing('sm');
+        }
+    }
+}

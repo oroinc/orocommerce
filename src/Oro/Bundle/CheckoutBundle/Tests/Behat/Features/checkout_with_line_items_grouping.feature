@@ -69,6 +69,7 @@ Feature: Checkout With Line Items Grouping
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $3.00  |
@@ -89,6 +90,7 @@ Feature: Checkout With Line Items Grouping
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $6.00  |

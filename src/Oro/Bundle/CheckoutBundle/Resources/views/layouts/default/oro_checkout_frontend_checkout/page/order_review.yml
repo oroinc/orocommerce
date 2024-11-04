@@ -31,13 +31,23 @@ layout:
             optionValue: false
 
         - '@setOption':
-            id: checkout_outside_button_continue
+            id: checkout_button_continue
             optionName: vars.showIcon
             optionValue: false
 
         - '@setOption':
-            id: checkout_outside_button_continue
+            id: checkout_button_continue
             optionName: vars.buttonCssStyle
             optionValue: ''
+
+        - '@setOption':
+            id: checkout_order_summary_totals_main
+            optionName: open
+            optionValue: true
+
+        - '@setOption':
+            id: checkout_button_continue
+            optionName: vars.relatedCheckoutFormIds
+            optionValue: ['order-review-checkout-form-additional']
 
     conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"]'

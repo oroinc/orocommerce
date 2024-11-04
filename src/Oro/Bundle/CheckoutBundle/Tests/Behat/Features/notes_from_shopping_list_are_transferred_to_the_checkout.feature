@@ -46,6 +46,7 @@ Feature: Notes from shopping list are transferred to the checkout
     Then I should see following grid:
       | SKU    | Item                                         |
       | SKU123 | 400-Watt Bulb Work Light SKU123 Product Note |
+    And I click "Expand Checkout Footer"
     And I should not see a "Checkout Order Summary Notes" element
     And "Checkout Order Review Form" must contains values:
       | Notes | My shopping list notes |

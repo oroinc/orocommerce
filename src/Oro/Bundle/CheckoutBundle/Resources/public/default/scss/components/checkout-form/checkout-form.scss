@@ -123,7 +123,7 @@
     &__buttons {
         display: grid;
         grid-auto-flow: column;
-        gap: spacing('base') spacing('sm');
+        gap: spacing('base') spacing('xl');
     }
 
     & &__buttons {
@@ -207,6 +207,10 @@
 
         &__address-form {
             grid-gap: #{spacing('xl')} 0;
+        }
+
+        &__buttons {
+            gap: spacing('base');
         }
     }
 }

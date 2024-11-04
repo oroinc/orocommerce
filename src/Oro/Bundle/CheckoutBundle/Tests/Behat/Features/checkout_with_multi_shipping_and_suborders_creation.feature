@@ -64,6 +64,7 @@ Feature: Checkout With Multi Shipping And Suborders Creation
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate: $3.00 |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate: $3.00 |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $9.00  |

@@ -3,12 +3,15 @@ layout:
         -
             id: oro_promotion_coupon_form
             namespace: coupon_form
-            root: checkout_order_footer_col_second
+            root: coupon_summary_container
     actions:
-        - '@move':
-            id: coupon_form_container
-            parentId: checkout_order_summary_inner
-            prepend: false
+        - '@setBlockTheme':
+            themes: '@OroPromotion/layouts/default/oro_checkout_frontend_checkout/coupon_form.html.twig'
+        - '@add':
+            id: coupon_summary_container
+            blockType: container
+            parentId: checkout_order_summary_summary
+            siblingId: checkout_order_summary_totals_subtree
 
         - '@setOption':
             id: coupon_form_applied_coupons_list_rows_container

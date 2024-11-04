@@ -95,5 +95,6 @@ Feature: Quote creation with empty prices (Default Quote Management Flow)
     And Checkout "Order Summary Products Grid" should contain products:
       | Product1 | 1 | item |
       | Product1 | 1 | item |
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $1.00 |

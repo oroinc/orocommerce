@@ -12,11 +12,12 @@ Feature: Promotions at Checkout
     And I disable inventory management
     Then I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
-      And I click "Create Order"
+    And I click "Create Order"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
       | SKU2 | -$5.00   |
+    And I click "Expand Checkout Footer"
     And I see next subtotals for "Checkout Step":
       | Subtotal | Amount  |
       | Discount | -$12.50 |
@@ -24,6 +25,7 @@ Feature: Promotions at Checkout
 
   Scenario: Check line item and order discount at Shipping Information Checkout's step
     Given Page title equals to "Shipping Information - Checkout"
+    And I click "Expand Checkout Footer"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
@@ -35,6 +37,7 @@ Feature: Promotions at Checkout
 
   Scenario: Check line item and order discount at Shipping Method Checkout's step
     Given Page title equals to "Shipping Method - Checkout"
+    And I click "Expand Checkout Footer"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |
@@ -46,6 +49,7 @@ Feature: Promotions at Checkout
 
   Scenario: Check line item and order discount at Payment Checkout's step
     Given Page title equals to "Payment - Checkout"
+    And I click "Expand Checkout Footer"
     Then I see next line item discounts for checkout:
       | SKU  | Discount |
       | SKU1 |          |

@@ -1,0 +1,127 @@
+/* @theme: default; */
+
+.multistep-checkout {
+    display: $multistep-checkout-display;
+    grid-template-areas: $multistep-checkout-grid-template-areas;
+    grid-template-columns: $multistep-checkout-grid-template-columns;
+    grid-template-rows: $multistep-checkout-grid-template-rows;
+
+    &__title {
+        grid-area: $multistep-checkout-title-grid-area;
+        padding-block: $multistep-checkout-title-padding-block;
+        padding-inline: $multistep-checkout-title-padding-inline;
+    }
+
+    &__steps {
+        background-color: $multistep-checkout-steps-background-color;
+        grid-area: $multistep-checkout-steps-grid-area;
+        border-bottom: $multistep-checkout-steps-border-bottom;
+    }
+
+    &__main {
+        grid-area: $multistep-checkout-main-grid-area;
+        padding-block: $multistep-checkout-main-padding-block;
+        padding-inline: $multistep-checkout-main-padding-inline;
+    }
+
+    &__footer {
+        background-color: $multistep-checkout-footer-background-color;
+        border-top: $multistep-checkout-footer-border-top;
+        border-bottom: $multistep-checkout-footer-border-bottom;
+        grid-area: $multistep-checkout-footer-grid-area;
+        position: $multistep-checkout-footer-position;
+        bottom: $multistep-checkout-footer-bottom;
+        z-index: $multistep-checkout-footer-z-index;
+
+        &::before {
+            content: $multistep-checkout-footer-before-content;
+            background: $multistep-checkout-footer-before-background;
+            width: $multistep-checkout-footer-before-width;
+            position: $multistep-checkout-footer-before-position;
+            inset-block: $multistep-checkout-footer-before-inset-block;
+            inset-inline: $multistep-checkout-footer-before-inset-inline;
+            z-index: $multistep-checkout-footer-before-z-index;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .multistep-checkout {
+        grid-template-columns: $multistep-checkout-tablet-grid-template-columns;
+    }
+}
+
+@include breakpoint('checkout-all-tablets') {
+    .multistep-checkout {
+        .transition-content-node {
+            opacity: 0;
+            visibility: hidden;
+            transform: translateX(-#{spacing('md')});
+            transition: $multistep-checkout-inner-content;
+
+            transition-delay: calc(var(--step-index, 1) * #{$multistep-checkout-content-node-transition-delay});
+        }
+
+        &__steps-inner {
+            min-width: 100%;
+            overflow: hidden;
+
+            .checkout-nav {
+                min-width: #{$multistep-checkout-base-sidebar-width - spacing('base') * 2};
+            }
+        }
+
+        &__steps {
+            transition: $multistep-checkout-steps-transition;
+            width: 100%;
+            z-index: $multistep-checkout-tablet-steps-z-index;
+
+            &:hover,
+            &:focus-within {
+                width: $multistep-checkout-tablet-expand-sidebar-width;
+                box-shadow: $multistep-checkout-steps-tablet-box-shadow;
+
+                transition-delay: 0s;
+
+                .transition-content-node {
+                    opacity: 1;
+                    visibility: visible;
+
+                    transition-delay:
+                        #{calc(100ms +
+                        calc(var(--step-index, 1) * #{$multistep-checkout-content-node-transition-delay}))};
+                    transform: translateX(0);
+                }
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .multistep-checkout {
+        grid-template-areas: $multistep-checkout-mobile-big-grid-template-areas;
+        grid-template-columns: $multistep-checkout-mobile-big-grid-template-columns;
+        grid-template-rows: $multistep-checkout-mobile-big-grid-template-rows;
+
+        &__title {
+            padding-block: $multistep-checkout-title-mobile-big-padding-block;
+            padding-inline: $multistep-checkout-title-mobile-big-padding-inline;
+        }
+
+        &__steps {
+            background: $multistep-checkout-steps-mobile-big-background;
+            border: $multistep-checkout-steps-mobile-big-border;
+        }
+
+        &__main {
+            padding-block: $multistep-checkout-main-mobile-big-padding-block;
+            padding-inline: $multistep-checkout-main-mobile-big-padding-inline;
+        }
+
+        &__footer {
+            &::before {
+                content: $multistep-checkout-footer-before-mobile-big-content;
+            }
+        }
+    }
+}

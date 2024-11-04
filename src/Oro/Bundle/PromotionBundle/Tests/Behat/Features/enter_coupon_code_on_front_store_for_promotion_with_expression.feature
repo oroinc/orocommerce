@@ -26,10 +26,12 @@ Feature: Enter coupon code on Front Store for promotion with expression
     When I scroll to "Create Order"
     And I click "Create Order"
     Then I should see "Checkout"
+    And I click "Expand Checkout Footer"
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
     And I type "coupon-2" in "Coupon Code Input"
     And I click "Apply"
+    And I click "Expand Checkout Footer"
     Then I should see "coupon-2 Second Promotion Name" in the "Coupons List" element
 
   Scenario: Add expression to the second promotion

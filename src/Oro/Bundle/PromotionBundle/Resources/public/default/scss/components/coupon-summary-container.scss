@@ -1,0 +1,20 @@
+/* @theme: default; */
+
+.coupon-summary-container {
+    .coupon-trigger {
+        padding-inline: 0;
+    }
+
+    .coupon-container {
+        &__content {
+            padding-inline: 0;
+        }
+    }
+}
+
+// Hide part of total table when summary is collapsed
+.summary-collapse-content:not(.show) {
+    .coupon-summary-container {
+        display: none;
+    }
+}

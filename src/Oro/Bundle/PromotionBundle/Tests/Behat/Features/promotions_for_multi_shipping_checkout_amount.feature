@@ -38,6 +38,7 @@ Feature: Promotions for multi shipping checkout amount
     And I should see notification "This product will be available later" for "SKU3" line item "Checkout Line Item"
     When I click "Create Order"
     Then Page title equals to "Billing Information - Checkout"
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
 
@@ -47,6 +48,7 @@ Feature: Promotions for multi shipping checkout amount
     And I type "multi-shipping-coupon" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Discount | -$5.00 |
@@ -54,6 +56,7 @@ Feature: Promotions for multi shipping checkout amount
     Then Page title equals to "Shipping Information - Checkout"
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal          | $50.00 |
       | Discount          | -$5.00 |
