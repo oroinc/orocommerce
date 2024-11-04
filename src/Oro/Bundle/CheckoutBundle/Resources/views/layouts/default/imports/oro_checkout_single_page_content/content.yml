@@ -7,23 +7,7 @@ layout:
 
     actions:
         - '@setBlockTheme':
-            themes: '@OroCheckout/layouts/default/imports/oro_checkout_content/content.html.twig'
-        - '@move':
-            id: page_title_container
-            parentId: __checkout_container
-            prepend: true
-        - '@setOption':
-            id: page_title_container
-            optionName: attr.class
-            optionValue: 'multistep-checkout__title'
-        - '@appendOption':
-            id: page_main
-            optionName: attr.class
-            optionValue: 'multistep-checkout-layout'
-        - '@appendOption':
-            id: checkout_sidebar
-            optionName: attr.class
-            optionValue: 'multistep-checkout__steps-inner'
+            themes: '@OroCheckout/layouts/default/imports/oro_checkout_single_page_content/content.html.twig'
         - '@add':
             id: order_taxes_template
             blockType: block
@@ -45,29 +29,7 @@ layout:
                     options:
                         attr:
                             class: ' checkout__container--steps-page'
-                __checkout_content:
-                    blockType: container
-                __checkout_steps:
-                    blockType: container
-                __checkout_main:
-                    blockType: container
-                __checkout_footer:
-                    blockType: container
                 __checkout_content_main:
-                    blockType: container
-                __checkout_content_main_top:
-                    blockType: container
-                __checkout_information:
-                    blockType: container
-                __checkout_information_head:
-                    blockType: container
-                __checkout_information_title:
-                    blockType: checkout_information_title
-                    options:
-                        workflowStep: '=data["workflowStep"]'
-                        stepOrder: '=data["oro_checkout_steps"].getStepOrder(data["workflowItem"], context["workflowStepName"], excludedSteps)'
-                        excludedSteps: '=["enter_credentials_step"]'
-                __checkout_information_body:
                     blockType: container
                 __checkout_form:
                     blockType: checkout_form
@@ -93,8 +55,6 @@ layout:
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
                         workflowItem: '=data["workflowItem"]'
                         visible: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
-                __checkout_order_summary_container:
-                    blockType: container
                 __checkout_order_summary:
                     blockType: checkout_order_summary
                     options:
@@ -137,17 +97,12 @@ layout:
                 __checkout_order_footer_col_second:
                     blockType: container
 
-                __checkout_order_summary_totals_main:
-                    blockType: summary_collapse
+                __checkout_order_sidebar:
+                    blockType: container
+
                 __checkout_order_summary_wrapper:
                     blockType: container
                 __checkout_order_summary_inner:
-                    blockType: container
-                __checkout_order_summary_inner_layout:
-                    blockType: container
-                __checkout_order_summary_inner_base:
-                    blockType: container
-                __checkout_order_summary_inner_total:
                     blockType: container
                 __checkout_order_summary_summary:
                     blockType: container
@@ -174,66 +129,27 @@ layout:
                         vars:
                             itemsCount: '=data["oro_checkout_line_items_totals"].getData(data["checkout"]).count()'
                             totalsConainerClassName: ''
-
-                __checkout_combined_buttons_container:
-                    blockType: container
-                __checkout_form_buttons:
-                    blockType: container
-                __checkout_button_continue:
-                    blockType: checkout_transition_continue
-                    options:
-                        transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
-                        checkout: '=data["checkout"]'
-                        vars:
-                            buttonCssStyle: ''
-                            showRequiredLabel: false
-                            showIcon: true
-                            form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
-                __checkout_button_back:
-                    blockType: checkout_transition_back
-                    options:
-                        attr:
-                            class: ' btn--flat'
-                        transitionData: '=data["oro_checkout_transition"].getBackTransition(data["workflowItem"])'
-                        checkout: '=data["checkout"]'
             tree:
                 __root:
                     __checkout_container:
-                        __checkout_steps: ~
-                        __checkout_main:
-                            __checkout_content:
-                                __checkout_information:
-                                    __checkout_information_head:
-                                        __checkout_information_title: ~
-                                    __checkout_information_body:
-                                        __checkout_form:
-                                            __checkout_form_errors: ~
-                                            __checkout_form_fields: ~
-                            __checkout_order_summary_container:
-                                __checkout_order_summary:
-                                    __checkout_order_summary_content:
-                                        __checkout_order_summary_line_items_container: ~
-                                __checkout_order_footer:
-                                    __checkout_order_footer_col_first:
-                                        __checkout_order_summary_notes_container:
-                                            __checkout_order_summary_notes_title: ~
-                                            __checkout_order_summary_notes: ~
-                                    __checkout_order_footer_col_second: ~
-                        __checkout_footer:
+                        __checkout_content_main:
+                        __checkout_form:
+                            __checkout_form_errors: ~
+                            __checkout_form_fields:
+                                __checkout_additional_options: ~
+                            __checkout_order_summary:
+                                __checkout_order_summary_content:
+                                    __checkout_order_summary_line_items_container: ~
+                            __checkout_order_footer:
+                                __checkout_order_footer_col_first:
+                                    __checkout_order_summary_notes_container:
+                                        __checkout_order_summary_notes_title: ~
+                                        __checkout_order_summary_notes: ~
+                                __checkout_order_footer_col_second: ~
+                        __checkout_order_sidebar:
                             __checkout_order_summary_totals_container:
-                                __checkout_order_summary_totals_main:
                                     __checkout_order_summary_wrapper:
                                         __checkout_order_summary_inner:
-                                            __checkout_order_summary_inner_layout:
-                                                __checkout_order_summary_inner_base:
-                                                    __checkout_additional_options: ~
-                                                __checkout_order_summary_inner_total:
-                                                    __checkout_order_summary_summary:
-                                                        __checkout_order_summary_totals_subtree:
-                                                            __checkout_order_summary_totals: ~
-                                                        __checkout_combined_buttons_container:
-                                                            __checkout_form_buttons:
-                                                                __checkout_button_back: ~
-                                                                __checkout_button_continue: ~
-
-    conditions: 'context["workflowStepName"]!="checkout"'
+                                            __checkout_order_summary_summary:
+                                                __checkout_order_summary_totals_subtree:
+                                                    __checkout_order_summary_totals: ~

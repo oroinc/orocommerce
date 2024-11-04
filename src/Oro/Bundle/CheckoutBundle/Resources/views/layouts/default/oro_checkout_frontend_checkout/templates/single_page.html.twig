@@ -1,4 +1,4 @@
-{% block __oro_checkout_content__checkout_information_widget %}
+{% block __oro_checkout_single_page_content__checkout_information_widget %}
     {{ block_widget(block) }}
 {% endblock %}
 
@@ -90,14 +90,14 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_summary_widget %}
+{% block __oro_checkout_single_page_content__checkout_order_summary_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view--summary"}) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_summary_header_widget %}
+{% block __oro_checkout_single_page_content__checkout_order_summary_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " single-page-checkout-view__column-header"
     }) %}
@@ -105,17 +105,6 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block __oro_checkout_content__checkout_order_summary_title_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': "single-page-checkout-view__title"
-    }) %}
-    <h3 {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-        {{ 'oro.checkout.order_summary.label'|trans }}
-    </h3>
-
 {% endblock %}
 
 {% block _checkout_summary_widget %}
@@ -361,7 +350,7 @@
     {% endif %}
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_footer_widget %}
+{% block __oro_checkout_single_page_content__checkout_order_footer_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set collapseId = 'checkout-collapse-'|uniqid %}
     {% set attr = layout_attr_defaults(attr, {
@@ -386,17 +375,8 @@
     </div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_content_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__content"
-    }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block __oro_checkout_content__checkout_container_widget %}
+{% block __oro_checkout_single_page_content__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' checkout__container',
         'data-layout': 'separate',

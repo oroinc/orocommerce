@@ -12,6 +12,13 @@ layout:
                         currentStep: '=data["workflowStep"]'
                         editTransitions: '=data["oro_checkout_transition"].getBackTransitions(data["workflowItem"])'
                         excludedSteps: '=["enter_credentials_step"]'
+                        vars:
+                            stepIconsMap:
+                                enter_billing_address: 'billing-info'
+                                enter_shipping_address: 'map-pin'
+                                enter_shipping_method: 'truck'
+                                enter_payment: 'credit-card'
+                                order_review: 'order-review'
                 __enter_billing_address_information:
                     blockType: block
                 __enter_shipping_address_information:

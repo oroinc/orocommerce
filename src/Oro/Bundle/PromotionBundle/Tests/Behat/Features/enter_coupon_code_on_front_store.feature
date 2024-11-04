@@ -26,6 +26,7 @@ Feature: Enter coupon code on Front Store
     When I scroll to "Create Order"
     And I click "Create Order"
     Then I should see "Checkout"
+    And I click "Expand Checkout Footer"
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
     When I type "CoupoN-1" in "CouponCodeInput"
@@ -34,6 +35,7 @@ Feature: Enter coupon code on Front Store
     When I type "coupon-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    And I click "Expand Checkout Footer"
     And I should see "coupon-1 First Promotion Label" in the "Coupons List" element
     And I should see "Discount -$1.00" in the "Subtotals" element
 
@@ -49,6 +51,7 @@ Feature: Enter coupon code on Front Store
   Scenario: Removed coupon should not give discount
     When I click "Coupon Delete Button"
     Then I should see "Coupon code has been removed" flash message
+    And I click "Expand Checkout Footer"
     And I should not see "coupon-1 First Promotion Label"
     And I should see "I have a Coupon Code"
     And I should not see "Discount -$1.00" in the "Subtotals" element
@@ -58,6 +61,7 @@ Feature: Enter coupon code on Front Store
     And I click "I have a Coupon Code"
     And I type "coupon-2" in "Coupon Code Input"
     And I click "Apply"
+    And I click "Expand Checkout Footer"
     Then I should see "coupon-2 Second Promotion Name" in the "Coupons List" element
 
   Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page

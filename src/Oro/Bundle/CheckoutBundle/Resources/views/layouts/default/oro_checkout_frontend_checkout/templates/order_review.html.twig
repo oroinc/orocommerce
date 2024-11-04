@@ -1,9 +1,11 @@
 {% block _checkout_additional_options_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " order-review-options__wrapper"
+        '~class': ' order-review-options__wrapper',
+        'id': 'order-review-checkout-form-additional',
+        'data-page-component-view': 'oroform/js/app/views/form-validate-view'
     }) %}
-    <div {{ block('block_attributes') }}>
+    <form {{ block('block_attributes') }}>
         <h4 class="heading-bottom-offset">{{ "oro.checkout.workflow.order_options.label"|trans }}</h4>
         <div class="order-review-options grid">
             {% set shippingDateId= 'shipping-date-uid-'|uniqid %}
@@ -13,7 +15,12 @@
                         {{ renderIcon.icon({name: 'calendar'}) }}
                     </span>
                     <label class="label label--full" for="{{ shippingDateId }}">{{ "oro.checkout.order_review.shipping_date"|trans }}</label>
-                    {{ form_widget(form.ship_until, {id: shippingDateId}) }}
+                    {{ form_widget(form.ship_until, {
+                        id: shippingDateId,
+                        attr: {
+                            form: form.vars.id,
+                        }
+                    }) }}
                 </div>
             </div>
             <div class="grid-col-6 grid-col-mobile-landscape-12">
@@ -21,6 +28,7 @@
                 <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
                 {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
                     'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
+                    'form': form.vars.id,
                     'data-validation': { Length: {max: 255} }|json_encode
                 }}) }}
             </div>
@@ -29,12 +37,17 @@
                 <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
                 {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
                     'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
+                    'form': form.vars.id,
                     'data-page-component-elastic-area': ''
                 }}) }}
             </div>
 
             {% if workflowItem.data.get('allow_manual_source_remove') %}
-                {% set removeElementOptions = {} %}
+                {% set removeElementOptions = {
+                    attr: {
+                        'form': form.vars.id,
+                    }
+                } %}
                 {% set removeLabel = workflowItem.data.get('source_remove_label')|trans %}
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
@@ -61,16 +74,24 @@
                       }
                   }|json_encode }}">
                     <div id="checkout-late-registration-toggler" class="grid-col-12">
-                        {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
+                        {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled'), {
+                            attr: {
+                                'form': form.vars.id,
+                            }
+                        }) }}
                     </div>
                     <div id="checkout-late-registration-fields" class="grid-col-12">
-                        {{ form_widget(form.late_registration, {'attr': {'class': 'grid'}}) }}
+                        {{ form_widget(form.late_registration, {
+                            'attr': {
+                                'class': 'grid',
+                                'form': form.vars.id
+                            }
+                        })  }}
                     </div>
                 </div>
-
             {% endif %}
         </div>
-    </div>
+    </form>
 {% endblock %}
 
 {% block _checkout_form_fields_widget -%}

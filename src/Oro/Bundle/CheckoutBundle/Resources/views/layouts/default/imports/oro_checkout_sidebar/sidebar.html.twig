@@ -24,7 +24,7 @@
             {% endif %}
         {% endfor %}
 
-        <nav aria-label="{{ 'oro.checkout.navigation_sidebar.list.aria_label'|trans({
+        <nav class="checkout-nav" aria-label="{{ 'oro.checkout.navigation_sidebar.list.aria_label'|trans({
             '%current_step_name%': currentStepName|trans({},'workflows'),
             '%current_step_num%': currentStepNum,
             '%count_steps%': steps|length - 1
@@ -40,47 +40,71 @@
                     {% if isCurrent %}
                         {% set isComplete = false %}
                     {% endif %}
-                        <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }} {{ isCurrent ? 'checkout-navigation__step--current' : '' }}"
-                            data-role="transition-trigger-container" {{ isCurrent ? 'aria-current="step"' : '' }}
-                            aria-label="{{ 'oro.checkout.navigation_sidebar.item.aria_label'|trans({
-                                '%step_name%': step.label|trans({},'workflows'),
-                                '%step_num%': stepNum,
-                                '%count_steps%': steps|length - 1,
-                                '%step_status%': (isComplete ? 'oro.checkout.navigation_sidebar.status.completed' : 'oro.checkout.navigation_sidebar.status.not_completed')|trans
-                            }) }}"
-                        >
-                        {% set badgeClass = '' %}
-                        {% if isComplete %}
-                            {% set badgeClass = 'checkout-navigation__icon--complete' %}
-                        {% elseif isCurrent %}
-                            {% set badgeClass = 'checkout-navigation__icon--current' %}
-                        {% endif %}
-                        <span class="checkout-navigation__icon {{ badgeClass }}" data-role="transition-trigger" aria-hidden="true">
-                            {% if isComplete %}
-                                {{ renderIcon.icon({name: 'check', extraClass: 'theme-icon--small'}) }}
-                            {% else %}
-                                {{ stepNum }}
-                            {% endif %}
-                        </span>
-                        <h5 class="checkout-navigation__title {{ isCurrent ? 'checkout-navigation__title--current' : '' }}">
-                            <span data-role="transition-trigger">{{ step.label|trans({},'workflows') }}</span>
-                            {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
-                                {% set editTransitionData = editTransitions[step.name] %}
-                                {{ block_widget(block.step_edit_button,
-                                    {
-                                        'transitionData': editTransitionData,
-                                        'checkout': checkout
-                                    }
-                                ) }}
-                            {% endif %}
-                        </h5>
-                        {% set informationBlockId = step.name ~ '_information' %}
-                        {% if isComplete and block[informationBlockId] is defined %}
-                            <div class="checkout-navigation__content" aria-hidden="true">
-                                {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
-                            </div>
-                        {% endif %}
+                    {% if steps|length - 1 > 5 and (currentStepNum > 3 and stepNum == 2) %}
+                    <li class="checkout-navigation__step checkout-navigation__step--placeholder checkout-navigation__step--past">
+                        <div class="checkout-navigation__side">
+                            <span class="checkout-navigation__icon checkout-navigation__icon--complete" aria-hidden="true">
+                                {{- renderIcon.icon({name: 'more-horizontal', extraClass: 'theme-icon--small'}) -}}
+                            </span>
+                        </div>
                     </li>
+                    {% endif %}
+                    <li class="checkout-navigation__step {{ isComplete ? 'checkout-navigation__step--past' : '' }} {{ isCurrent ? 'checkout-navigation__step--current' : '' }}"
+                        data-role="transition-trigger-container" {{ isCurrent ? 'aria-current="step"' : '' }}
+                        aria-label="{{ 'oro.checkout.navigation_sidebar.item.aria_label'|trans({
+                            '%step_name%': step.label|trans({},'workflows'),
+                            '%step_num%': stepNum,
+                            '%count_steps%': steps|length - 1,
+                            '%step_status%': (isComplete ? 'oro.checkout.navigation_sidebar.status.completed' : 'oro.checkout.navigation_sidebar.status.not_completed')|trans
+                        }) }}"
+                    >
+                        <div class="checkout-navigation__side">
+                            {% set badgeClass = '' %}
+                            {% if isComplete %}
+                                {% set badgeClass = 'checkout-navigation__icon--complete' %}
+                            {% elseif isCurrent %}
+                                {% set badgeClass = 'checkout-navigation__icon--current' %}
+                            {% endif %}
+                            {% set stepIcon = stepIconsMap[step.name]|default(false) %}
+                            {% set navIcon = stepIcon|default(isComplete ? 'check' : false) %}
+                            <span class="checkout-navigation__icon {{ badgeClass }}" data-role="transition-trigger" aria-hidden="true">
+                                {%- if navIcon -%}
+                                    {{- renderIcon.icon({name: navIcon, extraClass: 'theme-icon--small'}) -}}
+                                {%- else -%}
+                                    {{- stepNum -}}
+                                {%- endif -%}
+                            </span>
+                        </div>
+                        <div class="checkout-navigation__base">
+                            <h5 class="checkout-navigation__title transition-content-node {{ isCurrent ? 'checkout-navigation__title--current' : '' }}" style="--step-index: {{ stepNum }}">
+                                <span data-role="transition-trigger">{{ step.label|trans({},'workflows') }}</span>
+                                {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
+                                    {% set editTransitionData = editTransitions[step.name] %}
+                                    {{ block_widget(block.step_edit_button,
+                                        {
+                                            'transitionData': editTransitionData,
+                                            'checkout': checkout
+                                        }
+                                    ) }}
+                                {% endif %}
+                            </h5>
+                            {% set informationBlockId = step.name ~ '_information' %}
+                            {% if isComplete and block[informationBlockId] is defined %}
+                                <div class="checkout-navigation__content transition-content-node " style="--step-index: {{ stepNum }}" aria-hidden="true">
+                                    {{ block_widget(block.offsetGet(informationBlockId), {'checkout': checkout}) }}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </li>
+                    {% if steps|length - 1 > 5 and currentStepNum < steps|length - 3 and ((currentStepNum < 3 and stepNum == 3) or (currentStepNum >= 3 and isCurrent)) %}
+                    <li class="checkout-navigation__step checkout-navigation__step--placeholder">
+                        <div class="checkout-navigation__side">
+                            <span class="checkout-navigation__icon" aria-hidden="true">
+                                {{- renderIcon.icon({name: 'more-horizontal', extraClass: 'theme-icon--small'}) -}}
+                            </span>
+                        </div>
+                    </li>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
             </ol>

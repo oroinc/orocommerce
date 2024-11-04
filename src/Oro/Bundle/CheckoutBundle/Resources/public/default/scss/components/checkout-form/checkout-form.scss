@@ -93,7 +93,7 @@
     &__buttons {
         display: grid;
         grid-auto-flow: column;
-        gap: spacing('base') spacing('sm');
+        gap: spacing('base') spacing('xl');
     }
 
     & &__buttons {
@@ -173,6 +173,10 @@
     .checkout-form {
         &__payment-methods {
             max-width: 100%;
+        }
+
+        &__buttons {
+            gap: spacing('base');
         }
     }
 }

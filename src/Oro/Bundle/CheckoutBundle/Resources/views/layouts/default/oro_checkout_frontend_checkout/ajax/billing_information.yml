@@ -8,9 +8,4 @@ layout:
             optionName: visible
             optionValue: '=data["workflowItem"].getData().get("consents_available")'
 
-        - '@setOption':
-            id: checkout_outside_button_back
-            optionName: visible
-            optionValue: '=data["workflowItem"].getData().get("consents_available")'
-
     conditions: 'context["workflowStepName"]=="enter_billing_address"'

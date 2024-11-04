@@ -22,4 +22,18 @@
     &__totals {
         @include clearfix();
     }
+
+    .toolbar.in-sticky {
+        padding: spacing('sm') spacing('lg') spacing('sm');
+        margin: 0 -#{spacing('lg')} spacing('base');
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .checkout-order-summary {
+        .toolbar.in-sticky {
+            padding: spacing('sm') 0;
+            margin: 0;
+        }
+    }
 }

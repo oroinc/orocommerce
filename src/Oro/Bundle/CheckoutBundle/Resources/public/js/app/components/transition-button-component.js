@@ -23,7 +23,8 @@ define(function(require) {
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
                 transitionTrigger: '[data-role="transition-trigger"]',
                 stateToken: '[name$="[state_token]"]'
-            }
+            },
+            relatedCheckoutFormIds: []
         },
 
         /**
@@ -47,6 +48,10 @@ define(function(require) {
                 this.$form = this.getForm();
                 this.$form.bindFirst('submit.' + this.cid, this.preventSubmit.bind(this));
                 this.$form.on('submit.' + this.cid, this.onSubmit.bind(this));
+
+                this.getRelativeForms().forEach(
+                    form => [...form.find('[form]')].map(input => this.stashFormAttr(input))
+                );
             } else {
                 this.$el.on('click.' + this.cid, this.transit.bind(this));
             }
@@ -111,9 +116,10 @@ define(function(require) {
                 mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
                 return false;
             }
-            this.$form.validate();
 
-            if (this.$form.valid()) {
+            e.preventDefault();
+
+            if (this.formsValidate()) {
                 const eventData = {
                     stopped: false,
                     event: e
@@ -128,12 +134,50 @@ define(function(require) {
             }
         },
 
+        stashFormAttr(input) {
+            input.setAttribute('data-form', input.getAttribute('form'));
+            input.removeAttribute('form');
+
+            return input;
+        },
+
+        unStashFormAttr(input) {
+            input.setAttribute('form', input.getAttribute('data-form'));
+            input.removeAttribute('data-form');
+
+            return input;
+        },
+
+        formsValidate() {
+            return this.getAllForms().every(form => {
+                form.validate();
+                return form.valid();
+            });
+        },
+
+        getAllForms() {
+            return [this.$form, ...this.getRelativeForms()];
+        },
+
+        getRelativeForms() {
+            const forms = [];
+
+            if (this.options.relatedCheckoutFormIds) {
+                forms.push(...this.options.relatedCheckoutFormIds.map(
+                    relatedCheckoutFormId => $(`#${relatedCheckoutFormId}`)
+                ).filter(form => form.length));
+            }
+
+            return forms;
+        },
+
         /**
          * @param {Event} e
          * @param {Object} data
          */
         transit: function(e, data) {
             e.preventDefault();
+            e.stopPropagation();
             if (!this.options.enabled || this.inProgress || !this.options.transitionUrl) {
                 return;
             }
@@ -170,9 +214,13 @@ define(function(require) {
          * @returns FormData
          */
         getFormData: function() {
-            this.$form.find(this.options.selectors.stateToken)
-                .prop('disabled', false);
-            return new FormData(this.$form[0]);
+            return this.getAllForms().reduce((formData, form) => {
+                form.find(this.options.selectors.stateToken).prop('disabled', false);
+                for (const [name, value] of new FormData(form[0]).entries()) {
+                    formData.append(name, value);
+                }
+                return formData;
+            }, new FormData());
         },
 
         onSuccess: function(response) {
@@ -257,6 +305,11 @@ define(function(require) {
             if (this.$form) {
                 this.$form.off('.' + this.cid);
             }
+
+            this.getRelativeForms().forEach(
+                form => [...form.find('[form]')].map(input => this.unStashFormAttr(input))
+            );
+
             this.$el.off('.' + this.cid);
             this.$transitionTriggers.off('.' + this.cid);
 

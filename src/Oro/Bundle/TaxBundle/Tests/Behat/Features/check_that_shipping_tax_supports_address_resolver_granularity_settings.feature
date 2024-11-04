@@ -42,6 +42,7 @@ Feature: Check that shipping tax supports address resolver granularity settings
     And press "Create Order"
     And I check "Ship to this address" on the checkout page
     And click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $40.00"
     And should see "Shipping $3.00"
     And should see "Tax $4.30"
@@ -59,6 +60,7 @@ Feature: Check that shipping tax supports address resolver granularity settings
   Scenario: Check that taxes do not apply to product and shipping
     Given I proceed as the Buyer
     And I reload the page
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $40.00"
     And should see "Shipping $3.00"
     And should not see "Tax $0.30"

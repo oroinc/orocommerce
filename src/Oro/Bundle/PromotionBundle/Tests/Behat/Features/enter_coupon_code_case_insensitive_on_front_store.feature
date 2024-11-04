@@ -31,11 +31,13 @@ Feature: Enter coupon code case insensitive on Front Store
     When I scroll to "Create Order"
     And I click "Create Order"
     Then I should see "Checkout"
+    And I click "Expand Checkout Footer"
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
     And I type "CoUpoN-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    And I click "Expand Checkout Footer"
     And I should see "coupon-1 First Promotion Label" in the "Coupons List" element
     And I should see "Discount -$1.00" in the "Subtotals" element
 

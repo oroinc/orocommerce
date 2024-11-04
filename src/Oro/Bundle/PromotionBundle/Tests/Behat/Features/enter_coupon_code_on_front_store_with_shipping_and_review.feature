@@ -20,27 +20,32 @@ Feature: Enter coupon code on Front Store with shipping and review
     When I scroll to "Create Order"
     And I click "Create Order"
     Then I should see "Billing Information" in the "Checkout Step Title" element
+    And I click "Expand Checkout Footer"
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
     When I type "coupon-flat-rate" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    And I click "Expand Checkout Footer"
     And I should see "coupon-flat-rate Flat rate shipping Promotion" in the "Coupons List" element
     When I type "coupon-flat-rate2" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    And I click "Expand Checkout Footer"
     And I should see "coupon-flat-rate2 Flat rate2 shipping Promotion" in the "Coupons List" element
 
   Scenario: Flat Rate2 Promotion is applied when Flat Rate 2 shipping method is chosen
     When on the "Billing Information" checkout step I press Continue
     And on the "Shipping Information" checkout step I press Continue
     And I check "Flat Rate 2" on the "Shipping Method" checkout step and press Continue
+    And I click "Expand Checkout Footer"
     Then I should see "Shipping Discount -$1.00" in the "Subtotals" element
 
   Scenario: Flat Rate Promotion is applied when Flat Rate shipping method is chosen
     When on the "Payment" checkout step I go back to "Edit Shipping Method"
     And I click "Flat Rate Shipping Method"
     And on the "Shipping Method" checkout step I press Continue
+    And I click "Expand Checkout Footer"
     Then I should see "Shipping Discount -$2.00" in the "Subtotals" element
 
   Scenario: Created order after passing checkout should have discounts by coupons that was added on checkout page

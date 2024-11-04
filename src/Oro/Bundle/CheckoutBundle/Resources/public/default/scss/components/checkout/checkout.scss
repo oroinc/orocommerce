@@ -3,12 +3,6 @@
 .checkout {
     &__container {
         display: grid;
-
-        &--steps-page {
-            margin-top: spacing('lg');
-            gap: spacing('lg');
-            grid-template-columns: 1fr 280px;
-        }
     }
 
     &__content {
@@ -29,10 +23,11 @@
     }
 
     &__steps {
-        padding: spacing('base');
-        border-radius: $border-radius;
-
-        background-color: $checkout-steps-background-color;
+        padding: spacing('lg') spacing('base') spacing('base');
+        position: sticky;
+        top: var(--sticky-page-header-element-offset-top, 0);
+        max-height: calc(100dvh - var(--sticky-page-header-element-offset-top, 0));
+        overflow-y: auto;
     }
 
     &--no-background {
@@ -81,6 +76,10 @@
     &__submit-button-container {
         display: grid;
         gap: spacing('sm');
+
+        &:not(.final-step) {
+            display: none;
+        }
     }
 
     .required-label {
@@ -103,7 +102,7 @@
     .checkout {
         &__sidebar {
             position: sticky;
-            top: calc(var(--sticky-page-header-element-offset-top, 0) + #{spacing('xl')});
+            top: var(--sticky-page-header-element-offset-top, 0);
             height: max-content;
         }
     }
@@ -111,12 +110,6 @@
 
 @include breakpoint('tablet') {
     .checkout {
-        &__container {
-            &--steps-page {
-                grid-template-columns: 1fr;
-            }
-        }
-
         &--no-background {
             background: none;
             padding: 0;
@@ -157,10 +150,6 @@
                 }
             }
         }
-
-        &__submit-button-container:not(.final-step) {
-            display: none;
-        }
     }
 }
 
@@ -177,16 +166,9 @@
         display: grid;
         gap: spacing('md');
 
-        &__container--steps-page {
-            position: relative;
-
-            .checkout__require-label {
-                position: absolute;
-                top: -#{spacing('huge')};
-                right: 0;
-
-                text-align: right;
-            }
+        &__steps {
+            padding-top: 0;
+            position: static;
         }
 
         &__content-main-top {
@@ -194,9 +176,16 @@
             gap: spacing('md');
         }
 
+        &__content {
+            padding-inline: spacing('base');
+        }
+    }
+}
+
+@include fullscreen-mode() {
+    .checkout {
         &__steps {
-            padding: spacing('xs') 0 spacing('sm');
-            background-color: transparent;
+            padding: spacing('lg') 0;
         }
     }
 }

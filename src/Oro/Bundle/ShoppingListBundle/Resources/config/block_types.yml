@@ -106,7 +106,12 @@ services:
     oro_shopping_list.layout.type.summary_collapse:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{alwaysShow: ~}]]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        alwaysShow: ~
+                        open: {default: false}
             - [setName, ['summary_collapse']]
         tags:
              - { name: layout.block_type, alias: summary_collapse }

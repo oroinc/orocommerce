@@ -36,6 +36,7 @@ Feature: Create Order from Checkout with product kits and taxes
     When I click "Create Order"
     And I click "Ship to This Address"
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $124.69"
     And I should see "Discount -$12.47"
     And I should see "Shipping $3.00"
@@ -56,6 +57,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Total: $224.43"
     When I click "Create Order"
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $249.37"
     And I should see "Discount -$24.94"
     And I should see "Shipping $3.00"
@@ -78,6 +80,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Total: $231.09"
     When I click "Create Order"
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $256.77"
     And I should see "Discount -$25.68"
     And I should see "Shipping $3.00"
@@ -101,6 +104,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Total: $233.32"
     When I click "Create Order"
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $259.25"
     And I should see "Discount -$25.93"
     And I should see "Shipping $3.00"
@@ -126,6 +130,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Total: $248.89"
     When I click "Create Order"
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $276.55"
     And I should see "Discount -$27.66"
     And I should see "Shipping $3.00"
@@ -150,6 +155,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Total: $373.35"
     When I click "Create Order"
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"
@@ -165,6 +171,7 @@ Feature: Create Order from Checkout with product kits and taxes
     When I enable configuration options:
       | oro_tax.product_prices_include_tax |
     And I reload the page
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"
@@ -182,6 +189,7 @@ Feature: Create Order from Checkout with product kits and taxes
     And I enable configuration options:
       | oro_tax.calculate_taxes_after_promotions |
     And I reload the page
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"
@@ -197,6 +205,7 @@ Feature: Create Order from Checkout with product kits and taxes
     When I enable configuration options:
       | oro_tax.product_prices_include_tax |
     And I reload the page
+    And I click "Expand Checkout Footer"
     Then I should see "Subtotal $414.83"
     And I should see "Discount -$41.48"
     And I should see "Shipping $3.00"

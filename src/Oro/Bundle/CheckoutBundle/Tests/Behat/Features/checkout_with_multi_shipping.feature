@@ -135,6 +135,7 @@ Feature: Checkout With Multi Shipping
     And records in "Second Checkout Shipping Grid" should be 2
     When I click on "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
     And I click on "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $9.00  |

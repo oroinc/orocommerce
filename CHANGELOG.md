@@ -70,6 +70,9 @@ The current file describes significant changes in the code that may affect the u
 
 ### Removed
 
+#### CheckoutBundle
+* Removed `checkout_transition_submit` block type
+
 #### ProductBundle
 * Removed `oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view`
 * Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.

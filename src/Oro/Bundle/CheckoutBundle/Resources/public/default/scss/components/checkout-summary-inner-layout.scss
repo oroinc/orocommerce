@@ -1,0 +1,55 @@
+/* @theme: default; */
+
+.checkout-summary-inner-layout {
+    display: grid;
+    grid-template-areas: 'base total';
+    grid-template-columns: minmax(0, 1fr) 472px;
+    gap: 0 40px;
+
+    &__base {
+        grid-area: base;
+        padding: spacing('lg') spacing('lg') spacing('base');
+
+        &:empty {
+            display: none;
+        }
+    }
+
+    &__total {
+        grid-area: total;
+    }
+}
+
+// Hide part of total table when summary is collapsed
+.summary-collapse-content:not(.show) {
+    .checkout-summary-inner-layout {
+        display: block;
+
+        &__base {
+            display: none;
+        }
+    }
+}
+
+@include breakpoint('tablet-small') {
+    .checkout-summary-inner-layout {
+        grid-template-columns: minmax(0, 1fr) 340px;
+        gap: 0;
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .checkout-summary-inner-layout {
+        grid-template-areas: initial;
+        grid-template-columns: initial;
+
+        &__base {
+            display: none;
+            grid-area: initial;
+        }
+
+        &__total {
+            grid-area: initial;
+        }
+    }
+}
