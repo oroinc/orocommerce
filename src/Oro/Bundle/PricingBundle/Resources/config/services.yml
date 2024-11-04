@@ -1351,6 +1351,7 @@ services:
             - '@security.token_storage'
         calls:
             - ['setCustomerUserRelationsProvider', ['@oro_customer.provider.customer_user_relations_provider']]
+            - ['setLogger', ['@logger']]
         tags:
             - { name: website_search.placeholder }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }

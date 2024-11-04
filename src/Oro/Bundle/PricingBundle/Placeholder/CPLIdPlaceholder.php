@@ -9,6 +9,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureToggleableInterface;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTreeHandler;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
@@ -23,6 +24,7 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
     private CombinedPriceListTreeHandler $priceListTreeHandler;
     private TokenStorageInterface $tokenStorage;
     private CustomerUserRelationsProvider $customerUserRelationsProvider;
+    private ?LoggerInterface $logger = null;
 
     public function __construct(CombinedPriceListTreeHandler $priceListTreeHandler, TokenStorageInterface $tokenStorage)
     {
@@ -33,6 +35,11 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
     public function setCustomerUserRelationsProvider(CustomerUserRelationsProvider $customerUserRelationsProvider): void
     {
         $this->customerUserRelationsProvider = $customerUserRelationsProvider;
+    }
+
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
     }
 
     /**
@@ -64,7 +71,15 @@ class CPLIdPlaceholder extends AbstractPlaceholder implements FeatureToggleableI
         $cpl = $this->priceListTreeHandler->getPriceList($customer);
 
         if (!$cpl) {
-            throw new \RuntimeException('Can\'t get current cpl');
+            $this->logger?->warning(
+                'Can\'t get current cpl',
+                [
+                    'customer_id' => $customer?->getId(),
+                    'is_anonymous' => $token instanceof AnonymousCustomerUserToken
+                ]
+            );
+
+            return '';
         }
 
         return (string) $cpl->getId();
