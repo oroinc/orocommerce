@@ -22,9 +22,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
     const CONTENT_NODE = 'content-node';
     const CONTENT_NODE_TITLE = 'Content node title';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var WebCatalog $webCatalog */

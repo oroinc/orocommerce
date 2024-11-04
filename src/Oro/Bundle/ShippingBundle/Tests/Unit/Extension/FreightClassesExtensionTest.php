@@ -11,6 +11,7 @@ class FreightClassesExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var FreightClassesExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extension = new FreightClassesExtension();

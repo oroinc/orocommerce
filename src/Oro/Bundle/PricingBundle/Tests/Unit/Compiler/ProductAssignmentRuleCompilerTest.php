@@ -15,6 +15,7 @@ class ProductAssignmentRuleCompilerTest extends \PHPUnit\Framework\TestCase
 {
     private ProductAssignmentRuleCompiler $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $expressionParser = $this->createMock(ExpressionParser::class);

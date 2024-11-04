@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
  */
 class ProcessAssociationCustomerEventListener extends AbstractProcessAssociationEventListener
 {
+    #[\Override]
     public function onProcessAssociations(ProcessEvent $event): void
     {
         $associations = $event->getAssociations();

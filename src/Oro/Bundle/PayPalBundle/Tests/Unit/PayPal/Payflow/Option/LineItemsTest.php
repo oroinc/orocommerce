@@ -7,9 +7,7 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class LineItemsTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new LineItems()];
@@ -72,9 +70,7 @@ class LineItemsTest extends AbstractOptionTest
         ]));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

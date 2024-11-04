@@ -23,6 +23,7 @@ class AssignedProductsConverterTest extends \PHPUnit\Framework\TestCase
     /** @var AssignedProductsConverter */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldsProvider = $this->createMock(FieldsProviderInterface::class);

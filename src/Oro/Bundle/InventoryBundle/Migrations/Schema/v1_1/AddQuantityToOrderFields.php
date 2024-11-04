@@ -17,6 +17,7 @@ class AddQuantityToOrderFields implements Migration, ExtendExtensionAwareInterfa
 {
     use ExtendExtensionAwareTrait;
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addQuantityToOrderFieldsToProduct($schema);

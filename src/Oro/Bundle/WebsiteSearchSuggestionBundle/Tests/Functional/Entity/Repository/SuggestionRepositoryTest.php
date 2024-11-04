@@ -18,6 +18,7 @@ final class SuggestionRepositoryTest extends WebTestCase
 
     private SuggestionRepository $suggestionRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

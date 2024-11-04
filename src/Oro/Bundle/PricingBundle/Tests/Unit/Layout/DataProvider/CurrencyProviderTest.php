@@ -17,6 +17,7 @@ class CurrencyProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $userCurrencyManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);

@@ -31,11 +31,7 @@ class CategoryWriter extends EntityWriter
         parent::__construct($doctrineHelper, $detachFixer, $contextRegistry);
     }
 
-    /**
-     * {@inheritdoc}
-     *
-     * Disables Gedmo TreeListener before persisting and flushing.
-     */
+    #[\Override]
     public function write(array $items)
     {
         try {

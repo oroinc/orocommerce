@@ -12,9 +12,7 @@ class Configuration implements ConfigurationInterface
     public const NAVIGATION_ROOT = 'navigation_root';
     public const EMPTY_SEARCH_RESULT_PAGE = 'empty_search_result_page';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);
@@ -26,7 +24,7 @@ class Configuration implements ConfigurationInterface
                 'web_catalog' => ['type' => 'integer', 'value' => null],
                 'navigation_root' => ['type' => 'integer', 'value' => null],
                 'enable_web_catalog_canonical_url' => ['type' => 'boolean', 'value' => true],
-                self::EMPTY_SEARCH_RESULT_PAGE => ['type' => 'array', 'value' => []],
+                self::EMPTY_SEARCH_RESULT_PAGE => ['type' => 'integer', 'value' => null],
             ]
         );
 

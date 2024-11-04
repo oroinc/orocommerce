@@ -23,6 +23,7 @@ class BrandTypeTest extends WebTestCase
     private FormFactoryInterface $formFactory;
     private CsrfTokenManagerInterface $tokenManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new BrandType();

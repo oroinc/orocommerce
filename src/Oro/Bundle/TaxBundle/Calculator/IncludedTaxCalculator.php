@@ -12,7 +12,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
  */
 class IncludedTaxCalculator extends AbstractTaxCalculator
 {
-    /** {@inheritdoc} */
+    #[\Override]
     protected function doCalculate(string $amount, string $taxRate): ResultElement
     {
         $inclTax = BigDecimal::of($amount);
@@ -27,7 +27,7 @@ class IncludedTaxCalculator extends AbstractTaxCalculator
         return ResultElement::create($inclTax, $exclTax, $taxAmount);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getAmountKey()
     {
         return ResultElement::INCLUDING_TAX;

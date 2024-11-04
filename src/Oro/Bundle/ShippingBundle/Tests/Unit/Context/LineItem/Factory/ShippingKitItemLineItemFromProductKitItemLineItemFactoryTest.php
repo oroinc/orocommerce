@@ -30,6 +30,7 @@ class ShippingKitItemLineItemFromProductKitItemLineItemFactoryTest extends TestC
 
     private ShippingKitItemLineItemFromProductKitItemLineItemFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductShippingOptionsRepository::class);

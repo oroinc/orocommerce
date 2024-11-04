@@ -25,17 +25,13 @@ class ValueNode implements NodeInterface
         return $this->value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getNodes()
     {
         return [$this];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isBoolean()
     {
         return false;

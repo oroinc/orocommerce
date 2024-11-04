@@ -19,6 +19,7 @@ class SaveStateTest extends TestCase
     private TransitionServiceInterface $baseTransition;
     private SaveState $saveState;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

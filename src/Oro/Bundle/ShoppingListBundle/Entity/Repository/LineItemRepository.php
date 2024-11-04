@@ -289,7 +289,10 @@ class LineItemRepository extends ServiceEntityRepository
             ->innerJoin('line_item.product', 'product')
             ->where(
                 $lineItemsQb->expr()->orX(
-                    $lineItemsQb->expr()->notIn('IDENTITY(product.inventory_status)', ':allowedInventoryStatuses'),
+                    $lineItemsQb->expr()->notIn(
+                        "JSON_EXTRACT(product.serialized_data, 'inventory_status')",
+                        ':allowedInventoryStatuses'
+                    ),
                     $lineItemsQb->expr()->eq('product.status', ':status')
                 ),
                 $lineItemsQb->expr()->eq('line_item.shoppingList', ':shoppingList')

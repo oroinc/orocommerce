@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\ProductVariant\VariantFieldValueHa
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
@@ -25,8 +25,8 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $doctrineHelper;
 
-    /** @var EnumValueProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $enumValueProvider;
+    /** @var enumOptionsProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $enumOptionsProvider;
 
     /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $logger;
@@ -43,10 +43,11 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var LocaleSettings */
     private $localeSettings;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-        $this->enumValueProvider = $this->createMock(EnumValueProvider::class);
+        $this->enumOptionsProvider = $this->createMock(EnumOptionsProvider::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
@@ -54,7 +55,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler = new EnumVariantFieldValueHandler(
             $this->doctrineHelper,
-            $this->enumValueProvider,
+            $this->enumOptionsProvider,
             $this->logger,
             $this->configManager,
             $this->localizationHelper,
@@ -75,16 +76,16 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $fieldConfig = $this->createMock(FieldConfigModel::class);
         $fieldConfig->expects(self::once())
             ->method('toArray')
-            ->with('extend')
-            ->willReturn(['target_entity' => \stdClass::class]);
+            ->with('enum')
+            ->willReturn(['target_entity' => EnumOption::class, 'enum_code' => 'test']);
         $this->configManager->expects(self::once())
             ->method('getConfigFieldModel')
             ->with(Product::class, $fieldName)
             ->willReturn($fieldConfig);
 
-        $this->enumValueProvider->expects(self::once())
+        $this->enumOptionsProvider->expects(self::once())
             ->method('getEnumChoicesWithNonUniqueTranslation')
-            ->with(\stdClass::class)
+            ->with('test')
             ->willReturn($enumValues);
 
         $localization = (new Localization())->setFormattingCode('en_US');
@@ -118,22 +119,22 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->never())
             ->method('getConfigFieldModel');
 
-        $this->enumValueProvider->expects($this->never())
-            ->method('getEnumChoices');
+        $this->enumOptionsProvider->expects($this->never())
+            ->method('getEnumChoicesByCode');
 
         $this->assertEquals($enumValues, $this->handler->getPossibleValues($fieldName));
     }
 
     public function testGetScalarValue()
     {
-        $fieldValue = new TestEnumValue(1, 'test');
+        $fieldValue = new TestEnumValue('test_enum_code', 'Test', 'test1');
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($fieldValue)
             ->willReturn($fieldValue->getId());
 
-        $this->assertEquals(1, $this->handler->getScalarValue($fieldValue));
+        $this->assertEquals('test_enum_code.test1', $this->handler->getScalarValue($fieldValue));
     }
 
     public function testGetScalarValueWithNonEnum()
@@ -147,7 +148,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     public function testGetHumanReadableValueForEnumValue()
     {
         $fieldName = 'test_field';
-        $fieldValue = new TestEnumValue(1, 'test');
+        $fieldValue = new TestEnumValue('test_enum_code', 'Test', 'test1');
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
@@ -155,17 +156,17 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($fieldValue->getId());
 
         $fieldConfigModel = new FieldConfigModel($fieldName);
-        $fieldConfigModel->fromArray('extend', ['target_entity' => Product::class]);
+        $fieldConfigModel->fromArray('enum', ['target_entity' => Product::class, 'enum_code' => 'test1']);
 
         $this->configManager->expects($this->once())
             ->method('getConfigFieldModel')
             ->with(Product::class, $fieldName)
             ->willReturn($fieldConfigModel);
 
-        $this->enumValueProvider->expects($this->once())
+        $this->enumOptionsProvider->expects($this->once())
             ->method('getEnumChoicesWithNonUniqueTranslation')
-            ->with(Product::class)
-            ->willReturn([1 => 'cache_data']);
+            ->with('test1')
+            ->willReturn(['test_enum_code.test1' => 'cache_data']);
 
         $this->localeSettings->expects($this->once())
             ->method('getLocale')
@@ -185,7 +186,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->never())
             ->method('getConfigFieldModel');
 
-        $this->enumValueProvider->expects($this->never())
+        $this->enumOptionsProvider->expects($this->never())
             ->method('getEnumChoicesWithNonUniqueTranslation');
 
         $this->localeSettings->expects($this->never())
@@ -197,16 +198,16 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     public function testGetPossibleValues(): void
     {
         $fieldConfigModel = new FieldConfigModel(self::FIELD_NAME);
-        $fieldConfigModel->fromArray('extend', ['target_entity' => Product::class]);
+        $fieldConfigModel->fromArray('enum', ['target_entity' => Product::class, 'enum_code' => 'test2']);
 
         $this->configManager->expects($this->once())
             ->method('getConfigFieldModel')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($fieldConfigModel);
 
-        $this->enumValueProvider->expects($this->once())
+        $this->enumOptionsProvider->expects($this->once())
             ->method('getEnumChoicesWithNonUniqueTranslation')
-            ->with(Product::class)
+            ->with('test2')
             ->willReturn(['cache_data']);
 
         $this->localeSettings->expects($this->exactly(2))
@@ -227,7 +228,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn(null);
 
-        $this->enumValueProvider
+        $this->enumOptionsProvider
             ->expects($this->never())
             ->method('getEnumChoicesWithNonUniqueTranslation');
 
@@ -246,16 +247,16 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     public function testGetPossibleValuesWithDifferenceLocale(): void
     {
         $fieldConfigModel = new FieldConfigModel(self::FIELD_NAME);
-        $fieldConfigModel->fromArray('extend', ['target_entity' => Product::class]);
+        $fieldConfigModel->fromArray('enum', ['target_entity' => Product::class, 'enum_code' => 'test3']);
 
         $this->configManager->expects($this->exactly(2))
             ->method('getConfigFieldModel')
             ->with(Product::class, self::FIELD_NAME)
             ->willReturn($fieldConfigModel);
 
-        $this->enumValueProvider->expects($this->exactly(2))
+        $this->enumOptionsProvider->expects($this->exactly(2))
             ->method('getEnumChoicesWithNonUniqueTranslation')
-            ->with(Product::class)
+            ->with('test3')
             ->willReturnOnConsecutiveCalls(['cache_data_en'], ['cache_data_de']);
 
         $this->localeSettings->expects($this->exactly(2))
@@ -272,7 +273,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
     public function testGetHumanReadableValueWithLoggedError(): void
     {
         $fieldConfigModel = new FieldConfigModel(self::FIELD_NAME);
-        $fieldConfigModel->fromArray('extend', ['target_entity' => Product::class]);
+        $fieldConfigModel->fromArray('enum', ['target_entity' => Product::class, 'enum_code' => 'test4']);
 
         $this->configManager->expects($this->once())
             ->method('getConfigFieldModel')
@@ -280,9 +281,9 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
             ->willReturn($fieldConfigModel);
 
         $availableValues = ['cache_data_en'];
-        $this->enumValueProvider->expects($this->once())
+        $this->enumOptionsProvider->expects($this->once())
             ->method('getEnumChoicesWithNonUniqueTranslation')
-            ->with(Product::class)
+            ->with('test4')
             ->willReturnOnConsecutiveCalls($availableValues);
 
         $this->localeSettings->expects($this->once())
@@ -304,7 +305,7 @@ class EnumVariantFieldValueHandlerTest extends \PHPUnit\Framework\TestCase
                 ]
             );
 
-        $enData = $this->handler->getHumanReadableValue(self::FIELD_NAME, new TestEnumValue(1, 'test'));
+        $enData = $this->handler->getHumanReadableValue(self::FIELD_NAME, new TestEnumValue('test', 'Test', 'test1'));
 
         $this->assertEquals('N/A', $enData);
     }

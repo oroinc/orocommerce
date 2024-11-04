@@ -47,9 +47,7 @@ class SkuIncrementor implements SkuIncrementorInterface
         $this->productClass = $productClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function increment($sku)
     {
         $maxIndex = 0;

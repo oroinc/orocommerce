@@ -13,9 +13,7 @@ use Oro\Bundle\PromotionBundle\Entity\Promotion;
 
 class LoadCouponUsageData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -45,9 +43,7 @@ class LoadCouponUsageData extends AbstractFixture implements DependentFixtureInt
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->couponUsages as $couponUsageData) {

@@ -117,6 +117,7 @@ class ConsentData implements \JsonSerializable
         return $this;
     }
 
+    #[\Override]
     public function jsonSerialize(): array
     {
         $consentDataArray = [

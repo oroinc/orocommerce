@@ -18,6 +18,7 @@ class ActualizeCurrencyTest extends TestCase
     private CurrencyNameHelper|MockObject $currencyNameHelper;
     private ActualizeCurrency $actualizeCurrency;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

@@ -29,6 +29,7 @@ class OrderMapper extends AbstractOrderMapper
     /**
      * @param object|Order $order
      */
+    #[\Override]
     public function map(object $order): Taxable
     {
         $taxable = (new Taxable())

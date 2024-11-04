@@ -15,6 +15,7 @@ class CategoryVisibilityRepositoryTest extends WebTestCase
 
     private const ROOT_CATEGORY = 'All Products';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

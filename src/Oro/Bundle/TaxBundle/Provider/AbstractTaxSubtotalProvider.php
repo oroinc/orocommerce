@@ -25,9 +25,7 @@ abstract class AbstractTaxSubtotalProvider implements SubtotalProviderInterface,
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal($entity)
     {
         $subtotal = $this->createSubtotal();
@@ -41,9 +39,7 @@ abstract class AbstractTaxSubtotalProvider implements SubtotalProviderInterface,
         return $subtotal;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCachedSubtotal($entity)
     {
         $subtotal = $this->createSubtotal();
@@ -60,17 +56,13 @@ abstract class AbstractTaxSubtotalProvider implements SubtotalProviderInterface,
 
     abstract protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity): bool
     {
         return $this->taxFactory->supports($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsCachedSubtotal($entity): bool
     {
         return $this->taxFactory->supports($entity);

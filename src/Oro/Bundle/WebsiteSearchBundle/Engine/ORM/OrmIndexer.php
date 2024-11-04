@@ -22,9 +22,7 @@ class OrmIndexer extends AbstractIndexer
     use DriverAwareTrait;
     use ContextTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function delete($entities, array $context = [])
     {
         $entities = is_array($entities) ? $entities : [$entities];
@@ -59,7 +57,6 @@ class OrmIndexer extends AbstractIndexer
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context
      * $context = [
@@ -67,6 +64,7 @@ class OrmIndexer extends AbstractIndexer
      *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
      * ]
      */
+    #[\Override]
     protected function saveIndexData(
         $entityClass,
         array $entitiesData,
@@ -94,18 +92,14 @@ class OrmIndexer extends AbstractIndexer
         return $entityIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function renameIndex($temporaryAlias, $currentAlias)
     {
         $this->getDriver()->removeIndexByAlias($currentAlias);
         $this->getDriver()->renameIndexAlias($temporaryAlias, $currentAlias);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function resetIndex($class = null, array $context = [])
     {
         $websiteIds = $this->getContextWebsiteIds($context);
@@ -130,6 +124,7 @@ class OrmIndexer extends AbstractIndexer
         }
     }
 
+    #[\Override]
     protected function savePartialIndexData(
         $entityClass,
         array $entitiesData,
@@ -225,6 +220,7 @@ class OrmIndexer extends AbstractIndexer
         return false;
     }
 
+    #[\Override]
     protected function getIndexedEntities($entityClass, array $entities, array $context)
     {
         $recordIds = $this->getIndexedRecordIds($entityClass, array_keys($entities), $context);

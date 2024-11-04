@@ -9,9 +9,7 @@ class ProductTable extends Table implements ConfigurableProductAwareInterface
 {
     private const PRODUCT_TABLE_ROW_ELEMENT = 'CheckoutProductTableRow';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductRows(): array
     {
         return $this->getElements(self::PRODUCT_TABLE_ROW_ELEMENT);

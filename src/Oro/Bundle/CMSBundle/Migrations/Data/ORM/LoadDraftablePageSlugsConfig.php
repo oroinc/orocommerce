@@ -16,6 +16,7 @@ class LoadDraftablePageSlugsConfig extends AbstractFixture implements ContainerA
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var ConfigManager $configManager */

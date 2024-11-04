@@ -1,0 +1,35 @@
+workflows:
+    order_processing_flow:
+        transitions:
+            __start__:
+                step_to: new
+                is_start: true
+                is_hidden: true
+                is_unavailable_hidden: true
+                transition_definition: create_definition
+            confirm:
+                step_to: confirmed
+                frontend_options:
+                    icon: 'fa-check'
+                transition_definition: confirm_definition
+            process:
+                step_to: processing
+                frontend_options:
+                    icon: 'fa-play'
+                transition_definition: process_definition
+            mark_as_shipped:
+                step_to: processing
+                frontend_options:
+                    icon: 'fa-truck'
+                transition_definition: mark_as_shipped_definition
+                is_unavailable_hidden: true
+            complete:
+                step_to: completed
+                frontend_options:
+                    icon: 'fa-window-close-o'
+                transition_definition: complete_definition
+            decline:
+                step_to: declined
+                frontend_options:
+                    icon: 'fa-close'
+                transition_definition: decline_definition

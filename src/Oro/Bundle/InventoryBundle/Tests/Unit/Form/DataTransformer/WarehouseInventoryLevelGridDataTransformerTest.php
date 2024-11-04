@@ -23,6 +23,7 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
     /** @var InventoryLevelGridDataTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

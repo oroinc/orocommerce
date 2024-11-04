@@ -19,6 +19,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductKitItemUnitAvailableForSpecifiedProductsValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): ProductKitItemUnitAvailableForSpecifiedProductsValidator
     {
         return new ProductKitItemUnitAvailableForSpecifiedProductsValidator(new ProductKitItemProductUnitChecker());

@@ -46,9 +46,7 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function generate(string $name, array $parameters = [], int $referenceType = self::ABSOLUTE_PATH): string
     {
         if (preg_match('/\W/', $name)) {
@@ -94,17 +92,13 @@ class SluggableUrlGenerator implements UrlGeneratorInterface
         return $this->addContextUrl($url, $contextUrl);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContext(RequestContext $context)
     {
         $this->generator->setContext($context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContext(): RequestContext
     {
         return $this->generator->getContext();

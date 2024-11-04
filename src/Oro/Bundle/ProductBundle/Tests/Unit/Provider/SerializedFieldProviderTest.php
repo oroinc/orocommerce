@@ -8,6 +8,7 @@ use Oro\Bundle\ProductBundle\Provider\SerializedFieldProvider;
 
 class SerializedFieldProviderTest extends BaseSerializedFieldProviderTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

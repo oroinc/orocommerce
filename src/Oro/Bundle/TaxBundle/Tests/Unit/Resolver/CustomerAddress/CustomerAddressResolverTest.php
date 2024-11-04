@@ -15,6 +15,7 @@ class CustomerAddressResolverTest extends TestCase
 
     private CustomerAddressResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->itemResolver = $this->createMock(CustomerAddressItemResolver::class);

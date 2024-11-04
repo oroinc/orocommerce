@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\DependencyInjection;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -12,9 +13,7 @@ class Configuration implements ConfigurationInterface
     const ROOT_NODE = 'oro_shopping_list';
     const DEFAULT_GUEST_SHOPPING_LIST_OWNER = 'default_guest_shopping_list_owner';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);
@@ -26,8 +25,14 @@ class Configuration implements ConfigurationInterface
             [
                 'backend_product_visibility' => [
                     'value' => [
-                        Product::INVENTORY_STATUS_IN_STOCK,
-                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        ),
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        )
                     ]
                 ],
                 'availability_for_guests' => ['type' => 'boolean', 'value' => false],

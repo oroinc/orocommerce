@@ -7,9 +7,7 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\DateSearchableAttributeType;
 
 class DateSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return DateSearchableAttributeType::class;

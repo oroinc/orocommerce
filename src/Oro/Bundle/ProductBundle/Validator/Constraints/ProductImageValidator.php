@@ -23,8 +23,8 @@ class ProductImageValidator extends ConstraintValidator
      * @param File $value
      * @param Constraint $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if ($value instanceof File && $value->isEmptyFile() !== '1') {

@@ -12,6 +12,7 @@ class PriceListSelectTypeTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListSelectType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new PriceListSelectType();

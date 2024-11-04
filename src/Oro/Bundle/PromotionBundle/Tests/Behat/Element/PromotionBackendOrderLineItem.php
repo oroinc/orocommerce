@@ -12,9 +12,7 @@ class PromotionBackendOrderLineItem extends TableRow implements DiscountAwareLin
     const DISCOUNT_AMOUNT_INCL_TAX_CELL_HEADER = 'After Disc. Incl. Tax';
     const DISCOUNT_AMOUNT_EXCL_TAX_CELL_HEADER = 'After Disc. Excl. Tax';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscount()
     {
         $cellElement = $this->getCellByHeader(self::APPLIED_DISCOUNTS_CELL_HEADER);
@@ -42,9 +40,6 @@ class PromotionBackendOrderLineItem extends TableRow implements DiscountAwareLin
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProductSKU()
     {
         return $this->getCellValue('SKU');

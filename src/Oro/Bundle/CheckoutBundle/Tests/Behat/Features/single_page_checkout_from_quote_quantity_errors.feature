@@ -29,7 +29,7 @@ Feature: Single Page Checkout From Quote Quantity Errors
     And I click "Quotes"
     And I click view PO1 in grid
     When I click "Accept and Submit to Order"
-    And I click "Submit"
+    And I click "Checkout"
     Then I should see "There is not enough quantity for this product"
 
     When I select "Fifth avenue, 10115 Berlin, Germany" from "Billing Address"

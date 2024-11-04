@@ -21,6 +21,7 @@ class ShippingLineItemFromQuoteProductDemandFactory extends ShippingLineItemFrom
      *
      * @return ShippingLineItem
      */
+    #[\Override]
     public function create(ProductLineItemInterface $productLineItem): ShippingLineItem
     {
         if (!$productLineItem instanceof QuoteProductDemand) {
@@ -48,6 +49,7 @@ class ShippingLineItemFromQuoteProductDemandFactory extends ShippingLineItemFrom
      *
      * @return Collection<ShippingLineItem>
      */
+    #[\Override]
     public function createCollection(iterable $productLineItems): Collection
     {
         $quoteProductOffers = [];

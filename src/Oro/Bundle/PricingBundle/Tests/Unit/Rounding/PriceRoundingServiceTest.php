@@ -9,17 +9,13 @@ use Oro\Bundle\PricingBundle\Rounding\PriceRoundingService;
 
 class PriceRoundingServiceTest extends AbstractRoundingServiceTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRoundingService(): AbstractRoundingService
     {
         return new PriceRoundingService($this->configManager);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function prepareConfigManager(string $roundingType, int $precision): void
     {
         $this->configManager->expects($this->atMost(2))

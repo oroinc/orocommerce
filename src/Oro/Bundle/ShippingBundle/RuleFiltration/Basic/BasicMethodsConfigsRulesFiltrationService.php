@@ -27,9 +27,7 @@ class BasicMethodsConfigsRulesFiltrationService implements MethodsConfigsRulesFi
         $this->shippingContextToRulesValuesConverter = $converter;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilteredShippingMethodsConfigsRules(
         array $shippingMethodsConfigsRules,
         ShippingContextInterface $context

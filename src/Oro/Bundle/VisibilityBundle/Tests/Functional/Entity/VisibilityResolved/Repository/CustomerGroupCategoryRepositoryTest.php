@@ -541,6 +541,7 @@ class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
         return $currentCustomerGroupVisibilities;
     }
 
+    #[\Override]
     protected function getRepository(): CustomerGroupCategoryRepository
     {
         return $this->getContainer()->get('oro_visibility.customer_group_category_repository');

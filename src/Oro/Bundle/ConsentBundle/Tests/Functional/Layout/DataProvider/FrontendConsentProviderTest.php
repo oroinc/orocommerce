@@ -26,6 +26,7 @@ class FrontendConsentProviderTest extends WebTestCase
 
     private FrontendConsentProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

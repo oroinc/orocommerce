@@ -36,9 +36,7 @@ abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implem
      */
     protected $dispatcher;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->doctrine = $container->get('doctrine');
@@ -46,9 +44,7 @@ abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implem
         $this->dispatcher = $container->get('oro_payment.method.event.dispatcher.method_renaming');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         if ($this->installed) {

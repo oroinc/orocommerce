@@ -22,6 +22,7 @@ class BuiltInTaxProviderTest extends \PHPUnit\Framework\TestCase
     /** @var BuiltInTaxProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxManager = $this->createMock(TaxManager::class);

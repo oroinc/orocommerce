@@ -33,6 +33,7 @@ class ProductPriceProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceProvider */
     private $gridProductPriceProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

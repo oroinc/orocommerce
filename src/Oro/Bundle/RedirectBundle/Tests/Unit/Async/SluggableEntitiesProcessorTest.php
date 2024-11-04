@@ -36,6 +36,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit\Framework\TestCase
 
     private SluggableEntitiesProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

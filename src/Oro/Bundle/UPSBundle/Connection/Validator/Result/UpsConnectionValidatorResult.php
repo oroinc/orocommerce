@@ -13,25 +13,19 @@ class UpsConnectionValidatorResult extends ParameterBag implements UpsConnection
     public const ERROR_SEVERITY_KEY = 'error_severity';
     public const ERROR_MESSAGE_KEY = 'error_message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getStatus(): bool
     {
         return (bool)$this->get(self::STATUS_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getErrorSeverity(): string
     {
         return (string)$this->get(self::ERROR_SEVERITY_KEY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getErrorMessage(): string
     {
         return $this->get(self::ERROR_MESSAGE_KEY);

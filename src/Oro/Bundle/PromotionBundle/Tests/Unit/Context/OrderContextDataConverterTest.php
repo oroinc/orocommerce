@@ -73,6 +73,7 @@ class OrderContextDataConverterTest extends \PHPUnit\Framework\TestCase
      */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->criteriaDataProvider = $this->createMock(CriteriaDataProvider::class);

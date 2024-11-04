@@ -13,7 +13,6 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
  */
 class ProductVoter extends AbstractEntityVoter
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::DELETE];
 
     public function __construct(
@@ -23,9 +22,7 @@ class ProductVoter extends AbstractEntityVoter
         parent::__construct($doctrineHelper);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute): int
     {
         /** @var Product $product */

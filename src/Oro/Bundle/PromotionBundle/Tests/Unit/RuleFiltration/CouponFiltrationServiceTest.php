@@ -25,6 +25,7 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     /** @var CouponFiltrationService */
     private $filtrationService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->baseFiltrationService = $this->createMock(RuleFiltrationServiceInterface::class);

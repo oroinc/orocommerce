@@ -31,11 +31,6 @@ Feature: Product view page for configurable product with no matrix form and frac
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
-  Scenario: Schema update
-    Given I go to Products/Product Attributes
-    When I click update schema
-    Then I should see "Schema updated" flash message
-
   Scenario: Update product family
     Given I go to Products/ Product Families
     And I click "Edit" on row "default family" in grid

@@ -16,6 +16,7 @@ class ContinueToBillingAddressTest extends TestCase
     private ActionExecutor|MockObject $actionExecutor;
     private ContinueToBillingAddress $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

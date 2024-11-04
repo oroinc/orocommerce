@@ -253,6 +253,7 @@ class TaxJurisdiction implements DatesAwareInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->code;

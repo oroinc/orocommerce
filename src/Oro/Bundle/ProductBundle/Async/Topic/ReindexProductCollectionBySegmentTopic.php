@@ -22,17 +22,20 @@ class ReindexProductCollectionBySegmentTopic extends AbstractTopic
     public const OPTION_NAME_IS_FULL = 'is_full';
     public const OPTION_NAME_ADDITIONAL_PRODUCTS = 'additional_products';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Accumulates information about products from the segment on re-index in the intermediate storage' .
         ', which will be processed by the dependent job.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver->setRequired([

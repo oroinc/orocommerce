@@ -20,6 +20,7 @@ class TaxRuleControllerTest extends WebTestCase
     private const TAX_DESCRIPTION_UPDATED = 'description updated';
     private const TAX_RULE_SAVE_MESSAGE = 'Tax Rule has been saved';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

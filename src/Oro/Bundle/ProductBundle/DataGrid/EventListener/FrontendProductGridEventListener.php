@@ -12,6 +12,8 @@ use Oro\Bundle\EntityConfigBundle\Attribute\AttributeConfigurationProviderInterf
 use Oro\Bundle\EntityConfigBundle\Attribute\AttributeTypeRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -123,7 +125,10 @@ class FrontendProductGridEventListener
             SearchAttributeTypeInterface::FILTER_TYPE_ENTITY,
         ];
 
-        if (\in_array($attributeType->getFilterType($attribute), $entityFilterTypes, true)) {
+        if (ExtendHelper::isEnumerableType($attribute->getType())) {
+            $params['enum_code'] = $attribute->toArray('enum')['enum_code'];
+            $params['class'] = EnumOption::class;
+        } elseif (\in_array($attributeType->getFilterType($attribute), $entityFilterTypes, true)) {
             $params['class'] = $this->getEntityClass($attribute);
         } elseif ($fieldType === Query::TYPE_TEXT) {
             $params['max_length'] = 255;

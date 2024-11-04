@@ -16,7 +16,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamilyAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -42,8 +42,8 @@ use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyFields)
  *
- * @method AbstractEnumValue getInventoryStatus()
- * @method Product setInventoryStatus(AbstractEnumValue $enumId)
+ * @method EnumOptionInterface getInventoryStatus()
+ * @method Product setInventoryStatus(EnumOptionInterface $enumId)
  * @method ProductName getName(Localization $localization = null)
  * @method ProductName getDefaultName()
  * @method LocalizedFallbackValue getDefaultSlugPrototype()
@@ -160,16 +160,21 @@ class Product implements
     use ExtendEntityTrait;
 
 
-    const STATUS_DISABLED = 'disabled';
-    const STATUS_ENABLED = 'enabled';
+    public const STATUS_DISABLED = 'disabled';
+    public const STATUS_ENABLED = 'enabled';
 
-    const INVENTORY_STATUS_IN_STOCK = 'in_stock';
-    const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
-    const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
+    public const INVENTORY_STATUS_ENUM_CODE = 'prod_inventory_status';
+    public const INVENTORY_STATUS_IN_STOCK = 'in_stock';
+    public const INVENTORY_STATUS_OUT_OF_STOCK = 'out_of_stock';
+    public const INVENTORY_STATUS_DISCONTINUED = 'discontinued';
 
-    const TYPE_SIMPLE = 'simple';
-    const TYPE_CONFIGURABLE = 'configurable';
-    const TYPE_KIT = 'kit';
+    public const TYPE_SIMPLE = 'simple';
+    public const TYPE_CONFIGURABLE = 'configurable';
+    public const TYPE_KIT = 'kit';
+
+    public const KIT_SHIPPING_ALL = 'kit_shipping_all';
+    public const KIT_SHIPPING_ONLY_PRODUCT = 'kit_shipping_product';
+    public const KIT_SHIPPING_ONLY_ITEMS = 'kit_shipping_items';
 
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
@@ -455,6 +460,15 @@ class Product implements
     )]
     protected ?Collection $kitItems = null;
 
+    #[ORM\Column(
+        name: 'kit_shipping_calculation_method',
+        type: Types::STRING,
+        length: 32,
+        nullable: true
+    )]
+    #[ConfigField(defaultValues: ['importexport' => ['order' => 100]])]
+    protected ?string $kitShippingCalculationMethod = null;
+
     /**
      * {@inheritdoc}
      */
@@ -497,6 +511,7 @@ class Product implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         try {
@@ -513,6 +528,7 @@ class Product implements
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -585,6 +601,7 @@ class Product implements
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -595,6 +612,7 @@ class Product implements
      *
      * @return Product
      */
+    #[\Override]
     public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
@@ -605,6 +623,7 @@ class Product implements
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getUpdatedAt()
     {
         return $this->updatedAt;
@@ -615,6 +634,7 @@ class Product implements
      *
      * @return Product
      */
+    #[\Override]
     public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
@@ -625,6 +645,7 @@ class Product implements
     /**
      * @return bool
      */
+    #[\Override]
     public function isUpdatedAtSet()
     {
         return $this->updatedAtSet;
@@ -675,6 +696,7 @@ class Product implements
      *
      * @return Product
      */
+    #[\Override]
     public function setOrganization(OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
@@ -685,6 +707,7 @@ class Product implements
     /**
      * @return OrganizationInterface
      */
+    #[\Override]
     public function getOrganization()
     {
         return $this->organization;
@@ -823,9 +846,6 @@ class Product implements
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultName($value)
     {
         $this->setDefaultFallbackValue($this->names, $value, ProductName::class);
@@ -892,9 +912,6 @@ class Product implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultDescription($value)
     {
         $this->setDefaultFallbackValue($this->descriptions, $value, ProductDescription::class);
@@ -1091,9 +1108,6 @@ class Product implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setDefaultShortDescription($value)
     {
         $this->setDefaultFallbackValue($this->shortDescriptions, $value, ProductShortDescription::class);
@@ -1184,6 +1198,10 @@ class Product implements
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
+        if ($this->isKit() && !$this->kitShippingCalculationMethod) {
+            $this->kitShippingCalculationMethod = self::KIT_SHIPPING_ALL;
+        }
+
         $this->updateDenormalizedProperties();
     }
 
@@ -1195,6 +1213,10 @@ class Product implements
     {
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
+        if ($this->isKit() && !$this->kitShippingCalculationMethod) {
+            $this->kitShippingCalculationMethod = self::KIT_SHIPPING_ALL;
+        }
+
         $this->updateDenormalizedProperties();
 
         if (!$this->isConfigurable()) {
@@ -1203,6 +1225,7 @@ class Product implements
         }
     }
 
+    #[\Override]
     public function updateDenormalizedProperties(): void
     {
         $this->skuUppercase = $this->sku
@@ -1326,6 +1349,7 @@ class Product implements
      *
      * @return $this
      */
+    #[\Override]
     public function setAttributeFamily(AttributeFamily $attributeFamily)
     {
         $this->attributeFamily = $attributeFamily;
@@ -1336,6 +1360,7 @@ class Product implements
     /**
      * @return AttributeFamily
      */
+    #[\Override]
     public function getAttributeFamily()
     {
         return $this->attributeFamily;
@@ -1465,5 +1490,17 @@ class Product implements
         }
 
         return $this->kitItems;
+    }
+
+    public function getKitShippingCalculationMethod(): ?string
+    {
+        return $this->kitShippingCalculationMethod;
+    }
+
+    public function setKitShippingCalculationMethod(string $kitShippingCalculation): self
+    {
+        $this->kitShippingCalculationMethod = $kitShippingCalculation;
+
+        return $this;
     }
 }

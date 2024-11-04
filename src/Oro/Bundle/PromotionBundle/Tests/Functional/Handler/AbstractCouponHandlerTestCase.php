@@ -35,9 +35,7 @@ abstract class AbstractCouponHandlerTestCase extends WebTestCase
         LoadOrderLineItemData::class
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->loadFixtures($this->fixturesToLoad);

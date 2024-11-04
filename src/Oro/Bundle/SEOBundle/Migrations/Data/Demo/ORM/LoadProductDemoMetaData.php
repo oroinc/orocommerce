@@ -15,17 +15,13 @@ class LoadProductDemoMetaData extends AbstractFixture implements DependentFixtur
 {
     use LoadDemoMetaDataTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadProductDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addMetaFieldsData($manager, $manager->getRepository(Product::class)->findAll());

@@ -2,20 +2,25 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Provider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\TestFrameworkBundle\Test\Logger\LoggerAwareTraitTestTrait;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode;
 use Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentVariant;
 use Oro\Bundle\WebCatalogBundle\ContentNodeUtils\ContentNodeTreeResolverInterface;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Provider\EmptySearchResultPageContentVariantProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\RequestWebContentScopeProvider;
-use Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity\Stub\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Tests\Unit\Entity\Stub\ContentNode as ContentNodeStub;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class EmptySearchResultPageContentVariantProviderTest extends TestCase
 {
+    use LoggerAwareTraitTestTrait;
+
     private ConfigManager|MockObject $configManager;
 
     private ContentNodeTreeResolverInterface|MockObject $contentNodeTreeResolver;
@@ -24,21 +29,39 @@ class EmptySearchResultPageContentVariantProviderTest extends TestCase
 
     private EmptySearchResultPageContentVariantProvider $emptySearchResultPageContentVariantProvider;
 
+    private ContentNodeRepository|MockObject $contentNodeRepo;
+
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->requestWebContentScopeProvider = $this->createMock(RequestWebContentScopeProvider::class);
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);
+        $doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->emptySearchResultPageContentVariantProvider = new EmptySearchResultPageContentVariantProvider(
             $this->configManager,
+            $doctrine,
             $this->contentNodeTreeResolver,
             $this->requestWebContentScopeProvider
         );
+
+        $this->setUpLoggerMock($this->emptySearchResultPageContentVariantProvider);
+
+        $this->contentNodeRepo = $this->createMock(ContentNodeRepository::class);
+        $doctrine
+            ->method('getRepository')
+            ->with(ContentNode::class)
+            ->willReturn($this->contentNodeRepo);
     }
 
     public function testGetResolvedContentVariantNoEmptySearchResultPageConfigurationValue(): void
     {
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_web_catalog.empty_search_result_page')
+            ->willReturn(null);
+
         $this->requestWebContentScopeProvider->expects(self::never())
             ->method('getScopes');
 
@@ -51,10 +74,31 @@ class EmptySearchResultPageContentVariantProviderTest extends TestCase
 
     public function testGetResolvedContentVariantNoContentNode(): void
     {
+        $contentNodeId = 42;
+        $emptySearchResultPageKey = 'oro_web_catalog.empty_search_result_page';
+
         $this->configManager->expects(self::once())
             ->method('get')
-            ->with('oro_web_catalog.empty_search_result_page')
-            ->willReturn(['webCatalog' => new WebCatalog()]);
+            ->with($emptySearchResultPageKey)
+            ->willReturn($contentNodeId);
+
+        $this->contentNodeRepo
+            ->expects(self::once())
+            ->method('find')
+            ->with($contentNodeId)
+            ->willReturn(null);
+
+        $this->loggerMock
+            ->expects(self::once())
+            ->method('error')
+            ->with(
+                'Content node #{id} (fetched from "{system_config}" system config) '
+                . 'for the empty search result page is not found',
+                [
+                    'id' => $contentNodeId,
+                    'system_config' => $emptySearchResultPageKey,
+                ]
+            );
 
         $this->requestWebContentScopeProvider->expects(self::never())
             ->method('getScopes');
@@ -69,13 +113,19 @@ class EmptySearchResultPageContentVariantProviderTest extends TestCase
     public function testGetResolvedContentVariantNoResolvedContentNode(): void
     {
         $contentNodeId = 1;
-        $contentNode = (new ContentNode())
+        $contentNode = (new ContentNodeStub())
             ->setId($contentNodeId);
 
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_web_catalog.empty_search_result_page')
-            ->willReturn(['webCatalog' => new WebCatalog(), 'contentNode' => $contentNode]);
+            ->willReturn($contentNodeId);
+
+        $this->contentNodeRepo
+            ->expects(self::once())
+            ->method('find')
+            ->with($contentNodeId)
+            ->willReturn($contentNode);
 
         $scopes = [new Scope()];
         $this->requestWebContentScopeProvider->expects(self::once())
@@ -93,13 +143,19 @@ class EmptySearchResultPageContentVariantProviderTest extends TestCase
     public function testGetResolvedContentVariant(): void
     {
         $contentNodeId = 1;
-        $contentNode = (new ContentNode())
+        $contentNode = (new ContentNodeStub())
             ->setId($contentNodeId);
 
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_web_catalog.empty_search_result_page')
-            ->willReturn(['webCatalog' => new WebCatalog(), 'contentNode' => $contentNode]);
+            ->willReturn($contentNodeId);
+
+        $this->contentNodeRepo
+            ->expects(self::once())
+            ->method('find')
+            ->with($contentNodeId)
+            ->willReturn($contentNode);
 
         $scopes = [new Scope()];
         $this->requestWebContentScopeProvider->expects(self::once())

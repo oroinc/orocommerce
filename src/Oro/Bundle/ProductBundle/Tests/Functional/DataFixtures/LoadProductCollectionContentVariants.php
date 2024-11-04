@@ -25,9 +25,7 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
     public const TEST_VARIANT_WITH_TEST_SEGMENT_2 = 'test_segment_variant.2';
     public const TEST_VARIANT_WITH_TEST_SEGMENT_3 = 'test_segment_variant.3';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -38,9 +36,7 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->createContentVariantWithProductSegment($manager);

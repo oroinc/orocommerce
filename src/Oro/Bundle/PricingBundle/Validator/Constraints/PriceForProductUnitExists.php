@@ -13,9 +13,7 @@ class PriceForProductUnitExists extends Constraint
      */
     public $message = 'oro.pricing.validators.price_for_product_unit_exists.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return self::VALIDATOR;

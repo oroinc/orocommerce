@@ -14,9 +14,7 @@ class SameOrganization extends Constraint
      */
     public $message = 'oro.webcatalog.contentvariant.same_organization.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

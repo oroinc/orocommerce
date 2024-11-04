@@ -17,19 +17,19 @@ class Response implements ResponseInterface
         $this->values = new \ArrayObject($values);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function isSuccessful()
     {
         return $this->getResult() === ResponseStatusMap::APPROVED;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getReference()
     {
         return $this->getOffset(self::PNREF_KEY);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getResult()
     {
         return $this->getOffset(self::RESULT_KEY);
@@ -45,13 +45,13 @@ class Response implements ResponseInterface
         return $this->values->offsetExists($index) ? $this->values->offsetGet($index) : $default;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getMessage()
     {
         return $this->getOffset(self::RESPMSG_KEY);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getErrorMessage()
     {
         // Communication Error Response
@@ -63,7 +63,7 @@ class Response implements ResponseInterface
         return ResponseStatusMap::getMessage($this->getResult());
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getData()
     {
         return $this->values->getArrayCopy();

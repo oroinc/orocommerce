@@ -26,6 +26,7 @@ class UpdateWeightByValueAndUnitTest extends CustomizeFormDataProcessorTestCase
     /** @var UpdateWeightByValueAndUnit */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

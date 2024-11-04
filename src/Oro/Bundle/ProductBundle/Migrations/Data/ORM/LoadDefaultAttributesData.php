@@ -22,9 +22,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
         'inventory_status' => ['filterable' => true,]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -32,9 +30,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->makeProductAttributes(

@@ -26,17 +26,13 @@ class UpdatePasswordMigrationQuery implements MigrationQuery, ConnectionAwareInt
         $this->container = $container;
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Add Api password encryption';
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         /**

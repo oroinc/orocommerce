@@ -18,9 +18,7 @@ class ConfigCheckoutShippingOriginProvider implements CheckoutShippingOriginProv
         $this->systemShippingOriginProvider = $systemShippingOriginProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingOrigin(Checkout $checkout): ShippingOrigin
     {
         return $this->systemShippingOriginProvider->getSystemShippingOrigin();

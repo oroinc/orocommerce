@@ -11,9 +11,7 @@ class NotBlankDiscountValue extends Constraint
 {
     public $message = 'This value should not be blank.';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

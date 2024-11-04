@@ -12,9 +12,7 @@ use Symfony\Component\Form\FormEvents;
 
 class OrderTypeExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('appliedPromotions', AppliedPromotionCollectionTableType::class);
@@ -26,9 +24,7 @@ class OrderTypeExtension extends AbstractTypeExtension
         $event->getForm()->add('appliedCoupons', AppliedCouponCollectionType::class, ['entity' => $event->getData()]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [OrderType::class];

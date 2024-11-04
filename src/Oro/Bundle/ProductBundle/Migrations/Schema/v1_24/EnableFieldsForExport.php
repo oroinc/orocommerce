@@ -13,9 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class EnableFieldsForExport implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         foreach (['sku', 'names', 'inventory_status'] as $fieldName) {

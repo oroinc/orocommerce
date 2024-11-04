@@ -44,6 +44,7 @@ class ProductKitLineItemType extends AbstractType
         $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -66,6 +67,7 @@ class ProductKitLineItemType extends AbstractType
         ->add('notes', TextareaType::class, ['required' => false]);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         usort($view['kitItemLineItems']->children, function (FormView $formViewA, FormView $formViewB) {
@@ -128,6 +130,7 @@ class ProductKitLineItemType extends AbstractType
         }
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -135,6 +138,7 @@ class ProductKitLineItemType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_kit_line_item';

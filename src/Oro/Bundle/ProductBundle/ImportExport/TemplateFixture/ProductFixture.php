@@ -3,8 +3,8 @@
 namespace Oro\Bundle\ProductBundle\ImportExport\TemplateFixture;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
@@ -34,7 +34,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             'description' => 'Product Simple Description',
             'shortDescription' => 'Product Simple Short Description',
             'status' => Product::STATUS_ENABLED,
-            'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             'inventoryStatusName' => 'In Stock',
             'primaryUnitCode' => 'item',
             'additionalUnitCode' => 'kg',
@@ -46,7 +46,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             'description' => 'Product Second Simple Description',
             'shortDescription' => 'Product Second Simple Short Description',
             'status' => Product::STATUS_ENABLED,
-            'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             'inventoryStatusName' => 'In Stock',
             'primaryUnitCode' => 'item',
             'additionalUnitCode' => 'set',
@@ -58,7 +58,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             'description' => 'Product Kit Description',
             'shortDescription' => 'Product Kit Short Description',
             'status' => Product::STATUS_DISABLED,
-            'inventoryStatusId' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+            'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
             'inventoryStatusName' => 'Out of Stock',
             'primaryUnitCode' => 'item',
             'additionalUnitCode' => 'set',
@@ -90,17 +90,13 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass(): string
     {
         return Product::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData(): iterable
     {
         return new \ArrayIterator([
@@ -110,9 +106,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createEntity($key): Product
     {
         return new Product();
@@ -122,6 +116,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
      * @param string  $key
      * @param Product $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity): void
     {
         $this->fillProduct($key, $entity);
@@ -191,7 +186,7 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
             ->setAttributeFamily($attributeFamily)
             ->setStatus($data['status'])
             ->setType($data['type'])
-            ->setInventoryStatus($this->createInventoryStatus($data['inventoryStatusId'], $data['inventoryStatusName']))
+            ->setInventoryStatus($this->createInventoryStatus($data['inventory_status'], $data['inventoryStatusName']))
             ->addName($name)
             ->addName($localizedName)
             ->setPrimaryUnitPrecision($primaryProductUnitPrecision)
@@ -244,10 +239,12 @@ class ProductFixture extends AbstractTemplateRepository implements TemplateFixtu
         $method->setValue($entity, $id);
     }
 
-    private function createInventoryStatus(string $id, string $name): AbstractEnumValue
+    private function createInventoryStatus(string $id, string $name): EnumOptionInterface
     {
-        $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-
-        return new $enumValueClassName($id, $name);
+        return new EnumOption(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            $name,
+            $id
+        );
     }
 }

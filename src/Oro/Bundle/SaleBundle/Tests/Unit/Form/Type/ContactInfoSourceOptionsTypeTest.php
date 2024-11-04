@@ -16,6 +16,7 @@ class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
     /** @var ContactInfoSourceOptionsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customerOptionProvider = $this->createMock(OptionsProviderInterface::class);
@@ -23,9 +24,7 @@ class ContactInfoSourceOptionsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

@@ -12,6 +12,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
 
     private AbstractPlatform $platform;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->setDatagridIndexPath('oro_frontend_datagrid_index');
@@ -28,6 +29,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
     /**
      * @dataProvider restrictionSelectDataProvider
      */
+    #[\Override]
     public function testSearchRestriction(array $restrictionParams, array $expectedProducts)
     {
         if ($this->isMysqlPlatform() && $this->isInnoDBFulltextIndexSupported()) {
@@ -39,14 +41,17 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         parent::testSearchRestriction($restrictionParams, $expectedProducts);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function restrictionSelectDataProvider(): array
     {
         return [
             [
-                ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.out_of_stock'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -55,7 +60,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.in_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -63,17 +68,22 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['out_of_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.out_of_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_3
                 ],
             ],
             [
-                ['availableInventoryStatuses' => ['discontinued']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.discontinued']],
                 'expectedProducts' => []
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock', 'discontinued']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.discontinued'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -83,14 +93,17 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function restrictionGridDataProvider(): array
     {
         return [
             [
-                ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.out_of_stock'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -100,7 +113,7 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.in_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -109,17 +122,22 @@ abstract class AbstractFrontendScopedProductSelectTypeTest extends AbstractScope
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['out_of_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.out_of_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_3,
                 ],
             ],
             [
-                ['availableInventoryStatuses' => ['discontinued']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.discontinued']],
                 'expectedProducts' => [],
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock', 'discontinued']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.discontinued'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,

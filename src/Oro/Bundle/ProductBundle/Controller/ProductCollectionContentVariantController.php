@@ -97,6 +97,7 @@ class ProductCollectionContentVariantController extends AbstractController
             ->widgetAction($request, $gridName);
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

@@ -55,9 +55,7 @@ class LoadCategoryWithEntityFallbackValuesData extends AbstractCategoryFixture i
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -65,9 +63,7 @@ class LoadCategoryWithEntityFallbackValuesData extends AbstractCategoryFixture i
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach ($this->data as $categoryName => $fieldsData) {

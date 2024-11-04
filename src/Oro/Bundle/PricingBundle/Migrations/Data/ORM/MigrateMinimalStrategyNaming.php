@@ -15,9 +15,7 @@ class MigrateMinimalStrategyNaming extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->container->get('oro_pricing.migrations.minimal_strategy_naming_migration')->migrate();

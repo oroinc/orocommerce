@@ -16,6 +16,7 @@ class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCas
     /** @var ComponentProcessorRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $processorRegistry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processorRegistry = $this->createMock(ComponentProcessorRegistry::class);
@@ -23,9 +24,7 @@ class QuickAddComponentProcessorValidatorTest extends ConstraintValidatorTestCas
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createValidator(): QuickAddComponentProcessorValidator
     {
         return new QuickAddComponentProcessorValidator($this->processorRegistry);

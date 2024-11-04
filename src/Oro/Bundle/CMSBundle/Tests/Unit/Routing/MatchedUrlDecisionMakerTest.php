@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Routing;
 use Oro\Bundle\CMSBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CMSBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Provider\SlugEntityFinder;
@@ -25,6 +26,9 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
     private ConfigManager|MockObject $configManager;
 
+    private ApplicationState|MockObject $applicationState;
+
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);
@@ -32,6 +36,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
         $this->themeManager = $this->createMock(ThemeManager::class);
         $this->slugEntityFinder = $this->createMock(SlugEntityFinder::class);
         $this->configManager = $this->createMock(ConfigManager::class);
+        $this->applicationState = $this->createMock(ApplicationState::class);
     }
 
     /**
@@ -99,6 +104,10 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $maker = $this->createMatchedUrlDecisionMaker([]);
 
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(true);
+
         $this->themeConfigurationProvider->expects(self::once())
             ->method('getThemeName')
             ->willReturn(null);
@@ -116,6 +125,10 @@ class MatchedUrlDecisionMakerTest extends TestCase
         $url = '/';
 
         $maker = $this->createMatchedUrlDecisionMaker([]);
+
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(true);
 
         $themeName = 'default_51';
         $this->themeConfigurationProvider->expects(self::once())
@@ -140,6 +153,10 @@ class MatchedUrlDecisionMakerTest extends TestCase
         $url = '/';
 
         $maker = $this->createMatchedUrlDecisionMaker([]);
+
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(true);
 
         $themeName = 'default_51';
         $this->themeConfigurationProvider->expects(self::once())
@@ -172,6 +189,10 @@ class MatchedUrlDecisionMakerTest extends TestCase
         $url = '/';
 
         $maker = $this->createMatchedUrlDecisionMaker([]);
+
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(true);
 
         $themeName = 'default_51';
         $this->themeConfigurationProvider->expects(self::once())
@@ -209,6 +230,10 @@ class MatchedUrlDecisionMakerTest extends TestCase
         $url = '/';
 
         $maker = $this->createMatchedUrlDecisionMaker([]);
+
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(true);
 
         $themeName = 'default_51';
         $this->themeConfigurationProvider->expects(self::once())
@@ -248,6 +273,10 @@ class MatchedUrlDecisionMakerTest extends TestCase
         $url = '/';
 
         $maker = $this->createMatchedUrlDecisionMaker([]);
+
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(true);
 
         $themeName = 'default_51';
         $this->themeConfigurationProvider->expects(self::once())
@@ -292,6 +321,10 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $maker = $this->createMatchedUrlDecisionMaker([]);
 
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(true);
+
         $themeName = 'default_51';
         $this->themeConfigurationProvider->expects(self::once())
             ->method('getThemeName')
@@ -324,6 +357,24 @@ class MatchedUrlDecisionMakerTest extends TestCase
         self::assertFalse($maker->matches($url));
     }
 
+    public function testMatchesRootNoInstalledApplication(): void
+    {
+        $url = '/';
+
+        $maker = $this->createMatchedUrlDecisionMaker([]);
+
+        $this->applicationState->expects(self::once())
+            ->method('isInstalled')
+            ->willReturn(false);
+
+        $this->frontendHelper->expects(self::once())
+            ->method('isFrontendUrl')
+            ->with($url)
+            ->willReturn(true);
+
+        self::assertTrue($maker->matches($url));
+    }
+
     private function createMatchedUrlDecisionMaker(array $skippedUrlPatterns): MatchedUrlDecisionMaker
     {
         return new MatchedUrlDecisionMaker(
@@ -332,7 +383,8 @@ class MatchedUrlDecisionMakerTest extends TestCase
             $this->themeConfigurationProvider,
             $this->themeManager,
             $this->slugEntityFinder,
-            $this->configManager
+            $this->configManager,
+            $this->applicationState
         );
     }
 }

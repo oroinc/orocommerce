@@ -19,9 +19,7 @@ use Symfony\Component\DomCrawler\Form;
  */
 class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getPaymentFixtures(): array
     {
         return [

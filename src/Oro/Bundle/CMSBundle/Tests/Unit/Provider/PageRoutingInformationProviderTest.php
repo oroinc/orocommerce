@@ -18,6 +18,7 @@ class PageRoutingInformationProviderTest extends \PHPUnit\Framework\TestCase
     /** @var PageRoutingInformationProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -21,10 +21,10 @@ class TwigContentValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param TwigContent $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         try {

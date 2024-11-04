@@ -16,9 +16,7 @@ class AddContentTemplateTable implements Migration, AttachmentExtensionAwareInte
 {
     use AttachmentExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         if (!$schema->hasTable('oro_cms_content_template')) {

@@ -34,6 +34,7 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var Quote */
     private $quote;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteManager = $this->createMock(WebsiteManager::class);

@@ -41,6 +41,7 @@ class AddressActions implements AddressActionsInterface
         $this->addressDuplicatorConfig = $addressDuplicatorConfig;
     }
 
+    #[\Override]
     public function updateBillingAddress(
         Checkout $checkout,
         bool $disallowShippingAddressEdit = false
@@ -71,6 +72,7 @@ class AddressActions implements AddressActionsInterface
         return $billingAddressHasShipping;
     }
 
+    #[\Override]
     public function updateShippingAddress(Checkout $checkout): void
     {
         if (!$checkout->isShipToBillingAddress()) {
@@ -91,11 +93,13 @@ class AddressActions implements AddressActionsInterface
         $em->flush();
     }
 
+    #[\Override]
     public function duplicateOrderAddress(OrderAddress $address): OrderAddress
     {
         return $this->duplicatorFactory->create()->duplicate($address, $this->addressDuplicatorConfig);
     }
 
+    #[\Override]
     public function actualizeAddresses(Checkout $checkout, Order $order): void
     {
         $em = $this->registry->getManagerForClass(CustomerUserAddress::class);

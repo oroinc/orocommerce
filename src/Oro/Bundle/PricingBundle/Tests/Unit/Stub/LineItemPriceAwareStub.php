@@ -40,9 +40,7 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct(): ?Product
     {
         return $this->product;
@@ -55,9 +53,7 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParentProduct(): ?Product
     {
         return $this->parentProduct;
@@ -68,9 +64,7 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         $this->parentProduct = $parentProduct;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit(): ?ProductUnit
     {
         return $this->productUnit;
@@ -83,9 +77,7 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getQuantity(): ?float
     {
         return $this->quantity;
@@ -98,9 +90,7 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice(): ?Price
     {
         return $this->price;
@@ -113,33 +103,25 @@ class LineItemPriceAwareStub implements ProductLineItemInterface, PriceAwareInte
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier(): ?int
     {
         return $this->getId();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku(): ?string
     {
         return $this->getProduct() ? $this->getProduct()->getSku() : null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->getProductUnit() ? $this->getProductUnit()->getCode() : null;

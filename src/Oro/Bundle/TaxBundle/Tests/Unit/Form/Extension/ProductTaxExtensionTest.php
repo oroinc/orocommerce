@@ -16,17 +16,13 @@ use Symfony\Component\Form\FormInterface;
 
 class ProductTaxExtensionTest extends AbstractTaxExtensionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtension(): AbstractTaxExtension
     {
         return new ProductTaxExtension();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createTaxCodeTarget(int $id = null): object
     {
         $entity = $this->getMockBuilder(Product::class)
@@ -41,9 +37,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
         return $entity;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createTaxCode(int $id = null): AbstractTaxCode
     {
         $taxCode = new ProductTaxCode();

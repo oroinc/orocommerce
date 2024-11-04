@@ -13,7 +13,8 @@ use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -44,9 +45,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     private array $websites = [];
     private array $metadata = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -60,26 +59,19 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->toggleFeatures(false);
+        $this->toggleListeners(false);
         $this->disableLifecycleCallbacks($manager);
-
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
 
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
 
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy([]);
 
-        $handler = fopen($filePath, 'r');
+        $handler = fopen($this->getDataFilePath(), 'r');
         $headers = fgetcsv($handler, 1000, ',');
 
         /** @var EntityRepository $userRepository */
@@ -136,6 +128,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 ->addLineItem($this->getOrderLineItem($manager))
                 ->setSubtotalObject($subtotal)
                 ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager))
+                ->setShippingStatus($this->getOrderShippingStatusByName($row['shippingStatus'], $manager))
                 ->setCreatedAt($randomDateTime)
                 ->setUpdatedAt($randomDateTime);
 
@@ -159,7 +152,19 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
         $this->clearState();
         $this->toggleFeatures(true);
+        $this->toggleListeners(true);
         $this->enableLifecycleCallbacks($manager);
+    }
+
+    private function getDataFilePath(): string
+    {
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate('@OroOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
+        if (\is_array($filePath)) {
+            $filePath = current($filePath);
+        }
+
+        return $filePath;
     }
 
     private function getBillingAddressData(array $row, CustomerUser $customerUser): array
@@ -209,10 +214,20 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $orderAddress;
     }
 
-    private function getOrderInternalStatusByName(string $name, ObjectManager $manager): ?AbstractEnumValue
+    private function getOrderInternalStatusByName(string $name, ObjectManager $manager): ?EnumOptionInterface
     {
-        return $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-            ->findOneBy(['id' => $name]);
+        return $manager->getRepository(EnumOption::class)
+            ->findOneBy(['id' => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $name)]);
+    }
+
+    private function getOrderShippingStatusByName(?string $name, ObjectManager $manager): ?EnumOptionInterface
+    {
+        if (!$name) {
+            return null;
+        }
+
+        return $manager->getRepository(EnumOption::class)
+            ->findOneBy(['id' => ExtendHelper::buildEnumOptionId(Order::SHIPPING_STATUS_CODE, $name)]);
     }
 
     private function getCustomerUser(ObjectManager $manager, bool $isGuest = false): ?CustomerUser
@@ -303,6 +318,16 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         $configManager = $this->container->get('oro_config.global');
         $configManager->set('oro_promotion.feature_enabled', $enable ?? false);
         $configManager->flush();
+    }
+
+    private function toggleListeners(?bool $enable): void
+    {
+        $listenerManager = $this->container->get('oro_platform.optional_listeners.manager');
+        if ($enable) {
+            $listenerManager->enableListener('oro_order.order.listener.orm.order_shipping_status_listener');
+        } else {
+            $listenerManager->disableListener('oro_order.order.listener.orm.order_shipping_status_listener');
+        }
     }
 
     private function clearState(): void

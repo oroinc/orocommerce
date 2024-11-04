@@ -19,9 +19,7 @@ class RuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_rule';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $nameOptions = ['label' => 'oro.rule.name.label'];
@@ -65,6 +63,7 @@ class RuleType extends AbstractType
     /**
      * @throws AccessException
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -76,9 +75,7 @@ class RuleType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

@@ -20,6 +20,7 @@ class SitemapFilesystemAdapterTest extends \PHPUnit\Framework\TestCase
     /** @var SitemapFilesystemAdapter */
     private $sitemapFilesystemAdapter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fileManager = $this->createMock(FileManager::class);

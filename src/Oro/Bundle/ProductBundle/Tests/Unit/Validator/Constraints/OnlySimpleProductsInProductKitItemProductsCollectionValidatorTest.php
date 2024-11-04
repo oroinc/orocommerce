@@ -17,6 +17,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class OnlySimpleProductsInProductKitItemProductsCollectionValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): OnlySimpleProductsInProductKitItemProductsCollectionValidator
     {
         return new OnlySimpleProductsInProductKitItemProductsCollectionValidator();

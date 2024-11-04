@@ -14,16 +14,19 @@ class VisibilityOnRemoveCategoryTopic extends AbstractTopic
 {
     public const NAME = 'oro_visibility.visibility.category_remove';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolve visibility when a category is removed';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

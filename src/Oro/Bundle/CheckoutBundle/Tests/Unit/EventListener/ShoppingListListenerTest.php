@@ -35,6 +35,7 @@ class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListListener */
     protected $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutRepository = $this->createMock(ObjectRepository::class);

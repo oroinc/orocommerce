@@ -13,6 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class CollectionSortOrderRepositoryTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

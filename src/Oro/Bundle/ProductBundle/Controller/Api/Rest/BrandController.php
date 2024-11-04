@@ -58,6 +58,7 @@ class BrandController extends RestController
      *
      * @return ApiEntityManager
      */
+    #[\Override]
     public function getManager()
     {
         return $this->container->get('oro_product.brand.manager.api');
@@ -66,6 +67,7 @@ class BrandController extends RestController
     /**
      * @return ApiFormHandler
      */
+    #[\Override]
     public function getForm()
     {
         throw new \BadMethodCallException('Form is not available.');
@@ -74,6 +76,7 @@ class BrandController extends RestController
     /**
      * @return ApiFormHandler
      */
+    #[\Override]
     public function getFormHandler()
     {
         throw new \BadMethodCallException('Form handler is not available.');

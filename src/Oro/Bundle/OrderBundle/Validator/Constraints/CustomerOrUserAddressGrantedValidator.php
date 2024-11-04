@@ -23,9 +23,7 @@ class CustomerOrUserAddressGrantedValidator extends ConstraintValidator
         $this->addressProvider = $addressProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof CustomerOrUserAddressGranted) {

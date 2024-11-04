@@ -23,6 +23,7 @@ class RepairAllWysiwygFieldsSchemaMigration implements
     use ConnectionAwareTrait;
     use ExtendExtensionAwareTrait;
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $fields = $this->getAllWysiwygFields();

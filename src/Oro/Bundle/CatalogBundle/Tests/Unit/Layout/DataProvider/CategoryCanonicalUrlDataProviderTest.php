@@ -38,6 +38,7 @@ class CategoryCanonicalUrlDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryCanonicalUrlDataProvider */
     private $canonicalUrlDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

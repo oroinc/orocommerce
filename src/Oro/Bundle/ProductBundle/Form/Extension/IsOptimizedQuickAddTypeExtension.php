@@ -17,6 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class IsOptimizedQuickAddTypeExtension extends AbstractTypeExtension
 {
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [
@@ -26,11 +27,13 @@ class IsOptimizedQuickAddTypeExtension extends AbstractTypeExtension
         ];
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['is_optimized'] = $options['is_optimized'];
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

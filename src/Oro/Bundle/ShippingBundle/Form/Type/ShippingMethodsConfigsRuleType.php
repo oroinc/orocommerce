@@ -18,9 +18,7 @@ class ShippingMethodsConfigsRuleType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_shipping_methods_configs_rule';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -42,6 +40,7 @@ class ShippingMethodsConfigsRuleType extends AbstractType
             ]);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -50,9 +49,7 @@ class ShippingMethodsConfigsRuleType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

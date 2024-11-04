@@ -16,9 +16,7 @@ class FlatRateSettingsType extends AbstractType
 {
     const BLOCK_PREFIX = 'oro_flat_rate_settings';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -35,9 +33,7 @@ class FlatRateSettingsType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -45,9 +41,7 @@ class FlatRateSettingsType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

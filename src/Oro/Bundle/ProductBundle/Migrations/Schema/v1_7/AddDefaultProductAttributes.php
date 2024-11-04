@@ -11,9 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class AddDefaultProductAttributes implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addDefaultProductAttributes($queries);

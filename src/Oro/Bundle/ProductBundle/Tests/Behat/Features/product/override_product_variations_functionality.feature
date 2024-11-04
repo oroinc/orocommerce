@@ -26,7 +26,6 @@ Feature: Override product variations functionality
     And I upload "override_product_variations_functionality_attributes.csv" file to "ShoppingListImportFileField"
     And I click "Import file"
     And I reload the page
-    And I confirm schema update
 
   Scenario: Update product family
     Given I proceed as the Admin
@@ -104,7 +103,7 @@ Feature: Override product variations functionality
     And I check "Enable all products page"
     And save form
     Then I should see "Configuration saved" flash message
-    When I go to System/Frontend Menus
+    When I go to System/Storefront Menus
     And I click view "commerce_main_menu" in grid
     And I click "Create Menu Item"
     And I fill "Commerce Menu Form" with:

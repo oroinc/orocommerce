@@ -37,6 +37,7 @@ class VisibilityGridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var VisibilityGridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

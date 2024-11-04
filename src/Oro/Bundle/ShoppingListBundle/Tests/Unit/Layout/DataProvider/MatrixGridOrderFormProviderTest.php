@@ -32,6 +32,7 @@ class MatrixGridOrderFormProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MatrixGridOrderFormProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

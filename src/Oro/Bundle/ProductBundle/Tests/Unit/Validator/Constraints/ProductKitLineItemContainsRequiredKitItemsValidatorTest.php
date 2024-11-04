@@ -19,6 +19,7 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
 {
     private LocalizationHelper|MockObject $localizationHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
@@ -36,6 +37,7 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductKitLineItemContainsRequiredKitItemsValidator
     {
         return new ProductKitLineItemContainsRequiredKitItemsValidator($this->localizationHelper);

@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ShippingMethodTypeConfigTypeOptionsStub extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder

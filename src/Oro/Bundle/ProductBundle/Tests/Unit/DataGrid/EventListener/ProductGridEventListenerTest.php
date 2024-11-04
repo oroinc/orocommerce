@@ -29,6 +29,7 @@ class ProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductGridEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductRepository::class);

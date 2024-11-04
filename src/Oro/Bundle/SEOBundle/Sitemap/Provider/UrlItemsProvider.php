@@ -129,9 +129,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
         $this->prioritySettingsKey = $prioritySettingsKey;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlItems(WebsiteInterface $website, $version)
     {
         $this->loadConfigs($website);

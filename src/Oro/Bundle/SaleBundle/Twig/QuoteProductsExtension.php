@@ -45,9 +45,7 @@ class QuoteProductsExtension extends AbstractExtension implements ServiceSubscri
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [new TwigFunction('quote_products', [$this, 'getQuoteProducts'])];
@@ -105,6 +103,7 @@ class QuoteProductsExtension extends AbstractExtension implements ServiceSubscri
         return $kitItemLineItemsData;
     }
 
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

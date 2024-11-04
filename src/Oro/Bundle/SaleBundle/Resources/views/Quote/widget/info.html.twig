@@ -17,8 +17,14 @@
                 {{ UI.renderHtmlProperty('oro.sale.quote.unique_guest_link.label'|trans, UI.renderUrlWithActions({url: uniqueGuestLink, attributes: {target: '_blank'}}, entity), entity, 'guestAccessId') }}
             {% endif %}
 
-            {{ UI.renderProperty('oro.sale.quote.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
-            {{ UI.renderProperty('oro.sale.quote.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
+            {{ UI.renderProperty('oro.sale.quote.internal_status.label'|trans, entity.internal_status
+                ? entity.internal_status.id|trans_enum
+                : ''
+            ) }}
+            {{ UI.renderProperty('oro.sale.quote.customer_status.label'|trans, entity.customer_status
+                ? entity.customer_status.id|trans_enum
+                : ''
+            ) }}
 
             {{ UI.renderProperty('oro.sale.quote.valid_until.label'|trans, entity.validUntil ? entity.validUntil|oro_format_datetime : 'N/A'|trans) }}
             {% if entity.request %}

@@ -12,9 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 
 class LoadPayPalMethodsConfigsRuleData extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -22,9 +20,7 @@ class LoadPayPalMethodsConfigsRuleData extends AbstractFixture implements Depend
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $methodConfig = new PaymentMethodConfig();

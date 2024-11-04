@@ -13,6 +13,7 @@ class FreightClassesProviderTest extends MeasureUnitProviderTest
     /** @var FreightClassesProvider */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -22,9 +22,7 @@ use Symfony\Component\Validator\Validation;
 
 class CustomerGroupFormFlatPricingExtensionTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $featureChecker = $this->createMock(FeatureChecker::class);

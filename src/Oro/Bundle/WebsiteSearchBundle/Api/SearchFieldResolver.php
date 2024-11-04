@@ -10,9 +10,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
  */
 class SearchFieldResolver extends BaseResolver
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function guessFieldNames(string $fieldName): array
     {
         return array_merge(

@@ -23,6 +23,7 @@ class SluggableUrlDatabaseAwareProviderTest extends \PHPUnit\Framework\TestCase
     /** @var UrlCacheInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $cache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cacheProvider = $this->createMock(SluggableUrlCacheAwareProvider::class);

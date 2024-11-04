@@ -28,6 +28,7 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
 
     private array $events = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(CombinedProductPriceRepository::class);

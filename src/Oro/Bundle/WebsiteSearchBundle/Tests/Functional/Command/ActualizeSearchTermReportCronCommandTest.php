@@ -13,6 +13,7 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadSearchResul
 
 class ActualizeSearchTermReportCronCommandTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

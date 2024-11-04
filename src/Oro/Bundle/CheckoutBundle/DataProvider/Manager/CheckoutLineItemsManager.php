@@ -141,7 +141,6 @@ class CheckoutLineItemsManager
             return false;
         }
         $allowedProduct = true;
-
         $product = $lineItem->getProduct();
         if ($product) {
             $allowedProduct = false;

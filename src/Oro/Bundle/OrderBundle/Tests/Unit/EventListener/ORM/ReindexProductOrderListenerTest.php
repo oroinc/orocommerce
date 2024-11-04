@@ -6,9 +6,11 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\EventListener\ORM\ReindexProductOrderListener;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -44,6 +46,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ReindexProductOrderListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
@@ -97,9 +100,13 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         return $product;
     }
 
-    private function getInternalStatus(?string $id): AbstractEnumValue
+    private function getInternalStatus(?string $id): EnumOptionInterface
     {
-        return new TestEnumValue($id, null !== $id ? sprintf('Status (%s)', $id) : null);
+        return new TestEnumValue(
+            Order::INTERNAL_STATUS_CODE,
+            null !== $id ? sprintf('Status (%s)', $id) : null,
+            $id
+        );
     }
 
     private function getOrderLineItem(Product $product, Product $parentProduct = null): OrderLineItem
@@ -156,10 +163,15 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->eventDispatcher->expects($reindexExpected ? self::once() : self::never())
             ->method('dispatch');
-
+        $oldStatusId = $oldStatusId ? ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $oldStatusId) : '';
+        $newStatusId = $newStatusId ? ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $newStatusId) : '';
         $event = $this->getPreUpdateEventArgs([
-            'internal_status' => [$this->getInternalStatus($oldStatusId), $this->getInternalStatus($newStatusId)]
+            'serialized_data' => [
+                ['internal_status' => $oldStatusId],
+                ['internal_status' => $newStatusId]
+            ]
         ]);
+
         $this->listener->processOrderUpdate($this->order, $event);
     }
 

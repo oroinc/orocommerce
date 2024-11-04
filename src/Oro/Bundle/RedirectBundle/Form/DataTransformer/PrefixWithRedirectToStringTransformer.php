@@ -7,9 +7,7 @@ use Symfony\Component\Form\DataTransformerInterface;
 
 class PrefixWithRedirectToStringTransformer implements DataTransformerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($value)
     {
         if (null === $value) {
@@ -24,9 +22,9 @@ class PrefixWithRedirectToStringTransformer implements DataTransformerInterface
     }
 
     /**
-     * {@inheritdoc}
      * @param PrefixWithRedirect $value
      */
+    #[\Override]
     public function reverseTransform($value)
     {
         if (null === $value) {

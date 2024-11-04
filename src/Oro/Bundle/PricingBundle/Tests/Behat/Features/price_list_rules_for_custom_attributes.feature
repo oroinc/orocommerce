@@ -38,6 +38,7 @@ Feature: Price List Rules for Custom Attributes
       | black |
       | white |
     And I save form
+    And I remember element "Product Color Attribute White" value as "field.color.white"
     And I remember element "Product Attribute Name" value as "field.color"
     Then I should see "Attribute was successfully saved" flash message
 
@@ -72,8 +73,10 @@ Feature: Price List Rules for Custom Attributes
       | Label |
       | s     |
       | m     |
-    And I save and close form
+    And I save form
     Then I should see "Field saved" flash message
+    And I remember element "Product Size Attribute S" value as "field.size.s"
+    And I save and close form
 
   Scenario: Update schema
     When I click update schema
@@ -101,10 +104,10 @@ Feature: Price List Rules for Custom Attributes
     Given I go to Sales/ Price Lists
     When I click "Create Price List"
     And I fill form with:
-      | Name       | PL1                                                                         |
-      | Currencies | US Dollar ($)                                                               |
-      | Active     | true                                                                        |
-      | Rule       | product.$field.use_special_prices$ == true and product.category.size == 's' |
+      | Name       | PL1                                                                                                |
+      | Currencies | US Dollar ($)                                                                                      |
+      | Active     | true                                                                                               |
+      | Rule       | product.$field.use_special_prices$ == true and product.category.size == "$field.size.s$" |
     And I click "Add Price Calculation Rules"
     And I fill "Price Calculation Rules Form" with:
       | Price for quantity    | product.$field.base_qty$ |
@@ -143,12 +146,12 @@ Feature: Price List Rules for Custom Attributes
       | Rule       | product.category.base_qty > 0 |
     And I click "Add Price Calculation Rules"
     And I fill "Price Calculation Rules Form" with:
-      | Price for quantity | product.$field.base_qty$                                                   |
-      | Price Unit         | pricelist[1].prices.unit                                                   |
-      | Price Currency     | pricelist[1].prices.currency                                               |
-      | Calculate As       | pricelist[1].prices.value * product.category.price_multiplier              |
-      | Condition          | product.category.price_multiplier > 1 and product.$field.color$ == 'white' |
-      | Priority           | 1                                                                          |
+      | Price for quantity | product.$field.base_qty$                                                                 |
+      | Price Unit         | pricelist[1].prices.unit                                                                 |
+      | Price Currency     | pricelist[1].prices.currency                                                             |
+      | Calculate As       | pricelist[1].prices.value * product.category.price_multiplier                            |
+      | Condition          | product.category.price_multiplier > 1 and product.$field.color$ == "$field.color.white$" |
+      | Priority           | 1                                                                                        |
     And I save and close form
     Then should see "Price List has been saved" flash message
 

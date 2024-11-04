@@ -10,6 +10,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
  */
 class ComputeShoppingListLineItemPrice extends AbstractComputeLineItemPrice
 {
+    #[\Override]
     protected function getShoppingListLineItem(CustomizeLoadedDataContext $context): ?LineItem
     {
         $config = $context->getConfig();

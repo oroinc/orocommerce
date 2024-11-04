@@ -40,9 +40,7 @@ class LineItemHandlerTest extends TestCase
 
     private ValidatorInterface|MockObject $validator;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);

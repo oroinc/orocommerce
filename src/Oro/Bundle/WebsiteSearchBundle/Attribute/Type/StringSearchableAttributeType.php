@@ -10,57 +10,43 @@ use Oro\Bundle\SearchBundle\Query\Query;
  */
 class StringSearchableAttributeType extends AbstractSearchableAttributeType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFilterStorageFieldTypeMain(FieldConfigModel $attribute): string
     {
         return Query::TYPE_TEXT;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         return Query::TYPE_TEXT;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterType(FieldConfigModel $attribute): string
     {
         return self::FILTER_TYPE_STRING;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSearchableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName();

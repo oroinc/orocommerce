@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class GreaterThanZeroValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): GreaterThanValidator
     {
         return new GreaterThanValidator();

@@ -23,9 +23,7 @@ class SitemapFileWriter implements SitemapFileWriterInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function saveSitemap(string $content, string $path): string
     {
         try {

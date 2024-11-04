@@ -38,6 +38,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends \PHPUnit\Frame
     /** @var ReindexRequestItemProductsByRelatedJobProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteReindexRequestDataStorage = $this->createMock(

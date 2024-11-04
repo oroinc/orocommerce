@@ -5,7 +5,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -24,19 +25,21 @@ class LoadVariantFields extends AbstractFixture
         'The best' => false,
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
-        $className = ExtendHelper::buildEnumValueClassName('variant_field_code');
-
-        /** @var EnumValueRepository $enumRepo */
-        $enumRepo = $manager->getRepository($className);
+        /** @var EnumOptionRepository $enumRepo */
+        $enumRepo = $manager->getRepository(EnumOption::class);
 
         $priority = 1;
         foreach ($this->selectOptions as $name => $isDefault) {
-            $enumOption = $enumRepo->createEnumValue($name, $priority++, $isDefault);
+            $enumOption = $enumRepo->createEnumOption(
+                'variant_field_code',
+                ExtendHelper::buildEnumInternalId($name),
+                $name,
+                $priority++,
+                $isDefault,
+            );
             $manager->persist($enumOption);
         }
 

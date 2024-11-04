@@ -30,6 +30,7 @@ class CheckLineItemsCountTest extends TestCase
 
     private CheckLineItemsCount $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutWorkflowHelper = $this->createMock(CheckoutWorkflowHelper::class);

@@ -6,17 +6,13 @@ use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 
 class ContentNodeFormExtension extends BaseMetaFormExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ContentNodeType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.webcatalog.contentnode';

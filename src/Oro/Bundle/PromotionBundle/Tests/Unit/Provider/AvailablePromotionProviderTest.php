@@ -22,6 +22,7 @@ class AvailablePromotionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var AvailablePromotionProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

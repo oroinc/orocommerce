@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductUnitPrecisionTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

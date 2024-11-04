@@ -20,9 +20,7 @@ class SubcategoryFilter extends AbstractFilter
 {
     public const FILTER_TYPE_NAME = 'subcategory';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function init($name, array $params)
     {
         $params[FilterUtility::FORM_OPTIONS_KEY]['class'] = Category::class;
@@ -30,9 +28,7 @@ class SubcategoryFilter extends AbstractFilter
         parent::init($name, $params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMetadata()
     {
         $metadata = parent::getMetadata();
@@ -45,17 +41,13 @@ class SubcategoryFilter extends AbstractFilter
         return $metadata;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function prepareData(array $data): array
     {
         throw new \BadMethodCallException('Not implemented');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function apply(FilterDatasourceAdapterInterface $ds, $data)
     {
         if (!$ds instanceof SearchFilterDatasourceAdapter) {
@@ -65,9 +57,7 @@ class SubcategoryFilter extends AbstractFilter
         return $this->applyRestrictions($ds, $data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormType(): string
     {
         return SearchEntityFilterType::class;

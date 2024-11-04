@@ -36,6 +36,7 @@ class ProductLineItemsHolderDTO implements
         $this->lineItems = new ArrayCollection();
     }
 
+    #[\Override]
     public function getLineItems(): Collection
     {
         return $this->lineItems;
@@ -69,11 +70,13 @@ class ProductLineItemsHolderDTO implements
         return $this;
     }
 
+    #[\Override]
     public function getWebsite(): ?Website
     {
         return $this->website;
     }
 
+    #[\Override]
     public function setWebsite(?Website $website): self
     {
         $this->website = $website;
@@ -81,6 +84,7 @@ class ProductLineItemsHolderDTO implements
         return $this;
     }
 
+    #[\Override]
     public function getCustomer(): ?Customer
     {
         return $this->customer;
@@ -93,6 +97,7 @@ class ProductLineItemsHolderDTO implements
         return $this;
     }
 
+    #[\Override]
     public function getCustomerUser(): ?CustomerUser
     {
         return $this->customerUser;

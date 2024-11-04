@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Cache;
 
 use Oro\Bundle\EntityBundle\Provider\EntityWithFieldsProvider;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmer;
@@ -27,15 +27,13 @@ class EnumProductVariantFieldValuesCacheWarmer extends CacheWarmer
         $this->enumVariantFieldValueHandler = $enumVariantFieldValueHandler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function warmUp(string $cacheDir): array
     {
         $fields = $this->entityWithFieldsProvider->getFieldsForEntity(Product::class);
         foreach ($fields as $field) {
             $relatedEntityName = $field['related_entity_name'] ?? null;
-            if (!$relatedEntityName || !is_a($relatedEntityName, AbstractEnumValue::class, true)) {
+            if (!$relatedEntityName || !is_a($relatedEntityName, EnumOptionInterface::class, true)) {
                 continue;
             }
 
@@ -44,9 +42,7 @@ class EnumProductVariantFieldValuesCacheWarmer extends CacheWarmer
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOptional(): bool
     {
         return true;

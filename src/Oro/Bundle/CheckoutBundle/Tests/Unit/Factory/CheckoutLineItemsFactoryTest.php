@@ -15,9 +15,7 @@ class CheckoutLineItemsFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutLineItemsFactory */
     protected $factory;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(CheckoutLineItemConverterRegistry::class);

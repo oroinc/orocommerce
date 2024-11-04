@@ -6,17 +6,13 @@ use Oro\Bundle\CMSBundle\Form\Type\PageType;
 
 class PageFormExtension extends BaseMetaFormExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [PageType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.cms.page';

@@ -44,9 +44,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addEmptyMatrix(ShoppingList $shoppingList, Product $product)
     {
         if ($this->isShoppingListHasProductVariants($shoppingList, $product)) {
@@ -86,9 +84,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
         $entityManager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isAddEmptyMatrixAllowed(array $lineItems): bool
     {
         if ($this->lineItemQuantitiesAreEmpty($lineItems) && $this->isEmptyMatrixConfig()) {
@@ -119,9 +115,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
             ->get(sprintf('%s.%s', Configuration::ROOT_NODE, Configuration::MATRIX_FORM_ALLOW_TO_ADD_EMPTY));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function hasEmptyMatrix(ShoppingList $shoppingList): bool
     {
         $lineItemsCollection = $shoppingList->getLineItems();

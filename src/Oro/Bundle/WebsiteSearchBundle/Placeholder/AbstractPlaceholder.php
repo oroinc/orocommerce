@@ -7,9 +7,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
  */
 abstract class AbstractPlaceholder implements PlaceholderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function replaceDefault($string)
     {
         if (str_contains($string, $this->getPlaceholder())) {
@@ -19,9 +17,7 @@ abstract class AbstractPlaceholder implements PlaceholderInterface
         return $string;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function replace($string, array $values)
     {
         if (!\array_key_exists($this->getPlaceholder(), $values)) {

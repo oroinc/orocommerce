@@ -24,9 +24,7 @@ class ProductUnitPrecisionDeleteHandlerExtension extends AbstractEntityDeleteHan
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertDeleteGranted($entity): void
     {
         if (!$entity instanceof ProductUnitPrecision) {

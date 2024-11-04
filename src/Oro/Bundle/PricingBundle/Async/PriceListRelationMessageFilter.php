@@ -59,9 +59,7 @@ class PriceListRelationMessageFilter implements MessageFilterInterface
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function apply(MessageBuffer $buffer): void
     {
         if (!$buffer->hasMessagesForTopic(RebuildCombinedPriceListsTopic::getName())) {

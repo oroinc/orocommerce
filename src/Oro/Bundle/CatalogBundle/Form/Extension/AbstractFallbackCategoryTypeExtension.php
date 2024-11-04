@@ -21,17 +21,13 @@ abstract class AbstractFallbackCategoryTypeExtension extends AbstractTypeExtensi
      */
     abstract public function getFallbackProperties();
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [CategoryType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $category = $builder->getData();

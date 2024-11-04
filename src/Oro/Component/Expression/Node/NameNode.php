@@ -31,9 +31,7 @@ class NameNode implements NodeInterface, ContainerHolderNodeInterface
         $this->containerId = $containerId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContainer()
     {
         return $this->container;
@@ -47,33 +45,25 @@ class NameNode implements NodeInterface, ContainerHolderNodeInterface
         return $this->field;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getNodes()
     {
         return [$this];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isBoolean()
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContainerId()
     {
         return $this->containerId;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getResolvedContainer()
     {
         $alias = $this->getContainer();

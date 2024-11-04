@@ -30,6 +30,7 @@ class SplitCheckoutAction extends AbstractAction
         $this->groupedLineItemsProvider = $groupedLineItemsProvider;
     }
 
+    #[\Override]
     protected function executeAction($context)
     {
         $checkout = $this->contextAccessor->getValue($context, $this->checkout);
@@ -41,6 +42,7 @@ class SplitCheckoutAction extends AbstractAction
         $this->contextAccessor->setValue($context, $this->attribute, $splitCheckouts);
     }
 
+    #[\Override]
     public function initialize(array $options)
     {
         if (!array_key_exists('attribute', $options)) {

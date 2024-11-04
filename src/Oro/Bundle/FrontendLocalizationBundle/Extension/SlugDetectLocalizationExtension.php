@@ -34,6 +34,7 @@ class SlugDetectLocalizationExtension implements CurrentLocalizationExtensionInt
         $this->registry = $registry;
     }
 
+    #[\Override]
     public function getCurrentLocalization(): ?Localization
     {
         if ($this->slugLocalization === false) {

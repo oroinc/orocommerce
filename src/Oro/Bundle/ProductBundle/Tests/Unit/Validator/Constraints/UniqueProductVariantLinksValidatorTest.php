@@ -28,12 +28,14 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): UniqueProductVariantLinksValidator
     {
         return new UniqueProductVariantLinksValidator(
@@ -240,12 +242,12 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue')
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue')
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('m', 'M'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue')
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'M', 'm'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue')
                 ]
             ]
         );
@@ -265,12 +267,12 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue')
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue')
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue')
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue')
                 ]
             ]
         );
@@ -291,12 +293,12 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue')
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue')
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue')
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue')
                 ]
             ]
         );
@@ -320,13 +322,13 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => true
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => false
                 ]
             ]
@@ -348,13 +350,13 @@ class UniqueProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
             ],
             [
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => false
                 ],
                 [
-                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('l', 'L'),
-                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('blue', 'Blue'),
+                    self::VARIANT_FIELD_KEY_SIZE => new TestEnumValue('test', 'L', 'l'),
+                    self::VARIANT_FIELD_KEY_COLOR => new TestEnumValue('test', 'Blue', 'blue'),
                     self::VARIANT_FIELD_KEY_SLIM_FIT => false
                 ]
             ]

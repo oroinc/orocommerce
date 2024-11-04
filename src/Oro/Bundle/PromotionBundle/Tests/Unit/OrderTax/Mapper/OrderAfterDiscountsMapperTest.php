@@ -23,6 +23,7 @@ class OrderAfterDiscountsMapperTest extends \PHPUnit\Framework\TestCase
 
     private OrderAfterDiscountsMapper $orderAfterDiscountsMapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerMapper = $this->createMock(TaxMapperInterface::class);

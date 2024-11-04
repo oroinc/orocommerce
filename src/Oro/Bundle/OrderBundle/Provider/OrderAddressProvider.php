@@ -99,9 +99,7 @@ class OrderAddressProvider implements AddressProviderInterface
         $this->customerUserAddressClass = $customerUserAddressClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerAddresses(Customer $customer, $type)
     {
         static::assertType($type);
@@ -125,9 +123,7 @@ class OrderAddressProvider implements AddressProviderInterface
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomerUserAddresses(CustomerUser $customerUser, $type)
     {
         static::assertType($type);
@@ -155,6 +151,7 @@ class OrderAddressProvider implements AddressProviderInterface
      * @param string $type
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public static function assertType($type)
     {
         $supportedTypes = [self::ADDRESS_TYPE_BILLING, self::ADDRESS_TYPE_SHIPPING];

@@ -12,6 +12,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPayment
  */
 class CreateOrderForBuyerTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,16 +23,19 @@ class CreateOrderForBuyerTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/requests';
     }
 
+    #[\Override]
     protected function getResponseDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/responses';
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

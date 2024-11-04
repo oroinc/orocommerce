@@ -50,6 +50,7 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var bool */
     private $isProductTaxCodeDigital = false;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productTaxCode = (new ProductTaxCode())

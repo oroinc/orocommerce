@@ -71,25 +71,19 @@ class ShoppingListController extends RestController
         return new JsonResponse($data, $status);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getManager()
     {
         return $this->container->get('oro_shopping_list.shopping_list.manager.api');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getForm()
     {
         throw new \LogicException('This method should not be called');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormHandler()
     {
         throw new \LogicException('This method should not be called');

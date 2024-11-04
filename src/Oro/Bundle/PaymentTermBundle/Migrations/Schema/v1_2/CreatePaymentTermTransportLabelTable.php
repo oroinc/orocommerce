@@ -12,6 +12,7 @@ class CreatePaymentTermTransportLabelTable implements Migration
     /**
      * @throws SchemaException
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroPaymentTermTransportLabelTable($schema);

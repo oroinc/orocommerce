@@ -9,9 +9,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingCountries extends AbstractFixture
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getShippingCountriesData() as $reference => $data) {

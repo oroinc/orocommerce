@@ -46,9 +46,7 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
         $this->categoryProvider = $categoryProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureContext(ContextInterface $context)
     {
         $request = $this->requestStack->getCurrentRequest();

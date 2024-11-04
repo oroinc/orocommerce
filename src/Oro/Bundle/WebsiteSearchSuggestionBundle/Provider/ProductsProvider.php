@@ -2,10 +2,12 @@
 
 namespace Oro\Bundle\WebsiteSearchSuggestionBundle\Provider;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductName;
 
@@ -93,7 +95,12 @@ class ProductsProvider
         return $this->managerRegistry
             ->getRepository(Product::class)
             ->getProductsQueryBuilder($ids)
-            ->innerJoin('p.inventory_status', 'inv')
+            ->innerJoin(
+                EnumOption::class,
+                'inv',
+                Join::WITH,
+                "JSON_EXTRACT(p.serialized_data, 'inventory_status') = inv.id"
+            )
             ->innerJoin('p.organization', 'o')
             ->andWhere('p.status = :status')
             ->setParameter('status', Product::STATUS_ENABLED)

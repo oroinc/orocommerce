@@ -38,6 +38,7 @@ class AddLineItemMassActionProviderTest extends \PHPUnit\Framework\TestCase
     /** @var AddLineItemMassActionProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);

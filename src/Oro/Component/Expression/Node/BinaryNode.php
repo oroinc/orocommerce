@@ -84,9 +84,7 @@ class BinaryNode implements NodeInterface
         return $this->right;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getNodes()
     {
         return array_merge([$this], $this->left->getNodes(), $this->right->getNodes());
@@ -112,9 +110,7 @@ class BinaryNode implements NodeInterface
         return $this->operation;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isBoolean()
     {
         if ($this->isBooleanOperation() || $this->isBooleanExpression()) {

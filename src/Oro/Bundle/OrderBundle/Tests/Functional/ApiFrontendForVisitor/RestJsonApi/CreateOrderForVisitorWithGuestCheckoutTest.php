@@ -30,6 +30,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
     private ?bool $originalGuestCheckoutOptionValue;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -45,6 +46,7 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         }
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -54,16 +56,19 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         $this->originalGuestCheckoutOptionValue = null;
     }
 
+    #[\Override]
     protected function getRequestDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/requests';
     }
 
+    #[\Override]
     protected function getResponseDataFolderName(): string
     {
         return '../../ApiFrontend/RestJsonApi/responses';
     }
 
+    #[\Override]
     protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();

@@ -40,33 +40,24 @@ class LocalizedSlugType extends AbstractType
         $this->slugifyEntityHelper = $slugifyEntityHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return $this->getName();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return LocalizedFallbackValueCollectionType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit']);
@@ -89,9 +80,7 @@ class LocalizedSlugType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -102,9 +91,7 @@ class LocalizedSlugType extends AbstractType
         $resolver->setDefined('source_field');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->slugifyFormHelper->addSlugifyOptionsLocalized($view, $options);

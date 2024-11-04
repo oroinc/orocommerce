@@ -20,9 +20,7 @@ class LoadContentNode implements ProcessorInterface
         $this->contentNodeRepository = $contentNodeRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */

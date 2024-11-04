@@ -13,9 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductName;
  */
 class ProductImageData extends AbstractFixture
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $product = new Product();

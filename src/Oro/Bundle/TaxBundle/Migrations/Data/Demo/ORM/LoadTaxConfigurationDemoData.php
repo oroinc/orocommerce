@@ -31,9 +31,7 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements
         'use_as_base_by_default' => TaxationSettingsProvider::USE_AS_BASE_DESTINATION
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -41,9 +39,7 @@ class LoadTaxConfigurationDemoData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $configManager = $this->container->get('oro_config.global');

@@ -21,6 +21,7 @@ class ProductExportDataConverterTest extends TestCase
 
     private ProductExportDataConverter $dataConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);

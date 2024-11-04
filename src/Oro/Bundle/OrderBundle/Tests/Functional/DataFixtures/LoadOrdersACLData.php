@@ -43,9 +43,7 @@ class LoadOrdersACLData extends AbstractFixture implements
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -56,6 +54,7 @@ class LoadOrdersACLData extends AbstractFixture implements
     /**
      * Load data fixtures with the passed EntityManager
      */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$orders as $name => $order) {

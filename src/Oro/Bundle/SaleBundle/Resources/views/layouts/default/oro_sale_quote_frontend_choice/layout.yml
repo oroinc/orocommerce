@@ -2,9 +2,11 @@ layout:
     imports:
         -
             id: oro_customer_page
+
     actions:
         - '@setBlockTheme':
             themes: '@OroSale/layouts/default/oro_sale_quote_frontend_choice/layout.html.twig'
+
         - '@setFormTheme':
             themes: '@OroSale/layouts/default/oro_sale_quote_frontend_choice/form_theme.html.twig'
 
@@ -12,6 +14,7 @@ layout:
               id: page_main_header
               optionName: visible
               optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
+
         - '@setOption':
               id: head_customer_menu_container
               optionName: visible
@@ -25,55 +28,122 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: class_prefix
-            optionValue: 'customer'
-
-        - '@setOption':
-            id: page_title
             optionName: defaultValue
             optionValue:
                 label: 'oro.frontend.sale.quote.title.label'
                 parameters:
                     '%id%': '=data["quote"].getQid()'
 
+        - '@move':
+              id: quote_choice_actions_container
+              parentId: page_title_container
+              prepend: false
+
+        - '@appendOption':
+              id: quote_choice_submit_button_wrapper
+              optionName: attr.class
+              optionValue: hidden-before-relocation-on-mobile-big
+
+        - '@appendOption':
+              id: quote_choice_submit_button_wrapper
+              optionName: attr.data-dom-relocation-options
+              optionValue:
+                  responsive:
+                      -
+                          viewport: 'mobile-landscape'
+                          moveTo: '.summary-widget__summary'
+                          endpointClass: 'checkout-form__buttons--full'
+                          prepend: false
+
         - '@addTree':
             items:
-                quote_view_information:
+                quote_choice_information:
                     blockType: quote_view_information
                     options:
                         quote: '=data["quote"]'
+
                 quote_choice_page:
                     blockType: container
-                quote_view_container_content:
+
+                quote_choice_data:
                     blockType: container
+
+                quote_choice_total:
+                    blockType: container
+
+                quote_choice_info_container:
+                    blockType: container
+
                 quote_choice_form:
                     blockType: quote_choice_form_container
                     options:
                         form: '=data["form"]'
                         quoteDemand: '=data["data"]'
+
                 quote_choice_back_button:
                     blockType: back_link
                     options:
+                        attr:
+                            class: 'btn btn--outlined hidden-before-relocation-on-mobile-big'
+                            data-responsive-styler: ''
+                            data-input-widget-options:
+                                responsive:
+                                    mobile-landscape:
+                                        classes: 'btn btn--neutral hide-text'
+                                        icon: 'arrow-left'
+                        icon: 'close'
                         route_name: oro_sale_quote_frontend_view
                         route_parameters:
                             id: '=data["quote"].getId()'
                         text: 'oro.frontend.sale.quote.sections.back_to_quote.label'
                         visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view", data["quote"])==true'
+
                 quote_choice_guest_back_button:
                     blockType: back_link
                     options:
+                        attr:
+                            class: 'btn btn--outlined'
+                            data-responsive-styler: ''
+                            data-input-widget-options:
+                                responsive:
+                                    mobile-landscape:
+                                        classes: 'btn btn--neutral hide-text'
+                                        icon: 'arrow-left'
+                        icon: 'close'
                         route_name: oro_sale_quote_frontend_view_guest
                         route_parameters:
                             guest_access_id: '=data["quote"].getGuestAccessId()'
                         text: 'oro.frontend.sale.quote.sections.back_to_quote.label'
                         visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view", data["quote"])==false'
+
+                quote_choice_actions_container:
+                    blockType: container
+
+                quote_choice_back_button_wrapper:
+                    blockType: container
+
+                quote_choice_submit_button_wrapper:
+                    blockType: container
+
                 quote_choice_submit_button:
                     blockType: block
+                    options:
+                        attr:
+                            class: 'btn btn--full'
+                        vars:
+                            form: '=data["form"]'
+
+                quote_choice_total_main:
+                    blockType: summary_collapse
+                    options:
+                        alwaysShow: 'mobile-big-min'
+
                 quote_choice_subtotals:
                     blockType: order_total
                     options:
                         total: '=data["totals"].total'
                         subtotals: '=data["totals"].subtotals'
+
                 quote_shipping_address:
                     blockType: address
                     options:
@@ -83,13 +153,19 @@ layout:
             tree:
                 page_content:
                     quote_choice_page:
-                        quote_view_container_content:
-                            quote_view_information:
+                        quote_choice_actions_container:
+                            quote_choice_back_button_wrapper:
+                                quote_choice_back_button: ~
+                                quote_choice_guest_back_button: ~
+                            quote_choice_submit_button_wrapper:
+                                quote_choice_submit_button: ~
+                        quote_choice_info_container:
+                            quote_choice_information:
                                 quote_shipping_address: ~
-                            quote_choice_subtotals: ~
-                        quote_choice_form:
-                            quote_choice_back_button: ~
-                            quote_choice_guest_back_button: ~
-                            quote_choice_submit_button: ~
+                        quote_choice_data:
+                            quote_choice_form: ~
+                        quote_choice_total:
+                            quote_choice_total_main:
+                                quote_choice_subtotals: ~
 
     conditions: '!context["widget_container"]'

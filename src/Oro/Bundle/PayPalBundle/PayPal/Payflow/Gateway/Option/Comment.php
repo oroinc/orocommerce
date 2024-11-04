@@ -10,7 +10,7 @@ class Comment extends AbstractOption
     const COMMENT1 = 'COMMENT1';
     const COMMENT2 = 'COMMENT2';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

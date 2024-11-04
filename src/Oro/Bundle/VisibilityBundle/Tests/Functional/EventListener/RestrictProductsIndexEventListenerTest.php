@@ -36,6 +36,7 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
     /** @var EventDispatcherInterface */
     private $dispatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

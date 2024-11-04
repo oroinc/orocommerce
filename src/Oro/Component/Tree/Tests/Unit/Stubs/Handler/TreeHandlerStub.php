@@ -7,18 +7,16 @@ use Oro\Component\Tree\Tests\Unit\Stubs\EntityStub;
 
 class TreeHandlerStub extends AbstractTreeHandler
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function moveProcessing($entityId, $parentId, $position)
     {
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param EntityStub $entity
      */
+    #[\Override]
     protected function formatEntity($entity)
     {
         return [

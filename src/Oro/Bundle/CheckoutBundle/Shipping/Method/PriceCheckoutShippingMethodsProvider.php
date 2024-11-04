@@ -25,9 +25,7 @@ class PriceCheckoutShippingMethodsProvider implements CheckoutShippingMethodsPro
         $this->checkoutShippingContextProvider = $checkoutShippingContextProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
         return $this->shippingPriceProvider->getApplicableMethodsViews(
@@ -35,9 +33,7 @@ class PriceCheckoutShippingMethodsProvider implements CheckoutShippingMethodsPro
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPrice(Checkout $checkout): ?Price
     {
         return $this->shippingPriceProvider->getPrice(

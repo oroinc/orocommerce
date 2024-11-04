@@ -12,6 +12,7 @@ class NotEmptyProductKitItemsCollection extends Constraint
 {
     public string $message = 'oro.product.productkititem.collection.not_empty';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

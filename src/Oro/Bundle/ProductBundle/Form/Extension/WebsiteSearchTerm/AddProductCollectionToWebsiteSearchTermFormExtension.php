@@ -18,11 +18,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AddProductCollectionToWebsiteSearchTermFormExtension extends AbstractTypeExtension
 {
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [SearchTermType::class];
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $modifyTypeForm = $builder->get('modifyActionType');
@@ -48,6 +50,7 @@ class AddProductCollectionToWebsiteSearchTermFormExtension extends AbstractTypeE
             );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver

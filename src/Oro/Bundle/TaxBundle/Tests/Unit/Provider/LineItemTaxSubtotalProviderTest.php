@@ -15,6 +15,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
  */
 class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,6 +31,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         );
     }
 
+    #[\Override]
     public function testGetSubtotal(): void
     {
         $this->taxSettingsProvider->expects($this->once())
@@ -68,6 +70,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         $this->assertEquals(Subtotal::OPERATION_IGNORE, $subtotal->getOperation());
     }
 
+    #[\Override]
     public function testGetCachedSubtotal(): void
     {
         $this->taxSettingsProvider->expects($this->once())
@@ -87,6 +90,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         $this->assertEquals(Subtotal::OPERATION_ADD, $subtotal->getOperation());
     }
 
+    #[\Override]
     protected function createTotalResultElement($amount, $currency): ResultElement
     {
         $total = new ResultElement();
@@ -97,6 +101,7 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         return $total;
     }
 
+    #[\Override]
     protected function createTaxResult(ResultElement $total): Result
     {
         $rowTax = new Result();
@@ -109,21 +114,25 @@ class LineItemTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         return $tax;
     }
 
+    #[\Override]
     protected function getLabel(): string
     {
         return 'Oro.tax.subtotals.lineitem_' . TaxSubtotalProvider::TYPE;
     }
 
+    #[\Override]
     protected function getOrder(): int
     {
         return 410;
     }
 
+    #[\Override]
     protected function isVisible(): bool
     {
         return false;
     }
 
+    #[\Override]
     protected function isRemovable(): bool
     {
         return true;

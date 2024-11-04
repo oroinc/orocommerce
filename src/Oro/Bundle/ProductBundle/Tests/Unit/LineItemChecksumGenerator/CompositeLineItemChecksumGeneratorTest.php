@@ -18,6 +18,7 @@ class CompositeLineItemChecksumGeneratorTest extends TestCase
 
     private CompositeLineItemChecksumGenerator $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerGenerator1 = $this->createMock(LineItemChecksumGeneratorInterface::class);

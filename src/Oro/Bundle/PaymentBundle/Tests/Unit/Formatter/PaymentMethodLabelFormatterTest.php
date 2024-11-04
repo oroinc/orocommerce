@@ -17,6 +17,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var PaymentMethodLabelFormatter */
     private $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);

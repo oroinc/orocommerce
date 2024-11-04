@@ -14,17 +14,13 @@ use Oro\Bundle\UserBundle\Entity\User;
  */
 class LoadCouponPermissionsForExistingRoles extends AbstractUpdatePermissions implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadUserRolesData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $aclManager = $this->getAclManager();

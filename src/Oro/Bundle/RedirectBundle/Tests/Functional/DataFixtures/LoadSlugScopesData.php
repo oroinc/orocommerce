@@ -21,17 +21,13 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
      */
     protected $container;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Customer $customer */
@@ -58,9 +54,7 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

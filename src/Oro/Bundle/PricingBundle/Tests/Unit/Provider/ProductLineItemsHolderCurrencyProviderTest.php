@@ -24,6 +24,7 @@ class ProductLineItemsHolderCurrencyProviderTest extends TestCase
 
     private ProductLineItemsHolderCurrencyProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);

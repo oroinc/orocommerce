@@ -28,12 +28,14 @@ class QuoteControllerTest extends WebTestCase
     private static string $qid;
     private static string $qidUpdated;
 
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
         self::$qid = 'TestQuoteID - ' . time() . '-' . mt_rand();
         self::$qidUpdated = self::$qid . ' - updated';
     }
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

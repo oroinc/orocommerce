@@ -28,15 +28,13 @@ class Processor implements LoggerAwareInterface
      */
     private $logger;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(UserTemplateEmailSender $userTemplateEmailSender)
     {
         $this->userTemplateEmailSender = $userTemplateEmailSender;
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function setLogger(LoggerInterface $logger)
     {
         $this->logger = $logger;

@@ -26,6 +26,7 @@ class BasicRedirectActionHandlerTest extends TestCase
 
     private BasicRedirectActionHandler $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->httpKernel = $this->createMock(HttpKernelInterface::class);

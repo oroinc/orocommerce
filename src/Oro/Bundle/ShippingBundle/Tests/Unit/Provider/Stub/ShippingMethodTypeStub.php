@@ -13,9 +13,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
     private int $sortOrder;
     private ?string $optionsConfigurationFormType = ShippingMethodTypeConfigTypeOptionsStub::class;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->identifier;
@@ -26,9 +24,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
         $this->identifier = $identifier;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return $this->label ?: $this->identifier . '.label';
@@ -39,9 +35,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
         $this->label = $label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSortOrder(): int
     {
         return $this->sortOrder;
@@ -52,9 +46,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
         $this->sortOrder = $sortOrder;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptionsConfigurationFormType(): ?string
     {
         return $this->optionsConfigurationFormType;
@@ -65,9 +57,7 @@ class ShippingMethodTypeStub implements ShippingMethodTypeInterface
         $this->optionsConfigurationFormType = $optionsConfigurationFormType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculatePrice(
         ShippingContextInterface $context,
         array $methodOptions,

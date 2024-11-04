@@ -10,9 +10,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxRule;
  */
 class TaxRuleEntityNameProvider implements EntityNameProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof TaxRule) {
@@ -28,9 +26,7 @@ class TaxRuleEntityNameProvider implements EntityNameProviderInterface
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, TaxRule::class, true)) {

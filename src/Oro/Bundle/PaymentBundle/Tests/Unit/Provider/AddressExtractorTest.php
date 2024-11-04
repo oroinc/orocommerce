@@ -10,6 +10,7 @@ class AddressExtractorTest extends \PHPUnit\Framework\TestCase
 {
     private AddressExtractor $extractor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extractor = new AddressExtractor(PropertyAccess::createPropertyAccessor());

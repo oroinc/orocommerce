@@ -27,9 +27,7 @@ class WebpAwareWebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framewor
 
     private WebpAwareWebsiteSearchProductIndexerListener $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

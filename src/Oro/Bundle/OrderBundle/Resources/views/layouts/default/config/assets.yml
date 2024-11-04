@@ -1,3 +1,5 @@
 styles:
     inputs:
+        - 'bundles/oroorder/default/scss/variables/orders-created-by-config.scss'
+
         - 'bundles/oroorder/default/scss/styles.scss'

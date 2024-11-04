@@ -23,6 +23,7 @@ class FrontendEmulatorTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendEmulator */
     private $frontendEmulator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteManager = $this->createMock(WebsiteManager::class);

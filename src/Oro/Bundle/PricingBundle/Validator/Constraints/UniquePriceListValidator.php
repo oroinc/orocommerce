@@ -15,9 +15,7 @@ class UniquePriceListValidator extends ConstraintValidator
 {
     private const PRICE_LIST_KEY = 'priceList';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UniquePriceList) {

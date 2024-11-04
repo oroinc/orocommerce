@@ -23,6 +23,7 @@ class ContentVariantContextUrlProviderTest extends TestCase
     private LocalizationProviderInterface|MockObject $localizationProvider;
     private ContentVariantContextUrlProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

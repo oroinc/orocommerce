@@ -17,6 +17,7 @@ class TaxBaseExclusionFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var TaxBaseExclusionFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

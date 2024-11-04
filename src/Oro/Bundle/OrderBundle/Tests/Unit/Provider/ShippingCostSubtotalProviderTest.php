@@ -26,6 +26,7 @@ class ShippingCostSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingCostSubtotalProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

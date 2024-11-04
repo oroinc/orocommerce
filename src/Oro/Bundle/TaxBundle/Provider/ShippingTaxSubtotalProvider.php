@@ -12,6 +12,7 @@ class ShippingTaxSubtotalProvider extends AbstractTaxSubtotalProvider
 {
     public const SUBTOTAL_ORDER = 420;
 
+    #[\Override]
     protected function createSubtotal(): Subtotal
     {
         $subtotal = new Subtotal();
@@ -26,6 +27,7 @@ class ShippingTaxSubtotalProvider extends AbstractTaxSubtotalProvider
         return $subtotal;
     }
 
+    #[\Override]
     protected function fillSubtotal(Subtotal $subtotal, Result $tax, ?object $entity = null): Subtotal
     {
         $subtotal->setAmount($tax->getShipping()->getTaxAmount());

@@ -15,6 +15,7 @@ class ProductImportExportConfigurationProvider implements ImportExportConfigurat
 {
     public const EXPORT_PROCESSOR_ALIAS = 'oro_product_frontend_product_listing';
 
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

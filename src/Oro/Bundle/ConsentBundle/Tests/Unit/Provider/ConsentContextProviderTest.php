@@ -22,6 +22,7 @@ class ConsentContextProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ConsentContextProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);

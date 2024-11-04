@@ -11,6 +11,7 @@ class RelatedItemConfigHelperTest extends \PHPUnit\Framework\TestCase
     /** @var RelatedItemConfigHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->helper = new RelatedItemConfigHelper();

@@ -21,6 +21,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Helper\ProductImageHelper;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\ShippingBundle\Form\Type\ProductKitShippingCalculationMethodType;
 use Oro\Bundle\ThemeBundle\Fallback\Provider\ThemeConfigurationFallbackProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -82,8 +83,8 @@ class ProductType extends AbstractType
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -95,7 +96,7 @@ class ProductType extends AbstractType
                 EnumSelectType::class,
                 [
                     'label'     => 'oro.product.inventory_status.label',
-                    'enum_code' => 'prod_inventory_status',
+                    'enum_code' => Product::INVENTORY_STATUS_ENUM_CODE,
                     'configs'   => ['allowClear' => false]
                 ]
             )
@@ -281,18 +282,27 @@ class ProductType extends AbstractType
         }
 
         if ($product->isKit()) {
-            $form->add(
-                'kitItems',
-                ProductKitItemCollectionType::class,
-                [
-                    'label' => false,
-                    'attr' => [
-                        'class' => 'product-kit-control-group'
-                    ],
-                    'prototype_data' => (new ProductKitItem())->setProductKit($product),
-                    'error_bubbling' => false
-                ]
-            );
+            $form
+                ->add(
+                    'kitItems',
+                    ProductKitItemCollectionType::class,
+                    [
+                        'label' => false,
+                        'attr' => [
+                            'class' => 'product-kit-control-group'
+                        ],
+                        'prototype_data' => (new ProductKitItem())->setProductKit($product),
+                        'error_bubbling' => false
+                    ]
+                )
+                ->add(
+                    'kitShippingCalculationMethod',
+                    ProductKitShippingCalculationMethodType::class,
+                    [
+                        'label' => 'oro.product.kit_shipping_calculation_method.label',
+                        'tooltip' => 'oro.product.kit_shipping_calculation_method.tooltip',
+                    ]
+                );
         }
 
         if (!$product->getImages()->isEmpty()) {
@@ -354,9 +364,7 @@ class ProductType extends AbstractType
         PropertyAccess::createPropertyAccessor()->setValue($product, 'additionalUnitPrecisions', $additionalPrecisions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -375,9 +383,7 @@ class ProductType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

@@ -8,17 +8,13 @@ class EmptyVariantFieldInSimpleProductForVariantLinks extends Constraint
 {
     public $message = 'oro.product.product_variant_field.unique_variant_links_when_empty_variant_field_in_simple';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return EmptyVariantFieldInSimpleProductForVariantLinksValidator::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

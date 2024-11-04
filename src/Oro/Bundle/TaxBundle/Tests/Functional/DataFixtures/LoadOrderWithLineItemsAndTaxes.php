@@ -9,6 +9,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
 class LoadOrderWithLineItemsAndTaxes extends LoadOrderItems
 {
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var Order $order */
@@ -18,6 +19,7 @@ class LoadOrderWithLineItemsAndTaxes extends LoadOrderItems
         parent::load($manager);
     }
 
+    #[\Override]
     public function getDependencies()
     {
         $dependencies = parent::getDependencies();

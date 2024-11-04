@@ -21,9 +21,7 @@ class BasicUpsClientFactory implements UpsClientFactoryInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createUpsClient($isTestMode): RestClientInterface
     {
         if ($this->isOAuthConfigured) {

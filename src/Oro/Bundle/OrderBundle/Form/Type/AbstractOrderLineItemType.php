@@ -56,9 +56,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -109,9 +107,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['currency']);
@@ -129,9 +125,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
         $resolver->setAllowedTypes('currency', ['null', 'string']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->getSectionProvider()->addSections(
@@ -170,7 +164,7 @@ abstract class AbstractOrderLineItemType extends AbstractType
         $view->vars['page_component_options']['currency'] = $options['currency'];
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['sections'] = $this->getSectionProvider()->getSections(get_class($this));

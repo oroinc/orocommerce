@@ -23,6 +23,7 @@ class BasicQuickAddCollectionNormalizerTest extends TestCase
 {
     private BasicQuickAddCollectionNormalizer $normalizer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $localizationHelper = $this->createMock(LocalizationHelper::class);

@@ -22,12 +22,14 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends Const
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): EmptyVariantFieldInSimpleProductForVariantLinksValidator
     {
         return new EmptyVariantFieldInSimpleProductForVariantLinksValidator(

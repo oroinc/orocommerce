@@ -156,8 +156,6 @@ Feature: Commerce smoke e2e
       | L      |
       | M      |
     When I save and close form
-    And click update schema
-    Then should see Schema updated flash message
 
     And go to Products/ Product Families
     When I click "Create Product Family"
@@ -819,7 +817,7 @@ Feature: Commerce smoke e2e
     And click "Quotes"
     And click on PO00001 in grid
     When click "Accept and Submit to Order"
-    And click "Submit"
+    And click "Checkout"
     And fill form with:
       |Label          |Home Address  |
       |First name     |NewAmanda     |
@@ -893,7 +891,7 @@ Feature: Commerce smoke e2e
     And click "Quotes"
     When click on PO1001 in grid
     When click "Accept and Submit to Order"
-    And click "Submit"
+    And click "Checkout"
     And I select "Lonnie Townsend, OroCommerce, Parnasus Ave 12, SAN FRANCISCO CA US 90001" on the "Billing Information" checkout step and press Continue
     And I select "Lonnie Townsend, OroCommerce, Parnasus Ave 12, SAN FRANCISCO CA US 90001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue

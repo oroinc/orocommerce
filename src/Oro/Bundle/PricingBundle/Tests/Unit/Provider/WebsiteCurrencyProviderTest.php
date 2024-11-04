@@ -24,6 +24,7 @@ class WebsiteCurrencyProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);

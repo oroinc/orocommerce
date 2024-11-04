@@ -25,25 +25,19 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements
 {
     private ContainerInterface $container;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadChannelData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach ($this->getShippingMethodsConfigsRuleData() as $reference => $data) {

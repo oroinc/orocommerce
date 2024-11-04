@@ -23,6 +23,7 @@ class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecoratorTest extends
      */
     private $decorator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->optionsVisibility = $this->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);

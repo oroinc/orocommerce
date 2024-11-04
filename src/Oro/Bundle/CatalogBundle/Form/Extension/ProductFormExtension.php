@@ -31,17 +31,13 @@ class ProductFormExtension extends AbstractTypeExtension
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->authorizationChecker->isGranted('oro_catalog_category_view')) {

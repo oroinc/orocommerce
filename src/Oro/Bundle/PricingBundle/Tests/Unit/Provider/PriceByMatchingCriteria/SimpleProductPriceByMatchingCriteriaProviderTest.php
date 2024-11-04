@@ -22,6 +22,7 @@ class SimpleProductPriceByMatchingCriteriaProviderTest extends TestCase
     private SimpleProductPriceByMatchingCriteriaProvider $provider;
 
     private ConfigManager $configManager;
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

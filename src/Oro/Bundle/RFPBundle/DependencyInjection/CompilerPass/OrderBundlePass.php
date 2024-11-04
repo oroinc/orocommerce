@@ -11,7 +11,7 @@ use Symfony\Component\DependencyInjection\Reference;
  */
 class OrderBundlePass implements CompilerPassInterface
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if ($container->hasDefinition('oro_order.form.section.provider')) {

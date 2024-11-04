@@ -15,6 +15,7 @@ class CategoryTest extends WebTestCase
 
     private SlugRepository $slugRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -23,6 +23,7 @@ class SeoDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SeoDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

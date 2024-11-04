@@ -44,9 +44,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         return $categoryIds;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function updateCustomerGroupsFirstLevel(Category $category, $visibility)
     {
         $customerGroupIds = $this->getCustomerGroupIdsFirstLevel($category);
@@ -71,9 +69,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         return $this->getCustomerGroupIdsWithFallbackToAll($category);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function updateCustomersFirstLevel(Category $category, $visibility)
     {
         $customerIdsForUpdate = $this->getCustomerIdsFirstLevel($category);
@@ -151,6 +147,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      * @param QueryBuilder $qb
      * @return QueryBuilder
      */
+    #[\Override]
     protected function restrictStaticFallback(QueryBuilder $qb)
     {
         return $qb->andWhere($qb->expr()->isNotNull('cv.visibility'));
@@ -160,6 +157,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
      * @param QueryBuilder $qb
      * @return QueryBuilder
      */
+    #[\Override]
     protected function restrictToParentFallback(QueryBuilder $qb)
     {
         return $qb->andWhere($qb->expr()->isNull('cv.visibility'));
@@ -213,9 +211,7 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
         $qb->getQuery()->execute();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
         return $qb->leftJoin(

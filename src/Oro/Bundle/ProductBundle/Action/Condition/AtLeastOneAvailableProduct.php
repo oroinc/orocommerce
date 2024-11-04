@@ -43,17 +43,13 @@ class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAcc
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $propertyPath = reset($options);
@@ -64,9 +60,7 @@ class AtLeastOneAvailableProduct extends AbstractCondition implements ContextAcc
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $productHolderIterator = $this->resolveValue($context, $this->productIteratorPath);

@@ -13,11 +13,13 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class RemoveDirectUrlForEntityTypeTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         return new RemoveDirectUrlForEntityTypeTopic();
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         $className = get_class($this->createMock(SluggableInterface::class));
@@ -27,6 +29,7 @@ class RemoveDirectUrlForEntityTypeTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

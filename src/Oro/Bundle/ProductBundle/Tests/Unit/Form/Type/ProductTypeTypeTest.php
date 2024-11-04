@@ -17,6 +17,7 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
 
     private ProductTypeType $productTypeType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productTypeProvider = new ProductTypeProvider(Product::getTypes());
@@ -24,9 +25,7 @@ class ProductTypeTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

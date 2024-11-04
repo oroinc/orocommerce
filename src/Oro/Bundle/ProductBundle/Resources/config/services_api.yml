@@ -361,8 +361,8 @@ services:
         tags:
             - { name: oro.api.processor, action: get_list, group: load_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch, priority: -12 }
 
-    oro_product.api.product_search.expand_product_search_entities:
-        class: Oro\Bundle\ProductBundle\Api\Processor\ExpandProductSearchEntities
+    oro_product.api.product_search.expand_associated_entities:
+        class: Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\ExpandAssociatedEntities
         arguments:
             - '@oro_api.entity_serializer'
             - '@oro_api.doctrine_helper'

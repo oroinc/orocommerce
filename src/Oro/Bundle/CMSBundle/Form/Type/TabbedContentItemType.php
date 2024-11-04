@@ -17,6 +17,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class TabbedContentItemType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
@@ -60,6 +61,7 @@ class TabbedContentItemType extends AbstractType
         $data->setContentWidget($event->getForm()->getConfig()->getOption('content_widget'));
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(['data_class' => TabbedContentItem::class]);
@@ -67,6 +69,7 @@ class TabbedContentItemType extends AbstractType
         $resolver->setAllowedTypes('content_widget', [ContentWidget::class]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_cms_tabbed_content_item';

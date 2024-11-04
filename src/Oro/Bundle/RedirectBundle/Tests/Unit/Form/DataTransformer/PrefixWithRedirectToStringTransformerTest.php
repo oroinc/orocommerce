@@ -10,6 +10,7 @@ class PrefixWithRedirectToStringTransformerTest extends \PHPUnit\Framework\TestC
     /** @var PrefixWithRedirectToStringTransformer */
     private $transformer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transformer = new PrefixWithRedirectToStringTransformer();

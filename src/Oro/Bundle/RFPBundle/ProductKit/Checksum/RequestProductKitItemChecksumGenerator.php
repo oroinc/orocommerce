@@ -14,6 +14,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
  */
 class RequestProductKitItemChecksumGenerator implements LineItemChecksumGeneratorInterface
 {
+    #[\Override]
     public function getChecksum(ProductLineItemInterface $lineItem): ?string
     {
         if (!$lineItem instanceof RequestProductItem || !$lineItem->getProduct()?->isKit()) {

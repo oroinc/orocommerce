@@ -18,6 +18,7 @@ class ReindexParentConfigurableProductListenerTest extends \PHPUnit\Framework\Te
     /** @var ReindexParentConfigurableProductListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->changedEntities = new IndexationEntitiesContainer();

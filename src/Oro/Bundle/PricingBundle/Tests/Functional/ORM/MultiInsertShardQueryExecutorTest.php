@@ -28,6 +28,7 @@ class MultiInsertShardQueryExecutorTest extends WebTestCase
     private ShardManager $shardManager;
     private NativeQueryExecutorHelper $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

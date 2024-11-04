@@ -99,7 +99,7 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
                         event: update
-                        require: "(entity.isExpired() and !prevEntity.isExpired()) or (entity.getInternalStatus().getId() === 'expired' and prevEntity.getInternalStatus().getId() !== 'expired')"
+                        require: "(entity.isExpired() and !prevEntity.isExpired()) or (entity.getInternalStatus().getInternalId() === 'expired' and prevEntity.getInternalStatus().getInternalId() !== 'expired')"
             create_new_quote_transition:
                 step_to: sent_to_customer
                 transition_definition: create_new_quote_transition_definition
@@ -127,8 +127,8 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
                         event: update
-                        field: customer_status
-                        require: "entity.getCustomerStatus().getId() === 'accepted'"
+                        field: serialized_data
+                        require: "entity.getCustomerStatus() !== null && entity.getCustomerStatus().getInternalId() === 'accepted'"
             decline_transition:
                 step_to: closed
                 transition_definition: decline_transition_definition
@@ -137,8 +137,8 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
                         event: update
-                        field: customer_status
-                        require: "entity.getCustomerStatus().getId() === 'declined'"
+                        field: serialized_data
+                        require: "entity.getCustomerStatus() !== null && entity.getCustomerStatus().getInternalId() === 'declined'"
             decline_by_customer_transition:
                 step_to: closed
                 transition_definition: decline_by_customer_transition_definition

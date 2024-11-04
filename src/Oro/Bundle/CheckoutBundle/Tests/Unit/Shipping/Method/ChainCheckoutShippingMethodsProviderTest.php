@@ -19,6 +19,7 @@ class ChainCheckoutShippingMethodsProviderTest extends \PHPUnit\Framework\TestCa
     /** @var ChainCheckoutShippingMethodsProvider */
     private $chainProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider1 = $this->createMock(CheckoutShippingMethodsProviderInterface::class);

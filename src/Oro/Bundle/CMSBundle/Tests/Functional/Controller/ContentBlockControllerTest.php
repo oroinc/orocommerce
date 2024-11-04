@@ -13,6 +13,7 @@ class ContentBlockControllerTest extends WebTestCase
 {
     private const CONTENT_BLOCK_ALIAS = 'content-block-alias';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

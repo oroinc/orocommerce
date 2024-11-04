@@ -35,6 +35,7 @@ class FrontendCouponRemoveHandlerTest extends \PHPUnit\Framework\TestCase
 
     private PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject $promotionAwareHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

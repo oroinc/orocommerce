@@ -18,9 +18,7 @@ class UniqueProductPrices extends Constraint
      */
     public $message = 'oro.pricing.validators.product_price.unique_entity.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_pricing_unique_product_prices_validator';

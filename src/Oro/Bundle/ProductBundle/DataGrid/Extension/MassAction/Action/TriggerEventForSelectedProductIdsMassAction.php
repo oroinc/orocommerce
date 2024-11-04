@@ -12,9 +12,7 @@ class TriggerEventForSelectedProductIdsMassAction extends AjaxMassAction
 {
     protected $requiredOptions = ['handler', 'event_name'];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setOptions(ActionConfiguration $options)
     {
         if (!isset($options['frontend_type'])) {

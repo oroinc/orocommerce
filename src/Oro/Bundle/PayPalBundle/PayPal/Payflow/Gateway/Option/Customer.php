@@ -26,7 +26,7 @@ class Customer extends AbstractOption
         $this->customerRequired = $customerRequired;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         if ($this->customerRequired) {

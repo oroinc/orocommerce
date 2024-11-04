@@ -21,9 +21,6 @@ trusted_data:
         Oro\Bundle\ProductBundle\Api\Processor\BuildVariantProductsSubresourceQuery:
             process:
                 idFieldName: true
-        Oro\Bundle\ProductBundle\Api\Processor\ExpandProductSearchEntities:
-            loadAssociationData:
-                idPropertyName: true
         Oro\Bundle\ProductBundle\Api\Processor\ExpandProductCollectionContentVariant:
             addContentVariantFieldsToProductSearchQueryAndConfig:
                 searchFieldName: true

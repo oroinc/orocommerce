@@ -12,9 +12,7 @@ class PricesStrategyPass implements CompilerPassInterface
     const STRATEGY_ALIAS = 'alias';
     const STRATEGY_TAG = 'oro_pricing.price_strategy';
 
-    /**
-     * {@inheritoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition(self::STRATEGY_REGISTER)) {

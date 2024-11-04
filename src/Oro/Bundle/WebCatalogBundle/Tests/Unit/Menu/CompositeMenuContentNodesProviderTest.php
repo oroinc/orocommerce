@@ -19,6 +19,7 @@ class CompositeMenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
 
     private CompositeMenuContentNodesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->menuContentNodesProvider = $this->createMock(MenuContentNodesProviderInterface::class);

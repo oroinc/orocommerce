@@ -14,6 +14,7 @@ class CategoryFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.catalog.category';

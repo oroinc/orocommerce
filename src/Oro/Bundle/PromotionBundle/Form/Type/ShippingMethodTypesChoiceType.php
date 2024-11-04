@@ -31,9 +31,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
         $this->assetHelper = $assetHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new CallbackTransformer(
@@ -46,9 +44,7 @@ class ShippingMethodTypesChoiceType extends AbstractType
         ));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -70,17 +66,13 @@ class ShippingMethodTypesChoiceType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return OroChoiceType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_promotion_shipping_methods';

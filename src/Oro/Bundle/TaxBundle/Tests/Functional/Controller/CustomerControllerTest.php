@@ -6,7 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadInternalRating;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -16,6 +16,7 @@ class CustomerControllerTest extends WebTestCase
 {
     private const CUSTOMER_NAME = 'Customer_name';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -33,7 +34,7 @@ class CustomerControllerTest extends WebTestCase
         $parent = $this->getReference('customer.level_1');
         /** @var CustomerGroup $group */
         $group = $this->getReference('customer_group.group1');
-        /** @var AbstractEnumValue $internalRating */
+        /** @var EnumOptionInterface $internalRating */
         $internalRating = $this->getReference('internal_rating.1 of 5');
         /** @var CustomerTaxCode $customerTaxCode */
         $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
@@ -184,7 +185,7 @@ class CustomerControllerTest extends WebTestCase
         string $name,
         Customer $parent,
         CustomerGroup $group,
-        AbstractEnumValue $internalRating,
+        EnumOptionInterface $internalRating,
         CustomerTaxCode $customerTaxCode
     ): void {
         $form = $crawler->selectButton('Save and Close')->form(
@@ -209,7 +210,7 @@ class CustomerControllerTest extends WebTestCase
         string $name,
         Customer $parent,
         CustomerGroup $group,
-        AbstractEnumValue $internalRating,
+        EnumOptionInterface $internalRating,
         CustomerTaxCode $customerTaxCode
     ): void {
         $groupName = $group->getName();
@@ -224,7 +225,7 @@ class CustomerControllerTest extends WebTestCase
         string $name,
         Customer $parent,
         CustomerGroup $group,
-        AbstractEnumValue $internalRating,
+        EnumOptionInterface $internalRating,
         CustomerTaxCode $customerTaxCode
     ): array {
         return [

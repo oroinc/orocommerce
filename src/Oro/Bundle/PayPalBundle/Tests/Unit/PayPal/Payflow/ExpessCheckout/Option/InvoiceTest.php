@@ -9,17 +9,13 @@ use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class InvoiceTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new ECOption\Invoice(), new ECOption\Action()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

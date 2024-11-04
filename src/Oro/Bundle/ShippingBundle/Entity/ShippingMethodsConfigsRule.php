@@ -97,9 +97,6 @@ class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInte
     #[ORM\InverseJoinColumn(name: 'website_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
     private ?Collection $websites = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->destinations = new ArrayCollection();
@@ -118,6 +115,7 @@ class ShippingMethodsConfigsRule implements RuleOwnerInterface, ExtendEntityInte
     /**
      * @return RuleInterface
      */
+    #[\Override]
     public function getRule()
     {
         return $this->rule;

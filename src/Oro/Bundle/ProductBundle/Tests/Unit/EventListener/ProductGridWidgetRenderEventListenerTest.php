@@ -15,6 +15,7 @@ class ProductGridWidgetRenderEventListenerTest extends \PHPUnit\Framework\TestCa
     /** @var ProductGridWidgetRenderEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestParameterBagFactory = $this->createMock(RequestParameterBagFactory::class);

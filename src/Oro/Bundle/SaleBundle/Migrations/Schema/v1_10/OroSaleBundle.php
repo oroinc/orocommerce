@@ -16,9 +16,7 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface, Ordered
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_sale_quote');
@@ -78,9 +76,7 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface, Ordered
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_sale', 'oro_sale'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

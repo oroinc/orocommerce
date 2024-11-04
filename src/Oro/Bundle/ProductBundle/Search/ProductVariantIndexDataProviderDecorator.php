@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Search;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
@@ -25,9 +26,7 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIndexData(Product $product, FieldConfigModel $attribute, array $localizations): \ArrayIterator
     {
         $data = $this->originalProvider->getIndexData($product, $attribute, $localizations);
@@ -36,9 +35,6 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function buildIndexData(
         Product $product,
         FieldConfigModel $attribute,
@@ -55,7 +51,7 @@ class ProductVariantIndexDataProviderDecorator implements ProductIndexDataProvid
                     // It's required to prevent excess re-indexation when value of "Display Simple Variations" option
                     // in the "System Configuration" become "Everywhere".
                     $variantData = $this->originalProvider->getIndexData($variantProduct, $attribute, $localizations);
-                    if (\in_array($attribute->getType(), ['enum', 'multiEnum'], true)) {
+                    if (ExtendHelper::isEnumerableType($attribute->getType())) {
                         $searchableName = $this->getSearchableName($attribute);
                         $this->addEnumVariantData($data, $variantData, $attribute, $searchableName);
                         $this->mergeSearchable($data, $searchableName);

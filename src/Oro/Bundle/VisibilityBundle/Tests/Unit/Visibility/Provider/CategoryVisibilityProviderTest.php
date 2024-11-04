@@ -20,6 +20,7 @@ class CategoryVisibilityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryVisibilityProvider */
     private $categoryVisibilityProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryVisibilityResolver = $this->createMock(CategoryVisibilityResolverInterface::class);

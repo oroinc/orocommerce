@@ -22,6 +22,7 @@ class CheckoutCompareHelperTest extends TestCase
     private WorkflowManager|MockObject $workflowManager;
     private CheckoutCompareHelper $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->diffStorage = $this->createMock(CheckoutDiffStorageInterface::class);

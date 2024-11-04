@@ -34,9 +34,7 @@ class CheckoutAddressSelectType extends AbstractType
         $this->orderAddressToAddressIdentifierViewTransforLmer = $orderAddressToAddressIdentifierViewTransforLmer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         /** @var Checkout $object */
@@ -81,9 +79,7 @@ class CheckoutAddressSelectType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $labelPrefix = $options['group_label_prefix'];
@@ -101,9 +97,7 @@ class CheckoutAddressSelectType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -122,17 +116,13 @@ class CheckoutAddressSelectType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_checkout_address_select';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return OrderAddressSelectType::class;

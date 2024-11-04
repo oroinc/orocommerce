@@ -19,6 +19,7 @@ class QuoteProductKitItemLineItemCollectionRemovingListenerTest extends TestCase
 
     private QuoteProductKitItemLineItemCollectionRemovingListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new QuoteProductKitItemLineItemCollectionRemovingListener();

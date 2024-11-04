@@ -17,6 +17,7 @@ class ContentVariantDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ContentVariantDataProvider */
     private $dataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestWebContentVariantProvider = $this->createMock(RequestWebContentVariantProvider::class);

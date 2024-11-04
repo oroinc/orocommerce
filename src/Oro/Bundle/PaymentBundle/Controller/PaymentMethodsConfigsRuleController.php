@@ -159,9 +159,7 @@ class PaymentMethodsConfigsRuleController extends AbstractController
         return new JsonResponse(array_merge($data, $response->getOptions()));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

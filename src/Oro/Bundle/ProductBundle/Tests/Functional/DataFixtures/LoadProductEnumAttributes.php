@@ -9,7 +9,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroup;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeGroupRelation;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
@@ -33,6 +34,7 @@ class LoadProductEnumAttributes extends AbstractFixture implements ContainerAwar
         'contact',
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->addProductAttributesToFamily($manager);
@@ -61,16 +63,20 @@ class LoadProductEnumAttributes extends AbstractFixture implements ContainerAwar
 
     private function createEnumOptions(ObjectManager $manager, $enumCode, array $data)
     {
-        $className = ExtendHelper::buildEnumValueClassName($enumCode);
-
         /**
-         * @var EnumValueRepository $enumValueRepository
+         * @var EnumOptionRepository $enumOptionRepository
          */
-        $enumValueRepository = $manager->getRepository($className);
+        $enumOptionRepository = $manager->getRepository(EnumOption::class);
 
         $priority = 1;
         foreach ($data as $name => $isDefault) {
-            $enumOption = $enumValueRepository->createEnumValue($name, $priority++, $isDefault);
+            $enumOption = $enumOptionRepository->createEnumOption(
+                $enumCode,
+                ExtendHelper::buildEnumInternalId($name),
+                $name,
+                $priority++,
+                $isDefault,
+            );
             $manager->persist($enumOption);
         }
     }

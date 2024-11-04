@@ -36,6 +36,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
     /** @var WebCatalogUsageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->indexScheduler = $this->createMock(ProductIndexScheduler::class);

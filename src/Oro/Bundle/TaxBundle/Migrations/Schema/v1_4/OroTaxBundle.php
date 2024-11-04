@@ -15,9 +15,7 @@ class OroTaxBundle implements Migration, RenameExtensionAwareInterface, OrderedM
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->rename($schema, $queries);
@@ -73,9 +71,7 @@ class OroTaxBundle implements Migration, RenameExtensionAwareInterface, OrderedM
         $extension->renameTable($schema, $queries, 'oro_tax_account_tax_code', 'oro_tax_customer_tax_code');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

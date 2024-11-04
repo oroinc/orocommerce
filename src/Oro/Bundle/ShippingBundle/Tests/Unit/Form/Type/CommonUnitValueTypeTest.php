@@ -10,6 +10,7 @@ class CommonUnitValueTypeTest extends FormIntegrationTestCase
 {
     private string $defaultLocale;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultLocale = \Locale::getDefault();
@@ -17,6 +18,7 @@ class CommonUnitValueTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         \Locale::setDefault($this->defaultLocale);

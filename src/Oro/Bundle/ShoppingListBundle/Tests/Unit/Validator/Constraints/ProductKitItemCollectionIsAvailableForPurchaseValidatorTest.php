@@ -28,6 +28,7 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
 
     private array $validationGroups = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translationMessageSanitizer = $this->createMock(TranslationMessageSanitizerInterface::class);
@@ -38,11 +39,13 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductKitItemCollectionIsAvailableForPurchaseValidator
     {
         return new ProductKitItemCollectionIsAvailableForPurchaseValidator($this->translationMessageSanitizer);
     }
 
+    #[\Override]
     protected function createContext()
     {
         $context = parent::createContext();

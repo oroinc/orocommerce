@@ -25,9 +25,6 @@ class ProductNormalizerEvent extends Event
      */
     protected $context = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(Product $product, array $plainData, array $context = [])
     {
         $this->product = $product;

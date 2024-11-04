@@ -63,11 +63,13 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
         $this->productsBatchSize = $productsBatchSize;
     }
 
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [ResolveCombinedPriceByVersionedPriceListTopic::getName()];
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();

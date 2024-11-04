@@ -12,6 +12,7 @@ class CustomerGroupControllerTest extends WebTestCase
 {
     private const ACCOUNT_GROUP_NAME = 'Customer_Group';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

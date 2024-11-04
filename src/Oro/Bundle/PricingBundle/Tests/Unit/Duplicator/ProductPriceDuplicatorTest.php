@@ -21,6 +21,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceDuplicator */
     private $priceDuplicator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

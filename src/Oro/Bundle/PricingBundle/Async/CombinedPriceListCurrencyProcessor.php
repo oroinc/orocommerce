@@ -38,17 +38,13 @@ class CombinedPriceListCurrencyProcessor implements
         $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [ResolveCombinedPriceListCurrenciesTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $body = $message->getBody();

@@ -38,10 +38,6 @@ Feature: Product attribute import select existing options
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
-  Scenario: Update schema
-    When I click update schema
-    Then I should see "Schema updated" flash message
-
   Scenario: Product select attribute with duplicate options created correctly
     When I click "Edit" on row "Field2" in grid
     Then I should see values in field "Options":

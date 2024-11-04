@@ -12,6 +12,7 @@ class ExtendFieldValidationLoaderPassTest extends \PHPUnit\Framework\TestCase
 {
     private ExtendFieldValidationLoaderPass $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new ExtendFieldValidationLoaderPass();

@@ -13,6 +13,7 @@ class RequirePaymentRedirectEventTest extends \PHPUnit\Framework\TestCase
     /** @var RequirePaymentRedirectEvent */
     private $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethod = $this->createMock(PaymentMethodInterface::class);

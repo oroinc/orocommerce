@@ -13,12 +13,9 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
  */
 class ConsentVoter extends AbstractEntityVoter
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::EDIT, BasicPermission::DELETE];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         /** @var Consent $consent */

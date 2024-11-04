@@ -55,78 +55,79 @@ class DriverDecorator implements DriverInterface
         return $this->driver;
     }
 
+    #[\Override]
     public function createQueryBuilder($alias)
     {
         return $this->getDriver()->createQueryBuilder($alias);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName()
     {
         return $this->getDriver()->getName();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function initialize(EntityManagerInterface $entityManager)
     {
         $this->getDriver()->initialize($entityManager);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function search(Query $query)
     {
         return $this->getDriver()->search($query);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function removeIndexByAlias($currentAlias)
     {
         return $this->getDriver()->removeIndexByAlias($currentAlias);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function renameIndexAlias($temporaryAlias, $currentAlias)
     {
         return $this->getDriver()->renameIndexAlias($temporaryAlias, $currentAlias);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function removeEntities(array $entityIds, $entityClass, $entityAlias = null)
     {
         return $this->getDriver()->removeEntities($entityIds, $entityClass, $entityAlias);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function removeIndexByClass($entityClass = null)
     {
         return $this->getDriver()->removeIndexByClass($entityClass);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function createItem()
     {
         return $this->getDriver()->createItem();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getRecordsCount(Query $query)
     {
         return $this->getDriver()->getRecordsCount($query);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function flushWrites()
     {
         $this->getDriver()->flushWrites();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function writeItem(AbstractItem $item)
     {
         $this->getDriver()->writeItem($item);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getAggregatedData(Query $query)
     {
         return $this->getDriver()->getAggregatedData($query);

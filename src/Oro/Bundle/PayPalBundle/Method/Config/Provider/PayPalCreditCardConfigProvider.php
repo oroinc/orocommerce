@@ -15,9 +15,6 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
      */
     protected $configs = [];
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(
         ManagerRegistry $doctrine,
         LoggerInterface $logger,
@@ -27,9 +24,7 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
         parent::__construct($doctrine, $logger, $factory, $type);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentConfigs()
     {
         if (0 === count($this->configs)) {
@@ -39,9 +34,7 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
         return $this->configs;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentConfig($identifier)
     {
         if (!$this->hasPaymentConfig($identifier)) {

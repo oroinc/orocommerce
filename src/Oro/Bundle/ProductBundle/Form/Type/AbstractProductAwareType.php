@@ -13,7 +13,7 @@ abstract class AbstractProductAwareType extends AbstractType
 {
     use ProductAwareTrait;
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(

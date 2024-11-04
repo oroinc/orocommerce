@@ -11,7 +11,7 @@ class Tender extends AbstractOption
 
     const PAYPAL = 'P';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

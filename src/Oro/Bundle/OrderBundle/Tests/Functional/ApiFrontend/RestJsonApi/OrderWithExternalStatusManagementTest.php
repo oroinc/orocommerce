@@ -18,6 +18,7 @@ class OrderWithExternalStatusManagementTest extends FrontendRestJsonApiTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -32,12 +33,14 @@ class OrderWithExternalStatusManagementTest extends FrontendRestJsonApiTestCase
         self::getConfigManager()->set('oro_order.order_enable_external_status_management', true);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         self::getConfigManager()->set('oro_order.order_enable_external_status_management', false);
         parent::tearDown();
     }
 
+    #[\Override]
     protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();
@@ -99,7 +102,7 @@ class OrderWithExternalStatusManagementTest extends FrontendRestJsonApiTestCase
 
         /** @var Order $item */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
-        self::assertEquals('wait_for_approval', $order->getStatus()->getId());
+        self::assertEquals('wait_for_approval', $order->getStatus()->getInternalId());
     }
 
     public function testGetSubresourceForStatus(): void

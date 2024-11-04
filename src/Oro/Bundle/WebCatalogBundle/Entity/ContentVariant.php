@@ -95,9 +95,6 @@ class ContentVariant implements
      */
     protected $expanded = false;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->scopes = new ArrayCollection();
@@ -107,6 +104,7 @@ class ContentVariant implements
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -115,14 +113,13 @@ class ContentVariant implements
     /**
      * @return string
      */
+    #[\Override]
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setType($type)
     {
         $this->type = $type;
@@ -150,9 +147,7 @@ class ContentVariant implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getNode()
     {
         return $this->node;
@@ -173,6 +168,7 @@ class ContentVariant implements
     /**
      * @return Collection|Scope[]
      */
+    #[\Override]
     public function getScopes()
     {
         return $this->scopes;

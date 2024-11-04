@@ -32,6 +32,7 @@ class BasicPayPalCreditCardPaymentMethodFactory implements PayPalCreditCardPayme
      * @param PayPalCreditCardConfigInterface $config
      * @return PaymentMethodInterface
      */
+    #[\Override]
     public function create(PayPalCreditCardConfigInterface $config)
     {
         return new PayPalCreditCardPaymentMethod(

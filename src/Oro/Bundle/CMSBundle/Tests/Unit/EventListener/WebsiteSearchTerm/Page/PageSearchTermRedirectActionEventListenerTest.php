@@ -24,6 +24,7 @@ class PageSearchTermRedirectActionEventListenerTest extends TestCase
 
     private PageSearchTermRedirectActionEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->basicRedirectActionHandler = $this->createMock(BasicRedirectActionHandler::class);

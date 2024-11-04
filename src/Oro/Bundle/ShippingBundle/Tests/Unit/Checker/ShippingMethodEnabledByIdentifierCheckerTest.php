@@ -14,6 +14,7 @@ class ShippingMethodEnabledByIdentifierCheckerTest extends \PHPUnit\Framework\Te
     /** @var ShippingMethodEnabledByIdentifierChecker */
     private $checker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodProvider = $this->createMock(ShippingMethodProviderInterface::class);

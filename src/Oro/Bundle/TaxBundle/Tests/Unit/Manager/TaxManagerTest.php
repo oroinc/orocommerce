@@ -45,6 +45,7 @@ class TaxManagerTest extends \PHPUnit\Framework\TestCase
     /** @var TaxManager */
     private $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = $this->createMock(TaxFactory::class);

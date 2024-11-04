@@ -29,6 +29,7 @@ class DefaultPaymentMethodSetter implements LoggerAwareInterface, DefaultPayment
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function setDefaultPaymentMethod(Checkout $checkout): void
     {
         if ($checkout->getPaymentMethod()) {

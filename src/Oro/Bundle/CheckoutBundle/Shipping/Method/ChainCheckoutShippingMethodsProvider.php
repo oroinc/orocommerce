@@ -22,9 +22,7 @@ class ChainCheckoutShippingMethodsProvider implements CheckoutShippingMethodsPro
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
         foreach ($this->providers as $provider) {
@@ -37,9 +35,7 @@ class ChainCheckoutShippingMethodsProvider implements CheckoutShippingMethodsPro
         return new ShippingMethodViewCollection();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPrice(Checkout $checkout): ?Price
     {
         foreach ($this->providers as $provider) {

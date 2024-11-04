@@ -17,6 +17,7 @@ use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class ResolveCategoryVisibilityTopicTest extends AbstractTopicTestCase
 {
+    #[\Override]
     protected function getTopic(): TopicInterface
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);
@@ -31,6 +32,7 @@ class ResolveCategoryVisibilityTopicTest extends AbstractTopicTestCase
         return new ResolveCategoryVisibilityTopic($managerRegistry);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -56,6 +58,7 @@ class ResolveCategoryVisibilityTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

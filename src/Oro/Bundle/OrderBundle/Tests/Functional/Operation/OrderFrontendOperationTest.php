@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class OrderFrontendOperationTest extends FrontendActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

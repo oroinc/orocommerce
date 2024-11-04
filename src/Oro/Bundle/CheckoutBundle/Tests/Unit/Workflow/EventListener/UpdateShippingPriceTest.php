@@ -17,6 +17,7 @@ class UpdateShippingPriceTest extends TestCase
     private UpdateShippingPriceInterface|MockObject $updateShippingPrice;
     private UpdateShippingPrice $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->updateShippingPrice = $this->createMock(UpdateShippingPriceInterface::class);

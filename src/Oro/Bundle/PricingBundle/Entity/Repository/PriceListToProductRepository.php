@@ -71,9 +71,6 @@ class PriceListToProductRepository extends EntityRepository
         return new BufferedIdentityQueryResultIterator($query);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getProductIdsByPriceList(int|PriceList $priceList): array
     {
         $this->_em->createQueryBuilder();

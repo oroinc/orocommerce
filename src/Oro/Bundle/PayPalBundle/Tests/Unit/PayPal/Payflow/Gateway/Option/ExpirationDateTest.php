@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class ExpirationDateTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new ExpirationDate()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

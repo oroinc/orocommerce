@@ -31,10 +31,6 @@ Feature: Import Product with attributes and null values
     When I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
-  Scenario: Update schema
-    Given I go to Products / Product Attributes
-    And confirm schema update
-
   Scenario: Update product families
     Given I go to Products / Product Families
     And click Edit Default in grid

@@ -18,9 +18,7 @@ class OroSaleBundle implements Migration, AttachmentExtensionAwareInterface, Act
     use AttachmentExtensionAwareTrait;
     use ActivityExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/

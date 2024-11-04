@@ -8,17 +8,13 @@ class UniqueVariantLinksSimpleProduct extends Constraint
 {
     public $message = 'oro.product.product_variant_field.unique_variants_combination_simple_product.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return UniqueVariantLinksSimpleProductValidator::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

@@ -95,9 +95,6 @@ class ContentBlock implements
     #[ORM\Column(type: Types::BOOLEAN, options: ['default' => true])]
     protected ?bool $enabled = true;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->titles = new ArrayCollection();
@@ -169,9 +166,6 @@ class ContentBlock implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getScopes()
     {
         return $this->scopes;

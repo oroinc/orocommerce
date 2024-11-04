@@ -29,6 +29,7 @@ class ProductProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ProductRepository|\PHPUnit\Framework\MockObject\MockObject $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

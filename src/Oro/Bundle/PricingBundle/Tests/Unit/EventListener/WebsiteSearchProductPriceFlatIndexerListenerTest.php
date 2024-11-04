@@ -38,6 +38,7 @@ class WebsiteSearchProductPriceFlatIndexerListenerTest extends TestCase
 
     private WebsiteSearchProductPriceFlatIndexerListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);

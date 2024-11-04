@@ -13,6 +13,7 @@ class ShardManagerTest extends WebTestCase
 {
     private ShardManager $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

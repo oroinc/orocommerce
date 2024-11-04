@@ -21,6 +21,7 @@ class SaveState extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         $this->baseTransition->execute($workflowItem);

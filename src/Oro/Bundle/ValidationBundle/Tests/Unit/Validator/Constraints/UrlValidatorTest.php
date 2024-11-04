@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UrlValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): UrlValidator
     {
         return new UrlValidator();

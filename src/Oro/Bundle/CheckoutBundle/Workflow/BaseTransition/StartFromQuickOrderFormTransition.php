@@ -24,6 +24,7 @@ class StartFromQuickOrderFormTransition extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         $isAllowed = false;

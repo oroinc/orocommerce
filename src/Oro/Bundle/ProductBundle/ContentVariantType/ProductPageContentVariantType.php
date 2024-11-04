@@ -33,41 +33,31 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface, Cont
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTitle()
     {
         return 'oro.product.content_variant.product_page.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFormType()
     {
         return ProductPageVariantType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isAllowed()
     {
         return $this->authorizationChecker->isGranted('oro_product_view');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRouteData(ContentVariantInterface $contentVariant)
     {
         /** @var Product $product */
@@ -76,25 +66,19 @@ class ProductPageContentVariantType implements ContentVariantTypeInterface, Cont
         return new RouteData('oro_product_frontend_product_view', ['id' => $product->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceClassName()
     {
         return Product::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return sprintf('IDENTITY(%s.product_page_product)', $alias);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAttachedEntity(ContentVariantInterface $contentVariant)
     {
         return $this->propertyAccessor->getValue($contentVariant, 'productPageProduct');

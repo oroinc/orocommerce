@@ -13,25 +13,19 @@ class MatchingVariantHydrator extends AbstractMatchingEntityHydrator
 {
     public const NAME = 'oro.cms.entity.hydrator.matching_variant';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getRootEntityAlias(): string
     {
         return 'variant';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClass(): string
     {
         return TextContentVariant::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function hasScopes($variantId): bool
     {
         $hasScopeQuery = 'SELECT 1 FROM oro_cms_txt_cont_variant_scope WHERE variant_id = :id LIMIT 1';

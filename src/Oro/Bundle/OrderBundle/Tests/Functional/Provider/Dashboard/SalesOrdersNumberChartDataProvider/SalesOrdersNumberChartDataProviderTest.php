@@ -4,7 +4,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\SalesOrders
 
 use Carbon\Carbon;
 use Oro\Bundle\DashboardBundle\Model\WidgetOptionBag;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\AbstractDateFilterType;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\AbstractBasicSalesOrdersChartDataProviderTest;
@@ -14,6 +16,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\AbstractBasicSale
  */
 class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersChartDataProviderTest
 {
+    #[\Override]
     protected function getSalesOrdersChartDataProvider(): SalesOrdersChartDataProvider
     {
         return self::getContainer()
@@ -32,6 +35,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function getChartDataDataProvider(): array
     {
         $this->setCurrentDate();
@@ -50,7 +54,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/today.yml',
@@ -68,7 +72,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/monthToDate.yml',
@@ -86,7 +90,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/quarterToDate.yml',
@@ -104,7 +108,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/yearToDate.yml',
@@ -122,7 +126,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/customOneDay.yml',
@@ -140,7 +144,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/custom30Days.yml',
@@ -158,7 +162,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/custom31Days.yml',
@@ -176,7 +180,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/custom52Weeks.yml',
@@ -194,7 +198,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/custom53Weeks.yml',
@@ -212,7 +216,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/custom54Weeks.yml',
@@ -230,7 +234,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/laterThan.yml',
@@ -248,7 +252,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/earlierThan.yml',
@@ -266,7 +270,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/noDataForDateRange1.yml',
@@ -296,7 +300,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'scaling/scaleByDateRange1.yml',
@@ -326,7 +330,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'general/sameRanges.yml',
@@ -357,9 +361,12 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                 ],
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            ),
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -391,7 +398,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                 ],
                 'expectedResultsPath' => 'general/withSubOrders.yml',
@@ -421,7 +428,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/allTimeForRange2AndRange3.yml',
@@ -451,7 +458,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/31-12-2022_-_05-01-2023,laterThan31-12-2022,laterThan31-12-2022.yml',
@@ -481,7 +488,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/laterThan02-01-2023,laterThan01-01-2023,laterThan31-12-2022.yml',
@@ -511,7 +518,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/laterThanDatesInFuture.yml',
@@ -541,7 +548,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/earlierThan04-01-2023,laterThan01-01-2023,laterThan31-12-2022.yml',
@@ -571,7 +578,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/monthToDate,laterThan01-01-2023,laterThan31-12-2022.yml',
@@ -601,7 +608,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/quarterToDate,laterThan01-01-2023,laterThan31-12-2022.yml',
@@ -631,7 +638,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/yearToDate,laterThan01-01-2023,laterThan31-12-2022.yml',
@@ -655,7 +662,7 @@ class SalesOrdersNumberChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'combo/01FebruaryPlus31Days.yml',

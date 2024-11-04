@@ -58,9 +58,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         $this->propertyAccessor = $propertyAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -82,33 +80,24 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return SegmentFilterBuilderType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -140,9 +129,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         $resolver->setAllowedTypes('add_sort_order', 'bool');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['scopeValue'] = $options['scope_value'];
@@ -171,9 +158,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function mapDataToForms(mixed $data, \Traversable $forms)
     {
         $this->getDataMapper()->mapDataToForms($data, $forms);
@@ -200,9 +185,7 @@ class ProductCollectionSegmentType extends AbstractType implements DataMapperInt
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function mapFormsToData(\Traversable $forms, mixed &$data)
     {
         $this->getDataMapper()->mapFormsToData($forms, $data);

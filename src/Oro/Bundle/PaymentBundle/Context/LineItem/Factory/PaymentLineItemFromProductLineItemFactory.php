@@ -24,6 +24,7 @@ class PaymentLineItemFromProductLineItemFactory implements PaymentLineItemFromPr
         $this->paymentKitItemLineItemFactory = $paymentKitItemLineItemFactory;
     }
 
+    #[\Override]
     public function create(ProductLineItemInterface $productLineItem): PaymentLineItem
     {
         $paymentLineItem = (new PaymentLineItem(
@@ -55,6 +56,7 @@ class PaymentLineItemFromProductLineItemFactory implements PaymentLineItemFromPr
      *
      * @return Collection<PaymentLineItem>
      */
+    #[\Override]
     public function createCollection(iterable $productLineItems): Collection
     {
         $paymentLineItems = [];

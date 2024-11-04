@@ -20,9 +20,7 @@ class GuestQuickOrderFormVoterTest extends \PHPUnit\Framework\TestCase
     /** @var GuestQuickOrderFormVoter */
     private $voter;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->configVoter = $this->createMock(VoterInterface::class);

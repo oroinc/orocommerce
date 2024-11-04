@@ -28,9 +28,7 @@ class ProductStrategyEventListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

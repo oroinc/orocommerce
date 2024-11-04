@@ -12,9 +12,7 @@ class ProductQuantityToOrderLimit extends Constraint
 {
     public $message = 'oro.inventory.product.validators.quantity_min_over_max';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

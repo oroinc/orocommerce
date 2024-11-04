@@ -11,9 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
  */
 class RelatedProductStrategy extends ConfigurableAddOrReplaceStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function findEntityByIdentityValues($entityName, array $identityValues)
     {
         if (isset($identityValues['sku']) && is_a($entityName, Product::class, true)) {
@@ -24,9 +22,7 @@ class RelatedProductStrategy extends ConfigurableAddOrReplaceStrategy
         return parent::findEntityByIdentityValues($entityName, $identityValues);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData)
     {
         if ($existingEntity instanceof Product && $entity instanceof Product) {
@@ -36,9 +32,7 @@ class RelatedProductStrategy extends ConfigurableAddOrReplaceStrategy
         return parent::importEntityFields($entity, $existingEntity, $isFullData, $entityIsRelation, $itemData);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function combineIdentityValues($entity, $entityClass, array $searchContext)
     {
         if ($entityClass === RelatedProduct::class) {
@@ -52,9 +46,7 @@ class RelatedProductStrategy extends ConfigurableAddOrReplaceStrategy
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function afterProcessEntity($entity)
     {
         if ($entity instanceof RelatedProduct && $entity->getId()) {
@@ -64,9 +56,7 @@ class RelatedProductStrategy extends ConfigurableAddOrReplaceStrategy
         return parent::afterProcessEntity($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function updateContextCounters($entity): void
     {
     }

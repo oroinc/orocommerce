@@ -9,17 +9,13 @@ use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
  */
 class ApplyAllStrategy extends AbstractStrategy
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.promotion.discount.strategy.apply_all.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(DiscountContextInterface $discountContext, array $discounts): DiscountContextInterface
     {
         foreach ($discounts as $discount) {

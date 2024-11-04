@@ -23,9 +23,7 @@ class AddOrderPromotionDiscounts implements ProcessorInterface
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

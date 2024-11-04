@@ -13,9 +13,7 @@ class FullListUrlProvidersCompilerPass implements CompilerPassInterface
     const TAG_ALLOWED_URLS = 'oro_seo.sitemap.website_access_denied_urls_provider';
     const TAG = 'oro_seo.sitemap.url_items_provider';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition(self::PROVIDER_REGISTRY)) {

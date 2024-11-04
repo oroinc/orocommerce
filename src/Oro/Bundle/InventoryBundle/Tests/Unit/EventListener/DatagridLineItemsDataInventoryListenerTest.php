@@ -31,6 +31,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
 
     private DatagridLineItemsDataInventoryListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->availabilityDate = new \DateTime();
@@ -110,7 +111,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
                 'isUpcoming' => true,
                 'availabilityDate' => 'Jun 10, 2020',
                 'isLowInventory' => false,
-                'inventoryStatus' => 'in_stock',
+                'inventoryStatus' => 'test.in_stock',
                 'minimumQuantityToOrder' => 1,
                 'maximumQuantityToOrder' => 10,
             ],
@@ -150,7 +151,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
             [
                 'isUpcoming' => true,
                 'isLowInventory' => true,
-                'inventoryStatus' => 'in_stock',
+                'inventoryStatus' => 'test.in_stock',
                 'minimumQuantityToOrder' => 1,
                 'maximumQuantityToOrder' => 10,
             ],
@@ -188,7 +189,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
             [
                 'isUpcoming' => false,
                 'isLowInventory' => true,
-                'inventoryStatus' => 'in_stock',
+                'inventoryStatus' => 'test.in_stock',
                 'minimumQuantityToOrder' => 1,
                 'maximumQuantityToOrder' => 10,
             ],
@@ -199,7 +200,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
     public function testOnLineItemDataWithoutQuantityToOrder(): void
     {
         $product = new ProductStub();
-        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
+        $inventoryStatus = new InventoryStatus('test', 'Test', 'in_stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $this->upcomingProductProvider->expects(self::once())
@@ -225,7 +226,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
             [
                 'isUpcoming' => false,
                 'isLowInventory' => true,
-                'inventoryStatus' => 'in_stock',
+                'inventoryStatus' => 'test.in_stock',
                 'minimumQuantityToOrder' => null,
                 'maximumQuantityToOrder' => null,
             ],
@@ -236,7 +237,7 @@ class DatagridLineItemsDataInventoryListenerTest extends \PHPUnit\Framework\Test
     private function createProduct(): ProductStub
     {
         $product = new ProductStub();
-        $inventoryStatus = new InventoryStatus('in_stock', 'In Stock');
+        $inventoryStatus = new InventoryStatus('test', 'Test', 'in_stock');
         $product->setInventoryStatus($inventoryStatus);
 
         $minimumQuantityFallback = new EntityFieldFallbackValue();

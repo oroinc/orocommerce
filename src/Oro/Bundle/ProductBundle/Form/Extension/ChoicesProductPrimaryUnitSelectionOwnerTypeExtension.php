@@ -35,9 +35,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $this->productFormUnitFieldsSettings = $productFormUnitFieldsSettings;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAvailableUnits']);
@@ -63,9 +61,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtension extends AbstractTypeE
         $form->add($child->getName(), get_class($child->getConfig()->getType()->getInnerType()), $options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [self::EXTENDED_TYPE];

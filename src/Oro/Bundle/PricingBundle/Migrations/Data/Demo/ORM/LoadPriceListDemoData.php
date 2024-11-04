@@ -16,17 +16,13 @@ class LoadPriceListDemoData extends AbstractFixture implements ContainerAwareInt
 {
     protected ContainerInterface $container;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $locator = $this->container->get('file_locator');

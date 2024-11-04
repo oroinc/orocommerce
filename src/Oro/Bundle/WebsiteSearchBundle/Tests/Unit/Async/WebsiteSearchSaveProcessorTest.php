@@ -25,6 +25,7 @@ class WebsiteSearchSaveProcessorTest extends \PHPUnit\Framework\TestCase
 
     private WebsiteSearchSaveProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->indexer = $this->createMock(IndexerInterface::class);

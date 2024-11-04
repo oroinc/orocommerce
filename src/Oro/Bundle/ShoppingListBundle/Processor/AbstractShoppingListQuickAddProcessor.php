@@ -69,9 +69,7 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isAllowed(): bool
     {
         return $this->shoppingListLineItemHandler->isAllowed();

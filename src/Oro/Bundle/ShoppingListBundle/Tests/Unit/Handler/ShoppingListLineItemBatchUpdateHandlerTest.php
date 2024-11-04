@@ -38,6 +38,7 @@ class ShoppingListLineItemBatchUpdateHandlerTest extends TestCase
 
     private ShoppingListLineItemBatchUpdateHandler $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemRepository = $this->createMock(LineItemRepository::class);

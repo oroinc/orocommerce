@@ -21,17 +21,13 @@ class TaxCode implements TaxCodeInterface
         return new static($code, $type);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCode(): string
     {
         return $this->code;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getType(): string
     {
         return $this->type;

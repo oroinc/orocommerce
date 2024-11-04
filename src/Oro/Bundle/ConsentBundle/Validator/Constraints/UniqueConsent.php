@@ -11,9 +11,7 @@ class UniqueConsent extends Constraint
 {
     public string $message = 'oro.consent.validators.consent.unique_consent.message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

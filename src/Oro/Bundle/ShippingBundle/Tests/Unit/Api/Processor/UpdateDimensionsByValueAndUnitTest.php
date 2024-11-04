@@ -26,6 +26,7 @@ class UpdateDimensionsByValueAndUnitTest extends CustomizeFormDataProcessorTestC
     /** @var UpdateDimensionsByValueAndUnit */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

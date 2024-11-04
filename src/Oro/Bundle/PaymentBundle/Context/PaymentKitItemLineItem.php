@@ -50,54 +50,61 @@ class PaymentKitItemLineItem extends ParameterBag implements
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->get(self::FIELD_ENTITY_IDENTIFIER);
     }
 
+    #[\Override]
     public function getProduct(): Product|VirtualFieldsProductDecorator|null
     {
         return $this->get(self::FIELD_PRODUCT);
     }
 
+    #[\Override]
     public function getProductSku(): ?string
     {
         return $this->get(self::FIELD_PRODUCT_SKU);
     }
 
+    #[\Override]
     public function getProductHolder(): ProductHolderInterface
     {
         return $this->get(self::FIELD_PRODUCT_HOLDER);
     }
 
+    #[\Override]
     public function getProductUnit(): ProductUnit
     {
         return $this->get(self::FIELD_PRODUCT_UNIT);
     }
 
+    #[\Override]
     public function getProductUnitCode(): string
     {
         return $this->get(self::FIELD_PRODUCT_UNIT_CODE);
     }
 
+    #[\Override]
     public function getQuantity(): float|int
     {
         return $this->get(self::FIELD_QUANTITY);
     }
 
+    #[\Override]
     public function getPrice(): ?Price
     {
         return $this->get(self::FIELD_PRICE);
     }
 
+    #[\Override]
     public function getKitItem(): ?ProductKitItem
     {
         return $this->get(self::FIELD_KIT_ITEM);
     }
 
+    #[\Override]
     public function getSortOrder(): int
     {
         return $this->get(self::FIELD_SORT_ORDER, 0);

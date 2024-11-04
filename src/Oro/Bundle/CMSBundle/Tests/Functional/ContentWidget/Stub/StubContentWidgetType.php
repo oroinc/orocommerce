@@ -8,25 +8,19 @@ use Twig\Environment;
 
 class StubContentWidgetType extends AbstractContentWidgetType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getName(): string
     {
         return 'stub';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return 'stub';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';

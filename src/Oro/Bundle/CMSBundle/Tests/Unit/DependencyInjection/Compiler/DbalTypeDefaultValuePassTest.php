@@ -14,6 +14,7 @@ class DbalTypeDefaultValuePassTest extends \PHPUnit\Framework\TestCase
 {
     private DbalTypeDefaultValuePass $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new DbalTypeDefaultValuePass();

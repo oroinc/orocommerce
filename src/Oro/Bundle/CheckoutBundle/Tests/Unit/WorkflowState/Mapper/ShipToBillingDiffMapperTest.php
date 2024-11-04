@@ -28,9 +28,7 @@ class ShipToBillingDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertFalse($this->mapper->isStatesEqual($this->checkout, true, false));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new ShipToBillingDiffMapper();

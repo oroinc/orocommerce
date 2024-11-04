@@ -177,9 +177,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         $this->options = $this->getOptionsResolver()->resolve($options);

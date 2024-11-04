@@ -19,6 +19,7 @@ class PaymentKitItemLineItemTest extends TestCase
 
     private ProductHolderInterface|MockObject $productHolder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnit = $this->createMock(ProductUnit::class);

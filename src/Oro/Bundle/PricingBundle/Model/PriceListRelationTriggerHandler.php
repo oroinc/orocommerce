@@ -36,57 +36,43 @@ class PriceListRelationTriggerHandler implements PriceListRelationTriggerHandler
         $this->flatHandler = $flatHandler;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleConfigChange(): void
     {
         $this->getHandler()->handleConfigChange();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleFullRebuild(): void
     {
         $this->getHandler()->handleFullRebuild();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleWebsiteChange(Website $website): void
     {
         $this->getHandler()->handleWebsiteChange($website);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleCustomerGroupChange(CustomerGroup $customerGroup, Website $website): void
     {
         $this->getHandler()->handleCustomerGroupChange($customerGroup, $website);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleCustomerGroupRemove(CustomerGroup $customerGroup): void
     {
         $this->getHandler()->handleCustomerGroupRemove($customerGroup);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handleCustomerChange(Customer $customer, Website $website): void
     {
         $this->getHandler()->handleCustomerChange($customer, $website);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handlePriceListStatusChange(PriceList $priceList): void
     {
         $this->getHandler()->handlePriceListStatusChange($priceList);

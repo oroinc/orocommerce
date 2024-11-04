@@ -42,10 +42,9 @@ Feature: Mandatory Consent has been added during Checkout process
 
   Scenario: Enable consent functionality via feature toggle
     When go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
-    And fill form with:
-      | Use Default                  | false |
-      | Enable User Consents Feature | true  |
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
+    And I uncheck "Use default" for "Enable user consents feature" field
+    And I check "Enable user consents feature"
     And click "Save settings"
     Then I should see a "Sortable Consent List" element
 
@@ -65,9 +64,8 @@ Feature: Mandatory Consent has been added during Checkout process
 
   Scenario: Admin selects consents to be enabled on Storefront
     When I go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
-    And fill "Consent Settings Form" with:
-      | Enabled User Consents Use Default | false|
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
+    And I uncheck "Use default" for "Enabled user consents" field
     And click "Add Consent"
     And I choose Consent "Email Newsletters" in 1 row
     And click "Add Consent"

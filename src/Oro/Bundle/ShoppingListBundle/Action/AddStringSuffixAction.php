@@ -24,9 +24,7 @@ class AddStringSuffixAction extends AbstractAction
         parent::__construct($contextAccessor);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         $title = $this->getOriginalString($context);
@@ -50,8 +48,8 @@ class AddStringSuffixAction extends AbstractAction
      *  - stringSuffix - string that will be added to the tail of main string
      *  - maxLength - max result length
      *
-     * {@inheritDoc}
      */
+    #[\Override]
     public function initialize(array $options)
     {
         if (!array_key_exists(self::ATTRIBUTE_OPTION, $options)) {

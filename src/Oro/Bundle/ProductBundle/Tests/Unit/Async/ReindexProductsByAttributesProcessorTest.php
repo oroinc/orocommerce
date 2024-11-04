@@ -34,6 +34,7 @@ class ReindexProductsByAttributesProcessorTest extends \PHPUnit\Framework\TestCa
 
     private ReindexProductsByAttributesProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);

@@ -25,9 +25,7 @@ class WidgetExtension extends AbstractExtension
         $this->widgetIconRenderer = $widgetIconRenderer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [

@@ -15,6 +15,7 @@ class DigitalItemResolverTest extends TestCase
 {
     private DigitalItemResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolver = new DigitalItemResolver(new DigitalKitItemResolver());

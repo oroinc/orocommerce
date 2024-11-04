@@ -18,6 +18,7 @@ class CheckoutLineItemsConverterTest extends TestCase
 {
     private CheckoutLineItemsConverter $checkoutLineItemsConverter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsConverter = new CheckoutLineItemsConverter();

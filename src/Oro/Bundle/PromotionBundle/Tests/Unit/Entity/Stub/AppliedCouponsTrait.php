@@ -12,33 +12,21 @@ trait AppliedCouponsTrait
      */
     protected ?Collection $appliedCoupons = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function removeAppliedCoupon($coupon)
     {
         $this->appliedCoupons->removeElement($coupon);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function setAppliedCoupons($coupons)
     {
         $this->appliedCoupons = $coupons;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getAppliedCoupons()
     {
         return $this->appliedCoupons;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addAppliedCoupon($appliedCoupon)
     {
         return $this->appliedCoupons->add($appliedCoupon);

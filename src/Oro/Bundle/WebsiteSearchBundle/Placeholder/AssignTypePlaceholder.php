@@ -6,9 +6,7 @@ class AssignTypePlaceholder extends AbstractPlaceholder
 {
     const NAME = 'ASSIGN_TYPE';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
@@ -17,6 +15,7 @@ class AssignTypePlaceholder extends AbstractPlaceholder
     /**
      * @return null
      */
+    #[\Override]
     public function getDefaultValue()
     {
         return null;

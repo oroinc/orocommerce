@@ -26,6 +26,7 @@ final class PersistSuggestionPhrasesProcessorTest extends \PHPUnit\Framework\Tes
 
     private int $batchSize = 100;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);

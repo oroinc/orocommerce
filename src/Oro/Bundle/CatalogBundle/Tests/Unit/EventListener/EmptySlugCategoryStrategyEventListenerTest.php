@@ -18,6 +18,7 @@ class EmptySlugCategoryStrategyEventListenerTest extends \PHPUnit\Framework\Test
     /** @var EmptySlugCategoryStrategyEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->slugGenerator = $this->createMock(SlugGenerator::class);

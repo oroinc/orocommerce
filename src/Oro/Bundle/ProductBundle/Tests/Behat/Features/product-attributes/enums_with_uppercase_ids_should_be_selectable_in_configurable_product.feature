@@ -28,10 +28,6 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
 
-    When I go to Products / Product Attributes
-    And I click update schema
-    Then I should see "Schema updated" flash message
-
     Given I go to Products / Product Families
     When I click Edit "Default" in grid
     And set Attribute Groups with:
@@ -40,7 +36,7 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     And I save form
     Then I should see "Successfully updated" flash message
 
-    Scenario: Change "Color" attribute enum ID
+  Scenario: Change "Color" attribute enum ID
     When I go to Products / Product Attributes
     And I click Edit Color in grid
     And I set Options with:
@@ -88,8 +84,8 @@ Feature: Enums with uppercase IDs should be selectable in configurable product
     And click "View Details" for "CNFA" product
     Then I should see an "Configurable Product Form" element
     And "Configurable Product Form" must contains values:
-      | Color | Black |
-    When I fill "Configurable Product Form" with:
       | Color | White |
+    When I fill "Configurable Product Form" with:
+      | Color | Black |
     And I click "Add to Shopping List"
     Then I should see 'Product has been added to "Shopping List"' flash message

@@ -14,6 +14,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestProductKitItemLineItemTypeTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

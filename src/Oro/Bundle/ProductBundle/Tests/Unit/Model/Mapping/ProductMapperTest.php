@@ -15,6 +15,7 @@ class ProductMapperTest extends \PHPUnit\Framework\TestCase
     /** @var ProductMapper */
     private $mapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dataLoader = $this->createMock(ProductMapperDataLoaderInterface::class);

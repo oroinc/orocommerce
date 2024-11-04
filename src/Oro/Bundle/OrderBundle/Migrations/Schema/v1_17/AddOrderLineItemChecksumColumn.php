@@ -13,6 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddOrderLineItemChecksumColumn implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_order_line_item');

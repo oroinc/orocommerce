@@ -9,9 +9,7 @@ use Oro\Bundle\SearchBundle\Query\Query;
  */
 class TextFilteredIndexDataProvider extends IndexDataProvider
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function clearValue($type, $fieldName, $value)
     {
         if (is_array($value)) {

@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CommonUnitValueType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $separator = $this->getDecimalSeparator($options['html5']);
@@ -24,6 +25,7 @@ class CommonUnitValueType extends AbstractType
         $builder->addViewTransformer($transformer);
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         // Since it is not possible to know the value before configuration, we assume that the accuracy will be any.
@@ -54,6 +56,7 @@ class CommonUnitValueType extends AbstractType
         return $formatter->getSymbol(\NumberFormatter::DECIMAL_SEPARATOR_SYMBOL);
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return NumberType::class;

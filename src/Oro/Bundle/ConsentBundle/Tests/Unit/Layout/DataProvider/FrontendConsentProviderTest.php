@@ -32,9 +32,7 @@ class FrontendConsentProviderTest extends \PHPUnit\Framework\TestCase
 
     private FrontendConsentProvider $frontendConsentProvider;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->consentDataProvider = $this->createMock(ConsentDataProvider::class);

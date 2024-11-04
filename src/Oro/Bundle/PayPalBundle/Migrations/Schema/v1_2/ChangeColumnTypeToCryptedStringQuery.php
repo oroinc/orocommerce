@@ -23,6 +23,7 @@ class ChangeColumnTypeToCryptedStringQuery extends ParametrizedSqlMigrationQuery
         parent::__construct();
     }
 
+    #[\Override]
     public function processQueries(LoggerInterface $logger, $dryRun = false)
     {
         $platform = $this->connection->getDatabasePlatform();

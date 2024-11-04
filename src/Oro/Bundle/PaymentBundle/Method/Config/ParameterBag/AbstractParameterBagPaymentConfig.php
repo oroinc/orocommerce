@@ -12,33 +12,25 @@ abstract class AbstractParameterBagPaymentConfig extends ParameterBag implements
     const FIELD_ADMIN_LABEL = 'admin_label';
     const FIELD_PAYMENT_METHOD_IDENTIFIER = 'payment_method_identifier';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return $this->get(self::FIELD_LABEL);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShortLabel()
     {
         return $this->get(self::FIELD_SHORT_LABEL);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAdminLabel()
     {
         return $this->get(self::FIELD_ADMIN_LABEL);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentMethodIdentifier()
     {
         return $this->get(self::FIELD_PAYMENT_METHOD_IDENTIFIER);

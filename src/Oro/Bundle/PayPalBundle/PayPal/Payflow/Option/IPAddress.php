@@ -6,7 +6,7 @@ class IPAddress implements OptionInterface
 {
     const CUSTIP = 'CUSTIP';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

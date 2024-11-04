@@ -24,6 +24,7 @@ class ContentBlockResolverTest extends \PHPUnit\Framework\TestCase
      */
     protected $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

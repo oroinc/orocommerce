@@ -44,6 +44,7 @@ class ProductImageTypeValidator extends ConstraintValidator
      * @param EntityProductImageType $value
      * @param Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (null === $value->getType()) {

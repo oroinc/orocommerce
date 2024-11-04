@@ -7,9 +7,7 @@ use Psr\Log\LoggerInterface;
 
 class UpdateProductDescriptionFieldDataQuery extends MigrateLocalizedFallbackValueWysiwygQuery
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getLocalizedValueIds(LoggerInterface $logger): array
     {
         $sql = 'SELECT flv.id AS id

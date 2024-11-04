@@ -21,9 +21,7 @@ class UniqueExpressCheckoutNameValidator extends ConstraintValidator
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UniqueExpressCheckoutName) {

@@ -27,6 +27,7 @@ class LandingPageProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LocalizationHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $localizationHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EntityRepository::class);

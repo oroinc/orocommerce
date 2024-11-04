@@ -9,7 +9,7 @@ class SecureToken extends AbstractOption
 {
     const SECURETOKEN = 'SECURETOKEN';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

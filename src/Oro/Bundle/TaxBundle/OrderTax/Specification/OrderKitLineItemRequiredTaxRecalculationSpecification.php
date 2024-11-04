@@ -21,6 +21,7 @@ class OrderKitLineItemRequiredTaxRecalculationSpecification implements Specifica
     /**
      * @param OrderProductKitItemLineItem|object $orderLineItem
      */
+    #[\Override]
     public function isSatisfiedBy(object $orderKitLineItem): bool
     {
         if (!$orderKitLineItem instanceof OrderProductKitItemLineItem) {

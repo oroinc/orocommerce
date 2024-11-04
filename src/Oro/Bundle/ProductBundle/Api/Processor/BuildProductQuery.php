@@ -17,9 +17,7 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class BuildProductQuery implements ProcessorInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         $qb = $context->getQuery();

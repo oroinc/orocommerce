@@ -23,9 +23,7 @@ class OroCheckoutBundle implements Migration, ContainerAwareInterface, DatabaseP
     use ContainerAwareTrait;
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->updateOroCheckoutSubtotalTable($schema);

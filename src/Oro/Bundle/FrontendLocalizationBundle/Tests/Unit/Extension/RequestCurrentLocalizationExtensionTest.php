@@ -19,9 +19,7 @@ class RequestCurrentLocalizationExtensionTest extends \PHPUnit\Framework\TestCas
     /** @var RequestCurrentLocalizationExtension */
     private $extension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = new RequestStack();

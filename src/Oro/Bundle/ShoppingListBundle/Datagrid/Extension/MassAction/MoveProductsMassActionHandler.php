@@ -63,9 +63,7 @@ class MoveProductsMassActionHandler implements MassActionHandlerInterface
         $this->shoppingListTotalManager = $shoppingListTotalManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
         $request = $this->requestStack->getMainRequest();

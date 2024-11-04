@@ -20,9 +20,7 @@ class PricingStorageVoter implements VoterInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function vote($feature, $scopeIdentifier = null)
     {
         if ($feature !== 'oro_price_lists_flat' && $feature !== 'oro_price_lists_combined') {

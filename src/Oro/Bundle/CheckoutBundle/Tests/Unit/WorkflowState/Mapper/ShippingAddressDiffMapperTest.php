@@ -11,13 +11,13 @@ class ShippingAddressDiffMapperTest extends AbstractAddressDiffMapperTest
         $this->assertEquals('shipping_address', $this->mapper->getName());
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function getMapper()
     {
         return new ShippingAddressDiffMapper();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function getTestAddressFieldName()
     {
         return 'shippingAddress';

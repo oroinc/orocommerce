@@ -19,6 +19,7 @@ class ProductSearchQueryRestrictionEventListenerTest extends \PHPUnit\Framework\
     /** @var ProductSearchQueryRestrictionEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

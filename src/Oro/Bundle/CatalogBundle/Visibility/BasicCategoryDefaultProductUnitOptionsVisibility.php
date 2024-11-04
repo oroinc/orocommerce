@@ -4,9 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Visibility;
 
 class BasicCategoryDefaultProductUnitOptionsVisibility implements CategoryDefaultProductUnitOptionsVisibilityInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isDefaultUnitPrecisionSelectionAvailable()
     {
         return true;

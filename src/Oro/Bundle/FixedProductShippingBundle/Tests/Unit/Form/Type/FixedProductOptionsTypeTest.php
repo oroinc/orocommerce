@@ -13,6 +13,7 @@ class FixedProductOptionsTypeTest extends FormIntegrationTestCase
 {
     private FixedProductOptionsType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -93,9 +94,7 @@ class FixedProductOptionsTypeTest extends FormIntegrationTestCase
         $form->get(FixedProductMethodType::SURCHARGE_ON);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

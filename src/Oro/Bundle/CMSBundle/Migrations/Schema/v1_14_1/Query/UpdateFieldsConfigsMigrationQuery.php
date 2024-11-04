@@ -28,6 +28,7 @@ class UpdateFieldsConfigsMigrationQuery implements MigrationQuery
     ) {
     }
 
+    #[\Override]
     public function getDescription(): string
     {
         return sprintf(
@@ -36,6 +37,7 @@ class UpdateFieldsConfigsMigrationQuery implements MigrationQuery
         );
     }
 
+    #[\Override]
     public function execute(LoggerInterface $logger): void
     {
         $this->configManager->flush();

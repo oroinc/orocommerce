@@ -34,9 +34,7 @@ abstract class AbstractLoadVisibility implements ProcessorInterface
         $this->websiteManager = $websiteManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */

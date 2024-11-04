@@ -20,6 +20,7 @@ class SalesOrdersVolumeDataProviderTest extends TestCase
 
     private SalesOrdersVolumeDataProvider $salesOrdersVolumeDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderRepository = $this->createMock(OrderRepository::class);

@@ -10,6 +10,7 @@ class ProductVariantFieldValueHandlerRegistryTest extends \PHPUnit\Framework\Tes
     /** @var ProductVariantFieldValueHandlerRegistry */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = new ProductVariantFieldValueHandlerRegistry();

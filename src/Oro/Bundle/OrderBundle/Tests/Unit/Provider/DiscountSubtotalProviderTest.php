@@ -34,6 +34,7 @@ class DiscountSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     /** @var DiscountSubtotalProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

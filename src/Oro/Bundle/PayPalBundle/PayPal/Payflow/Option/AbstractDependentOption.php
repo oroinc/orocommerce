@@ -4,17 +4,17 @@ namespace Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 abstract class AbstractDependentOption implements OptionsDependentInterface
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
     }

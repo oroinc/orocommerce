@@ -30,6 +30,7 @@ class OrderLineItemMapperTest extends TestCase
     private TaxationAddressProvider|MockObject $addressProvider;
     private OrderLineItemMapper $mapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->addressProvider = $this->createMock(TaxationAddressProvider::class);

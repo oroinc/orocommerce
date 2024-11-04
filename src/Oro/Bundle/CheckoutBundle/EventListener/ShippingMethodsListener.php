@@ -31,9 +31,7 @@ class ShippingMethodsListener extends AbstractMethodsListener
         $this->availableShippingMethodChecker = $availableShippingMethodChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
     {
         $checkout->setShippingAddress($address);
@@ -41,17 +39,13 @@ class ShippingMethodsListener extends AbstractMethodsListener
         return $this->availableShippingMethodChecker->hasAvailableShippingMethods($checkout);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getError()
     {
         return 'oro.shipping.methods.no_method';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isManualEditGranted()
     {
         // User can ship to billing address so we have to count manual edit on billing address too.
@@ -59,9 +53,7 @@ class ShippingMethodsListener extends AbstractMethodsListener
             || $this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getApplicableAddresses(Checkout $checkout)
     {
         // User can ship to billing address so we have to count billing addresses too.

@@ -25,6 +25,7 @@ class DatesChainValidator extends ConstraintValidator
      * @param object|array $value
      * @param DatesChain|Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         $previous = null;

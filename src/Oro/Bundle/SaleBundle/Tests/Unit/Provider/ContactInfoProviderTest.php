@@ -40,6 +40,7 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ContactInfoFactory */
     private $contactInfoFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

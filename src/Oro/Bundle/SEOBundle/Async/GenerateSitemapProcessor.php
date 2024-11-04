@@ -61,17 +61,13 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics()
     {
         return [GenerateSitemapTopic::getName()];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         $version = time();

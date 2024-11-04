@@ -19,15 +19,14 @@ class PaymentMethodsConfigsRuleDestinationCollectionTypeTest extends AddressForm
 {
     private PaymentMethodsConfigsRuleDestinationCollectionType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new PaymentMethodsConfigsRuleDestinationCollectionType();
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge(parent::getExtensions(), [

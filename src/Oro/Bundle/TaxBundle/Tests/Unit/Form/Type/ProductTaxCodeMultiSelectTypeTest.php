@@ -12,6 +12,7 @@ class ProductTaxCodeMultiSelectTypeTest extends FormIntegrationTestCase
     /** @var ProductTaxCodeMultiSelectType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ProductTaxCodeMultiSelectType();

@@ -48,9 +48,7 @@ class ShipToBillingAddressTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has(ShipToBillingAddressType::SHIPPING_ADDRESS_FORM_FIELD));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

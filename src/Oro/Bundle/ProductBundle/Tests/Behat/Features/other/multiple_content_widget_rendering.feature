@@ -97,7 +97,7 @@ Feature: Multiple content widget rendering
     And I should see URL Slug field filled with "multiple-content-widgets-page"
 
   Scenario: Create Menu Item
-    Given I go to System/Frontend Menus
+    Given I go to System/Storefront Menus
     And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     When I fill "Commerce Menu Form" with:

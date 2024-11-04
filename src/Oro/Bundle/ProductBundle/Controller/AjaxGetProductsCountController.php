@@ -33,9 +33,7 @@ class AjaxGetProductsCountController extends AbstractController
         return new JsonResponse($count);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

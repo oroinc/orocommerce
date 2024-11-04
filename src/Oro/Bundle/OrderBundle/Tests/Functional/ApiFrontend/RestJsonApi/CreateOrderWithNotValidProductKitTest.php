@@ -12,6 +12,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPayment
  */
 class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,6 +23,7 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

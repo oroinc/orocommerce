@@ -25,6 +25,7 @@ class ProductExtensionTest extends TestCase
 
     private ProductExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProvider::class);

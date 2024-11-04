@@ -33,9 +33,7 @@ class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
         $this->fileManager = $fileManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterConfig()
     {
         $config = [];
@@ -69,6 +67,7 @@ class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
      * @param ThemeImageTypeDimension $dimension
      * @return bool
      */
+    #[\Override]
     public function isApplicable(ThemeImageTypeDimension $dimension)
     {
         return $dimension->hasOption(self::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME) &&

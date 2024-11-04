@@ -46,6 +46,7 @@ class TimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TimeInTransitProvider */
     private $timeInTransit;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->address = new AddressStub();

@@ -12,17 +12,13 @@ class ChannelType implements ChannelInterface, IconAwareIntegrationInterface
 {
     public const TYPE = 'ups';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.ups.channel_type.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIcon()
     {
         return 'bundles/oroups/img/ups-logo.gif';

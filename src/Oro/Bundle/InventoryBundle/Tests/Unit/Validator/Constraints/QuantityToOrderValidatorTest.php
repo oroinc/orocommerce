@@ -18,6 +18,7 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
 {
     private QuantityToOrderValidatorService|\PHPUnit\Framework\MockObject\MockObject $quantityToOrderValidatorService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->quantityToOrderValidatorService = $this->createMock(QuantityToOrderValidatorService::class);
@@ -25,6 +26,7 @@ class QuantityToOrderValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): QuantityToOrderValidator
     {
         return new QuantityToOrderValidator($this->quantityToOrderValidatorService);

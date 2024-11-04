@@ -20,7 +20,7 @@ class BillingAddress extends AbstractOption
     const BILLTOCOMPANY = 'BILLTOCOMPANY';
     const BILLTOPHONENUM = 'BILLTOPHONENUM';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $keys = $this->getAllKeys();

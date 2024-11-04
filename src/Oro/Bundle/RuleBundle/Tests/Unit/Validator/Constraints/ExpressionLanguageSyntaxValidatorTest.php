@@ -10,6 +10,7 @@ class ExpressionLanguageSyntaxValidatorTest extends ConstraintValidatorTestCase
 {
     private SymfonyExpressionLanguageValidator|\PHPUnit\Framework\MockObject\MockObject $innerValidator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerValidator = $this->createMock(SymfonyExpressionLanguageValidator::class);
@@ -17,6 +18,7 @@ class ExpressionLanguageSyntaxValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ExpressionLanguageSyntaxValidator
     {
         return new ExpressionLanguageSyntaxValidator($this->innerValidator);

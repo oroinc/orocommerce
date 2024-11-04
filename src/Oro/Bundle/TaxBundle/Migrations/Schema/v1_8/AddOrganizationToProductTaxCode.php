@@ -11,6 +11,7 @@ class AddOrganizationToProductTaxCode implements Migration
     /**
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->addOrganizationToProductTaxCode($schema);

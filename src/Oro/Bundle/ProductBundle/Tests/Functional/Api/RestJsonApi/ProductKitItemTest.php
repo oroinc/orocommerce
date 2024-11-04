@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
  */
 class ProductKitItemTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

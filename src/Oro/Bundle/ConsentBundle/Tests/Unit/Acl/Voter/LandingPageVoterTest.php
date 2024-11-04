@@ -17,6 +17,7 @@ class LandingPageVoterTest extends \PHPUnit\Framework\TestCase
     /** @var LandingPageVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

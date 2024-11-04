@@ -22,6 +22,7 @@ class RestrictVariantProductViewListenerTest extends \PHPUnit\Framework\TestCase
     private FeatureChecker|MockObject $featureChecker;
     private RestrictVariantProductViewListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

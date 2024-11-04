@@ -12,13 +12,13 @@ class WYSIWYGType extends TextType
 {
     public const TYPE = 'wysiwyg';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName(): string
     {
         return self::TYPE;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;

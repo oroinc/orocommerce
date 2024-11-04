@@ -6,8 +6,8 @@ Feature: Product attributes import triggers product reindex
 
   Scenario: Create different window session
     Given sessions active:
-      | admin    |first_session |
-      | customer |second_session|
+      | admin    | first_session  |
+      | customer | second_session |
 
   Scenario: Import Product Attributes
     Given I proceed as the admin
@@ -15,14 +15,12 @@ Feature: Product attributes import triggers product reindex
     And I go to Products / Product Attributes
     When I download Product Attributes' Data Template file
     And I fill template with data:
-      | fieldName | type | entity.label | entity.description | form.is_enabled | importexport.header |  attachment.mimetypes | attribute.searchable | attribute.filterable | attribute.filter_by | attribute.sortable | attribute.enabled | attribute.visible | email.available_in_template | datagrid.is_visible | datagrid.show_filter | datagrid.order | view.is_displayable | view.priority | search.searchable |enum.enum_options.0.label | enum.enum_options.0.is_default|
-      | Country   | enum | Country      | description_value  | yes             | header_value1       |                       | no                   | no                   | exact_value         | no                 | yes               | yes               | yes                         | 0                   | no                   | 9              | yes                 | 7             | no                |USA                       | no                            |
+      | fieldName | type | entity.label | entity.description | form.is_enabled | importexport.header | attachment.mimetypes | attribute.searchable | attribute.filterable | attribute.filter_by | attribute.sortable | attribute.enabled | attribute.visible | email.available_in_template | datagrid.is_visible | datagrid.show_filter | datagrid.order | view.is_displayable | view.priority | search.searchable | enum.enum_options.0.label | enum.enum_options.0.is_default |
+      | Country   | enum | Country      | description_value  | yes             | header_value1       |                      | no                   | no                   | exact_value         | no                 | yes               | yes               | yes                         | 0                   | no                   | 9              | yes                 | 7             | no                | USA                       | no                             |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
     When I reload the page
-    Then I should see "Update schema"
-    When I click update schema
-    Then I should see "Schema updated" flash message
+    Then I should see "Country" in grid
 
   Scenario: Update product family with new attributes
     Given I go to Products/ Product Families
@@ -60,8 +58,8 @@ Feature: Product attributes import triggers product reindex
     And login as administrator
     And I go to Products / Product Attributes
     When I fill template with data:
-      | fieldName | type | entity.label | entity.description | form.is_enabled | importexport.header |  attachment.mimetypes | attribute.searchable | attribute.filterable | attribute.filter_by | attribute.sortable | attribute.enabled | attribute.visible | email.available_in_template | datagrid.is_visible | datagrid.show_filter | datagrid.order | view.is_displayable | view.priority | search.searchable |enum.enum_options.0.label | enum.enum_options.0.is_default|
-      | Country   | enum | Country      | description_value  | yes             | header_value1       |                       | yes                   | yes                  | exact_value         | yes                | yes               | yes               | yes                         | 0                   | no                   | 9              | yes                 | 7             | yes               |USA                       | no                            |
+      | fieldName | type | entity.label | entity.description | form.is_enabled | importexport.header | attachment.mimetypes | attribute.searchable | attribute.filterable | attribute.filter_by | attribute.sortable | attribute.enabled | attribute.visible | email.available_in_template | datagrid.is_visible | datagrid.show_filter | datagrid.order | view.is_displayable | view.priority | search.searchable | enum.enum_options.0.label | enum.enum_options.0.is_default |
+      | Country   | enum | Country      | description_value  | yes             | header_value1       |                      | yes                  | yes                  | exact_value         | yes                | yes               | yes               | yes                         | 0                   | no                   | 9              | yes                 | 7             | yes               | USA                       | no                             |
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 0, updated: 1, replaced: 0" text
     When I reload the page

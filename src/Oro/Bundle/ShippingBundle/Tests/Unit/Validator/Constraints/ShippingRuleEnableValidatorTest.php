@@ -21,6 +21,7 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
     /** @var TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $tokenAccessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->ruleEnabledChecker = $this->createMock(ShippingRuleEnabledCheckerInterface::class);
@@ -28,6 +29,7 @@ class ShippingRuleEnableValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ShippingRuleEnableValidator
     {
         return new ShippingRuleEnableValidator($this->ruleEnabledChecker, $this->tokenAccessor);

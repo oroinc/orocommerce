@@ -18,6 +18,7 @@ class CategoryFormTemplateDataProviderTest extends TestCase
     private SortOrderDialogTargetStorage|MockObject $sortOrderDialogTargetStorage;
     private CategoryFormTemplateDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->sortOrderDialogTargetStorage = $this->createMock(SortOrderDialogTargetStorage::class);

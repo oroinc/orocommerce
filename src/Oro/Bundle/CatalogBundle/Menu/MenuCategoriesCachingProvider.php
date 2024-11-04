@@ -44,7 +44,6 @@ class MenuCategoriesCachingProvider implements MenuCategoriesProviderInterface
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context
      *  [
@@ -52,6 +51,7 @@ class MenuCategoriesCachingProvider implements MenuCategoriesProviderInterface
      *      'cache_lifetime' => int,
      *  ]
      */
+    #[\Override]
     public function getCategories(
         Category $category,
         ?UserInterface $user = null,

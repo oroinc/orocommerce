@@ -20,11 +20,13 @@ class ProductBrandExtension extends AbstractTypeExtension
     ) {
     }
 
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $callback = function (FormEvent $event) {

@@ -9,6 +9,7 @@ class IncludedTaxCalculatorTest extends \PHPUnit\Framework\TestCase
     /** @var IncludedTaxCalculator */
     private $calculator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->calculator = new IncludedTaxCalculator();

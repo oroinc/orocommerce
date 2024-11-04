@@ -18,9 +18,7 @@ class ContentNodeFromWebCatalogSelectTypeTest extends \PHPUnit\Framework\TestCas
      */
     private $treeHandler;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->treeHandler = $this->createMock(ContentNodeTreeHandler::class);

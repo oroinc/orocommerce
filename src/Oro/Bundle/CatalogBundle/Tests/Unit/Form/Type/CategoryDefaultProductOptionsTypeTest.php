@@ -24,6 +24,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
     /** @var CategoryUnitPrecisionType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new CategoryDefaultProductOptionsType();
@@ -31,9 +32,7 @@ class CategoryDefaultProductOptionsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $visibility = $this->createMock(CategoryDefaultProductUnitOptionsVisibilityInterface::class);

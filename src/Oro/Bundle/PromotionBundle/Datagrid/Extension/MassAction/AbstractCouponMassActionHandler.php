@@ -39,9 +39,7 @@ abstract class AbstractCouponMassActionHandler implements MassActionHandlerInter
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
         $datasource = $args->getDatagrid()->getDatasource();

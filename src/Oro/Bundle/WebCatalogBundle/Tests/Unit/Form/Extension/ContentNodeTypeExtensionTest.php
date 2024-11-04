@@ -50,6 +50,7 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
     /** @var ContentNodeTypeExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->typeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
@@ -134,9 +135,7 @@ class ContentNodeTypeExtensionTest extends FormIntegrationTestCase
         $this->assertEquals([ContentNodeType::class], ContentNodeTypeExtension::getExtendedTypes());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

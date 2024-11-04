@@ -13,9 +13,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
     const ROLE_VIEW_HISTORY = 'ORDER_PAYMENT_HISTORY_VIEW';
     const ROLE_VIEW_ORDER = 'ORDER_VIEW';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRolesData()
     {
         return [
@@ -48,9 +46,7 @@ class LoadPaymentHistoryUserData extends AbstractLoadMultipleUserData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getUsersData()
     {
         return [

@@ -14,6 +14,7 @@ class FrontendBrandFilter extends SearchEntityFilter
 {
     public const FILTER_ALIAS = 'frontend_brand';
 
+    #[\Override]
     public function init($name, array $params): void
     {
         $params[FilterUtility::FORM_OPTIONS_KEY]['field_options'] = $this->getDefaultFieldOptions();

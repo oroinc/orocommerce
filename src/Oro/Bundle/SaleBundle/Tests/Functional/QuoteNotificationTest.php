@@ -8,6 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class QuoteNotificationTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->markTestSkipped('Skipped due to issue with DOMDocument https://bugs.php.net/bug.php?id=52012');

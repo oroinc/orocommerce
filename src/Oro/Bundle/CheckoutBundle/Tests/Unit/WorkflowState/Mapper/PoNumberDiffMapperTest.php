@@ -29,9 +29,7 @@ class PoNumberDiffMapperTest extends AbstractCheckoutDiffMapperTest
         $this->assertFalse($this->mapper->isStatesEqual($this->checkout, '111111111', '22222222'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new PoNumberDiffMapper();

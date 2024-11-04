@@ -29,9 +29,7 @@ class ComputeImageFilePath implements ProcessorInterface
         $this->typeProvider = $typeProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

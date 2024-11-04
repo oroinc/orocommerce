@@ -9,9 +9,7 @@ class LineItemForm extends EntityPage
 {
     const SELECTOR_ITEM_LABEL = '.form-row label';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertPageContainsValue($label, $value)
     {
         $rowLabel = $this->find(

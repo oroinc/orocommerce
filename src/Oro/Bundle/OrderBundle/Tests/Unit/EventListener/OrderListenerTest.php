@@ -17,6 +17,7 @@ class OrderListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = $this->createMock(EntityAwareGeneratorInterface::class);

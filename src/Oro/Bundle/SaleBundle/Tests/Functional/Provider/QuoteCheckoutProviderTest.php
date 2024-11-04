@@ -15,9 +15,7 @@ class QuoteCheckoutProviderTest extends FrontendWebTestCase
      */
     protected $provider;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -12,9 +12,7 @@ class PaymentDeleteAction extends AbstractAction
      */
     protected $requiredOptions = ['link'];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setOptions(ActionConfiguration $options)
     {
         if (!isset($options['confirmation'])) {

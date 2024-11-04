@@ -15,6 +15,7 @@ class ProductPriceEntityListenerTest extends TestCase
 {
     protected ProductPriceEntityListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = $this->getMockBuilder(ProductPriceEntityListener::class)

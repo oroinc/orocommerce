@@ -96,6 +96,6 @@ class FormViewListener
     {
         return $this->registry
             ->getRepository(PriceAttributePriceList::class)
-            ->findOneBy(['name' => LoadPriceAttributePriceListData::SHIPPING_COST_NAME]);
+            ->findOneBy(['name' => LoadPriceAttributePriceListData::SHIPPING_COST_NAME], ['id' => 'DESC']);
     }
 }

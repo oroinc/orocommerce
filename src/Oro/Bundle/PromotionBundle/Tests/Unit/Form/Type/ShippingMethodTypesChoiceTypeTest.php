@@ -27,6 +27,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
     /** @var ShippingMethodTypesChoiceType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(ShippingMethodChoicesProvider::class);
@@ -127,6 +128,7 @@ class ShippingMethodTypesChoiceTypeTest extends FormIntegrationTestCase
         $this->assertEquals('oro_promotion_shipping_methods', $this->formType->getBlockPrefix());
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

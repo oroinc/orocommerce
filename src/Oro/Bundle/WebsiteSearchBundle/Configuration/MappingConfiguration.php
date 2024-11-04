@@ -24,8 +24,8 @@ class MappingConfiguration implements ConfigurationInterface
     /**
      * Website search mapping configuration structure
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('mappings');

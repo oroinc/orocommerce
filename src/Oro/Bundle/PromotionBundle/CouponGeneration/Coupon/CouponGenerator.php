@@ -57,9 +57,7 @@ class CouponGenerator implements CouponGeneratorInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function generateAndSave(CouponGenerationOptions $options)
     {
         $options = clone $options;

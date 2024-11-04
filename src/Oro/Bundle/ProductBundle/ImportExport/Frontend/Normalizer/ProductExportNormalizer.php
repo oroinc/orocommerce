@@ -43,9 +43,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
         $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         $result = parent::normalize($object, $format, $context);
@@ -64,9 +62,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return is_a($data, Product::class)
@@ -74,9 +70,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
             && $context['processorAlias'] === ProductImportExportConfigurationProvider::EXPORT_PROCESSOR_ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
     {
         return false;
@@ -88,6 +82,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
      * @param array $context
      * @return bool
      */
+    #[\Override]
     protected function isFieldSkippedForNormalization($entityName, $fieldName, array $context)
     {
         $config = $this->configProvider->getConfig($entityName, $fieldName);

@@ -17,7 +17,6 @@ datagrids:
                     - product.newArrival
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
-                    - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
         fields_acl:
@@ -37,7 +36,6 @@ datagrids:
                     data_name: product.updatedAt
                 inventory_status:
                     data_name: product.inventory_status
-                    column_name: inventoryStatusId
                 type:
                     data_name: product.type
         columns:
@@ -45,10 +43,11 @@ datagrids:
                 label:         oro.product.sku.label
             productName:
                 label:         oro.product.names.label
-            inventoryStatusId:
+            inventory_status:
                 label:         oro.product.inventory_status.label
                 frontend_type: select
-                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                data_name: inventory_status
+                choices:       "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('prod_inventory_status')"
                 translatable_options: false
             status:
                 label:         oro.product.status.label
@@ -102,10 +101,11 @@ datagrids:
                     data_name: productNameUppercase
                     case_insensitive: false
                     value_conversion: mb_strtoupper
-                inventoryStatusId:
+                inventory_status:
                     type:      enum
-                    data_name: inventoryStatusId
+                    data_name: inventory_status
                     enum_code: prod_inventory_status
+                    renderable: true
                 status:
                     data_name: product.status
                     type: choice
@@ -416,7 +416,7 @@ datagrids:
                     validation_rules:
                         NotBlank: true
                 order:         3
-            inventoryStatusId:
+            inventory_status:
                 inline_editing:
                     enable: true
                     editor:
@@ -462,15 +462,11 @@ datagrids:
                     - product.status
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
-                    - productInventoryStatus.name as inventoryStatusName
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 where:
                     and:
                         - product.id <> :parentProduct
-                join:
-                    left:
-                        - { join: product.inventory_status, alias: productInventoryStatus }
             bind_parameters:
                 - parentProduct
         sorters:
@@ -504,10 +500,10 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-                inventoryStatusName:
+                inventory_status:
                     label:     oro.product.inventory_status.label
                     type:      enum
-                    data_name: inventoryStatusName
+                    data_name: inventory_status
                     enum_code: prod_inventory_status
 
     product-product-variants-edit:
@@ -562,11 +558,12 @@ datagrids:
                 label:         oro.product.status.label
                 frontend_type: select
                 choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-            inventoryStatus:
+            inventory_status:
                 label:         oro.product.inventory_status.label
-                type:          twig
-                frontend_type: html
-                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
+                frontend_type: select
+                data_name: inventory_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('prod_inventory_status')"
+                translatable_options: false
         sorters:
             columns:
                 isVariant:
@@ -602,11 +599,12 @@ datagrids:
                 label:         oro.product.status.label
                 frontend_type: select
                 choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-            inventoryStatus:
+            inventory_status:
                 label:         oro.product.inventory_status.label
-                type:          twig
-                frontend_type: html
-                template:      '@OroProduct/Product/Datagrid/inventoryStatus.html.twig'
+                frontend_type: select
+                data_name: inventory_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('prod_inventory_status')"
+                translatable_options: false
         sorters:
             columns:
                 visible:
@@ -632,7 +630,6 @@ datagrids:
                     - product.type
                     - product.denormalizedDefaultName as productName
                     - product.denormalizedDefaultNameUppercase as productNameUppercase
-                    - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
         fields_acl:
@@ -642,7 +639,6 @@ datagrids:
                     column_name: productName
                 inventory_status:
                     data_name: product.inventory_status
-                    column_name: inventoryStatusId
                 sku:
                     data_name: product.sku
                 status:
@@ -660,10 +656,11 @@ datagrids:
                 label:         oro.product.sku.label
             productName:
                 label:         oro.product.names.label
-            inventoryStatusId:
+            inventory_status:
                 label:         oro.product.inventory_status.label
                 frontend_type: select
-                choices:       "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                data_name: inventory_status
+                choices:       "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('prod_inventory_status')"
                 translatable_options: false
             status:
                 label:         oro.product.status.label
@@ -710,9 +707,9 @@ datagrids:
                     data_name: productNameUppercase
                     case_insensitive: false
                     value_conversion: mb_strtoupper
-                inventoryStatusId:
+                inventory_status:
                     type:      enum
-                    data_name: inventoryStatusId
+                    data_name: inventory_status
                     enum_code: prod_inventory_status
                 status:
                     data_name: product.status
@@ -962,7 +959,6 @@ datagrids:
                     - product.status
                     - product.type
                     - product.denormalizedDefaultName as productName
-                    - IDENTITY(product.inventory_status) as inventoryStatusId
                 from:
                     - { table: 'Oro\Bundle\ProductBundle\Entity\Product', alias: product }
                 join:
@@ -1004,10 +1000,11 @@ datagrids:
                 label: oro.product.sku.label
             productName:
                 label: oro.product.names.label
-            inventoryStatusId:
+            inventory_status:
                 label: oro.product.inventory_status.label
                 frontend_type: select
-                choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                data_name: inventory_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('prod_inventory_status')"
                 translatable_options: false
             status:
                 label: oro.product.status.label
@@ -1188,7 +1185,8 @@ datagrids:
                 select:
                     - text.sku as sku
                     - text.names_LOCALIZATION_ID as name
-                    - text.inv_status as inventory_status
+                    - text.inv_status as inv_status
+
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -1196,10 +1194,11 @@ datagrids:
                 label: oro.product.sku.label
             name:
                 label: oro.product.names.label
-            inventory_status:
+            inv_status:
                 label: oro.product.inventory_status.label
                 frontend_type: select
-                choices: "@oro_entity_extend.enum_value_provider->getEnumChoicesByCode('prod_inventory_status')"
+                data_name: inv_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumInternalChoicesByCode('prod_inventory_status')"
                 translatable_options: false
         filters:
             columns:
@@ -1211,9 +1210,9 @@ datagrids:
                     type: string
                     data_name: text.names_LOCALIZATION_ID
                     force_like: true
-                inventory_status:
+                inv_status:
                     type: enum
-                    data_name: text.inv_status
+                    data_name: inv_status
                     enum_code: prod_inventory_status
         sorters:
             columns:
@@ -1221,8 +1220,8 @@ datagrids:
                     data_name: sku
                 name:
                     data_name: name
-                inventory_status:
-                    data_name: inventory_status
+                inv_status:
+                    data_name: inv_status
             toolbar_sorting: true
             disable_default_sorting: true
         properties:

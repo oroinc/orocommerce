@@ -19,6 +19,7 @@ class InlineEditProductControllerTest extends WebTestCase
     private const NEW_PRODUCT_SLUG_PROTOTYPE = 'new-default-product-1-name';
     private const NEW_INVENTORY_STATUS_ID = 'out_of_stock';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateWsseAuthHeader());
@@ -193,19 +194,19 @@ class InlineEditProductControllerTest extends WebTestCase
     {
         /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $product1->getInventoryStatus()->getId());
+        $this->assertEquals(Product::INVENTORY_STATUS_IN_STOCK, $product1->getInventoryStatus()->getInternalId());
 
         $this->client->jsonRequest(
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [
-                'inventoryStatusId' => self::NEW_INVENTORY_STATUS_ID
+                'inventory_status' => self::NEW_INVENTORY_STATUS_ID
             ]
         );
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);
-        $this->assertEquals(self::NEW_INVENTORY_STATUS_ID, $product1->getInventoryStatus()->getId());
+        $this->assertEquals(self::NEW_INVENTORY_STATUS_ID, $product1->getInventoryStatus()->getInternalId());
     }
 
     public function testProductEditInventoryStatusEmptyParameters()
@@ -246,7 +247,7 @@ class InlineEditProductControllerTest extends WebTestCase
             'PATCH',
             $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [
-                'inventoryStatusId' => 'unknown_inventory_status',
+                'inventory_status' => 'unknown_inventory_status',
             ]
         );
         $result = $this->client->getResponse();

@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

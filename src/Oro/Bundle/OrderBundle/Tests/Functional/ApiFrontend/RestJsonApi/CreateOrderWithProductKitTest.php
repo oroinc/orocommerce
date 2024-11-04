@@ -14,6 +14,7 @@ class CreateOrderWithProductKitTest extends FrontendRestJsonApiTestCase
 {
     use OrderResponseTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,6 +25,7 @@ class CreateOrderWithProductKitTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();

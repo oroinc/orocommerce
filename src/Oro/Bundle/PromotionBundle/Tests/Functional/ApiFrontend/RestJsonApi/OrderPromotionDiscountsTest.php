@@ -10,6 +10,7 @@ use Oro\DBAL\Types\MoneyType;
 
 class OrderPromotionDiscountsTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -28,6 +28,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendProductDatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productShoppingListsDataProvider = $this->createMock(ProductShoppingListsDataProvider::class);

@@ -27,6 +27,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit\Framework\TestCase
 
     private FrontendProductDatagridListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);

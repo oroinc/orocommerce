@@ -10,6 +10,7 @@ class BrandStatusProviderTest extends \PHPUnit\Framework\TestCase
     /** @var BrandStatusProvider */
     protected $brandStatusProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->brandStatusProvider = new BrandStatusProvider();

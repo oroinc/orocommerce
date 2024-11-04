@@ -45,6 +45,7 @@ class FilteredDatagridRouteHelper implements DatagridAwareRouteHelperInterface
      *
      * @return string
      */
+    #[\Override]
     public function generate(array $filters = [], int $referenceType = UrlGeneratorInterface::ABSOLUTE_PATH)
     {
         $params = [];

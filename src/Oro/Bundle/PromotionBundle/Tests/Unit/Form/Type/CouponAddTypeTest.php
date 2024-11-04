@@ -25,6 +25,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
     /** @var CouponAddType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -32,9 +33,7 @@ class CouponAddTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $coupon1 = $this->getEntity(Coupon::class, ['id' => 1]);

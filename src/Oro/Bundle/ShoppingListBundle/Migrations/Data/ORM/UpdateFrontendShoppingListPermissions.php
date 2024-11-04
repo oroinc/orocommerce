@@ -17,17 +17,13 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class UpdateFrontendShoppingListPermissions extends AbstractUpdatePermissions implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCustomerUserRoles::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {

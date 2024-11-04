@@ -30,6 +30,7 @@ final class FrontendInventorySwitcherFilterTest extends TestCase
 
     private FrontendInventorySwitcherFilter $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

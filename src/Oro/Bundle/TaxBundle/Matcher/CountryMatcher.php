@@ -23,9 +23,7 @@ class CountryMatcher implements MatcherInterface, ResetInterface
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function match(AbstractAddress $address, TaxCodes $taxCodes): array
     {
         $country = $address->getCountry();
@@ -44,9 +42,7 @@ class CountryMatcher implements MatcherInterface, ResetInterface
         return $taxRules;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset(): void
     {
         $this->cache = [];

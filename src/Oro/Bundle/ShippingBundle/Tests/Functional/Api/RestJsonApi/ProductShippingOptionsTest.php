@@ -16,6 +16,7 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingO
  */
 class ProductShippingOptionsTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

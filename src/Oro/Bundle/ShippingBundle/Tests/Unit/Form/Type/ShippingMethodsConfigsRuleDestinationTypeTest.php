@@ -18,6 +18,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
     private AddressCountryAndRegionSubscriber $subscriber;
     private ShippingMethodsConfigsRuleDestinationType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->subscriber = new AddressCountryAndRegionSubscriberStub();
@@ -25,9 +26,7 @@ class ShippingMethodsConfigsRuleDestinationTypeTest extends AddressFormExtension
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return array_merge(parent::getExtensions(), [

@@ -16,12 +16,14 @@ class ProductAssignmentRuleExpressionValidatorTest extends ConstraintValidatorTe
     /** @var ProductAssignmentRuleCompiler|\PHPUnit\Framework\MockObject\MockObject */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = $this->createMock(ProductAssignmentRuleCompiler::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductAssignmentRuleExpressionValidator
     {
         return new ProductAssignmentRuleExpressionValidator($this->compiler);

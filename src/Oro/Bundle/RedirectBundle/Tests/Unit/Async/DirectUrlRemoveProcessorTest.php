@@ -26,6 +26,7 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit\Framework\TestCase
 
     private DirectUrlRemoveProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

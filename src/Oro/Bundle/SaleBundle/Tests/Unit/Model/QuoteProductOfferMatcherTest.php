@@ -12,6 +12,7 @@ class QuoteProductOfferMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteProductOfferMatcher */
     private $matcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->matcher = new QuoteProductOfferMatcher();

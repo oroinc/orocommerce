@@ -38,7 +38,7 @@ Feature: Promotions on checkout from quote
     And click "Quotes"
     And click view "PO42" in grid
     And click "Accept and Submit to Order"
-    And I click "Submit"
+    And I click "Checkout"
     Then I should not see "Discount"
 
   Scenario: Check that there is no coupon form on checkout

@@ -16,6 +16,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

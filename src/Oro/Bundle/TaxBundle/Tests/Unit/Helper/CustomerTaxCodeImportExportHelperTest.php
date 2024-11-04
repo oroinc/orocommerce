@@ -18,6 +18,7 @@ class CustomerTaxCodeImportExportHelperTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerTaxCodeImportExportHelper */
     private $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(CustomerTaxCodeRepository::class);

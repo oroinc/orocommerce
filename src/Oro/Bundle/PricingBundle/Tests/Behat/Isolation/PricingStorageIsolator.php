@@ -31,9 +31,7 @@ class PricingStorageIsolator implements IsolatorInterface
         $this->kernel = $kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(ContainerInterface $container)
     {
         if (!$container->get(ApplicationState::class)->isInstalled()) {
@@ -45,24 +43,18 @@ class PricingStorageIsolator implements IsolatorInterface
         return $storage === 'flat' || $storage === 'combined';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'PricingStorage';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function start(BeforeStartTestsEvent $event)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function beforeTest(BeforeIsolatedTestEvent $event)
     {
         $container = $this->kernel->getContainer();
@@ -111,38 +103,28 @@ class PricingStorageIsolator implements IsolatorInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function afterTest(AfterIsolatedTestEvent $event)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function terminate(AfterFinishTestsEvent $event)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function restoreState(RestoreStateEvent $event)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOutdatedState()
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTag()
     {
         return 'pricing_storage';

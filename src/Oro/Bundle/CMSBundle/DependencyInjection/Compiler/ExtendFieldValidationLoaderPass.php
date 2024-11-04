@@ -20,9 +20,7 @@ class ExtendFieldValidationLoaderPass implements CompilerPassInterface
     private const SERIALIZED_FIELDS_EXTEND_FIELD_VALIDATOR_SERVICE_ID
         = 'oro_serialized_fields.validator.extend_entity_serialized_data';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $this->addTableFieldConstraints($container);

@@ -43,6 +43,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @return int
      */
+    #[\Override]
     public function getSortOrder()
     {
         return $this->sortOrder;
@@ -62,6 +63,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @return PriceList
      */
+    #[\Override]
     public function getPriceList()
     {
         return $this->priceList;
@@ -71,6 +73,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
      * @param PriceList $priceList
      * @return $this
      */
+    #[\Override]
     public function setPriceList(PriceList $priceList)
     {
         $this->priceList = $priceList;
@@ -81,6 +84,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @return Website
      */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
@@ -90,6 +94,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
      * @param Website $website
      * @return $this
      */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;

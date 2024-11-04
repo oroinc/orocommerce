@@ -27,6 +27,7 @@ class ShippingLineItemOptionsModifierTest extends TestCase
     private ManagerRegistry|MockObject $managerRegistry;
     private ShippingLineItemOptionsModifier $modifier;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductShippingOptionsRepository::class);

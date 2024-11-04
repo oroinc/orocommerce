@@ -20,6 +20,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
     /** @var ZipCodeType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ZipCodeType();
@@ -92,9 +93,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         $zipCodeFieldsValidator = $this->getMockBuilder(ZipCodeFieldsValidator::class)
@@ -140,9 +139,7 @@ class ZipCodeTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

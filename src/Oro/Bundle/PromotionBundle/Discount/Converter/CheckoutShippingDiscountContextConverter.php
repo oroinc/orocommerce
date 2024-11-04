@@ -13,9 +13,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
  */
 class CheckoutShippingDiscountContextConverter implements DiscountContextConverterInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert($sourceEntity): DiscountContext
     {
         /** @var Checkout $sourceEntity */
@@ -37,9 +35,7 @@ class CheckoutShippingDiscountContextConverter implements DiscountContextConvert
         return $discountContext;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($sourceEntity): bool
     {
         return $sourceEntity instanceof Checkout && !$sourceEntity->getSourceEntity() instanceof QuoteDemand;

@@ -22,12 +22,14 @@ class ItemRepositoryTest extends WebTestCase
 {
     use SearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
         $this->loadFixtures([LoadItemData::class]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->clearIndexTextTable(IndexText::class);

@@ -38,6 +38,7 @@ class VerifyCustomerConsentsListenerTest extends TestCase
 
     private VerifyCustomerConsentsListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

@@ -28,6 +28,7 @@ class QuoteCheckoutShippingMethodsProviderTest extends \PHPUnit\Framework\TestCa
     /** @var QuoteCheckoutShippingMethodsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutShippingContextProvider = $this->createMock(CheckoutShippingContextProvider::class);

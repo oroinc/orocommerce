@@ -24,6 +24,7 @@ abstract class AbstractPriceListRelationDataGridListenerTest extends \PHPUnit\Fr
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

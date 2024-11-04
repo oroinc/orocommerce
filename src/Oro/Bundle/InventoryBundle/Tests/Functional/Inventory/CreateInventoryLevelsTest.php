@@ -15,6 +15,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
  */
 class CreateInventoryLevelsTest extends ProductHelperTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -66,9 +67,7 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
         $this->assertCount($product->getUnitPrecisions()->count(), $inventoryLevels);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getLocalization(): Localization
     {
         $localization = self::getContainer()->get('doctrine')->getRepository(Localization::class)->findOneBy([]);
@@ -79,9 +78,7 @@ class CreateInventoryLevelsTest extends ProductHelperTestCase
         return $localization;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getLocalizedName(Product $product, Localization $localization): AbstractLocalizedFallbackValue
     {
         $localizedName = null;

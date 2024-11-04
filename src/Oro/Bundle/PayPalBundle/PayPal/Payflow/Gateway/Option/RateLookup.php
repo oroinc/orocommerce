@@ -9,7 +9,7 @@ class RateLookup extends AbstractOption
 {
     const RATELOOKUPID = 'RATELOOKUPID';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

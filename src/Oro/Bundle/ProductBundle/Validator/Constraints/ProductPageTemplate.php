@@ -23,9 +23,7 @@ class ProductPageTemplate extends Constraint
         $this->route = $options['route'] ?? null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return ProductPageTemplateValidator::ALIAS;

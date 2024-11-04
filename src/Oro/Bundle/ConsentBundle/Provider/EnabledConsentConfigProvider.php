@@ -25,9 +25,7 @@ class EnabledConsentConfigProvider implements EnabledConsentConfigProviderInterf
         $this->contextProvider = $contextProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConsentConfigs(): array
     {
         $website = $this->contextProvider->getWebsite();

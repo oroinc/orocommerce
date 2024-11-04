@@ -33,16 +33,16 @@
     {{ parent() }}
     <span class="page-title__internalStatus">
         {%- set internalStatusBadgeClass = 'info' %}
-        {%- if entity.internalStatus.id == 'closed' %}
+        {%- if entity.internalStatus.internalId == 'closed' %}
             {%- set internalStatusBadgeClass = 'disabled' %}
-        {%- elseif entity.internalStatus.id == 'cancelled' %}
+        {%- elseif entity.internalStatus.internalId == 'cancelled' %}
             {%- set internalStatusBadgeClass = 'danger' %}
         {%- endif %}
         {{ UI.badge(entity.internalStatus.name, internalStatusBadgeClass) }}
     </span>
     {% if oro_config_value('oro_order.order_enable_external_status_management') and entity.status %}
         <span class="page-title__status">
-            {{ UI.badge(entity.status.name, 'info') }}
+            {{ UI.badge(entity.status.id|trans_enum, 'info') }}
         </span>
     {% endif %}
 {% endblock breadcrumbs %}
@@ -82,6 +82,7 @@
     {% endset %}
 
     {% set shippingInformation %}
+        {{ UI.renderProperty('oro.order.shipping_status.label'|trans, entity.shippingStatus.name|default('N/A'|trans)) }}
         {%- if entity.shippingMethod and entity.shippingMethodType -%}
             {{ UI.renderProperty(
                 'oro.order.shipping_method.label'|trans,

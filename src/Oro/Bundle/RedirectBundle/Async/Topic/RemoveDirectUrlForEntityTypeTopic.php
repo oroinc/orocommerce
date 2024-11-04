@@ -14,16 +14,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RemoveDirectUrlForEntityTypeTopic extends AbstractTopic
 {
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.redirect.remove_direct_url.entity_type';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Remove Slug URLs for the entities of specified type.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

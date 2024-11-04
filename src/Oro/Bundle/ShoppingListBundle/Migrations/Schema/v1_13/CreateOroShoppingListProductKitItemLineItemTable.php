@@ -14,6 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
  */
 class CreateOroShoppingListProductKitItemLineItemTable implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         if (!$schema->hasTable('oro_shopping_list_product_kit_item_line_item')) {

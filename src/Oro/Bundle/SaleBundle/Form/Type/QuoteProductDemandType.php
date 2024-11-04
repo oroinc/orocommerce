@@ -28,9 +28,7 @@ class QuoteProductDemandType extends AbstractType
     const FIELD_QUOTE_PRODUCT_OFFER = 'quoteProductOffer';
     const FIELD_UNIT = 'unit';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired(['data']);
@@ -41,9 +39,7 @@ class QuoteProductDemandType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var QuoteProductDemand $quoteProductDemand */
@@ -105,9 +101,7 @@ class QuoteProductDemandType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         /** @var QuoteProductDemand $quoteProductDemand */
@@ -131,17 +125,12 @@ class QuoteProductDemandType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

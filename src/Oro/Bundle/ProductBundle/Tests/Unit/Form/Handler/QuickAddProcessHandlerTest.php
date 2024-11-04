@@ -48,6 +48,7 @@ class QuickAddProcessHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddProcessHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processorRegistry = $this->createMock(ComponentProcessorRegistry::class);

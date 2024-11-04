@@ -16,9 +16,7 @@ class ProductEntityListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -129,9 +129,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
         $this->upsClientSecret = $upsClientSecret;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createRequest(): UpsClientRequestInterface
     {
         $requestData = $this->getRequestData();
@@ -220,9 +218,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
         return $request;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setWeight(int $weight, string $weightUnitCode): self
     {
         $this->weight = $weight;
@@ -231,9 +227,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setMaximumListSize(string $maximumListSize): self
     {
         $this->maximumListSize = $maximumListSize;
@@ -241,9 +235,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setTransactionIdentifier(string $transactionIdentifier): self
     {
         $this->transactionIdentifier = $transactionIdentifier;
@@ -251,9 +243,7 @@ class TimeInTransitRequestBuilder implements TimeInTransitRequestBuilderInterfac
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setCustomerContext(string $customerContext): self
     {
         $this->customerContext = $customerContext;

@@ -194,6 +194,7 @@ class ProductImage implements ExtendEntityInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return $this->getImage()

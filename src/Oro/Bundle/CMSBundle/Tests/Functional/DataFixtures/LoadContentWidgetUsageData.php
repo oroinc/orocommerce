@@ -35,9 +35,7 @@ class LoadContentWidgetUsageData extends AbstractFixture implements DependentFix
             ],
         ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::CONTENT_WIDGET_USAGES as $reference => $mapping) {
@@ -54,9 +52,7 @@ class LoadContentWidgetUsageData extends AbstractFixture implements DependentFix
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

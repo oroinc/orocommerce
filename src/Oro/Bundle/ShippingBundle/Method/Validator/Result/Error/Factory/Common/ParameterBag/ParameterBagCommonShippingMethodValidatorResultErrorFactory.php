@@ -8,9 +8,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\ParameterBag\Paramet
 class ParameterBagCommonShippingMethodValidatorResultErrorFactory implements
     Factory\Common\CommonShippingMethodValidatorResultErrorFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createError($message)
     {
         return new ParameterBagShippingMethodValidatorResultError(

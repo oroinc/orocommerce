@@ -23,9 +23,7 @@ class ProtectRelatedProductDeleteQueryByAcl extends ProtectRelatedProductQueryBy
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

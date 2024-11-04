@@ -25,6 +25,7 @@ class UpdateIntegrationValidatorTest extends ConstraintValidatorTestCase
 
     private string $violationPath;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
@@ -34,6 +35,7 @@ class UpdateIntegrationValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new UpdateIntegrationValidator(

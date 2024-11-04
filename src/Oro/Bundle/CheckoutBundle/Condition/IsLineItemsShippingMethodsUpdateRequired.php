@@ -21,11 +21,7 @@ class IsLineItemsShippingMethodsUpdateRequired extends AbstractCondition impleme
     private mixed $lineItems = null;
     private mixed $lineItemsShippingData = null;
 
-    /**
-     * {@inheritDoc}
-     * Line item shipping methods should be updated if stored checkout value is not empty
-     * but some line item has no shipping method.
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $lineItemsShippingData = $this->resolveValue($context, $this->lineItemsShippingData);
@@ -44,17 +40,13 @@ class IsLineItemsShippingMethodsUpdateRequired extends AbstractCondition impleme
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'is_line_items_shipping_methods_update_required';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (\array_key_exists(self::LINE_ITEMS, $options)) {
@@ -80,17 +72,13 @@ class IsLineItemsShippingMethodsUpdateRequired extends AbstractCondition impleme
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->lineItems, $this->lineItemsShippingData]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->lineItems, $this->lineItemsShippingData], $factoryAccessor);

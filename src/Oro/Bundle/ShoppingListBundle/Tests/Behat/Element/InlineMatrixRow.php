@@ -13,6 +13,7 @@ class InlineMatrixRow extends TableRow
      * @param int $number Row index number starting from 0
      * @return NodeElement
      */
+    #[\Override]
     public function getCellByNumber($number)
     {
         $number = (int) $number;
@@ -36,6 +37,7 @@ class InlineMatrixRow extends TableRow
      * @param int $columnNumber
      * @return string
      */
+    #[\Override]
     protected function getCellElementValue($columnNumber)
     {
         $cellElement = $this->getCellByNumber($columnNumber);

@@ -21,6 +21,7 @@ class OrderProductKitLineItemListenerTest extends TestCase
 
     private OrderProductKitLineItemListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);

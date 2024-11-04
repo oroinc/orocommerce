@@ -51,9 +51,7 @@ class PaymentMethodsListener extends AbstractMethodsListener
         $this->checkoutPaymentContextProvider = $checkoutPaymentContextProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
     {
         $checkout->setBillingAddress($address);
@@ -63,25 +61,19 @@ class PaymentMethodsListener extends AbstractMethodsListener
         return count($paymentMethodsConfigs) > 0;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getError()
     {
         return 'oro.payment.methods.no_method';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function isManualEditGranted()
     {
         return $this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getApplicableAddresses(Checkout $checkout)
     {
         return array_merge(

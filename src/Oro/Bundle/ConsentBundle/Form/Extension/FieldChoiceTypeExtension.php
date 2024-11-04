@@ -13,14 +13,13 @@ use Symfony\Component\Form\FormView;
  */
 class FieldChoiceTypeExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [FieldChoiceType::class];
     }
 
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['page_component_options']['exclude'][] = [

@@ -23,8 +23,8 @@ class LineItemValidator extends ConstraintValidator
      * @param LineItem $value
      * @param Constraint|LineItem $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         $lineItemRepository = $this->registry->getRepository(LineItem::class);

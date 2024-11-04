@@ -21,9 +21,7 @@ class ComputeShoppingListDefault implements ProcessorInterface
         $this->defaultShoppingListEntityIdResolver = $defaultShoppingListEntityIdResolver;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

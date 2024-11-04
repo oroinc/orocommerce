@@ -25,6 +25,7 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderShippingTrackingHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->manager = $this->createMock(ObjectManager::class);

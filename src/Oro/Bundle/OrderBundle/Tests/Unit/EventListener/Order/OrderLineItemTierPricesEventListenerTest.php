@@ -24,6 +24,7 @@ class OrderLineItemTierPricesEventListenerTest extends TestCase
 
     private OrderLineItemTierPricesEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderProductPriceProvider = $this->createMock(OrderProductPriceProvider::class);

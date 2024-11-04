@@ -26,14 +26,13 @@ class TitleDataProvider implements TitleDataProviderInterface
         $this->localizationHelper = $localizationHelper;
     }
 
+    #[\Override]
     public function getNodeTitle($default = '')
     {
         return $this->getTitle($default);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTitle($default = '', $data = null)
     {
         $contentNode = $this->getContentNode();
@@ -47,6 +46,7 @@ class TitleDataProvider implements TitleDataProviderInterface
         return $default;
     }
 
+    #[\Override]
     public function isRenderTitle(): bool
     {
         $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();

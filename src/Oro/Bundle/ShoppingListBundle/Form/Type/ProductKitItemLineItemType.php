@@ -33,6 +33,7 @@ class ProductKitItemLineItemType extends AbstractType
         $this->productToIdDataTransformer = $productToIdDataTransformer;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -73,6 +74,7 @@ class ProductKitItemLineItemType extends AbstractType
         });
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -80,6 +82,7 @@ class ProductKitItemLineItemType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_kit_item_line_item';

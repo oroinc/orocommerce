@@ -10,9 +10,7 @@ use Oro\Component\Math\BigDecimal;
  */
 class TaxCalculator extends AbstractTaxCalculator
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function doCalculate(string $amount, string $taxRate): ResultElement
     {
         $exclTax = BigDecimal::of($amount);
@@ -24,7 +22,7 @@ class TaxCalculator extends AbstractTaxCalculator
         return ResultElement::create($inclTax, $exclTax, $taxAmount);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getAmountKey()
     {
         return ResultElement::EXCLUDING_TAX;

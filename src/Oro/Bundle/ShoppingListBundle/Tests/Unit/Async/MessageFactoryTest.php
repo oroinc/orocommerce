@@ -21,6 +21,7 @@ class MessageFactoryTest extends \PHPUnit\Framework\TestCase
      */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

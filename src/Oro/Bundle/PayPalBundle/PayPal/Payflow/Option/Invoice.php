@@ -9,7 +9,7 @@ class Invoice extends AbstractOption
 {
     const INVNUM = 'INVNUM';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

@@ -24,6 +24,7 @@ class RfpAllowedTest extends \PHPUnit\Framework\TestCase
     /** @var RfpAllowed */
     private $rfpAllowed;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);

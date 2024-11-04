@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormEvents;
  */
 class OrderProductKitItemLineItemCollectionRemovingListener implements EventSubscriberInterface
 {
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

@@ -55,9 +55,7 @@ class CheckoutStateDiffMapperRegistry implements ResetInterface
         return $this->initializedMappers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset()
     {
         $this->initializedMappers = null;

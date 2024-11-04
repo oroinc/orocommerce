@@ -15,9 +15,7 @@ class ValueNodeConverter implements QueryExpressionConverterInterface
      */
     protected $paramCount = 0;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
         if ($node instanceof ValueNode) {

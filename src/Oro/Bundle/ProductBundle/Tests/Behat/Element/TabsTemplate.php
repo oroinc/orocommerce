@@ -10,6 +10,7 @@ class TabsTemplate extends ProductTemplate
 {
     const ELEMENT_PREFIX = 'Tabs Template';
 
+    #[\Override]
     public function assertGroupWithValue($groupName, TableNode $table)
     {
         $tabContainer = null;
@@ -34,9 +35,7 @@ class TabsTemplate extends ProductTemplate
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertPrices(TableNode $table)
     {
         $prices = $this->getPricesElement();

@@ -15,6 +15,7 @@ use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType;
 
 class RequestProductTypeTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -20,17 +20,13 @@ class ShippingPackageOptions implements ShippingPackageOptionsInterface
         $this->weight = $weight;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWeight(): float
     {
         return $this->weight->getValue();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWeightUnitCode(): string
     {
         if (!$this->weight->getUnit()) {
@@ -40,33 +36,25 @@ class ShippingPackageOptions implements ShippingPackageOptionsInterface
         return $this->weight->getUnit()->getCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLength(): float
     {
         return $this->dimensions->getValue()->getLength();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWidth(): float
     {
         return $this->dimensions->getValue()->getWidth();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getHeight(): float
     {
         return $this->dimensions->getValue()->getHeight();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDimensionsUnitCode(): string
     {
         if (!$this->dimensions->getUnit()) {
@@ -76,9 +64,7 @@ class ShippingPackageOptions implements ShippingPackageOptionsInterface
         return $this->dimensions->getUnit()->getCode();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getGirth(): float
     {
         return $this->getLength() + 2 * $this->getWidth() + 2 * $this->getHeight();

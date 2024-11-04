@@ -8,6 +8,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderStatuses;
 
 class OrderStatusTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

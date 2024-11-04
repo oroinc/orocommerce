@@ -9,9 +9,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadRulesDataFixture extends AbstractFixture
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getRulesData() as $reference => $data) {

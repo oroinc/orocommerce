@@ -39,6 +39,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     /** @var ContentNodeType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->router = $this->createMock(RouterInterface::class);
@@ -48,9 +49,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $variantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);

@@ -46,9 +46,7 @@ class RelatedProductImportProcessor extends ImportProcessor
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process($item)
     {
         if (!$this->canBeProcessed($item)) {

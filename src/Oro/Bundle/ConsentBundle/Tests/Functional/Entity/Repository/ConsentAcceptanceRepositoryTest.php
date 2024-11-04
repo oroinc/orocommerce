@@ -14,6 +14,7 @@ class ConsentAcceptanceRepositoryTest extends WebTestCase
 {
     private ConsentAcceptanceRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

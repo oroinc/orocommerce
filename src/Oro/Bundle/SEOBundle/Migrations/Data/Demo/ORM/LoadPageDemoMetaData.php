@@ -15,17 +15,13 @@ class LoadPageDemoMetaData extends AbstractFixture implements DependentFixtureIn
 {
     use LoadDemoMetaDataTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadPageDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addMetaFieldsData($manager, $manager->getRepository(Page::class)->findAll());

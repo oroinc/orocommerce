@@ -46,9 +46,7 @@ class BuildPricesDemoDataFixturesListener extends AbstractDemoDataFixturesListen
         $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function afterEnableListeners(MigrationDataFixturesEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {

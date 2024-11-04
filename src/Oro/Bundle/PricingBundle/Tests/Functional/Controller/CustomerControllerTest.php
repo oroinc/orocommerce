@@ -13,47 +13,38 @@ class CustomerControllerTest extends AbstractPriceListsByEntityTestCase
 {
     private Customer $customer;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->customer = $this->getReference('customer.level_1_1');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUpdateUrl($id = null)
     {
         return $this->getUrl('oro_customer_customer_update', ['id' => $id ?: $this->customer->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCreateUrl()
     {
         return $this->getUrl('oro_customer_customer_create');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getViewUrl()
     {
         return $this->getUrl('oro_customer_customer_view', ['id' => $this->customer->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMainFormName()
     {
         return CustomerType::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceListsByEntity()
     {
         return self::getContainer()->get('doctrine')

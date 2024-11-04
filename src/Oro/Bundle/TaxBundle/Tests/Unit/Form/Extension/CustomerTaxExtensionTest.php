@@ -9,17 +9,13 @@ use Oro\Bundle\TaxBundle\Form\Extension\CustomerTaxExtension;
 
 class CustomerTaxExtensionTest extends AbstractCustomerTaxExtensionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtension(): AbstractTaxExtension
     {
         return new CustomerTaxExtension();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createTaxCodeTarget(int $id = null): object
     {
         $entity = $this->getMockBuilder(Customer::class)

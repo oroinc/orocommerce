@@ -27,17 +27,13 @@ class FrontendShoppingListGridExtension extends AbstractExtension
         $this->priority = $priority;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config): bool
     {
         return \in_array($config->getName(), $this->grids, true) && parent::isApplicable($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config): void
     {
         $actions = $config->offsetGetOr(ActionExtension::ACTION_KEY, []);
@@ -52,9 +48,7 @@ class FrontendShoppingListGridExtension extends AbstractExtension
         $config->offsetSet(ActionExtension::ACTION_KEY, $actions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriority(): int
     {
         return $this->priority;

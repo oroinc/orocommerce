@@ -17,11 +17,13 @@ class LoginPageTypeTest extends FormIntegrationTestCase
      */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new LoginPageType();
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

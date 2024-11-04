@@ -18,6 +18,7 @@ class WebpAwarePreviewMetadataProviderTest extends \PHPUnit\Framework\TestCase
 
     private WebpAwarePreviewMetadataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerPreviewMetadataProvider = $this->createMock(BasePreviewMetadataProvider::class);

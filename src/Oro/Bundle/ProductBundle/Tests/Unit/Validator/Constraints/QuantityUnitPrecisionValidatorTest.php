@@ -22,6 +22,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
     /** @var RoundingServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $roundingService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -34,9 +35,7 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createValidator(): QuantityUnitPrecisionValidator
     {
         return new QuantityUnitPrecisionValidator($this->roundingService);

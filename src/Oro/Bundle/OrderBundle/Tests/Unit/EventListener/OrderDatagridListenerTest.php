@@ -18,6 +18,7 @@ class OrderDatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderDatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

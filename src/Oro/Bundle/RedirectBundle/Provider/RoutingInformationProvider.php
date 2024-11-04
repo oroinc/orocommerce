@@ -30,9 +30,7 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         foreach ($this->entityClasses as $entityClass) {
@@ -44,17 +42,13 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRouteData($entity)
     {
         return $this->getProviderForEntity($entity)->getRouteData($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlPrefix($entity)
     {
         return $this->getProviderForEntity($entity)->getUrlPrefix($entity);

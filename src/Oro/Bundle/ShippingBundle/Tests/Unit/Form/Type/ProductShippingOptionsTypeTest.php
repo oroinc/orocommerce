@@ -30,6 +30,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
 {
     private ProductShippingOptionsType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new ProductShippingOptionsType();
@@ -37,9 +38,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         return [
@@ -307,9 +306,7 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
         return $value;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $weightType = new WeightType();

@@ -9,6 +9,7 @@ class FeatureAwareRestJsonApiTestCase extends RestJsonApiTestCase
     private static bool $featureState;
     private static bool $isFeatureStateChanged = false;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,6 +25,7 @@ class FeatureAwareRestJsonApiTestCase extends RestJsonApiTestCase
         }
     }
 
+    #[\Override]
     public static function tearDownAfterClass(): void
     {
         if (self::$isFeatureStateChanged) {

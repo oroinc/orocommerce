@@ -22,17 +22,13 @@ abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInt
         $this->methods = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function hasPaymentMethod($identifier)
     {
         return $this->getMethods()->containsKey($identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentMethod($identifier)
     {
         if (!$this->hasPaymentMethod($identifier)) {
@@ -42,9 +38,7 @@ abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInt
         return $this->getMethods()->get($identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentMethods()
     {
         return $this->getMethods()->toArray();

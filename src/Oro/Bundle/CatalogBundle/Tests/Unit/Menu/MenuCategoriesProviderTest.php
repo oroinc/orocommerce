@@ -17,6 +17,7 @@ class MenuCategoriesProviderTest extends \PHPUnit\Framework\TestCase
     private CategoryTreeProvider|\PHPUnit\Framework\MockObject\MockObject $categoryTreeProvider;
     private MenuCategoriesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);

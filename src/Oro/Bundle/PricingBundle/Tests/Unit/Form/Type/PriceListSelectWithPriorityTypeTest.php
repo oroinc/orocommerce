@@ -22,9 +22,7 @@ use Symfony\Component\Validator\Validation;
 
 class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $configManager = $this->createMock(ConfigManager::class);

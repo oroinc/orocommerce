@@ -12,6 +12,7 @@ class ZipCodeRangeHelperTest extends \PHPUnit\Framework\TestCase
     /** @var ZipCodeRangeHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->helper = new ZipCodeRangeHelper();

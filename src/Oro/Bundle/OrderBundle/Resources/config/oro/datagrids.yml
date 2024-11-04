@@ -60,8 +60,6 @@ datagrids:
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
                     - SUM(appliedDiscount.amount) as promotionalDiscountsAmount
-                    - internalStatus.name as internalStatusName
-                    - internalStatus.id as internalStatusId
                     - CASE WHEN IDENTITY(order1.parent) IS NULL THEN 1 ELSE 2 END as orderType
                     - CONCAT(created_by.firstName, ' ', created_by.lastName) as createdBy
                 join:
@@ -70,7 +68,6 @@ datagrids:
                         - { join: order1.createdBy, alias: created_by }
                         - { join: order1.customerUser, alias: customerUser }
                         - { join: order1.customer, alias: customer }
-                        - { join: order1.internal_status, alias: internalStatus }
                         - { join: order1.appliedPromotions, alias: appliedPromotion }
                         - { join: appliedPromotion.appliedDiscounts, alias: appliedDiscount }
                 groupBy:  order1.id
@@ -104,8 +101,12 @@ datagrids:
             customerUserName:
                 label:         oro.order.customer_user.label
                 renderable:    false
-            internalStatusName:
+            internal_status:
                 label: oro.order.internal_status.label
+                frontend_type: select
+                data_name: internal_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('order_internal_status')"
+                translatable_options: false
             currency:
                 label:         oro.order.currency.label
                 renderable:    false
@@ -183,8 +184,8 @@ datagrids:
                     data_name: customerName
                 customerUserName:
                     data_name: customerUserName
-                internalStatusName:
-                    data_name: internalStatusName
+                internal_status:
+                  data_name: internal_status
                 currency:
                     data_name: order1.currency
                 subtotal:
@@ -235,10 +236,11 @@ datagrids:
                     type:      string
                     data_name: customerUserName
                     renderable: false
-                internalStatusName:
-                    type:      enum
-                    data_name: internalStatusId
-                    enum_code: order_internal_status
+                internal_status:
+                  type: enum
+                  data_name: internal_status
+                  enum_code: order_internal_status
+                  renderable: true
                 currency:
                     type:      choice
                     data_name: order1.currency
@@ -384,15 +386,12 @@ datagrids:
                 select:
                     - COUNT(lineItems.id) as lineItemsCount
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
-                    - internalStatus.name as internalStatusName
-                    - internalStatus.id as internalStatusId
                     - CONCAT(created_by.firstName, ' ', created_by.lastName) as createdBy
                 join:
                     left:
                         - { join: order1.lineItems, alias: lineItems}
                         - { join: order1.owner, alias: order_owner }
                         - { join: order1.createdBy, alias: created_by }
-                        - { join: order1.internal_status, alias: internalStatus }
                 groupBy: order1.id
         columns:
             identifier:
@@ -413,8 +412,12 @@ datagrids:
             createdBy:
                 label:         oro.order.created_by.label
                 renderable:    false
-            internalStatusName:
-                label:         oro.order.internal_status.label
+            internal_status:
+              label: oro.order.internal_status.label
+              frontend_type: select
+              data_name: internal_status
+              choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('order_internal_status')"
+              translatable_options: false
             currency:
                 label:         oro.order.currency.label
                 renderable:    false
@@ -475,8 +478,8 @@ datagrids:
                     data_name: owner
                 createdBy:
                     data_name: createdBy
-                internalStatusName:
-                    data_name: internalStatusName
+                internal_status:
+                  data_name: internal_status
                 currency:
                     data_name: order1.currency
                 subtotal:
@@ -494,10 +497,10 @@ datagrids:
         filters:
             columns:
                 identifier:
-                    type:      string
+                    type: string
                     data_name: order1.identifier
                 poNumber:
-                    type:      string
+                    type: string
                     data_name: order1.poNumber
                     renderable: false
                 createdAt:
@@ -508,19 +511,19 @@ datagrids:
                     data_name: order1.updatedAt
                     renderable: false
                 owner:
-                    type:      string
+                    type: string
                     data_name: owner
                     renderable: false
                 createdBy:
-                    type:      string
+                    type: string
                     data_name: createdBy
                     renderable: false
-                internalStatusName:
-                    type:      enum
-                    data_name: internalStatusId
+                internal_status:
+                    type: enum
+                    data_name: internal_status
                     enum_code: order_internal_status
                 currency:
-                    type:      choice
+                    type: choice
                     data_name: order1.currency
                     options:
                         field_options:
@@ -528,28 +531,28 @@ datagrids:
                             translatable_options: false
                     renderable: false
                 subtotal:
-                    type:      currency
+                    type: currency
                     data_name: subtotal
                     renderable: false
                 total:
-                    type:      currency
+                    type: currency
                     data_name: total
                 totalDiscountsAmount:
-                    type:      number
+                    type: number
                     data_name: order1.totalDiscountsAmount
                 lineItemsCount:
-                    type:      number
+                    type: number
                     data_name: lineItemsCount
                     filter_by_having: true
                 paymentStatus:
-                    type:      choice
+                    type: choice
                     data_name: paymentStatus
                     options:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                             translatable_options: false
                 shipUntil:
-                    type:      date
+                    type: date
                     data_name: order1.shipUntil
                     renderable: false
         properties:

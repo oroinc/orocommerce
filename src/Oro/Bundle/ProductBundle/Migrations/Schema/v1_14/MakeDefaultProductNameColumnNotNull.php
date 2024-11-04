@@ -11,9 +11,7 @@ class MakeDefaultProductNameColumnNotNull implements
     Migration,
     OrderedMigrationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_product');
@@ -21,9 +19,7 @@ class MakeDefaultProductNameColumnNotNull implements
         $table->getColumn('name_uppercase')->setNotnull(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 30;

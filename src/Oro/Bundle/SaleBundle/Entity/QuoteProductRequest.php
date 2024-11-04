@@ -53,12 +53,14 @@ class QuoteProductRequest extends BaseQuoteProductItem
      * @param Price $price
      * @return $this
      */
+    #[\Override]
     public function setPrice($price = null)
     {
         return parent::setPrice($price);
     }
 
     #[ORM\PostLoad]
+    #[\Override]
     public function postLoad()
     {
         if (null !== $this->value && null !==  $this->currency) {

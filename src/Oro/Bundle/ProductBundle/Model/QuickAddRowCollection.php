@@ -15,6 +15,7 @@ class QuickAddRowCollection extends ArrayCollection
     /** @var QuickAddField[] [name => field, ...] */
     private $additionalFields = [];
 
+    #[\Override]
     public function __toString(): string
     {
         return implode(PHP_EOL, $this->map(function (QuickAddRow $row) {
@@ -54,6 +55,7 @@ class QuickAddRowCollection extends ArrayCollection
         return $products;
     }
 
+    #[\Override]
     protected function createFrom(array $elements): static
     {
         $quickAddRowCollection = parent::createFrom($elements);

@@ -32,6 +32,7 @@ class ProductCollectionSearchTermSegmentDoctrineListenerTest extends TestCase
 
     private ProductCollectionSearchTermSegmentDoctrineListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

@@ -20,6 +20,7 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
      */
     protected $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extension = new PageVariantTypeExtension();
@@ -75,9 +76,7 @@ class PageVariantTypeExtensionTest extends FormIntegrationTestCase
         $this->assertEquals([PageVariantType::class], PageVariantTypeExtension::getExtendedTypes());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions()
     {
         return [

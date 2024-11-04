@@ -36,10 +36,10 @@ class ProductAssignmentRuleExpressionValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      * @param PriceRule $value
      * @param ProductAssignmentRuleExpression $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof PriceList) {

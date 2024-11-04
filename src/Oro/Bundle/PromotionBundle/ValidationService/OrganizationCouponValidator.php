@@ -10,9 +10,7 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
  */
 class OrganizationCouponValidator implements CouponValidatorInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getViolationMessages(Coupon $coupon, object $entity): array
     {
         if ($entity instanceof OrganizationAwareInterface

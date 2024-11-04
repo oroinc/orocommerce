@@ -27,6 +27,7 @@ class SearchTermType extends AbstractType
     ) {
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -124,11 +125,13 @@ class SearchTermType extends AbstractType
         $builder->addEventSubscriber($this->disableFieldsEventSubscriber);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view['scopes']->vars['phraseDelimiter'] = $this->phraseDelimiter;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver

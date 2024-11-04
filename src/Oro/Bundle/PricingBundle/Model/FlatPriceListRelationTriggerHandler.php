@@ -44,11 +44,13 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         $this->configManager = $configManager;
     }
 
+    #[\Override]
     public function handleFullRebuild(): void
     {
         // No need in full rebuild for flat pricing storage.
     }
 
+    #[\Override]
     public function handleConfigChange(): void
     {
         $websites = $this->websiteProvider->getWebsites();
@@ -67,6 +69,7 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
+    #[\Override]
     public function handleWebsiteChange(Website $website): void
     {
         if ($website->getId()) {
@@ -75,6 +78,7 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
+    #[\Override]
     public function handleCustomerGroupChange(CustomerGroup $customerGroup, Website $website): void
     {
         if ($customerGroup->getId()) {
@@ -85,6 +89,7 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
+    #[\Override]
     public function handleCustomerGroupRemove(CustomerGroup $customerGroup): void
     {
         $eventData = [];
@@ -95,6 +100,7 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         $this->eventDispatcher->dispatch($event, CustomerGroupRelationUpdateEvent::NAME);
     }
 
+    #[\Override]
     public function handleCustomerChange(Customer $customer, Website $website): void
     {
         if ($customer->getId()) {
@@ -105,6 +111,7 @@ class FlatPriceListRelationTriggerHandler implements PriceListRelationTriggerHan
         }
     }
 
+    #[\Override]
     public function handlePriceListStatusChange(PriceList $priceList): void
     {
         $event = new MassStorageUpdateEvent([$priceList->getId()]);

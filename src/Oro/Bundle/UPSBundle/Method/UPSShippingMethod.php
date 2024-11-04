@@ -73,62 +73,49 @@ class UPSShippingMethod implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isGrouped(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon(): ?string
     {
         return $this->icon;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTypes(): array
     {
         return $this->types;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
         $methodTypes = $this->getTypes();
@@ -143,25 +130,19 @@ class UPSShippingMethod implements
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptionsConfigurationFormType(): ?string
     {
         return UPSShippingMethodOptionsType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSortOrder(): int
     {
         return 20;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function calculatePrices(
         ShippingContextInterface $context,
         array $methodOptions,
@@ -189,9 +170,7 @@ class UPSShippingMethod implements
         return $prices;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTrackingLink(string $number): ?string
     {
         if (!preg_match(self::TRACKING_REGEX, $number, $match)) {

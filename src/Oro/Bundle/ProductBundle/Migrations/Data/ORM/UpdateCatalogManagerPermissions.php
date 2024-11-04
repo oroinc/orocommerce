@@ -13,14 +13,13 @@ use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
  */
 class UpdateCatalogManagerPermissions extends AbstractUpdatePermissions implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadUserRolesData::class];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $aclManager = $this->getAclManager();

@@ -29,6 +29,7 @@ class ContentWidgetLayoutSelectType extends AbstractType
         $this->translator = $translator;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(
@@ -52,9 +53,7 @@ class ContentWidgetLayoutSelectType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
@@ -89,9 +88,7 @@ class ContentWidgetLayoutSelectType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if (!$view->vars['choices']) {
@@ -104,9 +101,7 @@ class ContentWidgetLayoutSelectType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return Select2ChoiceType::class;

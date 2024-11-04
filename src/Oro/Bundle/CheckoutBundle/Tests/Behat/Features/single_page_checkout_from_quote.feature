@@ -29,7 +29,7 @@ Feature: Single Page Checkout From Quote
     And I click "Quotes"
     And I click view PO1 in grid
     When I click "Accept and Submit to Order"
-    And I click "Submit"
+    And I click "Checkout"
     Then Checkout "Order Summary Products Grid" should contain products:
       | 400-Watt Bulb Work Light | 5 | items |
     And I should see Checkout Totals with data:

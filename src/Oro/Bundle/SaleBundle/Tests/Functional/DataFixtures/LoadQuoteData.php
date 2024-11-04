@@ -6,7 +6,8 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
@@ -251,9 +252,7 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -266,9 +265,7 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var User $user */
@@ -373,9 +370,12 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         $quote->addQuoteProduct($product);
     }
 
-    private function getEnumEntity(ObjectManager $manager, string $enumField, string $enumCode): AbstractEnumValue
+    private function getEnumEntity(ObjectManager $manager, string $enumCode, string $enumField): EnumOptionInterface
     {
-        return $manager->getReference(ExtendHelper::buildEnumValueClassName($enumField), $enumCode);
+        return $manager->getReference(
+            EnumOption::class,
+            ExtendHelper::buildEnumOptionId($enumCode, $enumField)
+        );
     }
 
     private function getValidUntil(array $item): ?\DateTime

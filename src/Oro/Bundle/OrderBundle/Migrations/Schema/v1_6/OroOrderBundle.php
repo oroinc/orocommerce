@@ -9,10 +9,10 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class OroOrderBundle implements Migration
 {
     /**
-     * {@inheritdoc}
      *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroOrderShippingTrackingTable($schema);

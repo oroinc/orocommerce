@@ -11,16 +11,19 @@ use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
  */
 class CategoryVisibilityProcessor extends AbstractVisibilityProcessor implements TopicSubscriberInterface
 {
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [ResolveCategoryVisibilityTopic::getName()];
     }
 
+    #[\Override]
     protected function getResolvedVisibilityClassName(): string
     {
         return CategoryVisibilityResolved::class;
     }
 
+    #[\Override]
     protected function resolveVisibility(array $body): void
     {
         $this->cacheBuilder->resolveVisibilitySettings($this->getVisibility($body));

@@ -20,9 +20,7 @@ class LoadRoute implements ProcessorInterface
         $this->routeRepository = $slugRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SingleItemContext $context */

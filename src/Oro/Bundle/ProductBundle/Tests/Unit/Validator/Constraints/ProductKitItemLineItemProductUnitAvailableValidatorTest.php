@@ -29,6 +29,7 @@ class ProductKitItemLineItemProductUnitAvailableValidatorTest extends Constraint
 
     private ProductKitItemLineItemProductUnitAvailable $productKitItemLineItemProductUnitAvailableConstraint;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityStateChecker = $this->createMock(EntityStateChecker::class);
@@ -40,6 +41,7 @@ class ProductKitItemLineItemProductUnitAvailableValidatorTest extends Constraint
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductKitItemLineItemProductUnitAvailableValidator
     {
         return new ProductKitItemLineItemProductUnitAvailableValidator($this->entityStateChecker);

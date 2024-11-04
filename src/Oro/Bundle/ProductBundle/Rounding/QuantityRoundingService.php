@@ -12,13 +12,13 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class QuantityRoundingService extends AbstractRoundingService
 {
-    /** {@inheritdoc} */
+    #[\Override]
     public function getRoundType()
     {
         return $this->configManager->get('oro_product.unit_rounding_type') ?? self::ROUND_HALF_UP;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getPrecision()
     {
         throw new \BadMethodCallException('ProductUnit required to get a precision');

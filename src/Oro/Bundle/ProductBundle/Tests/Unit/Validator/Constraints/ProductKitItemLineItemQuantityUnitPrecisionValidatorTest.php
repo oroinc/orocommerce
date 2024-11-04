@@ -28,6 +28,7 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidatorTest extends Constrain
 
     private UnitLabelFormatterInterface|MockObject $unitLabelFormatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -43,6 +44,7 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidatorTest extends Constrain
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductKitItemLineItemQuantityUnitPrecisionValidator
     {
         return new ProductKitItemLineItemQuantityUnitPrecisionValidator(

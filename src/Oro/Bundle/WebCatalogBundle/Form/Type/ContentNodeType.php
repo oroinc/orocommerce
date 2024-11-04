@@ -33,6 +33,7 @@ class ContentNodeType extends AbstractType
         $this->router = $router;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var ContentNode $contentNode */
@@ -153,9 +154,7 @@ class ContentNodeType extends AbstractType
         $event->setData($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -173,9 +172,7 @@ class ContentNodeType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

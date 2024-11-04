@@ -24,9 +24,7 @@ class FrontendShoppingListTotalListener implements ServiceSubscriberInterface
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [ShoppingListTotalManager::class];

@@ -25,9 +25,7 @@ class LoadDefaultAttributeBoost extends AbstractFixture implements ContainerAwar
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->updateProductAttributes($this->fields);

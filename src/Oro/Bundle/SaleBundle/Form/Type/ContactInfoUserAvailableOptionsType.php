@@ -24,9 +24,7 @@ class ContactInfoUserAvailableOptionsType extends AbstractType
         $this->optionsProvider = $optionsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $choices = $this->optionsProvider->getOptions();
@@ -42,9 +40,7 @@ class ContactInfoUserAvailableOptionsType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
@@ -56,25 +52,18 @@ class ContactInfoUserAvailableOptionsType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return static::NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return ChoiceType::class;

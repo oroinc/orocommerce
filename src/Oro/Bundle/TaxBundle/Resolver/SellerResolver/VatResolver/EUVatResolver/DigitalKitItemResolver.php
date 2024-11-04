@@ -11,6 +11,7 @@ use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
  */
 class DigitalKitItemResolver extends AbstractItemResolver
 {
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         if (!$this->isApplicable($taxable)) {

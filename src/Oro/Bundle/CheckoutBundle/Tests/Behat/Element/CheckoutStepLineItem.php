@@ -7,9 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class CheckoutStepLineItem extends Element implements LineItemInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSKU(): string
     {
         foreach ($this->getElements('CheckoutStepLineItemProductSku') as $element) {

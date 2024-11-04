@@ -16,6 +16,7 @@ use Symfony\Component\Validator\Constraints\Type;
 
 class RequestProductKitConfigurationTypeTest extends FrontendWebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

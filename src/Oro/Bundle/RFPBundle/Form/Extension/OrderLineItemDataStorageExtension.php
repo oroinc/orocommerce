@@ -68,7 +68,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
         $this->sectionProvider = $sectionProvider;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isApplicable()) {
@@ -150,7 +150,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
         return (array)$offers[$key];
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if ($this->sectionProvider && $this->isApplicable()) {
@@ -181,7 +181,7 @@ class OrderLineItemDataStorageExtension extends AbstractTypeExtension implements
         return $this->isFeaturesEnabled() && $request && $request->get(DataStorageInterface::STORAGE_KEY);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [OrderLineItemType::class];

@@ -37,9 +37,7 @@ class LoadWebCatalogPageData extends AbstractLoadWebCatalogData
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -50,16 +48,19 @@ class LoadWebCatalogPageData extends AbstractLoadWebCatalogData
         ];
     }
 
+    #[\Override]
     protected function getRoute(): string
     {
         return 'oro_cms_frontend_page_view';
     }
 
+    #[\Override]
     protected function getContentVariantType(): string
     {
         return CmsPageContentVariantType::TYPE;
     }
 
+    #[\Override]
     protected function getEntitySetterMethod(): string
     {
         return 'setCmsPage';

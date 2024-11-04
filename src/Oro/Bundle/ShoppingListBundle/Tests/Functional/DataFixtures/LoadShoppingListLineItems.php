@@ -86,9 +86,7 @@ class LoadShoppingListLineItems extends AbstractShoppingListLineItemsFixture
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [

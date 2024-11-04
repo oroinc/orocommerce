@@ -22,9 +22,7 @@ class ShippingMethodIconProvider implements ShippingMethodIconProviderInterface
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon(string $identifier): ?string
     {
         if ($this->shippingMethodProvider->hasShippingMethod($identifier)) {

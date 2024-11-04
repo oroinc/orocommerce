@@ -16,6 +16,7 @@ class PriceListsFilter extends EntityFilter
 {
     const RELATION_CLASS_NAME_PARAMETER = 'relation_class_name';
 
+    #[\Override]
     public function init($name, array $params)
     {
         if (empty($params[self::RELATION_CLASS_NAME_PARAMETER])) {
@@ -27,9 +28,7 @@ class PriceListsFilter extends EntityFilter
         parent::init($name, $params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function apply(FilterDatasourceAdapterInterface $ds, $data)
     {
         /** @var array $data */

@@ -16,6 +16,7 @@ class ContentNodeControllerTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

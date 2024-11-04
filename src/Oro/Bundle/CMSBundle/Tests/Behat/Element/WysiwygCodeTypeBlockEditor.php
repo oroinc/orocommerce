@@ -9,6 +9,7 @@ class WysiwygCodeTypeBlockEditor extends Element
     /**
      * @param string $value
      */
+    #[\Override]
     public function setValue($value): void
     {
         if (!is_string($value)) {
@@ -25,6 +26,7 @@ class WysiwygCodeTypeBlockEditor extends Element
         );
     }
 
+    #[\Override]
     public function getValue(): string
     {
         return $this->session->evaluateScript(

@@ -6,7 +6,7 @@ class CallbackReturnEvent extends AbstractCallbackEvent
 {
     const NAME = 'oro_payment.callback.return';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getEventName()
     {
         return self::NAME;

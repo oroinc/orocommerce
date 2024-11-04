@@ -33,6 +33,7 @@ class FlatPriceListRelationSystemConfigListenerTest extends \PHPUnit\Framework\T
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceListRelationHandler = $this->createMock(PriceListRelationHandler::class);

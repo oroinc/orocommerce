@@ -26,6 +26,7 @@ class ContinueToShippingAddressTest extends TestCase
 
     private ContinueToShippingAddress $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

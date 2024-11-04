@@ -30,6 +30,7 @@ class RequestWebContentScopeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var RequestWebContentScopeProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

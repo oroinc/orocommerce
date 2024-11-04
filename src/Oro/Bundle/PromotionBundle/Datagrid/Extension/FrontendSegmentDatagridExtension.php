@@ -34,17 +34,13 @@ class FrontendSegmentDatagridExtension extends AbstractExtension
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config)
     {
         return $this->isSegmentGrid($config) && $this->isProductEntityInGridQuery($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config)
     {
         if (!$this->frontendHelper->isFrontendRequest()) {
@@ -72,9 +68,7 @@ class FrontendSegmentDatagridExtension extends AbstractExtension
         return $config->getOrmQuery()->getRootEntity() === Product::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriority()
     {
         return 10;

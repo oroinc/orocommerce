@@ -256,6 +256,7 @@ class ShippingMethodsConfigsRuleDestination
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         $postalCodesNames = [];

@@ -18,9 +18,7 @@ class TimeInTransitRequestBuilderFactory implements TimeInTransitRequestBuilderF
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createTimeInTransitRequestBuilder(
         UPSTransport $transport,
         AddressInterface $shipFromAddress,

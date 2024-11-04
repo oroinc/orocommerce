@@ -12,6 +12,7 @@ class WeightUnitTest extends \PHPUnit\Framework\TestCase
     /** @var WeightUnit */
     private $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new WeightUnit();

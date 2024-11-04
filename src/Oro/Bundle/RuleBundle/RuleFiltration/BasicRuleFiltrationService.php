@@ -7,9 +7,7 @@ namespace Oro\Bundle\RuleBundle\RuleFiltration;
  */
 class BasicRuleFiltrationService implements RuleFiltrationServiceInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilteredRuleOwners(array $ruleOwners, array $context): array
     {
         return $ruleOwners;

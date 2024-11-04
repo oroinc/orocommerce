@@ -18,6 +18,7 @@ class CurrencyResolverTest extends TestCase
 
     private CurrencyResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolver = new CurrencyResolver();

@@ -24,6 +24,7 @@ class SlugExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $classMetaData = $this->getEntity(

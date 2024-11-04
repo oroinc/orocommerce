@@ -19,6 +19,7 @@ class ProductUnitPrecisionListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -29,6 +30,7 @@ class ProductUnitPrecisionListenerTest extends WebTestCase
         self::clearMessageCollector();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();

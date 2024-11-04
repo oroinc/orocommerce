@@ -29,9 +29,7 @@ class BasicMethodsConfigsRulesByContextProvider implements MethodsConfigsRulesBy
         $this->organizationProvider = $organizationProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethodsConfigsRules(ShippingContextInterface $context): array
     {
         if ($context->getShippingAddress()) {

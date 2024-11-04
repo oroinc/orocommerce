@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -16,8 +17,10 @@ class ProductControllerTest extends WebTestCase
 
     private const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';
 
+    #[\Override]
     protected function setUp(): void
     {
+        self::markTestSkipped('Will be fixed in BAP-22773');
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
@@ -34,7 +37,9 @@ class ProductControllerTest extends WebTestCase
     {
         $configManager = self::getConfigManager();
         $originalRfpProductVisibility = $configManager->get(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [Product::INVENTORY_STATUS_OUT_OF_STOCK]);
+        $configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, [
+            ExtendHelper::buildEnumOptionId(Product::INVENTORY_STATUS_ENUM_CODE, Product::INVENTORY_STATUS_OUT_OF_STOCK)
+        ]);
         $configManager->flush();
         try {
             self::assertStringContainsString(

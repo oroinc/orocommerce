@@ -33,6 +33,7 @@ class ContentTemplatesInWysiwygFormExtension extends AbstractTypeExtension
         $this->tokenAccessor = $tokenAccessor;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -49,6 +50,7 @@ class ContentTemplatesInWysiwygFormExtension extends AbstractTypeExtension
             ]);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $isContentTemplatesEnabled = $options['content_templates']['enabled'] ?? false;
@@ -62,9 +64,7 @@ class ContentTemplatesInWysiwygFormExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [WYSIWYGType::class];

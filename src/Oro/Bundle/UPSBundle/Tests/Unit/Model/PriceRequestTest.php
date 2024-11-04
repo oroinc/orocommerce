@@ -31,6 +31,7 @@ class PriceRequestTest extends \PHPUnit\Framework\TestCase
     /** @var PriceRequest */
     private $model;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->model = new PriceRequest();

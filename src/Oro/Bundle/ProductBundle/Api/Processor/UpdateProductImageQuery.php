@@ -23,9 +23,7 @@ class UpdateProductImageQuery implements ProcessorInterface
         $this->queryModifier = $queryModifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

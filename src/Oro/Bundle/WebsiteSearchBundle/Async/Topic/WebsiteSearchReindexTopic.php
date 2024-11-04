@@ -22,16 +22,19 @@ class WebsiteSearchReindexTopic extends AbstractTopic
         $this->indexerInputValidator = $indexerInputValidator;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Reindex the specified entities by classes and ids with optional granulating.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
@@ -43,6 +46,7 @@ class WebsiteSearchReindexTopic extends AbstractTopic
         $this->indexerInputValidator->configureContextOptions($resolver);
     }
 
+    #[\Override]
     public function getDefaultPriority(string $queueName): string
     {
         return self::PRIORITY;

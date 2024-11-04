@@ -13,9 +13,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddOroShoppingListCurrencyColumnStage2 implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPreQuery(new AddOroShoppingListCurrencyColumnStage2Query('USD'));
@@ -23,9 +21,7 @@ class AddOroShoppingListCurrencyColumnStage2 implements Migration, OrderedMigrat
         $table->getColumn('currency')->setNotnull(true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 2;

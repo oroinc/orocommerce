@@ -13,9 +13,7 @@ use Oro\Bundle\FedexShippingBundle\Model\FedexPackageSettingsInterface;
 class FedexPackageSettingsByIntegrationSettingsAndRuleFactory implements
     FedexPackageSettingsByIntegrationSettingsAndRuleFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(FedexIntegrationSettings $settings, ShippingServiceRule $rule): FedexPackageSettingsInterface
     {
         return new FedexPackageSettings(

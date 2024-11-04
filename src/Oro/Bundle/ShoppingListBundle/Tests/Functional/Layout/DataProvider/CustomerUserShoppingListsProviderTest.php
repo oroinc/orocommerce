@@ -12,6 +12,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

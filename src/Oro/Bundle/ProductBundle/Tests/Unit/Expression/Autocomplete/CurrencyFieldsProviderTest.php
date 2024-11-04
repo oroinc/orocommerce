@@ -10,6 +10,7 @@ class CurrencyFieldsProviderTest extends AbstractFieldsProviderTest
     /** @var UnitFieldsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

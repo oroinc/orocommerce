@@ -12,6 +12,7 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
 {
     private OrdersViewList $viewList;
 
+    #[\Override]
     protected function setUp(): void
     {
         $translator = $this->createMock(TranslatorInterface::class);
@@ -29,9 +30,13 @@ class OrdersViewListTest extends \PHPUnit\Framework\TestCase
         $view = new View(
             'oro_order.open_orders',
             [
-                'internalStatusName' => [
+                'internal_status' => [
                     'type'  => EnumFilterType::TYPE_IN,
-                    'value' => ['open']
+                    'value' => [
+                        'order_internal_status.pending',
+                        'order_internal_status.open',
+                        'order_internal_status.processing'
+                    ]
                 ]
             ]
         );

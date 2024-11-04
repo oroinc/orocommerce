@@ -12,9 +12,7 @@ class OrderDiscountEventListener extends AbstractFormEventListener
 {
     const TEMPLATE = '@OroOrder/Form/discountCollectionWidget.html.twig';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function onOrderEvent(OrderEvent $event)
     {
         if (null === $event->getSubmittedData()) {

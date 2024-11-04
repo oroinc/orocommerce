@@ -32,6 +32,7 @@ class ProductCollectionSegmentHelperTest extends \PHPUnit\Framework\TestCase
     /** @var ProductCollectionSegmentHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentVariantSegmentProvider = $this->createMock(ContentVariantSegmentProvider::class);

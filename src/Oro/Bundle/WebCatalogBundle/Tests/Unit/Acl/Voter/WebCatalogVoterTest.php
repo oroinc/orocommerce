@@ -22,6 +22,7 @@ class WebCatalogVoterTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

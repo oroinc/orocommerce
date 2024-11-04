@@ -266,9 +266,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $priceLists = [];
@@ -309,9 +307,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -320,9 +316,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;

@@ -39,6 +39,7 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
         $this->roundingService = $roundingService;
     }
 
+    #[\Override]
     public function getProductLineItemProductPrices(
         ProductLineItemInterface $productLineItem,
         ProductPriceCollectionDTO $productPriceCollection,

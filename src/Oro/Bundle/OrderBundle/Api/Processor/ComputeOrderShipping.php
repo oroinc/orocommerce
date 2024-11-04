@@ -28,9 +28,7 @@ class ComputeOrderShipping implements ProcessorInterface
         $this->shippingMethodLabelTranslator = $shippingMethodLabelTranslator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

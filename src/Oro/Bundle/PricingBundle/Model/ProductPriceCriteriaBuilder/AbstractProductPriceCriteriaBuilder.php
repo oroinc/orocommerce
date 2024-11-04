@@ -47,6 +47,7 @@ abstract class AbstractProductPriceCriteriaBuilder implements
 
     abstract protected function doCreate(): ?ProductPriceCriteria;
 
+    #[\Override]
     public function create(): ?ProductPriceCriteria
     {
         try {
@@ -71,11 +72,13 @@ abstract class AbstractProductPriceCriteriaBuilder implements
         }
     }
 
+    #[\Override]
     public function reset(): void
     {
         $this->product = $this->productUnit = $this->quantity = $this->currency = null;
     }
 
+    #[\Override]
     public function setProduct(?Product $product): self
     {
         $this->product = $product;
@@ -83,6 +86,7 @@ abstract class AbstractProductPriceCriteriaBuilder implements
         return $this;
     }
 
+    #[\Override]
     public function setProductUnit(?ProductUnit $productUnit): self
     {
         $this->productUnit = $productUnit;
@@ -90,6 +94,7 @@ abstract class AbstractProductPriceCriteriaBuilder implements
         return $this;
     }
 
+    #[\Override]
     public function setProductUnitCode(string $productUnitCode): self
     {
         /** @var EntityManager $entityManager */
@@ -99,6 +104,7 @@ abstract class AbstractProductPriceCriteriaBuilder implements
         return $this;
     }
 
+    #[\Override]
     public function setQuantity(?float $quantity): self
     {
         $this->quantity = $quantity;
@@ -106,6 +112,7 @@ abstract class AbstractProductPriceCriteriaBuilder implements
         return $this;
     }
 
+    #[\Override]
     public function setCurrency(?string $currency): self
     {
         $this->currency = $currency;

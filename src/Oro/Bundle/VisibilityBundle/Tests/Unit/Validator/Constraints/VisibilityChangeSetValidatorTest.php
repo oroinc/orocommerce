@@ -14,6 +14,7 @@ class VisibilityChangeSetValidatorTest extends ConstraintValidatorTestCase
     /**
      * @return VisibilityChangeSetValidator
      */
+    #[\Override]
     protected function createValidator()
     {
         return new VisibilityChangeSetValidator();

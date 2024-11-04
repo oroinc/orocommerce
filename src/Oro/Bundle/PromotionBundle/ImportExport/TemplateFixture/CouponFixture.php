@@ -12,26 +12,22 @@ class CouponFixture extends AbstractTemplateRepository implements TemplateFixtur
 {
     const COUPON_CODE = 'example-coupon';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createEntity($key)
     {
         return new Coupon();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass()
     {
         return Coupon::class;
     }
 
     /**
-     * {@inheritdoc}
      * @param Coupon $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity)
     {
         switch ($key) {
@@ -55,9 +51,7 @@ class CouponFixture extends AbstractTemplateRepository implements TemplateFixtur
         parent::fillEntityData($key, $entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData()
     {
         return $this->getEntityData(self::COUPON_CODE);

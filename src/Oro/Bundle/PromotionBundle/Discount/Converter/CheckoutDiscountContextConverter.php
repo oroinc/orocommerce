@@ -30,9 +30,7 @@ class CheckoutDiscountContextConverter implements DiscountContextConverterInterf
         $this->orderDiscountContextConverter = $orderDiscountContextConverter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert($sourceEntity): DiscountContext
     {
         /** @var Checkout $sourceEntity */
@@ -46,9 +44,7 @@ class CheckoutDiscountContextConverter implements DiscountContextConverterInterf
         return $this->orderDiscountContextConverter->convert($order);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($sourceEntity): bool
     {
         return $sourceEntity instanceof Checkout && !$sourceEntity->getSourceEntity() instanceof QuoteDemand;

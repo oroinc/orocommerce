@@ -3,6 +3,12 @@ api:
         Oro\Bundle\PricingBundle\Api\Model\CustomerPrice:
             alias: customerprice
             plural_alias: customerprices
+        Oro\Bundle\PricingBundle\Api\Model\ProductKitItemPrice:
+            alias: productkititemprice
+            plural_alias: productkititemprices
+        Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice:
+            alias: productkitprice
+            plural_alias: productkitprices
 
     entities:
         Oro\Bundle\PricingBundle\Entity\PriceList:
@@ -227,8 +233,6 @@ api:
         Oro\Bundle\PricingBundle\Api\Model\CustomerPrice:
             documentation_resource: '@OroPricingBundle/Resources/doc/api/customer_price.md'
             disable_meta_properties: true
-            disable_fieldset: true
-            disable_inclusion: true
             identifier_field_names: [id]
             fields:
                 id:
@@ -252,7 +256,8 @@ api:
                     target_class: Oro\Bundle\WebsiteBundle\Entity\Website
                     target_type: to-one
                 unit:
-                    data_type: string
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductUnit
+                    target_type: to-one
             filters:
                 fields:
                     unit:
@@ -274,7 +279,102 @@ api:
                         allow_array: true
             actions:
                 get_list:
-                    page_size: -1 # disable paging because ProductPriceProvider doesn't support pagination
+                    disable_paging: true
+                    disable_sorting: true
+                get: false
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+                get_subresource: false
+
+        Oro\Bundle\PricingBundle\Api\Model\ProductKitItemPrice:
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                currency:
+                    data_type: string
+                quantity:
+                    data_type: float
+                value:
+                    data_type: money
+                product:
+                    property_path: productId
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-one
+                customer:
+                    property_path: customerId
+                    target_class: Oro\Bundle\CustomerBundle\Entity\Customer
+                    target_type: to-one
+                website:
+                    property_path: websiteId
+                    target_class: Oro\Bundle\WebsiteBundle\Entity\Website
+                    target_type: to-one
+                unit:
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductUnit
+                    target_type: to-one
+                kitItem:
+                    property_path: kitItemId
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductKitItem
+                    target_type: to-one
+            # ProductKitItemPrice does not have own API resource, it is a part of ProductKitPrice API resource
+            actions: false
+
+        Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice:
+            documentation_resource: '@OroPricingBundle/Resources/doc/api/product_kit_price.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                currency:
+                    data_type: string
+                quantity:
+                    data_type: float
+                value:
+                    data_type: money
+                product:
+                    property_path: productId
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-one
+                customer:
+                    property_path: customerId
+                    target_class: Oro\Bundle\CustomerBundle\Entity\Customer
+                    target_type: to-one
+                website:
+                    property_path: websiteId
+                    target_class: Oro\Bundle\WebsiteBundle\Entity\Website
+                    target_type: to-one
+                unit:
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductUnit
+                    target_type: to-one
+                kitItemPrices:
+                    target_class: Oro\Bundle\PricingBundle\Api\Model\ProductKitItemPrice
+                    target_type: to-many
+            filters:
+                fields:
+                    unit:
+                        data_type: string
+                        operators: ['=']
+                    quantity:
+                        data_type: float
+                        operators: ['=']
+                    currency:
+                        data_type: string
+                        operators: ['=']
+                    website:
+                        data_type: integer
+                        operators: ['=']
+                    customer:
+                        data_type: integer
+                        operators: ['=']
+                    product:
+                        data_type: integer
+                        operators: ['=']
+            actions:
+                get_list:
+                    page_size: -1
                     disable_sorting: true
                 get: false
                 create: false

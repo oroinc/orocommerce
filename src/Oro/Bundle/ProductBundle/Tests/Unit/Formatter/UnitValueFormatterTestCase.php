@@ -18,6 +18,7 @@ abstract class UnitValueFormatterTestCase extends \PHPUnit\Framework\TestCase
     /** @var UnitValueFormatterInterface */
     protected $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

@@ -21,6 +21,7 @@ class SlugTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

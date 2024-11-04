@@ -65,9 +65,9 @@ Feature: Quotes Grid Frontend
 
   Scenario: Check Ship Until filter
     Given number of records in "AllQuotes" should be 13
-    When I filter Do Not Ship Later Than as between "today-2" and "today-1"
+    When I filter Ship By as between "today-2" and "today-1"
     Then there are no records in grid
-    When I filter Do Not Ship Later Than as between "today" and "today+1"
+    When I filter Ship By as between "today" and "today+1"
     Then I should see following grid:
       | Quote # |
       | Quote13 |
@@ -300,8 +300,8 @@ Feature: Quotes Grid Frontend
     Then I should see "View has been successfully created" flash message
     When I reset "AllQuotes" grid
     Then I should see following grid with exact columns order:
-      | Quote # | PO Number | DNSLT |
-      | Quote1  | PO1       |       |
+      | Quote # | PO Number | Ship By |
+      | Quote1  | PO1       |         |
     And I reload the page
     When I switch to "gridview1" grid view in "AllQuotes" frontend grid
     Then I should see following grid with exact columns order:

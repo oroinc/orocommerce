@@ -24,6 +24,7 @@ class SegmentMessageFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var SegmentMessageFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

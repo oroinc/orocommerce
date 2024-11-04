@@ -38,9 +38,7 @@ class FixedProductMethodFromChannelFactory implements IntegrationShippingMethodF
         $this->shippingCostProvider = $shippingCostProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(Channel $channel): ShippingMethodInterface
     {
         /** @var FixedProductSettings $transport */

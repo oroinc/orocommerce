@@ -17,6 +17,7 @@ class ProductPriceRepositoryGetMinimalTest extends WebTestCase
 
     private ProductPriceRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

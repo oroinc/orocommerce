@@ -29,17 +29,13 @@ class ContentNodeStub implements ContentNodeInterface, WebCatalogAwareInterface
         $this->id = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContentVariants()
     {
         return $this->contentVariants;
@@ -57,25 +53,19 @@ class ContentNodeStub implements ContentNodeInterface, WebCatalogAwareInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTitles()
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isRewriteVariantTitle()
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWebCatalog()
     {
         return $this->webCatalog;

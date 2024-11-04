@@ -21,8 +21,8 @@ class CheckoutShippingContextDataConverter implements ContextDataConverterInterf
 
     /**
      * @param Checkout $entity
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getContextData($entity): array
     {
         if (!$this->supports($entity)) {
@@ -48,9 +48,7 @@ class CheckoutShippingContextDataConverter implements ContextDataConverterInterf
         return $contextData;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($entity): bool
     {
         return $this->checkoutContextDataConverter->supports($entity);

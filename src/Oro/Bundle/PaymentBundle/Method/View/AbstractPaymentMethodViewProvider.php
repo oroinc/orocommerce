@@ -19,17 +19,13 @@ abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewPro
         $this->views = new ArrayCollection();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function hasPaymentMethodView($identifier)
     {
         return $this->getViews()->containsKey($identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentMethodView($identifier)
     {
         if (!$this->hasPaymentMethodView($identifier)) {
@@ -39,9 +35,7 @@ abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewPro
         return $this->getViews()->get($identifier);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentMethodViews(array $identifiers)
     {
         $views = [];

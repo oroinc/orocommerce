@@ -51,6 +51,7 @@ class SalesOrdersVolumeDataProvider implements SalesOrdersDataProviderInterface
      *      //...
      *  ]
      */
+    #[\Override]
     public function getData(
         \DateTime $dateFrom,
         \DateTime $dateTo,

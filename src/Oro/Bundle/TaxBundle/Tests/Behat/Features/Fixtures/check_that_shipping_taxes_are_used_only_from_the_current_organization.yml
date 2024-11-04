@@ -1,0 +1,61 @@
+Oro\Bundle\OrganizationBundle\Entity\Organization:
+    second_organization:
+        name: 'Acme'
+        enabled: true
+        __calls:
+            - addUser: ['@admin']
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        taxCode: '@customer_tax_code'
+        payment_term_7c4f1e8e: '@paymentTerm'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    marlene:
+        email: 'MarleneSBradley@example.org'
+        username: 'MarleneSBradley@example.org'
+        password: <userPassword(@marlene->username)>
+        firstName: 'Marlene'
+        lastName: 'Bradley'
+        enabled: '1'
+        confirmed: '1'
+        customer: '@customer'
+        organization: '@organization'
+        userRoles: ['@buyer']
+        owner: '@admin'
+        website: '@website1'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    address:
+        country: '@united_states'
+        region: '@california'
+        label: 'Customer user address'
+        street: 'Street'
+        city: 'City'
+        postalCode: '90001'
+        frontendOwner: '@marlene'
+        owner: '@admin'
+        __calls:
+            - setDefaults: ['@shippingType', '@billingType']
+        systemOrganization: '@organization'
+        primary: true
+        organization: 'ORO'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    billing:
+        address: '@address'
+        type: '@billingType'
+        default: true
+    shipping:
+        address: '@address'
+        type: '@shippingType'
+        default: true
+
+Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+    customer_tax_code:
+        owner: '@admin'
+        organization: '@organization'
+        code: 'customer_tax_code'

@@ -8,9 +8,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection;
 class DoctrineShippingMethodValidatorResultErrorCollection extends ArrayCollection implements
     Collection\ShippingMethodValidatorResultErrorCollectionInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createCommonBuilder()
     {
         return

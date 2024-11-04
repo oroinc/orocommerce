@@ -13,14 +13,14 @@ Feature: Quotes Grid Frontend Sort Nullables
     Given I signed in as AmandaRCole@example.org on the store frontend
     And I click "Account Dropdown"
     When I click "Quotes"
-    And I sort grid by "DNSLT"
+    And I sort grid by "Ship by"
     Then I should see following grid:
       | Quote # |
       | Quote13 |
-    When I sort grid by "DNSLT" again
+    When I sort grid by "Ship by" again
     Then I should see following grid:
-      | DNSLT |
-      |       |
+      | Ship by |
+      |         |
     And I reset "AllQuotes" grid
 
   Scenario: Sort by Valid Until

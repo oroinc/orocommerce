@@ -20,9 +20,7 @@ class BrandRoutingInformationProvider implements RoutingInformationProviderInter
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof Brand;
@@ -31,16 +29,14 @@ class BrandRoutingInformationProvider implements RoutingInformationProviderInter
     /**
      * @param Product $entity
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getRouteData($entity)
     {
         return new RouteData('oro_product_frontend_brand_view', ['id' => $entity->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlPrefix($entity)
     {
         return $this->configManager->get('oro_product.brand_direct_url_prefix');

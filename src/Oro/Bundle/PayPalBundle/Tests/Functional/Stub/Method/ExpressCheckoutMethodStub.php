@@ -13,9 +13,7 @@ class ExpressCheckoutMethodStub implements PaymentMethodInterface
     /** @internal */
     const TEST_URL = '/';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
         return [
@@ -23,25 +21,19 @@ class ExpressCheckoutMethodStub implements PaymentMethodInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier()
     {
         return static::TYPE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isApplicable(PaymentContextInterface $context)
     {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function supports($actionName)
     {
         return self::PURCHASE === $actionName;

@@ -28,6 +28,7 @@ class OrderAddressEventListenerTest extends \PHPUnit\Framework\TestCase
     protected FormFactoryInterface|MockObject $formFactory;
     protected OrderAddressManager|MockObject $addressManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);

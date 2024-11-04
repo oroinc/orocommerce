@@ -37,7 +37,7 @@ class CustomerTaxCode extends AbstractTaxCode implements OrganizationAwareInterf
 {
     use UserAwareTrait;
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getType()
     {
         return TaxCodeInterface::TYPE_ACCOUNT;

@@ -44,6 +44,7 @@ class AttributeFamilyUsageInVariantFieldValidator extends ConstraintValidator
      * @param AttributeFamily $value
      * @param Constraint $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof AttributeFamily) {

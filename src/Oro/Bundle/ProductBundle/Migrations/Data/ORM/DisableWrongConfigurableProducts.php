@@ -22,17 +22,13 @@ class DisableWrongConfigurableProducts extends AbstractFixture implements Contai
     /** @var ContainerInterface */
     private $container;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $hasResult = false;

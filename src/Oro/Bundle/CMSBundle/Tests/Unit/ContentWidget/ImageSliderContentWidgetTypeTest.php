@@ -37,6 +37,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
     private ObjectManager|MockObject $manager;
     private ImageSliderContentWidgetType $contentWidgetType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -210,6 +211,7 @@ class ImageSliderContentWidgetTypeTest extends FormIntegrationTestCase
         );
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         $fileType = new FileType($this->createMock(ExternalFileFactory::class));

@@ -30,6 +30,7 @@ abstract class AbstractEngineTest extends WebTestCase
     /** @var AbstractEngine */
     protected $engine;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->getContainer()->get('request_stack')->push(Request::create(''));
@@ -46,6 +47,7 @@ abstract class AbstractEngineTest extends WebTestCase
         $this->engine = $this->getSearchEngine();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->getContainer()->get('event_dispatcher')->removeListener(IndexEntityEvent::NAME, $this->listener);

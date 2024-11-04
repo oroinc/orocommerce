@@ -17,6 +17,7 @@ class AbstractTreeHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var TreeHandlerStub */
     private $treeHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->em = $this->createMock(EntityManager::class);

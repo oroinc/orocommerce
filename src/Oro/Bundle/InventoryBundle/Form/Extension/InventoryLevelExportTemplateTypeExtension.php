@@ -21,17 +21,13 @@ class InventoryLevelExportTemplateTypeExtension extends AbstractTypeExtension
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ExportTemplateType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!(isset($options['entityName']) && $options['entityName'] === InventoryLevel::class)) {

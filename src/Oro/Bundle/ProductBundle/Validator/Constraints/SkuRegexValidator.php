@@ -22,9 +22,7 @@ class SkuRegexValidator extends ConstraintValidator
         $this->pattern = $pattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$constraint instanceof SkuRegex) {

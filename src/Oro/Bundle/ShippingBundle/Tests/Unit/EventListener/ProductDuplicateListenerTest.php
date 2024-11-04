@@ -29,6 +29,7 @@ class ProductDuplicateListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductDuplicateListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ObjectRepository::class);

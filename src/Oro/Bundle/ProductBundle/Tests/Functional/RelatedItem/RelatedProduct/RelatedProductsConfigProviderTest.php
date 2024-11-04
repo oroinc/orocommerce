@@ -17,6 +17,7 @@ class RelatedProductsConfigProviderTest extends WebTestCase
     private ConfigManager $configManager;
     private RelatedProductsConfigProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,6 +25,7 @@ class RelatedProductsConfigProviderTest extends WebTestCase
         $this->provider = self::getContainer()->get('oro_product.tests.related_item.related_product.config_provider');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->configManager->set(

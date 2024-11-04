@@ -26,6 +26,7 @@ abstract class PlaceOrder implements TransitionServiceInterface
     ) {
     }
 
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         if (!$workflowItem->getId()) {
@@ -43,6 +44,7 @@ abstract class PlaceOrder implements TransitionServiceInterface
         return true;
     }
 
+    #[\Override]
     public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         return $this->actionExecutor->evaluateExpression(

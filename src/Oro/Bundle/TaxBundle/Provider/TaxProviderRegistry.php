@@ -38,9 +38,7 @@ class TaxProviderRegistry implements ResetInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function reset()
     {
         $this->providers = null;

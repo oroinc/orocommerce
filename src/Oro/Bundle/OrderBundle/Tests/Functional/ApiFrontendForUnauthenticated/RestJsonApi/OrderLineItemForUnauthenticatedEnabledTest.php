@@ -8,6 +8,7 @@ class OrderLineItemForUnauthenticatedEnabledTest extends OrderLineItemForUnauthe
 {
     use UnauthenticatedEnabledTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

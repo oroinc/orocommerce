@@ -16,6 +16,7 @@ class OrderLineItemMapper extends AbstractOrderMapper
     /**
      * @param object|OrderLineItem $lineItem
      */
+    #[\Override]
     public function map(object $lineItem): Taxable
     {
         $taxable = $this->createTaxable($lineItem);

@@ -133,10 +133,6 @@ Feature: Product View Page Templates
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
-    # Update schema
-    When I go to Products / Product Attributes
-    And I confirm schema update
-
     # Update attribute families
     And I go to Products / Product Families
     And I click Edit Default in grid
@@ -331,8 +327,8 @@ Feature: Product View Page Templates
     Then I should see "Shirt_1"
     And I should see "shirt_main"
     Then I should see next rows in "Default Page Prices" table in the exact order
-      | QTY | Item   | Set     |
-      | 1+  | $10.00 | $445.50 |
+      | QTY | Item  | Set     |
+      | 1+  | $7.00 | $432.30 |
     And I should see "Wide Template" with "Remark group" containing data:
       | Remark | Test text for configurable product |
 
@@ -371,8 +367,8 @@ Feature: Product View Page Templates
     And I click "Remark group"
     And I should see "Test text for configurable product"
     Then I should see next rows in "Default Page Prices" table in the exact order
-      | QTY | item   | Set     |
-      | 1+  | $10.00 | $445.50 |
+      | QTY | item  | Set     |
+      | 1+  | $7.00 | $432.30 |
   Scenario: "Product View Page Templates 5A" > Check that the label is hiding if the condition _name
     Given I operate as the Admin
     And go to Products/ Product Attributes

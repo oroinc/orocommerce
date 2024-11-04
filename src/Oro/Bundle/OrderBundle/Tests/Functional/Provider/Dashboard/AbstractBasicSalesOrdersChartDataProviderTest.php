@@ -5,8 +5,10 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard;
 use Carbon\Carbon;
 use Oro\Bundle\DashboardBundle\Model\WidgetOptionBag;
 use Oro\Bundle\DashboardBundle\Provider\Converters\FilterDateRangeConverter;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\AbstractDateFilterType;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatterInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartScaleProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -21,11 +23,23 @@ abstract class AbstractBasicSalesOrdersChartDataProviderTest extends WebTestCase
         OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED
     ];
 
+    protected static function getDefaultIncludedOrderStatuses(): array
+    {
+        return array_map(
+            fn ($optionId) => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $optionId),
+            [
+                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
+            ]
+        );
+    }
+
     protected FilterDateRangeConverter $filterDateRangeConverter;
     protected DateTimeFormatterInterface $dateTimeFormatter;
     protected SalesOrdersChartScaleProvider $chartScaleProvider;
     protected ?SalesOrdersChartDataProvider $salesOrdersChartDataProvider = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -39,6 +53,7 @@ abstract class AbstractBasicSalesOrdersChartDataProviderTest extends WebTestCase
         $this->salesOrdersChartDataProvider = $this->getSalesOrdersChartDataProvider();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         Carbon::setTestNow();

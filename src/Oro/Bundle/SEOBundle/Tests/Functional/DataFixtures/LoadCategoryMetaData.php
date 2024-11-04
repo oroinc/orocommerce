@@ -28,6 +28,7 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
         ]
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (self::$metadata as $entityReference => $metadataFields) {
@@ -38,6 +39,7 @@ class LoadCategoryMetaData extends AbstractFixture implements DependentFixtureIn
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [

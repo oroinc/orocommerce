@@ -58,11 +58,13 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
         ];
     }
 
+    #[\Override]
     public function isOptional(): bool
     {
         return false;
     }
 
+    #[\Override]
     public function warmUp(string $cacheDir): array
     {
         if (!$this->applicationState->isInstalled()) {

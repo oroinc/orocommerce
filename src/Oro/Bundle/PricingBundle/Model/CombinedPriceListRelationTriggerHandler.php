@@ -46,16 +46,19 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         $this->configManager = $configManager;
     }
 
+    #[\Override]
     public function handleConfigChange(): void
     {
         $this->sendMessage([]);
     }
 
+    #[\Override]
     public function handleFullRebuild(): void
     {
         $this->sendMessage(['force' => true]);
     }
 
+    #[\Override]
     public function handleWebsiteChange(Website $website): void
     {
         if (null === $website->getId()) {
@@ -67,6 +70,7 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
+    #[\Override]
     public function handleCustomerGroupChange(CustomerGroup $customerGroup, Website $website): void
     {
         if (null === $customerGroup->getId()) {
@@ -84,6 +88,7 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
+    #[\Override]
     public function handleCustomerGroupRemove(CustomerGroup $customerGroup): void
     {
         $iterator = $this->doctrine->getRepository(PriceListToCustomer::class)
@@ -93,6 +98,7 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
+    #[\Override]
     public function handleCustomerChange(Customer $customer, Website $website): void
     {
         if (null === $customer->getId()) {
@@ -115,6 +121,7 @@ class CombinedPriceListRelationTriggerHandler implements PriceListRelationTrigge
         }
     }
 
+    #[\Override]
     public function handlePriceListStatusChange(PriceList $priceList): void
     {
         if ($this->isDefaultPriceList($priceList->getId())) {

@@ -9,7 +9,7 @@ Feature: Product attributes
       | Field Name | Color  |
       | Type       | Select |
     And click "Continue"
-    And I click "Backoffice options"
+    And I click "Back-Office options"
     Then I should not see "Applicable Organizations"
     And set Options with:
       | Label  |
@@ -26,8 +26,6 @@ Feature: Product attributes
       | L      |
       | M      |
     And I save and close form
-    And click update schema
-    Then I should see Schema updated flash message
 
   Scenario: Create extend field from entity management
     Given I go to System/ Entities/ Entity Management
@@ -45,8 +43,6 @@ Feature: Product attributes
     Then I should see "Applicable Organizations"
     When I save and close form
     Then I should see "Field saved" flash message
-    When I click update schema
-    Then I should see Schema updated flash message
 
   Scenario: Create product family with new attributes
     And I go to Products/ Product Families

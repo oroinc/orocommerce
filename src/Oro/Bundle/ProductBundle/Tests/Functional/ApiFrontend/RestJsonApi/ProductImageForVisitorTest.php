@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
 
 class ProductImageForVisitorTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

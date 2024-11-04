@@ -35,6 +35,7 @@ class WYSIWYGBlockListenerTest extends \PHPUnit\Framework\TestCase
     /** @var WYSIWYGBlockListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->environment = $this->createMock(Environment::class);

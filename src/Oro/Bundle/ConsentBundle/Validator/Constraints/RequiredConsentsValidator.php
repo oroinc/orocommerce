@@ -26,10 +26,10 @@ class RequiredConsentsValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param RequiredConsents $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!is_array($value) && !$value instanceof ArrayCollection) {

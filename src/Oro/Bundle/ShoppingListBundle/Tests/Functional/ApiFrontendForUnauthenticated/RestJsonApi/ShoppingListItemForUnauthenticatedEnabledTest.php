@@ -8,6 +8,7 @@ class ShoppingListItemForUnauthenticatedEnabledTest extends ShoppingListItemForU
 {
     use UnauthenticatedEnabledTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

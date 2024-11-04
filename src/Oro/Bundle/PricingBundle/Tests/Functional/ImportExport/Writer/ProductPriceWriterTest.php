@@ -21,6 +21,7 @@ class ProductPriceWriterTest extends WebTestCase
 {
     use MessageQueueAssertTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

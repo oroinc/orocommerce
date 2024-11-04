@@ -25,6 +25,7 @@ class RequestToQuoteDataStorageTest extends TestCase
 
     private RequestToQuoteDataStorage $requestDataStorage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->storage = $this->createMock(ProductDataStorage::class);

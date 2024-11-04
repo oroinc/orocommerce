@@ -27,6 +27,7 @@ class UPSShippingMethodTypeFactory implements UPSShippingMethodTypeFactoryInterf
     ) {
     }
 
+    #[\Override]
     public function create(Channel $channel, ShippingService $service): UPSShippingMethodType
     {
         return new UPSShippingMethodType(

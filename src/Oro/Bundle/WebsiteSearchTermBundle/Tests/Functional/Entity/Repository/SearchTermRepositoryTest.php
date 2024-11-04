@@ -18,6 +18,7 @@ class SearchTermRepositoryTest extends WebTestCase
 
     private SearchTermRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

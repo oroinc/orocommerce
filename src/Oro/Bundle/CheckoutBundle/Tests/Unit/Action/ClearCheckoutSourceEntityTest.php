@@ -25,6 +25,7 @@ class ClearCheckoutSourceEntityTest extends \PHPUnit\Framework\TestCase
 
     private ClearCheckoutSourceEntity $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $contextAccessor = new ContextAccessor();

@@ -17,6 +17,7 @@ class WysiwygWidgetIconRendererTest extends TestCase
     private MockObject|Environment $twig;
     private WysiwygWidgetIconRenderer $renderer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);

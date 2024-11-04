@@ -18,7 +18,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
@@ -35,8 +35,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
- * @method AbstractEnumValue getInternalStatus()
- * @method AbstractEnumValue getCustomerStatus()
+ * @method EnumOptionInterface getInternalStatus()
+ * @method EnumOptionInterface getCustomerStatus()
  * @mixin OroRFPBundle_Entity_Request
  */
 #[ORM\Entity(repositoryClass: RequestRepository::class)]
@@ -232,6 +232,7 @@ class Request implements
      *
      * @return integer
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -255,6 +256,7 @@ class Request implements
      *
      * @return string
      */
+    #[\Override]
     public function getFirstName()
     {
         return $this->firstName;
@@ -278,6 +280,7 @@ class Request implements
      *
      * @return string
      */
+    #[\Override]
     public function getLastName()
     {
         return $this->lastName;
@@ -301,6 +304,7 @@ class Request implements
      *
      * @return string
      */
+    #[\Override]
     public function getEmail()
     {
         return $this->email;
@@ -407,6 +411,7 @@ class Request implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return sprintf('%s: %s %s', $this->id, $this->firstName, $this->lastName);
@@ -590,6 +595,7 @@ class Request implements
     /**
      * @return Website
      */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
@@ -599,6 +605,7 @@ class Request implements
      * @param Website|null $website
      * @return $this
      */
+    #[\Override]
     public function setWebsite(Website $website = null)
     {
         $this->website = $website;
@@ -606,9 +613,7 @@ class Request implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEmailFields()
     {
         return ['email'];

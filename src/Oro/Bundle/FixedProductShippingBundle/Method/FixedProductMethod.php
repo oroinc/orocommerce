@@ -38,54 +38,43 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
         $this->type = new FixedProductMethodType($label, $roundingService, $shippingCostProvider);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isGrouped(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTypes(): array
     {
         return [$this->type];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
         return $this->type->getIdentifier() === $identifier
@@ -93,25 +82,19 @@ class FixedProductMethod implements ShippingMethodInterface, ShippingMethodIconA
             : null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptionsConfigurationFormType(): ?string
     {
         return HiddenType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSortOrder(): int
     {
         return 10;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon(): ?string
     {
         return $this->icon;

@@ -13,6 +13,7 @@ class QuantityTransformerTest extends \PHPUnit\Framework\TestCase
      */
     private $numberFormatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->numberFormatter = $this->createMock(NumberFormatter::class);

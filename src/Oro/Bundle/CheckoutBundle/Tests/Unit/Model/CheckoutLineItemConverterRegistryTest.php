@@ -21,9 +21,7 @@ class CheckoutLineItemConverterRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutLineItemConverterRegistry */
     private $registry;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->converter1 = $this->createMock(CheckoutLineItemConverterInterface::class);

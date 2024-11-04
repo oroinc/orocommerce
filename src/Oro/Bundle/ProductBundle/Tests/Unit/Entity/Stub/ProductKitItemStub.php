@@ -20,11 +20,13 @@ class ProductKitItemStub extends BaseProductKitItem
         $this->id = $id;
     }
 
+    #[\Override]
     public function __call($name, $arguments)
     {
         return $this->localizedMethodCall($this->localizedFields, $name, $arguments);
     }
 
+    #[\Override]
     public function __get($name)
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -38,6 +40,7 @@ class ProductKitItemStub extends BaseProductKitItem
         throw new \RuntimeException('It\'s not expected to get non-existing property');
     }
 
+    #[\Override]
     public function __set($name, $value)
     {
         if (array_key_exists($name, $this->localizedFields)) {
@@ -55,6 +58,7 @@ class ProductKitItemStub extends BaseProductKitItem
         throw new \RuntimeException('It\'s not expected to set non-existing property');
     }
 
+    #[\Override]
     public function __isset($name)
     {
         if (array_key_exists($name, $this->localizedFields)) {

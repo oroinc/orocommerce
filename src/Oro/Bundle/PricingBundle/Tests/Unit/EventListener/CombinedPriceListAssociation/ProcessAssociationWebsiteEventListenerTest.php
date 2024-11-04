@@ -32,6 +32,7 @@ class ProcessAssociationWebsiteEventListenerTest extends TestCase
     private CombinedPriceListScheduleResolver|MockObject $scheduleResolver;
     private ProcessAssociationWebsiteEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

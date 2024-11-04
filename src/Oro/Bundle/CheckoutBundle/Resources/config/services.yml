@@ -935,6 +935,17 @@ services:
         tags:
             - { name: oro_datagrid.extension }
 
+    oro_checkout.datagrid.extension.frontend_line_items_grid.group_subtotal:
+        class: Oro\Bundle\CheckoutBundle\Datagrid\Extension\FrontendLineItemsGroupSubtotalExtension
+        arguments:
+            -
+                - 'frontend-checkout-line-items-grid'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_currency.rounding.price_rounding_service'
+            - '@oro_locale.formatter.number'
+        tags:
+            - { name: oro_datagrid.extension }
+
     oro_checkout.event_listener.datagrid_line_items_data.shopping_list_line_item_basic:
         class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataListener
         tags:

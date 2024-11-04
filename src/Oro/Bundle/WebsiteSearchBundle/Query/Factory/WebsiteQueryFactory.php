@@ -33,9 +33,7 @@ class WebsiteQueryFactory implements QueryFactoryInterface
         $builder->process($query, $queryConfig);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(array $config = [])
     {
         $query = new WebsiteSearchQuery(

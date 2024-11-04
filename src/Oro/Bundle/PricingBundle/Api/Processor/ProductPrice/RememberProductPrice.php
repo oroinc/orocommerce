@@ -15,9 +15,7 @@ class RememberProductPrice implements ProcessorInterface
 {
     public const PRODUCT_PRICE_ATTRIBUTE = 'product_price';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

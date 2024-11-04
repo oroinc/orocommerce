@@ -24,9 +24,7 @@ class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSub
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilters(): array
     {
         return [
@@ -55,9 +53,7 @@ class ContentWidgetTypeExtension extends AbstractExtension implements ServiceSub
         return $this->getTranslator()->trans($label);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

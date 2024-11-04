@@ -22,6 +22,7 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var MoneyOrderConfigFactoryInterface */
     private $testedFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelperMock = $this->createMock(LocalizationHelper::class);

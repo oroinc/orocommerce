@@ -11,6 +11,7 @@ class ShoppingList extends Element implements LineItemsAwareInterface, SubtotalA
      * @param string $subtotalName
      * @return string
      */
+    #[\Override]
     public function getSubtotal($subtotalName)
     {
         /** @var Subtotals $subtotals */
@@ -28,9 +29,7 @@ class ShoppingList extends Element implements LineItemsAwareInterface, SubtotalA
         self::assertTrue($titleElement->isValid(), sprintf('Title "%s", was not match to current title', $title));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getElements('ShoppingListLineItem');

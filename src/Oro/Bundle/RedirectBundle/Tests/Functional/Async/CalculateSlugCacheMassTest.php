@@ -24,6 +24,7 @@ class CalculateSlugCacheMassTest extends WebTestCase
     use JobsAwareTestTrait;
     use SlugAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -40,6 +40,8 @@ services:
         arguments:
             - '@oro_pricing.providers.price_attribute_prices'
             - '@doctrine'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_pricing.provider.product_price'
 
     oro_fixed_product_shipping.handler.shipping_cost_attribute_delete_handler:
         class: Oro\Bundle\FixedProductShippingBundle\Handler\ShippingCostAttributeDeleteHandler

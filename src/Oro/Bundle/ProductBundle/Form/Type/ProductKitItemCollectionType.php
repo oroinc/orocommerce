@@ -13,6 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductKitItemCollectionType extends AbstractType
 {
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -24,9 +25,7 @@ class ProductKitItemCollectionType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['skip_optional_validation_group'] = true;
@@ -34,11 +33,13 @@ class ProductKitItemCollectionType extends AbstractType
         unset($view->vars['attr']['data-validation-optional-group']);
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return CollectionType::class;
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_kit_items_collection';

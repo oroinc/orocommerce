@@ -16,6 +16,7 @@ class SubtotalProviderPassTest extends \PHPUnit\Framework\TestCase
 
     private SubtotalProviderPass $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->container = new ContainerBuilder();

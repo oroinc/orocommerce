@@ -21,10 +21,6 @@ Feature: Product Attributes Management in Product Families
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
-    When I go to Products / Product Attributes
-    And I click update schema
-    Then I should see "Schema updated" flash message
-
   Scenario: Create product families with Size attribute
     When I go to Products / Product Families
     And I click "Create Product Family"

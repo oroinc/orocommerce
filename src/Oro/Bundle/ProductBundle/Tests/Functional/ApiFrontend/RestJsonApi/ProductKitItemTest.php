@@ -12,13 +12,14 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTe
  */
 class ProductKitItemTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
         // guard
         self::assertEquals(
-            ['in_stock', 'out_of_stock'],
+            ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
             self::getConfigManager()->get('oro_product.general_frontend_product_visibility')
         );
 

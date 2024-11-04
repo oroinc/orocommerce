@@ -11,6 +11,7 @@ class AssignTypePlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $placeholder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->placeholder = new AssignTypePlaceholder();

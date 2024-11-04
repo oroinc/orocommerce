@@ -7,9 +7,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Page;
 
 class ContentNodeUpdate extends Page
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function open(array $parameters = [])
     {
         throw new PendingException('Open method is not implemented yet in Content Node Update page');

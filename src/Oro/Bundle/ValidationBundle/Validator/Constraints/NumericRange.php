@@ -20,9 +20,6 @@ class NumericRange extends Range
     /** @var float|string */
     public $max;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct($options = null)
     {
         $options['min'] = $options['min'] ?? self::DEFAULT_MIN;
@@ -36,9 +33,7 @@ class NumericRange extends Range
         parent::__construct($options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return NumericRangeValidator::class;

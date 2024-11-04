@@ -32,9 +32,7 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
     const BRAND_1_DEFAULT_SLUG_PROTOTYPE = 'brand-1.slugPrototypes.default';
     const BRAND_2_DEFAULT_SLUG_PROTOTYPE = 'brand-2.slugPrototypes.default';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -42,9 +40,7 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->makeBrandFilterable();

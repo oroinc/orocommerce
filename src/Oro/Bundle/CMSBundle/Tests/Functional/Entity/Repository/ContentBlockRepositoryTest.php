@@ -21,6 +21,7 @@ class ContentBlockRepositoryTest extends WebTestCase
     private ContentBlockRepository $repository;
     private ScopeManager $scopeManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

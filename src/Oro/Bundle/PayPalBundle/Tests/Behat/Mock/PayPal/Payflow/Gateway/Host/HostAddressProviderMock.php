@@ -8,13 +8,13 @@ class HostAddressProviderMock implements HostAddressProviderInterface
 {
     const PAYPAL_FORM_ACTION_MOCK = '/paypal-out-redirect-mock';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getHostAddress($testMode)
     {
         return '';
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getFormAction($testMode)
     {
         return self::PAYPAL_FORM_ACTION_MOCK;

@@ -38,9 +38,7 @@ class AddPaginationLinksForProductCollectionProducts implements ProcessorInterfa
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

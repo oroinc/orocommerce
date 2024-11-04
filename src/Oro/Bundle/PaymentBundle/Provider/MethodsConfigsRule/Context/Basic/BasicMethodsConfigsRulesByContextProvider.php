@@ -25,9 +25,7 @@ class BasicMethodsConfigsRulesByContextProvider implements MethodsConfigsRulesBy
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethodsConfigsRules(PaymentContextInterface $context): array
     {
         if ($context->getBillingAddress()) {

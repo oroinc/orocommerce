@@ -20,6 +20,7 @@ class QuickAddType extends AbstractType
     public const ADDITIONAL_FIELD_NAME = 'additional';
     public const TRANSITION_FIELD_NAME = 'transition';
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -48,6 +49,7 @@ class QuickAddType extends AbstractType
             );
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_quick_add';

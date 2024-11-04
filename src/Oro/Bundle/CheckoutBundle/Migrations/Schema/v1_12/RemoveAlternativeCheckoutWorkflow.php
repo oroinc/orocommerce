@@ -18,9 +18,7 @@ use Oro\Bundle\WorkflowBundle\Migration\RemoveWorkflowDefinitionQuery;
  */
 class RemoveAlternativeCheckoutWorkflow implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         if (\class_exists('Oro\Bundle\AlternativeCheckoutBundle\OroAlternativeCheckoutBundle', false)) {

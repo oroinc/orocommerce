@@ -7,9 +7,7 @@ use Oro\Bundle\ProductBundle\ContentVariantType\ProductCollectionContentVariantT
 
 class LoadWebCatalogProductCollectionData extends AbstractLoadWebCatalogData implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -17,33 +15,25 @@ class LoadWebCatalogProductCollectionData extends AbstractLoadWebCatalogData imp
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRoute()
     {
         return 'oro_product_frontend_product_view';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getContentVariantType()
     {
         return  ProductCollectionContentVariantType::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntitySetterMethod()
     {
         return 'setProductCollectionSegment';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntity()
     {
         return $this->getReference(LoadProductCollectionSegmentData::PRODUCT_COLLECTION_SEGMENT_1);

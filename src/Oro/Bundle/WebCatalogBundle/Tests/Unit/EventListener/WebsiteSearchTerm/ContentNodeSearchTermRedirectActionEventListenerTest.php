@@ -34,6 +34,7 @@ class ContentNodeSearchTermRedirectActionEventListenerTest extends TestCase
 
     private ContentNodeSearchTermRedirectActionEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contentNodeTreeResolver = $this->createMock(ContentNodeTreeResolverInterface::class);

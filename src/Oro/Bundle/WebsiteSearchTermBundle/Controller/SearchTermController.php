@@ -95,9 +95,7 @@ class SearchTermController extends AbstractController
             ->update($searchTerm, $form, $saveMessage, $request);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

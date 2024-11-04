@@ -31,6 +31,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
 
     private string $prevVariantClass;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -42,6 +43,7 @@ class ProductCollectionsIndexCronCommandTest extends WebTestCase
         $this->loadFixtures([LoadContentVariantSegmentsWithRelationsData::class]);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $metadata = $this->getContentVariantMetadata();

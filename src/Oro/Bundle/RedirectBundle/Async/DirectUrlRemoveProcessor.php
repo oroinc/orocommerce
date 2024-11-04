@@ -37,6 +37,7 @@ class DirectUrlRemoveProcessor implements MessageProcessorInterface, TopicSubscr
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $entityManager = null;
@@ -68,6 +69,7 @@ class DirectUrlRemoveProcessor implements MessageProcessorInterface, TopicSubscr
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [RemoveDirectUrlForEntityTypeTopic::getName()];

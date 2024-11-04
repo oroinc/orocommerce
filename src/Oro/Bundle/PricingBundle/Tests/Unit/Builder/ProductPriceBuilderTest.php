@@ -52,6 +52,7 @@ class ProductPriceBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var CombinedPriceListBuildTriggerHandler */
     private $combinedPriceListBuildTriggerHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

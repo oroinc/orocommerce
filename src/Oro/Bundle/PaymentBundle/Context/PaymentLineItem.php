@@ -54,65 +54,49 @@ class PaymentLineItem extends ParameterBag implements
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPrice()
     {
         return $this->get(self::FIELD_PRICE);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->get(self::FIELD_PRODUCT);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this->get(self::FIELD_PRODUCT_HOLDER);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->get(self::FIELD_PRODUCT_SKU);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->get(self::FIELD_ENTITY_IDENTIFIER);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getQuantity()
     {
         return $this->get(self::FIELD_QUANTITY);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->get(self::FIELD_PRODUCT_UNIT);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->get(self::FIELD_PRODUCT_UNIT_CODE);
@@ -121,11 +105,13 @@ class PaymentLineItem extends ParameterBag implements
     /**
      * @return Collection<PaymentKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems(): Collection
     {
         return $this->get(self::FIELD_KIT_ITEM_LINE_ITEMS, new ArrayCollection([]));
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->get(self::FIELD_CHECKSUM, '');

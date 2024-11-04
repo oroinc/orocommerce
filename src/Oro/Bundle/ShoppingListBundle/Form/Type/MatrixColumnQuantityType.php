@@ -13,26 +13,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MatrixColumnQuantityType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addViewTransformer(new NumberToLocalizedStringTransformer($options['precision']));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setRequired('precision');
         $resolver->setAllowedTypes('precision', 'int');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): string
     {
         return TextType::class;

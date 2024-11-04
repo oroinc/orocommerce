@@ -3,6 +3,7 @@
 namespace Oro\Bundle\InventoryBundle\ImportExport\Serializer;
 
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Serializer\Normalizer\ConfigurableEntityNormalizer;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -38,17 +39,13 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         $this->roundingService = $roundingService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization($data, string $format = null, array $context = []): bool
     {
         return $data instanceof InventoryLevel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function normalize($object, string $format = null, array $context = [])
     {
         $result = $this->dispatchNormalize($object, [], $context, Events::BEFORE_NORMALIZE_ENTITY);
@@ -114,9 +111,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         ]];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize($data, string $type, string $format = null, array $context = [])
     {
         if (!is_array($data) || !isset($data['product'])) {
@@ -140,7 +135,23 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         $productUnitPrecision->setProduct($productEntity);
 
         if (array_key_exists('inventoryStatus', $productData)) {
-            $productEntity->setInventoryStatus($productData['inventoryStatus']);
+            $inventoryStatus = $this->doctrineHelper->getEntityRepository(EnumOption::class)
+                ->findOneBy([
+                    'enumCode' => Product::INVENTORY_STATUS_ENUM_CODE,
+                    'name' => $productData['inventoryStatus']
+                ]);
+
+            if (null !== $inventoryStatus) {
+                $productEntity->setInventoryStatus($inventoryStatus);
+            } elseif (null !== $productData['inventoryStatus'] && !empty($productData['inventoryStatus'])) {
+                // set invalid inventory status reference is expected in HasSupportedInventoryStatusValidator
+                $productEntity->setInventoryStatus(
+                    $this->doctrineHelper->getEntityReference(
+                        EnumOption::class,
+                        $productData['inventoryStatus']
+                    )
+                );
+            }
         }
 
         $this->determineQuantity($inventoryLevel, $data);
@@ -169,9 +180,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization($data, string $type, string $format = null, array $context = array()): bool
     {
         return !empty($data) && isset($data['product']) && $type === InventoryLevel::class;

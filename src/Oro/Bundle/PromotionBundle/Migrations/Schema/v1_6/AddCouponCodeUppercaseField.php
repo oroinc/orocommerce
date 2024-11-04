@@ -16,9 +16,7 @@ class AddCouponCodeUppercaseField implements Migration, DatabasePlatformAwareInt
 {
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_promotion_coupon');

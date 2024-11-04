@@ -17,9 +17,7 @@ use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface as SID;
  */
 class LoadCustomerBuyerRoles extends LoadCustomerUserRoles
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {

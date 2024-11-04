@@ -13,9 +13,7 @@ class ComputeProductSearchUnitPrecisions implements ProcessorInterface
 {
     private const UNIT_PRECISIONS_FIELD = 'unitPrecisions';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

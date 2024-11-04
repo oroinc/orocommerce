@@ -8,9 +8,7 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\CompositeCacheBuilder;
 
 class CacheBuilder extends CompositeCacheBuilder implements CategoryCaseCacheBuilderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function categoryPositionChanged(Category $category)
     {
         foreach ($this->builders as $builder) {

@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\ProductBundle\ImportExport\DataConverter;
 
+use Oro\Bundle\EntityConfigBundle\Config\ConfigInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextAwareInterface;
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Converter\RelationCalculatorInterface;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
 use Oro\Bundle\ProductBundle\ImportExport\Event\ProductDataConverterEvent;
+use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -18,7 +20,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
-
+    protected ?TokenAccessorInterface $tokenAccessor = null;
     /**
      * @var ContextInterface
      */
@@ -29,17 +31,43 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setImportExportContext(ContextInterface $context): void
     {
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    public function setTokenAccessor(TokenAccessorInterface $tokenAccessor): void
+    {
+        $this->tokenAccessor = $tokenAccessor;
+    }
+
+    #[\Override]
+    protected function isFieldAvailableForExport(string $entityName, string $fieldName): bool
+    {
+        $isAvailable = parent::isFieldAvailableForExport($entityName, $fieldName);
+        $attrConfig = $this->fieldHelper->getFieldConfig('attribute', $entityName, $fieldName);
+        if ($isAvailable
+            && null !== $attrConfig
+            && $attrConfig->is('is_attribute')
+            && !$this->isAvailableAttribute($attrConfig)
+        ) {
+            $isAvailable = false;
+            $this->availableForExportField[$entityName][$fieldName] = false;
+        }
+
+        return $isAvailable;
+    }
+
+    private function isAvailableAttribute(ConfigInterface $attrConfig): bool
+    {
+        $organizationId = $this->tokenAccessor->getOrganizationId();
+
+        return $attrConfig->is('is_global')
+            || ($organizationId && $attrConfig->get('organization_id') === $organizationId);
+    }
+
+    #[\Override]
     protected function getBackendHeader()
     {
         $backendHeader = parent::getBackendHeader();
@@ -74,9 +102,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         return $backendHeader;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToExportFormat(array $exportedRecord, $skipNullValues = true)
     {
         $data = parent::convertToExportFormat($exportedRecord, $skipNullValues);
@@ -92,9 +118,7 @@ class ProductDataConverter extends LocalizedFallbackValueAwareDataConverter impl
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToImportFormat(array $importedRecord, $skipNullValues = true)
     {
         $data = parent::convertToImportFormat($importedRecord, $skipNullValues);

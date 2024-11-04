@@ -27,6 +27,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
     /** @var BasicMethodsConfigsRulesByContextProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(MethodsConfigsRulesFiltrationServiceInterface::class);

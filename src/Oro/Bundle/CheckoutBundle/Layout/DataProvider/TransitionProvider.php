@@ -34,9 +34,7 @@ class TransitionProvider implements TransitionProviderInterface
         $this->workflowManager = $workflowManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackTransition(WorkflowItem $workflowItem)
     {
         $transitions = $this->getBackTransitions($workflowItem);
@@ -48,9 +46,7 @@ class TransitionProvider implements TransitionProviderInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackTransitions(WorkflowItem $workflowItem)
     {
         $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId();
@@ -79,9 +75,7 @@ class TransitionProvider implements TransitionProviderInterface
         return $this->backTransitions[$cacheKey];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContinueTransition(WorkflowItem $workflowItem, $transitionName = null)
     {
         $cacheKey = $workflowItem->getId() . '_' . $workflowItem->getCurrentStep()->getId() . '_' . $transitionName;
@@ -132,6 +126,7 @@ class TransitionProvider implements TransitionProviderInterface
         );
     }
 
+    #[\Override]
     public function clearCache()
     {
         $this->continueTransitions = $this->backTransitions = [];

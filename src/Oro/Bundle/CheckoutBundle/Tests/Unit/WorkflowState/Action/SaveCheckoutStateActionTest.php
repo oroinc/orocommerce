@@ -23,6 +23,7 @@ class SaveCheckoutStateActionTest extends \PHPUnit\Framework\TestCase
     /** @var SaveCheckoutStateAction */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);

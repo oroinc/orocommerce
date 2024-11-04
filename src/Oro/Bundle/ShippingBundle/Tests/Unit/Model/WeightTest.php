@@ -13,6 +13,7 @@ class WeightTest extends \PHPUnit\Framework\TestCase
     /** @var Weight */
     private $model;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->model = new Weight();

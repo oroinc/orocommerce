@@ -24,9 +24,7 @@ class ProductSlugSourceEntityProvider implements SlugSourceEntityProviderInterfa
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceEntityBySlug(Slug $slug): ?SlugAwareInterface
     {
         if (!$this->configManager->get(Configuration::getConfigKey(Configuration::ENABLE_DIRECT_URL))) {

@@ -24,6 +24,7 @@ class CategoryImportExportHelperTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryImportExportHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

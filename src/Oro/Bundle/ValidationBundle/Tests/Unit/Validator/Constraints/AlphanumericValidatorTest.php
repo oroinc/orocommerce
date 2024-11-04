@@ -8,6 +8,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class AlphanumericValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): RegexValidator
     {
         return new RegexValidator();

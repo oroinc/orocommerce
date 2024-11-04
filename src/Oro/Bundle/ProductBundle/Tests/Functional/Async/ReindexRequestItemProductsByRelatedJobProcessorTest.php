@@ -27,6 +27,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
 
     private ReindexRequestItemProductsByRelatedJobProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -21,6 +21,7 @@ class OrderLineItemRequiredTaxRecalculationSpecificationTest extends WebTestCase
 {
     private OrderLineItemRequiredTaxRecalculationSpecification $specification;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

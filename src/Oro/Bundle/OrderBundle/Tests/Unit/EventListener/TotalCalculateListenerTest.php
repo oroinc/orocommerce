@@ -27,6 +27,7 @@ class TotalCalculateListenerTest extends \PHPUnit\Framework\TestCase
     /** @var TotalCalculateListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactory::class);

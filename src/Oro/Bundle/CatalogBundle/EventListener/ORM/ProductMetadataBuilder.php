@@ -14,9 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  */
 class ProductMetadataBuilder implements MetadataBuilderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function supports(ConfigInterface $extendConfig)
     {
         $entityConfigId = $extendConfig->getId();
@@ -24,9 +22,7 @@ class ProductMetadataBuilder implements MetadataBuilderInterface
         return $entityConfigId instanceof EntityConfigId && is_a($entityConfigId->getClassName(), Product::class, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function build(ClassMetadataBuilder $metadataBuilder, ConfigInterface $extendConfig)
     {
         //TODO: should be removed after BAP-16101

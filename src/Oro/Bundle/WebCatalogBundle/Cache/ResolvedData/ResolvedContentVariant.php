@@ -66,25 +66,19 @@ class ResolvedContentVariant implements ContentVariantInterface
         unset($this->data[$name]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getId()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getType()
     {
         return $this->type;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setType($type)
     {
         $this->type = $type;

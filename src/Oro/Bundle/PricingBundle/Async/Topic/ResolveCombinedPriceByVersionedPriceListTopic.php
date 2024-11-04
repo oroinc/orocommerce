@@ -13,16 +13,19 @@ class ResolveCombinedPriceByVersionedPriceListTopic extends AbstractTopic implem
 {
     private const NAME = 'oro_pricing.price_lists.cpl.resolve_prices_by_version';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Combines prices for active and ready to rebuild Combined Price List for a given version of price list.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
@@ -38,6 +41,7 @@ class ResolveCombinedPriceByVersionedPriceListTopic extends AbstractTopic implem
             ->allowedTypes('int[]');
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return self::getName() . ':v' . $messageBody['version'];

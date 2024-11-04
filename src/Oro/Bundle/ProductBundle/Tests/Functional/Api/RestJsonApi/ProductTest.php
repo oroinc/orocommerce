@@ -25,6 +25,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadWorkflowDefinitio
  */
 class ProductTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -113,7 +114,7 @@ class ProductTest extends RestJsonApiTestCase
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->assertEquals('in_stock', $product->getInventoryStatus()->getId());
+        $this->assertEquals('in_stock', $product->getInventoryStatus()->getInternalId());
 
         $response = $this->patch(
             ['entity' => 'products', 'id' => (string)$product->getId()],

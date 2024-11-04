@@ -20,6 +20,7 @@ class OrderAddressEventListener extends AbstractFormEventListener
         $this->addressManager = $addressManager;
     }
 
+    #[\Override]
     public function onOrderEvent(OrderEvent $event)
     {
         if (null === $event->getSubmittedData()) {

@@ -44,7 +44,7 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
         $this->diffManager = $diffManager;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $entity = $this->resolveValue($context, $this->entity);
@@ -54,7 +54,7 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
         return $this->diffManager->isStatesEqual($entity, $state1, $state2);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function initialize(array $options)
     {
         $this->entity = $this->getValueFromOption($options, self::OPTION_KEY_ENTITY);
@@ -78,19 +78,19 @@ class CheckCheckoutStates extends AbstractCondition implements ContextAccessorAw
         return $options[$key];
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName()
     {
         return self::NAME;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->entity, $this->state1, $this->state2]);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->entity, $this->state1, $this->state2], $factoryAccessor);

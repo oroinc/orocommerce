@@ -24,6 +24,7 @@ final class DeleteOrphanSuggestionsProcessorTest extends \PHPUnit\Framework\Test
 
     private DeleteOrphanSuggestionsProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);

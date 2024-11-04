@@ -13,6 +13,7 @@ class TaxBaseExclusionCollectionTypeTest extends FormIntegrationTestCase
     /** @var TaxBaseExclusionCollectionType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new TaxBaseExclusionCollectionType();

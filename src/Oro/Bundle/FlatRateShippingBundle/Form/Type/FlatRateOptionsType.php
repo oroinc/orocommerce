@@ -27,9 +27,7 @@ class FlatRateOptionsType extends AbstractType
         $this->roundingService = $roundingService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $priceOptions = [
@@ -62,6 +60,7 @@ class FlatRateOptionsType extends AbstractType
     /**
      * @throws AccessException
      */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -69,9 +68,7 @@ class FlatRateOptionsType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::BLOCK_PREFIX;

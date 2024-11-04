@@ -19,9 +19,7 @@ class CategoryRoutingInformationProvider implements RoutingInformationProviderIn
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof Category;
@@ -30,8 +28,8 @@ class CategoryRoutingInformationProvider implements RoutingInformationProviderIn
     /**
      * @param Category $entity
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getRouteData($entity)
     {
         return new RouteData(
@@ -43,9 +41,7 @@ class CategoryRoutingInformationProvider implements RoutingInformationProviderIn
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlPrefix($entity)
     {
         return $this->configManager->get('oro_catalog.category_direct_url_prefix');

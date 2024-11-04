@@ -13,6 +13,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
     /** @var OrderAddressProvider */
     protected $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,6 +28,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
         );
     }
 
+    #[\Override]
     public function testGetCustomerAddressesUnsupportedType()
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -35,6 +37,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
         $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
+    #[\Override]
     public function testGetCustomerUserAddressesUnsupportedType()
     {
         $this->expectException(\InvalidArgumentException::class);

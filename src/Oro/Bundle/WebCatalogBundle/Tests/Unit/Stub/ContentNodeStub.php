@@ -20,6 +20,7 @@ class ContentNodeStub extends ContentNode
         }
     }
 
+    #[\Override]
     public function __clone()
     {
     }

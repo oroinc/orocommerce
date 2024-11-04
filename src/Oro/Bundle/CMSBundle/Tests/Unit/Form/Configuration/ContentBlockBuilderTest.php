@@ -27,6 +27,7 @@ final class ContentBlockBuilderTest extends TestCase
     private ManagerRegistry|MockObject $registry;
     private FormBuilder|MockObject $formBuilder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->packages = $this->createMock(Packages::class);

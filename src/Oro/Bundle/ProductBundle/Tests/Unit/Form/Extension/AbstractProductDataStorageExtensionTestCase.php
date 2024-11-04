@@ -45,6 +45,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
     /** @var AbstractProductDataStorageExtension */
     protected $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->request = $this->createMock(Request::class);

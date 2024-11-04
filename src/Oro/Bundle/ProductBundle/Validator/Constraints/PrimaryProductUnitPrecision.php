@@ -12,9 +12,7 @@ class PrimaryProductUnitPrecision extends Constraint
     /** @var string */
     public $message = 'oro.product.unit_precisions_items.primary_precision_not_in_collection';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

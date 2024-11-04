@@ -17,6 +17,7 @@ class ComponentProcessorRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var ComponentProcessorRegistry */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processor1 = $this->createMock(ComponentProcessorInterface::class);

@@ -11,6 +11,7 @@ class QuickAddRowGrouperTest extends \PHPUnit\Framework\TestCase
 {
     private QuickAddRowGrouper $grouper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->grouper = new QuickAddRowGrouper();

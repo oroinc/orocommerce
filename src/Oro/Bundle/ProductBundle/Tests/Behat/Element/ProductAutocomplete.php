@@ -9,6 +9,7 @@ class ProductAutocomplete extends Element
     /**
      * @param string $value
      */
+    #[\Override]
     public function setValue($value)
     {
         $this->focus();

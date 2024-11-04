@@ -24,6 +24,7 @@ final class GenerateSuggestionsProcessorTest extends TestCase
 
     private int $batchSize = 100;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(SessionInterface::class);

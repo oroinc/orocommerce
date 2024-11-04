@@ -12,6 +12,7 @@ class SecureArrayTypeTest extends \PHPUnit\Framework\TestCase
     private SymmetricCrypterInterface $crypter;
     private SecureArrayType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->crypter = new DefaultCrypter('key');

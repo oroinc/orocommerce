@@ -12,6 +12,7 @@ class OnlySimpleProductsInProductKitItemProductsCollection extends Constraint
 {
     public string $message = 'oro.product.productkititem.products.only_simple';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

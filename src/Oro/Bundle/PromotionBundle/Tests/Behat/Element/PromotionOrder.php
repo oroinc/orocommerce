@@ -6,9 +6,7 @@ use Oro\Bundle\OrderBundle\Tests\Behat\Element\Order;
 
 class PromotionOrder extends Order
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return $this->getElements('PromotionOrderLineItem');

@@ -14,6 +14,7 @@ class WebsiteSearchProductPreloadingIndexerListenerTest extends WebTestCase
 {
     private ?WebsiteSearchProductPreloadingIndexerListener $listener = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

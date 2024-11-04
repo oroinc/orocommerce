@@ -18,6 +18,7 @@ class InventoryQuantityManagerTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryQuantityManager */
     private $inventoryQuantityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);

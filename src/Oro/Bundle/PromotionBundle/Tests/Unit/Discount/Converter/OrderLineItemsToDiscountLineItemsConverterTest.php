@@ -16,6 +16,7 @@ class OrderLineItemsToDiscountLineItemsConverterTest extends \PHPUnit\Framework\
 
     private OrderLineItemsToDiscountLineItemsConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converter = new OrderLineItemsToDiscountLineItemsConverter();

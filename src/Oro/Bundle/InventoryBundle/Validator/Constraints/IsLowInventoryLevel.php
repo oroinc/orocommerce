@@ -19,6 +19,7 @@ class IsLowInventoryLevel extends Constraint
 
     public string $message = '';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

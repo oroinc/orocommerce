@@ -22,6 +22,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

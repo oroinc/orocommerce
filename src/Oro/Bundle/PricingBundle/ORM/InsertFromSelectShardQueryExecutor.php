@@ -11,9 +11,7 @@ use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardOutputResultModifier;
 class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor implements
     ShardQueryExecutorNativeSqlInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function execute($className, array $fields, QueryBuilder $selectQueryBuilder)
     {
         $insertToTableName = $this->getTableName($className, $fields, $selectQueryBuilder);
@@ -25,9 +23,7 @@ class InsertFromSelectShardQueryExecutor extends AbstractShardQueryExecutor impl
         return $this->executeNative($insertToTableName, $className, $selectQuery->getSQL(), $fields, $params, $types);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function executeNative(
         string $insertToTableName,
         string $className,

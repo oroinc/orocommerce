@@ -14,9 +14,7 @@ use Oro\Bundle\MigrationBundle\Tools\DbIdentifierNameGenerator;
  */
 class ModifyPricingTables implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $identifierGenerator = new DbIdentifierNameGenerator();

@@ -49,7 +49,7 @@ data:
         inventory_status:
             data:
                 type: prodinventorystatuses
-                id: 'out_of_stock'
+                id: out_of_stock
         manageInventory:
             data:
                 type: entityfieldfallbackvalues
@@ -372,7 +372,7 @@ included:
             inventory_status:
                 data:
                     type: prodinventorystatuses
-                    id: 'out_of_stock'
+                    id: out_of_stock
             manageInventory:
                 data:
                     type: entityfieldfallbackvalues

@@ -61,9 +61,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate(ShippingMethodInterface $shippingMethod)
     {
         $result = $this->parentShippingMethodValidator->validate($shippingMethod);

@@ -7,7 +7,8 @@ use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
+use Oro\Bundle\EntityExtendBundle\Test\EntityExtendTestInitializer;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -60,6 +61,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVariantAvailabilityProvider */
     private $availabilityProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
@@ -82,7 +84,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->enumHandler = $this->getMockBuilder(EnumVariantFieldValueHandler::class)
             ->setConstructorArgs([
                 $doctrineHelper,
-                $this->createMock(EnumValueProvider::class),
+                $this->createMock(EnumOptionsProvider::class),
                 $this->createMock(LoggerInterface::class),
                 $this->createMock(ConfigManager::class),
                 $this->createMock(LocalizationHelper::class),
@@ -100,6 +102,10 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->qb->expects($this->any())
             ->method('getQuery')
             ->willReturn($this->query);
+        $this->qb->expects($this->any())
+            ->method('orderBy')
+            ->willReturnSelf();
+        EntityExtendTestInitializer::initialize();
 
         $this->availabilityProvider = new ProductVariantAvailabilityProvider(
             $doctrine,
@@ -321,7 +327,13 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $actualFields = $this->availabilityProvider
             ->getVariantFieldsValuesForVariant($configurableProduct, $simpleProduct);
 
-        $this->assertEquals($productData[$expectedProductSku], $actualFields);
+        $this->assertEquals(
+            [
+                'color' => 'test.red',
+                'new' => true
+            ],
+            $actualFields
+        );
     }
 
     /**
@@ -356,18 +368,18 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'Red' => 'red',
-                            'Green' => 'green',
-                            'Blue' => 'blue',
+                            'test.Red' => 'red',
+                            'test.Green' => 'green',
+                            'test.Blue' => 'blue',
                         ]
                     ],
                     'size' => [
                         'type' => 'enum',
                         'values' => [
-                            'S' => 's',
-                            'M' => 'm',
-                            'L' => 'l',
-                            'XL' => 'xl',
+                            'test.S' => 's',
+                            'test.M' => 'm',
+                            'test.L' => 'l',
+                            'test.XL' => 'xl',
                         ]
                     ],
                     'slim_fit' => [
@@ -402,15 +414,15 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expected' => [
                     'size' => [
-                        'S' => true,
-                        'M' => false,
-                        'L' => false,
-                        'XL' => false,
+                        'test.S' => true,
+                        'test.M' => false,
+                        'test.L' => false,
+                        'test.XL' => false,
                     ],
                     'color' => [
-                        'Red' => true,
-                        'Green' => false,
-                        'Blue' => false,
+                        'test.Red' => true,
+                        'test.Green' => false,
+                        'test.Blue' => false,
                     ],
                     'slim_fit' => [
                         0 => false,
@@ -423,9 +435,9 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                     'color' => [
                         'type' => 'enum',
                         'values' => [
-                            'Red' => 'red',
-                            'Green' => 'green',
-                            'Blue' => 'blue',
+                            'test.Red' => 'red',
+                            'test.Green' => 'green',
+                            'test.Blue' => 'blue',
                         ]
                     ],
                     'extended_field' => [
@@ -451,9 +463,9 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 'expected' => [
                     'color' => [
-                        'Red' => false,
-                        'Green' => true,
-                        'Blue' => false,
+                        'test.Red' => false,
+                        'test.Green' => true,
+                        'test.Blue' => false,
                     ]
                 ],
             ],
@@ -580,6 +592,9 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
                     ->willReturn($filteredProducts);
                 $qbAvailableSimpleProducts = $this->createMock(QueryBuilder::class);
                 $qbAvailableSimpleProducts->expects($this->any())
+                    ->method('orderBy')
+                    ->willReturnSelf();
+                $qbAvailableSimpleProducts->expects($this->any())
                     ->method('getQuery')
                     ->willReturn($queryAvailableSimpleProducts);
 
@@ -602,7 +617,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             foreach ($data as $field => $value) {
                 switch ($variantsData[$field]['type']) {
                     case 'enum':
-                        $fieldValue = $value ? new TestEnumValue($value, $value) : null;
+                        $fieldValue = $value ? new TestEnumValue('test', $value, $value) : null;
                         break;
                     case 'boolean':
                         $fieldValue = $value;

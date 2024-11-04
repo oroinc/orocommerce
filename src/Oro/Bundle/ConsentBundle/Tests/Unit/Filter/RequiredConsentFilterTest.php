@@ -13,6 +13,7 @@ class RequiredConsentFilterTest extends \PHPUnit\Framework\TestCase
     /** @var RequiredConsentFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new RequiredConsentFilter();

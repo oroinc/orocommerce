@@ -16,9 +16,7 @@ class LoadContentVariantsData extends AbstractFixture implements DependentFixtur
     const CONTENT_VARIANT_SUBNODE_1 = 'web_catalog.content_variant.subnode_1';
     const CONTENT_VARIANT_SUBNODE_2 = 'web_catalog.content_variant.subnode_2';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ContentNode $firstCatalogNode */
@@ -63,9 +61,7 @@ class LoadContentVariantsData extends AbstractFixture implements DependentFixtur
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadContentNodesData::class];

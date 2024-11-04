@@ -7,9 +7,7 @@ use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 
 class MoneyOrderPaymentMethodFactory implements MoneyOrderPaymentMethodFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(MoneyOrderConfigInterface $config)
     {
         return new MoneyOrder($config);

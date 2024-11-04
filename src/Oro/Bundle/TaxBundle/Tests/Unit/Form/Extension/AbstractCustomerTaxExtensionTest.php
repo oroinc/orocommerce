@@ -12,9 +12,7 @@ use Symfony\Component\Form\FormInterface;
 
 abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createTaxCode(int $id = null): AbstractTaxCode
     {
         $taxCode = new CustomerTaxCode();

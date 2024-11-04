@@ -40,6 +40,7 @@ class ProductCollectionSegmentProductsFormHandler implements FormHandlerInterfac
         $this->collectionSortOrderHandler = $collectionSortOrderHandler;
     }
 
+    #[\Override]
     public function process($data, FormInterface $form, Request $request): bool
     {
         if (!$data instanceof Segment) {

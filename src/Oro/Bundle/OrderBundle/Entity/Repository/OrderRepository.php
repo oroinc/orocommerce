@@ -116,7 +116,10 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             )
             ->innerJoin('orders.lineItems', 'lineItems')
             ->andWhere($qb->expr()->eq('orders.website', ':websiteId'))
-            ->andWhere($qb->expr()->in('orders.internal_status', ':orderStatuses'))
+            ->andWhere($qb->expr()->in(
+                "JSON_EXTRACT(orders.serialized_data, 'internal_status')",
+                ':orderStatuses'
+            ))
             ->groupBy('orders.customerUser');
 
         $qb
@@ -187,7 +190,10 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
         if (null !== $includedOrderStatuses) {
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
+                ->andWhere($queryBuilder->expr()->in(
+                    "JSON_EXTRACT(o.serialized_data, 'internal_status')",
+                    ':includedOrderStatuses'
+                ))
                 ->setParameter('includedOrderStatuses', $includedOrderStatuses);
         }
 

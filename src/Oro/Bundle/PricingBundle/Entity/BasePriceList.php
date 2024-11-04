@@ -50,6 +50,7 @@ class BasePriceList implements DatesAwareInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->name;

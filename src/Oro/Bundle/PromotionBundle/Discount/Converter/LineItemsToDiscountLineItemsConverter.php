@@ -17,9 +17,7 @@ class LineItemsToDiscountLineItemsConverter extends AbstractLineItemsToDiscountL
         $this->productLineItemsPriceProvider = $productLineItemsPriceProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(array $lineItems): array
     {
         $discountLineItems = [];

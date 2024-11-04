@@ -36,6 +36,7 @@ class PlaceOrderTest extends TestCase
     private ShippingMethodActionsInterface|MockObject $shippingMethodActions;
     private PlaceOrder $placeOrder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

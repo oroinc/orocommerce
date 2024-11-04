@@ -14,6 +14,7 @@ class GenerateMissingProductPrices extends AbstractFixture implements ContainerA
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->container->get('oro_pricing.migrations.generate_missing_product_by_rules')->migrate();

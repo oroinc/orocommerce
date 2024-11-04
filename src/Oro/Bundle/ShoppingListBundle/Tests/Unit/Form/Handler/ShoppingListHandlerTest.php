@@ -24,6 +24,7 @@ class ShoppingListHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|CurrentShoppingListManager */
     private $currentShoppingListManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->form = $this->createMock(FormInterface::class);

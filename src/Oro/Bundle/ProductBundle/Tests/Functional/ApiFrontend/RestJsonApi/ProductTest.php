@@ -17,13 +17,14 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProductTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
         // guard
         self::assertEquals(
-            ['in_stock', 'out_of_stock'],
+            ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
             self::getConfigManager()->get('oro_product.general_frontend_product_visibility')
         );
 
@@ -76,7 +77,7 @@ class ProductTest extends FrontendRestJsonApiTestCase
                             'inventoryStatus' => [
                                 'data' => [
                                     'type' => 'productinventorystatuses',
-                                    'id'   => '<toString(@out_of_stock->id)>'
+                                    'id'   => '<toString(@out_of_stock->internalId)>'
                                 ]
                             ]
                         ]
@@ -338,11 +339,11 @@ class ProductTest extends FrontendRestJsonApiTestCase
                             'testAttrDateTime'   => '2010-06-15T20:20:30Z',
                             'testAttrMultiEnum'  => [
                                 [
-                                    'id'          => '@productAttrMultiEnum_option1->id',
+                                    'id'          => '@productAttrMultiEnum_option1->internalId',
                                     'targetValue' => '@productAttrMultiEnum_option1->name'
                                 ],
                                 [
-                                    'id'          => '@productAttrMultiEnum_option2->id',
+                                    'id'          => '@productAttrMultiEnum_option2->internalId',
                                     'targetValue' => '@productAttrMultiEnum_option2->name'
                                 ]
                             ],

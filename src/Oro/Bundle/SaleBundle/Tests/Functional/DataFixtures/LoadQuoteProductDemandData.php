@@ -58,9 +58,7 @@ class LoadQuoteProductDemandData extends AbstractFixture implements DependentFix
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -70,9 +68,7 @@ class LoadQuoteProductDemandData extends AbstractFixture implements DependentFix
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (self::$items as $key => $item) {

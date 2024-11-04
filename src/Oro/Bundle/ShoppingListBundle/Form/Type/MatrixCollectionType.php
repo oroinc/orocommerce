@@ -15,9 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class MatrixCollectionType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('rows', CollectionType::class, [
@@ -25,9 +23,7 @@ class MatrixCollectionType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         /** @var MatrixCollection $matrixCollection */
@@ -66,9 +62,7 @@ class MatrixCollectionType extends AbstractType
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

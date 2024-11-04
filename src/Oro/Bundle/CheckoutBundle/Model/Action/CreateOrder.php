@@ -56,9 +56,7 @@ class CreateOrder extends AbstractAction
         $this->paymentMethodsProvider = $paymentMethodsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (empty($options[self::OPTION_KEY_CHECKOUT])) {
@@ -85,9 +83,7 @@ class CreateOrder extends AbstractAction
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         /** @var Checkout $checkout */

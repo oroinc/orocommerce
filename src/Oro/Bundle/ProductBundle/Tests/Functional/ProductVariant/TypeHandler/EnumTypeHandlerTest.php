@@ -21,6 +21,7 @@ class EnumTypeHandlerTest extends WebTestCase
     /** @var EnumTypeHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -82,8 +83,8 @@ class EnumTypeHandlerTest extends WebTestCase
 
     private function getFieldConfigModel(): FieldConfigModel
     {
-        $model = new FieldConfigModel(self::FIELD_NAME);
-        $model->fromArray('extend', ['target_entity' => Item::class]);
+        $model = new FieldConfigModel(self::FIELD_NAME, 'enum');
+        $model->fromArray('enum', ['enum_code' => 'test']);
 
         return $model;
     }

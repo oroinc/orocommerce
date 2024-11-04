@@ -29,6 +29,7 @@ class WatermarkImageFilterProviderTest extends \PHPUnit\Framework\TestCase
     /** @var WatermarkImageFilterProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

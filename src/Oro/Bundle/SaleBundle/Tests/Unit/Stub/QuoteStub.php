@@ -2,23 +2,23 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Stub;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteStub extends Quote
 {
-    /** @var AbstractEnumValue */
+    /** @var EnumOptionInterface */
     protected $internalStatus;
 
     /**
-     * @return AbstractEnumValue
+     * @return EnumOptionInterface
      */
     public function getInternalStatus()
     {
         return $this->internalStatus;
     }
 
-    public function setInternalStatus(AbstractEnumValue $internalStatus = null)
+    public function setInternalStatus(EnumOptionInterface $internalStatus = null)
     {
         $this->internalStatus = $internalStatus;
     }

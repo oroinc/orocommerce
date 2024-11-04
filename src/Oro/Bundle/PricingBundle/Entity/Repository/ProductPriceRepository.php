@@ -138,9 +138,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createQBForCopy(BasePriceList $sourcePriceList, BasePriceList $targetPriceList)
     {
         $qb = parent::createQBForCopy($sourcePriceList, $targetPriceList);
@@ -149,6 +147,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return $qb;
     }
 
+    #[\Override]
     public function copyPrices(
         BasePriceList $sourcePriceList,
         BasePriceList $targetPriceList,
@@ -203,9 +202,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return $query->getResult();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductIdsByPriceLists(array $priceLists)
     {
         $this->_em->createQueryBuilder();
@@ -221,6 +218,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return array_map(fn ($value) => (int) current($value), $result);
     }
 
+    #[\Override]
     public function remove(ShardManager $shardManager, BaseProductPrice $price)
     {
         $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $price->getPriceList()]);
@@ -236,6 +234,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
      * @param ShardManager $shardManager
      * @param BaseProductPrice|ProductPrice $price
      */
+    #[\Override]
     public function save(ShardManager $shardManager, BaseProductPrice $price)
     {
         $connection = $this->_em->getConnection();
@@ -280,33 +279,25 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $qb->execute();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function find($id, $lockMode = null, $lockVersion = null)
     {
         throw new \LogicException('Method locked because of sharded tables');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
     {
         throw new \LogicException('Method locked because of sharded tables');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function findAll()
     {
         throw new \LogicException('Method locked because of sharded tables');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function findOneBy(array $criteria, array $orderBy = null)
     {
         throw new \LogicException('Method locked because of sharded tables');
@@ -368,9 +359,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         return $this->uuidGenerator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPriceListIdsByProduct(Product $product)
     {
         $qb = $this->_em->createQueryBuilder();

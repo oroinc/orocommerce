@@ -20,6 +20,7 @@ class ProductPriceCriteriaFactoryTest extends \PHPUnit\Framework\TestCase
 
     private ProductPriceCriteriaFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPriceCriteriaBuilderRegistry = $this->createMock(ProductPriceCriteriaBuilderRegistry::class);

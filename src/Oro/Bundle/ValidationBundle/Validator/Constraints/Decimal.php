@@ -10,9 +10,7 @@ class Decimal extends Constraint implements AliasAwareConstraintInterface
 
     public $message = 'This value should be decimal number.';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAlias()
     {
         return self::ALIAS;

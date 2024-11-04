@@ -37,6 +37,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductShoppingListsDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);

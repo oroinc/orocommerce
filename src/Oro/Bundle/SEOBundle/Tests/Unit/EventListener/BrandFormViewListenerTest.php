@@ -13,6 +13,7 @@ class BrandFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var BrandFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

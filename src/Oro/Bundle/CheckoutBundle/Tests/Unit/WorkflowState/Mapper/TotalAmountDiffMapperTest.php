@@ -11,6 +11,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
     /** @var TotalProcessorProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $totalProcessorProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProcessorProvider = $this->createMock(TotalProcessorProvider::class);
@@ -140,9 +141,7 @@ class TotalAmountDiffMapperTest extends AbstractCheckoutDiffMapperTest
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getMapper()
     {
         return new TotalAmountDiffMapper($this->totalProcessorProvider);

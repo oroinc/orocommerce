@@ -23,25 +23,19 @@ class FedexResponseCacheKey implements FedexResponseCacheKeyInterface
         $this->settings = $settings;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getRequest(): FedexRequestInterface
     {
         return $this->request;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSettings(): FedexIntegrationSettings
     {
         return $this->settings;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCacheKey(): string
     {
         return (string) crc32(serialize($this->request->getRequestData()));

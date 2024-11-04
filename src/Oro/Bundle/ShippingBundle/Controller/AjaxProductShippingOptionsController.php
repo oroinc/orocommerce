@@ -117,9 +117,7 @@ class AjaxProductShippingOptionsController extends AbstractController
         return $activeShippingOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

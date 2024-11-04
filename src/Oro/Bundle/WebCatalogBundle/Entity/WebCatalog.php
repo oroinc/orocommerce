@@ -67,6 +67,7 @@ class WebCatalog implements
     /**
      * @return int
      */
+    #[\Override]
     public function getId()
     {
         return $this->id;

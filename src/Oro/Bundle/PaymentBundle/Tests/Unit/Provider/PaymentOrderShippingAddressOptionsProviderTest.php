@@ -16,9 +16,7 @@ class PaymentOrderShippingAddressOptionsProviderTest extends TestCase
      */
     private $provider;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new PaymentOrderShippingAddressOptionsProvider();

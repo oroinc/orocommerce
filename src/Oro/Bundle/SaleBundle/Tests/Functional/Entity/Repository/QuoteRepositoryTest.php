@@ -34,9 +34,7 @@ class QuoteRepositoryTest extends WebTestCase
     /** @var SQLLogger */
     private $prevLogger;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -56,6 +54,7 @@ class QuoteRepositoryTest extends WebTestCase
         $this->configuration->setSQLLogger($this->queryAnalyzer);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();

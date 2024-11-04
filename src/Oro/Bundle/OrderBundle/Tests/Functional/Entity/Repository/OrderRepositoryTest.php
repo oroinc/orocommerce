@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\DashboardBundle\Helper\DateHelper;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -30,14 +31,9 @@ class OrderRepositoryTest extends WebTestCase
 {
     use WebsiteTrait;
 
-    private const INCLUDED_ORDER_STATUSES = [
-        OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
-        OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
-    ];
-
     private OrderRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -97,7 +93,10 @@ class OrderRepositoryTest extends WebTestCase
             ],
             $this->getDefaultWebsite()->getId(),
             [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                ExtendHelper::buildEnumOptionId(
+                    Order::INTERNAL_STATUS_CODE,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                )
             ]
         );
 
@@ -133,7 +132,7 @@ class OrderRepositoryTest extends WebTestCase
         }
         static::fail(sprintf(
             'Failed asserting that there is a record with product %s (product_id=%s)'
-             . " and customer user %s (customer_user_id=%s):\n%s",
+            . " and customer user %s (customer_user_id=%s):\n%s",
             $productReference,
             $productId,
             $customerUserEmail,
@@ -150,7 +149,10 @@ class OrderRepositoryTest extends WebTestCase
             ],
             $this->getDefaultWebsite()->getId(),
             [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                ExtendHelper::buildEnumOptionId(
+                    Order::INTERNAL_STATUS_CODE,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                )
             ]
         );
 
@@ -166,7 +168,10 @@ class OrderRepositoryTest extends WebTestCase
             ],
             $this->getDefaultWebsite()->getId(),
             [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                ExtendHelper::buildEnumOptionId(
+                    Order::INTERNAL_STATUS_CODE,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                )
             ]
         );
 
@@ -333,7 +338,7 @@ class OrderRepositoryTest extends WebTestCase
             'date range with total amount type' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
                 'currency' => $currency,
@@ -350,7 +355,7 @@ class OrderRepositoryTest extends WebTestCase
             'without suborders with subtotal total type' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => false,
                 'amountType' => 'total',
                 'currency' => $currency,
@@ -367,7 +372,12 @@ class OrderRepositoryTest extends WebTestCase
             'filtered by order status with total amount type' => [
                 'startDate' => $minDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => [OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED],
+                'includedOrderStatuses' => [
+                    ExtendHelper::buildEnumOptionId(
+                        Order::INTERNAL_STATUS_CODE,
+                        OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                    )
+                ],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
                 'currency' => $currency,
@@ -394,7 +404,7 @@ class OrderRepositoryTest extends WebTestCase
             'empty results by date range with total amount type' => [
                 'startDate' => new \DateTime(DateHelper::MIN_DATE . '- 5 days', new \DateTimeZone('UTC')),
                 'endDate' => new \DateTime(DateHelper::MIN_DATE . '- 4 days', new \DateTimeZone('UTC')),
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'amountType' => 'total',
                 'currency' => $currency,
@@ -427,7 +437,7 @@ class OrderRepositoryTest extends WebTestCase
             'date range with subtotal amount type' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
                 'currency' => $currency,
@@ -444,7 +454,7 @@ class OrderRepositoryTest extends WebTestCase
             'without suborders with subtotal amount type' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => false,
                 'amountType' => 'subtotal',
                 'currency' => $currency,
@@ -461,7 +471,12 @@ class OrderRepositoryTest extends WebTestCase
             'filtered by order status with subtotal amount type' => [
                 'startDate' => $minDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => [OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED],
+                'includedOrderStatuses' => [
+                    ExtendHelper::buildEnumOptionId(
+                        Order::INTERNAL_STATUS_CODE,
+                        OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                    )
+                ],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
                 'currency' => $currency,
@@ -488,7 +503,7 @@ class OrderRepositoryTest extends WebTestCase
             'empty results by date range with subtotal amount type' => [
                 'startDate' => new \DateTime(DateHelper::MIN_DATE . '- 5 days', new \DateTimeZone('UTC')),
                 'endDate' => new \DateTime(DateHelper::MIN_DATE . '- 4 days', new \DateTimeZone('UTC')),
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal',
                 'currency' => $currency,
@@ -521,7 +536,7 @@ class OrderRepositoryTest extends WebTestCase
             'date range with subtotal_with_discounts amount type' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
                 'currency' => $currency,
@@ -538,7 +553,7 @@ class OrderRepositoryTest extends WebTestCase
             'without suborders with subtotal_with_discounts amount type' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => false,
                 'amountType' => 'subtotal_with_discounts',
                 'currency' => $currency,
@@ -555,7 +570,12 @@ class OrderRepositoryTest extends WebTestCase
             'filtered by order status with subtotal_with_discounts amount type' => [
                 'startDate' => $minDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => [OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED],
+                'includedOrderStatuses' => [
+                    ExtendHelper::buildEnumOptionId(
+                        Order::INTERNAL_STATUS_CODE,
+                        OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                    )
+                ],
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
                 'currency' => $currency,
@@ -582,7 +602,7 @@ class OrderRepositoryTest extends WebTestCase
             'empty results by date range with subtotal_with_discounts amount type' => [
                 'startDate' => new \DateTime(DateHelper::MIN_DATE . '- 5 days', new \DateTimeZone('UTC')),
                 'endDate' => new \DateTime(DateHelper::MIN_DATE . '- 4 days', new \DateTimeZone('UTC')),
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'amountType' => 'subtotal_with_discounts',
                 'currency' => $currency,
@@ -636,6 +656,9 @@ class OrderRepositoryTest extends WebTestCase
         self::assertEquals($expectedResults, $queryBuilder->getQuery()->getResult());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function getSalesOrdersNumberDataProvider(): array
     {
         $today = new \DateTime('today', new \DateTimeZone('UTC'));
@@ -672,7 +695,7 @@ class OrderRepositoryTest extends WebTestCase
             'date range' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'scaleType' => 'day',
                 'expectedResults' => [
@@ -687,7 +710,7 @@ class OrderRepositoryTest extends WebTestCase
             'without suborders' => [
                 'startDate' => $startDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => false,
                 'scaleType' => 'day',
                 'expectedResults' => [
@@ -702,7 +725,12 @@ class OrderRepositoryTest extends WebTestCase
             'filtered by order status' => [
                 'startDate' => $minDate,
                 'endDate' => $endDate,
-                'includedOrderStatuses' => [OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED],
+                'includedOrderStatuses' => [
+                    ExtendHelper::buildEnumOptionId(
+                        Order::INTERNAL_STATUS_CODE,
+                        OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                    )
+                ],
                 'isIncludeSubOrders' => true,
                 'scaleType' => 'day',
                 'expectedResults' => [
@@ -725,11 +753,23 @@ class OrderRepositoryTest extends WebTestCase
             'empty results by date range' => [
                 'startDate' => new \DateTime(DateHelper::MIN_DATE . '- 5 days', new \DateTimeZone('UTC')),
                 'endDate' => new \DateTime(DateHelper::MIN_DATE . '- 4 days', new \DateTimeZone('UTC')),
-                'includedOrderStatuses' => self::INCLUDED_ORDER_STATUSES,
+                'includedOrderStatuses' => self::getIncludedOrderStatus(),
                 'isIncludeSubOrders' => true,
                 'scaleType' => 'day',
                 'expectedResults' => [],
             ],
         ];
+    }
+
+    protected static function getIncludedOrderStatus()
+    {
+        return array_map(
+            fn ($optionId) => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $optionId),
+            [
+                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                OrderStatusesProviderInterface::INTERNAL_STATUS_CLOSED,
+                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+            ]
+        );
     }
 }

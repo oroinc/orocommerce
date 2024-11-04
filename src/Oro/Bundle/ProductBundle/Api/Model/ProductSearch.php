@@ -14,17 +14,13 @@ class ProductSearch implements \ArrayAccess
         $this->properties['id'] = $id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function offsetExists($offset): bool
     {
         return \array_key_exists($offset, $this->properties);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function offsetGet($offset): mixed
     {
         if (!\array_key_exists($offset, $this->properties)) {
@@ -34,17 +30,13 @@ class ProductSearch implements \ArrayAccess
         return $this->properties[$offset];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function offsetSet($offset, $value): void
     {
         $this->properties[$offset] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function offsetUnset($offset): void
     {
         unset($this->properties[$offset]);

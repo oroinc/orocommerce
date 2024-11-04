@@ -38,6 +38,7 @@ class RepairWysiwygFieldSchemaMigration implements Migration
         $this->fieldOptions = $fieldOptions;
     }
 
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $classTableName = $this->extendExtension->getTableNameByEntityClass($this->className);

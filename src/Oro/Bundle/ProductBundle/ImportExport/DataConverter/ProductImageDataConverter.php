@@ -15,9 +15,7 @@ class ProductImageDataConverter extends AbstractTableDataConverter
         $this->imageTypeProvider = $imageTypeProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getHeaderConversionRules()
     {
         foreach ($this->imageTypeProvider->getImageTypes() as $imageTypeName => $imageType) {
@@ -33,9 +31,7 @@ class ProductImageDataConverter extends AbstractTableDataConverter
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getBackendHeader()
     {
         return array_values($this->getHeaderConversionRules());

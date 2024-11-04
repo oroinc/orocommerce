@@ -9,6 +9,7 @@ class WideTemplate extends ProductTemplate
 {
     const ELEMENT_PREFIX = 'Wide Template';
 
+    #[\Override]
     public function assertGroupWithValue($groupName, TableNode $table)
     {
         $this->getPage()->pressButton($groupName);
@@ -19,9 +20,7 @@ class WideTemplate extends ProductTemplate
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertPrices(TableNode $table)
     {
         $prices = $this->getPricesElement();

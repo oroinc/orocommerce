@@ -51,6 +51,7 @@ class CategoryRepository extends NestedTreeRepository
      * @param bool $includeNode
      * @return Category[]
      */
+    #[\Override]
     public function getChildren(
         $node = null,
         $direct = false,

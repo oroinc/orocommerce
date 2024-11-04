@@ -21,9 +21,7 @@ class LoadCustomerVisibilityProductsToIndex extends AbstractFixture implements C
 
     private const REFERENCE_PRODUCT_PREFIX = 'product';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         for ($productId = 1; $productId <= self::PRODUCT_COUNT; $productId++) {

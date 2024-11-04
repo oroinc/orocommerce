@@ -39,6 +39,7 @@ class WebCatalogCacheProcessorTest extends \PHPUnit\Framework\TestCase
 
     private ContentNodeRepository $contentNodeRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);

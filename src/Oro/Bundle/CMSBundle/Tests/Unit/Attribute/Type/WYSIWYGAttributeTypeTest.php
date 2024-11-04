@@ -12,9 +12,7 @@ class WYSIWYGAttributeTypeTest extends AttributeTypeTestCase
     /** @var HtmlTagHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $htmlTagHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,17 +25,13 @@ class WYSIWYGAttributeTypeTest extends AttributeTypeTestCase
             });
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getAttributeType(): AttributeTypeInterface
     {
         return new WYSIWYGAttributeType($this->htmlTagHelper);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configurationMethodsDataProvider(): array
     {
         return [

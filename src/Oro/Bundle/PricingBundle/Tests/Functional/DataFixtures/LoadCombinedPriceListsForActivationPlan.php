@@ -52,6 +52,7 @@ class LoadCombinedPriceListsForActivationPlan extends AbstractCombinedPriceLists
         ]
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         parent::load($manager);
@@ -85,9 +86,7 @@ class LoadCombinedPriceListsForActivationPlan extends AbstractCombinedPriceLists
         $priceManager->persist($productPrice);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

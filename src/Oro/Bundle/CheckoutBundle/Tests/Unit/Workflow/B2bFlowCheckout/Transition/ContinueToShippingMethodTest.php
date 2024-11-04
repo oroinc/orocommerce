@@ -27,6 +27,7 @@ class ContinueToShippingMethodTest extends TestCase
 
     private ContinueToShippingMethod $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->addressActions = $this->createMock(AddressActionsInterface::class);

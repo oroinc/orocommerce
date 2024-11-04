@@ -18,9 +18,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
     /** @var ObjectManager */
     protected $em;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->em = $manager;
@@ -36,9 +34,7 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

@@ -22,9 +22,7 @@ class ProductWithInSaleAndDiscount extends Product
      */
     private $precision;
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function getUnitPrecision($unitCode)
     {
         return $this->precision;

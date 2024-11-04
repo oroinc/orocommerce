@@ -30,6 +30,7 @@ class DefaultVisibilityListenerTest extends WebTestCase
     private Customer $customer;
     private CustomerGroup $customerGroup;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

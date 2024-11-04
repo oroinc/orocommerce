@@ -11,9 +11,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
  */
 class UpdateFrontendItemPermissions extends AbstractMassUpdateCustomerUserRolePermissions
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getACLData(): array
     {
         return [

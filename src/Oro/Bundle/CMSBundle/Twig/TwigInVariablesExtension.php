@@ -26,9 +26,7 @@ class TwigInVariablesExtension extends AbstractExtension implements ServiceSubsc
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilters()
     {
         return [
@@ -58,9 +56,7 @@ class TwigInVariablesExtension extends AbstractExtension implements ServiceSubsc
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

@@ -181,14 +181,12 @@ class RequestController extends AbstractController
     private function assertValidInternalStatus(RFPRequest $request): void
     {
         $status = $request->getInternalStatus();
-        if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
+        if ($status && $status->getInternalId() === RFPRequest::INTERNAL_STATUS_DELETED) {
             throw $this->createNotFoundException();
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

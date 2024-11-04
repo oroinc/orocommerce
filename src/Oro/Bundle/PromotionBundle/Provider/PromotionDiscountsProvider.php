@@ -24,9 +24,7 @@ class PromotionDiscountsProvider implements PromotionDiscountsProviderInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array
     {
         if (!$this->isFeaturesEnabled()) {

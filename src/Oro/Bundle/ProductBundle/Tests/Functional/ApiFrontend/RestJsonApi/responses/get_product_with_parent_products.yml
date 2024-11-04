@@ -23,7 +23,7 @@ data:
             testAttrManyToOne: null
             testToOneId: null
             testAttrEnum:
-                id: '@productAttrEnum_option1->id'
+                id: '@productAttrEnum_option1->internalId'
                 targetValue: '@productAttrEnum_option1->name'
             testAttrMultiEnum: []
             testAttrManyToMany: []
@@ -43,7 +43,7 @@ data:
         inventoryStatus:
             data:
                 type: productinventorystatuses
-                id: '<toString(@in_stock->id)>'
+                id: '<toString(@in_stock->internalId)>'
         productFamily:
             data:
                 type: productfamilies
@@ -100,7 +100,7 @@ included:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: '<toString(@in_stock->internalId)>'
             productFamily:
                 data:
                     type: productfamilies
@@ -157,7 +157,7 @@ included:
             inventoryStatus:
                 data:
                     type: productinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: '<toString(@in_stock->internalId)>'
             productFamily:
                 data:
                     type: productfamilies

@@ -31,6 +31,7 @@ class GenerateSitemapCommand extends Command implements CronCommandScheduleDefin
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Schedules generation of sitemap files.')
@@ -51,6 +52,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->sitemapGenerationScheduler->scheduleSend();
@@ -59,9 +61,7 @@ HELP
         return Command::SUCCESS;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultDefinition(): string
     {
         return $this->configManager->get(UpdateCronDefinitionConfigListener::CONFIG_FIELD);

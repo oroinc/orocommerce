@@ -24,6 +24,7 @@ class ContentNodeFormViewListener extends BaseFormViewListener
      * @param string $keywordsTemplate
      * @param int $priority
      */
+    #[\Override]
     protected function addSEOBlock(
         ScrollData $scrollData,
         $titleTemplate,
@@ -48,6 +49,7 @@ class ContentNodeFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.webcatalog.contentnode';

@@ -11,6 +11,7 @@ class BasicCategoryDefaultProductUnitOptionsVisibilityTest extends \PHPUnit\Fram
      */
     private $visibility;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->visibility = new BasicCategoryDefaultProductUnitOptionsVisibility();

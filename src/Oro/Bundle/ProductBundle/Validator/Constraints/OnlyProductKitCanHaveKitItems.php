@@ -24,6 +24,7 @@ class OnlyProductKitCanHaveKitItems extends Constraint
      */
     public bool $forceInitialize = false;
 
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

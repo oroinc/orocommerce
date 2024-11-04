@@ -16,6 +16,8 @@ oro_behat_extension:
         - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\ShoppingListContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
       paths:
         - '@OroApplicationBundle/Tests/Behat/Features'
   elements:
@@ -173,6 +175,10 @@ oro_behat_extension:
 
     Product Attribute Name:
       selector: '[name="oro_entity_config_type[fieldName]"]'
+    Product Color Attribute White:
+      selector: '[name="oro_entity_config_type[enum][enum_options][1][id]"]'
+    Product Size Attribute S:
+      selector: '[name="oro_entity_config_type[enum][enum_options][0][id]"]'
 
     Customer Form:
       selector: 'form[name="oro_customer_type"]'
@@ -294,6 +300,12 @@ oro_behat_extension:
 
     Matrix Grid Total Quantity:
       selector: 'div[data-role="total-quantity"]'
+
+    Dialog Matrix Grid Total Price:
+      selector: '.ui-dialog div[data-role="total-price"]'
+
+    Dialog Matrix Grid Total Quantity:
+      selector: '.ui-dialog div[data-role="total-quantity"]'
 
     Matrix Grid Column 1 Total Quantity:
       selector: 'div[data-columns-quantity="1"]'

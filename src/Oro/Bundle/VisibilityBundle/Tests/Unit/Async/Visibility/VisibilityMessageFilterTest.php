@@ -16,6 +16,7 @@ class VisibilityMessageFilterTest extends \PHPUnit\Framework\TestCase
     /** @var VisibilityMessageFilter */
     private $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filter = new VisibilityMessageFilter(self::TOPIC);

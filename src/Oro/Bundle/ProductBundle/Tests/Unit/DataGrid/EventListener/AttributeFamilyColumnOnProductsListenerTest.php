@@ -21,6 +21,7 @@ class AttributeFamilyColumnOnProductsListenerTest extends \PHPUnit\Framework\Tes
 
     private AttributeFamilyColumnOnProductsListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityNameResolver = $this->createMock(EntityNameResolver::class);

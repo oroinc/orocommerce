@@ -24,7 +24,6 @@ Feature: Add Product to Customer User's Own Shopping List
     And I upload "configurable_products_for_matrix_forms/products_attributes.csv" file to "Shopping List Import File Field"
     And I click "Import file"
     And I reload the page
-    And I confirm schema update
 
     # Update attribute family
     And I go to Products / Product Families

@@ -51,7 +51,7 @@ Feature: Landing page open on frontend
     And I click on "More Link"
     And I should see "File of cat1"
 
-    When I go to System/Frontend Menus
+    When I go to System/Storefront Menus
     And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:

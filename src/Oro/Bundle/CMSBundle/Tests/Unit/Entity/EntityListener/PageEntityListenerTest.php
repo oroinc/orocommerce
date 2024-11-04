@@ -23,6 +23,7 @@ class PageEntityListenerTest extends \PHPUnit\Framework\TestCase
 
     private PageEntityListener $entityListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

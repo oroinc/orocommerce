@@ -34,9 +34,7 @@ class SystemPageResourceResolver implements ResourceTypeResolverInterface, Resou
         $this->valueNormalizer = $valueNormalizer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function resolveType(string $routeName, array $routeParameters, RequestType $requestType): ?string
     {
         if (!$this->isSystemPage($routeName, $routeParameters)) {
@@ -46,9 +44,7 @@ class SystemPageResourceResolver implements ResourceTypeResolverInterface, Resou
         return 'system_page';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function resolveApiUrl(
         string $routeName,
         array $routeParameters,

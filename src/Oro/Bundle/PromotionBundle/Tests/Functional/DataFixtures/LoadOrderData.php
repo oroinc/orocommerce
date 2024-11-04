@@ -19,7 +19,7 @@ class LoadOrderData extends AbstractFixture implements DependentFixtureInterface
 
     const PROMOTION_ORDER_1 = 'promo_order_1';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCheckoutData::class];
@@ -36,9 +36,7 @@ class LoadOrderData extends AbstractFixture implements DependentFixtureInterface
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->orderData as $reference => $data) {

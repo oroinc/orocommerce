@@ -6,16 +6,11 @@ use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubs
 
 class RuleMethodConfigCollectionSubscriberStub extends RuleMethodConfigCollectionSubscriber
 {
-    /**
-     * @inheritDoc
-     */
     public function __construct()
     {
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [];

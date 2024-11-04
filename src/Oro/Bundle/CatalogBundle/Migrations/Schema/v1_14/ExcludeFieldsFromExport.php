@@ -17,9 +17,7 @@ class ExcludeFieldsFromExport implements Migration, ExtendOptionsManagerAwareInt
 {
     use ExtendOptionsManagerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_catalog_category');

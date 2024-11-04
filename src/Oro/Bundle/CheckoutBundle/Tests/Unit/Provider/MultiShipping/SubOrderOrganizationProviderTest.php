@@ -13,6 +13,7 @@ class SubOrderOrganizationProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SubOrderOrganizationProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new SubOrderOrganizationProvider();

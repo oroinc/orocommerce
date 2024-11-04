@@ -19,6 +19,7 @@ class IsQuoteValidTest extends TestCase
 
     private IsQuoteValid $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);

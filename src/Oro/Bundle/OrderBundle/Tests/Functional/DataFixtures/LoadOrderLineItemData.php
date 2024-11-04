@@ -117,9 +117,7 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -128,9 +126,7 @@ class LoadOrderLineItemData extends AbstractFixture implements DependentFixtureI
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->lineItems as $name => $definition) {

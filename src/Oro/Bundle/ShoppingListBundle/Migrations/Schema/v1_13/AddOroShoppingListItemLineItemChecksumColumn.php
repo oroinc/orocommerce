@@ -15,6 +15,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  */
 class AddOroShoppingListItemLineItemChecksumColumn implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_shopping_list_line_item');

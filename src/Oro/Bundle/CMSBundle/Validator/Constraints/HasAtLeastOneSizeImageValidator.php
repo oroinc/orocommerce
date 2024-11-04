@@ -48,6 +48,7 @@ class HasAtLeastOneSizeImageValidator extends ConstraintValidator
         $this->translator = $translator;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof HasAtLeastOneSizeImage) {

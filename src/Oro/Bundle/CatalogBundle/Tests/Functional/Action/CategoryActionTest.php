@@ -13,6 +13,7 @@ class CategoryActionTest extends WebTestCase
     use CatalogTrait;
     use OperationAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

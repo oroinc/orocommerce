@@ -19,9 +19,7 @@ class RecalculateDefaultVariantScopes extends AbstractFixture implements Contain
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ContentNodeRepository $contentNodeRepo */

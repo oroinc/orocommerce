@@ -24,6 +24,7 @@ abstract class AbstractItemResolverTestCase extends TestCase
     protected CountryMatcher|MockObject $matcher;
     protected AbstractItemResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->unitResolver = $this->createMock(UnitResolver::class);

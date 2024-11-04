@@ -14,9 +14,7 @@ class LoadContentVariantData extends AbstractFixture implements DependentFixture
 {
     public const VARIANT = 'cms.content_variant';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ContentNode $firstCatalogNode */
@@ -33,9 +31,7 @@ class LoadContentVariantData extends AbstractFixture implements DependentFixture
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

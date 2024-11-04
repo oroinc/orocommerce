@@ -18,7 +18,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
  */
 class LandingPageDeleteVoter extends AbstractEntityVoter
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::DELETE];
 
     public function __construct(DoctrineHelper $doctrineHelper)
@@ -27,9 +26,7 @@ class LandingPageDeleteVoter extends AbstractEntityVoter
         $this->setClassName(Page::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute): int
     {
         if ($this->isSelectedInSystemConfiguration($identifier) ||

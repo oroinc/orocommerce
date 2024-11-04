@@ -32,6 +32,7 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit\Framework\Test
     /** @var PaymentResultMessageProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $messageProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);

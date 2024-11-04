@@ -3,8 +3,9 @@
 namespace Oro\Bundle\ProductBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * Provides available inventory status codes and labels.
@@ -36,14 +37,13 @@ class ProductInventoryStatusProvider
 
     private function getInventoryStatusesList(): array
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        /** @var AbstractEnumValue[] $inventoryStatuses */
-        $inventoryStatuses = $this->doctrine->getRepository($inventoryStatusClassName)->findAll();
+        /** @var EnumOptionInterface[] $inventoryStatuses */
+        $inventoryStatuses = $this->doctrine->getRepository(EnumOption::class)
+            ->findBy(['enumCode' => Product::INVENTORY_STATUS_ENUM_CODE]);
 
         $inventoryStatusesList = [];
         foreach ($inventoryStatuses as $inventoryStatus) {
-            $code = $inventoryStatus->getId();
-            $inventoryStatusesList[$code] = $inventoryStatus->getName();
+            $inventoryStatusesList[$inventoryStatus->getId()] = $inventoryStatus->getName();
         }
 
         return $inventoryStatusesList;

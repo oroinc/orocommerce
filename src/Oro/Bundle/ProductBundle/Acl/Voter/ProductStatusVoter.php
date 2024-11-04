@@ -14,7 +14,6 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ProductStatusVoter extends AbstractEntityVoter
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::VIEW];
 
     private FrontendHelper $frontendHelper;
@@ -25,9 +24,7 @@ class ProductStatusVoter extends AbstractEntityVoter
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote(TokenInterface $token, $object, array $attributes): int
     {
         if ($this->frontendHelper->isFrontendRequest()) {
@@ -37,13 +34,11 @@ class ProductStatusVoter extends AbstractEntityVoter
         return self::ACCESS_ABSTAIN;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         /** @var Product|null $product */
-        $product = $this->doctrineHelper->getEntityRepository($class)->find($identifier);
+        $product = $this->doctrineHelper->getEntityManagerForClass($class)->find($class, $identifier);
         if (null === $product) {
             return self::ACCESS_ABSTAIN;
         }

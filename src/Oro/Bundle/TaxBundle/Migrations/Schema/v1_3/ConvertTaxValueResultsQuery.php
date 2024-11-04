@@ -23,9 +23,7 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
         $this->platform = $platform;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -34,9 +32,7 @@ class ConvertTaxValueResultsQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

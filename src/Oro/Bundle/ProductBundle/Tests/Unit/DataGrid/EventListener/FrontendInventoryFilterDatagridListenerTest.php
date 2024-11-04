@@ -25,6 +25,7 @@ final class FrontendInventoryFilterDatagridListenerTest extends TestCase
 
     private FrontendInventoryFilterDatagridListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

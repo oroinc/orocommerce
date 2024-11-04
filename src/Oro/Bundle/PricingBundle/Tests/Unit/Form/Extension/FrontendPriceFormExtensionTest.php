@@ -17,9 +17,7 @@ class FrontendPriceFormExtensionTest extends FormIntegrationTestCase
     /** @var FrontendHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $frontendHelper;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $this->frontendHelper = $this->createMock(FrontendHelper::class);

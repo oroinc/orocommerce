@@ -20,41 +20,31 @@ class VirtualFieldsSelectQueryConverter extends QueryBuilderGroupingOrmQueryConv
         return $qb;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addOrderByColumn(string $columnAlias, string $columnSorting): void
     {
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addGroupByColumn(string $columnAlias): void
     {
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function saveTableAliases(array $tableAliases): void
     {
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function saveColumnAliases(array $columnAliases): void
     {
         // nothing to do
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function addSelectColumn(
         string $entityClass,
         string $tableAlias,

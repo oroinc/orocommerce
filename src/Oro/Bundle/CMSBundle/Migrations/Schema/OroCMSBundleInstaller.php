@@ -31,17 +31,13 @@ class OroCMSBundleInstaller implements
     use AttachmentExtensionAwareTrait;
     use SlugExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
         return 'v1_16';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/

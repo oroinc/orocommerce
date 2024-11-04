@@ -66,6 +66,10 @@ data:
                 data:
                     type: orderstatuses
                     id: cancelled
+            shippingStatus:
+                data:
+                    type: ordershippingstatuses
+                    id: not_shipped
     -
         type: orders
         id: '<toString(@order2->id)>'
@@ -116,6 +120,8 @@ data:
                 data:
                     type: orderstatuses
                     id: open
+            shippingStatus:
+                data: null
     -
         type: orders
         id: '<toString(@order3->id)>'
@@ -174,6 +180,8 @@ data:
                 data:
                     type: orderstatuses
                     id: open
+            shippingStatus:
+                data: null
     -
         type: orders
         id: '<toString(@order4->id)>'
@@ -234,6 +242,8 @@ data:
                 data:
                     type: orderstatuses
                     id: open
+            shippingStatus:
+                data: null
     -
         type: orders
         id: '<toString(@order5->id)>'
@@ -288,3 +298,5 @@ data:
                 data:
                     type: orderstatuses
                     id: open
+            shippingStatus:
+                data: null

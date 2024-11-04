@@ -11,9 +11,7 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadShippingServices extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -21,9 +19,7 @@ class LoadShippingServices extends AbstractFixture implements DependentFixtureIn
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->getShippingServicesData() as $reference => $data) {

@@ -34,9 +34,7 @@ final class CompletedCheckoutData extends \ArrayObject implements \JsonSerializa
         return new self($serialized);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return $this->getArrayCopy();

@@ -13,9 +13,7 @@ class LoadCategoryVisibilityScopes extends AbstractFixture implements ContainerA
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ScopeManager $scopeManager */

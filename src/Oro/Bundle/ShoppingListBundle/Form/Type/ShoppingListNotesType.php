@@ -13,9 +13,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ShoppingListNotesType extends AbstractType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->add(
@@ -28,9 +26,7 @@ class ShoppingListNotesType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
@@ -40,9 +36,7 @@ class ShoppingListNotesType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_shopping_list_notes_type';

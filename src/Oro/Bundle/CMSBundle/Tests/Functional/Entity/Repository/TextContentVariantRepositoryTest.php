@@ -29,9 +29,7 @@ class TextContentVariantRepositoryTest extends WebTestCase
      */
     private $scopeManager;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

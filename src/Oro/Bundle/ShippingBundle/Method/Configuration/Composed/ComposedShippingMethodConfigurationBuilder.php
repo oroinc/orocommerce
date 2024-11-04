@@ -40,9 +40,7 @@ class ComposedShippingMethodConfigurationBuilder implements ComposedShippingMeth
      */
     private $isAllowUnlistedShippingMethod;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getResult()
     {
         $params = [];
@@ -76,9 +74,7 @@ class ComposedShippingMethodConfigurationBuilder implements ComposedShippingMeth
         return new ComposedShippingMethodConfiguration($params);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildShippingMethod(
         PreConfiguredShippingMethodConfigurationInterface $preConfiguredShippingMethodConfiguration
     ) {
@@ -87,9 +83,7 @@ class ComposedShippingMethodConfigurationBuilder implements ComposedShippingMeth
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildShippingMethodType(
         PreConfiguredShippingMethodConfigurationInterface $preConfiguredShippingMethodConfiguration
     ) {
@@ -98,9 +92,7 @@ class ComposedShippingMethodConfigurationBuilder implements ComposedShippingMeth
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildShippingCost(
         PreConfiguredShippingMethodConfigurationInterface $preConfiguredShippingMethodConfiguration
     ) {
@@ -109,9 +101,7 @@ class ComposedShippingMethodConfigurationBuilder implements ComposedShippingMeth
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildIsOverriddenCost(
         OverriddenCostShippingMethodConfigurationInterface $overriddenCostShippingMethodConfiguration
     ) {
@@ -120,9 +110,7 @@ class ComposedShippingMethodConfigurationBuilder implements ComposedShippingMeth
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildIsShippingMethodLocked(
         MethodLockedShippingMethodConfigurationInterface $methodLockedShippingMethodConfiguration
     ) {
@@ -131,9 +119,7 @@ class ComposedShippingMethodConfigurationBuilder implements ComposedShippingMeth
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildIsAllowUnlistedShippingMethod(
         AllowUnlistedShippingMethodConfigurationInterface $allowUnlistedShippingMethodConfiguration
     ) {

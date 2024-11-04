@@ -14,6 +14,7 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
     /** @var OrderDiscountCollectionRowType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new OrderDiscountCollectionRowType();
@@ -75,9 +76,7 @@ class OrderDiscountCollectionRowTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $numberFormatter = $this->createMock(NumberFormatter::class);

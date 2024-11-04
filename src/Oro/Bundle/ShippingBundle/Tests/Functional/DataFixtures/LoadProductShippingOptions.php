@@ -19,9 +19,7 @@ class LoadProductShippingOptions extends AbstractFixture implements DependentFix
     const PRODUCT_SHIPPING_OPTIONS_1 = 'product_shipping_options.1';
     const PRODUCT_SHIPPING_OPTIONS_2 = 'product_shipping_options.2';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -58,9 +56,7 @@ class LoadProductShippingOptions extends AbstractFixture implements DependentFix
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->data as $reference => $data) {

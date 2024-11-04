@@ -20,6 +20,7 @@ class ProductKitItemProductHasPriceValidatorTest extends ConstraintValidatorTest
 {
     private FrontendProductPricesDataProvider|MockObject $frontendProductPricesDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->frontendProductPricesDataProvider = $this->createMock(FrontendProductPricesDataProvider::class);
@@ -27,6 +28,7 @@ class ProductKitItemProductHasPriceValidatorTest extends ConstraintValidatorTest
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductKitItemProductHasPriceValidator
     {
         return new ProductKitItemProductHasPriceValidator($this->frontendProductPricesDataProvider);

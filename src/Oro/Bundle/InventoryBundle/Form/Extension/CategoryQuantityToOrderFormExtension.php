@@ -9,9 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackProperties()
     {
         return [
@@ -20,9 +18,7 @@ class CategoryQuantityToOrderFormExtension extends AbstractFallbackCategoryTypeE
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);

@@ -24,6 +24,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutTotalsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutToOrderConverter = $this->createMock(CheckoutToOrderConverter::class);

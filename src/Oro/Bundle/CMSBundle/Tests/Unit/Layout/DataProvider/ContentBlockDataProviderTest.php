@@ -29,6 +29,7 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
     private LoggerInterface|MockObject $logger;
     private ContentBlockDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolver = $this->createMock(ContentBlockResolver::class);

@@ -25,6 +25,7 @@ class RequestProductKitItemLineItemDefaultDataListenerTest extends TestCase
 
     private FormFactoryInterface $formFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->kitItemLineItemFactory = $this->createMock(RequestProductKitItemLineItemFactory::class);

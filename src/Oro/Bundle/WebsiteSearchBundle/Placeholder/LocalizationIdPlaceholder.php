@@ -24,17 +24,13 @@ class LocalizationIdPlaceholder extends AbstractPlaceholder
         $this->localizationManager = $localizationManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultValue()
     {
         $localization = $this->localizationProvider->getCurrentLocalization();

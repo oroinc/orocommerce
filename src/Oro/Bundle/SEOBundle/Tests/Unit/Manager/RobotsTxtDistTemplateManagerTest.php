@@ -25,6 +25,7 @@ TEXT;
 
     private RobotsTxtDistTemplateManager $robotsTxtDistTemplateManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->website = new Website();

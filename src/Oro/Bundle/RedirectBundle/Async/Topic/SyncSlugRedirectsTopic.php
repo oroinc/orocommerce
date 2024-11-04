@@ -14,16 +14,19 @@ class SyncSlugRedirectsTopic extends AbstractTopic
 {
     public const SLUG_ID = 'slugId';
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.redirect.generate_slug_redirects';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Synchronize the redirects of the specified slug.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

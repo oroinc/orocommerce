@@ -78,9 +78,7 @@ class FieldsProvider implements FieldsProviderInterface
         $this->fieldsBlackList[$className][$fieldName] = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFields($className, $numericOnly = false, $withRelations = false)
     {
         $realClassName = $this->getRealClassName($className);
@@ -89,9 +87,7 @@ class FieldsProvider implements FieldsProviderInterface
         return array_keys($fields);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isRelation($className, $fieldName)
     {
         $field = $this->getField($className, $fieldName);
@@ -99,17 +95,13 @@ class FieldsProvider implements FieldsProviderInterface
         return !empty($field['relation_type']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getIdentityFieldName($className)
     {
         return $this->doctrineHelper->getSingleEntityIdentifierFieldName($className, false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRealClassName($className, $fieldName = null)
     {
         if (!$fieldName && str_contains($className, '::')) {
@@ -138,6 +130,7 @@ class FieldsProvider implements FieldsProviderInterface
      * @param bool $withRelations
      * @return array
      */
+    #[\Override]
     public function getDetailedFieldsInformation($className, $numericOnly = false, $withRelations = false)
     {
         $cacheKey = $this->getCacheKey($className, $numericOnly, $withRelations);
@@ -215,6 +208,7 @@ class FieldsProvider implements FieldsProviderInterface
     /**
      * @return array
      */
+    #[\Override]
     public function getSupportedNumericTypes()
     {
         return array_keys(self::$supportedNumericTypes);
@@ -233,6 +227,7 @@ class FieldsProvider implements FieldsProviderInterface
     /**
      * @return array
      */
+    #[\Override]
     public function getSupportedRelationTypes()
     {
         return array_keys(self::$supportedRelationTypes);
@@ -251,6 +246,7 @@ class FieldsProvider implements FieldsProviderInterface
     /**
      * @return array
      */
+    #[\Override]
     public function getFieldsWhiteList()
     {
         return $this->fieldsWhiteList;
@@ -269,6 +265,7 @@ class FieldsProvider implements FieldsProviderInterface
     /**
      * @return array
      */
+    #[\Override]
     public function getFieldsBlackList()
     {
         return $this->fieldsBlackList;

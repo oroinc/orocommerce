@@ -16,11 +16,13 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class AddContentBlockToWebsiteSearchTermFormExtension extends AbstractTypeExtension
 {
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [SearchTermType::class];
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -33,6 +35,7 @@ class AddContentBlockToWebsiteSearchTermFormExtension extends AbstractTypeExtens
             );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver

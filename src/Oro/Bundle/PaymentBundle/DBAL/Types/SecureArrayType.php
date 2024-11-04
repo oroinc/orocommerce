@@ -17,9 +17,7 @@ class SecureArrayType extends JsonArrayType
     /** @var SymmetricCrypterInterface */
     private $crypter;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (null === $value) {
@@ -31,9 +29,7 @@ class SecureArrayType extends JsonArrayType
         return $this->getCrypter()->encryptData($value);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if ($value === null || $value === '') {
@@ -45,19 +41,19 @@ class SecureArrayType extends JsonArrayType
         return parent::convertToPHPValue($value, $platform);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
     {
         return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function requiresSQLCommentHint(AbstractPlatform $platform)
     {
         return true;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName()
     {
         return self::TYPE;

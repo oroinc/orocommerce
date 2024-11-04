@@ -25,9 +25,7 @@ class CacheableWebCatalogUsageProvider implements WebCatalogUsageProviderInterfa
         $this->webCatalogUsageProvider = $webCatalogUsageProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isInUse(WebCatalogInterface $webCatalog)
     {
         $webCatalogId = $webCatalog->getId();
@@ -38,9 +36,7 @@ class CacheableWebCatalogUsageProvider implements WebCatalogUsageProviderInterfa
         return $this->inUseWebCatalogs[$webCatalogId];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAssignedWebCatalogs()
     {
         if (null === $this->assignedWebCatalogs) {

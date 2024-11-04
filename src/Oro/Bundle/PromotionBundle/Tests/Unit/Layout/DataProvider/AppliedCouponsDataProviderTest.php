@@ -24,6 +24,7 @@ class AppliedCouponsDataProviderTest extends \PHPUnit\Framework\TestCase
     private MockObject|PromotionProvider $promotionProvider;
     private AppliedCouponsDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

@@ -23,6 +23,7 @@ class ProductDataConverterTest extends TestCase
 
     private ContextInterface|MockObject $context;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fieldHelper = $this->createMock(FieldHelper::class);

@@ -13,9 +13,7 @@ class Configuration implements ConfigurationInterface
     public const CONSENT_FEATURE_ENABLED = 'consent_feature_enabled';
     public const ENABLED_CONSENTS = 'enabled_consents';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

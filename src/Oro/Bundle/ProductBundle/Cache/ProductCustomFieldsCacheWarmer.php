@@ -19,18 +19,14 @@ class ProductCustomFieldsCacheWarmer extends CacheWarmer
         $this->customFieldProvider = $customFieldProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function warmUp(string $cacheDir): array
     {
         $this->customFieldProvider->getEntityCustomFields(Product::class);
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOptional(): bool
     {
         return true;

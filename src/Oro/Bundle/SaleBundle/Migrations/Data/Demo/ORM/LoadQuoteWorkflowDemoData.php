@@ -14,9 +14,7 @@ use Oro\Bundle\WorkflowBundle\Model\Transition;
  */
 class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -24,9 +22,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $helper = $this->container->get('oro_sale.helper.notification');
@@ -41,9 +37,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         $helper->setEnabled(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getWorkflows()
     {
         return [
@@ -51,9 +45,7 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getIgnoredTransitions()
     {
         return [
@@ -67,34 +59,26 @@ class LoadQuoteWorkflowDemoData extends AbstractLoadEntityWorkflowDemoData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getDeepLevel()
     {
         return 3;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntityUser($quote, $workflowName)
     {
         /* @var $quote Quote */
         return $quote->getOwner();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntities(ObjectManager $manager)
     {
         return $manager->getRepository(Quote::class)->findAll();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function transitWorkflow(WorkflowItem $workflowItem, Transition $transition)
     {
         /** @var Quote $quote */

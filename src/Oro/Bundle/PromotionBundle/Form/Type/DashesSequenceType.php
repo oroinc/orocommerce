@@ -13,17 +13,13 @@ class DashesSequenceType extends AbstractType
 {
     const NAME = 'oro_promotion_coupon_dashes_sequence';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return IntegerType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

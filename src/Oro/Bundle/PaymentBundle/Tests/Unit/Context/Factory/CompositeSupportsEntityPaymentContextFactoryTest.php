@@ -18,6 +18,7 @@ class CompositeSupportsEntityPaymentContextFactoryTest extends \PHPUnit\Framewor
     /** @var CompositeSupportsEntityPaymentContextFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->results = [

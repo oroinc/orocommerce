@@ -25,9 +25,7 @@ class ValidateGuestShoppingListFeature implements ProcessorInterface
         $this->shoppingListManager = $shoppingListManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

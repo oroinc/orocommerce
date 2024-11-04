@@ -13,6 +13,7 @@ class DatesChainValidatorTest extends ConstraintValidatorTestCase
     private const SECOND_LABEL = 'Second';
     private const THIRD_LABEL = 'Third';
 
+    #[\Override]
     protected function createValidator()
     {
         return new DatesChainValidator(PropertyAccess::createPropertyAccessor());

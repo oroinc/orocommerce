@@ -22,6 +22,7 @@ class ConfigPriceListsAssignmentProvider implements PriceListsAssignmentProvider
     ) {
     }
 
+    #[\Override]
     public function getPriceListAssignments(): ?array
     {
         $priceLists = $this->configConverter->convertFromSaved(

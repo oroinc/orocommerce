@@ -30,6 +30,7 @@ class AfterSearchEvent extends Event implements SearchQueryAwareEventInterface
         return $this->result;
     }
 
+    #[\Override]
     public function getQuery(): Query
     {
         return $this->query;

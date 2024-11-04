@@ -26,6 +26,7 @@ class OrderAddressSecurityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var OrderAddressSecurityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

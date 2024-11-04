@@ -15,17 +15,13 @@ class LoadCategoryDemoMetaData extends AbstractFixture implements DependentFixtu
 {
     use LoadDemoMetaDataTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadCategoryDemoData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->addMetaFieldsData($manager, $manager->getRepository(Category::class)->findAll());

@@ -15,9 +15,7 @@ class UrlItemsProviderCompilerPassTest extends \PHPUnit\Framework\TestCase
     /** @var UrlItemsProviderCompilerPass */
     private $compiler;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new UrlItemsProviderCompilerPass(self::REGISTRY_SERVICE_ID, self::TAG_NAME);

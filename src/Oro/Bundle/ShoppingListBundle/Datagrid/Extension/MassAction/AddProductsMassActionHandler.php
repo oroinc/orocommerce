@@ -40,9 +40,7 @@ class AddProductsMassActionHandler implements MassActionHandlerInterface
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function handle(MassActionHandlerArgs $args): MassActionResponseInterface
     {
         $shoppingList = $this->getShoppingList($args);

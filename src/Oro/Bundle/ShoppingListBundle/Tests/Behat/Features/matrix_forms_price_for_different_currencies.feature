@@ -46,7 +46,6 @@ Feature: Matrix forms price for different currencies
       | Value 2 |
     And I save and close form
     And I should see "Attribute was successfully saved" flash message
-    And I confirm schema update
 
     # Added product attributes to product family
     And I go to Products / Product Families

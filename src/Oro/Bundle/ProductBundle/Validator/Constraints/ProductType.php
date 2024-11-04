@@ -20,6 +20,7 @@ class ProductType extends Constraint
     /** @var string[] */
     public array $allowedTypes = [];
 
+    #[\Override]
     public function getRequiredOptions(): array
     {
         return ['allowedTypes'];

@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -26,6 +27,7 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
 
     private OrderRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -54,7 +56,10 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
             ],
             $this->getDefaultWebsite()->getId(),
             [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                ExtendHelper::buildEnumOptionId(
+                    Order::INTERNAL_STATUS_CODE,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                )
             ]
         );
 
@@ -80,7 +85,10 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
             ],
             $this->getDefaultWebsite()->getId(),
             [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                ExtendHelper::buildEnumOptionId(
+                    Order::INTERNAL_STATUS_CODE,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                )
             ]
         );
 
@@ -103,7 +111,10 @@ class LatestOrderedProductsTest extends WebTestCase implements ResettableCustome
             ],
             $this->getDefaultWebsite()->getId(),
             [
-                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                ExtendHelper::buildEnumOptionId(
+                    Order::INTERNAL_STATUS_CODE,
+                    OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                )
             ]
         );
 

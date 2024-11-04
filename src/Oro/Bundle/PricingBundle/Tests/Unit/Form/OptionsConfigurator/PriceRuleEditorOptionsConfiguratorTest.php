@@ -29,6 +29,7 @@ class PriceRuleEditorOptionsConfiguratorTest extends \PHPUnit\Framework\TestCase
     /** @var PriceRuleEditorOptionsConfigurator */
     private $configurator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->autocompleteFieldsProvider = $this->createMock(AutocompleteFieldsProviderInterface::class);

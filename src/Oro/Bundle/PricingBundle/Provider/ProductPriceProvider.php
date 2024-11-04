@@ -39,9 +39,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
         $this->memoryCacheProvider = $memoryCacheProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria): array
     {
         return array_intersect(
@@ -50,9 +48,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPricesByScopeCriteriaAndProducts(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
@@ -82,9 +78,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMatchedPrices(
         array $productPriceCriteria,
         ProductPriceScopeCriteriaInterface $scopeCriteria
@@ -99,9 +93,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
         return $matchingPricesByIdentifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMatchedProductPrices(
         array $productsPriceCriteria,
         ProductPriceScopeCriteriaInterface $productPriceScopeCriteria

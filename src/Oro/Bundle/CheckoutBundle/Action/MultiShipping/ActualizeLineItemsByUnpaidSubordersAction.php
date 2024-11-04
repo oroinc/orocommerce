@@ -34,9 +34,7 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         /** @var Checkout $checkout */
@@ -69,9 +67,7 @@ class ActualizeLineItemsByUnpaidSubordersAction extends AbstractAction
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (!\array_key_exists('order', $options)) {

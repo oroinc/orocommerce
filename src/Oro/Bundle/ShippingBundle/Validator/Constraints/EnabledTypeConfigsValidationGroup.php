@@ -16,9 +16,7 @@ class EnabledTypeConfigsValidationGroup extends Constraint
      */
     public $min = 1;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_shipping_enabled_type_config_validation_group_validator';

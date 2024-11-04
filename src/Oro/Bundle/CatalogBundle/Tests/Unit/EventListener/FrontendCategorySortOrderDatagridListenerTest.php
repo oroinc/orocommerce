@@ -14,6 +14,7 @@ class FrontendCategorySortOrderDatagridListenerTest extends \PHPUnit\Framework\T
 {
     private FrontendCategorySortOrderDatagridListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new FrontendCategorySortOrderDatagridListener();

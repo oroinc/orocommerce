@@ -19,9 +19,11 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\PropertyAccess;
+use Oro\Bundle\EntityExtendBundle\Test\EntityExtendTestInitializer;
+use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\ProductDescription;
@@ -57,6 +59,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
     /** @var WebsiteSearchProductIndexDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extendConfigProvider = $this->createMock(ConfigProvider::class);
@@ -74,6 +77,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
 
         $this->filterableAttributeProvider = new ProductIndexFieldsProvider();
         $searchableProvider = new SearchableInformationProvider($configManager);
+        EntityExtendTestInitializer::initialize();
 
         $this->provider = new WebsiteSearchProductIndexDataProvider(
             $this->attributeTypeRegistry,
@@ -100,7 +104,12 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         $product = $this->getEntity(
             Product::class,
             [
-                'inventoryStatus' => $this->getEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock', 42),
+                'inventoryStatus' => $this->getEnumValue(
+                    'In Stock',
+                    42,
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_IN_STOCK,
+                ),
                 'sku' => 'SKU123',
                 'descriptions' => new ArrayCollection(
                     [
@@ -111,8 +120,8 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
                 ),
                 'flags' => new ArrayCollection(
                     [
-                        $this->getEnumValue('bestseller', 'Best Sales', 105),
-                        $this->getEnumValue('discounts', 'New Discounts', 110)
+                        $this->getEnumValue('Best Sales', 105, 'flags_enum_code', 'bestseller'),
+                        $this->getEnumValue('New Discounts', 110, 'flags_enum_code', 'discounts')
                     ]
                 ),
             ]
@@ -527,20 +536,13 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         return new Config($this->createMock(ConfigIdInterface::class), $values);
     }
 
-    private function getEnumValue(string $id, string $name, int $priority): AbstractEnumValue
-    {
-        $enum = $this->createMock(AbstractEnumValue::class);
-        $enum->expects($this->any())
-            ->method('getId')
-            ->willReturn($id);
-        $enum->expects($this->any())
-            ->method('getName')
-            ->willReturn($name);
-        $enum->expects($this->any())
-            ->method('getPriority')
-            ->willReturn($priority);
-
-        return $enum;
+    private function getEnumValue(
+        string $name,
+        int $priority,
+        string $enumCode,
+        string $internalId
+    ): EnumOptionInterface {
+        return new TestEnumValue($enumCode, $name, $internalId, $priority);
     }
 
     private function getLocalizedValue(string $string, Localization $localization = null): ProductDescription

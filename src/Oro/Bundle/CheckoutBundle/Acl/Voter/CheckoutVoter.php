@@ -25,9 +25,7 @@ class CheckoutVoter implements VoterInterface
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function vote(TokenInterface $token, $object, array $attributes): int
     {
         if (!\is_object($object)) {

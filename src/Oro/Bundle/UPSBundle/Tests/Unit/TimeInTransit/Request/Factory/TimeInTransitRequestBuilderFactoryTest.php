@@ -33,6 +33,7 @@ class TimeInTransitRequestBuilderFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var TimeInTransitRequestBuilderFactoryInterface */
     private $timeInTransitRequestBuilderFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->crypter = $this->createMock(SymmetricCrypterInterface::class);

@@ -3,7 +3,9 @@
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\SalesOrdersVolumeChartDataProvider;
 
 use Carbon\Carbon;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\AbstractDateFilterType;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\AbstractBasicSalesOrdersChartDataProviderTest;
@@ -14,6 +16,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\AbstractBasicSale
  */
 class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersChartDataProviderTest
 {
+    #[\Override]
     protected function getSalesOrdersChartDataProvider(): SalesOrdersChartDataProvider
     {
         return self::getContainer()
@@ -23,6 +26,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function getChartDataDataProvider(): array
     {
         $this->setCurrentDate();
@@ -41,7 +45,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -60,7 +64,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -79,7 +83,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -98,7 +102,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -117,7 +121,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -136,7 +140,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -155,7 +159,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -174,7 +178,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -193,7 +197,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -212,7 +216,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -231,7 +235,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -250,7 +254,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -270,7 +274,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -301,7 +305,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -332,7 +336,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -364,9 +368,12 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                 ],
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            )
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -399,7 +406,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                     'orderTotal' => 'subtotal',
                 ],
@@ -430,7 +437,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -461,7 +468,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -492,7 +499,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -524,7 +531,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -555,7 +562,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -587,7 +594,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -618,7 +625,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -649,7 +656,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -674,7 +681,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal',
                 ],
@@ -691,7 +698,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -710,7 +717,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -729,7 +736,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -748,7 +755,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -767,7 +774,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -786,7 +793,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -805,7 +812,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -824,7 +831,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -843,7 +850,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -862,7 +869,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -881,7 +888,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -900,7 +907,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -919,7 +926,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -950,7 +957,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -981,7 +988,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1013,9 +1020,12 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                 ],
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            ),
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -1048,7 +1058,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                     'orderTotal' => 'total',
                 ],
@@ -1079,7 +1089,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1110,7 +1120,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1141,7 +1151,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1172,7 +1182,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1203,7 +1213,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1235,7 +1245,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1266,7 +1276,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1297,7 +1307,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1322,7 +1332,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'total',
                 ],
@@ -1339,7 +1349,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1358,7 +1368,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1377,7 +1387,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1396,7 +1406,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1415,7 +1425,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1434,7 +1444,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1453,7 +1463,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1472,7 +1482,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1491,7 +1501,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1510,7 +1520,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1529,7 +1539,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1548,7 +1558,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1568,7 +1578,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1599,7 +1609,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1630,7 +1640,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1662,9 +1672,12 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                 ],
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            )
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -1697,7 +1710,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1728,7 +1741,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1760,7 +1773,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1792,7 +1805,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1824,7 +1837,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1856,7 +1869,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1888,7 +1901,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1920,7 +1933,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1952,7 +1965,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],
@@ -1978,7 +1991,7 @@ class SalesOrdersVolumeChartDataProviderTest extends AbstractBasicSalesOrdersCha
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                     'orderTotal' => 'subtotal_with_discounts',
                 ],

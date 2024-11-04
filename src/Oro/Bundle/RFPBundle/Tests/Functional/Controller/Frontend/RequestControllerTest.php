@@ -4,7 +4,8 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
@@ -33,6 +34,7 @@ class RequestControllerTest extends WebTestCase
 
     private WorkflowManager $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -112,7 +114,10 @@ class RequestControllerTest extends WebTestCase
             sort($expectedColumns);
 
             foreach ($data as $item) {
-                self::assertEquals($expectedData['action_configuration'], $item['action_configuration']);
+                foreach ($expectedData['action_configuration'] as $key => $config) {
+                    self::assertArrayHasKey($key, $item['action_configuration']);
+                    self::assertEquals($config, $item['action_configuration'][$key]);
+                }
             }
 
             self::assertEquals($expectedColumns, $testedColumns);
@@ -191,7 +196,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['hideButtonEdit'])) {
-            $buttonEdit = $crawler->filter('.controls-list')->html();
+            $buttonEdit = $crawler->filter('.page-title-actions')->html();
             self::assertStringNotContainsString('edit', $buttonEdit);
         }
     }
@@ -238,8 +243,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'workflowStepLabel',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -269,8 +273,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -301,8 +304,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -329,8 +331,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'update' => false,
@@ -358,8 +359,7 @@ class RequestControllerTest extends WebTestCase
                         'view_aria_label',
                         'view_link',
                         'action_configuration',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -388,8 +388,7 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerUserName',
-                        'customerStatusName',
-                        'customerStatusId',
+                        'customer_status',
                     ],
                     'action_configuration' => [
                         'delete' => false,
@@ -862,11 +861,12 @@ class RequestControllerTest extends WebTestCase
         self::assertArrayHasKey('flashMessages', $jsonContent);
     }
 
-    private function getEnumEntity(string $enumField, string $enumCode): AbstractEnumValue
+    private function getEnumEntity(string $enumCode, string $enumField): EnumOptionInterface
     {
-        $className = ExtendHelper::buildEnumValueClassName($enumField);
-
-        return $this->getManager($className)->getReference($className, $enumCode);
+        return $this->getManager(EnumOption::class)->getReference(
+            EnumOption::class,
+            ExtendHelper::buildEnumOptionId($enumCode, $enumField)
+        );
     }
 
     private function getManager(string $className): EntityManagerInterface

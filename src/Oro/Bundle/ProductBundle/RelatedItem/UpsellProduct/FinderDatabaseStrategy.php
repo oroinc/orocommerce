@@ -20,9 +20,7 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function findIds(Product $product): array
     {
         if (!$this->configProvider->isEnabled()) {

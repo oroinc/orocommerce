@@ -18,6 +18,7 @@ class ProductLineItemsHolderFactoryTest extends TestCase
 {
     private ProductLineItemsHolderFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new ProductLineItemsHolderFactory();

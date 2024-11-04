@@ -36,6 +36,7 @@ class TimeInTransitResultFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var TimeInTransitResultFactory */
     private $timeInTransitResultFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->estimatedArrivalFactory = $this->createMock(EstimatedArrivalFactoryInterface::class);

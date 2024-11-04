@@ -15,6 +15,7 @@ class HomePageSystemConfigFormOptionsListenerTest extends TestCase
     private ConfigManager|MockObject $configManager;
     private HomePageSystemConfigFormOptionsListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -5,37 +5,31 @@ namespace Oro\Bundle\RFPBundle\Migrations\Data\ORM;
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 use Oro\Bundle\RFPBundle\Entity\Request;
 
+/**
+ * Loads RFQ customer status enum options.
+ */
 class LoadRequestCustomerStatuses extends AbstractEnumFixture
 {
-    /** @var array */
-    protected static $data = [
+    protected static array $data = [
         'submitted' => 'Submitted',
         'pending_approval' => 'Pending Approval',
         'requires_attention' => 'Requires Attention',
         'cancelled' => 'Cancelled'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData()
+    #[\Override]
+    protected function getData(): array
     {
         return self::$data;
     }
 
-    /**
-     * Returns array of data keys.
-     * @return array
-     */
-    public static function getDataKeys()
+    public static function getDataKeys(): array
     {
         return array_keys(self::$data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEnumCode()
+    #[\Override]
+    protected function getEnumCode(): string
     {
         return Request::CUSTOMER_STATUS_CODE;
     }

@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ValidateAction extends AbstractPaymentMethodAction
 {
-    /** {@inheritdoc} */
+    #[\Override]
     protected function configureOptionsResolver(OptionsResolver $resolver)
     {
         parent::configureOptionsResolver($resolver);
@@ -16,7 +16,7 @@ class ValidateAction extends AbstractPaymentMethodAction
             ->remove(['amount', 'currency']);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function configureValuesResolver(OptionsResolver $resolver)
     {
         parent::configureValuesResolver($resolver);
@@ -28,6 +28,7 @@ class ValidateAction extends AbstractPaymentMethodAction
     /**
      * @param mixed $context
      */
+    #[\Override]
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);

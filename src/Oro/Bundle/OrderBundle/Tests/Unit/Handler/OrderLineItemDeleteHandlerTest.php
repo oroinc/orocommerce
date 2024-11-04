@@ -23,6 +23,7 @@ class OrderLineItemDeleteHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemDeleteHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalHelper = $this->createMock(TotalHelper::class);

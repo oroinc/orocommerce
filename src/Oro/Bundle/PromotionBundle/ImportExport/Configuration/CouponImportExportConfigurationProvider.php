@@ -10,10 +10,10 @@ use Oro\Bundle\PromotionBundle\Entity\Coupon;
 class CouponImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
     /**
-     * {@inheritDoc}
      *
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

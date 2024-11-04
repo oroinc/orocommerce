@@ -27,13 +27,13 @@ class PaymentTermAwareStub implements CustomerOwnerAwareInterface
         return $this->paymentTerm;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCustomer()
     {
         return $this->customer;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCustomerUser()
     {
     }

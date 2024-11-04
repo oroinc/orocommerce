@@ -24,22 +24,26 @@ class ContentBlockBuilder extends AbstractChoiceBuilder
         parent::__construct($packages);
     }
 
-    #[\Override] public static function getType(): string
+    #[\Override]
+    public static function getType(): string
     {
         return 'content_block_selector';
     }
 
-    #[\Override] protected function getTypeClass(): string
+    #[\Override]
+    protected function getTypeClass(): string
     {
         return ContentBlockSelectType::class;
     }
 
-    #[\Override] protected function getDefaultOptions(): array
+    #[\Override]
+    protected function getDefaultOptions(): array
     {
         return [];
     }
 
-    #[\Override] public function buildOption(FormBuilderInterface $builder, array $option): void
+    #[\Override]
+    public function buildOption(FormBuilderInterface $builder, array $option): void
     {
         parent::buildOption($builder, $option);
 
@@ -64,6 +68,7 @@ class ContentBlockBuilder extends AbstractChoiceBuilder
         ));
     }
 
+    #[\Override]
     protected function getOptionPreview(array $option, mixed $value = null, bool $default = false): ?string
     {
         if ($value && !$value instanceof ContentBlock && $value !== self::DEFAULT_PREVIEW_KEY) {

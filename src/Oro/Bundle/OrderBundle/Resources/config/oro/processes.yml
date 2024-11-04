@@ -36,8 +36,8 @@ processes:
                                 and:
                                     - e.shipUntil IS NOT NULL
                                     - e.shipUntil < :date
-                                    - NOT IDENTITY(e.internal_status) = :targetStatus
-                                    - IDENTITY(e.internal_status) IN (:statuses)
+                                    - NOT JSON_EXTRACT(e.serialized_data, 'internal_status') = :targetStatus
+                                    - JSON_EXTRACT(e.serialized_data, 'internal_status') IN (:statuses)
                             query_parameters:
                                 date: $.date
                                 targetStatus: $.targetStatusId

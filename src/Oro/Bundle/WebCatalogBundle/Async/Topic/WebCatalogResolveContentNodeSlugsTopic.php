@@ -15,16 +15,19 @@ class WebCatalogResolveContentNodeSlugsTopic extends AbstractTopic
     public const ID = 'id';
     public const CREATE_REDIRECT = 'createRedirect';
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro_web_catalog.resolve_node_slugs';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Generate slugs for the specified web catalog content node.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

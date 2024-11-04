@@ -10,9 +10,7 @@ use Oro\Bundle\ImportExportBundle\Converter\AbstractTableDataConverter;
  */
 class RelatedProductDataConverter extends AbstractTableDataConverter
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getHeaderConversionRules(): array
     {
         return [
@@ -21,17 +19,13 @@ class RelatedProductDataConverter extends AbstractTableDataConverter
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getBackendHeader(): array
     {
         return array_values($this->getHeaderConversionRules());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToExportFormat(array $exportedRecord, $skipNullValues = true): array
     {
         if (isset($exportedRecord['relatedItem']) && is_array($exportedRecord['relatedItem'])) {

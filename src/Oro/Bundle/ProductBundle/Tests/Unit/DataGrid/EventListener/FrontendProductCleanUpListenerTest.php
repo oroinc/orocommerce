@@ -27,9 +27,7 @@ class FrontendProductCleanUpListenerTest extends \PHPUnit\Framework\TestCase
     /** @var SearchResultAfter */
     private $event;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

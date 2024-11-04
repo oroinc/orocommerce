@@ -29,6 +29,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit\Framework\Test
     /** @var ProductDBQueryRestrictionEventListener */
     protected $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

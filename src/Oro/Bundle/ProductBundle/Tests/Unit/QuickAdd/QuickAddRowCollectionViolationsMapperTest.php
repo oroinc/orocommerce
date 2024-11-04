@@ -13,6 +13,7 @@ class QuickAddRowCollectionViolationsMapperTest extends \PHPUnit\Framework\TestC
 {
     private QuickAddRowCollectionViolationsMapper $mapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->mapper = new QuickAddRowCollectionViolationsMapper();

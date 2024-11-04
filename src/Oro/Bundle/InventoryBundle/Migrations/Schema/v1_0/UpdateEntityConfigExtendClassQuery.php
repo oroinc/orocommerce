@@ -30,17 +30,13 @@ class UpdateEntityConfigExtendClassQuery extends ParametrizedMigrationQuery
         $this->toExtendClass = $toExtendClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Update entity extend class configuration on given entity';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->updateEntityConfig($logger);

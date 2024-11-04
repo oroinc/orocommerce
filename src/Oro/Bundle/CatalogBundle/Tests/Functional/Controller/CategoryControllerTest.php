@@ -48,6 +48,7 @@ class CategoryControllerTest extends WebTestCase
     private array $localizations;
     private Category $masterCatalog;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

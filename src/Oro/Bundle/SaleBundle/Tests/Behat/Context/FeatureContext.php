@@ -8,6 +8,7 @@ use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -210,8 +211,10 @@ class FeatureContext extends OroFeatureContext implements
         $managerRegistry = $this->getAppContainer()->get('doctrine');
         $manager = $managerRegistry->getManagerForClass(Quote::class);
 
-        $className = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);
-        $enumValue = $manager->getReference($className, 'accepted');
+        $enumValue = $manager->getReference(
+            EnumOption::class,
+            ExtendHelper::buildEnumOptionId(Quote::CUSTOMER_STATUS_CODE, 'accepted')
+        );
 
         $quote = $manager->getRepository(Quote::class)->find($quoteId);
         $quote->setCustomerStatus($enumValue);

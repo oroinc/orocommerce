@@ -17,6 +17,7 @@ class PayPalCreditCardConfigFactory extends AbstractPayPalConfigFactory implemen
      * @return PayPalCreditCardConfig
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function createConfig(PayPalSettings $settings)
     {
         $params = [];

@@ -19,6 +19,7 @@ class UnitsWithPrecisionPropertyTest extends TestCase
 
     private Environment|MockObject $twig;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->twig = $this->createMock(Environment::class);

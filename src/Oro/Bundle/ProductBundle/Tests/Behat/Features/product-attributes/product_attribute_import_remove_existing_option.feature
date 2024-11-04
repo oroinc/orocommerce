@@ -17,11 +17,6 @@ Feature: Product attribute import remove existing option
     And I import file
     Then Email should contains the following "Errors: 0 processed: 1, read: 1, added: 1, updated: 0, replaced: 0" text
 
-  Scenario: Update schema
-    Given I go to Products/ Product Attributes
-    When I click update schema
-    Then I should see "Schema updated" flash message
-
   Scenario: Update product family with new attribute
     Given I go to Products/ Product Families
     When I click "Edit" on row "default_family" in grid

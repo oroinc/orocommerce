@@ -19,6 +19,7 @@ class MinimalPricesSelectedPriceProvider implements SelectedPriceProviderInterfa
     ) {
     }
 
+    #[\Override]
     public function getSelectedPricesIds(array $priceListRelations, Product $product): array
     {
         $priceLists = array_map(

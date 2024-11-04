@@ -10,6 +10,7 @@ class ProductVariantTypeHandlerRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVariantTypeHandlerRegistry */
     protected $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = new ProductVariantTypeHandlerRegistry();

@@ -22,6 +22,7 @@ class LoadPageData extends AbstractFixture implements DependentFixtureInterface
         self::PAGE_3 => [],
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         // remove all built-in pages before tests
@@ -41,6 +42,7 @@ class LoadPageData extends AbstractFixture implements DependentFixtureInterface
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadOrganization::class];

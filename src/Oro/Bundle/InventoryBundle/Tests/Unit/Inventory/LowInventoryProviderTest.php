@@ -23,6 +23,7 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
     /** @var LowInventoryProvider */
     private $lowInventoryProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityFallbackResolver = $this->createMock(EntityFallbackResolver::class);

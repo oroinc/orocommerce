@@ -4,31 +4,36 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 
+/**
+ * Updates default status for Order entity.
+ */
 class UpdateDefaultOrderStatuses extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
+    #[\Override]
+    public function getDependencies(): array
     {
         return [LoadOrderInternalStatuses::class];
     }
 
-    /**
-     * @var EntityManager $manager
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
-        $qb = $manager->getConnection()->createQueryBuilder();
-        $qb->update('oro_order')
-            ->set('internal_status_id', ':status')
-            ->setParameter('status', OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN)
-            ->where($qb->expr()->isNull('internal_status_id'))
-            ->execute();
+        $defaultStatusId = ExtendHelper::buildEnumOptionId(
+            Order::INTERNAL_STATUS_CODE,
+            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+        );
+        $sql = "UPDATE oro_order
+        set serialized_data = jsonb_set(serialized_data::jsonb, '{internal_status}', :status)
+        WHERE serialized_data::json -> 'internal_status' is null";
+
+        $manager->getConnection()->executeQuery(
+            $sql,
+            ['status' => '"' . $defaultStatusId . '"']
+        );
     }
 }

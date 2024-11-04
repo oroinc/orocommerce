@@ -9,6 +9,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class RemoveUniqueIndexAddDeferrableUniqueConstraintToRedirectSlug implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $tableName = 'oro_redirect_slug';

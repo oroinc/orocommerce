@@ -42,6 +42,7 @@ class FrontendProductPricesProviderTest extends TestCase
 
     private FrontendProductPricesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeCriteriaRequestHandler = $this->createMock(ProductPriceScopeCriteriaRequestHandler::class);

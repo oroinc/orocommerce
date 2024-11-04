@@ -50,9 +50,7 @@ abstract class AbstractDiscount implements DiscountInterface
      */
     private $resolvedOptions;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configure(array $options): array
     {
         if ($this->configured) {
@@ -69,41 +67,31 @@ abstract class AbstractDiscount implements DiscountInterface
         return $resolvedOptions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountType(): string
     {
         return $this->discountType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountValue(): float
     {
         return $this->discountValue;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDiscountCurrency()
     {
         return $this->discountCurrency;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMatchingProducts()
     {
         return $this->matchingProducts;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setMatchingProducts(array $products)
     {
         $this->matchingProducts = $products;
@@ -111,17 +99,13 @@ abstract class AbstractDiscount implements DiscountInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPromotion()
     {
         return $this->promotion;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setPromotion(PromotionDataInterface $promotion)
     {
         $this->promotion = $promotion;

@@ -38,9 +38,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
     use ContainerAwareTrait;
     use UserUtilityTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -49,9 +47,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPreviousClassNames(): array
     {
         return [
@@ -59,9 +55,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->loadShippingRule($manager, $this->loadIntegration($manager));

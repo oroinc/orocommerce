@@ -13,9 +13,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\InitialFixtureInterface;
  */
 class LoadProductDefaultAttributeFamily extends AbstractFixture implements InitialFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $repository = $manager->getRepository(AttributeFamily::class);

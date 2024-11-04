@@ -12,17 +12,13 @@ class LoadContentNodeData extends AbstractFixture implements DependentFixtureInt
     const FIRST_CONTENT_NODE = 'firstContentNode';
     const SECOND_CONTENT_NODE = 'secondContentNode';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadWebCatalogsData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $firstContentNode = new TestContentNode();

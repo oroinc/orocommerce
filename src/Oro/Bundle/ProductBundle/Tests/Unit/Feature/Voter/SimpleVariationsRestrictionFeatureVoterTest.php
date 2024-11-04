@@ -11,6 +11,7 @@ class SimpleVariationsRestrictionFeatureVoterTest extends \PHPUnit\Framework\Tes
     private ConfigManager|MockObject $configManager;
     private SimpleVariationsRestrictionFeatureVoter $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

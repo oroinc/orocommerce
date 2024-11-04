@@ -19,9 +19,7 @@ class BasicShippingConfiguredPriceProvider implements ShippingConfiguredPricePro
         $this->shippingPriceProvider = $shippingPriceProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(
         ComposedShippingMethodConfigurationInterface $configuration,
         ShippingContextInterface $context
@@ -29,9 +27,7 @@ class BasicShippingConfiguredPriceProvider implements ShippingConfiguredPricePro
         return $this->shippingPriceProvider->getApplicableMethodsViews($context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrice(
         $methodId,
         $methodTypeId,

@@ -13,9 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class DbalTypeDefaultValuePass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition('oro_platform.provider.dbal_type_default_value')) {

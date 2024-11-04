@@ -16,6 +16,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
  */
 class FillBackendOrderLineItemPrice extends AbstractBackendFillLineItemPrice
 {
+    #[\Override]
     protected function getOrderLineItem(CustomizeFormDataContext $context): OrderLineItem
     {
         return $context->getData();

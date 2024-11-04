@@ -22,9 +22,7 @@ class OroShoppingListBundle implements
     use DatabasePlatformAwareTrait;
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -59,9 +57,7 @@ class OroShoppingListBundle implements
         $queries->addPostQuery(new RenameConfigSectionQuery('oro_b2b_shopping_list', 'oro_shopping_list'));
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

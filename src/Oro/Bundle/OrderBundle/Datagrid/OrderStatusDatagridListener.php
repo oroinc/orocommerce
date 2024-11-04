@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
 
 /**
@@ -11,29 +12,33 @@ use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
  */
 class OrderStatusDatagridListener
 {
-    private OrderConfigurationProviderInterface $configurationProvider;
-
-    public function __construct(OrderConfigurationProviderInterface $configurationProvider)
-    {
-        $this->configurationProvider = $configurationProvider;
+    public function __construct(
+        private OrderConfigurationProviderInterface $configurationProvider,
+        private EnumOptionsProvider $enumOptionsProvider
+    ) {
     }
 
     public function onBuildBefore(BuildBefore $event): void
     {
         if ($this->configurationProvider->isExternalStatusManagementEnabled()) {
             $config = $event->getConfig();
-            $query = $config->getOrmQuery();
-            $query->addSelect('status.name as statusName');
-            $query->addSelect('status.id as statusId');
-            $query->addLeftJoin('order1.status', 'status');
-            $config->addColumn('statusName', ['label' => 'oro.order.status.label']);
-            $config->addFilter(
-                'statusName',
-                ['type' => 'enum', 'data_name' => 'statusId', 'enum_code' => 'order_status']
+            $config->addColumn(
+                'status',
+                [
+                    'label' => 'oro.order.status.label',
+                    'frontend_type' => 'select',
+                    'data_name' => 'status',
+                    'choices' => $this->enumOptionsProvider->getEnumChoicesByCode('order_status'),
+                    'translatable_options' => false,
+                ]
             );
-            $config->addSorter('statusName', ['data_name' => 'statusName']);
-            $config->moveColumnBefore('statusName', 'internalStatusName');
-            $config->moveFilterBefore('statusName', 'internalStatusName');
+            $config->addFilter(
+                'status',
+                ['type' => 'enum', 'data_name' => 'status', 'enum_code' => 'order_status']
+            );
+            $config->addSorter('status', ['data_name' => 'status']);
+            $config->moveColumnBefore('status', 'internal_status');
+            $config->moveFilterBefore('status', 'internal_status');
         }
     }
 }

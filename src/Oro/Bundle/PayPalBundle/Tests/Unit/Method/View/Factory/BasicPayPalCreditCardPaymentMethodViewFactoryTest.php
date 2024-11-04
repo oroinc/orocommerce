@@ -25,6 +25,7 @@ class BasicPayPalCreditCardPaymentMethodViewFactoryTest extends \PHPUnit\Framewo
      */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);

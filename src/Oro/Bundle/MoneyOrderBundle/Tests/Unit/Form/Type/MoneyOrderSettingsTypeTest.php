@@ -14,9 +14,7 @@ use Symfony\Component\Validator\Validation;
 
 class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

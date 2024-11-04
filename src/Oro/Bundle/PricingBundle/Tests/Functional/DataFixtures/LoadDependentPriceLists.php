@@ -30,9 +30,7 @@ class LoadDependentPriceLists extends AbstractFixture implements DependentFixtur
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $now = new \DateTime();
@@ -63,9 +61,7 @@ class LoadDependentPriceLists extends AbstractFixture implements DependentFixtur
         $manager->flush();
     }
 
-    /**
-     * @inheritdoc
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadOrganization::class, LoadPriceLists::class];

@@ -29,6 +29,7 @@ class ContentVariantSegmentProviderTest extends WebTestCase
      */
     private $usageProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -44,6 +45,7 @@ class ContentVariantSegmentProviderTest extends WebTestCase
         $this->provider->setWebCatalogUsageProvider($this->usageProvider);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $metadata = $this->getContentVariantMetadata();

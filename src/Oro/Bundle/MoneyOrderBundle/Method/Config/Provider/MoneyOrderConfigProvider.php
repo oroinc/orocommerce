@@ -43,9 +43,7 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
         $this->configFactory = $configFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentConfigs()
     {
         $configs = [];
@@ -61,9 +59,7 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
         return $configs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentConfig($identifier)
     {
         $paymentConfigs = $this->getPaymentConfigs();
@@ -75,9 +71,7 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
         return $paymentConfigs[$identifier];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasPaymentConfig($identifier)
     {
         return null !== $this->getPaymentConfig($identifier);

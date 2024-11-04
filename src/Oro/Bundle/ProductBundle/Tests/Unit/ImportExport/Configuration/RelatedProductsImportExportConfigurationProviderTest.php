@@ -21,6 +21,7 @@ class RelatedProductsImportExportConfigurationProviderTest extends \PHPUnit\Fram
     /** @var RelatedProductsImportExportConfigurationProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

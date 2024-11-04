@@ -38,17 +38,13 @@ class AssignUserCurrencyAction extends AbstractAction
         $this->currencyManager = $currencyManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function executeAction($context)
     {
         $this->contextAccessor->setValue($context, $this->attribute, $this->currencyManager->getUserCurrency());
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (count($options) !== 1) {

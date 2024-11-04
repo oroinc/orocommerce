@@ -26,9 +26,7 @@ class FeatureVoter implements VoterInterface
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function vote($feature, $scopeIdentifier = null)
     {
         if ($feature === self::FEATURE_NAME && $this->frontendHelper->isFrontendRequest()) {

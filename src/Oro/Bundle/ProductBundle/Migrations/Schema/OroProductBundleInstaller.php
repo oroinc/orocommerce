@@ -42,17 +42,13 @@ class OroProductBundleInstaller implements
     use SlugExtensionAwareTrait;
     use AddFallbackRelationTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_34';
+        return 'v1_35';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->createOroProductTable($schema);
@@ -113,6 +109,8 @@ class OroProductBundleInstaller implements
         $this->addPageTemplateField($schema);
         $this->addProductToSearchTermTable($schema);
         $this->addProductCollectionSegmentToSearchTermTable($schema);
+
+        $this->addKitShippingCalculationMethod($schema);
     }
 
     /**
@@ -977,5 +975,14 @@ class OroProductBundleInstaller implements
                 'form' => ['is_enabled' => false],
             ]
         );
+    }
+
+    private function addKitShippingCalculationMethod(Schema $schema): void
+    {
+        if ($schema->hasTable('oro_product')) {
+            $schema
+                ->getTable('oro_product')
+                ->addColumn('kit_shipping_calculation_method', 'string', ['length' => 32, 'notnull' => false]);
+        }
     }
 }

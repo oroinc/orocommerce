@@ -24,6 +24,7 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
     /** @var RestrictProductViewByInventoryStatusListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -41,12 +42,12 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
     public function testNoRestriction($controller, Product $product = null, string $inventoryStatusCode = null): void
     {
         if ($inventoryStatusCode) {
-            $inventoryStatus = new InventoryStatus($inventoryStatusCode, $inventoryStatusCode);
+            $inventoryStatus = new InventoryStatus('test_enum_code', 'Test', $inventoryStatusCode);
             if ($product) {
                 $product->setInventoryStatus($inventoryStatus);
             }
         }
-        $allowedStatuses = ['in_stock'];
+        $allowedStatuses = ['test_enum_code.in_stock'];
 
         $request = Request::create('/product/view/1', 'GET', []);
         $request->attributes->set('product', $product);
@@ -88,7 +89,7 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
 
     public function testRestriction(): void
     {
-        $inventoryStatus = new InventoryStatus('out_of_stock', 'out_of_stock');
+        $inventoryStatus = new InventoryStatus('test', 'Test', 'out_of_stock');
         $product = $this->getEntity(Product::class, ['id' => 42]);
         $product->setInventoryStatus($inventoryStatus);
         $allowedStatuses = ['in_stock'];
@@ -109,7 +110,8 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
             ->willReturn($allowedStatuses);
 
         $this->expectException(AccessDeniedHttpException::class);
-        $this->expectExceptionMessage('Inventory status "out_of_stock" is configured as invisible. Product id: 42');
+        $expectedMessage = 'Inventory status "test.out_of_stock" is configured as invisible. Product id: 42';
+        $this->expectExceptionMessage($expectedMessage);
 
         $this->listener->onKernelController($event);
     }

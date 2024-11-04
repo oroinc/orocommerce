@@ -18,6 +18,7 @@ class CouponGenerationTypeTest extends FormIntegrationTestCase
      */
     protected $couponGenerationType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

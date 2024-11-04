@@ -11,13 +11,13 @@ class BillingAddressDiffMapperTest extends AbstractAddressDiffMapperTest
         $this->assertEquals('billing_address', $this->mapper->getName());
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function getMapper()
     {
         return new BillingAddressDiffMapper();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function getTestAddressFieldName()
     {
         return 'billingAddress';

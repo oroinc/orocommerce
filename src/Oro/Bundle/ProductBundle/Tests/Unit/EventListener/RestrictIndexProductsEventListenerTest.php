@@ -29,6 +29,7 @@ class RestrictIndexProductsEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var RestrictIndexProductsEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->modifier = $this->createMock(ProductVisibilityQueryBuilderModifier::class);

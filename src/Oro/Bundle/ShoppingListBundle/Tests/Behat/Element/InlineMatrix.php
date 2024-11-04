@@ -35,6 +35,7 @@ class InlineMatrix extends Table
      * @param string $elementName
      * @return TableRow[]
      */
+    #[\Override]
     public function getRowElements($elementName)
     {
         return array_map(function (NodeElement $element) use ($elementName) {
@@ -46,6 +47,7 @@ class InlineMatrix extends Table
      * @param string $elementName
      * @return InlineMatrixHeader
      */
+    #[\Override]
     public function getHeaderElement($elementName)
     {
         return $this->elementFactory->wrapElement(

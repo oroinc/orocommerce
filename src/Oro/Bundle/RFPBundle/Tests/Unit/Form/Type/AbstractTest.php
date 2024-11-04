@@ -37,6 +37,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /** @var PropertyAccessor */
     protected $propertyAccessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

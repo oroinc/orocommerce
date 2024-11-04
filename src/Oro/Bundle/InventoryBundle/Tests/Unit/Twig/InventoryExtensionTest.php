@@ -21,6 +21,7 @@ class InventoryExtensionTest extends TestCase
     private InventoryStatusProvider|MockObject $inventoryStatusProvider;
     private InventoryExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->upcomingProductProvider = $this->createMock(UpcomingProductProvider::class);

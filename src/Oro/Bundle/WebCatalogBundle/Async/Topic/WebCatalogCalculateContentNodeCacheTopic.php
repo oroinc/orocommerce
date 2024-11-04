@@ -15,16 +15,19 @@ class WebCatalogCalculateContentNodeCacheTopic extends AbstractTopic implements 
 {
     public const CONTENT_NODE_ID = 'contentNodeId';
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.web_catalog.calculate_cache.content_node';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Initiate web catalog content node cache calculation.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
@@ -33,6 +36,7 @@ class WebCatalogCalculateContentNodeCacheTopic extends AbstractTopic implements 
             ->allowedTypes('int');
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return sprintf('%s:%s', self::getName(), $messageBody[self::CONTENT_NODE_ID]);

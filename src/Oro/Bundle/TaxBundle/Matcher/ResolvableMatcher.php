@@ -23,9 +23,7 @@ class ResolvableMatcher implements MatcherInterface
         $this->settingsProvider = $taxationSettingsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function match(AbstractAddress $address, TaxCodes $taxCodes): array
     {
         if (null === $this->matcher) {

@@ -19,9 +19,7 @@ class LoadOtherWebsite extends AbstractFixture implements ContainerAwareInterfac
 
     const REFERENCE_OTHER_WEBSITE = 'other_website';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $mainWebsite = $manager->getRepository(Website::class)

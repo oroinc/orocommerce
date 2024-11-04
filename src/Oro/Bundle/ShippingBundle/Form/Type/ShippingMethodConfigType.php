@@ -36,9 +36,7 @@ class ShippingMethodConfigType extends AbstractType
         $this->shippingMethodProvider = $shippingMethodProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('method', HiddenType::class, ['required' => false]);
@@ -48,9 +46,7 @@ class ShippingMethodConfigType extends AbstractType
         $builder->addEventSubscriber($this->subscriber);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $methodsLabels = [];
@@ -64,6 +60,7 @@ class ShippingMethodConfigType extends AbstractType
         $view->vars['methods_icons'] = $methodsIcons;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -71,9 +68,7 @@ class ShippingMethodConfigType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

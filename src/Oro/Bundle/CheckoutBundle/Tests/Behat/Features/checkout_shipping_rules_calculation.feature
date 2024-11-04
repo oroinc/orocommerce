@@ -29,9 +29,6 @@ Feature: Checkout shipping rules calculation
       | d     |
     And I save form
     Then I should see "Attribute was successfully saved" flash message
-    Given I go to Products/Product Attributes
-    When I click update schema
-    Then I should see "Schema updated" flash message
 
   Scenario: Add “shipping_category” product attribute to the default product family
     Given I go to Products/Product Families

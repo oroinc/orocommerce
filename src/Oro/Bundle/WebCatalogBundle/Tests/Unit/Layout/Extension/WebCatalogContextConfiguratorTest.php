@@ -15,6 +15,7 @@ class WebCatalogContextConfiguratorTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogContextConfigurator */
     private $contextConfigurator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -13,9 +13,7 @@ class UniqueEntity extends Constraint
 
     public array $fields;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

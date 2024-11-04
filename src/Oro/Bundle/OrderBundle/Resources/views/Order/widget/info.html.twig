@@ -57,6 +57,7 @@
             {{ UI.renderHtmlProperty('oro.order.billing_address.label'|trans, address.renderAddress(order.billingAddress, true)) }}
             {{ UI.renderHtmlProperty('oro.order.shipping_address.label'|trans, address.renderAddress(order.shippingAddress, true)) }}
             {{ UI.renderProperty('oro.order.ship_until.label'|trans, order.shipUntil|oro_format_date) }}
+            {{ UI.renderProperty('oro.order.shipping_status.label'|trans, order.shippingStatus.name|default('N/A'|trans)) }}
         </div>
     </div>
 </div>

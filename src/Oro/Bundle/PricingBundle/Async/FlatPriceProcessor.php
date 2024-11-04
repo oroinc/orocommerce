@@ -34,6 +34,7 @@ class FlatPriceProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->jobRunner = $jobRunner;
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session)
     {
         try {
@@ -87,6 +88,7 @@ class FlatPriceProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $this->productsBatchSize = $productsBatchSize;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [ResolveFlatPriceTopic::getName()];

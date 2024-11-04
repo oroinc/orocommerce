@@ -12,6 +12,7 @@ class UrlItemsProviderRegistryTest extends \PHPUnit\Framework\TestCase
      */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $providers = [

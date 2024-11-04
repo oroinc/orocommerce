@@ -20,6 +20,7 @@ class CountryMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var CountryMatcher */
     private $matcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);

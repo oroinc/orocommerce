@@ -29,6 +29,7 @@ class RequestCurrentLocalizationExtension implements CurrentLocalizationExtensio
     /**
      * @return Localization|null
      */
+    #[\Override]
     public function getCurrentLocalization()
     {
         $request = $this->requestStack->getMainRequest();

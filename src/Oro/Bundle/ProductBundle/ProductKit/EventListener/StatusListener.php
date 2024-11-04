@@ -90,7 +90,7 @@ class StatusListener
         } elseif ($entity instanceof Product) {
             if ($entity->isSimple()) {
                 $changeSet = $unitOfWork->getEntityChangeSet($entity);
-                if (isset($changeSet['status']) || isset($changeSet['inventory_status'])) {
+                if (isset($changeSet['status']) || isset($changeSet['serialized_data'][0]['inventory_status'])) {
                     $this->processSimpleProduct($objectManager, $entity);
                 }
             }

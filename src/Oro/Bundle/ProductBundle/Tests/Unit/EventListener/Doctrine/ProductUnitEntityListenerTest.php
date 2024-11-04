@@ -13,6 +13,7 @@ class ProductUnitEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitEntityListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);

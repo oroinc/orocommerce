@@ -19,9 +19,7 @@ class OrderLineItemDeleteHandlerExtension extends AbstractEntityDeleteHandlerExt
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function assertDeleteGranted($entity): void
     {
         /** @var OrderLineItem $entity */

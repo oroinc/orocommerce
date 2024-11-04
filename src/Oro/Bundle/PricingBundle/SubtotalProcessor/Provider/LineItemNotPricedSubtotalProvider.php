@@ -37,9 +37,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
         $this->productLineItemsPriceProvider = $productLineItemsPriceProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof LineItemsNotPricedAwareInterface;
@@ -52,6 +50,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
      *
      * @return Subtotal
      */
+    #[\Override]
     public function getSubtotal($entity)
     {
         return $this->getSubtotalByCurrency($entity, $this->getBaseCurrency($entity));

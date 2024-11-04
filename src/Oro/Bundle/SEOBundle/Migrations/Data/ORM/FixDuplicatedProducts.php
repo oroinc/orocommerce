@@ -34,9 +34,7 @@ class FixDuplicatedProducts extends AbstractFixture implements ContainerAwareInt
      */
     private $extendExtension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->nameGenerator = new ExtendDbIdentifierNameGenerator();

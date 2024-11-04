@@ -31,9 +31,7 @@ class DigitalAssetTwigTagsTransformer implements DataTransformerInterface
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function transform($value)
     {
         if (null === $value) {
@@ -55,9 +53,7 @@ class DigitalAssetTwigTagsTransformer implements DataTransformerInterface
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function reverseTransform($value)
     {
         if ('' === $value) {

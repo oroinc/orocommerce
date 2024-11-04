@@ -32,9 +32,7 @@ class ContentVariantUrlItemsProvider implements UrlItemsProviderInterface
     ) {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUrlItems(WebsiteInterface $website, $version)
     {
         // If master catalog is enabled - we do not return catalog nodes

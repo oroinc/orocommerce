@@ -23,6 +23,7 @@ class RequestProductItemChecksumListener implements EventSubscriberInterface
         $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
     }
 
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [

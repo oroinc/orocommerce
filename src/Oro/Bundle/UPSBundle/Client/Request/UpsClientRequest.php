@@ -17,17 +17,13 @@ class UpsClientRequest extends ParameterBag implements UpsClientRequestInterface
         parent::__construct($params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getUrl(): ?string
     {
         return $this->get(self::FIELD_URL);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getRequestData(): ?array
     {
         return $this->get(self::FIELD_REQUEST_DATA);

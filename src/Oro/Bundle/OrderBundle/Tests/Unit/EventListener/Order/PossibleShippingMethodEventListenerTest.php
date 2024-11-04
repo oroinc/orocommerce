@@ -32,6 +32,7 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit\Framework\TestCas
     /** @var PossibleShippingMethodEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = $this->createMock(OrderShippingContextFactory::class);

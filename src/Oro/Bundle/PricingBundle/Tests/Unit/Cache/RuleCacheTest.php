@@ -34,6 +34,7 @@ class RuleCacheTest extends \PHPUnit\Framework\TestCase
     /** @var RuleCache */
     private $ruleCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheItemPoolInterface::class);

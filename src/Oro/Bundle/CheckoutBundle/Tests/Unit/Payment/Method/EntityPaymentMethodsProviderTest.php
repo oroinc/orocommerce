@@ -17,6 +17,7 @@ class EntityPaymentMethodsProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);

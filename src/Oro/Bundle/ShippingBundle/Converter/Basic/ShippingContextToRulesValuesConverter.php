@@ -19,6 +19,7 @@ class ShippingContextToRulesValuesConverter implements ShippingContextToRulesVal
         $this->decoratedProductLineItemFactory = $decoratedProductLineItemFactory;
     }
 
+    #[\Override]
     public function convert(ShippingContextInterface $context): array
     {
         $shippingLineItems = $context->getLineItems()->toArray();

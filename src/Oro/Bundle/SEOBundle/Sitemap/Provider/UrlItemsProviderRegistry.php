@@ -16,17 +16,13 @@ class UrlItemsProviderRegistry implements UrlItemsProviderRegistryInterface
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProvidersIndexedByNames()
     {
         return $this->providers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProviderByName($name)
     {
         return isset($this->providers[$name]) ? $this->providers[$name] : null;

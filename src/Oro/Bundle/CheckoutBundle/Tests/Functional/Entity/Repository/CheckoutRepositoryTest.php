@@ -23,6 +23,7 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
 {
     private CheckoutRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

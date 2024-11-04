@@ -19,6 +19,7 @@ class UpdateContentVariantSlugsWithContentVariantId extends AbstractFixture impl
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var ContentNodeRepository $contentNodeRepo */

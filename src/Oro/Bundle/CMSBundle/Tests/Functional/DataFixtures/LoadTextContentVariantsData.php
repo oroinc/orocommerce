@@ -17,9 +17,7 @@ class LoadTextContentVariantsData extends AbstractFixture implements DependentFi
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var ContentBlock $contentBlock */
@@ -48,9 +46,7 @@ class LoadTextContentVariantsData extends AbstractFixture implements DependentFi
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

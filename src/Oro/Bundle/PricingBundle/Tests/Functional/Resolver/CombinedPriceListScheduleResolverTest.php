@@ -31,6 +31,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     private CombinedPriceListScheduleResolver $resolver;
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

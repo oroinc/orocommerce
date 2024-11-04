@@ -53,9 +53,7 @@ class QueryExpressionBuilder implements QueryExpressionConverterInterface
         return $this->sortedConverters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
         $convertedExpression = null;

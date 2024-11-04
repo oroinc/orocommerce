@@ -15,9 +15,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
 {
     private array $priceLists = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(
@@ -28,9 +26,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $priceAttributes = [
@@ -63,6 +59,7 @@ class LoadPriceAttributeProductPriceDemoData extends AbstractLoadProductPriceDem
         $manager->flush();
     }
 
+    #[\Override]
     protected function getFileLocator(): FileLocatorInterface
     {
         return $this->container->get('file_locator');

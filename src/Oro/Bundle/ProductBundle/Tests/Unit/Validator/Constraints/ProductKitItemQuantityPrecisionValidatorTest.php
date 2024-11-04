@@ -26,6 +26,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
  */
 class ProductKitItemQuantityPrecisionValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): ProductKitItemQuantityPrecisionValidator
     {
         $configManager = $this->createMock(ConfigManager::class);

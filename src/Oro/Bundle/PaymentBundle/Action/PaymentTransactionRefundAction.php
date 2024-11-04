@@ -14,6 +14,7 @@ class PaymentTransactionRefundAction extends AbstractPaymentMethodAction
 {
     const OPTION_PAYMENT_TRANSACTION = 'paymentTransaction';
 
+    #[\Override]
     protected function configureOptionsResolver(OptionsResolver $resolver)
     {
         parent::configureOptionsResolver($resolver);
@@ -27,6 +28,7 @@ class PaymentTransactionRefundAction extends AbstractPaymentMethodAction
             );
     }
 
+    #[\Override]
     protected function configureValuesResolver(OptionsResolver $resolver)
     {
         parent::configureValuesResolver($resolver);
@@ -42,6 +44,7 @@ class PaymentTransactionRefundAction extends AbstractPaymentMethodAction
         return $options[self::OPTION_PAYMENT_TRANSACTION];
     }
 
+    #[\Override]
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);

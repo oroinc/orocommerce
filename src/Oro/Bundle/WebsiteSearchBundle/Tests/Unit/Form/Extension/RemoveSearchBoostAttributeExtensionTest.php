@@ -28,6 +28,7 @@ class RemoveSearchBoostAttributeExtensionTest extends \PHPUnit\Framework\TestCas
     /** @var AttributeTypeRegistry|\PHPUnit\Framework\MockObject\MockObject */
     private $attributeTypeRegistry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attributeConfigProvider = $this->createMock(ConfigProvider::class);

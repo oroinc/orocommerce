@@ -11,22 +11,17 @@ use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * Provides aliases for target classes for enum and multi-enum product attributes.
+ * Provides aliases for target classes of enum and multi-enum product attributes created by a user.
  */
 class ProductEntityAliasProvider implements EntityAliasProviderInterface
 {
-    /** @var ConfigManager */
-    private $configManager;
+    private const string PRODUCT_ATTR_ENUM_CLASS_NAME_PREFIX = ExtendHelper::ENUM_CLASS_NAME_PREFIX . 'Product_';
 
-    /** @var DuplicateEntityAliasResolver */
-    private $duplicateResolver;
-
-    /** @var string */
-    private $extendedProductPrefix;
-
-    /** @var array [class name => TRUE, ...] */
-    private $classes;
+    private ConfigManager $configManager;
+    private DuplicateEntityAliasResolver $duplicateResolver;
     private Inflector $inflector;
+    /** @var array|null [class name => TRUE, ...] */
+    private ?array $classes = null;
 
     public function __construct(
         ConfigManager $configManager,
@@ -35,17 +30,13 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
     ) {
         $this->configManager = $configManager;
         $this->duplicateResolver = $duplicateResolver;
-        $this->extendedProductPrefix = ExtendHelper::ENTITY_NAMESPACE . 'EV_Product_';
         $this->inflector = $inflector;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityAlias($entityClass)
     {
-        // quick check to exclude classes that are not related to Product attributes
-        if (false === stripos($entityClass, $this->extendedProductPrefix)) {
+        if (!str_starts_with($entityClass, self::PRODUCT_ATTR_ENUM_CLASS_NAME_PREFIX)) {
             return null;
         }
 
@@ -56,42 +47,34 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
 
         $entityAlias = $this->duplicateResolver->getAlias($entityClass);
         if (null === $entityAlias) {
-            $entityAlias = $this->doGetEntityAlias($entityClass);
+            $alias = $this->buildAlias($entityClass);
+            $pluralAlias = $this->inflector->pluralize($alias);
+            while ($this->duplicateResolver->hasAlias($alias, $pluralAlias)) {
+                $alias = $this->duplicateResolver->getUniqueAlias($alias, $pluralAlias);
+                $pluralAlias = $this->inflector->pluralize($alias);
+            }
+            $entityAlias = new EntityAlias($alias, $pluralAlias);
             $this->duplicateResolver->saveAlias($entityClass, $entityAlias);
         }
 
         return $entityAlias;
     }
 
-    private function doGetEntityAlias(string $entityClass): EntityAlias
+    private function buildAlias(string $entityClass): string
     {
-        // remove namespace to get a short class name
+        // remove the product attribute enum class name prefix
         // ex: New_Attribute_8fde6396
-        $shortEntityClass = substr($entityClass, strlen($this->extendedProductPrefix));
+        $attributeName = substr($entityClass, \strlen(self::PRODUCT_ATTR_ENUM_CLASS_NAME_PREFIX));
         // remove the hash from the class name we get more readable class name
         // ex: New_Attribute
-        $cleanEntityClass = substr($shortEntityClass, 0, strrpos($shortEntityClass, '_'));
+        $attributeName = substr($attributeName, 0, strrpos($attributeName, '_'));
+        // remove underscores and convert to lower case
+        // ex: newattribute
+        $attributeName = $attributeName && $attributeName !== '_'
+            ? strtolower(str_replace('_', '', $attributeName))
+            : 'attribute';
 
-        $alias = $this->buildAlias($cleanEntityClass);
-        $pluralAlias = $this->inflector->pluralize($alias);
-        if ($this->duplicateResolver->hasAlias($alias, $pluralAlias)) {
-            $alias = $this->duplicateResolver->getUniqueAlias($alias, $pluralAlias);
-            $pluralAlias = $alias;
-        }
-
-        return new EntityAlias($alias, $pluralAlias);
-    }
-
-    /**
-     * @param string $className The class name without namespace
-     *
-     * @return string
-     */
-    private function buildAlias(string $className): string
-    {
-        $className = $className && $className !== '_' ? strtolower($className) : 'attribute';
-
-        return 'extproductattribute' . str_replace('_', '', strtolower($className));
+        return 'extproductattribute' . $attributeName;
     }
 
     private function ensureInitialized(): void
@@ -106,17 +89,23 @@ class ProductEntityAliasProvider implements EntityAliasProviderInterface
             if (!$field->is('is_attribute')) {
                 continue;
             }
-
-            $targetEntityClass = $this->configManager
-                ->getFieldConfig('extend', Product::class, $field->getId()->getFieldName())
-                ->get('target_entity');
-            if (!$targetEntityClass
-                || !$this->configManager->getEntityConfig('enum', $targetEntityClass)->get('code')
-            ) {
+            if (!ExtendHelper::isEnumerableType($field->getId()->getFieldType())) {
                 continue;
             }
 
-            $this->classes[$targetEntityClass] = true;
+            $enumCode = $this->configManager
+                ->getFieldConfig('enum', Product::class, $field->getId()->getFieldName())
+                ->get('enum_code');
+            if (!$enumCode) {
+                continue;
+            }
+
+            $enumOptionEntityClass = ExtendHelper::getOutdatedEnumOptionClassName($enumCode);
+            if (!str_starts_with($enumOptionEntityClass, self::PRODUCT_ATTR_ENUM_CLASS_NAME_PREFIX)) {
+                continue;
+            }
+
+            $this->classes[$enumOptionEntityClass] = true;
         }
     }
 }

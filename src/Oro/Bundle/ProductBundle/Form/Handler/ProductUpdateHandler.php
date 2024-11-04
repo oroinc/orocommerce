@@ -46,9 +46,7 @@ class ProductUpdateHandler extends UpdateHandlerFacade
         $this->relatedItemsHandler = $relatedItemsHandler;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function constructResponse(
         UpdateInterface $update,
         Request $request,

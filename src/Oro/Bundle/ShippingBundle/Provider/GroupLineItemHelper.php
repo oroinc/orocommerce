@@ -30,9 +30,7 @@ class GroupLineItemHelper implements GroupLineItemHelperInterface
         $this->doctrineHelper = $doctrineHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getGroupedLineItems(Collection $lineItems, string $groupingFieldPath): array
     {
         $groupedLineItems = [];
@@ -43,25 +41,19 @@ class GroupLineItemHelper implements GroupLineItemHelperInterface
         return $groupedLineItems;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isLineItemsGroupedByOrganization(string $groupingFieldPath): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getGroupingFieldPath(): string
     {
         return $this->configProvider->getGroupLineItemsByField();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getGroupingFieldValue(object $lineItem, string $groupingFieldPath): mixed
     {
         try {

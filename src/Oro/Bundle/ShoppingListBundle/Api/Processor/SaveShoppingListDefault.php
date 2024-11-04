@@ -28,9 +28,7 @@ class SaveShoppingListDefault implements ProcessorInterface
         $this->currentShoppingListStorage = $currentShoppingListStorage;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var FormContext $context */

@@ -46,12 +46,14 @@ class ProductVariantFieldValidatorTest extends ConstraintValidatorTestCase
         ]
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductVariantFieldValidator
     {
         return new ProductVariantFieldValidator($this->customFieldProvider);

@@ -28,6 +28,7 @@ class SwitchableUrlItemsProviderTest extends WebTestCase
     private ConfigManager $configManager;
     private SwitchableUrlItemsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

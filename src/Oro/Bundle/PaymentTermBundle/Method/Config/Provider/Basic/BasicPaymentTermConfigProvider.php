@@ -38,9 +38,7 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
         $this->paymentTermConfigBySettingsFactory = $paymentTermConfigBySettingsFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentConfigs()
     {
         $configs = [];
@@ -56,9 +54,7 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
         return $configs;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentConfig($identifier)
     {
         $paymentConfigs = $this->getPaymentConfigs();
@@ -70,9 +66,7 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
         return $paymentConfigs[$identifier];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasPaymentConfig($identifier)
     {
         return null !== $this->getPaymentConfig($identifier);

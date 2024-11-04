@@ -22,9 +22,7 @@ class ContactInfoManualTextType extends AbstractType
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $key = Configuration::getConfigKeyByName(Configuration::ALLOW_USER_CONFIGURATION);
@@ -35,25 +33,18 @@ class ContactInfoManualTextType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return static::NAME;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return TextareaType::class;

@@ -36,9 +36,7 @@ class FedexIntegrationSettingsTypeTest extends FormIntegrationTestCase
     /** @var ShippingPriceCache|\PHPUnit\Framework\MockObject\MockObject */
     private $shippingPriceCache;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $this->fedexResponseCache = $this->createMock(FedexResponseCacheInterface::class);

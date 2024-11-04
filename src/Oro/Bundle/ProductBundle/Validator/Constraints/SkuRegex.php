@@ -14,9 +14,7 @@ class SkuRegex extends Constraint
      */
     public $message = 'oro.product.sku.not_match_regex';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_product.validator_constraints.sku_regex_validator';

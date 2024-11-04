@@ -17,6 +17,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class PriceAttributeProductPriceRepositoryTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

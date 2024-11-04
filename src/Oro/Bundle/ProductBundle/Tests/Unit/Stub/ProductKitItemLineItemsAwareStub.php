@@ -26,6 +26,7 @@ class ProductKitItemLineItemsAwareStub extends ProductLineItem implements
         $this->kitItemLineItems = new ArrayCollection();
     }
 
+    #[\Override]
     public function getKitItemLineItems(): Collection
     {
         return $this->kitItemLineItems;
@@ -48,6 +49,7 @@ class ProductKitItemLineItemsAwareStub extends ProductLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->checksum;

@@ -19,6 +19,7 @@ class HasEnoughInventoryLevel extends Constraint
 
     public string $message = 'oro.inventory.has_enough_inventory_level.not_enough_quantity';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

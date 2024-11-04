@@ -14,6 +14,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentWidget;
  */
 class UpdateImageSliderWidgetOptions extends AbstractFixture
 {
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $widgets = $manager->getRepository(ContentWidget::class)->findBy([

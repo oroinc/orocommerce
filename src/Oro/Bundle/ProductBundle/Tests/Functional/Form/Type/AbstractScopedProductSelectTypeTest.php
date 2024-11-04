@@ -20,6 +20,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
 
     protected string $configScopeName = 'global';
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -27,6 +28,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         $this->configManager = self::getConfigManager($this->configScopeName);
     }
 
+    #[\Override]
     public function setUpBeforeRestriction()
     {
         [$availableInventoryStatuses] = func_get_args();
@@ -35,14 +37,17 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         $this->configManager->flush($this->configScopeIdentifier);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function restrictionSelectDataProvider(): array
     {
         return [
             [
-                ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.out_of_stock'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -51,7 +56,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.in_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -59,19 +64,24 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['out_of_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.out_of_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_3,
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['discontinued']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.discontinued']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_4,
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock', 'discontinued']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.discontinued'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -82,11 +92,17 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         ];
     }
 
+    #[\Override]
     public function restrictionGridDataProvider(): array
     {
         return [
             [
-                ['availableInventoryStatuses' => ['in_stock', 'out_of_stock']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.out_of_stock'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -96,7 +112,7 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.in_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,
@@ -105,19 +121,24 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['out_of_stock']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.out_of_stock']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_3,
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['discontinued']],
+                ['availableInventoryStatuses' => ['prod_inventory_status.discontinued']],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_4,
                 ]
             ],
             [
-                ['availableInventoryStatuses' => ['in_stock', 'discontinued']],
+                [
+                    'availableInventoryStatuses' => [
+                        'prod_inventory_status.in_stock',
+                        'prod_inventory_status.discontinued'
+                    ]
+                ],
                 'expectedProducts' => [
                     LoadProductData::PRODUCT_1,
                     LoadProductData::PRODUCT_2,

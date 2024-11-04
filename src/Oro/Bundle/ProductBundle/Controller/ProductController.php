@@ -304,9 +304,7 @@ class ProductController extends AbstractController
             || $this->isGranted('oro_upsell_products_edit');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

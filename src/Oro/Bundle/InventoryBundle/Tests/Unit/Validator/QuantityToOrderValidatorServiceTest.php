@@ -35,6 +35,7 @@ class QuantityToOrderValidatorServiceTest extends \PHPUnit\Framework\TestCase
         ],
     ];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fallbackResolver = $this->createMock(EntityFallbackResolver::class);

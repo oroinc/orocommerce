@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 class LoadOrderStatuses extends AbstractFixture
@@ -17,18 +17,16 @@ class LoadOrderStatuses extends AbstractFixture
         'wait_for_approval' => 'Wait For Approval'
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
-        /** @var EnumValueRepository $enumRepo */
-        $enumRepo = $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::STATUS_CODE));
+        /** @var EnumOptionRepository $enumRepo */
+        $enumRepo = $manager->getRepository(EnumOption::class);
         $priority = 1;
         foreach (self::DATA as $id => $name) {
-            $enumValue = $enumRepo->createEnumValue($name, $priority++, 'open' === $id, $id);
-            $manager->persist($enumValue);
-            $this->addReference('order_status.' . $id, $enumValue);
+            $enumOption = $enumRepo->createEnumOption(Order::STATUS_CODE, $id, $name, $priority++, 'open' === $id);
+            $manager->persist($enumOption);
+            $this->addReference($enumOption->getId(), $enumOption);
         }
         $manager->flush();
     }

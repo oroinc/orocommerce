@@ -23,6 +23,7 @@ class SendOrderConfirmationEmailTest extends \PHPUnit\Framework\TestCase
 
     private SendOrderConfirmationEmail $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $contextAccessor = $this->createMock(ContextAccessor::class);

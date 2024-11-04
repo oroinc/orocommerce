@@ -19,9 +19,7 @@ class AddCategoryToSearchTerm implements Migration, ExtendExtensionAwareInterfac
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $owningSideTable = $schema->getTable('oro_website_search_search_term');

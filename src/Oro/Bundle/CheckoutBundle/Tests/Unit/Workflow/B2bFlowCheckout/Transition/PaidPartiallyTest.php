@@ -24,6 +24,7 @@ class PaidPartiallyTest extends TestCase
 
     private PaidPartially $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

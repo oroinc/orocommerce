@@ -25,9 +25,7 @@ class UniqueTaxCodeValidator extends ConstraintValidator
         $this->aclHelper = $aclHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof UniqueTaxCode) {

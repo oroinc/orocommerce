@@ -55,9 +55,7 @@ class AjaxOrderController extends AbstractController
         return $this->createForm(OrderType::class, $order, ['validation_groups' => ['order_entry_point']]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

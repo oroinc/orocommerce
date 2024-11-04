@@ -29,6 +29,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
     /** @var array */
     private $products = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transformer = $this->createMock(ProductVariantLinksDataTransformer::class);
@@ -131,9 +132,7 @@ class ProductVariantLinksTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $this->initProducts();

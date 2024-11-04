@@ -28,7 +28,7 @@ class PaymentTermExtension extends AbstractTypeExtension
         $this->paymentTermProvider = $paymentTermProvider;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(
@@ -69,9 +69,7 @@ class PaymentTermExtension extends AbstractTypeExtension
         return implode('+', [$parent->getName(), $child->getName()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [PaymentTermSelectType::class];

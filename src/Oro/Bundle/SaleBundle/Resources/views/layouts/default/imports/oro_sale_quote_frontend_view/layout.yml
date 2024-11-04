@@ -1,13 +1,12 @@
 layout:
     imports:
         -
-            id: oro_customer_toolbar_actions
-            root: quote_view_page
-            namespace: quote_view_page_toolbar
-        -
             id: oro_sale_quote_product_kit_configuration
             root: quote_view_line_items_row_item
-
+        -
+            id: oro_customer_top_bar
+            root: quote_view_page
+            namespace: quote_view_top_bar
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
@@ -20,55 +19,84 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: class_prefix
-            optionValue: 'customer'
-
-        - '@setOption':
-            id: quote_view_page_toolbar_print_button
-            optionName: text
-            optionValue: 'oro.frontend.sale.quote.toolbar-actions.btn.print'
-
-        - '@setOption':
-            id: page_title
             optionName: defaultValue
             optionValue:
                 label: 'oro.frontend.sale.quote.title.label'
                 parameters:
                     '%id%': '=data["entity"].getQid()'
 
+        - '@setOption':
+            id: quote_view_top_bar_action_list
+            optionName: buttons
+            optionValue: '=data["buttons"].getAll(data["entity"])'
+
+        - '@setOption':
+            id: quote_view_top_bar_action_list
+            optionName: visible
+            optionValue: '=data["entity"]!=null'
+
+        - '@setOption':
+            id: quote_view_top_bar_status
+            optionName: text
+            optionValue: '=data["entity"].getCustomerStatus()'
+
+        - '@setOption':
+            id: quote_view_top_bar_status
+            optionName: visible
+            optionValue: '=data["entity"].getCustomerStatus()!=null'
+
+        - '@setOption':
+            id: quote_view_top_bar_back_button
+            optionName: route_name
+            optionValue: oro_sale_quote_frontend_index
+
+        - '@setOption':
+            id: quote_view_top_bar_back_button
+            optionName: visible
+            optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
+
         - '@addTree':
             items:
                 quote_view_page:
                     blockType: container
+
+                quote_view_container:
+                    blockType: container
+
+                quote_view_data:
+                    blockType: container
+
                 quote_view_controls_list:
                     blockType: block
                     options:
                         visible: '=false'
-                quote_view_customer_status:
-                    blockType: text
-                    options:
-                        visible: '=data["entity"].getCustomerStatus()!=null'
-                        text: '=data["entity"].getCustomerStatus().getName()'
+
                 quote_view_information:
                     blockType: quote_view_information
                     options:
                         quote: '=data["entity"]'
                         vars:
                             paymentTerm: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["entity"])'
+
                 quote_view_line_items:
                     blockType: quote_products_container
                     options:
                         quoteProducts: '=data["entity"].getQuoteProducts()'
+
                 quote_view_line_items_rows:
                     blockType: quote_products_container
                     options:
                         quoteProducts: '=data["entity"].getQuoteProducts()'
+
                 quote_view_line_items_row_title:
                     blockType: block
+
                 quote_view_line_items_row_item:
                     blockType: container
+
                 quote_view_line_items_row_item_sku:
                     blockType: block
+
                 quote_view_back_link:
                     blockType: link
                     options:
@@ -76,33 +104,25 @@ layout:
                         text: oro.frontend.sale.quote.sections.back.label
                         icon: arrow-left
                         attr:
-                            class: 'btn btn--no-padding btn--text btn--outlined btn--size-small hide-on-print'
+                            class: 'btn btn--text btn--outlined btn--size-small hide-on-print'
                         visible: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
-                quote_view_accept_button:
-                    blockType: combined_buttons
-                    options:
-                        visible: '=data["entity"].hasOfferVariants()!==null && data["entity"].isAcceptable()==true'
-                        buttons: '=data["buttons"].getAll(data["entity"])'
-                quote_view_accept_container:
-                    blockType: container
+
                 quote_shipping_address:
                     blockType: address
                     options:
                         address: '=data["entity"].getShippingAddress()'
                         label: 'oro.sale.quote.shipping_address.label'
                         additional_block_prefixes: ['quote_body_column_element']
+
             tree:
                 page_content:
                     quote_view_page:
-                        quote_view_customer_status: ~
-                        quote_view_controls_list: ~
-                        quote_view_information:
-                            quote_shipping_address: ~
-                        quote_view_line_items:
-                            quote_view_line_items_rows:
-                                quote_view_line_items_row_title: ~
-                                quote_view_line_items_row_item:
-                                    quote_view_line_items_row_item_sku: ~
-                        quote_view_accept_container:
-                            quote_view_back_link: ~
-                            quote_view_accept_button: ~
+                        quote_view_container:
+                            quote_view_information:
+                                quote_shipping_address: ~
+                        quote_view_data:
+                            quote_view_line_items:
+                                quote_view_line_items_rows:
+                                    quote_view_line_items_row_title: ~
+                                    quote_view_line_items_row_item:
+                                        quote_view_line_items_row_item_sku: ~

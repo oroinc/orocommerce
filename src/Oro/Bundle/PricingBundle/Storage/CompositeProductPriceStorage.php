@@ -35,9 +35,7 @@ class CompositeProductPriceStorage implements ProductPriceStorageInterface
         $this->featureChecker = $featureChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
@@ -52,9 +50,7 @@ class CompositeProductPriceStorage implements ProductPriceStorageInterface
         return [];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSupportedCurrencies(ProductPriceScopeCriteriaInterface $scopeCriteria)
     {
         $storage = $this->getStorage();

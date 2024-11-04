@@ -16,6 +16,7 @@ class PriceListShardingListenerTest extends WebTestCase
     /** @var EntityManagerInterface */
     private $em;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

@@ -57,7 +57,7 @@ abstract class AbstractTaxCode implements TaxCodeInterface, DatesAwareInterface
         return $this;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getCode()
     {
         return $this->code;
@@ -89,6 +89,7 @@ abstract class AbstractTaxCode implements TaxCodeInterface, DatesAwareInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->code;

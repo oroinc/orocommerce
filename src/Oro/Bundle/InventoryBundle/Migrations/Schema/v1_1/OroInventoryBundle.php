@@ -17,9 +17,7 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
     use AddFallbackRelationTrait;
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addInventoryThresholdFieldToProduct($schema);
@@ -142,9 +140,7 @@ class OroInventoryBundle implements Installation, ExtendExtensionAwareInterface
         );
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function getMigrationVersion()
     {
         return 'v1_1';

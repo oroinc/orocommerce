@@ -14,6 +14,7 @@ use Symfony\Component\Form\ChoiceList\View\ChoiceView;
 
 class ProductUnitChoiceTypeTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

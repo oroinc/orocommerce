@@ -20,6 +20,7 @@ class ProductKitPriceCriteriaDataExtractor implements ProductPriceCriteriaDataEx
         $this->productPriceCriteriaDataExtractor = $productPriceCriteriaDataExtractor;
     }
 
+    #[\Override]
     public function extractCriteriaData(ProductPriceCriteria|ProductKitPriceCriteria $productPriceCriteria): array
     {
         if (!$this->isSupported($productPriceCriteria)) {
@@ -49,6 +50,7 @@ class ProductKitPriceCriteriaDataExtractor implements ProductPriceCriteriaDataEx
         ];
     }
 
+    #[\Override]
     public function isSupported(ProductPriceCriteria|ProductKitPriceCriteria $productPriceCriteria): bool
     {
         return $productPriceCriteria instanceof ProductKitPriceCriteria;

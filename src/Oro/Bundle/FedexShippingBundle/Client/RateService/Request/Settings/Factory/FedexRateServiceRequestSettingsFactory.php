@@ -10,9 +10,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
 class FedexRateServiceRequestSettingsFactory implements FedexRateServiceRequestSettingsFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(
         FedexIntegrationSettings $integrationSettings,
         ShippingContextInterface $shippingContext,

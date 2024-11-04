@@ -27,6 +27,7 @@ class RelatedProductEntityWriterTest extends \PHPUnit\Framework\TestCase
     /** @var RelatedProductEntityWriter */
     private $writer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManager::class);

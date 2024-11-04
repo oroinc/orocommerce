@@ -21,17 +21,13 @@ class ProductVariantLinks extends Constraint
     /** @var string */
     public $variantLinkBelongsAnotherFamilyMessage = 'oro.product.product_variant_links.belongs_another_family.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return ProductVariantLinksValidator::ALIAS;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];

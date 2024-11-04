@@ -8,17 +8,13 @@ class LineItem extends Constraint
 {
     public $message = 'oro.shoppinglist.lineitem.already_exists';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_shopping_list_line_item_validator';

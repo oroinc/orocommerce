@@ -8,6 +8,7 @@ use Psr\Log\LoggerInterface;
 
 class RemoveDuplicateIndexationRequestsQuery extends ParametrizedMigrationQuery
 {
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -16,6 +17,7 @@ class RemoveDuplicateIndexationRequestsQuery extends ParametrizedMigrationQuery
         return $logger->getMessages();
     }
 
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

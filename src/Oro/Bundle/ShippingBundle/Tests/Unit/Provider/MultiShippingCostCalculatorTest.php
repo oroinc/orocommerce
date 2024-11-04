@@ -30,6 +30,7 @@ class MultiShippingCostCalculatorTest extends \PHPUnit\Framework\TestCase
     /** @var MultiShippingCostCalculator */
     private $shippingCostCalculator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingPriceProvider = $this->createMock(ShippingPriceProviderInterface::class);

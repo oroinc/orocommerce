@@ -14,16 +14,19 @@ class ReindexProductsByAttributesTopic extends AbstractTopic implements JobAware
     public const ATTRIBUTE_IDS_OPTION = 'attributeIds';
     public const NAME = 'oro_product.reindex_products_by_attributes';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Reindex products by attribute ids';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
@@ -31,6 +34,7 @@ class ReindexProductsByAttributesTopic extends AbstractTopic implements JobAware
             ->setAllowedTypes(self::ATTRIBUTE_IDS_OPTION, 'int[]');
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return self::getName();

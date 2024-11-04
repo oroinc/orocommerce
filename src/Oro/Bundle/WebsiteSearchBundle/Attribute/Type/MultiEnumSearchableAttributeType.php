@@ -11,57 +11,43 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
  */
 class MultiEnumSearchableAttributeType extends AbstractSearchableAttributeType
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFilterStorageFieldTypeMain(FieldConfigModel $attribute): string
     {
         return Query::TYPE_INTEGER;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSorterStorageFieldType(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterType(FieldConfigModel $attribute): string
     {
         return self::FILTER_TYPE_MULTI_ENUM;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isLocalizable(FieldConfigModel $attribute): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFilterableFieldNameMain(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName() . '_enum.' . EnumIdPlaceholder::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSortableFieldName(FieldConfigModel $attribute): string
     {
         throw new \RuntimeException('Not supported');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSearchableFieldName(FieldConfigModel $attribute): string
     {
         return $attribute->getFieldName() . '_' . self::SEARCHABLE_SUFFIX;

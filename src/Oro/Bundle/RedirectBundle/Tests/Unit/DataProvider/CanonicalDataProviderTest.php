@@ -14,6 +14,7 @@ class CanonicalDataProviderTest extends TestCase
 
     private CanonicalDataProvider $canonicalDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->canonicalUrlGenerator = $this->createMock(CanonicalUrlGenerator::class);

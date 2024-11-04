@@ -12,16 +12,19 @@ class ResolvePriceListAssignedProductsTopic extends AbstractTopic
 {
     public const NAME = 'oro_pricing.price_lists.resolve_assigned_products';
 
+    #[\Override]
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolves combined price lists in case of price list product assigned rule is changed.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver->setRequired('product');

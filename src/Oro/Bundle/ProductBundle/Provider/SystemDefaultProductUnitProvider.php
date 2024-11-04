@@ -29,6 +29,7 @@ class SystemDefaultProductUnitProvider implements DefaultProductUnitProviderInte
     /**
      * @return ProductUnitPrecision|null
      */
+    #[\Override]
     public function getDefaultProductUnitPrecision()
     {
         $defaultUnitCode = $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_UNIT));

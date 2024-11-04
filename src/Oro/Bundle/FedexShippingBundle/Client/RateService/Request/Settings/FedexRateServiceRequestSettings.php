@@ -33,25 +33,19 @@ class FedexRateServiceRequestSettings implements FedexRateServiceRequestSettings
         $this->rule = $rule;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIntegrationSettings(): FedexIntegrationSettings
     {
         return $this->integrationSettings;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingContext(): ShippingContextInterface
     {
         return $this->shippingContext;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingServiceRule(): ShippingServiceRule
     {
         return $this->rule;

@@ -33,6 +33,7 @@ class PriceRuleRelationExpressionsValidatorTest extends ConstraintValidatorTestC
     /** @var FieldsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);
@@ -56,6 +57,7 @@ class PriceRuleRelationExpressionsValidatorTest extends ConstraintValidatorTestC
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         $translator = $this->createMock(TranslatorInterface::class);

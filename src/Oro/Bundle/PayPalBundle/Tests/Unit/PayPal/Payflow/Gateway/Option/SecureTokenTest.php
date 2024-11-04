@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class SecureTokenTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new SecureToken()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         $token = md5('SecureToken');

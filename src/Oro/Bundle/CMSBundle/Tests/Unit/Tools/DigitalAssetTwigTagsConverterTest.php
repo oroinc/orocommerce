@@ -23,6 +23,7 @@ class DigitalAssetTwigTagsConverterTest extends \PHPUnit\Framework\TestCase
     private FileUrlProviderInterface|\PHPUnit\Framework\MockObject\MockObject $fileUrlProvider;
     private DigitalAssetTwigTagsConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->managerRegistry = $this->createMock(ManagerRegistry::class);

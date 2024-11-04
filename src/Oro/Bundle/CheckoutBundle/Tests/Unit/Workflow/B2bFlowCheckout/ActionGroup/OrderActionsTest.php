@@ -37,6 +37,7 @@ class OrderActionsTest extends TestCase
     private ActionExecutor|MockObject $actionExecutor;
     private OrderActions $orderActions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->addressActions = $this->createMock(AddressActions::class);

@@ -34,9 +34,7 @@ class ProductFormViewListener extends BaseFormViewListener
         $this->addViewPageBlock($event);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function addViewPageBlock(BeforeListRenderEvent $event, $priority = 10)
     {
         $entity = $event->getEntity();
@@ -160,6 +158,7 @@ class ProductFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.product';

@@ -62,17 +62,13 @@ class LoadPriceLists extends AbstractFixture implements DependentFixtureInterfac
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $now = new \DateTime();

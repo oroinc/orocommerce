@@ -7,14 +7,13 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\SearchAttributeTypeInterface;
 
 class PercentSearchableAttributeTypeTest extends DecimalSearchableAttributeTypeTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return PercentSearchableAttributeType::class;
     }
 
+    #[\Override]
     public function testGetFilterType()
     {
         $this->assertSame(

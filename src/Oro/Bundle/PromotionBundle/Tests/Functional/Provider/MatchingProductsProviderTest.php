@@ -15,6 +15,7 @@ class MatchingProductsProviderTest extends WebTestCase
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());

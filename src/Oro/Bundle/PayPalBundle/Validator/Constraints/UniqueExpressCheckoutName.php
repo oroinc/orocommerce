@@ -12,9 +12,7 @@ class UniqueExpressCheckoutName extends Constraint
     public string $expressCheckoutNameMessage = 'oro.paypal.express_checkout_name.differs_from_integration_name';
     public string $integrationNameUniquenessMessage = 'oro.paypal.express_checkout_name.unique_integration_name';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string
     {
         return self::CLASS_CONSTRAINT;

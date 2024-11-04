@@ -30,6 +30,7 @@ class ProductKitPriceByMatchingCriteriaProviderTest extends TestCase
 
     private ProductKitPriceByMatchingCriteriaProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->simpleProductPriceByMatchingCriteriaProvider = $this->createMock(

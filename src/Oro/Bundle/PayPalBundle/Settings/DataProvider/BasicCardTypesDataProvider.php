@@ -24,9 +24,7 @@ class BasicCardTypesDataProvider implements CreditCardTypesDataProviderInterface
      */
     const AMERICAN_EXPRESS = 'american_express';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCardTypes()
     {
         return [
@@ -37,9 +35,7 @@ class BasicCardTypesDataProvider implements CreditCardTypesDataProviderInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultCardTypes()
     {
         return [

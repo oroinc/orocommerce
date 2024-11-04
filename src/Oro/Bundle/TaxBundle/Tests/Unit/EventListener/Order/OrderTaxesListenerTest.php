@@ -25,6 +25,7 @@ class OrderTaxesListenerTest extends TestCase
 
     private OrderTaxesListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxProvider = $this->createMock(TaxProviderInterface::class);

@@ -35,8 +35,6 @@ Feature: Check configurable product with no matrix form
       | L     |
       | M     |
     When I save and close form
-    And click update schema
-    Then I should see Schema updated flash message
 
   Scenario: Prepare product family
     Given I go to Products/ Product Families

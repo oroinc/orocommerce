@@ -42,6 +42,7 @@ class CacheableTimeInTransitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var int */
     private $weight;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->address = new AddressStub();

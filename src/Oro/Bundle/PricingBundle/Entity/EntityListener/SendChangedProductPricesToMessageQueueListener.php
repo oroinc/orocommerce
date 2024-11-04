@@ -98,9 +98,7 @@ class SendChangedProductPricesToMessageQueueListener implements OptionalListener
         $this->allTokens = new \SplObjectStorage();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setEnabled($enabled = true)
     {
         $this->enabled = $enabled;

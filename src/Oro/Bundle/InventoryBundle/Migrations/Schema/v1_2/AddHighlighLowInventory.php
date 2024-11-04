@@ -18,9 +18,7 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
     use AddFallbackRelationTrait;
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addHighlightLowInventoryFieldToProduct($schema);
@@ -117,9 +115,6 @@ class AddHighlighLowInventory implements Migration, ExtendExtensionAwareInterfac
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getMigrationVersion()
     {
         return 'v1_2';

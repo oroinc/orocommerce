@@ -20,6 +20,7 @@ class CollectAssociationConfigEventListenerTest extends TestCase
     private CombinedPriceListProvider|MockObject $combinedPriceListProvider;
     private CollectAssociationConfigEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->collectionProvider = $this->createMock(PriceListCollectionProvider::class);

@@ -14,9 +14,7 @@ class LineItemProduct extends Constraint
      */
     public $emptyProductMessage = 'oro.order.orderlineitem.product.blank';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

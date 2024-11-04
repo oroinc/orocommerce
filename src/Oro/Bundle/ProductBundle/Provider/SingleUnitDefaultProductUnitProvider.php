@@ -24,9 +24,7 @@ class SingleUnitDefaultProductUnitProvider implements DefaultProductUnitProvider
         $this->provider = $provider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultProductUnitPrecision()
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {

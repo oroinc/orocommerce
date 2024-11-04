@@ -48,6 +48,7 @@ class ManuallyAddedProductCollectionIndexerListenerTest extends \PHPUnit\Framewo
      */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

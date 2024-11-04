@@ -38,6 +38,7 @@ class FrontendLineItemsGridExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendLineItemsGridExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutRepository = $this->createMock(CheckoutRepository::class);

@@ -115,6 +115,7 @@ class SearchTerm implements
     /**
      * @return Collection<Scope>
      */
+    #[\Override]
     public function getScopes(): Collection
     {
         return $this->scopes;

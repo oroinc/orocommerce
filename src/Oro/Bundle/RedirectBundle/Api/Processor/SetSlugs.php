@@ -20,9 +20,7 @@ class SetSlugs implements ProcessorInterface
         $this->slugifyEntityHelper = $slugifyEntityHelper;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

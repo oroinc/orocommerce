@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\EventListener\Datagrid;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 /**
@@ -26,7 +27,7 @@ class FrontendQuoteDatagridListener
     protected function applyFiltrationByInternalStatuses(QueryBuilder $qb)
     {
         $rootAliases = $qb->getRootAliases();
-        $field = sprintf('%s.internal_status', reset($rootAliases));
+        $field = sprintf("JSON_EXTRACT(%s.serialized_data, 'internal_status')", reset($rootAliases));
 
         $qb->andWhere(
             $qb->expr()->orX(
@@ -35,6 +36,9 @@ class FrontendQuoteDatagridListener
             )
         );
 
-        $qb->setParameter('internalStatuses', Quote::FRONTEND_INTERNAL_STATUSES);
+        $qb->setParameter('internalStatuses', ExtendHelper::mapToEnumOptionIds(
+            Quote::INTERNAL_STATUS_CODE,
+            Quote::INTERNAL_STATUSES
+        ));
     }
 }

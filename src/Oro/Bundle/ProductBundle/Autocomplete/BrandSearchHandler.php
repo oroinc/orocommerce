@@ -18,9 +18,7 @@ class BrandSearchHandler extends SearchHandler
         $this->entityNameResolver = $entityNameResolver;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function convertItem($item)
     {
         $result = [];

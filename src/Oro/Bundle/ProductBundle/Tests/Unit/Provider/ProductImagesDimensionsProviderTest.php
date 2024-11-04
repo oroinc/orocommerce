@@ -25,6 +25,7 @@ class ProductImagesDimensionsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ThemeImageType|\PHPUnit\Framework\MockObject\MockObject */
     private $themeImageType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->imageTypeProvider = $this->createMock(ImageTypeProvider::class);

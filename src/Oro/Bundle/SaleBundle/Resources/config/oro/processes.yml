@@ -15,7 +15,7 @@ processes:
                         and:
                             - e.expired = false
                             - e.validUntil < :date
-                            - IDENTITY(e.internal_status) = 'sent_to_customer' OR e.internal_status IS NULL
+                            - JSON_EXTRACT(e.serialized_data, 'internal_status') = 'quote_internal_status.sent_to_customer' OR JSON_EXTRACT(e.serialized_data, 'internal_status') IS NULL
                     query_parameters:
                         date: $.date
                 - '@foreach':
@@ -25,7 +25,7 @@ processes:
                         - '@request_enum_entity':
                             enum_code: 'quote_internal_status'
                             attribute: $.quote.internalStatus
-                            identifier: 'expired'
+                            identifier: 'quote_internal_status.expired'
                         - '@assign_value': [$.quote.expired, true]
 
         send_no_quote_alert:

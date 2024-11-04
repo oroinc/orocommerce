@@ -43,7 +43,7 @@ oro:
             prices_changed.label: 'Prices Changed'
             not_expired.label: 'Not Expired'
             po_number.label: 'PO Number'
-            ship_until.label: 'Do Not Ship Later Than'
+            ship_until.label: 'Ship by'
             price_list.label: 'Price List'
             expired.label: 'Expired'
             assigned_users.label: 'Assigned To'
@@ -450,7 +450,7 @@ oro:
                 customer_status.label: 'Status'
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
-                ship_until.label: 'Do Not Ship Later Than'
+                ship_until.label: 'Ship by'
                 ship_estimate.label: 'Shipping Estimate'
                 assigned_customer_users.label: 'Assigned To'
                 title.label: 'Quote #%id%'
@@ -458,7 +458,7 @@ oro:
                 sections:
                     general: 'Quote Information'
                     back.label: 'Back to Quote List'
-                    back_to_quote.label: 'Back to Quote'
+                    back_to_quote.label: 'Cancel'
                     quote_products:
                         label: 'Line Items'
                         columns:
@@ -468,7 +468,7 @@ oro:
                 widgets:
                     quote_information: 'Quote Information'
                 submit_to_order:
-                    submit: 'Submit'
+                    submit: 'Checkout'
                     cancel: 'Cancel'
                 toolbar-actions:
                     btn:

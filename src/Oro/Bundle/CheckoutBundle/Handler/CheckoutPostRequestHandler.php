@@ -28,11 +28,13 @@ class CheckoutPostRequestHandler implements CheckoutHandlerInterface
     ) {
     }
 
+    #[\Override]
     public function isSupported(Request $request): bool
     {
         return $request->isMethod(Request::METHOD_POST);
     }
 
+    #[\Override]
     public function handle(WorkflowItem $workflowItem, Request $request): void
     {
         $transition = $this->getContinueTransition($workflowItem, (string) $request->get('transition'));

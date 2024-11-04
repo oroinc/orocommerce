@@ -8,7 +8,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
 use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\InventoryBundle\EventListener\Frontend\ProductDatagridInventoryStatusListener;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
@@ -18,15 +18,16 @@ class ProductDatagridInventoryStatusListenerTest extends TestCase
 {
     private ProductDatagridInventoryStatusListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
-        $enumValueProvider = $this->createMock(EnumValueProvider::class);
-        $enumValueProvider
+        $enumOptionsProvider = $this->createMock(EnumOptionsProvider::class);
+        $enumOptionsProvider
             ->expects(self::any())
             ->method('getEnumChoicesByCode')
             ->with('prod_inventory_status')
             ->willReturn(['In Stock' => 'in_stock']);
-        $this->listener = new ProductDatagridInventoryStatusListener($enumValueProvider);
+        $this->listener = new ProductDatagridInventoryStatusListener($enumOptionsProvider);
     }
 
     public function testOnPreBuild(): void

@@ -35,6 +35,7 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit\Framework\Te
      */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channelType = 'integration_shipping_method';

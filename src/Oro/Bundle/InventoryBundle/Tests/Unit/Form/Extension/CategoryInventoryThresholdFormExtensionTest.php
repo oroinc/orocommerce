@@ -8,9 +8,7 @@ use Oro\Bundle\InventoryBundle\Tests\Unit\Form\Extension\Stub\CategoryStub;
 
 class CategoryInventoryThresholdFormExtensionTest extends CategoryInventoryTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -38,9 +36,7 @@ class CategoryInventoryThresholdFormExtensionTest extends CategoryInventoryTest
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function assertCategoryFallBack(CategoryStub $category, $expectedFallBackId)
     {
         $this->assertInstanceOf(EntityFieldFallbackValue::class, $category->getInventoryThreshold());

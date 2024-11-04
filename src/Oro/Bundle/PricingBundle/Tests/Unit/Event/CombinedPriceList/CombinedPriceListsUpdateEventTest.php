@@ -16,6 +16,7 @@ class CombinedPriceListsUpdateEventTest extends \PHPUnit\Framework\TestCase
      */
     protected $combinedPriceListsUpdateEvent;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cplIds = [1, 2, 3];

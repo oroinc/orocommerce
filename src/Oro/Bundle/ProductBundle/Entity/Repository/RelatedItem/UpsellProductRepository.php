@@ -14,17 +14,13 @@ use Oro\Bundle\ProductBundle\RelatedItem\AbstractAssignerRepositoryInterface;
  */
 class UpsellProductRepository extends EntityRepository implements AbstractAssignerRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function exists($productFrom, $productTo)
     {
         return null !== $this->findOneBy(['product' => $productFrom, 'relatedItem' => $productTo]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function countRelationsForProduct($id)
     {
         return (int) $this->createQueryBuilder('upsell_products')

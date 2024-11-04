@@ -35,6 +35,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     /** @var MockObject|ManagerRegistry */
     protected $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(OrderAddressProvider::class);

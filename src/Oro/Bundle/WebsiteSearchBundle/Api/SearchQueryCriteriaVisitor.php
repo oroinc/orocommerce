@@ -17,9 +17,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
  */
 class SearchQueryCriteriaVisitor extends ExpressionVisitor
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkComparison(Comparison $comparison)
     {
         $field = $comparison->getField();
@@ -30,17 +28,13 @@ class SearchQueryCriteriaVisitor extends ExpressionVisitor
         return $comparison;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkValue(Value $value)
     {
         return $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkCompositeExpression(CompositeExpression $expr)
     {
         return new CompositeExpression(

@@ -28,6 +28,7 @@ class WebpAwarePreviewMetadataProvider implements PreviewMetadataProviderInterfa
         $this->mimeTypeChecker = $mimeTypeChecker;
     }
 
+    #[\Override]
     public function getMetadata(File $file): array
     {
         $metadata = $this->innerPreviewMetadataProvider->getMetadata($file);

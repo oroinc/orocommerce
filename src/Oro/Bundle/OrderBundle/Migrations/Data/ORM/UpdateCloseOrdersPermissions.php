@@ -15,9 +15,7 @@ use Oro\Bundle\SecurityBundle\Migrations\Data\ORM\AbstractUpdatePermissions;
  */
 class UpdateCloseOrdersPermissions extends AbstractUpdatePermissions
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {

@@ -23,9 +23,7 @@ class SlugDetectLocalizationExtensionTest extends TestCase
 
     private SlugDetectLocalizationExtension $extension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

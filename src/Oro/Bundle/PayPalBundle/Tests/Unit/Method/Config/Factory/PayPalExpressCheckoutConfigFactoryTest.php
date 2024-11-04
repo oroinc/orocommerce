@@ -32,6 +32,7 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $payPalExpressCheckoutConfigFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

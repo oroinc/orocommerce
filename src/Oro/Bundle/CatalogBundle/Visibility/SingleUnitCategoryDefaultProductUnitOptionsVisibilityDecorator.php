@@ -25,9 +25,7 @@ class SingleUnitCategoryDefaultProductUnitOptionsVisibilityDecorator implements
         $this->singleUnitModeService = $singleUnitModeService;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isDefaultUnitPrecisionSelectionAvailable()
     {
         if ($this->singleUnitModeService->isSingleUnitMode()) {

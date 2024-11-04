@@ -10,6 +10,7 @@ class PaymentMethodObjectVariablesProviderTest extends \PHPUnit\Framework\TestCa
     /** @var PaymentMethodObjectVariablesProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new PaymentMethodObjectVariablesProvider();

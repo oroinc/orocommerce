@@ -239,6 +239,16 @@ The entity from which this order was created.
 
 **The read-only field when "Enable External Status Management" configuration option is disabled. A passed value will be ignored in this case.**
 
+### orderSubtotals
+
+Calculated order subtotal records for a specific order.
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ## SUBRESOURCES
 
 ### billingAddress
@@ -802,6 +812,33 @@ Example:
 ```
 {@/request}
 
+### shippingStatus
+
+#### get_subresource
+
+Retrieve shipping status record assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve the ID of the shipping status record assigned to a specific order record.
+
+#### update_relationship
+
+Replace the shipping status record assigned to a specific order record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "ordershippingstatuses",
+    "id": "shipped"
+  }
+}
+```
+{@/request}
+
 
 # Extend\Entity\EV_Order_Internal_Status
 
@@ -827,3 +864,16 @@ Retrieve a specific order status record.
 ### get_list
 
 Retrieve a collection of order status records.
+
+
+# Extend\Entity\EV_Order_Shipping_Status
+
+## ACTIONS
+
+### get
+
+Retrieve a specific order shipping status record.
+
+### get_list
+
+Retrieve a collection of order shipping status records.

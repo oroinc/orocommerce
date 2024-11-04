@@ -25,6 +25,7 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
     /** @var WebCatalogScopeExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);
@@ -71,9 +72,7 @@ class WebCatalogScopeExtensionTest extends FormIntegrationTestCase
         $this->assertEquals([ScopeType::class], WebCatalogScopeExtension::getExtendedTypes());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

@@ -8,17 +8,13 @@ use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class ShippingAddressOverrideTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new ECOption\ShippingAddressOverride(), new ECOption\Action()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

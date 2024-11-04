@@ -15,9 +15,7 @@ class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface,
     use RenameExtensionAwareTrait;
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_shopping_list');
@@ -61,9 +59,7 @@ class OroShoppingListBundle implements Migration, RenameExtensionAwareInterface,
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;

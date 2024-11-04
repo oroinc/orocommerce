@@ -7,17 +7,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class OriginalTransactionTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new OriginalTransaction()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

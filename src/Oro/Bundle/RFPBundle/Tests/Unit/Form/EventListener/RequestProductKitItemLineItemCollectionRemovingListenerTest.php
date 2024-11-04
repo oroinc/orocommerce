@@ -19,6 +19,7 @@ class RequestProductKitItemLineItemCollectionRemovingListenerTest extends TestCa
 
     private RequestProductKitItemLineItemCollectionRemovingListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new RequestProductKitItemLineItemCollectionRemovingListener();

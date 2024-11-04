@@ -20,9 +20,7 @@ abstract class BaseMetaFormExtension extends AbstractTypeExtension
      */
     abstract public function getMetaFieldLabelPrefix();
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder

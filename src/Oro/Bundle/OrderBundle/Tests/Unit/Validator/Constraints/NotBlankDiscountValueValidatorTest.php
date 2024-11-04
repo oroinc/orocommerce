@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class NotBlankDiscountValueValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): NotBlankDiscountValueValidator
     {
         return new NotBlankDiscountValueValidator();

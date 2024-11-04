@@ -76,9 +76,8 @@ Feature: Single page checkout with consents
 
   Scenario: Admin selects consents to be enabled on Frontstore
     Given go to System/ Configuration
-    And follow "Commerce/Customer/Consents" on configuration sidebar
-    And fill "Consent Settings Form" with:
-      | Enabled User Consents Use Default | false|
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
+    And I uncheck "Use default" for "Enabled user consents" field
     And click "Add Consent"
     And I choose Consent "Email Newsletters" in 1 row
     And click "Add Consent"
@@ -209,9 +208,8 @@ Feature: Single page checkout with consents
     Then I should see "Consent has been created" flash message
     And go to System/ Websites
     And click "Configuration" on row "Default" in grid
-    And follow "Commerce/Customer/Consents" on configuration sidebar
-    And fill "Consent Settings Form" with:
-      | Enabled User Consents Use Default | false|
+    And follow "Commerce/Customer/Interactions" on configuration sidebar
+    And I uncheck "Use Organization" for "Enabled user consents" field
     And click "Add Consent"
     And I choose Consent "New Mandatory Consent" in 4 row
     When click "Save settings"

@@ -38,9 +38,7 @@ class LoadProductUnitData extends AbstractFixture
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->productUnits as $item) {

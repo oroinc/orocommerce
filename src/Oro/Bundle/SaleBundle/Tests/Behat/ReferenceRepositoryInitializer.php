@@ -3,8 +3,8 @@
 namespace Oro\Bundle\SaleBundle\Tests\Behat;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\TestFrameworkBundle\Behat\Isolation\ReferenceRepositoryInitializerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\Collection;
@@ -13,9 +13,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 
 class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $this->setWorkflowsReference($doctrine, $referenceRepository);
@@ -42,21 +40,25 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
 
     private function setInternalStatusesReference(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
-        $enumClass = ExtendHelper::buildEnumValueClassName(Quote::INTERNAL_STATUS_CODE);
-        $repository = $doctrine->getManager()->getRepository($enumClass);
-        /** @var AbstractEnumValue $status */
-        foreach ($repository->findAll() as $status) {
-            $referenceRepository->set(sprintf('quote_internal_status_%s', $status->getId()), $status);
+        $repository = $doctrine->getManager()->getRepository(EnumOption::class);
+        /** @var EnumOptionInterface $status */
+        foreach ($repository->findBy(['enumCode' => Quote::INTERNAL_STATUS_CODE]) as $status) {
+            $referenceRepository->set(
+                \sprintf('%s_%s', Quote::INTERNAL_STATUS_CODE, $status->getInternalId()),
+                $status
+            );
         }
     }
 
     private function setCustomerStatusesReference(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
-        $enumClass = ExtendHelper::buildEnumValueClassName(Quote::CUSTOMER_STATUS_CODE);
-        $repository = $doctrine->getManager()->getRepository($enumClass);
-        /** @var AbstractEnumValue $status */
-        foreach ($repository->findAll() as $status) {
-            $referenceRepository->set(sprintf('quote_customer_status_%s', $status->getId()), $status);
+        $repository = $doctrine->getManager()->getRepository(EnumOption::class);
+        /** @var EnumOptionInterface $status */
+        foreach ($repository->findBy(['enumCode' => Quote::CUSTOMER_STATUS_CODE]) as $status) {
+            $referenceRepository->set(
+                \sprintf('%s_%s', Quote::CUSTOMER_STATUS_CODE, $status->getInternalId()),
+                $status
+            );
         }
     }
 }

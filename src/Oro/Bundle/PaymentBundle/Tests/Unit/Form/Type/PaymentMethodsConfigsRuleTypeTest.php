@@ -41,6 +41,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
     /** @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $compositePaymentMethodViewProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
@@ -138,9 +139,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         self::assertEquals($expectedChoices, $formView->vars['methods']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $currencyProvider = $this->createMock(CurrencyProviderInterface::class);
@@ -185,9 +184,7 @@ class PaymentMethodsConfigsRuleTypeTest extends AddressFormExtensionTestCase
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getValidators(): array
     {
         return [

@@ -33,9 +33,7 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
         $this->entityNameResolver = $entityNameResolver;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function search($query, $page, $perPage, $searchById = false)
     {
         $qb = $this->registry->getRepository(AttributeFamily::class)
@@ -67,25 +65,19 @@ class ProductFamilySearchHandler implements SearchHandlerInterface
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProperties()
     {
         return ['defaultLabel'];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityName()
     {
         return AttributeFamily::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function convertItem($item)
     {
         return [

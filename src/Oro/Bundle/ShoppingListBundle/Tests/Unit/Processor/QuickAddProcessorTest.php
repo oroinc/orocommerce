@@ -29,6 +29,7 @@ class QuickAddProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddProcessor */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListLineItemHandler = $this->createMock(ShoppingListLineItemHandler::class);

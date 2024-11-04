@@ -12,9 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
  */
 abstract class AbstractAddressDiffMapper implements CheckoutStateDiffMapperInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCurrentState($checkout)
     {
         if (!$checkout instanceof Checkout) {
@@ -38,15 +36,13 @@ abstract class AbstractAddressDiffMapper implements CheckoutStateDiffMapperInter
         return $this->getCompareString($address);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isEntitySupported($entity)
     {
         return is_object($entity) && $entity instanceof Checkout;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function isStatesEqual($entity, $state1, $state2)
     {
         return $state1 === $state2;

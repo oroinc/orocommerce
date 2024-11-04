@@ -42,6 +42,7 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit\Framework\TestCase
     /** @var string */
     private $productPriceClass;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPriceClass = 'stdClass';

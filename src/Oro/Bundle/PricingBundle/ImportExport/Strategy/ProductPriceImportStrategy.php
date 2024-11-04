@@ -38,6 +38,7 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      * @param ProductPrice $entity
      * @return ProductPrice
      */
+    #[\Override]
     protected function beforeProcessEntity($entity)
     {
         $this->refreshPrice($entity);
@@ -51,6 +52,7 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      * @param ProductPrice $entity
      * @return ProductPrice
      */
+    #[\Override]
     protected function afterProcessEntity($entity)
     {
         $this->refreshPrice($entity);
@@ -90,6 +92,7 @@ class ProductPriceImportStrategy extends ConfigurableAddOrReplaceStrategy
      *
      * @return ProductPrice|null
      */
+    #[\Override]
     protected function validateAndUpdateContext($entity): ?ProductPrice
     {
         $entity = parent::validateAndUpdateContext($entity);

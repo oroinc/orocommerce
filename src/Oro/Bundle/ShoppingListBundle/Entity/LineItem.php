@@ -143,6 +143,7 @@ class LineItem implements
     /**
      * @return Product
      */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -163,6 +164,7 @@ class LineItem implements
     /**
      * @return Product|null
      */
+    #[\Override]
     public function getParentProduct()
     {
         return $this->parentProduct;
@@ -203,6 +205,7 @@ class LineItem implements
     /**
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -287,33 +290,25 @@ class LineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->getUnit();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         $unit = $this->getUnit();
@@ -324,7 +319,7 @@ class LineItem implements
         return $unit->getCode();
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getProductSku()
     {
         $product = $this->getProduct();
@@ -335,9 +330,7 @@ class LineItem implements
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getVisitor()
     {
         return $this->getShoppingList()->getVisitor();
@@ -346,6 +339,7 @@ class LineItem implements
     /**
      * @return Collection<ProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         return $this->kitItemLineItems;
@@ -375,11 +369,13 @@ class LineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->checksum;
     }
 
+    #[\Override]
     public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
     {
         return $this->shoppingList;

@@ -21,6 +21,7 @@ class ImportSluggableEntityListenerTest extends TestCase
 
     private SlugifyEntityHelper|MockObject $slugifyEntityHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->slugifyEntityHelper = $this->createMock(SlugifyEntityHelper::class);

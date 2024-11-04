@@ -9,7 +9,7 @@ class Swipe extends AbstractOption
 {
     const SWIPE = 'SWIPE';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

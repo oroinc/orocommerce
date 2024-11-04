@@ -27,9 +27,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
 
     private array $metadata = [];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -40,9 +38,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->disableLifecycleCallbacks($manager);

@@ -27,9 +27,7 @@ class AddParentEntityIdToCategoryNodeSubresourceQuery implements ProcessorInterf
         $this->entityAssociationName = $entityAssociationName;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */

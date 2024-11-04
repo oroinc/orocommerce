@@ -15,6 +15,7 @@ class ActualizeCplActivationRules extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $this->container->get('oro_pricing.migrations.actualize_cpl_activation_rules_migration')->migrate();

@@ -26,6 +26,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
     /** @var CategoryUnitPrecisionType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultProductOptionsVisibility = $this
@@ -37,9 +38,7 @@ class CategoryUnitPrecisionTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

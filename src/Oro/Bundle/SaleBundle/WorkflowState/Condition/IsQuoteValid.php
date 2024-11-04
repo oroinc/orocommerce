@@ -36,9 +36,7 @@ class IsQuoteValid extends AbstractCondition implements ContextAccessorAwareInte
         $this->validator = $validator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('quote', $options)) {
@@ -54,16 +52,19 @@ class IsQuoteValid extends AbstractCondition implements ContextAccessorAwareInte
         return $this;
     }
 
+    #[\Override]
     public function getName()
     {
         return 'is_quote_valid';
     }
 
+    #[\Override]
     protected function doEvaluate($context)
     {
         return $this->isConditionAllowed($context);
     }
 
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         /** @var Quote $quote */
@@ -89,11 +90,13 @@ class IsQuoteValid extends AbstractCondition implements ContextAccessorAwareInte
         return $constraintViolationList->count() === 0;
     }
 
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->quote, $this->validationGroups]);
     }
 
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->quote, $this->validationGroups], $factoryAccessor);

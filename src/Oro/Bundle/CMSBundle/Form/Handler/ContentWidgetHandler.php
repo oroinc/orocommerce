@@ -35,9 +35,7 @@ class ContentWidgetHandler implements FormHandlerInterface
         $this->eventDispatcher = $eventDispatcher;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process($data, FormInterface $form, Request $request): bool
     {
         if (!$data instanceof ContentWidget) {

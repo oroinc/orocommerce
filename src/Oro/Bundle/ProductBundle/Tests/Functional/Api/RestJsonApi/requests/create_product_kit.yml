@@ -33,7 +33,7 @@ data:
         inventory_status:
             data:
                 type: prodinventorystatuses
-                id: '<toString(@in_stock->id)>'
+                id: in_stock
         pageTemplate:
             data:
                 type: entityfieldfallbackvalues
@@ -239,7 +239,7 @@ included:
             inventory_status:
                 data:
                     type: prodinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: in_stock
     -
         type: products
         id: 'productkititems1-products2'
@@ -277,7 +277,7 @@ included:
             inventory_status:
                 data:
                     type: prodinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: in_stock
     -
         type: products
         id: 'productkititems2-products1'
@@ -315,7 +315,7 @@ included:
             inventory_status:
                 data:
                     type: prodinventorystatuses
-                    id: '<toString(@in_stock->id)>'
+                    id: in_stock
     -
         type: productkititemlabels
         id: 'productkititems1-productkititemlabels-default'

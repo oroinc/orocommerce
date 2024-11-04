@@ -23,6 +23,7 @@ class GenerateCheckoutStateSnapshotActionTest extends \PHPUnit\Framework\TestCas
     /** @var GenerateCheckoutStateSnapshotAction */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);

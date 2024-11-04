@@ -11,6 +11,7 @@ use Oro\Bundle\TaxBundle\Model\Taxable;
  */
 class CurrencyResolver implements ResolverInterface
 {
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         $this->walk($taxable->getResult(), $taxable);

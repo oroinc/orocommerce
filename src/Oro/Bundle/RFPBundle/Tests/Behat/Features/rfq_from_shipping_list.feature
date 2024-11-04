@@ -48,16 +48,15 @@ Feature: RFQ from Shipping List
 
     When I click "Submit Request"
     Then I should see RFQ with data:
-      | First Name             | Marlene                                                               |
-      | Last Name              | Bradley                                                               |
-      | Email                  | MarleneSBradley@example.com                                           |
-      | Phone Number           | 72 669 62 82                                                          |
-      | Company                | Red Fox Tavern                                                        |
-      | Role                   | Sauce cook                                                            |
-      | Notes                  | Parish so enable innate in formed missed. Hand two was eat busy fail. |
-      | PO Number              | PO Test 01                                                            |
-      | Assigned To            | Marlene Bradley                                                       |
-      | Do Not Ship Later Than | 7/1/2018                                                              |
+      | Contact Person | Marlene Bradley                                                       |
+      | Email Address  | MarleneSBradley@example.com                                           |
+      | Phone Number   | 72 669 62 82                                                          |
+      | Company        | Red Fox Tavern                                                        |
+      | Title          | Sauce cook                                                            |
+      | Notes          | Parish so enable innate in formed missed. Hand two was eat busy fail. |
+      | PO Number      | PO Test 01                                                            |
+      | Assigned To    | Marlene Bradley                                                       |
+      | Ship By        | 7/1/2018                                                              |
     And I should see "Notes: This item was missed in the previous request"
 
   Scenario: Request more information(notes) field validation
@@ -86,8 +85,8 @@ Feature: RFQ from Shipping List
   Scenario: Create Quote from RFQ with note and line item note
     When I click "Create Quote"
     Then "Quote Form" must contains values:
-      | PO Number              | PO Test 01  |
-      | Do Not Ship Later Than | Jul 1, 2018 |
+      | PO Number | PO Test 01  |
+      | Ship By   | Jul 1, 2018 |
     When fill "Quote Form" with:
       | LineItemPrice | 12 |
     And save and close form
@@ -109,11 +108,11 @@ Feature: RFQ from Shipping List
     And I click view "PO Test 01" in grid
     And I click on "RFQ Create Order"
     Then "Order Form" must contains values:
-      | PO Number              | PO Test 01                                                            |
-      | Do Not Ship Later Than | Jul 1, 2018                                                           |
-      | Customer Notes         | Parish so enable innate in formed missed. Hand two was eat busy fail. |
-      | Billing Address        | ORO, 2849 Junkins Avenue, ALBANY NY US 31707                          |
-      | Shipping Address       | ORO, 2849 Junkins Avenue, ALBANY NY US 31707                          |
+      | PO Number        | PO Test 01                                                            |
+      | Ship By          | Jul 1, 2018                                                           |
+      | Customer Notes   | Parish so enable innate in formed missed. Hand two was eat busy fail. |
+      | Billing Address  | ORO, 2849 Junkins Avenue, ALBANY NY US 31707                          |
+      | Shipping Address | ORO, 2849 Junkins Avenue, ALBANY NY US 31707                          |
     And I should see next rows in "Backend Order First Line Item Taxes Items Table" table
       |            | Incl. Tax | Excl. Tax | Tax Amount |
       | Unit Price | $2.00     | $2.00     | $0.00      |
@@ -167,15 +166,14 @@ Feature: RFQ from Shipping List
 
     When I click "Submit Request"
     Then I should see RFQ with data:
-      | First Name             | Marlene                     |
-      | Last Name              | Bradley                     |
-      | Email                  | MarleneSBradley@example.com |
-      | Phone Number           | 72 669 62 82                |
-      | Company                | Red Fox Tavern              |
-      | Role                   | Sauce cook                  |
-      | PO Number              | PO Test 02                  |
-      | Assigned To            | Marlene Bradley             |
-      | Do Not Ship Later Than | 7/1/2018                    |
+      | Contact Person | Marlene Bradley             |
+      | Email Address  | MarleneSBradley@example.com |
+      | Phone Number   | 72 669 62 82                |
+      | Company        | Red Fox Tavern              |
+      | Title          | Sauce cook                  |
+      | PO Number      | PO Test 02                  |
+      | Assigned To    | Marlene Bradley             |
+      | Ship By        | 7/1/2018                    |
 
   Scenario: Create Order from the new RFQ to confirm that functions of line item section work well
     When I proceed as the Admin
@@ -183,8 +181,8 @@ Feature: RFQ from Shipping List
     And I click view "PO Test 02" in grid
     And I click on "RFQ Create Order"
     Then "Order Form" must contains values:
-      | PO Number              | PO Test 02  |
-      | Do Not Ship Later Than | Jul 1, 2018 |
+      | PO Number | PO Test 02  |
+      | Ship By   | Jul 1, 2018 |
     When I click "Order Form Line Item 1 Offer 1"
     Then I should see next rows in "Backend Order First Line Item Taxes Items Table" table
       |            | Incl. Tax | Excl. Tax | Tax Amount |

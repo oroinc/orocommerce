@@ -16,9 +16,7 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface, Orde
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('orob2b_product_image');
@@ -81,9 +79,7 @@ class OroProductBundle implements Migration, RenameExtensionAwareInterface, Orde
         $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_product', 'oro_product'));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 10;

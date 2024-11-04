@@ -19,6 +19,7 @@ class PriceRuleLexemeEntityListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceRuleLexemeEntityListener */
     protected $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(PriceRuleLexemeRepository::class);

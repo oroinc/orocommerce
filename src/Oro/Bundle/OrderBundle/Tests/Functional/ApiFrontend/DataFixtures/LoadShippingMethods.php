@@ -15,9 +15,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class LoadShippingMethods extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -25,9 +23,7 @@ class LoadShippingMethods extends AbstractFixture implements DependentFixtureInt
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $transportLabel = new LocalizedFallbackValue();

@@ -53,9 +53,7 @@ class GuestAccessAllowedUrlsProvider implements GuestAccessAllowedUrlsProviderIn
         $this->allowedUrls[] = $pattern;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getAllowedUrlsPatterns(): array
     {
         $allowedUrlsByConsents = [];

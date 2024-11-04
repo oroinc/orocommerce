@@ -37,6 +37,7 @@ class WebsiteSearchProductImageListener implements WebsiteSearchProductIndexerLi
         $this->attachmentManager = $attachmentManager;
     }
 
+    #[\Override]
     public function onWebsiteSearchIndex(IndexEntityEvent $event)
     {
         if (!$this->hasContextFieldGroup($event->getContext(), 'image')) {

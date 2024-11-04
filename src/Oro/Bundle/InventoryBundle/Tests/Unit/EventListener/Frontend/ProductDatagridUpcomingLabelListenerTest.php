@@ -17,6 +17,7 @@ class ProductDatagridUpcomingLabelListenerTest extends \PHPUnit\Framework\TestCa
     /** @var ProductDatagridUpcomingLabelListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductDatagridUpcomingLabelListener();

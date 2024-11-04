@@ -26,8 +26,8 @@ class SameOrganizationValidator extends ConstraintValidator
     /**
      * @param SameOrganization $constraint
      *
-     * {@inheritDoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$value instanceof ContentVariant) {

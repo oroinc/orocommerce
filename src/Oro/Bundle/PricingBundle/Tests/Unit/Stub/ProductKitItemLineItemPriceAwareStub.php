@@ -13,6 +13,7 @@ class ProductKitItemLineItemPriceAwareStub extends ProductKitItemLineItemStub im
 {
     private ?Price $price = null;
 
+    #[\Override]
     public function getPrice(): ?Price
     {
         return $this->price;

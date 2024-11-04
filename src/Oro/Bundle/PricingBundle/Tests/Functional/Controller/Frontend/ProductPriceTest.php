@@ -16,6 +16,7 @@ class ProductPriceTest extends WebTestCase
      */
     protected $client;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

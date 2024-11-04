@@ -25,6 +25,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
     /** @var Workflow */
     protected $workflow;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -35,6 +35,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
     /** @var MemoryCacheProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $memoryCacheProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
@@ -107,7 +108,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_order.frontend_product_visibility')
-            ->willReturn(['in_stock']);
+            ->willReturn(['test_enum_code.in_stock']);
 
         $this->memoryCacheProvider->expects(self::once())
             ->method('get')
@@ -138,7 +139,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_order.frontend_product_visibility')
-            ->willReturn(['in_stock']);
+            ->willReturn(['test_enum_code.in_stock']);
 
         $this->memoryCacheProvider->expects(self::once())
             ->method('get')
@@ -256,7 +257,7 @@ class CheckoutLineItemsManagerTest extends \PHPUnit\Framework\TestCase
             $product->setStatus($status);
 
             if ($inventoryStatus) {
-                $inventoryStatus = new TestEnumValue($inventoryStatus, $inventoryStatus);
+                $inventoryStatus = new TestEnumValue('test_enum_code', 'Test', $inventoryStatus);
                 $product->setInventoryStatus($inventoryStatus);
             }
         }

@@ -3,7 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
-use Oro\Bundle\EntityExtendBundle\Entity\EnumValueTranslation;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionTranslation;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
@@ -13,6 +14,7 @@ use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
  */
 class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,19 +28,19 @@ class ProductInventoryStatusTest extends FrontendRestJsonApiTestCase
         $esLanguageCode = $esLocalization->getLanguageCode();
 
         $em = $this->getEntityManager();
-        /** @var EnumValueTranslation|null $translation */
-        $translation = $em->getRepository(EnumValueTranslation::class)
+        /** @var EnumOptionTranslation|null $translation */
+        $translation = $em->getRepository(EnumOptionTranslation::class)
             ->findOneBy([
-                'objectClass' => 'Extend\Entity\EV_Prod_Inventory_Status',
-                'field'       => 'name',
-                'foreignKey'  => 'in_stock',
-                'locale'      => $esLanguageCode
+                'objectClass' => EnumOption::class,
+                'field' => 'name',
+                'foreignKey' => 'prod_inventory_status.in_stock',
+                'locale' => $esLanguageCode
             ]);
         if (null === $translation) {
-            $translation = new EnumValueTranslation();
-            $translation->setObjectClass('Extend\Entity\EV_Prod_Inventory_Status');
+            $translation = new EnumOptionTranslation();
+            $translation->setObjectClass(EnumOption::class);
             $translation->setField('name');
-            $translation->setForeignKey('in_stock');
+            $translation->setForeignKey('prod_inventory_status.in_stock');
             $translation->setLocale($esLanguageCode);
             $translation->setContent('In Stock (Spanish)');
             $em->persist($translation);

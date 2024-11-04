@@ -13,6 +13,7 @@ class ClearPaymentMethodAndRecalculateStateTest extends TestCase
 {
     private ClearPaymentMethodAndRecalculateState $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transition = new ClearPaymentMethodAndRecalculateState();

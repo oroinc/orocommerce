@@ -10,6 +10,7 @@ use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
  */
 class LoadEmailNotificationTemplates extends AbstractHashEmailMigration implements VersionedFixtureInterface
 {
+    #[\Override]
     public function getEmailsDir(): string
     {
         return $this->container
@@ -17,11 +18,13 @@ class LoadEmailNotificationTemplates extends AbstractHashEmailMigration implemen
             ->locateResource('@OroSaleBundle/Migrations/Data/ORM/email_notifications');
     }
 
+    #[\Override]
     public function getVersion(): string
     {
         return '1.2';
     }
 
+    #[\Override]
     protected function getEmailHashesToUpdate(): array
     {
         return [

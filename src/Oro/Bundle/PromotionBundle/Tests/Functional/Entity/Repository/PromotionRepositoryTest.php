@@ -16,6 +16,7 @@ class PromotionRepositoryTest extends WebTestCase
 {
     private PromotionRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

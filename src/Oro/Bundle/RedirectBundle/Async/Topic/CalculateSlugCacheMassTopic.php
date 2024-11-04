@@ -21,16 +21,19 @@ class CalculateSlugCacheMassTopic extends AbstractTopic
         $this->directUrlCommonTopicHelper = $directUrlCommonTopicHelper;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Fill Slug URL caches for the specified entity type.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $this->directUrlCommonTopicHelper->configureIdOption($resolver);

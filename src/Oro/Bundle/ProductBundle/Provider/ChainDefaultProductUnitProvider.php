@@ -23,6 +23,7 @@ class ChainDefaultProductUnitProvider implements DefaultProductUnitProviderInter
     /**
      * @return ProductUnitPrecision|null
      */
+    #[\Override]
     public function getDefaultProductUnitPrecision()
     {
         foreach ($this->providers as $provider) {

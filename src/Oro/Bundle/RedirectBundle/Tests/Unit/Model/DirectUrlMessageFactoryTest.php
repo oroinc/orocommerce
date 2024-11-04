@@ -17,6 +17,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var DirectUrlMessageFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

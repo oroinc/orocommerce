@@ -13,6 +13,7 @@ class CollectSurchargeEventTest extends \PHPUnit\Framework\TestCase
     /** @var object */
     protected $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new \stdClass();

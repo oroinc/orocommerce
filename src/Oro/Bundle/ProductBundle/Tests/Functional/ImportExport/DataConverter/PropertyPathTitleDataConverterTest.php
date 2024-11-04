@@ -11,6 +11,7 @@ class PropertyPathTitleDataConverterTest extends WebTestCase
 {
     private PropertyPathTitleDataConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

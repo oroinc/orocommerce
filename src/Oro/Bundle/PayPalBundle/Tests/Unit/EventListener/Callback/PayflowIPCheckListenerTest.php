@@ -14,6 +14,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
 {
     private PaymentMethodProviderInterface|MockObject $paymentMethodProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);

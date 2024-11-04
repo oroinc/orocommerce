@@ -34,6 +34,7 @@ class FedexShippingMethodTypeTest extends \PHPUnit\Framework\TestCase
     /** @var FedexRateServiceBySettingsClientInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $rateServiceClient;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->rateServiceRequestSettingsFactory = $this->createMock(

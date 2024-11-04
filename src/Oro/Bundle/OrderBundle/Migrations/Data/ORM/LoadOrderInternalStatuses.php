@@ -22,17 +22,13 @@ class LoadOrderInternalStatuses extends AbstractEnumFixture
         return array_keys(self::$data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getData(): array
     {
         return self::$data;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEnumCode(): string
     {
         return Order::INTERNAL_STATUS_CODE;

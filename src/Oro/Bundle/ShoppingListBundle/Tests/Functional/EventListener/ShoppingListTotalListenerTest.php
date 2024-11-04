@@ -24,6 +24,7 @@ class ShoppingListTotalListenerTest extends WebTestCase
     /** @var ShoppingListTotalRepository */
     protected $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

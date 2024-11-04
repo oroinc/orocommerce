@@ -37,6 +37,7 @@ class StartCheckoutTest extends TestCase
 
     private StartCheckout $startCheckout;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->prepareCheckoutSettings = $this->createMock(PrepareCheckoutSettingsInterface::class);

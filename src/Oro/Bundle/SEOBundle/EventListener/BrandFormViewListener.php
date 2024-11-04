@@ -14,6 +14,7 @@ class BrandFormViewListener extends BaseFormViewListener
     /**
      * @return string
      */
+    #[\Override]
     public function getMetaFieldLabelPrefix()
     {
         return 'oro.product.brand';

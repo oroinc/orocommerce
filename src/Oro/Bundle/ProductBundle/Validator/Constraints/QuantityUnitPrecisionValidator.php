@@ -25,9 +25,7 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
         $this->roundingService = $roundingService;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof QuantityUnitPrecision) {

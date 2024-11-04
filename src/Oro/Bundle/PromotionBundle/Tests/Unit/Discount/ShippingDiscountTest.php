@@ -12,6 +12,7 @@ class ShippingDiscountTest extends \PHPUnit\Framework\TestCase
 {
     private ShippingDiscount $discount;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->discount = new ShippingDiscount();

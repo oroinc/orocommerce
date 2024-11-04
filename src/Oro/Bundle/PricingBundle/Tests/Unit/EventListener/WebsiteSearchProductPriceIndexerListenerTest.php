@@ -34,6 +34,7 @@ class WebsiteSearchProductPriceIndexerListenerTest extends TestCase
 
     private FeatureChecker|MockObject $featureChecker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);

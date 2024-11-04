@@ -20,6 +20,7 @@ class DimensionsValueFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var DimensionsValueFormatter */
     private $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

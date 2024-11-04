@@ -35,9 +35,7 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         $this->checkoutLineItemsProvider = $checkoutLineItemsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $valid = true;
@@ -69,17 +67,13 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         return $valid;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName()
     {
         return 'line_items_shipping_methods_has_enabled_shipping_rules';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function initialize(array $options)
     {
         if (\array_key_exists(self::OPTION_ENTITY, $options)) {
@@ -95,17 +89,13 @@ class LineItemsShippingMethodsHasEnabledShippingRules extends AbstractCondition 
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->entity]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->entity], $factoryAccessor);

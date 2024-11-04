@@ -40,6 +40,7 @@ class WeightUnit implements MeasureUnitInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getCode()
     {
         return $this->code;
@@ -68,6 +69,7 @@ class WeightUnit implements MeasureUnitInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->code;

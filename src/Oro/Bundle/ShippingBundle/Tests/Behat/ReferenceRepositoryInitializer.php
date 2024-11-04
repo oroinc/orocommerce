@@ -13,9 +13,7 @@ class ReferenceRepositoryInitializer implements ReferenceRepositoryInitializerIn
 {
     private const LENGTH_UNIT_MAPPING = ['m' => 'meter', 'cm' => 'centimeter'];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function init(ManagerRegistry $doctrine, Collection $referenceRepository): void
     {
         $repository = $doctrine->getRepository(FreightClass::class);

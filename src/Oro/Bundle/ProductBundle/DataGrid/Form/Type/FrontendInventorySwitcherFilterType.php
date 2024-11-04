@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\DataGrid\Form\Type;
 
 use Oro\Bundle\FilterBundle\Form\Type\Filter\FilterType;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormInterface;
@@ -21,9 +22,7 @@ class FrontendInventorySwitcherFilterType extends AbstractType
     {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $choices = [
@@ -43,13 +42,12 @@ class FrontendInventorySwitcherFilterType extends AbstractType
                 'default_value' => null,
                 'null_value' => null,
                 'class' => null,
+                'enum_code' => Product::INVENTORY_STATUS_ENUM_CODE,
             ]
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         if (isset($options['populate_default'])) {
@@ -59,23 +57,21 @@ class FrontendInventorySwitcherFilterType extends AbstractType
         if (!empty($options['null_value'])) {
             $view->vars['null_value'] = $options['null_value'];
         }
-
+        if (!empty($options['enum_code'])) {
+            $view->vars['enum_code'] = $options['enum_code'];
+        }
         if (!empty($options['class'])) {
             $view->vars['class'] = $options['class'];
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return FilterType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_type_inventory_switcher_filter';

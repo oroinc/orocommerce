@@ -73,9 +73,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
         $customerFormExtension->buildForm($builder, []);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $featureChecker = $this->createMock(FeatureChecker::class);

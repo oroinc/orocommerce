@@ -7,6 +7,7 @@ namespace Oro\Bundle\ProductBundle\DependencyInjection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
@@ -97,9 +98,9 @@ class Configuration implements ConfigurationInterface
         'inventory_filter_in_stock_statuses_for_simple_filter';
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(static::ROOT_NODE);
@@ -141,8 +142,14 @@ class Configuration implements ConfigurationInterface
                 'default_unit_precision' => ['value' => 0],
                 'general_frontend_product_visibility' => [
                     'value' => [
-                        Product::INVENTORY_STATUS_IN_STOCK,
-                        Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        ),
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ),
                     ]
                 ],
                 static::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
@@ -240,7 +247,10 @@ class Configuration implements ConfigurationInterface
                 ],
                 static::INVENTORY_FILTER_IN_STOCK_STATUSES_FOR_SIMPLE_FILTER => [
                     'value' => [
-                        Product::INVENTORY_STATUS_IN_STOCK,
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        ),
                     ],
                 ],
             ]

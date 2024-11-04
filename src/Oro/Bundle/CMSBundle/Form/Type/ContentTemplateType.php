@@ -16,6 +16,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ContentTemplateType extends AbstractType
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -74,6 +75,7 @@ class ContentTemplateType extends AbstractType
             );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -82,6 +84,7 @@ class ContentTemplateType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_cms_content_template';

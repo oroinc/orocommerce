@@ -6,17 +6,12 @@ class CustomerTaxCodeType extends AbstractTaxCodeType
 {
     const NAME = 'oro_tax_customer_tax_code_type';
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

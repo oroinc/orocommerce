@@ -11,7 +11,8 @@ use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
 use Oro\Bundle\DigitalAssetBundle\Entity\DigitalAsset;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Brand;
@@ -46,6 +47,7 @@ class LoadProductDemoData extends AbstractFixture implements
 
     protected array $productUnits = [];
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -57,6 +59,7 @@ class LoadProductDemoData extends AbstractFixture implements
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $user = $this->getFirstUser($manager);
@@ -203,12 +206,10 @@ class LoadProductDemoData extends AbstractFixture implements
      *     $outOfStock = LoadProductDemoData::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_IN_STOCK);
      *     $disc = LoadProductDemoData::getProductInventoryStatus($manager, Product::INVENTORY_STATUS_DISCONTINUED);
      */
-    public static function getProductInventoryStatus(ObjectManager $manager, string $status): ?AbstractEnumValue
+    public static function getProductInventoryStatus(ObjectManager $manager, string $status): ?EnumOptionInterface
     {
-        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName(self::ENUM_CODE_INVENTORY_STATUS);
-
-        return $manager->getRepository($inventoryStatusClassName)->findOneBy([
-            'id' => $status
+        return $manager->getRepository(EnumOption::class)->findOneBy([
+            'id' => ExtendHelper::buildEnumOptionId(self::ENUM_CODE_INVENTORY_STATUS, $status)
         ]);
     }
 

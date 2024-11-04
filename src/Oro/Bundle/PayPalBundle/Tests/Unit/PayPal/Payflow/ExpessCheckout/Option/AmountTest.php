@@ -9,17 +9,13 @@ use Symfony\Component\OptionsResolver\Exception\UndefinedOptionsException;
 
 class AmountTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new ECOption\Amount(), new ECOption\Action()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

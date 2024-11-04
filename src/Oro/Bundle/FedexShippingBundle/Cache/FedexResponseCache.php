@@ -20,17 +20,20 @@ class FedexResponseCache implements FedexResponseCacheInterface
         $this->cache = $cache;
     }
 
+    #[\Override]
     public function has(FedexResponseCacheKeyInterface $key): bool
     {
         return $this->cache->getItem($this->generateCacheKey($key))->isHit();
     }
 
+    #[\Override]
     public function get(FedexResponseCacheKeyInterface $key): FedexRateServiceResponseInterface|null
     {
         $cacheKey = $this->cache->getItem($this->generateCacheKey($key));
         return $cacheKey->isHit() ? $cacheKey->get() : null;
     }
 
+    #[\Override]
     public function set(FedexResponseCacheKeyInterface $key, FedexRateServiceResponseInterface $response): bool
     {
         $cacheItem = $this->cache->getItem($this->generateCacheKey($key));
@@ -38,11 +41,13 @@ class FedexResponseCache implements FedexResponseCacheInterface
         return $this->cache->save($cacheItem);
     }
 
+    #[\Override]
     public function delete(FedexResponseCacheKeyInterface $key): bool
     {
         return $this->cache->deleteItem($this->generateCacheKey($key));
     }
 
+    #[\Override]
     public function deleteAll(): bool
     {
         return $this->cache->clear();

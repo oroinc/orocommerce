@@ -17,6 +17,7 @@ abstract class AbstractCategoryRepositoryTest extends WebTestCase
 
     protected const ROOT_CATEGORY = 'root';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

@@ -22,9 +22,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 {
     use ConfigManagerAwareTestTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->fixturesToLoad[] = LoadCheckoutData::class;
@@ -39,9 +37,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
             ->push(Request::create($this->getUrl('oro_promotion_frontend_add_coupon')));
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getToken()
     {
         $user = self::getContainer()->get('doctrine')
@@ -56,17 +52,13 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRole()
     {
         return 'ROLE_FRONTEND_ADMINISTRATOR';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getHandlerServiceName()
     {
         return 'oro_promotion.handler.frontend_coupon_handler';
@@ -207,9 +199,6 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         self::assertEmpty($jsonContent['errors']);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     private function getRequestWithEuroCouponData(array $postData = [])
     {
         $postData['couponCode'] = $this
@@ -219,9 +208,7 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
         return new Request([], $postData);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRequestWithCouponData(array $postData = [])
     {
         $postData['couponCode'] = $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)

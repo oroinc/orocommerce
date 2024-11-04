@@ -27,17 +27,13 @@ class ShippingOriginConfigSearchProvider implements SearchProviderInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($name)
     {
         return $name === 'oro_shipping.shipping_origin';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData($name)
     {
         return array_merge(

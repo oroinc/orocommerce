@@ -29,6 +29,7 @@ class TabbedContentWidgetTypeTest extends FormIntegrationTestCase
 
     private TabbedContentWidgetType $contentWidgetType;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -151,6 +152,7 @@ class TabbedContentWidgetTypeTest extends FormIntegrationTestCase
         );
     }
 
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

@@ -18,6 +18,7 @@ class ProductLineItemPriceFactoryTest extends TestCase
 
     private ProductLineItemPriceFactoryInterface|MockObject $innerFactory2;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerFactory1 = $this->createMock(ProductLineItemPriceFactoryInterface::class);

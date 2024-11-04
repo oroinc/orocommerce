@@ -36,6 +36,7 @@ class ProductCollectionSearchTermFilteringEventListenerTest extends WebTestCase
 
     private ProductCollectionSearchTermFilteringEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = new RequestStack();

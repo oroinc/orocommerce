@@ -13,9 +13,7 @@ use Twig\TwigFunction;
  */
 class ProductPriceExtension extends AbstractExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [

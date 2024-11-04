@@ -6,17 +6,13 @@ use Symfony\Component\Validator\Constraint;
 
 class RemoveUsedShippingServiceConstraint extends Constraint
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_ups_remove_used_shipping_service_validator';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

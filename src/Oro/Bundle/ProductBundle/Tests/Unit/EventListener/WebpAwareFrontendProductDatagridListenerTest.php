@@ -24,9 +24,7 @@ class WebpAwareFrontendProductDatagridListenerTest extends \PHPUnit\Framework\Te
 
     private WebpAwareFrontendProductDatagridListener $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->themeHelper = $this->createMock(DataGridThemeHelper::class);

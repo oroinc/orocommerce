@@ -8,9 +8,7 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\CollectionField;
 
 class ProductPriceCollection extends CollectionField
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setValue($values)
     {
         $this->removeAllRows();

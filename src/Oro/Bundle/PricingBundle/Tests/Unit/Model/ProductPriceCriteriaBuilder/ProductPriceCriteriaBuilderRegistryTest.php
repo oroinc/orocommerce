@@ -16,6 +16,7 @@ class ProductPriceCriteriaBuilderRegistryTest extends TestCase
 
     private ProductPriceCriteriaBuilderInterface|MockObject $builder2;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->builder1 = $this->createMock(ProductPriceCriteriaBuilderInterface::class);

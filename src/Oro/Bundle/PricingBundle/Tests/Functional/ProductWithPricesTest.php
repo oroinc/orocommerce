@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -37,6 +38,7 @@ class ProductWithPricesTest extends WebTestCase
 
     private const CATEGORY_ID = 1;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -52,6 +54,9 @@ class ProductWithPricesTest extends WebTestCase
             ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testCreate(): int
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
@@ -73,13 +78,16 @@ class ProductWithPricesTest extends WebTestCase
         $this->client->followRedirects(true);
 
         $localizations = $this->getLocalizations();
-
+        $inventoryStaus = ExtendHelper::buildEnumOptionId(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            Product::INVENTORY_STATUS_IN_STOCK
+        );
         $formData = $form->getPhpValues()['oro_product'];
         $formData = array_merge($formData, [
             '_token' => $form['oro_product[_token]']->getValue(),
             'owner'  => $this->getBusinessUnitId(),
             'sku'    => self::TEST_SKU,
-            'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+            'inventory_status' => $inventoryStaus,
             'primaryUnitPrecision' => [
                 'unit'      => self::FIRST_UNIT_CODE,
                 'precision' => self::FIRST_UNIT_PRECISION

@@ -23,9 +23,7 @@ class OrderShippingTrackingType extends AbstractType
         $this->trackingAwareShippingMethodsProvider = $trackingAwareShippingMethodsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         parent::buildForm($builder, $options);
@@ -72,17 +70,13 @@ class OrderShippingTrackingType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('data_class', OrderShippingTracking::class);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_order_shipping_tracking';

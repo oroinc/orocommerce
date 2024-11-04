@@ -14,6 +14,7 @@ class CachedMemoryPaymentTermConfigProviderTest extends \PHPUnit\Framework\TestC
     /** @var CachedMemoryPaymentTermConfigProvider */
     private $testedProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTermConfigProvider = $this->createMock(PaymentTermConfigProviderInterface::class);

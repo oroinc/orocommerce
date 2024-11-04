@@ -31,6 +31,7 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|RoundingServiceInterface */
     private $roundingService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

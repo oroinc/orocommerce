@@ -51,9 +51,7 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
         $this->featureChecker = $featureChecker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(array $data, Request $request): ?Response
     {
         $initialStoredData = $this->storage->get();
@@ -78,9 +76,7 @@ class DataStorageComponentProcessor extends DataStorageAwareComponentProcessor
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isAllowed(): bool
     {
         return parent::isAllowed() || $this->isAllowedForGuest();

@@ -40,6 +40,7 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
     /** @var SubtotalSubscriber */
     private $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->totalProvider = $this->createMock(TotalProcessorProvider::class);

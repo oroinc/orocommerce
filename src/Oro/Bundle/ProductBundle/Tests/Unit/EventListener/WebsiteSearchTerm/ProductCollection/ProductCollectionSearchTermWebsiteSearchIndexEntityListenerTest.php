@@ -29,6 +29,7 @@ class ProductCollectionSearchTermWebsiteSearchIndexEntityListenerTest extends Te
 
     private ProductCollectionSearchTermWebsiteSearchIndexEntityListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->searchTermsIndexDataProvider = $this->createMock(SearchTermsIndexDataProvider::class);

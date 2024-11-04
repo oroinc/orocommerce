@@ -30,6 +30,7 @@ class DumpRobotsTxtListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DumpRobotsTxtListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->robotsTxtSitemapManager = $this->createMock(RobotsTxtSitemapManager::class);

@@ -21,6 +21,7 @@ class PriceListType extends AbstractType
     const NAME = 'oro_pricing_price_list';
     const SCHEDULES_FIELD = 'schedules';
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var PriceList $priceList */
@@ -76,9 +77,7 @@ class PriceListType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(
@@ -96,9 +95,7 @@ class PriceListType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

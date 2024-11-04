@@ -17,6 +17,7 @@ class ProductListBuilderTest extends WebTestCase
 
     private ProductListBuilder $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

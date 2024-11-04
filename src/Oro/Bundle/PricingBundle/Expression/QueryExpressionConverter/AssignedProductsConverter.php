@@ -26,9 +26,7 @@ class AssignedProductsConverter implements QueryExpressionConverterInterface
         $this->fieldsProvider = $fieldsProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert(Node\NodeInterface $node, Expr $expr, array &$params, array $aliasMapping = [])
     {
         $tableAliasMapping = $aliasMapping[QueryExpressionConverterInterface::MAPPING_TABLES] ?? [];

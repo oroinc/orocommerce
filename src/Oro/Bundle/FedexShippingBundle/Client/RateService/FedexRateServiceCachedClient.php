@@ -45,9 +45,7 @@ class FedexRateServiceCachedClient implements FedexRateServiceBySettingsClientIn
         $this->cacheKeyFactory = $cacheKeyFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function send(
         FedexRequestInterface $request,
         FedexIntegrationSettings $settings

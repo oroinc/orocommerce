@@ -5,6 +5,9 @@ namespace Oro\Bundle\SaleBundle\Migrations\Data\ORM;
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
+/**
+ * Loads customer status enum options for Quote Entity
+ */
 class LoadQuoteCustomerStatuses extends AbstractEnumFixture
 {
     /** @var array */
@@ -18,27 +21,19 @@ class LoadQuoteCustomerStatuses extends AbstractEnumFixture
         'not_approved' => 'Not Approved'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getData()
+    #[\Override]
+    protected function getData(): array
     {
         return self::$data;
     }
 
-    /**
-     * Returns array of data keys.
-     * @return array
-     */
-    public static function getDataKeys()
+    public static function getDataKeys(): array
     {
         return array_keys(self::$data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getEnumCode()
+    #[\Override]
+    protected function getEnumCode(): string
     {
         return Quote::CUSTOMER_STATUS_CODE;
     }

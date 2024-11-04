@@ -16,12 +16,14 @@ class NotEmptyConfigurableAttributesValidatorTest extends ConstraintValidatorTes
     /** @var VariantFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(VariantFieldProvider::class);
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): NotEmptyConfigurableAttributesValidator
     {
         return new NotEmptyConfigurableAttributesValidator($this->provider);

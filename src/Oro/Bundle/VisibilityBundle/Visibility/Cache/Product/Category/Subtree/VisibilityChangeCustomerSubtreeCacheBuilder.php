@@ -44,6 +44,7 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
      * @param QueryBuilder $qb
      * @return QueryBuilder
      */
+    #[\Override]
     protected function restrictStaticFallback(QueryBuilder $qb)
     {
         return $qb->andWhere($qb->expr()->neq('cv.visibility', ':parentCategory'))
@@ -54,6 +55,7 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
      * @param QueryBuilder $qb
      * @return QueryBuilder
      */
+    #[\Override]
     protected function restrictToParentFallback(QueryBuilder $qb)
     {
         return $qb->andWhere($qb->expr()->eq('cv.visibility', ':parentCategory'))
@@ -86,9 +88,7 @@ class VisibilityChangeCustomerSubtreeCacheBuilder extends AbstractSubtreeCacheBu
         $qb->getQuery()->execute();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function joinCategoryVisibility(QueryBuilder $qb, $target)
     {
         return $qb->leftJoin(

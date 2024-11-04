@@ -20,6 +20,7 @@ class WYSIWYGAuditStrategyProcessor implements EntityAuditStrategyProcessorInter
         $this->innerProcessor = $innerProcessor;
     }
 
+    #[\Override]
     public function processInverseCollections(array $sourceEntityData): array
     {
         if (isset($sourceEntityData['change_set']['wysiwyg'])) {
@@ -92,11 +93,13 @@ class WYSIWYGAuditStrategyProcessor implements EntityAuditStrategyProcessorInter
         }
     }
 
+    #[\Override]
     public function processChangedEntities(array $sourceEntityData): array
     {
         return $this->innerProcessor->processChangedEntities($sourceEntityData);
     }
 
+    #[\Override]
     public function processInverseRelations(array $sourceEntityData): array
     {
         return $this->innerProcessor->processInverseRelations($sourceEntityData);

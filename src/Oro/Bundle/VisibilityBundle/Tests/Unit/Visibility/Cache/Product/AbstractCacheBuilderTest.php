@@ -19,6 +19,7 @@ abstract class AbstractCacheBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var string */
     protected $cacheBuilderInterface = CacheBuilderInterface::class;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->builders = [

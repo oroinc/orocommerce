@@ -7,18 +7,16 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class ShippingAddressTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new ShippingAddress()];
     }
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

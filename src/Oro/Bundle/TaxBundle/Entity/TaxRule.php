@@ -192,6 +192,7 @@ class TaxRule implements DatesAwareInterface
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -201,6 +202,7 @@ class TaxRule implements DatesAwareInterface
      * @param \DateTime|null $createdAt
      * @return $this
      */
+    #[\Override]
     public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
@@ -211,6 +213,7 @@ class TaxRule implements DatesAwareInterface
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getUpdatedAt()
     {
         return $this->updatedAt;
@@ -221,6 +224,7 @@ class TaxRule implements DatesAwareInterface
      *
      * @return $this
      */
+    #[\Override]
     public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAtSet = false;
@@ -236,6 +240,7 @@ class TaxRule implements DatesAwareInterface
     /**
      * @return bool
      */
+    #[\Override]
     public function isUpdatedAtSet()
     {
         return $this->updatedAtSet;

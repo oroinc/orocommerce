@@ -7,17 +7,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class CurrencyTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new Currency(false)];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

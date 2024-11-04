@@ -11,7 +11,8 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresse
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -37,12 +38,16 @@ class ExpireOrdersProcessTest extends WebTestCase
     private ProcessDefinition $processDefinition;
     private ConfigManager $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
 
         self::assertEquals(
-            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+            ExtendHelper::buildEnumOptionId(
+                Order::INTERNAL_STATUS_CODE,
+                OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+            ),
             self::getConfigManager(null)->get('oro_order.order_creation_new_internal_order_status')
         );
 
@@ -190,12 +195,23 @@ class ExpireOrdersProcessTest extends WebTestCase
 
     private function initializeConfigs(
         bool $enabled = true,
-        array $statuses = [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
+        array $statuses = [
+            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+        ],
         string $target = OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
     ): void {
         $this->configManager->set('oro_order.order_automation_enable_cancellation', $enabled);
-        $this->configManager->set('oro_order.order_automation_applicable_statuses', $statuses);
-        $this->configManager->set('oro_order.order_automation_target_status', $target);
+        $this->configManager->set(
+            'oro_order.order_automation_applicable_statuses',
+            ExtendHelper::mapToEnumOptionIds(Order::INTERNAL_STATUS_CODE, $statuses)
+        );
+        $this->configManager->set(
+            'oro_order.order_automation_target_status',
+            ExtendHelper::buildEnumOptionId(
+                Order::INTERNAL_STATUS_CODE,
+                $target
+            )
+        );
     }
 
     private function prepareOrderObject(
@@ -234,11 +250,10 @@ class ExpireOrdersProcessTest extends WebTestCase
         return $this->reloadOrder($order);
     }
 
-    private function getOrderInternalStatusById(string $id): AbstractEnumValue
+    private function getOrderInternalStatusById(string $id): EnumOptionInterface
     {
-        $className = ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE);
-
-        return $this->doctrine->getManagerForClass($className)->getRepository($className)->find($id);
+        return $this->doctrine->getManagerForClass(EnumOption::class)->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $id));
     }
 
     private function reloadOrder(Order $order): Order

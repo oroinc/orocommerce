@@ -65,6 +65,7 @@ class SearchResultHistoryManagerTest extends TestCase
 
     private SearchResultHistoryManager $manager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->historyRepository = $this->createMock(SearchResultHistoryRepository::class);
@@ -88,7 +89,8 @@ class SearchResultHistoryManagerTest extends TestCase
 
     public function testSaveSearchResultForLoggedInCustomerUser(): void
     {
-        $searchTerm = 'TEST   search   Term';
+        $searchTerm = '    test    - test   ';
+        $upperCaseSearchTerm = mb_strtoupper($searchTerm);
         $searchType = 'test search type';
         $resultsCount = 10;
         $searchSessionId = 'test search session id';
@@ -102,43 +104,46 @@ class SearchResultHistoryManagerTest extends TestCase
         $customer = $this->getEntity(Customer::class, ['id' => 6]);
         $customerUser->setCustomer($customer);
 
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects($this->exactly(2))
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $token = $this->createMock(OrganizationAwareTokenInterface::class);
-        $this->tokenStorage->expects($this->once())
+        $this->tokenStorage->expects($this->exactly(2))
             ->method('getToken')
             ->willReturn($token);
-        $token->expects($this->once())
+        $token->expects($this->exactly(2))
             ->method('getOrganization')
             ->willReturn($organization);
-        $token->expects($this->once())
+        $token->expects($this->exactly(2))
             ->method('getUser')
             ->willReturn($customerUser);
 
-        $this->localizationHelper->expects($this->once())
+        $this->localizationHelper->expects($this->exactly(2))
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
-        $this->historyRepository->expects($this->once())
+        $this->historyRepository->expects($this->exactly(2))
             ->method('upsertSearchHistoryRecord')
-            ->with(
-                $searchTerm,
-                $searchType,
-                $resultsCount,
-                md5('test search term'),
-                $businessUnit->getId(),
-                $website->getId(),
-                $searchSessionId,
-                $localization->getId(),
-                $customer->getId(),
-                $customerUser->getId(),
-                null,
-                $organization->getId()
+            ->withConsecutive(
+                [
+                    'test - test',
+                    $searchType,
+                    $resultsCount,
+                    md5('test - test'),
+                    $businessUnit->getId(),
+                    $website->getId(),
+                    $searchSessionId,
+                    $localization->getId(),
+                    $customer->getId(),
+                    $customerUser->getId(),
+                    null,
+                    $organization->getId()
+                ],
             );
 
         $this->manager->saveSearchResult($searchTerm, $searchType, $resultsCount, $searchSessionId);
+        $this->manager->saveSearchResult($upperCaseSearchTerm, $searchType, $resultsCount, $searchSessionId);
     }
 
     public function testSaveSearchResultForAnonymous(): void
@@ -177,10 +182,10 @@ class SearchResultHistoryManagerTest extends TestCase
         $this->historyRepository->expects($this->once())
             ->method('upsertSearchHistoryRecord')
             ->with(
-                $searchTerm,
+                'TEST search Term',
                 $searchType,
                 $resultsCount,
-                md5('test search term'),
+                md5('TEST search Term'),
                 $businessUnit->getId(),
                 $website->getId(),
                 $searchSessionId,

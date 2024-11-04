@@ -12,17 +12,13 @@ class ProductEntityListenerTest extends AbstractRuleEntityListenerTest
     /** @var ProductEntityListener */
     protected $listener;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClassName(): string
     {
         return Product::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getListener(): AbstractRuleEntityListener
     {
         return new ProductEntityListener(

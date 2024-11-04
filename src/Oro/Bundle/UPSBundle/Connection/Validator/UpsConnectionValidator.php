@@ -26,9 +26,7 @@ class UpsConnectionValidator implements UpsConnectionValidatorInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validateConnectionByUpsSettings(UPSTransport $transport): UpsConnectionValidatorResultInterface
     {
         $request = $this->requestFactory->createByTransport($transport);

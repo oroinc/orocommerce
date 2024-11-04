@@ -91,16 +91,14 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
     /**
      * Must be called before FormatterExtension.
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getPriority()
     {
         return 10;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config)
     {
         return $this->isFeaturesEnabled()
@@ -109,9 +107,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
             && parent::isApplicable($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config)
     {
         if (!$this->isGrantedToViewPriceFields()) {
@@ -122,9 +118,7 @@ class ProductPriceDatagridExtension extends AbstractExtension implements Feature
         $this->applied = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function visitResult(DatagridConfiguration $config, ResultsObject $result)
     {
         if (!$this->enabledPriceColumns) {

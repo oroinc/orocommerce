@@ -11,9 +11,7 @@ class UniqueTaxCode extends Constraint
 {
     public $message = 'oro.tax.validator.constraints.not_unique_tax_code';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

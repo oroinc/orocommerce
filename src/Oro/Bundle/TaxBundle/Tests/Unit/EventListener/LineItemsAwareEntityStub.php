@@ -7,9 +7,7 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 
 class LineItemsAwareEntityStub implements LineItemsAwareInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLineItems()
     {
         return new ArrayCollection([]);

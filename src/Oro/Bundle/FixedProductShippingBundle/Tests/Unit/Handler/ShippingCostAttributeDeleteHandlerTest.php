@@ -24,6 +24,7 @@ class ShippingCostAttributeDeleteHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingCostAttributeDeleteHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

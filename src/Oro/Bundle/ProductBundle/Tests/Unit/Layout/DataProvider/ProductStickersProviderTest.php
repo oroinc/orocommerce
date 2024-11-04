@@ -15,6 +15,7 @@ class ProductStickersProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductStickersProvider */
     private $productStickersProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

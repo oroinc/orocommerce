@@ -14,6 +14,7 @@ class EntityFieldFallbackValueRepositoryTest extends WebTestCase
     /** @var EntityFieldFallbackValueRepository */
     private $repo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

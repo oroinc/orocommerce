@@ -15,6 +15,7 @@ class CustomerUserAddressForVisitorWithGuestCheckoutTest extends FrontendRestJso
     /** @var bool */
     private $originalGuestCheckoutOptionValue;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -30,6 +31,7 @@ class CustomerUserAddressForVisitorWithGuestCheckoutTest extends FrontendRestJso
         }
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();

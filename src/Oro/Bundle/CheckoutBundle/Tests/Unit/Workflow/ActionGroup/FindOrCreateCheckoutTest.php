@@ -43,6 +43,7 @@ class FindOrCreateCheckoutTest extends TestCase
     private TokenStorageInterface|MockObject $tokenStorage;
     private FindOrCreateCheckout $findOrCreateCheckout;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

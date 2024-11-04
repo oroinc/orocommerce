@@ -15,6 +15,7 @@ class FrontendProductUnitsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendProductUnitsProvider */
     private $productUnitsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ProductUnitRepository::class);

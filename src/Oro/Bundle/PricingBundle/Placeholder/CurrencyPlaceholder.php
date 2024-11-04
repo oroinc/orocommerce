@@ -19,17 +19,13 @@ class CurrencyPlaceholder extends AbstractPlaceholder
         $this->currencyManager = $currencyManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultValue()
     {
         $currency = $this->currencyManager->getUserCurrency();

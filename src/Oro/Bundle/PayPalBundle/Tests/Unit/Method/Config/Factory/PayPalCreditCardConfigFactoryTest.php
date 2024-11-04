@@ -31,6 +31,7 @@ class PayPalCreditCardConfigFactoryTest extends \PHPUnit\Framework\TestCase
      */
     protected $payPalCreditCardConfigFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

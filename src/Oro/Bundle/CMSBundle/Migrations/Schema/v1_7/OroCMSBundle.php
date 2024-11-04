@@ -17,9 +17,7 @@ class OroCMSBundle implements Migration, AttachmentExtensionAwareInterface
     const MAX_IMAGE_SLIDE_MEDIUM_IMAGE_SIZE_IN_MB = 10;
     const MAX_IMAGE_SLIDE_SMALL_IMAGE_SIZE_IN_MB = 10;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->createOroCmsContentWidgetTable($schema);

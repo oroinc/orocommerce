@@ -7,6 +7,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
  */
 class RegexPlaceholderDecorator extends PlaceholderDecorator
 {
+    #[\Override]
     public function replaceDefault($string)
     {
         foreach ($this->placeholderRegistry->getPlaceholders() as $placeholder) {

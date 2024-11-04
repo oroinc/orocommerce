@@ -24,6 +24,7 @@ class VisibilityFormDataHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var VisibilityFormDataHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

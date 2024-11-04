@@ -41,9 +41,7 @@ final class ResultElement extends AbstractResultElement implements \JsonSerializ
         return $resultElement;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return $this->getArrayCopy();

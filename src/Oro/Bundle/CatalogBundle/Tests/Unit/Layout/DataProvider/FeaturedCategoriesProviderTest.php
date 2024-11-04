@@ -27,6 +27,7 @@ class FeaturedCategoriesProviderTest extends \PHPUnit\Framework\TestCase
     private WebsiteManager|\PHPUnit\Framework\MockObject\MockObject $websiteManager;
     private FeaturedCategoriesProvider $featuredCategoriesProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);

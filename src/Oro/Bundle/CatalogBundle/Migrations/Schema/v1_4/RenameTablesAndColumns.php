@@ -13,9 +13,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
 {
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -29,9 +27,7 @@ class RenameTablesAndColumns implements Migration, RenameExtensionAwareInterface
         $extension->renameTable($schema, $queries, 'orob2b_category_def_prod_opts', 'oro_category_def_prod_opts');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;

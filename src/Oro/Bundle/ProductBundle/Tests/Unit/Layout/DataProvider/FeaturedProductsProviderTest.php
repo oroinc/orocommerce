@@ -42,6 +42,7 @@ class FeaturedProductsProviderTest extends OrmTestCase
     /** @var FeaturedProductsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->em = $this->getTestEntityManager();

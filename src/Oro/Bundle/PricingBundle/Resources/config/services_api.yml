@@ -1,4 +1,15 @@
 services:
+    oro_pricing.api.customer_price_repository:
+        class: Oro\Bundle\PricingBundle\Api\Repository\CustomerPriceRepository
+        arguments:
+            - '@oro_pricing.provider.product_price'
+            - '@oro_currency.config.currency'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_api.doctrine_helper'
+            - '@security.authorization_checker'
+            - '@oro_api.query_acl_helper'
+            - '@oro_customer.provider.customer_user_relations_provider'
+
     oro_pricing.api.compute_price_list_currencies:
         class: Oro\Bundle\PricingBundle\Api\Processor\ComputePriceListCurrencies
         tags:
@@ -292,11 +303,6 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ProductBundle\Api\Model\ProductSearch }
 
-    oro_pricing.api.customer_price_repository:
-        class: Oro\Bundle\PricingBundle\Api\Repository\CustomerPriceRepository
-        arguments:
-            - '@oro_pricing.provider.product_price'
-
     oro_pricing.api.handle_customer_price_filters:
         class: Oro\Bundle\PricingBundle\Api\Processor\CustomerPrice\HandleCustomerPriceFilters
         tags:
@@ -306,8 +312,44 @@ services:
         class: Oro\Bundle\PricingBundle\Api\Processor\CustomerPrice\LoadCustomerPrices
         arguments:
             - '@oro_pricing.api.customer_price_repository'
-            - '@oro_currency.config.currency'
-            - '@oro_pricing.model.product_price_scope_criteria_factory'
-            - '@oro_api.doctrine_helper'
         tags:
             - { name: oro.api.processor, action: get_list, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Api\Model\CustomerPrice }
+
+    oro_pricing.api.expand_price_associated_entities:
+        class: Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\ExpandAssociatedEntities
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', collection: true, class: Oro\Bundle\PricingBundle\Api\Model\CustomerPrice, priority: 100 }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', collection: true, class: Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice, priority: 100 }
+
+    oro_pricing.api.product_kit_price_repository:
+        class: Oro\Bundle\PricingBundle\Api\Repository\ProductKitPriceRepository
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@security.authorization_checker'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_customer.provider.customer_user_relations_provider'
+            - '@oro_pricing.product_price_criteria_factory'
+            - '@oro_pricing.provider.product_price'
+            - '@oro_api.doctrine_helper'
+
+    oro_pricing.api.add_kit_item_filters:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductKitPrice\AddKitItemFilters
+        tags:
+            - { name: oro.api.processor, action: get_list, group: initialize, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice, priority: -200 }
+
+    oro_pricing.api.handle_product_kit_price_filters:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductKitPrice\HandleProductKitPriceFilters
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: normalize_input, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice, priority: -120 }
+
+    oro_pricing.api.load_product_kit_prices:
+        class: Oro\Bundle\PricingBundle\Api\Processor\ProductKitPrice\LoadProductKitPrices
+        arguments:
+            - '@oro_pricing.api.product_kit_price_repository'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: '!frontend', class: Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice }

@@ -27,6 +27,7 @@ use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityConfigBundle\Entity\Repository\AttributeFamilyRepository;
 use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterTypeInterface;
@@ -102,6 +103,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendProductGridEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->attributeManager = $this->createMock(AttributeManager::class);
@@ -244,7 +246,7 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             'type' => 'enum'
         ]);
         $enumAttribute->setEntity(new EntityConfigModel(Product::class))
-            ->fromArray('extend', ['target_entity' => TestEnumValue::class]);
+            ->fromArray('enum', ['enum_code' => 'internal_status']);
         $enumSearchAttributeType = new SearchableType\EnumSearchableAttributeType(new Type\EnumAttributeType());
 
         $decimalAttribute = $this->getEntity(FieldConfigModel::class, [
@@ -262,7 +264,8 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
             'fieldName' => 'internalStatus',
             'type' => 'multiEnum'
         ]);
-        $multiEnumAttribute->setEntity(new EntityConfigModel(Product::class));
+        $multiEnumAttribute->setEntity(new EntityConfigModel(Product::class))
+            ->fromArray('enum', ['enum_code' => 'internal_status']);
         $multiEnumSearchAttributeType = new SearchableType\MultiEnumSearchableAttributeType(
             new Type\MultiEnumAttributeType()
         );
@@ -388,8 +391,9 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => TestEnumValue::class,
+                                'class' => EnumOption::class,
                                 'field_options' => ['type' => 'enum'],
+                                'enum_code' => 'internal_status'
                             ]
                         ]
                     ],
@@ -455,8 +459,9 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => TestEnumValue::class,
+                                'class' => EnumOption::class,
                                 'field_options' => ['type' => 'enum'],
+                                'enum_code' => 'internal_status'
                             ]
                         ]
                     ],
@@ -545,8 +550,9 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => TestEnumValue::class,
-                                'field_options' => ['type' => 'multiEnum']
+                                'class' => EnumOption::class,
+                                'field_options' => ['type' => 'multiEnum'],
+                                'enum_code' => 'internal_status'
                             ]
                         ]
                     ],
@@ -570,8 +576,9 @@ class FrontendProductGridEventListenerTest extends \PHPUnit\Framework\TestCase
                                 'data_name' => Query::TYPE_INTEGER . '.internalStatus_enum.' . EnumIdPlaceholder::NAME,
                                 'force_like' => true,
                                 'label' => self::LABEL,
-                                'class' => null,
-                                'field_options' => ['type' => 'multiEnum']
+                                'class' => EnumOption::class,
+                                'field_options' => ['type' => 'multiEnum'],
+                                'enum_code' => 'internal_status'
                             ]
                         ]
                     ],

@@ -15,6 +15,7 @@ class CategoryListenerTest extends WebTestCase
     private EntityManagerInterface $entityManager;
     private Category $rootCategory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

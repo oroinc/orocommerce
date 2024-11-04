@@ -41,9 +41,7 @@ class ImportExportResultListenerTest extends \PHPUnit\Framework\TestCase
     /** @var MessageProducerInterface */
     private $producer;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

@@ -57,9 +57,7 @@ class FrontendCouponHandler extends AbstractCouponHandler
         $this->skippedFilters[$filterClass] = true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function handle(Request $request)
     {
         $coupon = $this->getCouponForValidation($request);
@@ -84,9 +82,7 @@ class FrontendCouponHandler extends AbstractCouponHandler
         return new JsonResponse(['success' => empty($errors), 'errors' => $errors]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCouponForValidation(Request $request)
     {
         $couponCode = $request->request->get('couponCode');

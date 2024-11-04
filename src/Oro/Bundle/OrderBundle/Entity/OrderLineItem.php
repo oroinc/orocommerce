@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\OrderBy;
 use Extend\Entity\Autocomplete\OroOrderBundle_Entity_OrderLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -53,6 +54,7 @@ class OrderLineItem implements
     ProductLineItemsHolderAwareInterface,
     ExtendEntityInterface
 {
+    use DatesAwareTrait;
     use ExtendEntityTrait;
 
     #[ORM\Id]
@@ -174,6 +176,7 @@ class OrderLineItem implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->productSku;
@@ -196,6 +199,7 @@ class OrderLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getOrder(): ?Order
     {
         return $this->order;
@@ -218,9 +222,7 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -229,6 +231,7 @@ class OrderLineItem implements
     /**
      * @return Product
      */
+    #[\Override]
     public function getParentProduct()
     {
         return $this->parentProduct;
@@ -258,9 +261,7 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->productSku;
@@ -340,6 +341,7 @@ class OrderLineItem implements
      *
      * @return float
      */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -362,9 +364,7 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->productUnit;
@@ -383,9 +383,7 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->productUnitCode;
@@ -411,6 +409,7 @@ class OrderLineItem implements
      *
      * @return Price|null
      */
+    #[\Override]
     public function getPrice()
     {
         return $this->price;
@@ -434,6 +433,7 @@ class OrderLineItem implements
      *
      * @return int
      */
+    #[\Override]
     public function getPriceType()
     {
         return $this->priceType;
@@ -576,9 +576,7 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingCost(): ?Price
     {
         $amount = $this->shippingEstimateAmount;
@@ -614,6 +612,19 @@ class OrderLineItem implements
         $this->updateItemInformation();
     }
 
+    #[ORM\PrePersist]
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = clone $this->createdAt;
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+    }
+
     public function updatePrice()
     {
         $this->value = $this->price ? $this->price->getValue() : null;
@@ -639,22 +650,19 @@ class OrderLineItem implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
     }
 
+    #[\Override]
     public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
     {
         return $this->order;
@@ -663,6 +671,7 @@ class OrderLineItem implements
     /**
      * @return Collection<OrderProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         return $this->kitItemLineItems;
@@ -698,6 +707,7 @@ class OrderLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->checksum;

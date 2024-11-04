@@ -81,9 +81,7 @@ class CallbackController extends AbstractController
         return $this->container->get(CallbackHandler::class)->handle($event);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

@@ -37,6 +37,7 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerUserProvider */
     private $customerUserProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

@@ -147,9 +147,7 @@ class UrlDataStorage implements \JsonSerializable
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return $this->data;

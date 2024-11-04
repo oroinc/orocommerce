@@ -9,6 +9,7 @@ class CallbackReturnEventTest extends AbstractCallbackEventTest
     /**
      * @return CallbackReturnEvent
      */
+    #[\Override]
     protected function getEvent()
     {
         return new CallbackReturnEvent();

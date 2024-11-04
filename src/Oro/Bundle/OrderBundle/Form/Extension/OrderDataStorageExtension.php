@@ -15,9 +15,7 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
  */
 class OrderDataStorageExtension extends AbstractProductDataStorageExtension
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function addItem(Product $product, object $entity, array $itemData): void
     {
         /** @var Order $entity */
@@ -43,17 +41,13 @@ class OrderDataStorageExtension extends AbstractProductDataStorageExtension
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEntityClass(): string
     {
         return Order::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [OrderType::class];

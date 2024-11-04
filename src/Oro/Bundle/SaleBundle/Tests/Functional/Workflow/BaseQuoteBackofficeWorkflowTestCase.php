@@ -23,6 +23,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     protected WorkflowManager $systemManager;
     protected Quote $quote;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -193,8 +194,8 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
     protected function assertStatuses(string $internalStatus, string $customerStatus): void
     {
         $this->refreshQuoteEntity();
-        $this->assertEquals($internalStatus, $this->quote->getInternalStatus()->getId());
-        $this->assertEquals($customerStatus, $this->quote->getCustomerStatus()->getId());
+        $this->assertEquals($internalStatus, $this->quote->getInternalStatus()->getInternalId());
+        $this->assertEquals($customerStatus, $this->quote->getCustomerStatus()->getInternalId());
     }
 
     protected function assertBackofficeTransition(

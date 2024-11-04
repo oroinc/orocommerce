@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -15,10 +16,12 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganizatio
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     const ORDER_1 = 'simple_order';
     const ORDER_2 = 'simple_order2';
     const ORDER_3 = 'simple_order3';
@@ -43,6 +46,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+            'shippingStatus' => 'not_shipped',
         ],
         self::ORDER_2 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -87,7 +91,8 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'subtotal' => self::SUBTOTAL,
             'total' => self::TOTAL,
             'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
-            'external' => false
+            'external' => false,
+            'internalStatus' => 'closed'
         ],
         self::ORDER_6 => [
             'user' => LoadOrderUsers::ORDER_USER_1,
@@ -116,27 +121,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ],
     ];
 
-    /**
-     * @var ContainerInterface
-     */
-    protected $container;
+    private ?Website $defaultWebsite = null;
 
-    /**
-     * @var Website
-     */
-    protected $defaultWebsite;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -148,9 +135,7 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->orders as $name => $order) {
@@ -218,15 +203,20 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
 
         if (isset($orderData['internalStatus'])) {
             $order->setInternalStatus(
-                $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-                    ->find($orderData['internalStatus'])
+                $manager->getRepository(EnumOption::class)
+                    ->find(ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $orderData['internalStatus']))
             );
         }
-
         if (isset($orderData['status'])) {
             $order->setStatus(
-                $manager->getRepository(ExtendHelper::buildEnumValueClassName(Order::STATUS_CODE))
-                    ->find($orderData['status'])
+                $manager->getRepository(EnumOption::class)
+                    ->find(ExtendHelper::buildEnumOptionId(Order::STATUS_CODE, $orderData['status']))
+            );
+        }
+        if (isset($orderData['shippingStatus'])) {
+            $order->setShippingStatus(
+                $manager->getRepository(EnumOption::class)
+                    ->find(ExtendHelper::buildEnumOptionId(Order::SHIPPING_STATUS_CODE, $orderData['shippingStatus']))
             );
         }
 
@@ -249,12 +239,9 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         return $order;
     }
 
-    /**
-     * @return Website
-     */
-    protected function getDefaultWebsite()
+    protected function getDefaultWebsite(): Website
     {
-        if (!$this->defaultWebsite) {
+        if (null === $this->defaultWebsite) {
             $this->defaultWebsite = $this->container->get('doctrine')
                 ->getRepository(Website::class)
                 ->findOneBy(['default' => true]);

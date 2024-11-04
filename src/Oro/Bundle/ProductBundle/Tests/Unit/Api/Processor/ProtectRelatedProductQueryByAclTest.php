@@ -16,6 +16,7 @@ class ProtectRelatedProductQueryByAclTest extends GetListProcessorTestCase
     /** @var ProtectRelatedProductQueryByAcl */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

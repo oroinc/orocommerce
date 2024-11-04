@@ -18,6 +18,7 @@ class PriceListQueryConverterExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListQueryConverterExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->extension = new PriceListQueryConverterExtension();

@@ -18,9 +18,7 @@ class ReorganizePageSlugs implements Migration, DatabasePlatformAwareInterface, 
     use DatabasePlatformAwareTrait;
     use SlugExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->slugExtension->addLocalizedSlugPrototypes(

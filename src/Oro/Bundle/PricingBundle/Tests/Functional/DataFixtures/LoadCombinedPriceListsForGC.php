@@ -213,9 +213,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -226,9 +224,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         parent::load($manager);
@@ -243,6 +239,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         $manager->flush();
     }
 
+    #[\Override]
     protected function loadCombinedPriceListToCustomer(
         ObjectManager $manager,
         array $priceListData,
@@ -267,6 +264,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         }
     }
 
+    #[\Override]
     protected function loadCombinedPriceListToCustomerGroup(
         ObjectManager $manager,
         array $priceListData,
@@ -291,6 +289,7 @@ class LoadCombinedPriceListsForGC extends AbstractCombinedPriceListsFixture impl
         }
     }
 
+    #[\Override]
     protected function loadCombinedPriceListToWebsite(
         ObjectManager $manager,
         array $priceListData,

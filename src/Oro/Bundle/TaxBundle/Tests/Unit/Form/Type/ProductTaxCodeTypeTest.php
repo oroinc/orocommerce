@@ -8,17 +8,13 @@ use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeType;
 
 class ProductTaxCodeTypeTest extends AbstractTaxCodeTypeTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createTaxCodeType(): AbstractTaxCodeType
     {
         return new ProductTaxCodeType();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getDataClass(): string
     {
         return ProductTaxCode::class;

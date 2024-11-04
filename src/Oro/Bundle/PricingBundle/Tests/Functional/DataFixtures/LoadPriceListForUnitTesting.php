@@ -22,6 +22,7 @@ class LoadPriceListForUnitTesting extends AbstractFixture implements DependentFi
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -31,6 +32,7 @@ class LoadPriceListForUnitTesting extends AbstractFixture implements DependentFi
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $pl1 = $this->createPriceList('pricelist.without_rule', $manager);

@@ -10,9 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
  */
 class ProductPriceEntityNameProvider implements EntityNameProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof ProductPrice) {
@@ -30,9 +28,7 @@ class ProductPriceEntityNameProvider implements EntityNameProviderInterface
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, ProductPrice::class, true)) {

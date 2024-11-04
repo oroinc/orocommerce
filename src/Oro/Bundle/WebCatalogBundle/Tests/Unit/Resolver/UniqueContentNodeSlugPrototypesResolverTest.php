@@ -24,6 +24,7 @@ class UniqueContentNodeSlugPrototypesResolverTest extends \PHPUnit\Framework\Tes
      */
     private $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

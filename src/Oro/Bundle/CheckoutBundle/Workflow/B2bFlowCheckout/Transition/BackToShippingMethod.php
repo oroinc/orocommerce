@@ -21,11 +21,13 @@ class BackToShippingMethod extends ClearPaymentMethodAndRecalculateState
     ) {
     }
 
+    #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
         return $this->baseTransition->isPreConditionAllowed($workflowItem, $errors);
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         $this->baseTransition->execute($workflowItem);

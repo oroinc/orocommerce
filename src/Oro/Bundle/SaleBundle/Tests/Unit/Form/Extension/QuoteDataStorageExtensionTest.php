@@ -5,6 +5,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
@@ -22,12 +24,16 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Form\Extension\QuoteDataStorageExtension;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
+use Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
 class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     private Quote $entity;
+    private QuoteProductPricesProvider|MockObject $quoteProductPricesProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new Quote();
@@ -35,13 +41,15 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         parent::setUp();
 
         $lineItemChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);
+        $this->quoteProductPricesProvider = $this->createMock(QuoteProductPricesProvider::class);
+
         $lineItemChecksumGenerator
             ->method('getChecksum')
             ->willReturnCallback(
                 static function (BaseQuoteProductItem $quoteProductItem) {
                     return ($quoteProductItem->getProduct()?->getId()
-                        . '|' . $quoteProductItem->getProductUnit()?->getCode()
-                        . '|' . $quoteProductItem->getQuantity());
+                        .'|'.$quoteProductItem->getProductUnit()?->getCode()
+                        .'|'.$quoteProductItem->getQuantity());
                 }
             );
 
@@ -51,7 +59,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             PropertyAccess::createPropertyAccessor(),
             $this->doctrine,
             $lineItemChecksumGenerator,
-            $this->logger
+            $this->logger,
+            $this->quoteProductPricesProvider
         );
 
         $this->initEntityMetadata([
@@ -79,6 +88,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         ]);
     }
 
+    #[\Override]
     protected function getTargetEntity(): Quote
     {
         return $this->entity;
@@ -176,9 +186,10 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
     }
 
     /**
+     * @dataProvider pricesDataProvider
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testBuildFormWithProductKit(): void
+    public function testBuildFormWithProductKit(array $priceData, ?Price $expectedPrice): void
     {
         $requestId = 1;
         $requestProductItemId = 2;
@@ -188,6 +199,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $customerId = 3;
         $customerUserId = 4;
         $price = Price::create(5, 'USD');
+        $priceActual = Price::create(7, 'USD');
         $quantity = 6;
         $commentCustomer = 'comment 7';
 
@@ -197,9 +209,13 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $productUnit = $this->getProductUnit($productUnitCode);
         $productUnit->setDefaultPrecision(0);
         $product = $this->getProduct($productSku, $productUnit);
+        $product->setId($productId);
+        $product->setType(Product::TYPE_KIT);
 
         $customer = $this->getEntity(Customer::class, $customerId);
         $customerUser = $this->getEntity(CustomerUser::class, $customerUserId);
+
+        $this->assertPricesProviderCall($priceData, $product);
 
         $kitItemLineItem1Quantity = 2;
         $kitItemLineItem1SortOrder = 1;
@@ -306,7 +322,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         self::assertEquals($quantity, $quoteProductRequest->getQuantity());
         self::assertEquals($price, $quoteProductRequest->getPrice());
 
-        self::assertEquals('|item|6', $quoteProductRequest->getChecksum());
+        self::assertEquals('123|item|6', $quoteProductRequest->getChecksum());
 
         /* @var QuoteProductOffer $quoteProductOffer */
         $quoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
@@ -315,9 +331,9 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         self::assertEquals($productUnit->getCode(), $quoteProductOffer->getProductUnitCode());
 
         self::assertEquals($quantity, $quoteProductOffer->getQuantity());
-        self::assertEquals($price, $quoteProductOffer->getPrice());
+        self::assertEquals($expectedPrice, $quoteProductOffer->getPrice());
 
-        self::assertEquals('|item|6', $quoteProductRequest->getChecksum());
+        self::assertEquals('123|item|6', $quoteProductRequest->getChecksum());
 
         self::assertCount(1, $quoteProduct->getKitItemLineItems());
         /** @var QuoteProductKitItemLineItem $quoteProductKitItemLineItem */
@@ -339,6 +355,100 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         );
         self::assertEquals($kitItemLineItem1Quantity, $quoteProductKitItemLineItem->getQuantity());
         self::assertEquals($kitItemLineItem1SortOrder, $quoteProductKitItemLineItem->getSortOrder());
+    }
+
+    public function pricesDataProvider(): array
+    {
+        return [
+            'one price for kit product' => [
+                'pricesData' => [
+                    123 => [
+                        '123|item|6' => [
+                            [
+                                'qty' => 1,
+                                'unit' => 'item',
+                                'price' => Price::create(7, 'USD'),
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedPrice' => Price::create(7, 'USD'),
+            ],
+            'two prices for kit product' => [
+                'pricesData' => [
+                    123 => [
+                        '123|item|6' => [
+                            [
+                                'qty' => 1,
+                                'unit' => 'item',
+                                'price' => Price::create(7, 'USD'),
+                            ],
+                            [
+                                'qty' => 5,
+                                'unit' => 'item',
+                                'price' => Price::create(3, 'USD'),
+                            ],
+                        ],
+                    ],
+                ],
+                'expectedPrice' => Price::create(3, 'USD'),
+            ],
+            'all prices with not requested unit' => [
+                'pricesData' => [
+                    123 => [
+                        '123|item|6' => [
+                            [
+                                'qty' => 1,
+                                'unit' => 'set',
+                                'price' => Price::create(7, 'USD'),
+                            ],
+                        ],
+                    ],
+                ],
+                null,
+            ],
+            'no prices for requested configuration' => [
+                'pricesData' => [
+                    123 => [
+                        '123|set|6' => [
+                            [
+                                'qty' => 1,
+                                'unit' => 'item',
+                                'price' => Price::create(7, 'USD'),
+                            ],
+                        ],
+                    ],
+                ],
+                null,
+            ],
+            'no prices for requested product' => [
+                'pricesData' => [],
+                null,
+            ],
+        ];
+    }
+
+    private function assertPricesProviderCall(array $pricesData, Product $product): void
+    {
+        $tierPrices = [];
+        foreach ($pricesData as $productId => $byChecksum) {
+            foreach ($byChecksum as $checksum => $prices) {
+                foreach ($prices as $priceRow) {
+                    $tierPrices[$productId][$checksum][] = new ProductPriceDTO(
+                        $product,
+                        $priceRow['price'],
+                        $priceRow['qty'],
+                        (new ProductUnit())->setCode($priceRow['unit'])
+                    );
+                }
+            }
+        }
+
+        $this->quoteProductPricesProvider
+            ->expects(self::once())
+            ->method('getProductLineItemsTierPrices')
+            ->with($this->entity)
+            ->willReturn($tierPrices);
     }
 
     public function testGetExtendedTypes(): void

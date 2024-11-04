@@ -17,6 +17,7 @@ class StorefrontMenuContentNodesProviderTest extends \PHPUnit\Framework\TestCase
 
     private StorefrontMenuContentNodesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestWebContentScopeProvider = $this->createMock(RequestWebContentScopeProvider::class);

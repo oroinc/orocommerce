@@ -30,57 +30,43 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
      */
     protected $data = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCustomer(): ?Customer
     {
         return $this->customer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setCustomer(Customer $customer = null)
     {
         $this->customer = $customer;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWebsite(): ?Website
     {
         return $this->website;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setWebsite(Website $website = null)
     {
         $this->website = $website;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getContext()
     {
         return $this->context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContext($context)
     {
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData(string $key)
     {
         if (\array_key_exists($key, $this->data)) {
@@ -90,17 +76,13 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setData(string $key, $value)
     {
         $this->data[$key] = $value;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function unsetData(string $key)
     {
         unset($this->data[$key]);

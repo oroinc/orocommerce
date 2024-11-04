@@ -16,6 +16,7 @@ class ShippingOriginModelFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var ShippingOriginModelFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

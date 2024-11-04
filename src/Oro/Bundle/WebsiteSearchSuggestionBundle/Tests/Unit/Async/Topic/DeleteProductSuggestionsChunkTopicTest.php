@@ -14,6 +14,7 @@ final class DeleteProductSuggestionsChunkTopicTest extends \PHPUnit\Framework\Te
 {
     private OptionsResolver $optionsResolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->optionsResolver = new OptionsResolver();

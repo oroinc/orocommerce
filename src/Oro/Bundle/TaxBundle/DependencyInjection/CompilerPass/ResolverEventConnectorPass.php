@@ -17,9 +17,7 @@ class ResolverEventConnectorPass implements CompilerPassInterface
     const CONNECTOR_CLASS = 'oro_tax.event.resolver_event_connector.common_class';
     const CONNECTOR_SERVICE_NAME_SUFFIX = 'event.resolver_event_connector';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $connectorClass = $this->getConnectorClass($container);

@@ -14,6 +14,7 @@ final class ProductPageTemplateBuilderTest extends TestCase
 
     private ProductPageTemplateBuilder $productPageTemplateBuilder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formBuilder = $this->createMock(FormBuilderInterface::class);

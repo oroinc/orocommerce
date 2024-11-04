@@ -23,6 +23,7 @@ class ShippingPromotionExecutorTest extends FrontendWebTestCase
      */
     private $executor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

@@ -13,9 +13,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class EntityExtendFieldTypePass implements CompilerPassInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container): void
     {
         $this->addFieldType($container);

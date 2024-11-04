@@ -9,17 +9,13 @@ class CouponCodeLength extends Constraint
     /** @var string */
     public $message = 'oro.promotion.coupon.validators.max_possible_code_length_exceeded';
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }
 
-    /**
-     * @inheritDoc
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return CouponCodeLengthValidator::ALIAS;

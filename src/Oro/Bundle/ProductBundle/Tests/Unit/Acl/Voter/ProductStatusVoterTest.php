@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Acl\Voter;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Request\FrontendHelper;
 use Oro\Bundle\ProductBundle\Acl\Voter\ProductStatusVoter;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\Authorization\Voter\VoterInterface;
 
@@ -22,6 +21,7 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
     /** @var ProductStatusVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -32,9 +32,9 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @dataProvider unsupportedAttributesDataProvider
+     * @dataProvider unsupportedAttributeDataProvider
      */
-    public function testAbstainOnUnsupportedAttribute(array $attributes)
+    public function testAbstainOnUnsupportedAttribute(string $attribute): void
     {
         $product = new Product();
 
@@ -50,14 +50,14 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             VoterInterface::ACCESS_ABSTAIN,
-            $this->voter->vote($token, $product, $attributes)
+            $this->voter->vote($token, $product, [$attribute])
         );
     }
 
     /**
-     * @dataProvider supportedAttributesDataProvider
+     * @dataProvider supportedAttributeDataProvider
      */
-    public function testAbstainOnUnsupportedClass(array $attributes)
+    public function testAbstainOnUnsupportedClass(string $attribute): void
     {
         $object = new \stdClass();
 
@@ -73,14 +73,14 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             VoterInterface::ACCESS_ABSTAIN,
-            $this->voter->vote($token, $object, $attributes)
+            $this->voter->vote($token, $object, [$attribute])
         );
     }
 
     /**
-     * @dataProvider supportedAttributesDataProvider
+     * @dataProvider supportedAttributeDataProvider
      */
-    public function testAbstainWithNonFrontendRequest(array $attributes)
+    public function testAbstainForNotFrontendRequest(string $attribute): void
     {
         $object = new Product();
 
@@ -88,7 +88,7 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
             ->method('getSingleEntityIdentifier');
 
         $this->doctrineHelper->expects($this->never())
-            ->method('getEntityRepository');
+            ->method('getEntityManagerForClass');
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
@@ -97,34 +97,14 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             VoterInterface::ACCESS_ABSTAIN,
-            $this->voter->vote($token, $object, $attributes)
+            $this->voter->vote($token, $object, [$attribute])
         );
     }
 
     /**
-     * @dataProvider supportedAttributesDataProvider
+     * @dataProvider supportedAttributeDataProvider
      */
-    public function testAbstainWithoutFrontendHelper(array $attributes)
-    {
-        $object = new Product();
-
-        $this->doctrineHelper->expects($this->never())
-            ->method('getSingleEntityIdentifier');
-
-        $this->doctrineHelper->expects($this->never())
-            ->method('getEntityRepository');
-
-        $token = $this->createMock(TokenInterface::class);
-        $this->assertEquals(
-            VoterInterface::ACCESS_ABSTAIN,
-            $this->voter->vote($token, $object, $attributes)
-        );
-    }
-
-    /**
-     * @dataProvider supportedAttributesDataProvider
-     */
-    public function testGrantedOnExistingEnabledProduct(array $attributes)
+    public function testGrantedOnExistingEnabledProduct(string $attribute): void
     {
         $product = new Product();
         $product->setStatus(Product::STATUS_ENABLED);
@@ -134,17 +114,15 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
             ->with($product, false)
             ->willReturn(1);
 
-        $repository = $this->createMock(ProductRepository::class);
-
-        $repository->expects($this->once())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
             ->method('find')
-            ->with(1)
+            ->with(Product::class, 1)
             ->willReturn($product);
-
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+            ->method('getEntityManagerForClass')
             ->with(Product::class)
-            ->willReturn($repository);
+            ->willReturn($em);
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
@@ -153,14 +131,14 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             VoterInterface::ACCESS_GRANTED,
-            $this->voter->vote($token, $product, $attributes)
+            $this->voter->vote($token, $product, [$attribute])
         );
     }
 
     /**
-     * @dataProvider supportedAttributesDataProvider
+     * @dataProvider supportedAttributeDataProvider
      */
-    public function testDeniedOnExistingDisabledProduct(array $attributes)
+    public function testDeniedOnExistingDisabledProduct(string $attribute): void
     {
         $product = new Product();
         $product->setStatus(Product::STATUS_DISABLED);
@@ -170,17 +148,15 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
             ->with($product, false)
             ->willReturn(2);
 
-        $repository = $this->createMock(ProductRepository::class);
-
-        $repository->expects($this->once())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
             ->method('find')
-            ->with(2)
+            ->with(Product::class, 2)
             ->willReturn($product);
-
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+            ->method('getEntityManagerForClass')
             ->with(Product::class)
-            ->willReturn($repository);
+            ->willReturn($em);
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
@@ -189,35 +165,32 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             VoterInterface::ACCESS_DENIED,
-            $this->voter->vote($token, $product, $attributes)
+            $this->voter->vote($token, $product, [$attribute])
         );
     }
 
     /**
-     * @dataProvider supportedAttributesDataProvider
+     * @dataProvider supportedAttributeDataProvider
      */
-    public function testAbstainOnNotFoundProduct(array $attributes)
+    public function testAbstainOnNotFoundProduct(string $attribute): void
     {
         $product = new Product();
-        ReflectionUtil::setId($product, 9999);
         $product->setStatus(Product::STATUS_ENABLED);
 
         $this->doctrineHelper->expects($this->once())
             ->method('getSingleEntityIdentifier')
             ->with($product, false)
-            ->willReturn(9999);
+            ->willReturn(1);
 
-        $repository = $this->createMock(ProductRepository::class);
-
-        $repository->expects($this->once())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->once())
             ->method('find')
-            ->with(9999)
+            ->with(Product::class, 1)
             ->willReturn(null);
-
         $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepository')
+            ->method('getEntityManagerForClass')
             ->with(Product::class)
-            ->willReturn($repository);
+            ->willReturn($em);
 
         $this->frontendHelper->expects($this->once())
             ->method('isFrontendRequest')
@@ -226,24 +199,24 @@ class ProductStatusVoterTest extends \PHPUnit\Framework\TestCase
         $token = $this->createMock(TokenInterface::class);
         $this->assertEquals(
             VoterInterface::ACCESS_ABSTAIN,
-            $this->voter->vote($token, $product, $attributes)
+            $this->voter->vote($token, $product, [$attribute])
         );
     }
 
-    public function supportedAttributesDataProvider(): array
+    public function supportedAttributeDataProvider(): array
     {
         return [
-            [['VIEW']],
+            ['VIEW']
         ];
     }
 
-    public function unsupportedAttributesDataProvider(): array
+    public function unsupportedAttributeDataProvider(): array
     {
         return [
-            [['EDIT']],
-            [['DELETE']],
-            [['CREATE']],
-            [['ASSIGN']],
+            ['EDIT'],
+            ['DELETE'],
+            ['CREATE'],
+            ['ASSIGN']
         ];
     }
 }

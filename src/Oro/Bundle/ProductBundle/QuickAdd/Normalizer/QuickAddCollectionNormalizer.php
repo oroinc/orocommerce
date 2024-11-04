@@ -19,6 +19,7 @@ class QuickAddCollectionNormalizer implements QuickAddCollectionNormalizerInterf
         $this->innerNormalizers = $innerNormalizers;
     }
 
+    #[\Override]
     public function normalize(QuickAddRowCollection $quickAddRowCollection): array
     {
         $result = ['errors' => [], 'items' => []];

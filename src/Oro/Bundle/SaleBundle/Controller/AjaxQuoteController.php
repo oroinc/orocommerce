@@ -147,9 +147,6 @@ class AjaxQuoteController extends AbstractController
         return $this->container->get(PaymentTermProvider::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getQuoteFormTypeName()
     {
         return QuoteType::class;
@@ -169,9 +166,7 @@ class AjaxQuoteController extends AbstractController
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

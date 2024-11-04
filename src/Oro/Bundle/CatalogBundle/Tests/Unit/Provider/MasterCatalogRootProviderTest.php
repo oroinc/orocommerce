@@ -22,6 +22,7 @@ class MasterCatalogRootProviderTest extends \PHPUnit\Framework\TestCase
     /** @var MasterCatalogRootProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->categoryRepository = $this->createMock(CategoryRepository::class);

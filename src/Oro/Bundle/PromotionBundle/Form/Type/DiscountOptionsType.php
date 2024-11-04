@@ -27,9 +27,7 @@ class DiscountOptionsType extends AbstractType
     const PERCENT_DISCOUNT_VALUE_FIELD = 'percent_discount_value';
     const TYPE_FIELD_CHOICES = [DiscountInterface::TYPE_AMOUNT, DiscountInterface::TYPE_PERCENT];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -52,9 +50,7 @@ class DiscountOptionsType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $selectorPattern = '[name*="[%s]"]';
@@ -78,9 +74,7 @@ class DiscountOptionsType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['attr']['data-page-component-module'] = $options['page_component'];
@@ -138,17 +132,12 @@ class DiscountOptionsType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();

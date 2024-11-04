@@ -9,9 +9,7 @@ use Oro\Bundle\ShippingBundle\Method\Validator\Result\ParameterBag\ParameterBagS
 class ParameterBagCommonShippingMethodValidatorResultFactory implements
     Factory\Common\CommonShippingMethodValidatorResultFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createSuccessResult()
     {
         return new ParameterBagShippingMethodValidatorResult(
@@ -22,9 +20,7 @@ class ParameterBagCommonShippingMethodValidatorResultFactory implements
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createErrorResult(
         Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $errors
     ) {

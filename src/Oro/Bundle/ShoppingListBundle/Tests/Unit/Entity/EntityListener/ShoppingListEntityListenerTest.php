@@ -21,6 +21,7 @@ class ShoppingListEntityListenerTest extends \PHPUnit\Framework\TestCase
     private UserCurrencyManager $userCurrencyManager;
     private ShoppingListEntityListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->defaultUserProvider = $this->createMock(DefaultUserProvider::class);

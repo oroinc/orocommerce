@@ -6,7 +6,7 @@ class User extends AbstractOption
 {
     const USER = 'USER';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

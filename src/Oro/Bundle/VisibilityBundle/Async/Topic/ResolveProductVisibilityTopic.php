@@ -11,11 +11,13 @@ class ResolveProductVisibilityTopic extends AbstractResolveVisibilityTopic
 {
     public const NAME = 'oro_visibility.visibility.resolve_product_visibility';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Resolve visibility for a product.';

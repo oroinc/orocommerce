@@ -21,13 +21,13 @@ class MenuCategoriesProvider implements MenuCategoriesProviderInterface
     }
 
     /**
-     * {@inheritdoc}
      *
      * @param array $context
      *  [
      *      'tree_depth' => int, // Max depth to expand categories children. -1 stands for unlimited.
      *  ]
      */
+    #[\Override]
     public function getCategories(
         Category $category,
         ?UserInterface $user = null,

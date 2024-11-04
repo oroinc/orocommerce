@@ -11,6 +11,7 @@ use Oro\Bundle\TaxBundle\Provider\TaxSubtotalProvider;
 
 class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,6 +24,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         );
     }
 
+    #[\Override]
     public function testGetSubtotal(): void
     {
         $this->taxSettingsProvider->expects($this->once())
@@ -61,6 +63,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         $this->assertEquals(Subtotal::OPERATION_IGNORE, $subtotal->getOperation());
     }
 
+    #[\Override]
     public function testGetCachedSubtotal(): void
     {
         $this->taxSettingsProvider->expects($this->once())
@@ -80,6 +83,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         $this->assertEquals(Subtotal::OPERATION_ADD, $subtotal->getOperation());
     }
 
+    #[\Override]
     protected function createTotalResultElement($amount, $currency): ResultElement
     {
         $total = new ResultElement();
@@ -90,6 +94,7 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         return $total;
     }
 
+    #[\Override]
     protected function createTaxResult(ResultElement $total): Result
     {
         $tax = new Result();
@@ -98,21 +103,25 @@ class ShippingTaxSubtotalProviderTest extends TaxSubtotalProviderTest
         return $tax;
     }
 
+    #[\Override]
     protected function getLabel(): string
     {
         return 'Oro.tax.subtotals.shipping_' . TaxSubtotalProvider::TYPE;
     }
 
+    #[\Override]
     protected function getOrder(): int
     {
         return 420;
     }
 
+    #[\Override]
     protected function isVisible(): bool
     {
         return false;
     }
 
+    #[\Override]
     protected function isRemovable(): bool
     {
         return true;

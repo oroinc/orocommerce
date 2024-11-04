@@ -21,6 +21,7 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit\Framework\Test
     /** @var PriceListWithPriorityCollectionHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

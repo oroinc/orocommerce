@@ -30,6 +30,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         $this->lifetimeProvider = $lifetimeProvider;
     }
 
+    #[\Override]
     public function contains(
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
@@ -38,6 +39,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         return $this->cacheProvider->hasItem($this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate));
     }
 
+    #[\Override]
     public function fetch(
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
@@ -49,6 +51,7 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 
+    #[\Override]
     public function delete(
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,
@@ -57,11 +60,13 @@ class TimeInTransitCacheProvider implements TimeInTransitCacheProviderInterface
         return $this->cacheProvider->deleteItem($this->composeCacheKey($shipFromAddress, $shipToAddress, $pickupDate));
     }
 
+    #[\Override]
     public function deleteAll(): bool
     {
         return $this->cacheProvider->clear();
     }
 
+    #[\Override]
     public function save(
         AddressInterface $shipFromAddress,
         AddressInterface $shipToAddress,

@@ -27,9 +27,7 @@ class LoadProductBrandData extends AbstractFixture implements ContainerAwareInte
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -38,9 +36,7 @@ class LoadProductBrandData extends AbstractFixture implements ContainerAwareInte
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->productsToBrands as $brand => $products) {

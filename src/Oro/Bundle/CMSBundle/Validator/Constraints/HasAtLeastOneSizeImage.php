@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Constraint;
  */
 class HasAtLeastOneSizeImage extends Constraint
 {
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

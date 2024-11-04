@@ -17,6 +17,7 @@ class CouponRepositoryTest extends WebTestCase
 {
     private CouponRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

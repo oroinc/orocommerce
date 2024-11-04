@@ -24,6 +24,7 @@ class DatagridListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DatagridListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = $this->createMock(PaymentTermProvider::class);

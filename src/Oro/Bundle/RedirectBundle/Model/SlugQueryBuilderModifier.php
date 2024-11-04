@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
  */
 class SlugQueryBuilderModifier implements SlugQueryBuilderModifierInterface
 {
+    #[\Override]
     public function modify(QueryBuilder $qb): void
     {
     }

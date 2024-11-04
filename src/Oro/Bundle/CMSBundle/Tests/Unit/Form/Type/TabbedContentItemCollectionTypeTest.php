@@ -11,6 +11,7 @@ class TabbedContentItemCollectionTypeTest extends \PHPUnit\Framework\TestCase
 {
     private TabbedContentItemCollectionType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new TabbedContentItemCollectionType();

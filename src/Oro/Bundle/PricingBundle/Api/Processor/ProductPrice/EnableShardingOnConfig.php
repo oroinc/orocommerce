@@ -21,9 +21,7 @@ class EnableShardingOnConfig implements ProcessorInterface
         $this->shardManager = $shardManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

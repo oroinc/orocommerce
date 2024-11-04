@@ -16,17 +16,13 @@ use Oro\Bundle\SecurityBundle\AccessRule\Expr\Path;
  */
 class PriceAttributePriceListAccessRule implements AccessRuleInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(Criteria $criteria): bool
     {
         return $criteria->getOption(PriceAttributesProductFormExtension::PRODUCT_PRICE_ATTRIBUTES_PRICES, false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(Criteria $criteria): void
     {
         $criteria->andExpression(

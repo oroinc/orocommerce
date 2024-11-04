@@ -17,6 +17,7 @@ class BasicPaymentActionsDataProvider implements PaymentActionsDataProviderInter
     /**
      * @return string[]
      */
+    #[\Override]
     public function getPaymentActions()
     {
         return [

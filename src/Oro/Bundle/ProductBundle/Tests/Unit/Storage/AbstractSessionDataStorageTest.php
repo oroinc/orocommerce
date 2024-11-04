@@ -20,6 +20,7 @@ abstract class AbstractSessionDataStorageTest extends \PHPUnit\Framework\TestCas
 
     protected AbstractSessionDataStorage $storage;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = new RequestStack();

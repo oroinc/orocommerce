@@ -24,6 +24,7 @@ class CompositePaymentMethodProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CompositePaymentMethodProvider */
     private $compositeProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->methods = [

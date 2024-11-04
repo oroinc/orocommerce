@@ -17,6 +17,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
     /** @var ProductUnitsType */
     private $productUnitsType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnitsProvider = $this->createMock(ProductUnitsProvider::class);
@@ -32,9 +33,7 @@ class ProductUnitsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

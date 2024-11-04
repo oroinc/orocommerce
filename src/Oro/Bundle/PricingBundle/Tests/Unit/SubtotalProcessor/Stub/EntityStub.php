@@ -21,6 +21,7 @@ class EntityStub implements LineItemsAwareInterface, CurrencyAwareInterface
     /**
      * @return ArrayCollection
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->lineItems;
@@ -40,6 +41,7 @@ class EntityStub implements LineItemsAwareInterface, CurrencyAwareInterface
     /**
      * @return string
      */
+    #[\Override]
     public function getCurrency()
     {
         return $this->currency;
@@ -49,6 +51,7 @@ class EntityStub implements LineItemsAwareInterface, CurrencyAwareInterface
      * @param string $currency
      * @return $this
      */
+    #[\Override]
     public function setCurrency($currency)
     {
         $this->currency = $currency;

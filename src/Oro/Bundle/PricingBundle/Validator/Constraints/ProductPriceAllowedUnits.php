@@ -24,17 +24,13 @@ class ProductPriceAllowedUnits extends Constraint
      */
     public $notAllowedUnitMessage = 'oro.pricing.validators.product_price.not_allowed_unit.message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return 'oro_pricing_product_price_allowed_units_validator';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

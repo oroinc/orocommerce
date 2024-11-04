@@ -24,6 +24,7 @@ class GroupLineItemsDataProviderTest extends \PHPUnit\Framework\TestCase
     /** @var GroupLineItemsDataProvider */
     private $groupLineItemsDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->titleProvider = $this->createMock(LineItemGroupTitleProvider::class);

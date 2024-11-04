@@ -24,9 +24,7 @@ class OroCheckoutBundle implements
     use DatabasePlatformAwareTrait;
     use RenameExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPreQuery(new UpdateCheckoutWorkflowDataQuery());
@@ -129,8 +127,8 @@ class OroCheckoutBundle implements
      * Should be executed before:
      * @see \Oro\Bundle\CheckoutBundle\Migrations\Schema\v1_2\MigrateNotes
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function getOrder()
     {
         return 0;

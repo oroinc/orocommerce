@@ -24,6 +24,7 @@ class CategoryVisibleListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CategoryVisibleListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

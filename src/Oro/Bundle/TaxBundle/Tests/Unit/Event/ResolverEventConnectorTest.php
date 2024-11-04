@@ -16,6 +16,7 @@ class ResolverEventConnectorTest extends \PHPUnit\Framework\TestCase
     /** @var ResolverEventConnector */
     private $connector;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolver = $this->createMock(ResolverInterface::class);

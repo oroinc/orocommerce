@@ -49,6 +49,7 @@ class UserCurrencyManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CurrentCurrencyProviderInterface */
     private $currentCurrencyProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);

@@ -24,9 +24,7 @@ class SaveAddressType extends AbstractType
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return $this->isCreateAllowed(CustomerUserAddress::class) && $this->isCreateAllowed(CustomerAddress::class)
@@ -34,9 +32,7 @@ class SaveAddressType extends AbstractType
             : HiddenType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         if (!$this->isCreateAllowed(CustomerUserAddress::class) && !$this->isCreateAllowed(CustomerAddress::class)) {
@@ -46,17 +42,12 @@ class SaveAddressType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_save_address';

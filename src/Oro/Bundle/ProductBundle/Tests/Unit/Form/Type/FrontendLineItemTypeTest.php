@@ -22,6 +22,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
 
     private FrontendLineItemType $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new FrontendLineItemType();
@@ -29,9 +30,7 @@ class FrontendLineItemTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

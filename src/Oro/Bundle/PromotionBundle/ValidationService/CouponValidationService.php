@@ -30,9 +30,7 @@ class CouponValidationService implements CouponValidatorInterface
         return !$this->getViolations($coupon, $customerUser);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getViolationMessages(Coupon $coupon, object $entity): array
     {
         return $this->getViolations($coupon, $entity->getCustomerUser());

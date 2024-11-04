@@ -18,35 +18,29 @@ class PriceAttributeProductPriceFixture extends AbstractTemplateRepository imple
     const CURRENCY = 'USD';
     const PRICE = 10.89;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getData()
     {
         return $this->getEntityData('Example Product Price Attribute Price');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEntityClass()
     {
         return PriceAttributeProductPrice::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createEntity($key)
     {
         return new PriceAttributeProductPrice();
     }
 
     /**
-     * {@inheritDoc}
      *
      * @param PriceAttributeProductPrice $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity)
     {
         $product = new Product();

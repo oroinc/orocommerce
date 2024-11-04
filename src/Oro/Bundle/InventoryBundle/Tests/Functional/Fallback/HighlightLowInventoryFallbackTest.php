@@ -15,6 +15,7 @@ class HighlightLowInventoryFallbackTest extends InventoryFallbackTest
     /**
      * @dataProvider productCategorySystemFallbackProvider
      */
+    #[\Override]
     public function testProductCategorySystemFallback(
         mixed $systemValue,
         string $expectedProductValue,

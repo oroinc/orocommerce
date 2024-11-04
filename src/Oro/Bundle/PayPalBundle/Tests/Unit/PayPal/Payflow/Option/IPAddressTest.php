@@ -7,17 +7,13 @@ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class IPAddressTest extends AbstractOptionTest
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getOptions(): array
     {
         return [new IPAddress()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptionDataProvider(): array
     {
         return [

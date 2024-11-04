@@ -20,6 +20,7 @@ class SearchTermProviderTest extends TestCase
 
     private SearchTermRepository|MockObject $searchTermRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);

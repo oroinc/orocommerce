@@ -16,6 +16,7 @@ class DefaultVisibilityChangedListenerTest extends \PHPUnit\Framework\TestCase
     /** @var DefaultVisibilityChangedListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);

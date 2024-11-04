@@ -29,41 +29,31 @@ class ProductCollectionContentVariantType implements
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName(): string
     {
         return self::TYPE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTitle(): string
     {
         return 'oro.product.content_variant.product_collection.label';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFormType(): string
     {
         return ProductCollectionVariantType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isAllowed(): bool
     {
         return $this->authorizationChecker->isGranted('oro_product_view');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getRouteData(ContentVariantInterface $contentVariant): RouteData
     {
         return new RouteData(
@@ -75,25 +65,19 @@ class ProductCollectionContentVariantType implements
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApiResourceClassName(): string
     {
         return ProductCollection::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApiResourceIdentifierDqlExpression($alias)
     {
         return $alias . '.id';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getAttachedEntity(ContentVariantInterface $contentVariant)
     {
         return $contentVariant->getProductCollectionSegment();

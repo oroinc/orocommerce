@@ -20,6 +20,7 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendQuotePermissionVoter */
     private $voter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->token = $this->createMock(TokenInterface::class);
@@ -130,7 +131,7 @@ class FrontendQuotePermissionVoterTest extends \PHPUnit\Framework\TestCase
     private function getQuoteWithInternalStatus(string $status): Quote
     {
         $quote = new Quote();
-        $quote->setInternalStatus(new TestEnumValue($status, $status));
+        $quote->setInternalStatus(new TestEnumValue(Quote::INTERNAL_STATUS_CODE, 'Test', $status));
 
         return $quote;
     }

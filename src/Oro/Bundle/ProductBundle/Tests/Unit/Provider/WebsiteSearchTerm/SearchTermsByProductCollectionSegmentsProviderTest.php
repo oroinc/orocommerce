@@ -15,6 +15,7 @@ class SearchTermsByProductCollectionSegmentsProviderTest extends TestCase
 
     private SearchTermsByProductCollectionSegmentsProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

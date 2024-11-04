@@ -37,6 +37,7 @@ class OrderLineItemTypeExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var OrderLineItemTypeExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxationSettingsProvider = $this->createMock(TaxationSettingsProvider::class);

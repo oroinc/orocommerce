@@ -29,9 +29,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
         return $this->batchSize;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function execute($className, array $fields, QueryBuilder $selectQueryBuilder)
     {
         $insertToTableName = $this->getTableName($className, $fields, $selectQueryBuilder);
@@ -56,6 +54,7 @@ class MultiInsertShardQueryExecutor extends AbstractShardQueryExecutor implement
         );
     }
 
+    #[\Override]
     public function executeNative(
         string $insertToTableName,
         string $className,

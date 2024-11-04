@@ -15,6 +15,7 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class OrderControllerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

@@ -34,6 +34,7 @@ class SearchTermProductCollectionSegmentReindexProcessor implements
         $this->logger = new NullLogger();
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): ?string
     {
         $body = $message->getBody();
@@ -75,6 +76,7 @@ class SearchTermProductCollectionSegmentReindexProcessor implements
         yield from $this->segmentSnapshotDeltaProvider->getRemovedEntityIds($segment);
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [SearchTermProductCollectionSegmentReindexTopic::getName()];

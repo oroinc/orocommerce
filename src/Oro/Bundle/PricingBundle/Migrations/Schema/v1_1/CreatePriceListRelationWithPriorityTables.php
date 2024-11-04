@@ -20,17 +20,13 @@ class CreatePriceListRelationWithPriorityTables implements Migration, OrderedMig
         'account_group_id' => 'orob2b_account_group',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 1;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->migrateToNewRelationTable(

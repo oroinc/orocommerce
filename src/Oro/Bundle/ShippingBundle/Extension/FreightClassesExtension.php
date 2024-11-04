@@ -7,9 +7,7 @@ use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptionsInterface;
 
 class FreightClassesExtension implements FreightClassesExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(FreightClassInterface $class, ProductShippingOptionsInterface $options)
     {
         return $class->getCode() === 'parcel';

@@ -21,6 +21,7 @@ class ShippingMethodHasEnabledShippingRulesTest extends \PHPUnit\Framework\TestC
     /** @var ShippingMethodHasEnabledShippingRules */
     private $condition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

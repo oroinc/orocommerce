@@ -1,0 +1,11 @@
+ROLE_USER:
+    permissions:
+        workflow|order_processing_flow: [VIEW_WORKFLOW_SYSTEM, PERFORM_TRANSITIONS_SYSTEM]
+
+ROLE_MANAGER:
+    permissions:
+        workflow|order_processing_flow: [VIEW_WORKFLOW_SYSTEM, PERFORM_TRANSITIONS_SYSTEM]
+
+ROLE_SALES_ASSISTANT:
+    permissions:
+        workflow|order_processing_flow: [VIEW_WORKFLOW_SYSTEM, PERFORM_TRANSITIONS_SYSTEM]

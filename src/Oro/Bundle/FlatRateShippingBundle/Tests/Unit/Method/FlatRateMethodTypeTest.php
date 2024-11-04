@@ -18,6 +18,7 @@ class FlatRateMethodTypeTest extends TestCase
 
     private FlatRateMethodType $flatRateType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->flatRateType = new FlatRateMethodType(self::LABEL);

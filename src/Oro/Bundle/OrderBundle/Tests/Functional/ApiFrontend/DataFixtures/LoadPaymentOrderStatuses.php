@@ -14,9 +14,7 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentStatusProvider;
  */
 class LoadPaymentOrderStatuses extends AbstractFixture implements DependentFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -24,9 +22,7 @@ class LoadPaymentOrderStatuses extends AbstractFixture implements DependentFixtu
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $status1 = new PaymentStatus();

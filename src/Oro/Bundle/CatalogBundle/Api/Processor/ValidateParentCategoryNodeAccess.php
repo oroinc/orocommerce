@@ -22,9 +22,7 @@ class ValidateParentCategoryNodeAccess implements ProcessorInterface
         $this->categoryNodeRepository = $categoryNodeRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */

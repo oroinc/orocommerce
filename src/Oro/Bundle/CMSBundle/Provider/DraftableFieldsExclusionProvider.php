@@ -10,17 +10,13 @@ use Oro\Bundle\DraftBundle\Provider\DraftableFieldsExclusionProviderInterface;
  */
 class DraftableFieldsExclusionProvider implements DraftableFieldsExclusionProviderInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupport(string $className): bool
     {
         return Page::class === $className;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getExcludedFields(): array
     {
         return [

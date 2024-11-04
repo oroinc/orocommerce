@@ -10,6 +10,7 @@ use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
  */
 class CustomerAddressKitItemResolver extends AbstractItemResolver
 {
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         if (!$this->isApplicable($taxable)) {

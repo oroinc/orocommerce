@@ -20,6 +20,7 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var DeleteMessageTextGenerator */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentTermManager = $this->createMock(PaymentTermManager::class);

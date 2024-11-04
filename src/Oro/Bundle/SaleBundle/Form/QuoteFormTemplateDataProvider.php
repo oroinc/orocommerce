@@ -22,10 +22,10 @@ class QuoteFormTemplateDataProvider implements FormTemplateDataProviderInterface
     }
 
     /**
-     * {@inheritdoc}
      *
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function getData($entity, FormInterface $form, Request $request)
     {
         if (!$entity instanceof Quote) {

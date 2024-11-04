@@ -23,6 +23,7 @@ class NodeHasNoRestrictionsValidatorTest extends ConstraintValidatorTestCase
 
     private ConfigHandler|MockObject $configHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -35,6 +36,7 @@ class NodeHasNoRestrictionsValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): NodeHasNoRestrictionsValidator
     {
         return new NodeHasNoRestrictionsValidator($this->configHandler);

@@ -36,6 +36,7 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
 
     private Brand $brand;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteContextManager = $this->createMock(WebsiteContextManager::class);

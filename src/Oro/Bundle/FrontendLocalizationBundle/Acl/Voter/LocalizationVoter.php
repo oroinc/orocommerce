@@ -12,15 +12,12 @@ use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
  */
 class LocalizationVoter extends AbstractEntityVoter
 {
-    /** {@inheritDoc} */
     protected $supportedAttributes = [BasicPermission::DELETE];
 
     /** @var array */
     private static $usedLocalizationIds;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         return $this->isLocalizationUsed($identifier) ? self::ACCESS_DENIED : self::ACCESS_ABSTAIN;

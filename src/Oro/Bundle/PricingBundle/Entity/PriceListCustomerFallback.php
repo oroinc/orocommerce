@@ -26,6 +26,7 @@ class PriceListCustomerFallback extends PriceListFallback implements CustomerAwa
     /**
      * @return Customer
      */
+    #[\Override]
     public function getCustomer()
     {
         return $this->customer;
@@ -36,6 +37,7 @@ class PriceListCustomerFallback extends PriceListFallback implements CustomerAwa
      *
      * @return $this
      */
+    #[\Override]
     public function setCustomer(Customer $customer)
     {
         $this->customer = $customer;

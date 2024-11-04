@@ -14,6 +14,7 @@ class WYSIWYGFieldsName extends Constraint
      */
     public $message = 'oro.cms.wysiwyg.field_name_exist';
 
+    #[\Override]
     public function getTargets(): string
     {
         return self::CLASS_CONSTRAINT;

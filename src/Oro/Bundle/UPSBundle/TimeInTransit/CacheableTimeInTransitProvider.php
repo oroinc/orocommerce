@@ -24,6 +24,7 @@ class CacheableTimeInTransitProvider implements TimeInTransitProviderInterface
         $this->timeInTransitCacheProviderFactory = $timeInTransitCacheProviderFactory;
     }
 
+    #[\Override]
     public function getTimeInTransitResult(
         UPSTransport $transport,
         AddressInterface $shipFromAddress,

@@ -3,6 +3,9 @@ api:
         Extend\Entity\EV_Order_Status:
             alias: orderstatus
             plural_alias: orderstatuses
+        Extend\Entity\EV_Order_Shipping_Status:
+            alias: ordershippingstatus
+            plural_alias: ordershippingstatuses
 
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
@@ -105,6 +108,7 @@ api:
                     form_options:
                         mapped: false
                 status: ~
+                shippingStatus: ~
             filters:
                 fields:
                     identifier:
@@ -115,6 +119,10 @@ api:
                         allow_array: true
                         options:
                             case_insensitive: true
+                    updatedAt: ~
+            sorters:
+                fields:
+                    updatedAt: ~
             actions:
                 create:
                     form_options:
@@ -124,6 +132,17 @@ api:
                 delete_list: false
 
         Extend\Entity\EV_Order_Status:
+            documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
+            fields:
+                priority:
+                    exclude: true
+                default:
+                    exclude: true
+            actions:
+                get_list:
+                    disable_paging: true
+
+        Extend\Entity\EV_Order_Shipping_Status:
             documentation_resource: '@OroOrderBundle/Resources/doc/api_frontend/order.md'
             fields:
                 priority:
@@ -161,6 +180,14 @@ api:
                     exclude: true
                 shippingMethodType:
                     exclude: true
+            filters:
+                fields:
+                    createdAt: ~
+                    updatedAt: ~
+            sorters:
+                fields:
+                    createdAt: ~
+                    updatedAt: ~
             actions:
                 create:
                     form_options:

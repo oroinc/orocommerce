@@ -21,6 +21,7 @@ class SimpleVariationsRestrictionFeatureVoter implements VoterInterface
         $this->configManager = $configManager;
     }
 
+    #[\Override]
     public function vote($feature, $scopeIdentifier = null)
     {
         if ($feature === self::FEATURE_NAME) {

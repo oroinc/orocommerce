@@ -18,17 +18,13 @@ class ModifyAppliedDiscount implements Migration, OrderedMigrationInterface, Dat
     use MigrationConstraintTrait;
     use DatabasePlatformAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 20;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->modifyAppliedDiscount($schema, $queries);

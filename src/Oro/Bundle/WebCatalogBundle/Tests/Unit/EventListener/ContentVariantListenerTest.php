@@ -48,6 +48,7 @@ class ContentVariantListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->typeRegistry = $this->createMock(ContentVariantTypeRegistry::class);

@@ -14,6 +14,7 @@ class ShoppingListCreateVoterTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListCreateVoter */
     private $shoppingListCreateVoter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListLimitManager = $this->createMock(ShoppingListLimitManager::class);

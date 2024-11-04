@@ -16,9 +16,7 @@ class ShippingRuleEnabledChecker implements ShippingRuleEnabledCheckerInterface
         $this->methodEnabledChecker = $methodEnabledChecker;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function canBeEnabled(ShippingMethodsConfigsRule $rule): bool
     {
         $configs = $rule->getMethodConfigs();

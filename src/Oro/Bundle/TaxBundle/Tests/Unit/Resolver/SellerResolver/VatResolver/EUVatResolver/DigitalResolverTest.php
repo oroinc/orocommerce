@@ -18,6 +18,7 @@ class DigitalResolverTest extends TestCase
 
     private DigitalResolver $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->itemResolver = $this->createMock(DigitalItemResolver::class);

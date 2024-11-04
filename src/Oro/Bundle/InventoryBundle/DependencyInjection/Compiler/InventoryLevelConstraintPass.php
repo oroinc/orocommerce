@@ -8,9 +8,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class InventoryLevelConstraintPass implements CompilerPassInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         $validatorBuilder = $container->getDefinition('validator.builder');

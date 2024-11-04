@@ -14,17 +14,13 @@ use Symfony\Component\Form\FormBuilderInterface;
  */
 class ProductTaxExtension extends AbstractTaxExtension
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function addTaxCodeField(FormBuilderInterface $builder): void
     {
         $builder
@@ -41,9 +37,7 @@ class ProductTaxExtension extends AbstractTaxExtension
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function handleTaxCode(object $entity, ?AbstractTaxCode $taxCode, ?AbstractTaxCode $taxCodeNew): void
     {
         /** @var Product $entity */
@@ -51,9 +45,7 @@ class ProductTaxExtension extends AbstractTaxExtension
         $entity->setTaxCode($taxCodeNew);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getTaxCode(object $entity): ?AbstractTaxCode
     {
         /** @var Product $entity */

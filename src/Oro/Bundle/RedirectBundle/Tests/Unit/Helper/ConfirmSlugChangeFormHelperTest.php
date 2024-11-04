@@ -21,6 +21,7 @@ class ConfirmSlugChangeFormHelperTest extends \PHPUnit\Framework\TestCase
     /** @var ConfirmSlugChangeFormHelper */
     private $helper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);

@@ -25,6 +25,7 @@ class ProductKitItemProductsDataTransformerTest extends TestCase
 
     private ProductRepository|MockObject $productRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

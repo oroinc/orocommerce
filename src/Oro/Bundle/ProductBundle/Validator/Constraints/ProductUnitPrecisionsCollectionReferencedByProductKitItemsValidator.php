@@ -27,6 +27,7 @@ class ProductUnitPrecisionsCollectionReferencedByProductKitItemsValidator extend
      * @param Product|null $value
      * @param ProductUnitPrecisionsCollectionReferencedByProductKitItems $constraint
      */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductUnitPrecisionsCollectionReferencedByProductKitItems) {

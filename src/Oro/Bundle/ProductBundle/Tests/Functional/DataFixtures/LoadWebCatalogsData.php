@@ -11,9 +11,7 @@ class LoadWebCatalogsData extends AbstractFixture
     const FIRST_WEB_CATALOG = 'firstWebCatalog';
     const SECOND_WEB_CATALOG = 'secondWebCatalog';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $firstWebCatalog = new TestWebCatalog();

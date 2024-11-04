@@ -13,16 +13,19 @@ class ReindexRequestItemProductsByRelatedJobIdTopic extends AbstractTopic implem
 {
     public const NAME = 'oro_product.reindex_request_item_products_by_related_job';
 
+    #[\Override]
     public static function getName(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Dispatches search reindexation event for all records that found by given relatedJobId.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver->setDefault('indexationFieldsGroups', null);
@@ -34,6 +37,7 @@ class ReindexRequestItemProductsByRelatedJobIdTopic extends AbstractTopic implem
         $resolver->setAllowedTypes('indexationFieldsGroups', ['string[]', 'null']);
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return sprintf('%s:%s', self::getName(), $messageBody['relatedJobId']);

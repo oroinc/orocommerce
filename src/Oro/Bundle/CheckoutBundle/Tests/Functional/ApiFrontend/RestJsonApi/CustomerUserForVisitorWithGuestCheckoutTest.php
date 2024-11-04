@@ -28,6 +28,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
     /** @var bool */
     private $originalGuestCheckoutOptionValue;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -43,6 +44,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         }
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();

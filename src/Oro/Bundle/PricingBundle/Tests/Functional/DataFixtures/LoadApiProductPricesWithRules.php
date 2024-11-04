@@ -6,9 +6,7 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 
 class LoadApiProductPricesWithRules extends LoadProductPricesWithRules
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

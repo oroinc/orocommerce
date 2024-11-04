@@ -23,6 +23,7 @@ class PriceListCollectionProviderTest extends WebTestCase
 
     private PriceListCollectionProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([]);

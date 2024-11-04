@@ -14,6 +14,7 @@ class PaymentTermTest extends RestJsonApiTestCase
 {
     use SearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

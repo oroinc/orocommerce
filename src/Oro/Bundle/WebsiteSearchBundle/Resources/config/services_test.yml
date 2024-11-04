@@ -12,5 +12,5 @@ services:
         arguments:
             - '@.inner'
         calls:
-            - [addSkippedEntity, ['Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory']]
-            - [addSkippedEntity, ['Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport']]
+            - [addSkippedEntity, ['Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory', ['get_list']]]
+            - [addSkippedEntity, ['Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport', ['get_list']]]

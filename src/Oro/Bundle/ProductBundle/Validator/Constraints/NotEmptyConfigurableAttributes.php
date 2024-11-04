@@ -9,17 +9,13 @@ class NotEmptyConfigurableAttributes extends Constraint
     /** @var string */
     public $message = 'oro.product.attribute_family.empty_configurable_attributes.message';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validatedBy(): string
     {
         return NotEmptyConfigurableAttributesValidator::ALIAS;

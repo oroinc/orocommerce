@@ -24,6 +24,7 @@ class TabbedContentWidgetFormEventListenerTest extends \PHPUnit\Framework\TestCa
 
     private TabbedContentWidgetFormEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(EntityRepository::class);

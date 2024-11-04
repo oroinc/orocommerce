@@ -31,7 +31,7 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
         $this->paymentMethodProvider = $methodProvider;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function initialize(array $options)
     {
         if (array_key_exists('context', $options)) {
@@ -47,15 +47,13 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getName()
     {
         return self::NAME;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function isConditionAllowed($context)
     {
         $paymentContext = $this->resolveValue($context, $this->context, false);
@@ -63,13 +61,13 @@ class HasApplicablePaymentMethods extends AbstractCondition implements ContextAc
         return count($methods) > 0;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function toArray()
     {
         return $this->convertToArray([$this->context]);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function compile($factoryAccessor)
     {
         return $this->convertToPhpCode([$this->context], $factoryAccessor);

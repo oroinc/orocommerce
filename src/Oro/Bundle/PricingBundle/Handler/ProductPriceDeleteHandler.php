@@ -19,18 +19,14 @@ class ProductPriceDeleteHandler extends AbstractEntityDeleteHandler
         $this->priceManager = $priceManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function flush(array $options): void
     {
         $this->priceManager->flush();
         $this->postFlush($options[self::ENTITY], $options);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function flushAll(array $listOfOptions): void
     {
         $this->priceManager->flush();
@@ -39,9 +35,7 @@ class ProductPriceDeleteHandler extends AbstractEntityDeleteHandler
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function deleteWithoutFlush($entity, array $options): void
     {
         /** @var ProductPrice $entity */

@@ -60,6 +60,7 @@ class SearchTermRunOriginalSearchGridListenerTest extends WebTestCase
 
     private CustomerGroupRepository|MockObject $customerGroupRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $doctrine = $this->createMock(ManagerRegistry::class);

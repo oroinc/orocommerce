@@ -15,17 +15,13 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
 {
     public const REFERENCE_FLAT_RATE = 'flat_rate_integration';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadOrganization::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $label = new LocalizedFallbackValue();

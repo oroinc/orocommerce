@@ -32,7 +32,7 @@ class GenerateCheckoutStateSnapshotAction extends AbstractAction
         parent::__construct($contextAccessor);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function executeAction($context)
     {
         $entityPath = $this->getOption($this->options, self::OPTION_KEY_ENTITY);
@@ -45,7 +45,7 @@ class GenerateCheckoutStateSnapshotAction extends AbstractAction
         $this->contextAccessor->setValue($context, $attributePath, $state);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function initialize(array $options)
     {
         $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ENTITY);

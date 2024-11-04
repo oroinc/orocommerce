@@ -24,9 +24,7 @@ class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidator
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createByTransport(UPSTransport $transport)
     {
         return new UpsClientRequest([

@@ -22,9 +22,7 @@ class ValidateParentContentNodeAccess implements ProcessorInterface
         $this->contentNodeRepository = $contentNodeRepository;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var SubresourceContext $context */

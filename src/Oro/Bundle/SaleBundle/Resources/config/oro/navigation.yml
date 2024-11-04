@@ -13,7 +13,7 @@ navigation:
                 route:      'oro_sale_quote_index'
                 position:   300
                 extras:
-                    routes: ['/^oro_sale/']
+                    routes: ['/^oro_sale_/']
 
             oro_sale_quote_frontend_index:
                 label: 'oro.frontend.sale.quote.entity_plural_label'

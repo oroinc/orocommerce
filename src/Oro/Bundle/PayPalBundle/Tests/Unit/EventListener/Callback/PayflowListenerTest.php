@@ -32,6 +32,7 @@ class PayflowListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PayflowListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);

@@ -11,9 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ZipCodeCollectionType extends AbstractType
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -22,17 +20,13 @@ class ZipCodeCollectionType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_tax_zip_code_collection_type';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return CollectionType::class;

@@ -31,7 +31,6 @@ class ValueRenderEventListener
         $this->router = $router;
     }
 
-    /** {@inheritdoc} */
     public function beforeValueRender(ValueRenderEvent $event)
     {
         $entity = $event->getEntity();

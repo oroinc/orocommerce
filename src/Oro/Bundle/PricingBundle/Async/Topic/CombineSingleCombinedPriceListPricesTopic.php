@@ -26,17 +26,20 @@ class CombineSingleCombinedPriceListPricesTopic extends AbstractTopic
         $this->combinedPriceListProvider = $combinedPriceListProvider;
     }
 
+    #[\Override]
     public static function getName(): string
     {
         return static::NAME;
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Combine prices for active and ready to rebuild Combined Price List for a given list of price lists ' .
             'and products.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver->define('jobId')

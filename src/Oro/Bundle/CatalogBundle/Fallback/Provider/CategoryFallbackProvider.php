@@ -34,9 +34,7 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
         $this->systemConfigFallbackProvider = $systemConfigFallbackProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackHolderEntity($object, $objectFieldName)
     {
         if (!$object instanceof Product) {
@@ -48,25 +46,19 @@ class CategoryFallbackProvider extends AbstractEntityFallbackProvider
         return $category ?: $this->systemConfigFallbackProvider->getFallbackHolderEntity($object, $objectFieldName);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isFallbackSupported($object, $objectFieldName)
     {
         return $object instanceof Product;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackLabel()
     {
         return 'oro.catalog.fallback.category.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackEntityClass()
     {
         return Category::class;

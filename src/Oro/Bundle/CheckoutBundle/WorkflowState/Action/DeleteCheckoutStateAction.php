@@ -26,16 +26,13 @@ class DeleteCheckoutStateAction extends AbstractAction
     /** @var CheckoutDiffStorageInterface */
     protected $diffStorage;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct(ContextAccessor $contextAccessor, CheckoutDiffStorageInterface $diffStorage)
     {
         $this->diffStorage = $diffStorage;
         parent::__construct($contextAccessor);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     protected function executeAction($context)
     {
         $entityPath = $this->getOption($this->options, self::OPTION_KEY_ENTITY);
@@ -51,7 +48,7 @@ class DeleteCheckoutStateAction extends AbstractAction
         $this->diffStorage->deleteStates($entity, $token);
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function initialize(array $options)
     {
         $this->throwExceptionIfRequiredParameterEmpty($options, self::OPTION_KEY_ENTITY);

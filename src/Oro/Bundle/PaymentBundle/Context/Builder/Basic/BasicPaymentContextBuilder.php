@@ -41,6 +41,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         $this->sourceEntityIdentifier = $sourceEntityIdentifier;
     }
 
+    #[\Override]
     public function getResult(): PaymentContextInterface
     {
         $params = $this->getMandatoryParams();
@@ -49,9 +50,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return new PaymentContext($params);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setLineItems(Collection $lineItemCollection): static
     {
         $this->lineItems = $lineItemCollection;
@@ -59,6 +58,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function addLineItem(PaymentLineItem $paymentLineItem): static
     {
         $this->lineItems->add($paymentLineItem);
@@ -66,6 +66,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setBillingAddress(?AddressInterface $billingAddress): static
     {
         $this->billingAddress = $billingAddress;
@@ -73,6 +74,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setShippingAddress(?AddressInterface $shippingAddress): static
     {
         $this->shippingAddress = $shippingAddress;
@@ -80,6 +82,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setShippingOrigin(?AddressInterface $shippingOrigin): static
     {
         $this->shippingOrigin = $shippingOrigin;
@@ -87,6 +90,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setShippingMethod(?string $shippingMethod): static
     {
         $this->shippingMethod = $shippingMethod;
@@ -94,6 +98,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setCustomer(?Customer $customer): static
     {
         $this->customer = $customer;
@@ -101,6 +106,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setCustomerUser(?CustomerUser $customerUser): static
     {
         $this->customerUser = $customerUser;
@@ -108,6 +114,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setSubTotal(?Price $subTotal): static
     {
         $this->subTotal = $subTotal;
@@ -115,6 +122,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setCurrency(?string $currency): static
     {
         $this->currency = $currency;
@@ -122,6 +130,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setWebsite(?Website $website): static
     {
         $this->website = $website;
@@ -129,6 +138,7 @@ class BasicPaymentContextBuilder implements PaymentContextBuilderInterface
         return $this;
     }
 
+    #[\Override]
     public function setTotal(?float $total): static
     {
         $this->total = $total;

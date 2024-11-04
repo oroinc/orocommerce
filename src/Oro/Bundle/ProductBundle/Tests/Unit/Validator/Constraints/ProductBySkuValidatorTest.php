@@ -22,6 +22,7 @@ class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
     /** @var AclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $aclHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -29,6 +30,7 @@ class ProductBySkuValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): ProductBySkuValidator
     {
         return new ProductBySkuValidator($this->doctrine, $this->aclHelper);

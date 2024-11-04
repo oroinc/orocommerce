@@ -11,6 +11,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
  */
 class WysiwygFieldsTest extends RestJsonApiTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

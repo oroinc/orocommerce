@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\TemplateFixture;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\AbstractTemplateRepository;
 use Oro\Bundle\ImportExportBundle\TemplateFixture\TemplateFixtureInterface;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -25,25 +25,19 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $this->localizationManager = $localizationManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass()
     {
         return InventoryLevel::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData()
     {
         return $this->getEntityData('Example Inventory Level');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createEntity($key)
     {
         return new InventoryLevel();
@@ -53,6 +47,7 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
      * @param string  $key
      * @param InventoryLevel $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity)
     {
         $product = new Product();
@@ -83,10 +78,12 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
         $entity->setProductUnitPrecision($unitPrecision);
     }
 
-    private function createInventoryStatus(string $id, string $name): AbstractEnumValue
+    private function createInventoryStatus(string $id, string $name): EnumOptionInterface
     {
-        $enumValueClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-
-        return new $enumValueClassName($id, $name);
+        return new EnumOption(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            $name,
+            $id,
+        );
     }
 }

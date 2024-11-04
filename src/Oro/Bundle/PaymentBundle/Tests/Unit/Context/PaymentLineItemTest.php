@@ -25,6 +25,7 @@ class PaymentLineItemTest extends TestCase
 
     private Product|MockObject $product;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->price = Price::create(123, 'USD');

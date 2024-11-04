@@ -57,9 +57,7 @@ abstract class AbstractPriceListCollectionAwareListenerTest extends \PHPUnit\Fra
      */
     abstract protected function getFallbackClass();
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->collectionHandler = $this->createMock(PriceListWithPriorityCollectionHandler::class);

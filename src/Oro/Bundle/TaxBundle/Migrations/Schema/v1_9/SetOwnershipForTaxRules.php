@@ -10,9 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
 
 class SetOwnershipForTaxRules implements Migration
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $table = $schema->getTable('oro_tax_rule');

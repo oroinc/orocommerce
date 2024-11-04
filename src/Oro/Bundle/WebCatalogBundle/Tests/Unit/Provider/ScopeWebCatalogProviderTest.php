@@ -14,6 +14,7 @@ class ScopeWebCatalogProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ScopeWebCatalogProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->webCatalogProvider = $this->createMock(WebCatalogProvider::class);

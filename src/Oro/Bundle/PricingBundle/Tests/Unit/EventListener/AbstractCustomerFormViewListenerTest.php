@@ -54,6 +54,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
 
     abstract protected function processEvent(BeforeListRenderEvent $event);
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

@@ -11,9 +11,7 @@ class QuoteProductDemandCollectionType extends CollectionType
 {
     const NAME = 'oro_sale_quote_product_demand_collection';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -28,9 +26,7 @@ class QuoteProductDemandCollectionType extends CollectionType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         // custom subscriber to pass data to child form types
@@ -44,17 +40,12 @@ class QuoteProductDemandCollectionType extends CollectionType
         $builder->addEventSubscriber($resizeSubscriber);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

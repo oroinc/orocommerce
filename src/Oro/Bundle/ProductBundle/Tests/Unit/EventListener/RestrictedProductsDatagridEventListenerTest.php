@@ -26,6 +26,7 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit\Framework\Tes
     /** @var RestrictedProductsDatagridEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->qb = $this->createMock(QueryBuilder::class);

@@ -21,6 +21,7 @@ class ProductCollectionSegmentManipulatorTest extends TestCase
 
     private CollectionSortOrderRepository|MockObject $sortOrderRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $managerRegistry = $this->createMock(ManagerRegistry::class);

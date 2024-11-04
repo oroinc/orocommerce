@@ -8,17 +8,13 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\Element;
 
 class OrderLineItem extends Element implements LineItemInterface, ConfigurableProductTableRowAwareInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clickProductLink(): void
     {
         $this->getElement('Frontend Order Line Item Product View Link')->click();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isRowContainingAttributes(array $attributeLabels): bool
     {
         foreach ($attributeLabels as $attributeLabel) {
@@ -33,9 +29,7 @@ class OrderLineItem extends Element implements LineItemInterface, ConfigurablePr
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSKU(): string
     {
         return $this->getElement('OrderLineItemProductSku')->getText();

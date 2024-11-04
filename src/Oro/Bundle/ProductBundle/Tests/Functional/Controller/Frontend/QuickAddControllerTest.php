@@ -11,6 +11,7 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProduc
 
 class QuickAddControllerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

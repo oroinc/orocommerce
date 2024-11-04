@@ -27,14 +27,13 @@ class LoadScopeData extends AbstractFixture implements DependentFixtureInterface
         self::SCOPE_CUSTOMER1 => ['customer' => LoadCustomers::CUSTOMER_LEVEL_1],
     ];
 
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCustomers::class, LoadLocalizationData::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $manager->getRepository(Scope::class)

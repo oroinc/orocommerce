@@ -11,18 +11,14 @@ class MakeDefaultBrandTitleNotNull implements
     Migration,
     OrderedMigrationInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $table = $schema->getTable('oro_brand');
         $table->getColumn('default_title')->setNotnull(true);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 30;

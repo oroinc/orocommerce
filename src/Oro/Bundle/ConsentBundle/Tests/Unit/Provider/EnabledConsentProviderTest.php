@@ -19,6 +19,7 @@ class EnabledConsentProviderTest extends \PHPUnit\Framework\TestCase
     /** @var EnabledConsentProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->enabledConsentConfigProvider = $this->createMock(EnabledConsentConfigProviderInterface::class);

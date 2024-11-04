@@ -9,33 +9,25 @@ use Oro\Bundle\CustomerBundle\EventListener\AbstractCustomerViewListener;
  */
 class CustomerViewListener extends AbstractCustomerViewListener
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerViewTemplate()
     {
         return '@OroShoppingList/Customer/shopping_lists_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerLabel(): string
     {
         return 'oro.shoppinglist.entity_plural_label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserViewTemplate()
     {
         return '@OroShoppingList/CustomerUser/shopping_lists_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCustomerUserLabel(): string
     {
         return 'oro.shoppinglist.entity_plural_label';

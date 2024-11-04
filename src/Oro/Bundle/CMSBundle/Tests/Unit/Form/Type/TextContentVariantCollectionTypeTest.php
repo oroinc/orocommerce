@@ -11,6 +11,7 @@ class TextContentVariantCollectionTypeTest extends \PHPUnit\Framework\TestCase
     /** @var TextContentVariantCollectionType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new TextContentVariantCollectionType();

@@ -29,9 +29,7 @@ class ProductFormExtension extends AbstractTypeExtension
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         /** @var Product $product */
@@ -71,9 +69,6 @@ class ProductFormExtension extends AbstractTypeExtension
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onPostSetData(FormEvent $event)
     {
         $form = $event->getForm();
@@ -93,9 +88,6 @@ class ProductFormExtension extends AbstractTypeExtension
         $form->get(self::FORM_ELEMENT_NAME)->setData($shippingOptions);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onPreSubmit(FormEvent $event)
     {
         $form = $event->getForm();
@@ -136,9 +128,6 @@ class ProductFormExtension extends AbstractTypeExtension
         $event->setData($data);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onPostSubmit(FormEvent $event)
     {
         /** @var Product|null $product */
@@ -213,9 +202,7 @@ class ProductFormExtension extends AbstractTypeExtension
             ->getRepository(ProductShippingOptions::class);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];

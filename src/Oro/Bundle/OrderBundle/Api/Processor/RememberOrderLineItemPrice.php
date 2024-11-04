@@ -18,9 +18,7 @@ class RememberOrderLineItemPrice implements ProcessorInterface
 {
     public const SUBMITTED_PRICE = 'order_line_item_submitted_price';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

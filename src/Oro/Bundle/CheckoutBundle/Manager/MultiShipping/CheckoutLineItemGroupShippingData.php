@@ -62,9 +62,6 @@ final class CheckoutLineItemGroupShippingData
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function toArray(): array
     {
         $result = [];

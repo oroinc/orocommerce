@@ -40,6 +40,7 @@ class ContentTemplatesForWysiwygPreviewProviderTest extends \PHPUnit\Framework\T
     private ContentTemplateRepository|\PHPUnit\Framework\MockObject\MockObject $contentTemplateRepository;
     private ContentTemplatesForWysiwygPreviewProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->pictureSourcesProvider = $this->createMock(PictureSourcesProviderInterface::class);

@@ -17,6 +17,7 @@ class ProductPriceFormatterTest extends \PHPUnit\Framework\TestCase
     /** @var ProductPriceFormatter */
     private $formatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $numberFormatter = $this->createMock(NumberFormatter::class);

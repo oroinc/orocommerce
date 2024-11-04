@@ -16,9 +16,7 @@ class QuickAddImportFromFileType extends AbstractType
     const NAME = 'oro_product_quick_add_import_from_file';
     const FILE_FIELD_NAME = 'file';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -50,17 +48,12 @@ class QuickAddImportFromFileType extends AbstractType
             );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

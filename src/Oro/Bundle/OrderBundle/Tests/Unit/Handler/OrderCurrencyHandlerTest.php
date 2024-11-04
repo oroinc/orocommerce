@@ -14,6 +14,7 @@ class OrderCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var OrderCurrencyHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);

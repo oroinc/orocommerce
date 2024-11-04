@@ -12,9 +12,7 @@ abstract class AbstractTaxCalculator implements TaxCalculatorInterface
     /** @var array */
     private $cache = [];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function calculate($amount, $taxRate)
     {
         $key = $this->getCacheKey($amount, $taxRate);

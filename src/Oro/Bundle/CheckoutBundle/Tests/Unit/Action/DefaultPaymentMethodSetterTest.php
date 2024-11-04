@@ -20,6 +20,7 @@ class DefaultPaymentMethodSetterTest extends \PHPUnit\Framework\TestCase
 
     private DefaultPaymentMethodSetter $defaultPaymentMethodSetter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->applicablePaymentMethodsProvider = $this->createMock(ApplicablePaymentMethodsProvider::class);

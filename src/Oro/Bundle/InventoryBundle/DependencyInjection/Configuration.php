@@ -37,9 +37,7 @@ class Configuration implements ConfigurationInterface
         return self::getConfigKeyByName(self::MINIMUM_QUANTITY_TO_ORDER);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

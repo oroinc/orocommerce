@@ -20,9 +20,7 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $classNames = $this->createQueryBuilder($manager)

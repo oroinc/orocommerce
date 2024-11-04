@@ -14,17 +14,20 @@ class GenerateSuggestionsPhrasesChunkTopic extends AbstractTopic
 
     private const NAME = 'oro_website_search_suggestion.generate_for_products';
 
-    #[\Override] public static function getName(): string
+    #[\Override]
+    public static function getName(): string
     {
         return static::NAME;
     }
 
-    #[\Override] public static function getDescription(): string
+    #[\Override]
+    public static function getDescription(): string
     {
         return "Generate suggestion phrases for provided chunk of products";
     }
 
-    #[\Override] public function configureMessageBody(OptionsResolver $resolver): void
+    #[\Override]
+    public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
             ->setRequired(GenerateSuggestionsTopic::PRODUCT_IDS)

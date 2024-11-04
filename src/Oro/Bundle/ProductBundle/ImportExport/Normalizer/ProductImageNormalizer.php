@@ -48,8 +48,8 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
     /**
      * @param ProductImage $productImage
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function normalize(mixed $productImage, string $format = null, array $context = [])
     {
         $data = parent::normalize($productImage, $format, $context);
@@ -82,9 +82,7 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function denormalize(mixed $productImageData, string $type, string $format = null, array $context = [])
     {
         $imageTypes = $this->imageTypeProvider->getImageTypes();
@@ -105,17 +103,13 @@ class ProductImageNormalizer extends ConfigurableEntityNormalizer
         return parent::denormalize($productImageData, $type, $format, $context);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsNormalization(mixed $data, string $format = null, array $context = []): bool
     {
         return is_a($data, $this->productImageClass);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supportsDenormalization(mixed $data, string $type, string $format = null, array $context = []): bool
     {
         return is_array($data) && is_a($type, $this->productImageClass, true);

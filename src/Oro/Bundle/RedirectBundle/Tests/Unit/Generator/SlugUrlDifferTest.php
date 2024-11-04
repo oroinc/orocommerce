@@ -24,6 +24,7 @@ class SlugUrlDifferTest extends \PHPUnit\Framework\TestCase
     /** @var SlugUrlDiffer */
     private $differ;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);

@@ -24,6 +24,7 @@ class ProductPricesListenerTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListTriggerHandler|\PHPUnit\Framework\MockObject\MockObject */
     private $priceListTriggerHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->combinedPriceListBuildTriggerHandler = $this->createMock(CombinedPriceListBuildTriggerHandler::class);

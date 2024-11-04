@@ -18,9 +18,7 @@ class FrontendProductGrid extends Grid
         'GridFilterManager' => 'FrontendGridFilterManager',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getRows()
     {
         return $this->getElements($this->getMappedChildElementName(static::TABLE_ROW_STRICT_ELEMENT));

@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class NodeNotEmptyScopesValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): NodeNotEmptyScopesValidator
     {
         return new NodeNotEmptyScopesValidator();

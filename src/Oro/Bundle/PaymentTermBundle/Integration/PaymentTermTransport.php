@@ -9,29 +9,24 @@ use Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType;
 
 class PaymentTermTransport implements TransportInterface
 {
+    #[\Override]
     public function init(Transport $transportEntity)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsFormType()
     {
         return PaymentTermSettingsType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsEntityFQCN()
     {
         return PaymentTermSettings::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.paymentterm.settings.label';

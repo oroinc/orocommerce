@@ -24,17 +24,13 @@ class LoadBrandDemoData extends AbstractFixture implements ContainerAwareInterfa
      */
     protected $container;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setContainer(ContainerInterface $container = null)
     {
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */

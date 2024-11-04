@@ -35,9 +35,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
      */
     protected $choicesProductPrimaryUnitSelectionOwnerTypeExtension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->childName = 'testChild';
@@ -109,9 +107,7 @@ class ChoicesProductPrimaryUnitSelectionOwnerTypeExtensionTest extends FormInteg
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions()
     {
         /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject $formatter */

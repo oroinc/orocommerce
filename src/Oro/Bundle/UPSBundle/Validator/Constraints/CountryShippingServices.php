@@ -11,9 +11,7 @@ class CountryShippingServices extends Constraint
 {
     public string $message = 'oro.ups.settings.shipping_service.wrong_country.message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

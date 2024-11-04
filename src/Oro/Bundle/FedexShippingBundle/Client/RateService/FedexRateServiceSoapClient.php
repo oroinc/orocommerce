@@ -43,9 +43,7 @@ class FedexRateServiceSoapClient implements FedexRateServiceBySettingsClientInte
         $this->soapTestSettings = $soapTestSettings;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function send(
         FedexRequestInterface $request,
         FedexIntegrationSettings $settings

@@ -60,17 +60,13 @@ class BaseCombinedPriceListRelation implements WebsiteAwareInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;

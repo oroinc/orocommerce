@@ -84,14 +84,13 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->productSku;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->getId();
@@ -151,6 +150,7 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
      *
      * @return Product
      */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
@@ -174,6 +174,7 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
      *
      * @return string
      */
+    #[\Override]
     public function getProductSku()
     {
         return $this->productSku;
@@ -242,6 +243,7 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
     /**
      * @return Collection<RequestProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         return $this->kitItemLineItems;

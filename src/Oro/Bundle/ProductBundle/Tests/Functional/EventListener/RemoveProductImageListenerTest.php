@@ -18,6 +18,7 @@ class RemoveProductImageListenerTest extends WebTestCase
 
     private EntityManagerInterface $entityManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

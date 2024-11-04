@@ -29,9 +29,7 @@ class LoadShippingOriginConfigurationDemoData extends AbstractFixture implements
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $configManager = $this->container->get('oro_config.global');

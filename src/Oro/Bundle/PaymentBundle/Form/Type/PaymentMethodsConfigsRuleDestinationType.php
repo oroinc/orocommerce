@@ -30,9 +30,7 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
         $this->subscriber = $subscriber;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this->subscriber);
@@ -54,6 +52,7 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
         $builder->get('postalCodes')->addModelTransformer(new DestinationPostalCodeTransformer());
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -62,9 +61,7 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
         ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         if (!empty($options['region_route'])) {
@@ -72,9 +69,7 @@ class PaymentMethodsConfigsRuleDestinationType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

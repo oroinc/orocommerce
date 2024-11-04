@@ -32,6 +32,7 @@ class CheckoutAwareValidatorDecorator extends ConstraintValidator
         $this->checkoutWorkflowHelper = $checkoutWorkflowHelper;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if ($value === null) {

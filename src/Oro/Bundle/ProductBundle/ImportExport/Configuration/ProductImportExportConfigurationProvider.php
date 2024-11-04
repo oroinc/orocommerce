@@ -21,10 +21,10 @@ class ProductImportExportConfigurationProvider implements ImportExportConfigurat
     }
 
     /**
-     * {@inheritDoc}
      *
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

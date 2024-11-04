@@ -4,7 +4,8 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\LocaleBundle\Entity\AbstractLocalizedFallbackValue;
@@ -30,6 +31,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
 {
     private LocalizedFallbackValueAwareStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -126,11 +128,11 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             ->findOneBy(['code' => 'default_family']);
     }
 
-    private function loadInventoryStatus(string $id): AbstractEnumValue
+    private function loadInventoryStatus(string $id): EnumOptionInterface
     {
         return self::getContainer()->get('doctrine')
-            ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
-            ->find($id);
+            ->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId('prod_inventory_status', $id));
     }
 
     private function loadFirstBusinessUnit(): BusinessUnit

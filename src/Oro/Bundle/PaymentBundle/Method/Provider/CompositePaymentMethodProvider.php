@@ -18,9 +18,7 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
         $this->providers = $providers;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethods()
     {
         $items = [];
@@ -34,9 +32,7 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
         return $items;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethod($identifier)
     {
         foreach ($this->providers as $provider) {
@@ -48,9 +44,7 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
         throw new \InvalidArgumentException('There is no payment method for "' . $identifier . '" identifier');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasPaymentMethod($identifier)
     {
         foreach ($this->providers as $provider) {

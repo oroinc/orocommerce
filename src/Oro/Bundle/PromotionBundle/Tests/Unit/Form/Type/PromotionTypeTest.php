@@ -35,9 +35,7 @@ class PromotionTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $doctrineHelper = $this->createMock(DoctrineHelper::class);

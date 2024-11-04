@@ -20,9 +20,6 @@ class SystemShippingOriginProvider
         $this->shippingOriginModelFactory = $shippingOriginModelFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getSystemShippingOrigin(): ShippingOrigin
     {
         return $this->shippingOriginModelFactory->create(

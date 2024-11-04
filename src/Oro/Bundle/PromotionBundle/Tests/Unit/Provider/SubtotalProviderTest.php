@@ -40,6 +40,7 @@ class SubtotalProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SubtotalProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->currencyManager = $this->createMock(UserCurrencyManager::class);

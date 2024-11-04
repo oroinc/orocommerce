@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\ProductKit\ProductPriceCriteria\ProductKitItemPrice
  */
 class ProductKitItemPriceCriteriaDataExtractor implements ProductPriceCriteriaDataExtractorInterface
 {
+    #[\Override]
     public function extractCriteriaData(
         ProductPriceCriteria|ProductKitItemPriceCriteria $productPriceCriteria
     ): array {
@@ -31,6 +32,7 @@ class ProductKitItemPriceCriteriaDataExtractor implements ProductPriceCriteriaDa
         ];
     }
 
+    #[\Override]
     public function isSupported(ProductPriceCriteria|ProductKitItemPriceCriteria $productPriceCriteria): bool
     {
         return $productPriceCriteria instanceof ProductKitItemPriceCriteria;

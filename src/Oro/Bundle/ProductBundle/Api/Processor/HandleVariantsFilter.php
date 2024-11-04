@@ -24,9 +24,7 @@ class HandleVariantsFilter implements ProcessorInterface
         $this->modifier = $modifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var Context $context */

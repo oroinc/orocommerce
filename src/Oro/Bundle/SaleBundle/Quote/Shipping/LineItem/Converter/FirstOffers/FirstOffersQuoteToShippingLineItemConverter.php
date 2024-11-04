@@ -20,6 +20,7 @@ class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLine
         $this->shippingLineItemFactory = $shippingLineItemFactory;
     }
 
+    #[\Override]
     public function convertLineItems(Quote $quote): Collection
     {
         $offersToConvert = [];

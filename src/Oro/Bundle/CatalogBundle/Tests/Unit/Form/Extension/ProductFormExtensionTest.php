@@ -29,6 +29,7 @@ class ProductFormExtensionTest extends TestCase
     private AuthorizationCheckerInterface|MockObject $authorizationChecker;
     private ProductFormExtension $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

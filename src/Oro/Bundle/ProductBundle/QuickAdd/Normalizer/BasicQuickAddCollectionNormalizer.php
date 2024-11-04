@@ -30,6 +30,7 @@ class BasicQuickAddCollectionNormalizer implements QuickAddCollectionNormalizerI
         $this->translator = $translator;
     }
 
+    #[\Override]
     public function normalize(QuickAddRowCollection $quickAddRowCollection): array
     {
         $results = [

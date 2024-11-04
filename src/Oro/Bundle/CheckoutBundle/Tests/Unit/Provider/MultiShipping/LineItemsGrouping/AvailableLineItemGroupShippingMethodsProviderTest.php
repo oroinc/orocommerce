@@ -30,6 +30,7 @@ class AvailableLineItemGroupShippingMethodsProviderTest extends \PHPUnit\Framewo
     /** @var AvailableLineItemGroupShippingMethodsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingMethodsProvider = $this->createMock(CheckoutShippingMethodsProviderInterface::class);

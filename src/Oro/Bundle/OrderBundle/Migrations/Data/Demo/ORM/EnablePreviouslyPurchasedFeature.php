@@ -18,9 +18,7 @@ class EnablePreviouslyPurchasedFeature extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -29,9 +27,7 @@ class EnablePreviouslyPurchasedFeature extends AbstractFixture implements
     }
 
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $configManager = $this->container->get('oro_config.global');

@@ -29,6 +29,7 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
     /** @var AbstractRuleEntityListener */
     protected $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceRuleLexemeTriggerHandler = $this->createMock(PriceRuleLexemeTriggerHandler::class);

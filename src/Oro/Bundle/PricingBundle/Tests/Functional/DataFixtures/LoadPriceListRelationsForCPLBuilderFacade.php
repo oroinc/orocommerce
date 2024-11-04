@@ -168,9 +168,7 @@ class LoadPriceListRelationsForCPLBuilderFacade extends LoadPriceListRelations
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

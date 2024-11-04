@@ -13,6 +13,7 @@ class NodeToQueryDesignerConverterTest extends \PHPUnit\Framework\TestCase
     /** @var NodeToQueryDesignerConverter */
     private $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converter = new NodeToQueryDesignerConverter();

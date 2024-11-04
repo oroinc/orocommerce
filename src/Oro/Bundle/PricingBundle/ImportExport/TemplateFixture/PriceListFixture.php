@@ -11,25 +11,19 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class PriceListFixture extends AbstractTemplateRepository implements TemplateFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass()
     {
         return 'Oro\Bundle\PricingBundle\Entity\ProductPrice';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData()
     {
         return $this->getEntityData('Example Price List');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createEntity($key)
     {
         return new ProductPrice();
@@ -39,6 +33,7 @@ class PriceListFixture extends AbstractTemplateRepository implements TemplateFix
      * @param string  $key
      * @param ProductPrice $entity
      */
+    #[\Override]
     public function fillEntityData($key, $entity)
     {
         $entity

@@ -18,6 +18,7 @@ class DatagridLineItemsDataPreloadListenerTest extends TestCase
 
     private DatagridLineItemsDataPreloadListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->preloadingManager = $this->createMock(PreloadingManager::class);

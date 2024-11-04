@@ -24,6 +24,7 @@ class DecoratedProductLineItemFactoryTest extends TestCase
 
     private VirtualFieldsProductDecoratorFactory|MockObject $virtualFieldsProductDecoratorFactory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->virtualFieldsProductDecoratorFactory = $this->createMock(VirtualFieldsProductDecoratorFactory::class);

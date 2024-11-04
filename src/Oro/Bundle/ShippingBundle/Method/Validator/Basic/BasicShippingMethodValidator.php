@@ -19,9 +19,7 @@ class BasicShippingMethodValidator implements ShippingMethodValidatorInterface
         $this->commonShippingMethodValidatorResultFactory = $commonShippingMethodValidatorResultFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function validate(ShippingMethodInterface $shippingMethod)
     {
         return $this->commonShippingMethodValidatorResultFactory->createSuccessResult();

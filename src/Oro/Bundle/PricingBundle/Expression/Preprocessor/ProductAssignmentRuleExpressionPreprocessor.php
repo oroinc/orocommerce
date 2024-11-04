@@ -21,6 +21,7 @@ class ProductAssignmentRuleExpressionPreprocessor implements ExpressionPreproces
         $this->registry = $registry;
     }
 
+    #[\Override]
     public function process($expression)
     {
         $matches = [];

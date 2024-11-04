@@ -36,17 +36,13 @@ class UpdateEntityConfigFieldCascadeQuery extends ParametrizedMigrationQuery
         $this->fields = $fields;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         return 'Update cascade options for meta fields on given entity';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->updateEntityConfig($logger);

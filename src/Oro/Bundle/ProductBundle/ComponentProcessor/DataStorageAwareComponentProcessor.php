@@ -57,9 +57,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
         $this->redirectRouteName = $redirectRouteName;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isAllowed(): bool
     {
         if (!$this->acl) {
@@ -69,9 +67,7 @@ class DataStorageAwareComponentProcessor implements ComponentProcessorInterface
         return $this->tokenAccessor->hasUser() && $this->authorizationChecker->isGranted($this->acl);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(array $data, Request $request): ?Response
     {
         $inputProductSkus = $this->getProductSkus($data);

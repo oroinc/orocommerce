@@ -40,6 +40,7 @@ class ContentWidgetHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var Request */
     private $request;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->manager = $this->createMock(EntityManager::class);

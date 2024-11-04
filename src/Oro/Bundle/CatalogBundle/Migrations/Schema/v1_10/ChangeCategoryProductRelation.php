@@ -29,17 +29,13 @@ class ChangeCategoryProductRelation implements
     use ConnectionAwareTrait;
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 100;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->addCategoryProductRelation($schema);

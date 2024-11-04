@@ -34,6 +34,7 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
     /**
      * @return CustomerGroupFormViewListener
      */
+    #[\Override]
     protected function getListener()
     {
         return new CustomerGroupFormViewListener(
@@ -47,6 +48,7 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
     /**
      * @return PriceListToCustomerGroup[]|MockObject[]
      */
+    #[\Override]
     protected function setRepositoryExpectations()
     {
         $websites = $this->websiteProvider->getWebsites();
@@ -87,9 +89,7 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
         return [$priceListToCustomerGroup1, $priceListToCustomerGroup2];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function processEvent(BeforeListRenderEvent $event)
     {
         $this->featureChecker->expects($this->once())
@@ -103,9 +103,7 @@ class CustomerGroupFormViewListenerTest extends AbstractCustomerFormViewListener
         $listener->onCustomerGroupView($event);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getFallbackLabel()
     {
         return 'oro.pricing.fallback.current_customer_group_only.label';

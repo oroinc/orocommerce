@@ -23,9 +23,7 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
         $this->managerRegistry = $managerRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createMessage(SluggableInterface $entity): array
     {
         $createRedirect = true;
@@ -40,9 +38,7 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createMassMessage($entityClass, $id, $createRedirect = true): array
     {
         return [
@@ -52,9 +48,7 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntitiesFromMessage($data): array
     {
         $className = $data[self::ENTITY_CLASS_NAME];
@@ -68,17 +62,13 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
             ->findBy([$idFieldName => $data[self::ID]]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClassFromMessage($data)
     {
         return $data[self::ENTITY_CLASS_NAME];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCreateRedirectFromMessage($data)
     {
         return $data[self::CREATE_REDIRECT];

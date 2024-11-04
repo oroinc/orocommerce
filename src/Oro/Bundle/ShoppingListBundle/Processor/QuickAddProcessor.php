@@ -26,9 +26,7 @@ class QuickAddProcessor extends AbstractShoppingListQuickAddProcessor
         $this->messageGenerator = $messageGenerator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(array $data, Request $request): ?Response
     {
         if (empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY]) ||

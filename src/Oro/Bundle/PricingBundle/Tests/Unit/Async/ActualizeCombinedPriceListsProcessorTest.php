@@ -55,6 +55,7 @@ class ActualizeCombinedPriceListsProcessorTest extends \PHPUnit\Framework\TestCa
      */
     private $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->logger = $this->createMock(LoggerInterface::class);

@@ -20,6 +20,7 @@ class ProductKitItemRepositoryTest extends WebTestCase
 {
     private ProductKitItemRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -143,8 +144,8 @@ class ProductKitItemRepositoryTest extends WebTestCase
         self::assertArrayHasKey($productKit->getId(), $data);
         self::assertCount(1, $data[$productKit->getId()]);
         self::assertEquals([
-            'in_stock',
-            'in_stock',
+            'prod_inventory_status.in_stock',
+            'prod_inventory_status.in_stock',
         ], $data[$productKit->getId()][0]['status']);
     }
 

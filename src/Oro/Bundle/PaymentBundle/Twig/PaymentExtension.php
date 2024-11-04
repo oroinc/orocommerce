@@ -39,9 +39,7 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -130,9 +128,7 @@ class PaymentExtension extends AbstractExtension implements ServiceSubscriberInt
         return $this->getPaymentStatusProvider()->getPaymentStatus($entity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

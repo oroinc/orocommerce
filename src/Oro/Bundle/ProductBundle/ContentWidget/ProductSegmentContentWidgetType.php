@@ -35,23 +35,19 @@ class ProductSegmentContentWidgetType implements ContentWidgetTypeInterface
     ) {
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public static function getName(): string
     {
         return 'product_segment';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return 'oro.product.content_widget_type.product_segment.label';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBackOfficeViewSubBlocks(ContentWidget $contentWidget, Environment $twig): array
     {
         $data = $this->getWidgetData($contentWidget);
@@ -70,9 +66,7 @@ class ProductSegmentContentWidgetType implements ContentWidgetTypeInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsForm(ContentWidget $contentWidget, FormFactoryInterface $formFactory): ?FormInterface
     {
         return $formFactory
@@ -90,9 +84,7 @@ class ProductSegmentContentWidgetType implements ContentWidgetTypeInterface
             ]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getWidgetData(ContentWidget $contentWidget): array
     {
         $data = $contentWidget->getSettings();
@@ -110,17 +102,13 @@ class ProductSegmentContentWidgetType implements ContentWidgetTypeInterface
         return $data;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isInline(): bool
     {
         return false;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultTemplate(ContentWidget $contentWidget, Environment $twig): string
     {
         return '';

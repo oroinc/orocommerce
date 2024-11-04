@@ -32,6 +32,7 @@ class FixedProductMethodFromChannelFactoryTest extends \PHPUnit\Framework\TestCa
     /** @var FixedProductMethodFromChannelFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);

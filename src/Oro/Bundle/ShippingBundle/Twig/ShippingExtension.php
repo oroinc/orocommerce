@@ -55,9 +55,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
         $this->container = $container;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFunctions(): array
     {
         return [
@@ -69,9 +67,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getFilters(): array
     {
         return [
@@ -248,9 +244,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
         return $this->getFreightClassLabelFormatter()->format($code, $isShort, $isPlural);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

@@ -16,8 +16,8 @@ class MatrixCollectionColumnValidator extends ConstraintValidator
      * @param \Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn $value
      * @param Constraint|MatrixCollectionColumn $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if ($value->quantity && null === $value->product) {

@@ -14,6 +14,7 @@ use Symfony\Component\Form\FormEvents;
  */
 class TextContentVariantDefaultScopesExtensions extends AbstractTypeExtension
 {
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::PRE_SUBMIT, function ($event) {
@@ -27,6 +28,7 @@ class TextContentVariantDefaultScopesExtensions extends AbstractTypeExtension
         });
     }
 
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [TextContentVariantType::class];

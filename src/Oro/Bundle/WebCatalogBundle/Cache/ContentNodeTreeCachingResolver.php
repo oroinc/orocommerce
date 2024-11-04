@@ -43,6 +43,7 @@ class ContentNodeTreeCachingResolver implements ContentNodeTreeResolverInterface
      *  ]
      * @return ResolvedContentNode|null
      */
+    #[\Override]
     public function getResolvedContentNode(
         ContentNode $node,
         Scope|array $scopes,

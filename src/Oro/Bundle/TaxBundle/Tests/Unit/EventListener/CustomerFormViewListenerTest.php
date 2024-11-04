@@ -33,6 +33,7 @@ class CustomerFormViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerFormViewListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

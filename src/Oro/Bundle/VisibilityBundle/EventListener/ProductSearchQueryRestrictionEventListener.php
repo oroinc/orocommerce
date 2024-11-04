@@ -7,6 +7,9 @@ use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryModifierInterface;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier;
 
+/**
+ *  Listening ProductSearchQueryRestrictionEvent and modify product search query for frontend requests
+ */
 class ProductSearchQueryRestrictionEventListener
 {
     /**

@@ -42,9 +42,6 @@ class CustomerUserViewListener
         $this->customerUserConsentProvider = $customerUserConsentProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function onCustomerUserView(BeforeListRenderEvent $event)
     {
         if (!$this->isFeaturesEnabled()) {
@@ -74,17 +71,11 @@ class CustomerUserViewListener
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getCustomerUserViewTemplate()
     {
         return '@OroConsent/CustomerUser/consent_view.html.twig';
     }
 
-    /**
-     * {@inheritdoc}
-     */
     protected function getCustomerUserLabel()
     {
         return 'oro.consent.entity_plural_label';

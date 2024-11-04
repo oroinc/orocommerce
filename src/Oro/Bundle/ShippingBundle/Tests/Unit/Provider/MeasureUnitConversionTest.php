@@ -17,6 +17,7 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
     /** @var Weight */
     private $weightUnit;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dimensionsUnit = Dimensions::create(

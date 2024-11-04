@@ -13,6 +13,7 @@ class UpsellProductRepositoryTest extends WebTestCase
 {
     private UpsellProductRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

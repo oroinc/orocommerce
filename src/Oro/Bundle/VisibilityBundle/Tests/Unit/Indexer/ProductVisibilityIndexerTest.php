@@ -17,6 +17,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVisibilityIndexer */
     private $indexer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->visibilityProvider = $this->createMock(ProductVisibilityProvider::class);

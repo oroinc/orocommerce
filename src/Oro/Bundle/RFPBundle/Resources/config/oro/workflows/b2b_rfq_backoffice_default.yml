@@ -71,8 +71,8 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
-                        field: internal_status
-                        require: "entity.getInternalStatus().getId() === 'processed'"
+                        field: serialized_data
+                        require: "entity.getInternalStatus().getInternalId() === 'processed'"
             request_more_information_transition:
                 step_to: more_info_requested
                 transition_definition: request_more_information_transition_definition
@@ -100,8 +100,8 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
-                        field: internal_status
-                        require: "entity.getInternalStatus().getId() === 'cancelled_by_customer'"
+                        field: serialized_data
+                        require: "entity.getInternalStatus().getInternalId() === 'cancelled_by_customer'"
             delete_transition:
                 step_to: deleted
                 frontend_options:
@@ -115,8 +115,8 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
-                        field: internal_status
-                        require: "entity.getInternalStatus().getId() === 'open'"
+                        field: serialized_data
+                        require: "entity.getInternalStatus().getInternalId() === 'open'"
             reprocess_transition:
                 step_to: open
                 transition_definition: reprocess_transition_definition
@@ -147,17 +147,17 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'open'
+                        identifier: 'rfp_internal_status.open'
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
-                        identifier: 'submitted'
+                        identifier: 'rfp_customer_status.submitted'
             request_more_information_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'more_info_requested'
+                        identifier: 'rfp_internal_status.more_info_requested'
 
                     - '@assign_constant_value':
                         attribute: $.result.note_type
@@ -175,21 +175,21 @@ workflows:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'deleted'
+                        identifier: 'rfp_internal_status.deleted'
             decline_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'declined'
+                        identifier: 'rfp_internal_status.declined'
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
-                        identifier: 'cancelled'
+                        identifier: 'rfp_customer_status.cancelled'
             cancel_transition_definition: ~
             undelete_to_cancelled_transition_definition:
                 preconditions:
-                    '@equal': ['cancelled_by_customer', $internal_status_before_deletion]
+                    '@equal': ['rfp_internal_status.cancelled_by_customer', $internal_status_before_deletion]
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
@@ -199,45 +199,45 @@ workflows:
             undelete_to_open_transition_definition:
                 preconditions:
                     '@and':
-                        - '@not_equal': ['cancelled_by_customer', $internal_status_before_deletion]
+                        - '@not_equal': ['rfp_internal_status.cancelled_by_customer', $internal_status_before_deletion]
                         - '@or':
-                            - '@equal': ['submitted', $request.customerStatus.id]
-                            - '@equal': ['cancelled', $request.customerStatus.id]
+                            - '@equal': ['submitted', $request.customerStatus.internalId]
+                            - '@equal': ['cancelled', $request.customerStatus.internalId]
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'open'
+                        identifier: 'rfp_internal_status.open'
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
-                        identifier: 'submitted'
+                        identifier: 'rfp_customer_status.submitted'
                     - '@unset_value': [$internal_status_before_deletion]
             undelete_to_more_information_requested_transition_definition:
                 preconditions:
                     '@and':
-                        - '@not_equal': ['cancelled_by_customer', $internal_status_before_deletion]
-                        - '@equal': ['requires_attention', $request.customerStatus.id]
+                        - '@not_equal': ['rfp_internal_status.cancelled_by_customer', $internal_status_before_deletion]
+                        - '@equal': ['requires_attention', $request.customerStatus.internalId]
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
-                        identifier: 'more_info_requested'
+                        identifier: 'rfp_internal_status.more_info_requested'
                     - '@unset_value': [$internal_status_before_deletion]
             process_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
-                        identifier: 'processed'
+                        identifier: 'rfp_internal_status.processed'
                         attribute: $request.internalStatus
             info_provided_transition_definition: ~
             reprocess_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
-                        identifier: 'open'
+                        identifier: 'rfp_internal_status.open'
                         attribute: $request.internalStatus
                     - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
-                        identifier: 'submitted'
+                        identifier: 'rfp_customer_status.submitted'
                         attribute: $request.customerStatus

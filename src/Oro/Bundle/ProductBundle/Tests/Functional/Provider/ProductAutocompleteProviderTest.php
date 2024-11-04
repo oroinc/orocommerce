@@ -22,6 +22,7 @@ class ProductAutocompleteProviderTest extends WebTestCase
     /** @var ProductAutocompleteProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
@@ -47,6 +48,7 @@ class ProductAutocompleteProviderTest extends WebTestCase
         $this->provider = $container->get('oro_product.provider.product_autocomplete');
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $container = $this->getContainer();

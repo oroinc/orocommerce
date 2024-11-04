@@ -24,7 +24,7 @@ Feature: Mass Product Actions processing
 
   Scenario: I add link to all products page to the main menu
     Given I proceed as the Admin
-    When I go to System/ Frontend Menus
+    When I go to System/ Storefront Menus
     And I click view "commerce_main_menu" in grid
     And I click "Create Menu Item"
     And I fill "Commerce Menu Form" with:

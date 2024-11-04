@@ -19,6 +19,7 @@ class ProductImageTest extends FrontendRestJsonApiTestCase
 {
     use WebpConfigurationTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

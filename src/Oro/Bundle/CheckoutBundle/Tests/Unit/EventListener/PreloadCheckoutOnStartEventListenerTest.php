@@ -23,6 +23,7 @@ class PreloadCheckoutOnStartEventListenerTest extends TestCase
 
     private array $fieldsToPreload = ['product' =>  []];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->preloadingManager = $this->createMock(PreloadingManager::class);

@@ -13,9 +13,7 @@ class AddAppliedCouponsToCheckout implements Migration, ExtendExtensionAwareInte
 {
     use ExtendExtensionAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addAppliedCouponsToCheckout($schema);

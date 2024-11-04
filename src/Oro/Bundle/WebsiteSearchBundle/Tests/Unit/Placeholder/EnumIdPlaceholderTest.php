@@ -9,6 +9,7 @@ class EnumIdPlaceholderTest extends \PHPUnit\Framework\TestCase
     /** @var EnumIdPlaceholder */
     protected $placeholder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->placeholder = new EnumIdPlaceholder();

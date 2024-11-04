@@ -30,6 +30,7 @@ class StartCheckout implements StartCheckoutInterface
     ) {
     }
 
+    #[\Override]
     public function execute(
         array $sourceCriteria,
         bool $force = false,

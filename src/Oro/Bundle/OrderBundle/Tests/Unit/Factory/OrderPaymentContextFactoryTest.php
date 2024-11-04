@@ -31,6 +31,7 @@ class OrderPaymentContextFactoryTest extends TestCase
 
     private OrderPaymentContextFactory $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentLineItemConverter = $this->createMock(OrderPaymentLineItemConverterInterface::class);

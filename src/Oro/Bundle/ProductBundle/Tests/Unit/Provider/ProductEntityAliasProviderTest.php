@@ -7,22 +7,22 @@ use Oro\Bundle\EntityBundle\Model\EntityAlias;
 use Oro\Bundle\EntityBundle\Provider\DuplicateEntityAliasResolver;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Config\Id\FieldConfigId;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductEntityAliasProvider;
 
 class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ConfigManager */
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
     private $configManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|DuplicateEntityAliasResolver */
+    /** @var DuplicateEntityAliasResolver|\PHPUnit\Framework\MockObject\MockObject */
     private $duplicateResolver;
 
     /** @var ProductEntityAliasProvider */
     private $entityAliasProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -38,89 +38,77 @@ class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getPossibleClassNames
      */
-    public function testGetEntityAliasForProductAttribute($className, $attributeName, $expectedAlias, $expectedPlural)
-    {
-        $attributeFieldConfig = new Config(
-            new FieldConfigId('attribute', Product::class, $attributeName, 'enum'),
-            ['is_attribute' => true]
-        );
+    public function testGetEntityAliasForProductAttribute(
+        string $attributeEnumCode,
+        string $attributeClassName,
+        string $expectedAlias,
+        string $expectedPluralAlias
+    ): void {
+        $attributeName = 'testAttr';
         $this->configManager->expects(self::once())
             ->method('getConfigs')
             ->with('attribute', Product::class, true)
-            ->willReturn([$attributeFieldConfig]);
-        $extendFieldConfig = new Config(
-            new FieldConfigId('extend', Product::class, $attributeName, 'enum'),
-            ['target_entity' => $className]
-        );
+            ->willReturn([
+                new Config(
+                    new FieldConfigId('attribute', Product::class, $attributeName, 'enum'),
+                    ['is_attribute' => true]
+                )
+            ]);
         $this->configManager->expects(self::once())
             ->method('getFieldConfig')
-            ->with('extend', Product::class, $attributeName)
-            ->willReturn($extendFieldConfig);
-        $enumEntityConfig = new Config(
-            new EntityConfigId('enum', Product::class),
-            ['code' => 'test']
-        );
-        $this->configManager->expects(self::once())
-            ->method('getEntityConfig')
-            ->with('enum', $className)
-            ->willReturn($enumEntityConfig);
+            ->with('enum', Product::class, $attributeName)
+            ->willReturn(new Config(
+                new FieldConfigId('enum', Product::class, $attributeName, 'enum'),
+                ['enum_code' => $attributeEnumCode]
+            ));
 
         $this->duplicateResolver->expects(self::once())
             ->method('getAlias')
-            ->with($className)
+            ->with($attributeClassName)
             ->willReturn(null);
         $this->duplicateResolver->expects(self::once())
             ->method('hasAlias')
-            ->with($expectedAlias, $expectedPlural)
+            ->with($expectedAlias, $expectedPluralAlias)
             ->willReturn(false);
         $this->duplicateResolver->expects(self::never())
             ->method('getUniqueAlias');
         $this->duplicateResolver->expects(self::once())
             ->method('saveAlias')
-            ->with($className, new EntityAlias($expectedAlias, $expectedPlural));
+            ->with($attributeClassName, new EntityAlias($expectedAlias, $expectedPluralAlias));
 
-        $entityAlias = $this->entityAliasProvider->getEntityAlias($className);
-        $this->assertNotNull($entityAlias);
-        $this->assertEquals($expectedAlias, $entityAlias->getAlias());
-        $this->assertEquals($expectedPlural, $entityAlias->getPluralAlias());
+        $entityAlias = $this->entityAliasProvider->getEntityAlias($attributeClassName);
+        self::assertNotNull($entityAlias);
+        self::assertEquals($expectedAlias, $entityAlias->getAlias());
+        self::assertEquals($expectedPluralAlias, $entityAlias->getPluralAlias());
     }
 
-    /**
-     * @return array
-     */
-    public function getPossibleClassNames()
+    public static function getPossibleClassNames(): array
     {
         return [
             [
+                'product_new_attribute_8fde6396',
                 'Extend\Entity\EV_Product_New_Attribute_8fde6396',
-                'new_attribute',
                 'extproductattributenewattribute',
-                'extproductattributenewattributes',
+                'extproductattributenewattributes'
             ],
             [
-                'Extend\Entity\EV_Product_New_Attribute_8fde6396',
-                'newAttribute',
-                'extproductattributenewattribute',
-                'extproductattributenewattributes',
-            ],
-            [
-                'Extend\Entity\EV_Product__My__Test_Attribute_8fde6396',
-                'My_testAttribute',
+                'product_my__test__attribute_8fde6396',
+                'Extend\Entity\EV_Product_My__Test__Attribute_8fde6396',
                 'extproductattributemytestattribute',
-                'extproductattributemytestattributes',
+                'extproductattributemytestattributes'
             ],
             [
+                'product_product_8fde6396',
                 'Extend\Entity\EV_Product_Product_8fde6396',
-                'product',
                 'extproductattributeproduct',
-                'extproductattributeproducts',
-            ],
+                'extproductattributeproducts'
+            ]
         ];
     }
 
-    public function testGetEntityAliasForNotProductRelatedEntity()
+    public function testGetEntityAliasForNotProductAttributeRelatedEntity(): void
     {
-        $className = 'Extend\Entity\EV_Category__My__Test__Attribute_8fde6396';
+        $attributeClassName = 'Extend\Entity\EV_Category__My__Test__Attribute_8fde6396';
 
         $this->configManager->expects(self::never())
             ->method('getConfigs');
@@ -131,22 +119,24 @@ class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
         $this->duplicateResolver->expects(self::never())
             ->method('saveAlias');
 
-        $entityAlias = $this->entityAliasProvider->getEntityAlias($className);
-        $this->assertNull($entityAlias);
+        $entityAlias = $this->entityAliasProvider->getEntityAlias($attributeClassName);
+        self::assertNull($entityAlias);
     }
 
-    public function testGetEntityAliasForNotProductAttribute()
+    public function testGetEntityAliasForEnumEntityThatIsNotProductAttribute(): void
     {
-        $className = 'Extend\Entity\EV_Product__My__Test__Entity_8fde6396';
+        $attributeName = 'testAttr';
+        $attributeClassName = 'Extend\Entity\EV_Product__My__Test__Entity_8fde6396';
 
-        $attributeFieldConfig = new Config(
-            new FieldConfigId('attribute', Product::class, 'My_Test_Field', 'enum'),
-            ['is_attribute' => false]
-        );
         $this->configManager->expects(self::once())
             ->method('getConfigs')
             ->with('attribute', Product::class, true)
-            ->willReturn([$attributeFieldConfig]);
+            ->willReturn([
+                new Config(
+                    new FieldConfigId('attribute', Product::class, $attributeName, 'enum'),
+                    ['is_attribute' => false]
+                )
+            ]);
         $this->duplicateResolver->expects(self::never())
             ->method('getAlias');
         $this->duplicateResolver->expects(self::never())
@@ -154,110 +144,96 @@ class ProductEntityAliasProviderTest extends \PHPUnit\Framework\TestCase
         $this->duplicateResolver->expects(self::never())
             ->method('saveAlias');
 
-        $entityAlias = $this->entityAliasProvider->getEntityAlias($className);
-        $this->assertNull($entityAlias);
+        $entityAlias = $this->entityAliasProvider->getEntityAlias($attributeClassName);
+        self::assertNull($entityAlias);
     }
 
-    public function testGetEntityAliasForProductAttributeWhenAliasAlreadyExistInEntityConfig()
+    public function testGetEntityAliasForProductAttributeWhenAliasAlreadyExistInEntityConfig(): void
     {
-        $className = 'Extend\Entity\EV_Product_New_Attribute_8fde6396';
-        $attributeName = 'new_attribute';
+        $attributeName = 'testAttr';
+        $attributeEnumCode = 'product_new_attribute_8fde6396';
+        $attributeClassName = 'Extend\Entity\EV_Product_New_Attribute_8fde6396';
         $alias = 'productnewattribute';
         $pluralAlias = 'productnewattributes';
 
-        $attributeFieldConfig = new Config(
-            new FieldConfigId('attribute', Product::class, $attributeName, 'enum'),
-            ['is_attribute' => true]
-        );
         $this->configManager->expects(self::once())
             ->method('getConfigs')
             ->with('attribute', Product::class, true)
-            ->willReturn([$attributeFieldConfig]);
-        $extendFieldConfig = new Config(
-            new FieldConfigId('extend', Product::class, $attributeName, 'enum'),
-            ['target_entity' => $className]
-        );
+            ->willReturn([
+                new Config(
+                    new FieldConfigId('attribute', Product::class, $attributeName, 'enum'),
+                    ['is_attribute' => true]
+                )
+            ]);
         $this->configManager->expects(self::once())
             ->method('getFieldConfig')
-            ->with('extend', Product::class, $attributeName)
-            ->willReturn($extendFieldConfig);
-        $enumEntityConfig = new Config(
-            new EntityConfigId('enum', Product::class),
-            ['code' => 'test']
-        );
-        $this->configManager->expects(self::once())
-            ->method('getEntityConfig')
-            ->with('enum', $className)
-            ->willReturn($enumEntityConfig);
+            ->with('enum', Product::class, $attributeName)
+            ->willReturn(new Config(
+                new FieldConfigId('enum', Product::class, $attributeName, 'enum'),
+                ['enum_code' => $attributeEnumCode]
+            ));
 
         $this->duplicateResolver->expects(self::once())
             ->method('getAlias')
-            ->with($className)
+            ->with($attributeClassName)
             ->willReturn(new EntityAlias($alias, $pluralAlias));
         $this->duplicateResolver->expects(self::never())
             ->method('hasAlias');
         $this->duplicateResolver->expects(self::never())
             ->method('saveAlias');
 
-        $entityAlias = $this->entityAliasProvider->getEntityAlias($className);
-        $this->assertNotNull($entityAlias);
-        $this->assertEquals($alias, $entityAlias->getAlias());
-        $this->assertEquals($pluralAlias, $entityAlias->getPluralAlias());
+        $entityAlias = $this->entityAliasProvider->getEntityAlias($attributeClassName);
+        self::assertNotNull($entityAlias);
+        self::assertEquals($alias, $entityAlias->getAlias());
+        self::assertEquals($pluralAlias, $entityAlias->getPluralAlias());
     }
 
-    public function testGetEntityAliasForProductAttributeWhenAliasIsDuplicated()
+    public function testGetEntityAliasForProductAttributeWhenAliasIsDuplicated(): void
     {
-        $className = 'Extend\Entity\EV_Product_New_Attribute_8fde6396';
-        $attributeName = 'new_attribute';
+        $attributeName = 'testAttr';
+        $attributeEnumCode = 'product_new_attribute_8fde6396';
+        $attributeClassName = 'Extend\Entity\EV_Product_New_Attribute_8fde6396';
         $defaultAlias = 'extproductattributenewattribute';
         $defaultPluralAlias = 'extproductattributenewattributes';
         $expectedAlias = 'extproductattributenewattribute1';
-        $expectedPluralAlias = $expectedAlias;
+        $expectedPluralAlias = $expectedAlias . 's';
 
-        $attributeFieldConfig = new Config(
-            new FieldConfigId('attribute', Product::class, $attributeName, 'enum'),
-            ['is_attribute' => true]
-        );
         $this->configManager->expects(self::once())
             ->method('getConfigs')
             ->with('attribute', Product::class, true)
-            ->willReturn([$attributeFieldConfig]);
-        $extendFieldConfig = new Config(
-            new FieldConfigId('extend', Product::class, $attributeName, 'enum'),
-            ['target_entity' => $className]
-        );
+            ->willReturn([
+                new Config(
+                    new FieldConfigId('attribute', Product::class, $attributeName, 'enum'),
+                    ['is_attribute' => true]
+                )
+            ]);
         $this->configManager->expects(self::once())
             ->method('getFieldConfig')
-            ->with('extend', Product::class, $attributeName)
-            ->willReturn($extendFieldConfig);
-        $enumEntityConfig = new Config(
-            new EntityConfigId('enum', Product::class),
-            ['code' => 'test']
-        );
-        $this->configManager->expects(self::once())
-            ->method('getEntityConfig')
-            ->with('enum', $className)
-            ->willReturn($enumEntityConfig);
+            ->with('enum', Product::class, $attributeName)
+            ->willReturn(new Config(
+                new FieldConfigId('enum', Product::class, $attributeName, 'enum'),
+                ['enum_code' => $attributeEnumCode]
+            ));
 
         $this->duplicateResolver->expects(self::once())
             ->method('getAlias')
-            ->with($className)
+            ->with($attributeClassName)
             ->willReturn(null);
-        $this->duplicateResolver->expects(self::once())
+        $this->duplicateResolver->expects(self::exactly(2))
             ->method('hasAlias')
-            ->with($defaultAlias, $defaultPluralAlias)
-            ->willReturn(true);
+            ->withConsecutive([$defaultAlias, $defaultPluralAlias], [$expectedAlias, $expectedPluralAlias])
+            ->willReturnOnConsecutiveCalls(true, false);
         $this->duplicateResolver->expects(self::once())
             ->method('getUniqueAlias')
             ->with($defaultAlias, $defaultPluralAlias)
             ->willReturn($expectedAlias);
         $this->duplicateResolver->expects(self::once())
             ->method('saveAlias')
-            ->with($className, new EntityAlias($expectedAlias, $expectedPluralAlias));
+            ->with($attributeClassName, new EntityAlias($expectedAlias, $expectedPluralAlias));
 
-        $entityAlias = $this->entityAliasProvider->getEntityAlias($className);
-        $this->assertNotNull($entityAlias);
-        $this->assertEquals($expectedAlias, $entityAlias->getAlias());
-        $this->assertEquals($expectedPluralAlias, $entityAlias->getPluralAlias());
+        $entityAlias = $this->entityAliasProvider->getEntityAlias($attributeClassName);
+        self::assertNotNull($entityAlias);
+        self::assertEquals($expectedAlias, $entityAlias->getAlias());
+        self::assertEquals($expectedPluralAlias, $entityAlias->getPluralAlias());
     }
 }

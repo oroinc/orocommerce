@@ -180,9 +180,7 @@ class Checkout implements
         $this->subtotals = new ArrayCollection();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getId()
     {
         return $this->id;
@@ -207,17 +205,13 @@ class Checkout implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPaymentMethod()
     {
         return $this->paymentMethod;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setPaymentMethod($paymentMethod)
     {
         $this->paymentMethod = $paymentMethod;
@@ -301,17 +295,13 @@ class Checkout implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setWebsite(Website $website = null)
     {
         $this->website = $website;
@@ -319,9 +309,7 @@ class Checkout implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceEntity()
     {
         if ($this->source) {
@@ -331,17 +319,13 @@ class Checkout implements
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSource()
     {
         return $this->source;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setSource(CheckoutSource $source)
     {
         $this->source = $source;
@@ -349,9 +333,7 @@ class Checkout implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingCost()
     {
         return $this->shippingCost;
@@ -372,17 +354,13 @@ class Checkout implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCurrency()
     {
         return $this->currency;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setCurrency($currency)
     {
         $this->currency = $currency;
@@ -498,6 +476,7 @@ class Checkout implements
     /**
      * @return Collection|CheckoutLineItem[]
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->lineItems;
@@ -530,6 +509,7 @@ class Checkout implements
     /**
      * @return CustomerVisitor|null
      */
+    #[\Override]
     public function getVisitor()
     {
         $sourceEntity = $this->getSourceEntity();

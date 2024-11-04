@@ -8,11 +8,13 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class RemoveUnusedCombinedPriceListsCommandTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $gc = $this->getContainer()->get('oro_pricing.builder.combined_price_list_garbage_collector');

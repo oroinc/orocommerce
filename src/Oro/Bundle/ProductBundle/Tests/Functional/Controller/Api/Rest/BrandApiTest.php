@@ -15,6 +15,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 class BrandApiTest extends RestJsonApiTestCase
 {
     use RolePermissionExtension;
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateWsseAuthHeader());

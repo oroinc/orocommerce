@@ -12,17 +12,13 @@ class RemoveShippingRuleRelation implements Migration, OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 0;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->modifyOroShippingRuleDestinationTable($schema);

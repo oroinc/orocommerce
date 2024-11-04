@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -227,9 +228,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         });
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -239,6 +238,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         ];
     }
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var User $owner */
@@ -296,7 +296,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
 
     protected function updatedInternalStatus(ObjectManager $manager)
     {
-        $internalEntityClass = ExtendHelper::buildEnumValueClassName('rfp_internal_status');
+        $enumRepository = $manager->getRepository(EnumOption::class);
         foreach (self::$requests as $key => $rawRequest) {
             if (!isset($rawRequest['internal_status'])) {
                 continue;
@@ -305,14 +305,16 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
             /** @var Request $request */
             $request = $this->getReference($key);
 
-            $enumValue = $manager->getRepository($internalEntityClass)->find($rawRequest['internal_status']);
-            if (!$enumValue) {
+            $enumOption = $enumRepository->find(
+                ExtendHelper::buildEnumOptionId('rfp_internal_status', $rawRequest['internal_status'])
+            );
+            if (!$enumOption) {
                 throw new \RuntimeException(
                     sprintf('Can\'t find InternalStatus with code "%s"', $rawRequest['internal_status'])
                 );
             }
 
-            $request->setInternalStatus($enumValue);
+            $request->setInternalStatus($enumOption);
         }
 
         $manager->flush();

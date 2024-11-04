@@ -156,9 +156,7 @@ class ProductController extends AbstractController
         return $this->container->get(FeatureChecker::class)->isFeatureEnabled('oro_price_lists');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

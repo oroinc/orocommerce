@@ -52,10 +52,6 @@ Feature: My Shopping List
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
-  Scenario: Update schema
-    When I go to Products/Product Attributes
-    Then I confirm schema update
-
   Scenario: Update product family
     Given I go to Products/Product Families
     When I click Edit Attribute Family in grid

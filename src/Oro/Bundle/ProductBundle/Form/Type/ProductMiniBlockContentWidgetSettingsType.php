@@ -27,9 +27,7 @@ class ProductMiniBlockContentWidgetSettingsType extends AbstractType
         $this->registry = $registry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $manager = $this->registry->getManagerForClass(Product::class);

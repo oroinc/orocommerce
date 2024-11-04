@@ -26,9 +26,7 @@ abstract class AbstractPaymentTermAclExtension extends AbstractTypeExtension
         $this->authorizationChecker = $authorizationChecker;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->aclResource) {

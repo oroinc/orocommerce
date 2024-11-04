@@ -154,9 +154,7 @@ class LoadPriceAttributeProductPrices extends AbstractFixture implements Depende
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$data as $data) {
@@ -184,9 +182,7 @@ class LoadPriceAttributeProductPrices extends AbstractFixture implements Depende
         $manager->flush();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [

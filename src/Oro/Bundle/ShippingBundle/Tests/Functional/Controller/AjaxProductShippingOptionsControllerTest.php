@@ -9,6 +9,7 @@ use Symfony\Component\DomCrawler\Form;
 
 class AjaxProductShippingOptionsControllerTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], static::generateBasicAuthHeader());

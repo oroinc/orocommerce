@@ -19,6 +19,7 @@ class ProductVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 
     private ProductVisibilityListener $visibilityListener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

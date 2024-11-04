@@ -23,6 +23,7 @@ class FrontendShoppingListTotalListenerTest extends \PHPUnit\Framework\TestCase
     /** @var FrontendShoppingListTotalListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customerUserProvider = $this->createMock(CustomerUserProvider::class);

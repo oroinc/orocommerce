@@ -24,9 +24,7 @@ class UrlSafeSlugPrototypeValidator extends ConstraintValidator
         $this->validator = $validator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($slugPrototype, Constraint $constraint)
     {
         if (!$constraint instanceof UrlSafeSlugPrototype) {

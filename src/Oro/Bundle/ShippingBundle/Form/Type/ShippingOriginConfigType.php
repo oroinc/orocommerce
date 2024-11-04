@@ -10,9 +10,7 @@ class ShippingOriginConfigType extends AbstractType
 {
     const NAME = 'oro_shipping_origin_config';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $parent = $form->getParent();
@@ -30,17 +28,13 @@ class ShippingOriginConfigType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return ShippingOriginType::class;

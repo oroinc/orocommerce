@@ -16,16 +16,19 @@ class WebCatalogCalculateCacheTopic extends AbstractTopic implements JobAwareTop
 {
     public const WEB_CATALOG_ID = 'webCatalogId';
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro.web_catalog.calculate_cache';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Initiate web catalog cache calculation.';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver
@@ -35,6 +38,7 @@ class WebCatalogCalculateCacheTopic extends AbstractTopic implements JobAwareTop
             ->normalize(static fn (Options $options, $value) => (int)$value);
     }
 
+    #[\Override]
     public function createJobName($messageBody): string
     {
         return sprintf('%s:%s', self::getName(), $messageBody[self::WEB_CATALOG_ID]);

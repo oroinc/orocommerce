@@ -32,9 +32,9 @@ Feature: Product attribute multiselect
       | Field Name | MultiSelectField |
       | Type       | Multi-Select     |
     And I click "Continue"
-    Then I should see that "Product Attribute Frontend Options" contains "Searchable"
-    And I should see that "Product Attribute Frontend Options" contains "Filterable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
+    Then I should see that "Product Attribute Storefront Options" contains "Searchable"
+    And I should see that "Product Attribute Storefront Options" contains "Filterable"
+    And I should see that "Product Attribute Storefront Options" does not contain "Sortable"
 
     When I fill form with:
       | Searchable | Yes |
@@ -47,9 +47,6 @@ Feature: Product attribute multiselect
       | TestMultiValueFour  |
     And I save and close form
     Then I should see "Attribute was successfully saved" flash message
-
-    When I click update schema
-    Then I should see "Schema updated" flash message
 
   Scenario: Delete option from attribute
     Given I go to Products/ Product Attributes
@@ -165,4 +162,3 @@ Feature: Product attribute multiselect
     Then I should see "Are you sure you want to delete this attribute?"
     And I click "Yes"
     Then I should see "Attribute successfully deleted" flash message
-    And I should see "Update schema"

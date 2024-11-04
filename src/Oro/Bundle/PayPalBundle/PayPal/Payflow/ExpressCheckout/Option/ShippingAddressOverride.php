@@ -13,17 +13,13 @@ class ShippingAddressOverride extends AbstractBooleanOption implements OptionsDe
     const TRUE = 1;
     const FALSE = 0;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicableDependent(array $options)
     {
         return isset($options[Action::ACTION]) && $options[Action::ACTION] === Action::SET_EC;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         $resolver

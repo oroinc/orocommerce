@@ -15,6 +15,7 @@ class ProductUpcomingFormExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUpcomingFormExtension */
     private $productFormExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productFormExtension = new ProductUpcomingFormExtension();

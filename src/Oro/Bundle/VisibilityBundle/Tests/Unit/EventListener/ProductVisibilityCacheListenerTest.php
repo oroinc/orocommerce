@@ -24,6 +24,7 @@ class ProductVisibilityCacheListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductVisibilityCacheListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->resolvedProductVisibilityProvider = $this->createMock(ResolvedProductVisibilityProvider::class);

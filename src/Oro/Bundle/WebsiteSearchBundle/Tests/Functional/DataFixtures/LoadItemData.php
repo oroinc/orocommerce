@@ -120,9 +120,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
      */
     private static $searchReferenceRepository;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -132,9 +130,7 @@ class LoadItemData extends AbstractFixture implements ContainerAwareInterface, D
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $websiteIds = $manager->getRepository(Website::class)->getWebsiteIdentifiers();

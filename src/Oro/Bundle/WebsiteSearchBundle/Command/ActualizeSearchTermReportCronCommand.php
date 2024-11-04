@@ -24,6 +24,7 @@ class ActualizeSearchTermReportCronCommand extends Command implements CronComman
         parent::__construct();
     }
 
+    #[\Override]
     public function getDefaultDefinition()
     {
         // At minute 1 past every hour.
@@ -31,6 +32,7 @@ class ActualizeSearchTermReportCronCommand extends Command implements CronComman
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Actualize Search Terms report.')
@@ -49,6 +51,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln('Actualizing report');

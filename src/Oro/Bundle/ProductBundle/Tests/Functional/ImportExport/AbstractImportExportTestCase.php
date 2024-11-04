@@ -15,6 +15,7 @@ use Oro\Component\Testing\ReflectionUtil;
 
 abstract class AbstractImportExportTestCase extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

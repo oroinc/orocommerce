@@ -85,62 +85,49 @@ class FedexShippingMethod implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isGrouped(): bool
     {
         return true;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isEnabled(): bool
     {
         return $this->enabled;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIdentifier(): string
     {
         return $this->identifier;
     }
 
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel(): string
     {
         return $this->label;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon(): ?string
     {
         return $this->iconPath;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTypes(): array
     {
         return $this->types;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getType(string $identifier): ?ShippingMethodTypeInterface
     {
         foreach ($this->getTypes() as $methodType) {
@@ -164,25 +151,19 @@ class FedexShippingMethod implements
         return null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptionsConfigurationFormType(): ?string
     {
         return FedexShippingMethodOptionsType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSortOrder(): int
     {
         return 20;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function calculatePrices(
         ShippingContextInterface $context,
         array $methodOptions,
@@ -209,9 +190,7 @@ class FedexShippingMethod implements
         return $result;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTrackingLink(string $number): ?string
     {
         foreach ($this->getTrackingRegexList() as $regex) {

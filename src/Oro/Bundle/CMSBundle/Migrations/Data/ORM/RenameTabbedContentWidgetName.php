@@ -16,6 +16,7 @@ class RenameTabbedContentWidgetName extends AbstractFixture implements Container
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         if (!$this->container->get(ApplicationState::class)->isInstalled()) {

@@ -65,14 +65,14 @@ Feature: Product Kit search attribute
     Then I should see an "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
-    And I should see "Search Autocomplete Item Selected" element with text "Product 1" inside "Search Autocomplete" element
+    And I should see "Search Autocomplete Item Selected" element with text "Product Kit 1" inside "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
-    And I should see "Search Autocomplete Item Selected" element with text "Product Kit 1" inside "Search Autocomplete" element
+    And I should see "Search Autocomplete Item Selected" element with text "Product 1" inside "Search Autocomplete" element
     When I click "Search Button"
     Then number of records in "Product Frontend Grid" should be 2
-    And PSKU1 must be first record in "Product Frontend Grid"
-    And PSKU_KIT1 must be second record in "Product Frontend Grid"
+    And PSKU_KIT1 must be first record in "Product Frontend Grid"
+    And PSKU1 must be second record in "Product Frontend Grid"
 
   Scenario: Disable searchable option for product attribute of simple product related to product kit in the back-office
     Given I proceed as the Admin
@@ -127,14 +127,14 @@ Feature: Product Kit search attribute
     Then I should see an "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
-    And I should see "Search Autocomplete Item Selected" element with text "Product 1" inside "Search Autocomplete" element
+    And I should see "Search Autocomplete Item Selected" element with text "Product Kit 1" inside "Search Autocomplete" element
     When I press "ArrowDown" key on "Search Form Field" element
     Then I should see "Search Form Field" element focused
-    And I should see "Search Autocomplete Item Selected" element with text "Product Kit 1" inside "Search Autocomplete" element
+    And I should see "Search Autocomplete Item Selected" element with text "Product 1" inside "Search Autocomplete" element
     When I click "Search Button"
     Then number of records in "Product Frontend Grid" should be 2
-    And PSKU1 must be first record in "Product Frontend Grid"
-    And PSKU_KIT1 must be second record in "Product Frontend Grid"
+    And PSKU_KIT1 must be first record in "Product Frontend Grid"
+    And PSKU1 must be second record in "Product Frontend Grid"
 
 # TODO: Uncomment and apply after BB-23247
 #  Scenario: Check the search of product kits after removing searchable attribute for simple product related to product kit in the back-office

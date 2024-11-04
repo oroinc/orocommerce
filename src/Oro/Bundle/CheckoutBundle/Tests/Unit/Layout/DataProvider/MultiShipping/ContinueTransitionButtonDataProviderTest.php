@@ -21,6 +21,7 @@ class ContinueTransitionButtonDataProviderTest extends \PHPUnit\Framework\TestCa
     /** @var ContinueTransitionButtonDataProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transitionProvider = $this->createMock(TransitionProvider::class);

@@ -10,6 +10,7 @@ class RelatedProductFixtureTest extends \PHPUnit\Framework\TestCase
     /** @var RelatedProductFixture */
     private $fixture;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->fixture = new RelatedProductFixture();

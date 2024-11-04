@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductImage;
  */
 class ProductImageFileNameProvider extends AbstractHumanReadableFileNameProvider
 {
+    #[\Override]
     protected function isApplicable(File $file): bool
     {
         return

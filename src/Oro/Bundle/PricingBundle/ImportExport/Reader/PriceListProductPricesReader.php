@@ -27,9 +27,7 @@ class PriceListProductPricesReader extends EntityReader
      */
     protected $priceListId;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null, array $ids = [])
     {
         $qb = parent::createSourceEntityQueryBuilder($entityName, $organization, $ids);
@@ -47,6 +45,7 @@ class PriceListProductPricesReader extends EntityReader
         return $qb;
     }
 
+    #[\Override]
     public function setSourceQuery(Query $query)
     {
         $iterator = $this->createSourceIterator($query);
@@ -65,9 +64,7 @@ class PriceListProductPricesReader extends EntityReader
         $jobInstance->setRawConfiguration($configuration);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function initializeFromContext(ContextInterface $context)
     {
         $this->priceListId = (int)$context->getOption('price_list_id');
@@ -80,6 +77,7 @@ class PriceListProductPricesReader extends EntityReader
         $this->shardManager = $shardManager;
     }
 
+    #[\Override]
     protected function createQueryBuilderByEntityNameAndIdentifier(
         ObjectManager $entityManager,
         string $entityName,

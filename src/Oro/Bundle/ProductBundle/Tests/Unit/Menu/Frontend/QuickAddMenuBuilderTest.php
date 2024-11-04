@@ -14,6 +14,7 @@ class QuickAddMenuBuilderTest extends \PHPUnit\Framework\TestCase
     /** @var QuickAddMenuBuilder */
     private $builder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->processorRegistry = $this->createMock(ComponentProcessorRegistry::class);

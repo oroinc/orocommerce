@@ -34,9 +34,7 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
         $this->container = $container;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFunctions()
     {
         return [
@@ -76,9 +74,7 @@ class ShoppingListExtension extends AbstractExtension implements ServiceSubscrib
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return [

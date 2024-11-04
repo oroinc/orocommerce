@@ -14,16 +14,19 @@ class ResizeProductImageTopic extends AbstractTopic
     public const FORCE_OPTION = 'force';
     public const DIMENSIONS_OPTION = 'dimensions';
 
+    #[\Override]
     public static function getName(): string
     {
         return 'oro_product.image_resize';
     }
 
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Topic for resizing product images by product id using received dimensions';
     }
 
+    #[\Override]
     public function configureMessageBody(OptionsResolver $resolver): void
     {
         $resolver

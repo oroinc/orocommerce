@@ -19,6 +19,7 @@ class RequestProductItemChecksumListenerTest extends TestCase
 
     private RequestProductItemChecksumListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->lineItemChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);

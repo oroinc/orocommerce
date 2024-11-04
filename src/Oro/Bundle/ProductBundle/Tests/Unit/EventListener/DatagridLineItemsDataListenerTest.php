@@ -28,6 +28,7 @@ class DatagridLineItemsDataListenerTest extends \PHPUnit\Framework\TestCase
 
     private DatagridLineItemsDataListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $localizationHelper = $this->createMock(LocalizationHelper::class);

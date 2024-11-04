@@ -4,6 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
@@ -38,6 +39,7 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var QuoteExtension */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);
@@ -111,12 +113,21 @@ class QuoteExtensionTest extends \PHPUnit\Framework\TestCase
         $this->configManager->expects($this->any())
             ->method('get')
             ->with('oro_rfp.frontend_product_visibility')
-            ->willReturn([Product::INVENTORY_STATUS_OUT_OF_STOCK]);
+            ->willReturn([
+                ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_OUT_OF_STOCK
+                )
+            ]);
 
         $product = new StubProduct();
 
         if (!empty($productInventoryStatus)) {
-            $productInventoryStatus = new TestEnumValue($productInventoryStatus, $productInventoryStatus);
+            $productInventoryStatus = new TestEnumValue(
+                Product::INVENTORY_STATUS_ENUM_CODE,
+                'Test',
+                $productInventoryStatus
+            );
             $product->setInventoryStatus($productInventoryStatus);
         }
 

@@ -12,9 +12,7 @@ class LoadCouponData extends AbstractLoadCouponData
     const COUPON_DISABLED = 'coupon_disabled';
     const COUPON_WITH_SHIPPING_PROMO_AND_VALID_UNTIL = 'coupon_with_shipping_promo_and_valid_until';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -22,9 +20,7 @@ class LoadCouponData extends AbstractLoadCouponData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getCoupons()
     {
         return [

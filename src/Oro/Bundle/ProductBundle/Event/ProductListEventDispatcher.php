@@ -14,7 +14,6 @@ use Symfony\Component\EventDispatcher\ImmutableEventDispatcher;
 class ProductListEventDispatcher extends ImmutableEventDispatcher
 {
     /**
-     * {@inheritDoc}
      *
      * @param ProductListEvent $event
      * @param string|null      $eventName
@@ -23,6 +22,7 @@ class ProductListEventDispatcher extends ImmutableEventDispatcher
      *
      * @throws \InvalidArgumentException when the given event is not supported or an event name is not provided
      */
+    #[\Override]
     public function dispatch(object $event, string $eventName = null): object
     {
         if (!$event instanceof ProductListEvent) {

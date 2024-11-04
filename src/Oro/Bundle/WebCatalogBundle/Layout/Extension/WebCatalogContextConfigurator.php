@@ -20,9 +20,7 @@ class WebCatalogContextConfigurator implements ContextConfiguratorInterface
         $this->configManager = $configManager;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureContext(ContextInterface $context)
     {
         $context->getResolver()

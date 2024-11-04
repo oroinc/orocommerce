@@ -18,6 +18,7 @@ class CheckoutWorkflowStateExtensionTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutWorkflowStateExtension */
     private $checkoutWorkflowExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutErrorHandler = $this->createMock(CheckoutErrorHandler::class);

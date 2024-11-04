@@ -25,6 +25,7 @@ class SameOrganizationValidatorTest extends ConstraintValidatorTestCase
     /** @var EntityOwnerAccessor|\PHPUnit\Framework\MockObject\MockObject */
     private $entityOwnerAccessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->typeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
@@ -32,6 +33,7 @@ class SameOrganizationValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): SameOrganizationValidator
     {
         return new SameOrganizationValidator($this->typeRegistry, $this->entityOwnerAccessor);

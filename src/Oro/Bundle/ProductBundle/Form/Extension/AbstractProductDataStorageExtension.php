@@ -46,9 +46,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         $this->logger = $logger;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         if ($this->isStorageFull()) {
@@ -61,9 +59,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         if ($this->isStorageFull()) {

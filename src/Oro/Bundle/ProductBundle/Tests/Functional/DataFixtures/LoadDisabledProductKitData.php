@@ -11,6 +11,7 @@ class LoadDisabledProductKitData extends LoadProductKitData
 {
     public const PRODUCT_KIT_4 = 'product-kit-4';
 
+    #[\Override]
     protected function getProductsData(): array
     {
         return [
@@ -48,7 +49,7 @@ class LoadDisabledProductKitData extends LoadProductKitData
                         'products' => ['product-4', 'product-5'],
                     ],
                 ],
-                'inventoryStatusId' => Product::INVENTORY_STATUS_IN_STOCK,
+                'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
             ],
         ];
     }

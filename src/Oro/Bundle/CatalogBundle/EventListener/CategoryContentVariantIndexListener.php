@@ -57,9 +57,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         $this->webCatalogUsageProvider = $webCatalogUsageProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function addField($fieldName)
     {
         if (!in_array($fieldName, $this->fieldsChangesListenTo, true)) {
@@ -69,9 +67,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFields()
     {
         return $this->fieldsChangesListenTo;

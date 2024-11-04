@@ -15,6 +15,7 @@ class FedexRateServiceResponseFactoryTest extends TestCase
     /** @var FedexRateServiceResponseFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new FedexRateServiceResponseFactory();

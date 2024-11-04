@@ -16,9 +16,7 @@ class OroFedexShippingBundle extends Bundle
         $this->kernel = $kernel;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function build(ContainerBuilder $container): void
     {
         parent::build($container);

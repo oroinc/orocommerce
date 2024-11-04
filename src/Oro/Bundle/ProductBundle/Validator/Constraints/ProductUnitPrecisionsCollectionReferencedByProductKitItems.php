@@ -17,6 +17,7 @@ class ProductUnitPrecisionsCollectionReferencedByProductKitItems extends Constra
 
     public string $message = 'oro.product.unit_precisions_items.referenced_by_product_kits';
 
+    #[\Override]
     public function getTargets(): array
     {
         return [self::CLASS_CONSTRAINT];

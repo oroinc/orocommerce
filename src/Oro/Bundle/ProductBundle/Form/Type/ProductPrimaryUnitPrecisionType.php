@@ -31,6 +31,7 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
         $this->dataClass = $dataClass;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -79,9 +80,7 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
         });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
@@ -99,9 +98,7 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;

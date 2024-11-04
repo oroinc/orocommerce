@@ -35,6 +35,7 @@ class CustomerGroupPriceListsAssignmentProviderTest extends TestCase
 
     private CustomerGroupPriceListsAssignmentProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestHandler = $this->createMock(DebugProductPricesPriceListRequestHandler::class);

@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Datagrid;
 
+use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Provider\EnumOptionsProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
 
 /**
@@ -13,15 +15,10 @@ use Oro\Bundle\OrderBundle\Provider\OrderConfigurationProviderInterface;
  */
 class OrderStatusFrontendDatagridListener
 {
-    private OrderConfigurationProviderInterface $configurationProvider;
-    private EnumValueProvider $enumValueProvider;
-
     public function __construct(
-        OrderConfigurationProviderInterface $configurationProvider,
-        EnumValueProvider $enumValueProvider
+        private OrderConfigurationProviderInterface $configurationProvider,
+        private EnumOptionsProvider $enumOptionsProvider
     ) {
-        $this->configurationProvider = $configurationProvider;
-        $this->enumValueProvider = $enumValueProvider;
     }
 
     public function onBuildBefore(BuildBefore $event): void
@@ -37,7 +34,12 @@ class OrderStatusFrontendDatagridListener
         $query = $config->getOrmQuery();
         $query->addSelect('status.name as statusName');
         $query->addSelect('status.id as statusId');
-        $query->addLeftJoin('order1.' . $fieldName, 'status');
+        $query->addLeftJoin(
+            EnumOption::class,
+            'status',
+            Join::WITH,
+            "JSON_EXTRACT(order1.serialized_data, '$fieldName') = status"
+        );
         $query->addHint('HINT_TRANSLATABLE');
         $config->addColumn('statusName', ['label' => 'oro.frontend.order.order_status.label']);
         $config->addFilter('statusName', [
@@ -45,7 +47,7 @@ class OrderStatusFrontendDatagridListener
             'data_name' => 'statusId',
             'options'   => [
                 'field_options' => [
-                    'choices'              => $this->enumValueProvider->getEnumChoicesByCode($enumCode),
+                    'choices'              => $this->enumOptionsProvider->getEnumChoicesByCode($enumCode),
                     'translatable_options' => false,
                     'multiple'             => true
                 ]

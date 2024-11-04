@@ -20,6 +20,7 @@ class ChainDefaultProductUnitProviderTest extends \PHPUnit\Framework\TestCase
     /** @var ProductUnitPrecision */
     private $unitPrecision;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->unitPrecision = new ProductUnitPrecision();

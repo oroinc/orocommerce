@@ -11,6 +11,7 @@ class OffersDataStorage extends AbstractSessionDataStorage
 {
     public const OFFERS_DATA_KEY = 'offers';
 
+    #[\Override]
     protected function getKey(): string
     {
         return self::OFFERS_DATA_KEY;

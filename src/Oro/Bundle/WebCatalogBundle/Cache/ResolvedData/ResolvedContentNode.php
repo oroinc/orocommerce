@@ -42,6 +42,7 @@ class ResolvedContentNode implements ContentNodeInterface
         $this->rewriteVariantTitle = $rewriteVariantTitle;
     }
 
+    #[\Override]
     public function getId(): int
     {
         return $this->id;
@@ -52,6 +53,7 @@ class ResolvedContentNode implements ContentNodeInterface
         return $this->identifier;
     }
 
+    #[\Override]
     public function getTitles(): Collection
     {
         return $this->titles;
@@ -62,6 +64,7 @@ class ResolvedContentNode implements ContentNodeInterface
         return $this->resolvedContentVariant;
     }
 
+    #[\Override]
     public function getContentVariants(): ArrayCollection
     {
         return new ArrayCollection([$this->getResolvedContentVariant()]);
@@ -98,6 +101,7 @@ class ResolvedContentNode implements ContentNodeInterface
         return $this;
     }
 
+    #[\Override]
     public function isRewriteVariantTitle(): bool
     {
         return $this->rewriteVariantTitle;

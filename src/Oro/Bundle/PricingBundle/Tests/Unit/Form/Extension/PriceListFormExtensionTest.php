@@ -20,6 +20,7 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
     /** @var PriceListFormExtension */
     private $priceListFormExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -45,9 +46,7 @@ class PriceListFormExtensionTest extends FormIntegrationTestCase
         $this->assertEquals([PriceListSelectWithPriorityType::class], PriceListFormExtension::getExtendedTypes());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

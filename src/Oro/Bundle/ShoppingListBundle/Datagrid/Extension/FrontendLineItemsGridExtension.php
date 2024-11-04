@@ -43,17 +43,13 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(DatagridConfiguration $config): bool
     {
         return \in_array($config->getName(), static::SUPPORTED_GRIDS, true) && parent::isApplicable($config);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setParameters(ParameterBag $parameters): void
     {
         if ($parameters->has(ParameterBag::MINIFIED_PARAMETERS)) {
@@ -70,9 +66,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         parent::setParameters($parameters);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function processConfigs(DatagridConfiguration $config): void
     {
         if ($this->isLineItemsGrouped()) {
@@ -123,9 +117,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function visitMetadata(DatagridConfiguration $config, MetadataObject $data): void
     {
         $shoppingListId = $this->getShoppingListId();
@@ -140,9 +132,7 @@ class FrontendLineItemsGridExtension extends AbstractExtension
         $data->offsetAddToArrayByPath('[state][parameters]', ['group' => $this->isLineItemsGrouped()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function visitResult(DatagridConfiguration $config, ResultsObject $result): void
     {
         $shoppingListId = $this->getShoppingListId();

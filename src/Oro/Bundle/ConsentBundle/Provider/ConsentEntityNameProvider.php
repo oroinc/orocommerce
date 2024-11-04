@@ -12,9 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
  */
 class ConsentEntityNameProvider implements EntityNameProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof Consent) {
@@ -28,9 +26,7 @@ class ConsentEntityNameProvider implements EntityNameProviderInterface
         return $localizedName ?: (string)$entity->getDefaultName();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, Consent::class, true)) {

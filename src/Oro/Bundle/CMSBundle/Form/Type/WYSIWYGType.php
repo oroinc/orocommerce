@@ -43,11 +43,13 @@ class WYSIWYGType extends AbstractType
         $this->entityProvider = $entityProvider;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addEventSubscriber($this->digitalAssetTwigTagsEventSubscriber);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $dataClass = $form->getConfig()->getOption('entity_class') ?: $form->getRoot()->getConfig()->getDataClass();
@@ -101,6 +103,7 @@ class WYSIWYGType extends AbstractType
         );
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
@@ -124,6 +127,7 @@ class WYSIWYGType extends AbstractType
         ]);
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return TextareaType::class;

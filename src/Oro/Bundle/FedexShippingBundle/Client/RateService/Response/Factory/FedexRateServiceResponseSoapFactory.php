@@ -12,9 +12,7 @@ use Oro\Bundle\FedexShippingBundle\Client\RateService\Response\FedexRateServiceS
  */
 class FedexRateServiceResponseSoapFactory implements FedexRateServiceResponseFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create($response): FedexRateServiceResponseInterface
     {
         $soapResponse = $response;

@@ -25,6 +25,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends FrontendWebTestCase
 
     private ?Event $firedEvent = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

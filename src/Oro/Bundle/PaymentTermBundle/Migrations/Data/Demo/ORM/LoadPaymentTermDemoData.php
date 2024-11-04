@@ -18,9 +18,7 @@ class LoadPaymentTermDemoData extends AbstractFixture
         'net 90',
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach (self::$paymentTermsLabels as $paymentTermLabel) {

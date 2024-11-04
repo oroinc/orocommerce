@@ -13,9 +13,7 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 
 class UpdateEntitiesFormTypes implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(

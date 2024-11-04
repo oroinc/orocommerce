@@ -5,7 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\OrdersCreatedAt;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -124,6 +125,7 @@ class LoadOrdersCreatedAtRangeDuration4Days extends LoadOrders
      * @param array $orderData
      * @return Order
      */
+    #[\Override]
     protected function createOrder(ObjectManager $manager, $name, array $orderData)
     {
         $orderMetadata = $manager->getClassMetadata(Order::class);
@@ -167,10 +169,10 @@ class LoadOrdersCreatedAtRangeDuration4Days extends LoadOrders
         }
 
         if (isset($orderData['internalStatus'])) {
-            /** @var AbstractEnumValue $internalStatus */
+            /** @var EnumOptionInterface $internalStatus */
             $internalStatus = $manager
-                ->getRepository(ExtendHelper::buildEnumValueClassName(Order::INTERNAL_STATUS_CODE))
-                ->find($orderData['internalStatus']);
+                ->getRepository(EnumOption::class)
+                ->find(ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $orderData['internalStatus']));
 
             $order->setInternalStatus($internalStatus);
         }

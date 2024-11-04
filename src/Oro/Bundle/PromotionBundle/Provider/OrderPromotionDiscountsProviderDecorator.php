@@ -19,9 +19,7 @@ class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProv
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array
     {
         $discounts = $this->baseDiscountsProvider->getDiscounts($sourceEntity, $context);

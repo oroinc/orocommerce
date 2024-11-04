@@ -36,9 +36,7 @@ class ContactInfoUserOptionsProvider implements OptionProviderWithDefaultValueIn
         $this->contactInfoCustomerOptionsProvider = $contactInfoCustomerOptionsProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOptions()
     {
         $options = $this->availableUserOptionsProvider->getSelectedOptions();
@@ -65,9 +63,7 @@ class ContactInfoUserOptionsProvider implements OptionProviderWithDefaultValueIn
         return $option;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultOption()
     {
         $map = [

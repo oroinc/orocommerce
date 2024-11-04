@@ -138,11 +138,13 @@ class SearchResultHistory implements
         return $this;
     }
 
+    #[\Override]
     public function getWebsite(): ?Website
     {
         return $this->website;
     }
 
+    #[\Override]
     public function setWebsite(?Website $website): self
     {
         $this->website = $website;
@@ -225,6 +227,7 @@ class SearchResultHistory implements
     /**
      * @return \DateTime
      */
+    #[\Override]
     public function getCreatedAt()
     {
         return $this->createdAt;
@@ -234,6 +237,7 @@ class SearchResultHistory implements
      * @param \DateTime|null $createdAt
      * @return $this
      */
+    #[\Override]
     public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;

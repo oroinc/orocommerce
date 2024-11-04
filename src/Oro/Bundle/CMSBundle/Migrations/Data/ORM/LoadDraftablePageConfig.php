@@ -16,6 +16,7 @@ class LoadDraftablePageConfig extends AbstractFixture implements ContainerAwareI
 {
     use ContainerAwareTrait;
 
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $configManager = $this->getConfigManager();

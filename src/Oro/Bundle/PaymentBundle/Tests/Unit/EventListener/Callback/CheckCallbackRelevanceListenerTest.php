@@ -37,6 +37,7 @@ class CheckCallbackRelevanceListenerTest extends \PHPUnit\Framework\TestCase
      */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);

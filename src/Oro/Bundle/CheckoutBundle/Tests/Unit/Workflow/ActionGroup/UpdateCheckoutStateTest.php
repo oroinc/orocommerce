@@ -18,6 +18,7 @@ class UpdateCheckoutStateTest extends TestCase
 
     private UpdateCheckoutState $updateCheckoutState;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);

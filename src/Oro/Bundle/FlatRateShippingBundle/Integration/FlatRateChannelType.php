@@ -9,17 +9,13 @@ class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInter
 {
     const TYPE = 'flat_rate';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.flat_rate.channel_type.label';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getIcon()
     {
         return 'bundles/oroflatrateshipping/img/flat-rate-logo.png';

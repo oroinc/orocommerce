@@ -11,6 +11,7 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class EnabledTypeConfigsValidationGroupValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): EnabledTypeConfigsValidationGroupValidator
     {
         return new EnabledTypeConfigsValidationGroupValidator();

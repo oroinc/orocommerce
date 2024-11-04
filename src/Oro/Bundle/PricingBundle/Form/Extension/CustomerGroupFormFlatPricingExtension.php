@@ -30,17 +30,13 @@ class CustomerGroupFormFlatPricingExtension extends AbstractTypeExtension implem
         $this->listener = $listener;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [CustomerGroupType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (!$this->isFeaturesEnabled()) {

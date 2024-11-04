@@ -26,6 +26,7 @@ class ProductInventoryFieldsChangedListenerTest extends \PHPUnit\Framework\TestC
     /** @var ProductInventoryFieldsChangedListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->changedEntities = $this->createMock(IndexationEntitiesContainer::class);

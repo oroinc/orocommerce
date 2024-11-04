@@ -87,9 +87,7 @@ class LoadConsentsData extends AbstractFixture implements DependentFixtureInterf
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -108,6 +106,7 @@ class LoadConsentsData extends AbstractFixture implements DependentFixtureInterf
         return $consentRef . '_CONSENT_ACCEPTANCE';
     }
 
+    #[\Override]
     public function load(ObjectManager $objectManager)
     {
         foreach ($this->consentData as $consentItem) {

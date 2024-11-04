@@ -35,9 +35,9 @@ class CategoryType extends AbstractType
     }
 
     /**
-     * {@inheritDoc}
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -172,9 +172,7 @@ class CategoryType extends AbstractType
             });
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
@@ -182,9 +180,7 @@ class CategoryType extends AbstractType
             ->setDefault('csrf_token_id', 'category');
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_catalog_category';

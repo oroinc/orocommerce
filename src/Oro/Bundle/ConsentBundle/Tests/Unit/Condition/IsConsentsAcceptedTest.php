@@ -28,9 +28,7 @@ class IsConsentsAcceptedTest extends \PHPUnit\Framework\TestCase
 
     private ContextAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $contextAccessor;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

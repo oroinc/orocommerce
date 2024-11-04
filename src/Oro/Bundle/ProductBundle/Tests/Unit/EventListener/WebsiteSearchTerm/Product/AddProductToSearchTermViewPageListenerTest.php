@@ -18,6 +18,7 @@ class AddProductToSearchTermViewPageListenerTest extends TestCase
 
     private AddProductToSearchTermViewPageListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->environment = $this->createMock(Environment::class);

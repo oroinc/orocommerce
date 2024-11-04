@@ -21,6 +21,7 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit\Framework\TestCas
     /** @var ProductVisibilityPostSubmitListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

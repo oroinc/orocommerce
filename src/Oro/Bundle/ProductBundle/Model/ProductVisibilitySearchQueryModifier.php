@@ -10,14 +10,14 @@ use Oro\Bundle\SearchBundle\Query\Query;
  */
 class ProductVisibilitySearchQueryModifier
 {
-    public function modifyByInventoryStatus(Query $query, array $productInventoryStatuses)
+    public function modifyByInventoryStatus(Query $query, array $productInventoryStatuses): void
     {
         $query->getCriteria()->andWhere(
             Criteria::expr()->in('inv_status', $productInventoryStatuses)
         );
     }
 
-    public function modifyByStatus(Query $query, array $statuses)
+    public function modifyByStatus(Query $query, array $statuses): void
     {
         $query->getCriteria()->andWhere(
             Criteria::expr()->in('status', $statuses)

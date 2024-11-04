@@ -26,6 +26,7 @@ class TwigExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->generator = $this->createMock(SlugEntityGenerator::class);

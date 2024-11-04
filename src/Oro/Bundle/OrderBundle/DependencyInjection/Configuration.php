@@ -4,6 +4,8 @@ namespace Oro\Bundle\OrderBundle\DependencyInjection;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
@@ -20,9 +22,7 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD = 'order_previously_purchased_period';
     public const CONFIG_KEY_ENABLE_PURCHASE_HISTORY = 'enable_purchase_history';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);
@@ -33,30 +33,53 @@ class Configuration implements ConfigurationInterface
             [
                 'backend_product_visibility' => [
                     'value' => [
-                        Product::INVENTORY_STATUS_IN_STOCK,
-                        Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        ),
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ),
                     ],
                 ],
                 'frontend_product_visibility' => [
                     'value' => [
-                        Product::INVENTORY_STATUS_IN_STOCK,
-                        Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        ),
+                        ExtendHelper::buildEnumOptionId(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            Product::INVENTORY_STATUS_OUT_OF_STOCK
+                        ),
                     ],
                 ],
                 self::CONFIG_KEY_ENABLE_CANCELLATION => [
                     'value' => false,
                 ],
-                self::CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES => [
-                    'value' => [OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN],
+                static::CONFIG_KEY_APPLICABLE_INTERNAL_STATUSES => [
+                    'value' => [
+                        ExtendHelper::buildEnumOptionId(
+                            Order::INTERNAL_STATUS_CODE,
+                            OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                        )
+                    ],
                 ],
-                self::CONFIG_KEY_TARGET_INTERNAL_STATUS => [
-                    'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                static::CONFIG_KEY_TARGET_INTERNAL_STATUS => [
+                    'value' => ExtendHelper::buildEnumOptionId(
+                        Order::INTERNAL_STATUS_CODE,
+                        OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                    )
                 ],
                 self::CONFIG_KEY_ENABLE_EXTERNAL_STATUS_MANAGEMENT => [
                     'value' => false,
                 ],
-                self::CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS => [
-                    'value' => OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN,
+                static::CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS => [
+                    'value' => ExtendHelper::buildEnumOptionId(
+                        Order::INTERNAL_STATUS_CODE,
+                        OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+                    )
                 ],
                 'order_creation_new_order_owner' => ['value' => null, 'type' => 'string'],
                 self::CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD => [

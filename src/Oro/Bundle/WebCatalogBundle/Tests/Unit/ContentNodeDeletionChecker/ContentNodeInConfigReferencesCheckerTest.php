@@ -22,6 +22,7 @@ class ContentNodeInConfigReferencesCheckerTest extends \PHPUnit\Framework\TestCa
 
     private ContentNode $contentNode;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

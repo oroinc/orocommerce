@@ -21,6 +21,7 @@ class ProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
     private const VARIANT_FIELD_KEY_SIZE = 'size';
     private const VARIANT_FIELD_KEY_SLIM_FIT = 'slim_fit';
 
+    #[\Override]
     protected function createValidator(): ProductVariantLinksValidator
     {
         return new ProductVariantLinksValidator(PropertyAccess::createPropertyAccessor());

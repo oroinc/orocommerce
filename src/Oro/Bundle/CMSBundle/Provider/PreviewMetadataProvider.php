@@ -33,6 +33,7 @@ class PreviewMetadataProvider implements PreviewMetadataProviderInterface
         $this->mimeTypes = $mimeTypes;
     }
 
+    #[\Override]
     public function getMetadata(File $file): array
     {
         $metadata = $this->innerPreviewMetadataProvider->getMetadata($file);

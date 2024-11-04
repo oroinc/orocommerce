@@ -26,6 +26,7 @@ class CategoryFallbackProviderTest extends \PHPUnit\Framework\TestCase
      */
     protected $categoryFallbackProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

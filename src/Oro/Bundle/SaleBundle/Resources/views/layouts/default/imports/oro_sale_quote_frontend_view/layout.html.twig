@@ -1,3 +1,13 @@
+{% block _quote_view_toolbar_actions_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " controls-list"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _quote_view_controls_list_widget %}
     {% apply spaceless %}
     <ul class="controls-list">
@@ -8,53 +18,93 @@
     {% endapply %}
 {% endblock %}
 
-{% block _quote_view_customer_status_widget %}
-    {% set text %}
-        {{ 'oro.frontend.sale.quote.customer_status.label'|trans }}: {{ text }}
-    {% endset %}
+{% block _quote_view_top_bar_status_widget %}
+    {% import '@OroUI/layouts/renderStatus.html.twig' as renderStatus %}
+    {{ renderStatus.status({
+        label: text,
+        code: text.id,
+        map: {
+            'open': 'info',
+            'expired': '',
+            'accepted': 'progress',
+            'declined': 'destructive',
+            'pending approval': 'warning',
+            'approved': 'success',
+            'not approved': 'destructive',
+        }
+    }) }}
+{% endblock %}
 
-    {{ parent_block_widget(block) }}
+{% block _quote_view_page_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__order"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_conainer_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__container"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _quote_view_data_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__data"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _quote_view_information_widget %}
-    <div class="customer-info-grid">
-        <h2 class="customer-info-grid__title">
-            {{- 'oro.frontend.sale.quote.sections.general'|trans -}}
-        </h2>
-        <div class="grid">
-            <div class="grid-col-6 grid-col-mobile-landscape-12">
-                <table class="customer-info-grid__table">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="grid grid-columns-2">
+            <div class="grid-col grid-col-mobile-landscape-12">
+                <table class="customer-info-grid__list">
                     <tbody>
-                    {% if quote.assignedUsers | length %}
-                        <tr>
-                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
-                            <td class="customer-info-grid__element-content">
-                                {% set assigned_users = [] %}
-                                {% for entity in quote.assignedUsers %}
-                                    {% set assigned_users = assigned_users|merge([entity.fullName]) %}
-                                {% endfor %}
-                                {{ assigned_users|join(', ') }}
-                            </td>
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ quote.poNumber|default('N/A'|trans) }}</bdo></td>
                         </tr>
-                    {% endif %}
-                    <tr class="customer-info-grid__row">
-                        <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
-                        <td class="customer-info-grid__element-content">{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
-                    </tr>
-                    <tr class="customer-info-grid__row">
-                        <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
-                        <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ quote.poNumber|default('N/A'|trans) }}</bdo></td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-            <div class="grid-col-6 grid-col-mobile-landscape-12">
-                <table class="customer-info-grid__table">
-                    <tbody>
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                             <td class="customer-info-grid__element-content">{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="grid-col grid-col-mobile-landscape-12">
+                <table class="customer-info-grid__list">
+                    <tbody>
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
+                        </tr>
+                        {% if quote.assignedUsers | length %}
+                            <tr class="customer-info-grid__row">
+                                <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
+                                <td class="customer-info-grid__element-content">
+                                    {% set assigned_users = [] %}
+                                    {% for entity in quote.assignedUsers %}
+                                        {% set assigned_users = assigned_users|merge([entity.fullName]) %}
+                                    {% endfor %}
+                                    {{ assigned_users|join(', ') }}
+                                </td>
+                            </tr>
+                        {% endif %}
                         {% if quote.shippingCost is not empty %}
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
@@ -67,18 +117,22 @@
                                 <td class="customer-info-grid__element-content">{{ paymentTerm.label|escape }}</td>
                             </tr>
                         {% endif %}
+
                         {{ block_widget(block) }}
                     </tbody>
                 </table>
             </div>
-
         </div>
     </div>
 {% endblock %}
 
 {% block _quote_view_line_items_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
-    <div class="customer-line-items">
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-line-items"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         <h2 class="customer-line-items__title">
             {{- 'oro.frontend.sale.quote.sections.quote_products.label'|trans -}}
         </h2>
@@ -184,22 +238,8 @@
     {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ quoteProduct.productSku }}</span>
 {% endblock %}
 
-{% block _quote_view_page_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " quote"}) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _quote_view_accept_container_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget"}) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _quote_view_accept_button_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget__quote"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

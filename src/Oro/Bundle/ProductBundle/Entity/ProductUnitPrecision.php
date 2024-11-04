@@ -173,33 +173,25 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         if ($unit = $this->getUnit()) {
@@ -212,6 +204,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         if ($this->getUnit()) {

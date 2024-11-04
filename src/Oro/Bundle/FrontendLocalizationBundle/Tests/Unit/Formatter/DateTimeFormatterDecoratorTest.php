@@ -28,9 +28,7 @@ class DateTimeFormatterDecoratorTest extends \PHPUnit\Framework\TestCase
      */
     private $formatterDecorator;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->formatter = $this->createMock(DateTimeFormatter::class);

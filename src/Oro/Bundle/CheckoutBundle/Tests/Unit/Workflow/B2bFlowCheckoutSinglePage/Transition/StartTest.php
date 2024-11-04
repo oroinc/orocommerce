@@ -20,6 +20,7 @@ class StartTest extends TestCase
     private TransitionServiceInterface|MockObject $baseTransition;
     private Start $start;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->customerUserActions = $this->createMock(CustomerUserActionsInterface::class);

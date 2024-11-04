@@ -13,6 +13,7 @@ class SelectSwitchInputTypeTest extends FormIntegrationTestCase
     /** @var SelectSwitchInputType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

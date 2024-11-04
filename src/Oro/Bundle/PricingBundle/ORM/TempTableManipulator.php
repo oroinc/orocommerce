@@ -36,70 +36,55 @@ class TempTableManipulator implements TempTableManipulatorInterface
         $this->mySqlManipulator = $mySqlManipulator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createTempTableForEntity(string $className, $identifier)
     {
         $this->getManipulator()->createTempTableForEntity($className, $identifier);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function dropTempTableForEntity(string $className, $identifier)
     {
         $this->getManipulator()->dropTempTableForEntity($className, $identifier);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function truncateTempTableForEntity(string $className, $identifier)
     {
         $this->getManipulator()->truncateTempTableForEntity($className, $identifier);
     }
 
+    #[\Override]
     public function copyDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
     {
         $this->getManipulator()->copyDataFromTemplateTableToEntityTable($className, $identifier, $fields);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function moveDataFromTemplateTableToEntityTable(string $className, $identifier, array $fields)
     {
         $this->getManipulator()->moveDataFromTemplateTableToEntityTable($className, $identifier, $fields);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTempTableNameForEntity(string $className, $identifier): string
     {
         return $this->getManipulator()->getTempTableNameForEntity($className, $identifier);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTableNameForEntity(string $className): string
     {
         return $this->getManipulator()->getTableNameForEntity($className);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setInsertSelectExecutor(ShardQueryExecutorNativeSqlInterface $queryExecutor)
     {
         $this->getManipulator()->setInsertSelectExecutor($queryExecutor);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function insertData(
         string $insertToTableName,
         string $className,

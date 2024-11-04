@@ -8,9 +8,7 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 class PayPalExpressCheckoutConfigFactory extends AbstractPayPalConfigFactory implements
     PayPalExpressCheckoutConfigFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createConfig(PayPalSettings $settings)
     {
         $params = [];

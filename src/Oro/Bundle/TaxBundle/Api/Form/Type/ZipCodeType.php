@@ -15,9 +15,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ZipCodeType extends AbstractType
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder->addModelTransformer(new ResetTransformDataTransformer(new ZipCodeTransformer()));
@@ -26,9 +24,7 @@ class ZipCodeType extends AbstractType
             ->add('to', TextType::class, ['property_path' => 'zipRangeEnd']);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

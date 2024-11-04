@@ -58,6 +58,7 @@ class CmsPageData implements \JsonSerializable
         return $this;
     }
 
+    #[\Override]
     public function jsonSerialize(): array
     {
         return [

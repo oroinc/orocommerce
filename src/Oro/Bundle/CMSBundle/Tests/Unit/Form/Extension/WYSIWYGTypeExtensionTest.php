@@ -30,6 +30,7 @@ class WYSIWYGTypeExtensionTest extends TestCase
     private WYSIWYGTypeExtension $extension;
     private Website $defaultWebsite;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->themeManager = $this->createMock(ThemeManager::class);

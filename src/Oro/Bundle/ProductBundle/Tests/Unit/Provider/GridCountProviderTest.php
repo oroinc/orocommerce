@@ -37,6 +37,7 @@ class GridCountProviderTest extends \PHPUnit\Framework\TestCase
      */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->gridManager = $this->createMock(ManagerInterface::class);

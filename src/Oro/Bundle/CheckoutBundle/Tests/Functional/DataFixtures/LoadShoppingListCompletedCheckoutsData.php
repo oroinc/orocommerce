@@ -17,9 +17,7 @@ class LoadShoppingListCompletedCheckoutsData extends AbstractLoadCheckouts
 
     public const CHECKOUT_1 = 'checkout.1';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getData(): array
     {
         /** @var Order $order */
@@ -48,33 +46,25 @@ class LoadShoppingListCompletedCheckoutsData extends AbstractLoadCheckouts
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getWorkflowName(): string
     {
         return 'b2b_flow_checkout';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createCheckout(): Checkout
     {
         return new Checkout();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getCheckoutSourceName(): string
     {
         return 'shoppingList';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(

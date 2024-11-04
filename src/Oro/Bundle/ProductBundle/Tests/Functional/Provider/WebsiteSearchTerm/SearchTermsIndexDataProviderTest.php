@@ -14,6 +14,7 @@ class SearchTermsIndexDataProviderTest extends WebTestCase
 {
     private SearchTermsIndexDataProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

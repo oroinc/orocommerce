@@ -16,9 +16,7 @@ class OroSEOBundle implements Migration
     const ENTITY_TO = LocalizedFallbackValue::class;
     const RELATION_TYPE = 'manyToMany';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $fieldNames = ['metaTitles', 'metaDescriptions', 'metaKeywords'];

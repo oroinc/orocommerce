@@ -71,17 +71,11 @@ trait SlugAwareTrait
         return $this->slugs->contains($slug);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getBaseSlug()
     {
         return $this->getSlugByLocalization(null);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getSlugByLocalization(Localization $localization = null)
     {
         foreach ($this->getSlugs() as $slug) {

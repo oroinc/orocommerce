@@ -23,6 +23,7 @@ class ProductImageTypesSubscriberTest extends \PHPUnit\Framework\TestCase
     /** @var ProductImageTypesSubscriber */
     protected $productImageTypesSubscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productImageTypesSubscriber = new ProductImageTypesSubscriber([

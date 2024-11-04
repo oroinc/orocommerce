@@ -18,9 +18,7 @@ class GroupedLineItemsProvider implements GroupedLineItemsProviderInterface
         $this->groupLineItemHelper = $groupLineItemHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getGroupedLineItems(ProductLineItemsHolderInterface $entity): array
     {
         $cacheKey = spl_object_hash($entity);

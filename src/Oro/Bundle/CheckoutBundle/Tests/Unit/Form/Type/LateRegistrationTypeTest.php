@@ -12,9 +12,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class LateRegistrationTypeTest extends FormIntegrationTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $validator = $this->createMock(ValidatorInterface::class);

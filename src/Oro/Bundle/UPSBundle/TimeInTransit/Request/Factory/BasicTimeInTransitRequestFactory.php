@@ -18,9 +18,7 @@ class BasicTimeInTransitRequestFactory implements TimeInTransitRequestFactoryInt
         $this->timeInTransitRequestBuilderFactory = $timeInTransitRequestBuilderFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function createRequest(
         UPSTransport $transport,
         AddressInterface $shipFromAddress,

@@ -17,6 +17,7 @@ class DimensionsValueFormatter extends UnitValueFormatter
      *
      * @return string
      */
+    #[\Override]
     public function formatCode($value, $unitCode, $isShort = false)
     {
         $na = $this->translator->trans('N/A');

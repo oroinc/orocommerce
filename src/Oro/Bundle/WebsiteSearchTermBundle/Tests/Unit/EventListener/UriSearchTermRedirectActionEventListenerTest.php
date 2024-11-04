@@ -20,6 +20,7 @@ class UriSearchTermRedirectActionEventListenerTest extends TestCase
 
     private UriSearchTermRedirectActionEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->basicRedirectActionHandler = $this->createMock(BasicRedirectActionHandler::class);

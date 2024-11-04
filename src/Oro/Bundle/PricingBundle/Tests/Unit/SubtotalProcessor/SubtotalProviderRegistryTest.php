@@ -17,6 +17,7 @@ class SubtotalProviderRegistryTest extends \PHPUnit\Framework\TestCase
     /** @var SubtotalProviderRegistry */
     private $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider1 = $this->createMock(SubtotalProviderInterface::class);

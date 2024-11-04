@@ -18,6 +18,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
     /** @var FieldAclHelper|\PHPUnit\Framework\MockObject\MockObject */
     private $fieldAclHelper;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -59,9 +60,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
         $this->listener->onProductEdit($event);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getEnvironmentForView(object $entityObject, string $labelPrefix): Environment
     {
         $env = $this->createMock(Environment::class);

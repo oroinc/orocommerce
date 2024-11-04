@@ -58,6 +58,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var ShoppingListLineItemHandler */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);

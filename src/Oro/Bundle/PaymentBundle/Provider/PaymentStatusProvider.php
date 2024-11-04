@@ -41,9 +41,7 @@ class PaymentStatusProvider implements PaymentStatusProviderInterface
         $this->totalProcessorProvider = $totalProcessorProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPaymentStatus($entity)
     {
         $paymentTransactions = new ArrayCollection($this->paymentTransactionProvider->getPaymentTransactions($entity));

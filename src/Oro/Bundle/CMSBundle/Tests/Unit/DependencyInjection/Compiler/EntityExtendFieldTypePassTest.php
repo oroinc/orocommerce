@@ -10,6 +10,7 @@ class EntityExtendFieldTypePassTest extends \PHPUnit\Framework\TestCase
 {
     private EntityExtendFieldTypePass $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new EntityExtendFieldTypePass();

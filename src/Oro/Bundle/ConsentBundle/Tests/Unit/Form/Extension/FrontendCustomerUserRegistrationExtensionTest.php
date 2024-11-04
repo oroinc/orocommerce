@@ -23,9 +23,7 @@ class FrontendCustomerUserRegistrationExtensionTest extends FormIntegrationTestC
     /** @var FrontendCustomerUserRegistrationExtension */
     private $extension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

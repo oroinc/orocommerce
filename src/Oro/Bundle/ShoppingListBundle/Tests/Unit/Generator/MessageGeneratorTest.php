@@ -20,6 +20,7 @@ class MessageGeneratorTest extends \PHPUnit\Framework\TestCase
     /** @var MessageGenerator */
     private $generator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

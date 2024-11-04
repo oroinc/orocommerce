@@ -24,6 +24,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit\Framework\TestCase
     /** @var PriceListSystemConfigSubscriber */
     private $subscriber;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converterMock = $this->createMock(PriceListConfigConverter::class);

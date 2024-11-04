@@ -18,6 +18,7 @@ class ProductAccessExceptionListenerTest extends \PHPUnit\Framework\TestCase
 
     private ProductAccessExceptionListener $testable;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestStack = $this->createMock(RequestStack::class);

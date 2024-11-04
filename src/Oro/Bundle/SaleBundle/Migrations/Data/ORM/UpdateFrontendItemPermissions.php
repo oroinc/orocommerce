@@ -11,9 +11,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
  */
 class UpdateFrontendItemPermissions extends AbstractMassUpdateCustomerUserRolePermissions
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getACLData(): array
     {
         return [

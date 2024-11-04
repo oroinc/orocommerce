@@ -23,6 +23,7 @@ abstract class SearchableAttributeTypeTestCase extends \PHPUnit\Framework\TestCa
     /** @var AttributeTypeInterface|\PHPUnit\Framework\MockObject\MockObject */
     protected $attributeType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $entity = new EntityConfigModel(self::CLASS_NAME);

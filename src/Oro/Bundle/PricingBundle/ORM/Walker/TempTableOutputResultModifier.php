@@ -12,9 +12,7 @@ class TempTableOutputResultModifier extends AbstractOutputResultModifier
 {
     public const ORO_TEMP_TABLE_ALIASES = 'oro_pricing.temp_table_aliases';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkSubselectFromClause($subselectFromClause, string $result)
     {
         if ($this->isApplicable()) {
@@ -24,9 +22,7 @@ class TempTableOutputResultModifier extends AbstractOutputResultModifier
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkFromClause($fromClause, string $result)
     {
         if ($this->isApplicable()) {
@@ -36,9 +32,7 @@ class TempTableOutputResultModifier extends AbstractOutputResultModifier
         return $result;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function walkJoin($join, string $result)
     {
         if ($this->isApplicable()) {

@@ -43,17 +43,13 @@ class AdditionalProductPricesIterator implements \Iterator
         $this->productIterator = $productIterator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function current(): mixed
     {
         return $this->current;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function next(): void
     {
         $this->current = $this->read();
@@ -62,25 +58,19 @@ class AdditionalProductPricesIterator implements \Iterator
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function key(): mixed
     {
         return $this->offset;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function valid(): bool
     {
         return $this->current !== null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function rewind(): void
     {
         $this->offset = -1;

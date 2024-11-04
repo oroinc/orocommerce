@@ -57,6 +57,7 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
 
     private ProductDuplicator $duplicator;
 
+    #[\Override]
     protected function setUp(): void
     {
         $eventDispatcher = $this->createMock(EventDispatcherInterface::class);

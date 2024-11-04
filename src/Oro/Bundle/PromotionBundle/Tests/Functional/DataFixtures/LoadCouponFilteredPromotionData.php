@@ -9,9 +9,7 @@ class LoadCouponFilteredPromotionData extends AbstractLoadPromotionData
     public const PROMO_NOT_CORRESPONDING_APPLIED_DISCOUNTS = 'promo_not_corresponding_applied_discounts';
     public const PROMO_WITHOUT_DISCOUNTS = 'promo_without_discounts';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(
@@ -20,9 +18,7 @@ class LoadCouponFilteredPromotionData extends AbstractLoadPromotionData
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getPromotions(): array
     {
         return [

@@ -62,9 +62,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
         $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $sections = [];
@@ -83,9 +81,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
         $this->sectionProvider->addSections(self::EXTENDED_TYPE, $sections);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         /** @var OrderLineItem $orderLineItem */
@@ -117,9 +113,7 @@ class OrderLineItemTypeExtension extends AbstractTypeExtension
         $view->vars['applied_discounts']['taxes'] = $this->getProvider()->getTax($orderLineItem);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [self::EXTENDED_TYPE];

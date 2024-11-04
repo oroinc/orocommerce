@@ -4,10 +4,14 @@ namespace Oro\Bundle\InventoryBundle\Inventory;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+/**
+ * Set 'Out Of Stock' Inventory Status for product on q-ty decrement
+ */
 class InventoryStatusHandler
 {
     /**
@@ -37,9 +41,13 @@ class InventoryStatusHandler
 
     protected function setInventoryStatusForDecrement(Product $product)
     {
-        $inventoryStatusEntityName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        $status = $this->doctrineHelper->getEntityRepository($inventoryStatusEntityName)->findOneBy(
-            ['id' => Product::INVENTORY_STATUS_OUT_OF_STOCK]
+        $status = $this->doctrineHelper->getEntityRepository(EnumOption::class)->findOneBy(
+            [
+                'id' => ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_OUT_OF_STOCK
+                )
+            ]
         );
         $product->setInventoryStatus($status);
     }

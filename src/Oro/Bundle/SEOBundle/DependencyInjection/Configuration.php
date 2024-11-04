@@ -23,9 +23,7 @@ class Configuration implements ConfigurationInterface
 
     public const DEFAULT_CRON_DEFINITION = '0 0 * * *';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

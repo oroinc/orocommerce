@@ -38,6 +38,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
     /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
     private $productUnitRepo;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

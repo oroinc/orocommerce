@@ -31,9 +31,7 @@ class MultiShippingMethodProvider implements ShippingMethodProviderInterface
         $this->shippingCostProvider = $shippingCostProvider;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethods(): array
     {
         return $this->memoryCacheProvider->get(
@@ -48,9 +46,7 @@ class MultiShippingMethodProvider implements ShippingMethodProviderInterface
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethod(string $name): ?ShippingMethodInterface
     {
         $shippingMethods = $this->getShippingMethods();
@@ -58,9 +54,7 @@ class MultiShippingMethodProvider implements ShippingMethodProviderInterface
         return $shippingMethods[$name] ?? null;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function hasShippingMethod(string $name): bool
     {
         $shippingMethods = $this->getShippingMethods();

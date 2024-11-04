@@ -12,6 +12,7 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit\Framework\TestCase
     /** @var PaymentConfigInterface */
     protected $config;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->config = $this->getPaymentConfig();

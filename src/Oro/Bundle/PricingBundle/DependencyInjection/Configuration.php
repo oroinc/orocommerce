@@ -49,9 +49,7 @@ class Configuration implements ConfigurationInterface
      */
     protected static $configKeyToFullPriceList;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

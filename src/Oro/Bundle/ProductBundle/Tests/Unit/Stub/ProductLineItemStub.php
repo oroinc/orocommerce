@@ -10,6 +10,7 @@ class ProductLineItemStub extends ProductLineItem
     /** @var Product|null */
     protected $parentProduct;
 
+    #[\Override]
     public function getParentProduct(): ?Product
     {
         return $this->parentProduct;

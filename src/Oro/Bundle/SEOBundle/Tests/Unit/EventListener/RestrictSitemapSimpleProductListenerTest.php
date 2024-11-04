@@ -15,6 +15,7 @@ class RestrictSitemapSimpleProductListenerTest extends \PHPUnit\Framework\TestCa
     private QueryBuilderModifierInterface|MockObject $dbQueryBuilderModifier;
     private RestrictSitemapSimpleProductListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->featureChecker = $this->createMock(FeatureChecker::class);

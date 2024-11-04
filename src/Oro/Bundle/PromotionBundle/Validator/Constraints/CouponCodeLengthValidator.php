@@ -16,10 +16,10 @@ class CouponCodeLengthValidator extends ConstraintValidator
     const ALIAS = 'oro_promotion_coupon_code_length';
 
     /**
-     * @inheritDoc
      * @param CodeGenerationOptions $entity
      * @throws UnexpectedTypeException
      */
+    #[\Override]
     public function validate($entity, Constraint $constraint)
     {
         if (!$entity instanceof CodeGenerationOptions) {

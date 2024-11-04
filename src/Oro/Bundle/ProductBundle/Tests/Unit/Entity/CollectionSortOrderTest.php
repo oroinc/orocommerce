@@ -22,6 +22,7 @@ class CollectionSortOrderTest extends \PHPUnit\Framework\TestCase
 
     private CollectionSortOrder $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->product = new Product();

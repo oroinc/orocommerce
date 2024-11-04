@@ -55,6 +55,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
      *
      * @return Subtotal[]
      */
+    #[\Override]
     public function getSubtotal($entity)
     {
         $subtotals = [];
@@ -89,9 +90,7 @@ class DiscountSubtotalProvider extends AbstractSubtotalProvider implements Subto
         return $subtotals;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof DiscountAwareInterface;

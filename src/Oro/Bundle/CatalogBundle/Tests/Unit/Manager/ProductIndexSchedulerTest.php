@@ -19,6 +19,7 @@ class ProductIndexSchedulerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductIndexScheduler */
     private $productIndexScheduler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->reindexManager = $this->createMock(ProductReindexManager::class);

@@ -36,9 +36,7 @@ class AddPaginationLinksForProductCollectionProductsAssociation implements Proce
         $this->urlGenerator = $urlGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var MetadataContext $context */

@@ -16,6 +16,7 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
 {
     private DiscountFormTypeProvider $discountFormTypeProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->discountFormTypeProvider = new DiscountFormTypeProvider();
@@ -107,9 +108,7 @@ class DiscountConfigurationTypeTest extends FormIntegrationTestCase
         $this->assertEquals(DiscountConfigurationType::NAME, $formType->getBlockPrefix());
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

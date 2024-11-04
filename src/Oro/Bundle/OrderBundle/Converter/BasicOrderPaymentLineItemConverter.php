@@ -18,9 +18,7 @@ class BasicOrderPaymentLineItemConverter implements OrderPaymentLineItemConverte
         $this->paymentLineItemFactory = $paymentLineItemFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function convertLineItems(Collection $orderLineItems): Collection
     {
         $orderLineItemsToConvert = [];

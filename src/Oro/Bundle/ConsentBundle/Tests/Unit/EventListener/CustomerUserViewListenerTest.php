@@ -41,6 +41,7 @@ class CustomerUserViewListenerTest extends \PHPUnit\Framework\TestCase
     /** @var CustomerUserConsentProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $customerUserConsentProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->translator = $this->createMock(TranslatorInterface::class);

@@ -16,6 +16,7 @@ class GroupedLineItemsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var GroupedLineItemsProvider */
     private $groupedLineItemsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->groupLineItemHelper = $this->createMock(GroupLineItemHelperInterface::class);

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub;
 
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 
 class OrderLineItemStub extends OrderLineItem
 {
-    /** @var AbstractEnumValue */
+    /** @var EnumOptionInterface */
     protected $internalStatus;
 
     public function __construct(?int $id = null)
@@ -18,7 +18,7 @@ class OrderLineItemStub extends OrderLineItem
     }
 
     /**
-     * @return AbstractEnumValue
+     * @return EnumOptionInterface
      */
     public function getInternalStatus()
     {
@@ -26,7 +26,7 @@ class OrderLineItemStub extends OrderLineItem
     }
 
     /**
-     * @param AbstractEnumValue $internalStatus
+     * @param EnumOptionInterface $internalStatus
      *
      * @return $this
      */

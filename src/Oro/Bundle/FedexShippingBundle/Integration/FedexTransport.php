@@ -9,29 +9,24 @@ use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 
 class FedexTransport implements TransportInterface
 {
+    #[\Override]
     public function init(Transport $transportEntity)
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsFormType()
     {
         return FedexIntegrationSettingsType::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSettingsEntityFQCN()
     {
         return FedexIntegrationSettings::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getLabel()
     {
         return 'oro.fedex.integration.settings.label';

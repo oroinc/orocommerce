@@ -5,7 +5,6 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
-use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi\OrderResponseTrait;
 use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
 
 /**
@@ -13,8 +12,7 @@ use Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures\LoadPromotionData;
  */
 class CreateOrderWithPromotionsTest extends FrontendRestJsonApiTestCase
 {
-    use OrderResponseTrait;
-
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -26,6 +24,7 @@ class CreateOrderWithPromotionsTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
+    #[\Override]
     protected function postFixtureLoad()
     {
         parent::postFixtureLoad();
@@ -41,7 +40,7 @@ class CreateOrderWithPromotionsTest extends FrontendRestJsonApiTestCase
             'create_order_with_promotions.yml'
         );
 
-        $responseContent = $this->updateOrderResponseContent('create_order_with_promotions.yml', $response);
+        $responseContent = $this->updateResponseContent('create_order_with_promotions.yml', $response);
         $this->assertResponseContains($responseContent, $response);
     }
 }

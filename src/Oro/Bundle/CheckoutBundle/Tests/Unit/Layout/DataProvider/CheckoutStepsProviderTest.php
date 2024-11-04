@@ -22,6 +22,7 @@ class CheckoutStepsProviderTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutStepsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);

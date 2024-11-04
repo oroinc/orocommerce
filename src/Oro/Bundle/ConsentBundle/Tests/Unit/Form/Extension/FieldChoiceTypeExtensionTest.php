@@ -14,9 +14,7 @@ class FieldChoiceTypeExtensionTest extends \PHPUnit\Framework\TestCase
      */
     private $extension;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->extension = new FieldChoiceTypeExtension();

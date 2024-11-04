@@ -35,10 +35,6 @@ Feature: Create RFQ with product variant
     And I save form
     Then I should see "Attribute was successfully saved" flash message
 
-    # Update schema
-    And I go to Products / Product Attributes
-    And I confirm schema update
-
     # Update attribute family
     And I go to Products / Product Families
     And I click Edit Attribute Family in grid

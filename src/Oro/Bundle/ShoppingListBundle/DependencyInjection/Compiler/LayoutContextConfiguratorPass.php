@@ -12,9 +12,7 @@ class LayoutContextConfiguratorPass implements CompilerPassInterface
 {
     private const SERVICE_KEY = 'oro_layout.layout_context_configurator.is_xml_http_request';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container): void
     {
         if (!$container->hasDefinition(self::SERVICE_KEY)) {

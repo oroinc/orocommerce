@@ -51,9 +51,7 @@ class ReindexProductCollectionProcessor implements
         $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): ?string
     {
         try {
@@ -94,9 +92,7 @@ class ReindexProductCollectionProcessor implements
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [ReindexProductCollectionBySegmentTopic::getName()];

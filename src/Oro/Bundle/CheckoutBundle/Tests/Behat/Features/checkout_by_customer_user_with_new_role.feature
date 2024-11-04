@@ -21,11 +21,12 @@ Feature: Checkout by customer user with new role
     And I fill form with:
       | Role | Test customer user role |
     And select following permissions:
-      | Checkout                | View:User (Own) | Create:User (Own) | Edit:User (Own) | Delete:User (Own) | Assign:User (Own) |
-      | Customer User Address   | View:User (Own) | Create:User (Own) | Edit:User (Own) | Delete:User (Own) | Assign:User (Own) |
-      | Order                   | View:User (Own) | Create:User (Own) | Edit:User (Own) | Delete:User (Own) | Assign:User (Own) |
-      | Shopping List           | View:User (Own) | Create:User (Own) | Edit:User (Own) | Delete:User (Own) | Assign:User (Own) |
-      | Shopping List Line Item | View:User (Own) | Create:User (Own) | Edit:User (Own) | Delete:User (Own) | Assign:User (Own) |
+      | Checkout                | View:User (Own)              | Create:User (Own)              | Edit:User (Own)              | Delete:User (Own)              | Assign:User (Own)              |
+      | Customer User Role      | View:Department (Same Level) | Create:Department (Same Level) | Edit:Department (Same Level) | Delete:Department (Same Level) | Assign:Department (Same Level) |
+      | Customer User Address   | View:User (Own)              | Create:User (Own)              | Edit:User (Own)              | Delete:User (Own)              | Assign:User (Own)              |
+      | Order                   | View:User (Own)              | Create:User (Own)              | Edit:User (Own)              | Delete:User (Own)              | Assign:User (Own)              |
+      | Shopping List           | View:User (Own)              | Create:User (Own)              | Edit:User (Own)              | Delete:User (Own)              | Assign:User (Own)              |
+      | Shopping List Line Item | View:User (Own)              | Create:User (Own)              | Edit:User (Own)              | Delete:User (Own)              | Assign:User (Own)              |
     And select following permissions:
       | Checkout | View Workflow:User (Own) | Perform transitions:User (Own) |
     And I click "Checkout" tab

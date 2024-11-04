@@ -10,32 +10,24 @@ use Oro\Bundle\ProductBundle\Entity\RelatedItem\RelatedProduct;
  */
 class RelatedProductFixture implements TemplateFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityClass(): string
     {
         return RelatedProduct::class;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntity($key): RelatedProduct
     {
         return new RelatedProduct();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function fillEntityData($key, $entity): void
     {
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getData(): \Iterator
     {
         return new \ArrayIterator(

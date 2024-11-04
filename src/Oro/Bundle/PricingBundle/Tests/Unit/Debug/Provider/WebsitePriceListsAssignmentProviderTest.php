@@ -28,6 +28,7 @@ class WebsitePriceListsAssignmentProviderTest extends TestCase
 
     private WebsitePriceListsAssignmentProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestHandler = $this->createMock(DebugProductPricesPriceListRequestHandler::class);

@@ -11,13 +11,16 @@ use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrai
 use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareTrait;
-use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareInterface;
+use Oro\Bundle\EntitySerializedFieldsBundle\Migration\Extension\SerializedFieldsExtensionAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareTrait;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\SqlMigrationQuery;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Migrations\Data\ORM\LoadAdditionalOrderInternalStatuses;
 use Oro\Bundle\OrderBundle\Migrations\Data\ORM\LoadOrderInternalStatuses;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
@@ -28,25 +31,23 @@ class OroOrderBundleInstaller implements
     AttachmentExtensionAwareInterface,
     ActivityExtensionAwareInterface,
     PaymentTermExtensionAwareInterface,
-    ExtendExtensionAwareInterface
+    ExtendExtensionAwareInterface,
+    SerializedFieldsExtensionAwareInterface
 {
     use DatabasePlatformAwareTrait;
     use AttachmentExtensionAwareTrait;
     use ActivityExtensionAwareTrait;
     use PaymentTermExtensionAwareTrait;
     use ExtendExtensionAwareTrait;
+    use SerializedFieldsExtensionAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_22';
+        return 'v1_23';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
@@ -67,6 +68,7 @@ class OroOrderBundleInstaller implements
 
         $this->addOrderInternalStatusField($schema);
         $this->addOrderStatusField($schema);
+        $this->addOrderShippingStatusField($schema);
 
         $this->paymentTermExtension->addPaymentTermAssociation(
             $schema,
@@ -264,6 +266,8 @@ class OroOrderBundleInstaller implements
             'comment' => '(DC2Type:money)'
         ]);
         $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
+        $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
+        $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['product_id'], 'idx_de9136094584665a');
         $table->addIndex(['product_unit_id'], 'idx_de91360929646bbd');
@@ -439,19 +443,23 @@ class OroOrderBundleInstaller implements
 
     private function addOrderInternalStatusField(Schema $schema): void
     {
-        $internalStatusOptions = new OroOptions();
-        $internalStatusOptions->set('enum', 'immutable_codes', LoadOrderInternalStatuses::getDataKeys());
-
-        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+        $this->extendExtension->addEnumField(
             $schema,
             'oro_order',
             'internal_status',
             Order::INTERNAL_STATUS_CODE,
             false,
             false,
-            ['dataaudit' => ['auditable' => true]]
+            [
+                'dataaudit' => ['auditable' => true],
+                'enum' => [
+                    'immutable_codes' => ExtendHelper::mapToEnumOptionIds(Order::INTERNAL_STATUS_CODE, array_merge(
+                        LoadOrderInternalStatuses::getDataKeys(),
+                        LoadAdditionalOrderInternalStatuses::getDataKeys()
+                    ))
+                ]
+            ]
         );
-        $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
     }
 
     private function addOrderStatusField(Schema $schema): void
@@ -464,6 +472,27 @@ class OroOrderBundleInstaller implements
             false,
             false,
             ['dataaudit' => ['auditable' => true]]
+        );
+    }
+
+    private function addOrderShippingStatusField(Schema $schema): void
+    {
+        $this->extendExtension->addEnumField(
+            $schema,
+            'oro_order',
+            'shippingStatus',
+            Order::SHIPPING_STATUS_CODE,
+            false,
+            false,
+            [
+                'dataaudit' => ['auditable' => true],
+                'enum' => [
+                    'immutable_codes' => ExtendHelper::mapToEnumOptionIds(
+                        Order::SHIPPING_STATUS_CODE,
+                        ['not_shipped', 'shipped']
+                    )
+                ]
+            ]
         );
     }
 

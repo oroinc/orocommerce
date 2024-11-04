@@ -8,7 +8,7 @@ class PdoPgsql extends BaseDriver implements DriverInterface
 {
     use DriverTrait;
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getName()
     {
         return DriverInterface::DRIVER_POSTGRESQL;

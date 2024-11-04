@@ -21,9 +21,7 @@ class CustomerImportExportSubscriber implements EventSubscriberInterface
         $this->associationProvider = $associationProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [
@@ -31,9 +29,6 @@ class CustomerImportExportSubscriber implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function addPaymentTermToCustomers(LoadTemplateFixturesEvent $event)
     {
         foreach ($event->getEntities() as $customerData) {

@@ -18,16 +18,19 @@ class TitleDataProvider implements TitleDataProviderInterface
     ) {
     }
 
+    #[\Override]
     public function getNodeTitle($default = '')
     {
         return $this->getTitle($default);
     }
 
+    #[\Override]
     public function getTitle($default = '', $data = null)
     {
         return $this->decoratedTitleDataProvider->getTitle($default);
     }
 
+    #[\Override]
     public function isRenderTitle(): bool
     {
         $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();

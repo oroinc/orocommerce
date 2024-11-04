@@ -37,11 +37,13 @@ abstract class AbstractSessionDataStorage extends AbstractDataStorage implements
         return $this->bag;
     }
 
+    #[\Override]
     public function set(array $data): void
     {
         $this->getBag()->set($this->getKey(), $this->prepareData($data));
     }
 
+    #[\Override]
     public function get(): array
     {
         if (!$this->getBag()->has($this->getKey())) {
@@ -51,6 +53,7 @@ abstract class AbstractSessionDataStorage extends AbstractDataStorage implements
         return $this->parseData($this->getBag()->get($this->getKey(), null));
     }
 
+    #[\Override]
     public function remove(): void
     {
         if ($this->getBag()->has($this->getKey())) {

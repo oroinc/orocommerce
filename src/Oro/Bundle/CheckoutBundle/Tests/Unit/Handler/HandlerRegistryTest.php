@@ -15,6 +15,7 @@ class HandlerRegistryTest extends TestCase
     private CheckoutHandlerInterface|MockObject $handler2;
     private HandlerRegistry $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->handler1 = $this->createMock(CheckoutHandlerInterface::class);

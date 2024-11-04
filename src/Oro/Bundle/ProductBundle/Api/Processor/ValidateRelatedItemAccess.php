@@ -26,9 +26,7 @@ class ValidateRelatedItemAccess implements ProcessorInterface
         $this->productPermissions = $productPermissions;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         if (!$this->authorizationChecker->isGranted('oro_related_products_edit')) {

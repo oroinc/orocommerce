@@ -20,6 +20,7 @@ class CalculateSlugCacheTest extends WebTestCase
     use MessageQueueExtension;
     use SlugAwareTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

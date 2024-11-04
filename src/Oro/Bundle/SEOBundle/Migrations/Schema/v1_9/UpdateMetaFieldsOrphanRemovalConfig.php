@@ -24,9 +24,7 @@ class UpdateMetaFieldsOrphanRemovalConfig implements Migration, ExtendOptionsMan
 {
     use ExtendOptionsManagerAwareTrait;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $classNames = [

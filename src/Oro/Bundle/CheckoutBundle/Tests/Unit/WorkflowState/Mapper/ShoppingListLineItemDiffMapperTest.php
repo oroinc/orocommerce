@@ -30,6 +30,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 {
     private CheckoutShippingContextProvider|MockObject $shipContextProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shipContextProvider = $this->createMock(CheckoutShippingContextProvider::class);
@@ -99,9 +100,10 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
         $this->assertEquals(
             [
-                'sSKU123-uset-q1-pUSD120-w10kg-d1x2x3cm-iin_stock',
-                'sSKU123-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock',
-                'sSKU124-uitem-q1-pUSD10-w1kg-d1x2x3cm-iin_stock-kilisSKU123-kiliuunit_code-kiliq1-kilipUSD13'
+                'sSKU123-uset-q1-pUSD120-w10kg-d1x2x3cm-itest_enum_code.in_stock',
+                'sSKU123-uitem-q1-pUSD10-w1kg-d1x2x3cm-itest_enum_code.in_stock',
+                // phpcs:disable Generic.Files.LineLength.TooLong
+                'sSKU124-uitem-q1-pUSD10-w1kg-d1x2x3cm-itest_enum_code.in_stock-kilisSKU123-kiliuunit_code-kiliq1-kilipUSD13'
             ],
             $result
         );
@@ -257,9 +259,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getMapper(): ShoppingListLineItemDiffMapper|CheckoutStateDiffMapperInterface
     {
         return new ShoppingListLineItemDiffMapper($this->shipContextProvider);
@@ -305,7 +305,7 @@ class ShoppingListLineItemDiffMapperTest extends AbstractCheckoutDiffMapperTest
 
     private function getProduct(string $sku, string $inventoryStatusCode): StubProduct
     {
-        $inventoryStatus = new TestEnumValue($inventoryStatusCode, $inventoryStatusCode);
+        $inventoryStatus = new TestEnumValue('test_enum_code', 'Test', $inventoryStatusCode);
         $product = $this->createMock(StubProduct::class);
         $product->expects($this->any())
             ->method('getSkuUppercase')

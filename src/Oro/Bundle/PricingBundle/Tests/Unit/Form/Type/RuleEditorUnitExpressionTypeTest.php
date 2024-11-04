@@ -14,6 +14,7 @@ class RuleEditorUnitExpressionTypeTest extends \PHPUnit\Framework\TestCase
     /** @var RuleEditorUnitExpressionType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configurator = $this->createMock(PriceRuleEditorOptionsConfigurator::class);

@@ -19,9 +19,7 @@ class HomePageProvider implements HomePageProviderInterface
     ) {
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getHomePage(): object
     {
         return $this->getPage() ?? $this->getNotFoundPage();

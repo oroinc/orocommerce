@@ -27,6 +27,7 @@ class SlugRepositoryTest extends WebTestCase
     private SlugRepository $repository;
     private ScopeManager $scopeManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(

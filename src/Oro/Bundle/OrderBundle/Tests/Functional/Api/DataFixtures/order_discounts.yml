@@ -9,6 +9,19 @@ dependencies:
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductDefaultAttributeFamily
     - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductInventoryStatuses
 
+Oro\Bundle\UserBundle\Entity\User:
+    user1:
+        username: 'user1'
+        email: 'user1@example.com'
+        firstName: 'John'
+        lastName: 'Doe'
+        enabled: true
+        owner: '@business_unit'
+        businessUnits: ['@business_unit']
+        organization: '@organization'
+        organizations: ['@organization']
+        password: <userPassword(@user1->username)>
+
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
     payment_term_net_10:
         label: 'net 10'
@@ -62,6 +75,18 @@ Oro\Bundle\OrderBundle\Entity\Order:
         website: '@website'
         owner: '@user'
         organization: '@organization'
+    order3:
+        identifier: order3
+        currency: 'USD'
+        poNumber: 'PO2'
+        subtotal: '789.0000'
+        total: '1234.0000'
+        payment_term_7c4f1e8e: '@payment_term_net_10'
+        customer: '@customer'
+        customerUser: '@customer_user'
+        website: '@website'
+        owner: '@user1'
+        organization: '@organization'
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order_line_item.1:
@@ -73,6 +98,13 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         currency: USD
     order_line_item.2:
         order: '@order2'
+        product: '@product1'
+        quantity: 1
+        productUnit: '@item'
+        value: 20
+        currency: USD
+    order_line_item.3:
+        order: '@order3'
         product: '@product1'
         quantity: 1
         productUnit: '@item'
@@ -92,3 +124,9 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
         percent: 20.1
         amount: 40.2
         order: '@order1'
+    order_discount.another_user:
+        description: 'Discount 3'
+        type: oro_order_discount_item_type_amount
+        percent: 20.1
+        amount: 40.2
+        order: '@order3'

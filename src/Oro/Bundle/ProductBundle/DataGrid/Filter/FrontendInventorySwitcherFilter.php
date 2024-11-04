@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\DataGrid\Filter;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\Provider\DictionaryEntityDataProvider;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\ProductBundle\DataGrid\Form\Type\FrontendInventorySwitcherFilterType;
@@ -27,9 +28,7 @@ class FrontendInventorySwitcherFilter extends SearchMultiEnumFilter
         parent::__construct($factory, $util, $dictionaryEntityDataProvider);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function init($name, array $params): void
     {
         parent::init($name, $params);
@@ -43,9 +42,7 @@ class FrontendInventorySwitcherFilter extends SearchMultiEnumFilter
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function applyRestrictions(FilterDatasourceAdapterInterface $ds, array $data): bool
     {
         if (in_array(FrontendInventorySwitcherFilterType::TYPE_ENABLED, $data['value'])) {
@@ -55,15 +52,13 @@ class FrontendInventorySwitcherFilter extends SearchMultiEnumFilter
                 )
             );
 
-            $data['value'] = $inStockStatuses;
+            $data['value'] = ExtendHelper::mapToEnumInternalIds($inStockStatuses);
         }
 
         return parent::applyRestrictions($ds, $data);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getFormType(): string
     {
         return FrontendInventorySwitcherFilterType::class;

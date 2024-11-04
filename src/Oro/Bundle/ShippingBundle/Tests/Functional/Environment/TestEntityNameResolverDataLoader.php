@@ -21,6 +21,7 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
         $this->innerDataLoader = $innerDataLoader;
     }
 
+    #[\Override]
     public function loadEntity(
         EntityManagerInterface $em,
         ReferenceRepository $repository,
@@ -77,6 +78,7 @@ class TestEntityNameResolverDataLoader implements TestEntityNameResolverDataLoad
         return $this->innerDataLoader->loadEntity($em, $repository, $entityClass);
     }
 
+    #[\Override]
     public function getExpectedEntityName(
         ReferenceRepository $repository,
         string $entityClass,

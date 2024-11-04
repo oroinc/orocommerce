@@ -28,9 +28,7 @@ class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
         $this->identifierGenerator = $identifierGenerator;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(MoneyOrderSettings $settings)
     {
         $params = [];

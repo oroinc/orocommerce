@@ -41,6 +41,7 @@ class RequestProductKitItemLineItemType extends AbstractType
         $this->kitItemLineItemGhostOptionListener = $kitItemLineItemGhostOptionListener;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $choices = [];
@@ -111,6 +112,7 @@ class RequestProductKitItemLineItemType extends AbstractType
         FormUtils::replaceField($parentForm, 'quantity', $options);
     }
 
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['product_kit_item'] = $options['product_kit_item'];
@@ -135,6 +137,7 @@ class RequestProductKitItemLineItemType extends AbstractType
         }
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefault('error_mapping', ['.' => 'product']);
@@ -147,6 +150,7 @@ class RequestProductKitItemLineItemType extends AbstractType
             ->allowedTypes(ProductKitItem::class, 'null');
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_rfp_request_product_kit_item_line_item';

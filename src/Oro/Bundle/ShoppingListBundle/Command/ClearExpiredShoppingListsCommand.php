@@ -44,6 +44,7 @@ class ClearExpiredShoppingListsCommand extends Command implements CronCommandSch
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Clears old data in shopping list database tables.')
@@ -60,6 +61,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         /** @var Connection $connection */
@@ -111,9 +113,7 @@ HELP
         return $expiredLastVisitDate;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultDefinition(): string
     {
         return '0 0 * * *';

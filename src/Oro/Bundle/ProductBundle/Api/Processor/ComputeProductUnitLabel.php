@@ -23,9 +23,7 @@ class ComputeProductUnitLabel implements ProcessorInterface
         $this->formatter = $formatter;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

@@ -22,6 +22,7 @@ class ProductHandlerListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ProductHandlerListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->propertyAccessor = $this->createMock(PropertyAccessorInterface::class);

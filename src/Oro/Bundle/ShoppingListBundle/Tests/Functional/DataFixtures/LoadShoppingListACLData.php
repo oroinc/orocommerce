@@ -55,9 +55,7 @@ class LoadShoppingListACLData extends AbstractFixture implements DependentFixtur
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -66,9 +64,7 @@ class LoadShoppingListACLData extends AbstractFixture implements DependentFixtur
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         foreach (self::$shoppingLists as $name => $order) {

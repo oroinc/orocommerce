@@ -30,6 +30,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
     private array $testPriceLists = [];
     private array $testPriceListConfigs = [];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new PriceListSystemConfigType(PriceListConfig::class);
@@ -42,9 +43,7 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $configManager = $this->createMock(ConfigManager::class);

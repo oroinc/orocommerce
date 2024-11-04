@@ -23,7 +23,10 @@ class OroShoppingListExtensionTest extends \PHPUnit\Framework\TestCase
                 [
                     'settings' => [
                         'resolved' => true,
-                        'backend_product_visibility' => ['value' => ['in_stock', 'out_of_stock'], 'scope' => 'app'],
+                        'backend_product_visibility' => [
+                            'value' => ['prod_inventory_status.in_stock', 'prod_inventory_status.out_of_stock'],
+                            'scope' => 'app'
+                        ],
                         'availability_for_guests' => ['value' => false, 'scope' => 'app'],
                         'default_guest_shopping_list_owner' => ['value' => null, 'scope' => 'app'],
                         'shopping_list_limit' => ['value' => 0, 'scope' => 'app'],

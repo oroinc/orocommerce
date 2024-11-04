@@ -21,6 +21,7 @@ class FrontendProductExportOptionsProviderTest extends \PHPUnit\Framework\TestCa
     /** @var FrontendProductExportOptionsProvider */
     private $productExportOptionsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestProductHandler = $this->createMock(RequestProductHandler::class);

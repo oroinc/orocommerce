@@ -21,6 +21,7 @@ class PriceCheckoutShippingMethodsProviderTest extends \PHPUnit\Framework\TestCa
     /** @var PriceCheckoutShippingMethodsProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->shippingPriceProvider = $this->createMock(ShippingPriceProvider::class);

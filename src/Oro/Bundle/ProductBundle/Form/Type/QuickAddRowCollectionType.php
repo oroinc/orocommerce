@@ -27,6 +27,7 @@ class QuickAddRowCollectionType extends AbstractType
         $this->quickAddRowCollectionTransformer = $quickAddRowCollectionTransformer;
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         FormUtils::removeListenerByClassName(
@@ -47,11 +48,13 @@ class QuickAddRowCollectionType extends AbstractType
         $builder->addModelTransformer($this->quickAddRowCollectionTransformer);
     }
 
+    #[\Override]
     public function getParent(): string
     {
         return CollectionType::class;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(
@@ -68,6 +71,7 @@ class QuickAddRowCollectionType extends AbstractType
         );
     }
 
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return 'oro_product_quick_add_row_collection';

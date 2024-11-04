@@ -45,6 +45,7 @@ class CPLIdPlaceholderTest extends \PHPUnit\Framework\TestCase
      */
     private $customerUserRelationsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->priceListTreeHandler = $this->createMock(CombinedPriceListTreeHandler::class);

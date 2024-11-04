@@ -25,9 +25,7 @@ class TaxAmountProviderTest extends TestCase
 
     private TaxAmountProvider $provider;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->sourceEntity = new \stdClass();

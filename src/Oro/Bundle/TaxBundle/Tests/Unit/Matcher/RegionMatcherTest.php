@@ -26,6 +26,7 @@ class RegionMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var RegionMatcher */
     private $matcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->taxRuleRepository = $this->createMock(TaxRuleRepository::class);

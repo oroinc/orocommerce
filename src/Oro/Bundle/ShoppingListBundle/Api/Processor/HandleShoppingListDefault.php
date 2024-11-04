@@ -18,9 +18,7 @@ class HandleShoppingListDefault implements ProcessorInterface
 
     private const FIELD_NAME = 'default';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */

@@ -9,7 +9,7 @@ class PartialAuthorization extends AbstractBooleanOption
 {
     const PARTIALAUTH = 'PARTIALAUTH';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

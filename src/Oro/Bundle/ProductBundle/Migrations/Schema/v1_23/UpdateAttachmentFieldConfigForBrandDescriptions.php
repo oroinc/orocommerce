@@ -13,9 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\Brand;
  */
 class UpdateAttachmentFieldConfigForBrandDescriptions implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $queries->addPostQuery(

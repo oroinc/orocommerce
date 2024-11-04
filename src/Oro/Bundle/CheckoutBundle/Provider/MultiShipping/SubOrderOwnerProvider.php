@@ -42,9 +42,7 @@ class SubOrderOwnerProvider implements SubOrderOwnerProviderInterface
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOwner(Collection $lineItems, string $lineItemGroupKey): User
     {
         /** @var CheckoutLineItem|false $lineItem */

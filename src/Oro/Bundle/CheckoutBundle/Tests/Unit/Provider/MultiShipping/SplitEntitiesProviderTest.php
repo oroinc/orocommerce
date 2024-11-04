@@ -16,6 +16,7 @@ class SplitEntitiesProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SplitEntitiesProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->splitCheckoutProvider = $this->createMock(SplitCheckoutProvider::class);

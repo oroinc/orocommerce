@@ -41,6 +41,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
     /** @var RequestDataStorageExtension */
     protected $extension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new RFPRequest();
@@ -94,9 +95,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         ]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getTargetEntity(): RFPRequest
     {
         return $this->entity;

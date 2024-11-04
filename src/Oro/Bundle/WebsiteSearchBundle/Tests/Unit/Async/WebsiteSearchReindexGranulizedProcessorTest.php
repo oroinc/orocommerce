@@ -25,6 +25,7 @@ class WebsiteSearchReindexGranulizedProcessorTest extends \PHPUnit\Framework\Tes
 
     private WebsiteSearchReindexGranulizedProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->indexer = $this->createMock(IndexerInterface::class);

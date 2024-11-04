@@ -23,6 +23,7 @@ class PackageTest extends \PHPUnit\Framework\TestCase
     /** @var Package */
     private $model;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->model = new Package();

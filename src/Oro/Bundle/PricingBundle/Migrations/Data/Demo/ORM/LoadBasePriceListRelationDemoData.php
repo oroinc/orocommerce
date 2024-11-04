@@ -25,9 +25,7 @@ abstract class LoadBasePriceListRelationDemoData extends AbstractFixture impleme
     private ?array $websites = null;
     private ?array $priceLists = null;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [

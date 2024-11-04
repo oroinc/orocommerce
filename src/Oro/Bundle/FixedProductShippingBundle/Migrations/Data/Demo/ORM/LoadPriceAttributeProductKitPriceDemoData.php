@@ -10,17 +10,13 @@ use Symfony\Component\Yaml\Yaml;
  */
 class LoadPriceAttributeProductKitPriceDemoData extends LoadPriceAttributeProductPriceDemoData
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(parent::getDependencies(), [LoadProductKitDemoData::class]);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getProducts(): \Iterator
     {
         $filePath = $this->getFileLocator()

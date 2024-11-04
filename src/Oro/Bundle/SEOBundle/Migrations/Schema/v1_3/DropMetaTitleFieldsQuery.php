@@ -23,9 +23,7 @@ class DropMetaTitleFieldsQuery implements MigrationQuery, ConnectionAwareInterfa
         $this->className = $className;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDescription()
     {
         $logger = new ArrayLogger();
@@ -34,9 +32,7 @@ class DropMetaTitleFieldsQuery implements MigrationQuery, ConnectionAwareInterfa
         return $logger->getMessages();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function execute(LoggerInterface $logger)
     {
         $this->doExecute($logger);

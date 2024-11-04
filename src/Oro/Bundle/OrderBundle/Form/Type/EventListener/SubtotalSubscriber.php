@@ -39,9 +39,7 @@ class SubtotalSubscriber implements EventSubscriberInterface
         $this->orderLineItemCurrencyHandler = $orderLineItemCurrencyHandler;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedEvents(): array
     {
         return [FormEvents::SUBMIT => 'onSubmitEventListener'];

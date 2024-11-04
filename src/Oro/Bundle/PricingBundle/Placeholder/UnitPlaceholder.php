@@ -8,17 +8,13 @@ class UnitPlaceholder extends AbstractPlaceholder
 {
     const NAME = 'UNIT';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPlaceholder()
     {
         return self::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDefaultValue()
     {
         return '';

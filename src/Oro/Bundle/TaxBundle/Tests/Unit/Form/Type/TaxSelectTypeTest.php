@@ -11,6 +11,7 @@ class TaxSelectTypeTest extends \PHPUnit\Framework\TestCase
     /** @var TaxSelectType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new TaxSelectType();

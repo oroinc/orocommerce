@@ -12,9 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
  */
 class CategoryEntityNameProvider implements EntityNameProviderInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getName($format, $locale, $entity)
     {
         if (!$entity instanceof Category) {
@@ -28,9 +26,7 @@ class CategoryEntityNameProvider implements EntityNameProviderInterface
         return $localizedTitle ?: (string)$entity->getDefaultTitle();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getNameDQL($format, $locale, $className, $alias)
     {
         if (!is_a($className, Category::class, true)) {

@@ -7,9 +7,7 @@ use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\Ajax\AjaxMassAction;
 
 class AddProductsMassAction extends AjaxMassAction
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setOptions(ActionConfiguration $options)
     {
         if (!isset($options['frontend_type'])) {

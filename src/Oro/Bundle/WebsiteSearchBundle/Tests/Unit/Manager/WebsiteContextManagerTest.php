@@ -16,6 +16,7 @@ class WebsiteContextManagerTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteContextManager */
     private $websiteContextManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

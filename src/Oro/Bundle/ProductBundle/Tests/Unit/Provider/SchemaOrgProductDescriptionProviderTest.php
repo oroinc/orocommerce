@@ -19,6 +19,7 @@ class SchemaOrgProductDescriptionProviderTest extends \PHPUnit\Framework\TestCas
 
     private SchemaOrgProductDescriptionProvider $productDescriptionProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $configManager = $this->createMock(ConfigManager::class);

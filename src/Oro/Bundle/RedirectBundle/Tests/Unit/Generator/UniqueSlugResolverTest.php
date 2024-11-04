@@ -21,6 +21,7 @@ class UniqueSlugResolverTest extends \PHPUnit\Framework\TestCase
     /** @var UniqueSlugResolver */
     private $uniqueSlugResolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(SlugRepository::class);

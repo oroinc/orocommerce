@@ -16,6 +16,7 @@ class RelatedProductRepositoryTest extends WebTestCase
 {
     private RelatedProductRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

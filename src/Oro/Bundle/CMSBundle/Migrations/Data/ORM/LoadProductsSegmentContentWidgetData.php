@@ -14,9 +14,7 @@ use Oro\Bundle\SegmentBundle\Entity\Segment;
  */
 class LoadProductsSegmentContentWidgetData extends AbstractLoadContentWidgetData
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return array_merge(
@@ -28,11 +26,13 @@ class LoadProductsSegmentContentWidgetData extends AbstractLoadContentWidgetData
         );
     }
 
+    #[\Override]
     protected function getFilePaths(): string
     {
         return $this->getFilePathsFromLocator('@OroCMSBundle/Migrations/Data/ORM/data/content_widgets.yml');
     }
 
+    #[\Override]
     protected function updateContentWidget(ObjectManager $manager, ContentWidget $contentWidget, array $row): void
     {
         $settings = $contentWidget->getSettings();
@@ -44,6 +44,7 @@ class LoadProductsSegmentContentWidgetData extends AbstractLoadContentWidgetData
         }
     }
 
+    #[\Override]
     public function getVersion(): string
     {
         return '1.0';

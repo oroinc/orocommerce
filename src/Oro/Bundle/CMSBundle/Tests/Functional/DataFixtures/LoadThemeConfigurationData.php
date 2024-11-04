@@ -8,17 +8,13 @@ use Oro\Bundle\ThemeBundle\Tests\Functional\DataFixtures\LoadThemeConfigurationD
 
 class LoadThemeConfigurationData extends BaseLoadThemeConfigurationData implements DependentFixtureInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadContentBlockData::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function processConfiguration(array $configuration): array
     {
         $key = ThemeConfiguration::buildOptionKey('header', 'promotional_content');

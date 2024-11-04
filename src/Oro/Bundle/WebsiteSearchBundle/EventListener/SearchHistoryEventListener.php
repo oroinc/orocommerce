@@ -28,11 +28,13 @@ class SearchHistoryEventListener implements SearchHistoryEventListenerInterface,
         $this->searchResultHistoryManager = $searchResultHistoryManager;
     }
 
+    #[\Override]
     public function addSupportedSearchQueryType(string $type): void
     {
         $this->supportedQueryTypes[$type] = true;
     }
 
+    #[\Override]
     public function onSearchAfter(AfterSearchEvent $event): void
     {
         $query = $event->getQuery();

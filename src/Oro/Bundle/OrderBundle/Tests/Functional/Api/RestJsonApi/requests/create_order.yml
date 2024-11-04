@@ -1,41 +1,41 @@
 data:
-      type: orders
-      attributes:
-          identifier: 'new_order'
-          poNumber: '2345678'
-          shipUntil: '2017-04-12'
-          currency: 'USD'
-          createdAt: '2017-04-12T14:11:39Z'
-          updatedAt: '2017-04-12T14:11:39Z'
-      relationships:
-          lineItems:
-              data:
-                  -
-                      type: orderlineitems
-                      id: line_item_1
-                  -
-                      type: orderlineitems
-                      id: product_kit_line_item_1
-          organization:
-              data:
-                  type: organizations
-                  id: '<toString(@simple_order->organization->id)>'
-          createdBy:
-              data:
-                  type: users
-                  id: '<toString(@order.simple_user->id)>'
-          customerUser:
-              data:
-                   type: customerusers
-                   id: '<toString(@simple_order->customerUser->id)>'
-          customer:
-              data:
-                   type: customers
-                   id: '<toString(@simple_order->customer->id)>'
-          status:
-              data:
-                  type: orderstatuses
-                  id: open
+    type: orders
+    attributes:
+        identifier: 'new_order'
+        poNumber: '2345678'
+        shipUntil: '2017-04-12'
+        currency: 'USD'
+        createdAt: '2017-04-12T14:11:39Z'
+        updatedAt: '2017-04-12T14:11:39Z'
+    relationships:
+        lineItems:
+            data:
+                -
+                    type: orderlineitems
+                    id: line_item_1
+                -
+                    type: orderlineitems
+                    id: product_kit_line_item_1
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@simple_order->organization->id)>'
+        createdBy:
+            data:
+                type: users
+                id: '<toString(@order.simple_user->id)>'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@simple_order->customerUser->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@simple_order->customer->id)>'
+        status:
+            data:
+                type: orderstatuses
+                id: open
 included:
     -
         type: orderlineitems

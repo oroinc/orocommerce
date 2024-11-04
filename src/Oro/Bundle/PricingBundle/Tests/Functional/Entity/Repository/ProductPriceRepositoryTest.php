@@ -30,6 +30,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     private ProductPriceRepository $repository;
     private ShardManager $shardManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

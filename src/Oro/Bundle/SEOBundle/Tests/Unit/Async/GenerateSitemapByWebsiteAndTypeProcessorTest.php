@@ -37,6 +37,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit\Framework\Te
 
     private GenerateSitemapByWebsiteAndTypeProcessor $processor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->jobRunner = $this->createMock(JobRunner::class);

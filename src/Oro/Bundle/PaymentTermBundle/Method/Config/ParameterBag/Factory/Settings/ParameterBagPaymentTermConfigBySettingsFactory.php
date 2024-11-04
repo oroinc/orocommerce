@@ -28,9 +28,7 @@ class ParameterBagPaymentTermConfigBySettingsFactory implements PaymentTermConfi
         $this->integrationIdentifierGenerator = $integrationIdentifierGenerator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function createConfigBySettings(PaymentTermSettings $paymentTermSettings)
     {
         $channel = $paymentTermSettings->getChannel();

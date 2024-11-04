@@ -11,9 +11,7 @@ use Oro\Bundle\MessageQueueBundle\Client\MessageFilterInterface;
  */
 class RecalculateCheckoutSubtotalsMessageFilter implements MessageFilterInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function apply(MessageBuffer $buffer): void
     {
         if (!$buffer->hasMessagesForTopic(RecalculateCheckoutSubtotalsTopic::getName())) {

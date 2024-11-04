@@ -20,9 +20,7 @@ class CouponSearchHandler extends SearchHandler
         $this->modifier = $modifier;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function searchEntities($search, $firstResult, $maxResults)
     {
         $queryBuilder = $this->entityRepository->createQueryBuilder('coupon');

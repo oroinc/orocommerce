@@ -20,6 +20,7 @@ class ProductVariantLinksType extends AbstractType
         $this->transformer = $transformer ?: new ProductVariantLinksDataTransformer();
     }
 
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
@@ -55,14 +56,13 @@ class ProductVariantLinksType extends AbstractType
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return self::NAME;
     }
 
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([

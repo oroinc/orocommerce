@@ -33,9 +33,7 @@ class CategoryVisibilityQueryModifier implements QueryModifierInterface
         $this->tokenAccessor = $tokenAccessor;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function modify(QueryBuilder $qb, bool $skipRootEntity): void
     {
         if ($skipRootEntity) {

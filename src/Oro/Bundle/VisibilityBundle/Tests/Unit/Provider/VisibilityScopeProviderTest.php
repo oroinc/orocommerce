@@ -25,6 +25,7 @@ class VisibilityScopeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var VisibilityScopeProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->scopeManager = $this->createMock(ScopeManager::class);

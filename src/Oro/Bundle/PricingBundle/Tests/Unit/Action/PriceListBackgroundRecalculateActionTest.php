@@ -38,6 +38,7 @@ class PriceListBackgroundRecalculateActionTest extends \PHPUnit\Framework\TestCa
     /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $eventDispatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->contextAccessor = $this->createMock(ContextAccessor::class);

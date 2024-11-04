@@ -14,6 +14,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 class RemoveUUIDColumn implements Migration
 {
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         $this->removeField($schema);

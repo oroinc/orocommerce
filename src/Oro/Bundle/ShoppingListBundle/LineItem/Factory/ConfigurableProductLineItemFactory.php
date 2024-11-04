@@ -11,9 +11,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class ConfigurableProductLineItemFactory implements LineItemByShoppingListAndProductFactoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function create(ShoppingList $shoppingList, Product $product): LineItem
     {
         $lineItem = new LineItem();

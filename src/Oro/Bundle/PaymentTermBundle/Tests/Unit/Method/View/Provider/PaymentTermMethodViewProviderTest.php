@@ -10,6 +10,7 @@ use Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvi
 
 class PaymentTermMethodViewProviderTest extends AbstractMethodViewProviderTest
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = $this->createMock(PaymentTermPaymentMethodViewFactoryInterface::class);

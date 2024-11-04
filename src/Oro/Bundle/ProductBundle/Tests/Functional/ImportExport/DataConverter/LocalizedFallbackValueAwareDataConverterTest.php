@@ -98,7 +98,8 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'extend.entity.test.wysiwyg' => '',
         'extend.entity.test.wysiwyg_attr' => '',
         'Upcoming.value' => '',
-        'Kit Items' => ''
+        'Kit Items' => '',
+        'Calculate Shipping Based On' => ''
     ];
 
     private const HEADER_FIELD = 'sku';
@@ -107,6 +108,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 
     private LocalizedFallbackValueAwareDataConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -134,6 +136,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         $this->converter->setLocalizationClassName(Localization::class);
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $this->revertFieldConfigImportExportHeader(self::HEADER_FIELD);

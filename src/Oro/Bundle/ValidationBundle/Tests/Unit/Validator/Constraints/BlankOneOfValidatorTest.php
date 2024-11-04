@@ -11,6 +11,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class BlankOneOfValidatorTest extends ConstraintValidatorTestCase
 {
+    #[\Override]
     protected function createValidator(): BlankOneOfValidator
     {
         $translator = $this->createMock(TranslatorInterface::class);

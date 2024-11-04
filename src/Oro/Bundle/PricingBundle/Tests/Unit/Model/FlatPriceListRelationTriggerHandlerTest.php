@@ -41,6 +41,7 @@ class FlatPriceListRelationTriggerHandlerTest extends \PHPUnit\Framework\TestCas
      */
     private $handler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->websiteProvider = $this->createMock(WebsiteProviderInterface::class);

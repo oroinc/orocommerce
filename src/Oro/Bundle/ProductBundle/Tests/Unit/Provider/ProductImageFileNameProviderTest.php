@@ -26,6 +26,7 @@ class ProductImageFileNameProviderTest extends \PHPUnit\Framework\TestCase
 
     private ProductImageFileNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->innerProvider = $this->createMock(FileNameProviderInterface::class);

@@ -56,6 +56,8 @@ api:
                     - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
                     - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct: ~
                     - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
+                    - Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitShippingCalculationMethod:
+                          allowedShippingCalculationMethods: [ kit_shipping_all, kit_shipping_product, kit_shipping_items ]
             fields:
                 skuUppercase:
                     exclude: true

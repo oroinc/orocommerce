@@ -11,6 +11,7 @@ class CalculatorTest extends \PHPUnit\Framework\TestCase
     /** @var TaxationSettingsProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $settingsProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->settingsProvider = $this->createMock(TaxationSettingsProvider::class);

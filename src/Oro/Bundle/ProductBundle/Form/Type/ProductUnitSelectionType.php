@@ -48,9 +48,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'setAcceptableUnits']);
@@ -174,9 +172,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         $this->entityClass = $entityClass;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);
@@ -194,9 +190,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $formParent = $form->getParent();
@@ -294,25 +288,18 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         return $choices;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParent(): ?string
     {
         return EntityType::class;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return static::NAME;

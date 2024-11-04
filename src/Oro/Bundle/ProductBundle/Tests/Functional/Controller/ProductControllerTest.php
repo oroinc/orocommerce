@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -20,6 +21,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
     private static array $expectedProductImageMatrixHeaders = ['File', 'Main', 'Listing', 'Additional'];
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -249,7 +251,10 @@ class ProductControllerTest extends ProductHelperTestCase
                 '_token' => $form['oro_product[_token]']->getValue(),
                 'sku' => ProductTestHelper::FIRST_DUPLICATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
-                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'inventory_status' => ExtendHelper::buildEnumOptionId(
+                    Product::INVENTORY_STATUS_ENUM_CODE,
+                    Product::INVENTORY_STATUS_OUT_OF_STOCK
+                ),
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_SIMPLE,
                 'primaryUnitPrecision' => $form->getPhpValues()['oro_product']['primaryUnitPrecision'],

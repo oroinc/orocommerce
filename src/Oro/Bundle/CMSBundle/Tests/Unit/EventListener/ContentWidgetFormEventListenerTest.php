@@ -27,6 +27,7 @@ class ContentWidgetFormEventListenerTest extends \PHPUnit\Framework\TestCase
     /** @var ContentWidgetFormEventListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(ObjectRepository::class);

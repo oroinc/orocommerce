@@ -28,6 +28,7 @@ class CategoryProviderTest extends \PHPUnit\Framework\TestCase
     private CategoryProviderBCAdapter|\PHPUnit\Framework\MockObject\MockObject $categoryProviderBCAdapter;
     private CategoryProvider $categoryProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->requestProductHandler = $this->createMock(RequestProductHandler::class);

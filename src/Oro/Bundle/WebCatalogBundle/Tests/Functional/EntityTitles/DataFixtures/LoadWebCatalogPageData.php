@@ -9,9 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData
 
 class LoadWebCatalogPageData extends AbstractLoadWebCatalogData
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -21,33 +19,25 @@ class LoadWebCatalogPageData extends AbstractLoadWebCatalogData
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getRoute()
     {
         return 'oro_cms_frontend_page_view';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getContentVariantType()
     {
         return CmsPageContentVariantType::TYPE;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntitySetterMethod()
     {
         return 'setCmsPage';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getEntity()
     {
         return $this->getReference(LoadPageData::PAGE_1);

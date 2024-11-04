@@ -28,6 +28,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
      * @throws TransformationFailedException
      * @return null|int
      */
+    #[\Override]
     public function transform($email)
     {
         if (!$email) {
@@ -51,6 +52,7 @@ class UserIdToEmailTransformer implements DataTransformerInterface
      * @throws TransformationFailedException
      * @return string|null
      */
+    #[\Override]
     public function reverseTransform($value)
     {
         if (!$value) {

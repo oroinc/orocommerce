@@ -10,13 +10,13 @@ class HostAddressProvider implements HostAddressProviderInterface
     const PRODUCTION_FORM_ACTION = 'https://payflowlink.paypal.com';
     const PILOT_FORM_ACTION = 'https://pilot-payflowlink.paypal.com';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getHostAddress($testMode)
     {
         return $testMode ? self::PILOT_HOST_ADDRESS : self::PRODUCTION_HOST_ADDRESS;
     }
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getFormAction($testMode)
     {
         return $testMode ? self::PILOT_FORM_ACTION : self::PRODUCTION_FORM_ACTION;

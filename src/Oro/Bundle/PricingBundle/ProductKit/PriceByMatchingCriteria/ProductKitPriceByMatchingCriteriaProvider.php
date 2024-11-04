@@ -32,6 +32,7 @@ class ProductKitPriceByMatchingCriteriaProvider implements ProductPriceByMatchin
         $this->roundingService = $roundingService;
     }
 
+    #[\Override]
     public function getProductPriceMatchingCriteria(
         ProductPriceCriteria|ProductKitPriceCriteria $productPriceCriteria,
         ProductPriceCollectionDTO $productPriceCollection
@@ -88,6 +89,7 @@ class ProductKitPriceByMatchingCriteriaProvider implements ProductPriceByMatchin
         return $productKitPrice;
     }
 
+    #[\Override]
     public function isSupported(
         ProductPriceCriteria|ProductKitPriceCriteria $productPriceCriteria,
         ProductPriceCollectionDTO $productPriceCollection

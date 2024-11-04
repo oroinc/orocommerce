@@ -22,6 +22,7 @@ class ProductSelectGridTest extends WebTestCase
     protected $client;
     private AbstractPlatform $platform;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient(
@@ -161,7 +162,7 @@ class ProductSelectGridTest extends WebTestCase
                 false
             ],
             [
-                [self::DATAGRID_NAME.'[_filter][inventoryStatus][value][]' => 'out_of_stock'],
+                [self::DATAGRID_NAME.'[_filter][inventoryStatus][value][]' => 'prod_inventory_status.out_of_stock'],
                 [
                     LoadProductData::PRODUCT_3,
                     LoadProductKitData::PRODUCT_KIT_3,

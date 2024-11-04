@@ -15,6 +15,7 @@ class CategoriesProductsProviderTest extends FrontendWebTestCase
 {
     use WebsiteSearchExtensionTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

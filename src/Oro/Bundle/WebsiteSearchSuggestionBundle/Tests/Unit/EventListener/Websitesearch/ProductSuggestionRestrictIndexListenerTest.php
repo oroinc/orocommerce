@@ -34,6 +34,7 @@ final class ProductSuggestionRestrictIndexListenerTest extends \PHPUnit\Framewor
 
     private ManagerRegistry&MockObject $registry;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productSuggestionRepository = $this->createMock(SuggestionRepository::class);

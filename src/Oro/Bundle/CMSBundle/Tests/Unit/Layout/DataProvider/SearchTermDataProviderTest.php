@@ -15,6 +15,7 @@ class SearchTermDataProviderTest extends TestCase
 
     private SearchTermDataProvider $searchTermDataProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->searchTermProvider = $this->createMock(SearchTermProvider::class);

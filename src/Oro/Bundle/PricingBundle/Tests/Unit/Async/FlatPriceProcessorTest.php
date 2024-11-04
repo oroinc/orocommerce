@@ -23,6 +23,7 @@ class FlatPriceProcessorTest extends \PHPUnit\Framework\TestCase
     /** @var JobRunner|\PHPUnit\Framework\MockObject\MockObject */
     private $jobRunner;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->producer = $this->createMock(MessageProducerInterface::class);

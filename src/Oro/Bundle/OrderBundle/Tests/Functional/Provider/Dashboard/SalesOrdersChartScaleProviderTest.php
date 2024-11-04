@@ -19,6 +19,7 @@ class SalesOrdersChartScaleProviderTest extends WebTestCase
 
     private SalesOrdersChartScaleProvider $chartScaleProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

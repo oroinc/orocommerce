@@ -11,6 +11,7 @@ class Configuration implements ConfigurationInterface
     public const ROOT_NODE = 'oro_paypal';
     public const CONFIG_KEY_ALLOWED_IPS = 'allowed_ips';
 
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder(self::ROOT_NODE);

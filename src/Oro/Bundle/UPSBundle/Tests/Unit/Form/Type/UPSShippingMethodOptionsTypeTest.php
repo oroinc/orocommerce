@@ -14,6 +14,7 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
     /** @var UPSShippingMethodOptionsType */
     private $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $roundingService = $this->createMock(RoundingServiceInterface::class);
@@ -28,9 +29,7 @@ class UPSShippingMethodOptionsTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

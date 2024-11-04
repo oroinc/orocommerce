@@ -102,14 +102,14 @@ Feature: Related Products Grid
       | PSKU4 |
       | PSKU3 |
       | PSKU1 |
-    When I sort "RelatedProductsViewGrid" by "Status"
+    When I sort "RelatedProductsViewGrid" by "ProductStatus" strictly
     Then I should see following "RelatedProductsViewGrid" grid:
       | SKU   |
       | PSKU5 |
       | PSKU1 |
       | PSKU3 |
       | PSKU4 |
-    When I sort "RelatedProductsViewGrid" by "Status" again
+    When I sort "RelatedProductsViewGrid" by "ProductStatus" again strictly
     Then I should see following "RelatedProductsViewGrid" grid:
       | SKU   |
       | PSKU4 |

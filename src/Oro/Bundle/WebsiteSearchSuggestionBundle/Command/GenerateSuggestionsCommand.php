@@ -31,9 +31,7 @@ class GenerateSuggestionsCommand extends Command implements LoggerAwareInterface
         $this->logger = new NullLogger();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $symfonyStyle = new SymfonyStyle($input, $output);

@@ -22,6 +22,7 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
 
     private LineItemsActionsOnResultAfterListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->authorizationChecker = $this->createMock(AuthorizationCheckerInterface::class);

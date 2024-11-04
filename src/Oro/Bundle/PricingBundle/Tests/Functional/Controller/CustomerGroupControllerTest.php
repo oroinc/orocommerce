@@ -13,47 +13,38 @@ class CustomerGroupControllerTest extends AbstractPriceListsByEntityTestCase
 {
     private CustomerGroup $customerGroup;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
         $this->customerGroup = $this->getReference('customer_group.group3');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getUpdateUrl($id = null)
     {
         return $this->getUrl('oro_customer_customer_group_update', ['id' => $id ?: $this->customerGroup->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCreateUrl()
     {
         return $this->getUrl('oro_customer_customer_group_create');
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getViewUrl()
     {
         return $this->getUrl('oro_customer_customer_group_view', ['id' => $this->customerGroup->getId()]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getMainFormName()
     {
         return CustomerGroupType::NAME;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getPriceListsByEntity()
     {
         return self::getContainer()->get('doctrine')

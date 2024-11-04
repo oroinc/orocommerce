@@ -4,17 +4,12 @@
 
 ### get_list
 
-Retrieve a collection of product price records by the scope criteria (customerId, websiteId, productIds, etc.).
+Retrieve a collection of customer's product price records.
 
-{@inheritdoc}
-
-**Note:** It is required to provide the **customer**, **product**, **website** filters with request.
+**Note:**
+It is required to provide the **customer**, **product** and **website** filters with request.
 
 ## FIELDS
-
-### id
-
-The unique identifier of a resource is created by the pattern (customer-website-product-currency-unit-quantity).
 
 ### currency
 
@@ -30,16 +25,16 @@ The product price.
 
 ### product
 
-The product of a product price.
+The product.
 
 ### customer
 
-The customer related to a product price.
+The customer. To get prices for an unauthorized user, use a **0** value.
 
 ### website
 
-The website related to a product price.
+The website.
 
 ### unit
 
-The unit of a product.
+The unit of quantity.

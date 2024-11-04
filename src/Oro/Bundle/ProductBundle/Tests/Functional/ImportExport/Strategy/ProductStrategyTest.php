@@ -3,7 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\Strategy;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ImportExportBundle\Context\Context;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -30,6 +31,7 @@ class ProductStrategyTest extends WebTestCase
 {
     private ProductStrategy $strategy;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -289,19 +291,19 @@ class ProductStrategyTest extends WebTestCase
         );
     }
 
-    private function getInventoryStatus(): AbstractEnumValue
+    private function getInventoryStatus(): EnumOptionInterface
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
-            ->find('in_stock');
+            ->getRepository(EnumOption::class)
+            ->find(ExtendHelper::buildEnumOptionId('prod_inventory_status', 'in_stock'));
     }
 
     private function createProduct(
         string $sku,
         AttributeFamily $attributeFamily,
         ProductUnit $unit,
-        AbstractEnumValue $inventoryStatus
+        EnumOptionInterface $inventoryStatus
     ): Product {
         $newProduct = new Product();
         $productName = new ProductName();

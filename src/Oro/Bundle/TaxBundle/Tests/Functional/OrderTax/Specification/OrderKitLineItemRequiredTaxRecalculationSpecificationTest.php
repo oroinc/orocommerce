@@ -12,6 +12,7 @@ class OrderKitLineItemRequiredTaxRecalculationSpecificationTest extends WebTestC
 {
     private OrderKitLineItemRequiredTaxRecalculationSpecification $specification;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

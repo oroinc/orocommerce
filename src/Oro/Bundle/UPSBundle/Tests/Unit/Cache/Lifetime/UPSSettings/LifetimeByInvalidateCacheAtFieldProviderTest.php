@@ -13,6 +13,7 @@ class LifetimeByInvalidateCacheAtFieldProviderTest extends \PHPUnit\Framework\Te
     /** @var LifetimeByInvalidateCacheAtFieldProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new LifetimeByInvalidateCacheAtFieldProvider();

@@ -17,9 +17,7 @@ class WebpAwareDatagridLineItemsDataListenerTest extends \PHPUnit\Framework\Test
 
     private WebpAwareDatagridLineItemsDataListener $listener;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->attachmentManager = $this->createMock(AttachmentManager::class);

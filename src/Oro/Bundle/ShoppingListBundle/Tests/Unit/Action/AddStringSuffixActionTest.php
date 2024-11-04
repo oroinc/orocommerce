@@ -15,6 +15,7 @@ class AddStringSuffixActionTest extends \PHPUnit\Framework\TestCase
     /** @var AddStringSuffixAction */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->action = new AddStringSuffixAction(new ContextAccessor());

@@ -25,6 +25,7 @@ class DigitalItemResolver extends AbstractItemResolver
         parent::__construct($unitResolver, $rowTotalResolver, $matcher);
     }
 
+    #[\Override]
     public function resolve(Taxable $taxable): void
     {
         if (!$this->isApplicable($taxable)) {

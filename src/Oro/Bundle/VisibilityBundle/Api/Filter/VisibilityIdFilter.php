@@ -19,17 +19,13 @@ class VisibilityIdFilter extends AbstractCompositeIdentifierFilter implements Co
 {
     private EntityDefinitionConfig $config;
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setConfig(EntityDefinitionConfig $config): void
     {
         $this->config = $config;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function buildEqualExpression(array $value): Expression
     {
         $expressions = [];
@@ -40,9 +36,7 @@ class VisibilityIdFilter extends AbstractCompositeIdentifierFilter implements Co
         return new CompositeExpression(CompositeExpression::TYPE_AND, $expressions);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function buildNotEqualExpression(array $value): Expression
     {
         $expressions = [];
@@ -53,9 +47,7 @@ class VisibilityIdFilter extends AbstractCompositeIdentifierFilter implements Co
         return new CompositeExpression(CompositeExpression::TYPE_OR, $expressions);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function parseIdentifier(mixed $value): mixed
     {
         $visibilityId = VisibilityIdUtil::decodeVisibilityId($value, $this->config->getField('id'));

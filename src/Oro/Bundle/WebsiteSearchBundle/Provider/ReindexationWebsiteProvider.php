@@ -18,17 +18,13 @@ class ReindexationWebsiteProvider implements ReindexationWebsiteProviderInterfac
         $this->doctrine = $doctrine;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getReindexationWebsiteIds(Website $website): array
     {
         return [$website->getId()];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getReindexationWebsiteIdsForOrganization(Organization $organization): array
     {
         return $this->doctrine->getRepository(Website::class)->getAllWebsitesIds($organization);

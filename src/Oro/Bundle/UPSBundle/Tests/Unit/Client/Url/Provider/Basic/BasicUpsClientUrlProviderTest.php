@@ -11,6 +11,7 @@ class BasicUpsClientUrlProviderTest extends \PHPUnit\Framework\TestCase
 
     private BasicUpsClientUrlProvider $testedUrlProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->testedUrlProvider = new BasicUpsClientUrlProvider(self::PROD_URL, self::TEST_URL);

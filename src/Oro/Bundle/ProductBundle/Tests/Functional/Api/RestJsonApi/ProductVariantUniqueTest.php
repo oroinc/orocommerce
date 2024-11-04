@@ -15,6 +15,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
 {
     use MessageQueueExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

@@ -12,6 +12,7 @@ class ImageSlideCollectionTypeTest extends \PHPUnit\Framework\TestCase
     /** @var ImageSlideCollectionType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->type = new ImageSlideCollectionType();

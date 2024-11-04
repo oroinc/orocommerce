@@ -18,6 +18,7 @@ class ComposedSkuStringFilterTest extends TestCase
 {
     private ComposedSkuStringFilter $filter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $formFactory = $this->createMock(FormFactoryInterface::class);

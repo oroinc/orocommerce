@@ -46,17 +46,13 @@ class LoadTransitionEmailNotifications extends AbstractFixture implements
         'quote_under_review' => 'review_transition'
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadEmailNotificationTemplates::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $workflow = $this->getWorkflowDefinition($manager);

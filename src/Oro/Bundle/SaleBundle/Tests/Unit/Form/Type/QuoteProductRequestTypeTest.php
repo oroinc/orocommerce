@@ -19,6 +19,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
 
     private QuoteProductRequestType $formType;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new QuoteProductRequestType();
@@ -41,9 +42,7 @@ class QuoteProductRequestTypeTest extends AbstractTest
         $this->formType->configureOptions($resolver);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function submitProvider(): array
     {
         return [
@@ -132,17 +131,13 @@ class QuoteProductRequestTypeTest extends AbstractTest
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createForm(mixed $data, array $options): FormInterface
     {
         return $this->factory->create(QuoteProductRequestType::class, $data, $options);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $priceType = new PriceType();

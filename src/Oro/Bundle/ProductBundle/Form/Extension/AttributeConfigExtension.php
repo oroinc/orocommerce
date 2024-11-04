@@ -35,9 +35,7 @@ class AttributeConfigExtension extends AbstractTypeExtension
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $configModel = $options['config_model'];
@@ -53,9 +51,7 @@ class AttributeConfigExtension extends AbstractTypeExtension
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options)
     {
         $configModel = $options['config_model'];
@@ -146,9 +142,7 @@ class AttributeConfigExtension extends AbstractTypeExtension
         return array_key_exists($scope, $data) && array_key_exists($fieldName, $data[$scope]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ConfigType::class];

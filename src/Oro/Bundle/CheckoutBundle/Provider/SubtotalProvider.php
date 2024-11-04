@@ -58,9 +58,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements
         $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isSupported($entity)
     {
         return $entity instanceof Checkout;
@@ -73,6 +71,7 @@ class SubtotalProvider extends AbstractSubtotalProvider implements
      *
      * @return Subtotal|null
      */
+    #[\Override]
     public function getSubtotal($entity)
     {
         if (!$this->isSupported($entity)) {

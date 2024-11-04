@@ -15,8 +15,8 @@ class NodeNotEmptyScopesValidator extends ConstraintValidator
     /**
      * @param NodeNotEmptyScopes $constraint
      *
-     * {@inheritdoc}
      */
+    #[\Override]
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof ContentNode) {

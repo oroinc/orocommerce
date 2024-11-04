@@ -32,6 +32,7 @@ class DefaultMultiShippingGroupMethodSetterTest extends \PHPUnit\Framework\TestC
     /** @var DefaultMultiShippingGroupMethodSetter  */
     private $setter;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

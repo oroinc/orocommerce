@@ -21,9 +21,7 @@ class DiscountContextConverterRegistry implements DiscountContextConverterInterf
         $this->converters = $converters;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convert($sourceEntity): DiscountContext
     {
         $converter = $this->getConverterForEntity($sourceEntity);
@@ -34,9 +32,7 @@ class DiscountContextConverterRegistry implements DiscountContextConverterInterf
         return $converter->convert($sourceEntity);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function supports($sourceEntity): bool
     {
         return $this->getConverterForEntity($sourceEntity) !== null;

@@ -65,9 +65,7 @@ class LoadApiPriceRules extends LoadPriceRules implements ContainerAwareInterfac
         ]
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         parent::load($manager);

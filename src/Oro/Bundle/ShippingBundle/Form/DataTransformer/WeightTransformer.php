@@ -11,6 +11,7 @@ class WeightTransformer implements DataTransformerInterface
      * @param Weight|null $weight
      * @return Weight|null
      */
+    #[\Override]
     public function transform($weight)
     {
         return $weight;
@@ -20,6 +21,7 @@ class WeightTransformer implements DataTransformerInterface
      * @param Weight|null $weight
      * @return Weight|null
      */
+    #[\Override]
     public function reverseTransform($weight)
     {
         if (!$weight instanceof Weight ||

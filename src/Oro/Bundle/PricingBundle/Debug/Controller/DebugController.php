@@ -251,9 +251,7 @@ class DebugController extends AbstractController
         return null;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getSubscribedServices(): array
     {
         return array_merge(

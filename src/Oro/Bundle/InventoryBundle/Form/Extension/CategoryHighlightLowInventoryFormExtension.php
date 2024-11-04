@@ -9,9 +9,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CategoryHighlightLowInventoryFormExtension extends AbstractFallbackCategoryTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFallbackProperties()
     {
         return [
@@ -19,9 +17,7 @@ class CategoryHighlightLowInventoryFormExtension extends AbstractFallbackCategor
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         parent::buildForm($builder, $options);

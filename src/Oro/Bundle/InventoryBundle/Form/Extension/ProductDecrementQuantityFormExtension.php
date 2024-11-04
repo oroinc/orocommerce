@@ -11,17 +11,13 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class ProductDecrementQuantityFormExtension extends AbstractTypeExtension
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public static function getExtendedTypes(): iterable
     {
         return [ProductType::class];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $product = $builder->getData();

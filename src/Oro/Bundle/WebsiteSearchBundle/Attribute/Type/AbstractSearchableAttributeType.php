@@ -20,57 +20,43 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
         $this->attributeType = $attributeType;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSearchable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isSearchable($attribute);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isFilterable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isFilterable($attribute);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isSortable(FieldConfigModel $attribute)
     {
         return $this->attributeType->isSortable($attribute);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSearchableValue(FieldConfigModel $attribute, $originalValue, Localization $localization = null)
     {
         return $this->attributeType->getSearchableValue($attribute, $originalValue, $localization);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterableValue(FieldConfigModel $attribute, $originalValue, Localization $localization = null)
     {
         return $this->attributeType->getFilterableValue($attribute, $originalValue, $localization);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSortableValue(FieldConfigModel $attribute, $originalValue, Localization $localization = null)
     {
         return $this->attributeType->getSortableValue($attribute, $originalValue, $localization);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterableFieldNames(FieldConfigModel $attribute): array
     {
         $names = array_filter([
@@ -106,9 +92,7 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
         return '';
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getFilterStorageFieldTypes(FieldConfigModel $attribute): array
     {
         $types = array_filter([

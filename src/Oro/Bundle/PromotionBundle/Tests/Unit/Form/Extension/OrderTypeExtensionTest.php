@@ -22,6 +22,7 @@ class OrderTypeExtensionTest extends \PHPUnit\Framework\TestCase
      */
     protected $orderTypeExtension;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->orderTypeExtension = new OrderTypeExtension();

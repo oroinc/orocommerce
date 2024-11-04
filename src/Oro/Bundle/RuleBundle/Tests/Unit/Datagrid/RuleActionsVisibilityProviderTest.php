@@ -11,6 +11,7 @@ class RuleActionsVisibilityProviderTest extends \PHPUnit\Framework\TestCase
     /** @var RuleActionsVisibilityProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new RuleActionsVisibilityProvider();

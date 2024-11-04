@@ -12,9 +12,7 @@ class Configuration implements ConfigurationInterface
     public const DISCOUNT_STRATEGY = 'discount_strategy';
     public const CASE_INSENSITIVE_COUPON_SEARCH = 'case_insensitive_coupon_search';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('oro_promotion');

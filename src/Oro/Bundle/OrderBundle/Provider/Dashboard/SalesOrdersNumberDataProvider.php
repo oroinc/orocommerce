@@ -48,6 +48,7 @@ class SalesOrdersNumberDataProvider implements SalesOrdersDataProviderInterface
      *      //...
      *  ]
      */
+    #[\Override]
     public function getData(
         \DateTime $dateFrom,
         \DateTime $dateTo,

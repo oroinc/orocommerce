@@ -16,9 +16,7 @@ class PrepareProductSuggestionData extends AbstractFixture implements ContainerA
 {
     use ContainerAwareTrait;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->getMessageProducer()->send(GenerateSuggestionsTopic::getName(), []);

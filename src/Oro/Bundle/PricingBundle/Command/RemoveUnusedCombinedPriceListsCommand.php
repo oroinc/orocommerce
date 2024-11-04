@@ -31,6 +31,7 @@ class RemoveUnusedCombinedPriceListsCommand extends Command implements
     }
 
     /** @noinspection PhpMissingParentCallCommonInspection */
+    #[\Override]
     protected function configure()
     {
         $this->setDescription('Removes unused combined price lists scheduled for removal')
@@ -44,9 +45,7 @@ HELP
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isActive(): bool
     {
         return $this->garbageCollector->hasPriceListsScheduledForRemoval();
@@ -56,6 +55,7 @@ HELP
      * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      * @noinspection PhpMissingParentCallCommonInspection
      */
+    #[\Override]
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->garbageCollector->removeScheduledUnusedPriceLists();
@@ -63,9 +63,7 @@ HELP
         return self::SUCCESS;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDefaultDefinition(): string
     {
         // At minute 7 past every hour to minimize overlapping with other crons or CPL recalculations.

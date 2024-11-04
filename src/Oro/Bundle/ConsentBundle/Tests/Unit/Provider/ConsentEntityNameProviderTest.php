@@ -14,6 +14,7 @@ class ConsentEntityNameProviderTest extends \PHPUnit\Framework\TestCase
 {
     private ConsentEntityNameProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->provider = new ConsentEntityNameProvider();

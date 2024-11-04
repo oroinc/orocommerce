@@ -25,9 +25,7 @@ class LoadProductSearchData implements ProcessorInterface
 {
     public const SEARCH_RESULT = 'search_result';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ListContext $context */

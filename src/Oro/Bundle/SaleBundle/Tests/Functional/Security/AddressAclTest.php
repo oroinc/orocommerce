@@ -24,6 +24,7 @@ class AddressAclTest extends AbstractAddressAclTest
 
     private string $formName = 'oro_sale_quote';
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], $this->generateBasicAuthHeader());

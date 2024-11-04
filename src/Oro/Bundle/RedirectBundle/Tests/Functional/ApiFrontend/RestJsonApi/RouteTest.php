@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class RouteTest extends WebCatalogTreeTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,7 +26,8 @@ class RouteTest extends WebCatalogTreeTestCase
         $this->switchToWebCatalog();
     }
 
-    protected function postFixtureLoad()
+    #[\Override]
+    protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();
 
@@ -56,7 +58,7 @@ class RouteTest extends WebCatalogTreeTestCase
         return str_replace('/', ':', $pathIfo);
     }
 
-    public function testTryToGetForNotExistingUrl()
+    public function testTryToGetForNotExistingUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/not-existing')],
@@ -67,7 +69,7 @@ class RouteTest extends WebCatalogTreeTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testTryToGetForManagementConsoleUrl()
+    public function testTryToGetForManagementConsoleUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId($this->getUrl('oro_default'))],
@@ -78,7 +80,7 @@ class RouteTest extends WebCatalogTreeTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
-    public function testGetForRootPageUrl()
+    public function testGetForRootPageUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/')]
@@ -102,7 +104,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForCustomerUserAddressesUrl()
+    public function testGetForCustomerUserAddressesUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/customer/user/address')]
@@ -126,7 +128,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForAllProductsUrl()
+    public function testGetForAllProductsUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/product')]
@@ -150,7 +152,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForCustomerUserProfileUrl()
+    public function testGetForCustomerUserProfileUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/customer/profile')]
@@ -174,7 +176,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForCustomerUserUrl()
+    public function testGetForCustomerUserUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/customer/user/view/1')]
@@ -198,7 +200,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForDefaultShoppingListUrl()
+    public function testGetForDefaultShoppingListUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/customer/shoppinglist')]
@@ -222,7 +224,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForShoppingListUrl()
+    public function testGetForShoppingListUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/customer/shoppinglist/1')]
@@ -246,7 +248,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetOnlyUrl()
+    public function testGetOnlyUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/')],
@@ -266,7 +268,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetOnlyResourceType()
+    public function testGetOnlyResourceType(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/')],
@@ -286,7 +288,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetOnlyApiUrl()
+    public function testGetOnlyApiUrl(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/')],
@@ -306,7 +308,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForProductCollectionRoute()
+    public function testGetForProductCollectionRoute(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/catalog1_node1')]
@@ -330,7 +332,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForMasterCategoryProductsRoute()
+    public function testGetForMasterCategoryProductsRoute(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/catalog1_node5')]
@@ -354,7 +356,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForMasterCategoryProductsWithIncludeSubcategoriesRoute()
+    public function testGetForMasterCategoryProductsWithIncludeSubcategoriesRoute(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/catalog1_node2')]
@@ -379,7 +381,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForProductRoute()
+    public function testGetForProductRoute(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/catalog1_node3')]
@@ -403,7 +405,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForLandingPageRoute()
+    public function testGetForLandingPageRoute(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/catalog1_node4_new')]
@@ -427,7 +429,7 @@ class RouteTest extends WebCatalogTreeTestCase
         );
     }
 
-    public function testGetForRedirectRouteSlug()
+    public function testGetForRedirectRouteSlug(): void
     {
         $response = $this->get(
             ['entity' => 'routes', 'id' => $this->getRouteId('/catalog1_node4')]
@@ -449,5 +451,79 @@ class RouteTest extends WebCatalogTreeTestCase
             ],
             $response
         );
+    }
+
+    public function testGetWithHateoas(): void
+    {
+        $response = $this->get(
+            ['entity' => 'routes', 'id' => $this->getRouteId('/')],
+            [],
+            ['HTTP_HATEOAS' => true]
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type'       => 'routes',
+                    'id'         => ':',
+                    'attributes' => [
+                        'url'                => '/',
+                        'isSlug'             => true,
+                        'redirectUrl'        => null,
+                        'redirectStatusCode' => null,
+                        'resourceType'       => 'system_page',
+                        'apiUrl'             => '/api/systempages/oro_frontend_root'
+                    ],
+                    'links' => [
+                        'self' => '{baseUrl}/routes/:'
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToGetList(): void
+    {
+        $response = $this->cget(['entity' => 'routes'], [], [], false);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function testTryToCreate(): void
+    {
+        $response = $this->post(['entity' => 'routes'], [], [], false);
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
+    }
+
+    public function testTryToUpdate(): void
+    {
+        $response = $this->patch(
+            ['entity' => 'routes', 'id' => $this->getRouteId('/product')],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDelete(): void
+    {
+        $response = $this->delete(
+            ['entity' => 'routes', 'id' => $this->getRouteId('/product')],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDeleteList(): void
+    {
+        $response = $this->cdelete(
+            ['entity' => 'routes'],
+            ['filter' => ['id' => $this->getRouteId('/product')]],
+            [],
+            false
+        );
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 }

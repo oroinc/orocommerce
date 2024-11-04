@@ -20,25 +20,19 @@ class ScopeWebCatalogProvider implements ScopeCriteriaProviderInterface
         $this->webCatalogProvider = $webCatalogProvider;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCriteriaField()
     {
         return self::WEB_CATALOG;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCriteriaValue()
     {
         return $this->webCatalogProvider->getWebCatalog();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getCriteriaValueType()
     {
         return WebCatalog::class;

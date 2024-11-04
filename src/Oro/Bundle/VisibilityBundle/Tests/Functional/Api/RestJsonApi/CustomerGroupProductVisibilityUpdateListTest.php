@@ -12,6 +12,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility
  */
 class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateListTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

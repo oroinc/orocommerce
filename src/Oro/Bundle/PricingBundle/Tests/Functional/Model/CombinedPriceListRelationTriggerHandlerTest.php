@@ -29,9 +29,7 @@ class CombinedPriceListRelationTriggerHandlerTest extends WebTestCase
     /** @var PriceListRelationTriggerHandler */
     private $handler;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

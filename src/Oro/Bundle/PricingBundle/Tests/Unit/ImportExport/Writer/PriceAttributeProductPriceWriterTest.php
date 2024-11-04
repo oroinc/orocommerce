@@ -26,6 +26,7 @@ class PriceAttributeProductPriceWriterTest extends TestCase
      */
     private $writer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entityManager = $this->createMock(EntityManager::class);

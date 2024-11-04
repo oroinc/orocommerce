@@ -18,6 +18,7 @@ class HashingLineItemChecksumGenerator implements LineItemChecksumGeneratorInter
         $this->innerChecksumGenerator = $innerChecksumGenerator;
     }
 
+    #[\Override]
     public function getChecksum(ProductLineItemInterface $lineItem): ?string
     {
         $checksum = $this->innerChecksumGenerator->getChecksum($lineItem);

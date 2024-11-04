@@ -13,9 +13,7 @@ class ComputeProductSearchImages implements ProcessorInterface
 {
     private const IMAGES_FIELD = 'images';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeLoadedDataContext $context */

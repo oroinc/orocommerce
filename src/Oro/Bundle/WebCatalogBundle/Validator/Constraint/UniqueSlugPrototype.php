@@ -14,9 +14,7 @@ class UniqueSlugPrototype extends Constraint
      */
     public $message = 'oro.webcatalog.contentnode.slug_prototype.unique.message';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;

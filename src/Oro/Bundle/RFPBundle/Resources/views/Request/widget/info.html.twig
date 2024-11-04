@@ -19,8 +19,14 @@
             {% if entity.customerUser %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.customer_user.label'|trans, UI.entityViewLink(entity.customerUser, entity.customerUser.fullName, 'oro_customer_customer_user_view')) }}
             {% endif %}
-            {{ UI.renderProperty('oro.rfp.request.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
-            {{ UI.renderProperty('oro.rfp.request.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
+            {{ UI.renderProperty('oro.rfp.request.internal_status.label'|trans, entity.internal_status
+                ? entity.internal_status.id|trans_enum
+                : ''
+            ) }}
+            {{ UI.renderProperty('oro.rfp.request.customer_status.label'|trans, entity.customer_status
+                ? entity.customer_status.id|trans_enum
+                : ''
+            ) }}
             {% if entity.assignedUsers | length %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.assigned_users.label'|trans, UI.entityViewLinks(entity.assignedUsers, 'fullName', 'oro_user_view')) }}
             {% endif %}

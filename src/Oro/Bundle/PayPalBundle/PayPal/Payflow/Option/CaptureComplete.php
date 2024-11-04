@@ -6,7 +6,7 @@ class CaptureComplete extends AbstractBooleanOption
 {
     const CAPTURECOMPLETE = 'CAPTURECOMPLETE';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function configureOption(OptionsResolver $resolver)
     {
         $resolver

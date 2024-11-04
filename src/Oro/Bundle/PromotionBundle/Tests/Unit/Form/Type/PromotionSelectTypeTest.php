@@ -15,9 +15,7 @@ class PromotionSelectTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->formType = new PromotionSelectType();

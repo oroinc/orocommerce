@@ -23,6 +23,7 @@ class ShippingKitItemLineItemTest extends TestCase
 
     private Dimensions|MockObject $dimensions;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productUnit = $this->createMock(ProductUnit::class);

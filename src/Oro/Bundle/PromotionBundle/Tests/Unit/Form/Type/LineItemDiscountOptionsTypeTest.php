@@ -110,9 +110,7 @@ class LineItemDiscountOptionsTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $localeSettings = $this->createMock(LocaleSettings::class);

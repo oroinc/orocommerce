@@ -23,8 +23,8 @@ class PromotionSubtotalProviderDecorator implements SubtotalProviderInterface
     /**
      * Subtotal for Orders with subOrders should be calculated as the sum of its subOrders subtotals.
      *
-     * {@inheritDoc}
      */
+    #[\Override]
     public function getSubtotal($entity)
     {
         if ($entity instanceof ProductLineItemsHolderInterface) {
@@ -65,9 +65,7 @@ class PromotionSubtotalProviderDecorator implements SubtotalProviderInterface
         return $totals;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function isSupported($entity): bool
     {
         return $this->subtotalProvider->isSupported($entity);

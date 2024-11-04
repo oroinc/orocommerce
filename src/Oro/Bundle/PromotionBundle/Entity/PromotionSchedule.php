@@ -54,9 +54,7 @@ class PromotionSchedule implements ScheduleIntervalInterface
         return $this->promotion;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getScheduleIntervalsHolder()
     {
         return $this->getPromotion();

@@ -9,9 +9,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\EnumIdPlaceholder;
 
 class MultiEnumSearchableAttributeTypeTest extends SearchableAttributeTypeTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return MultiEnumSearchableAttributeType::class;

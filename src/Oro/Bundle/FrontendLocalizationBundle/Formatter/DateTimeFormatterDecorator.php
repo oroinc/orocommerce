@@ -30,9 +30,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         $this->frontendHelper = $frontendHelper;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPattern($dateType, $timeType, $locale = null, $value = null)
     {
         $dateType = $this->getDateType($dateType);
@@ -49,9 +47,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         return $pattern;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function format(
         $date,
         $dateType = null,
@@ -68,9 +64,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
             ->format($date, $this->getDateType($dateType), $timeType, $locale, $timeZone, $pattern);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function formatDate($date, $dateType = null, $locale = null, $timeZone = null)
     {
         // Trigger pattern update
@@ -79,9 +73,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         return $this->dateTimeFormatter->formatDate($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function formatYear($date, $dateType = null, $locale = null, $timeZone = null)
     {
         // Trigger pattern update
@@ -90,9 +82,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         return $this->dateTimeFormatter->formatYear($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function formatQuarter($date, $dateType = null, $locale = null, $timeZone = null)
     {
         // Trigger pattern update
@@ -101,9 +91,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         return $this->dateTimeFormatter->formatQuarter($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function formatMonth($date, $dateType = null, $locale = null, $timeZone = null)
     {
         // Trigger pattern update
@@ -112,9 +100,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         return $this->dateTimeFormatter->formatMonth($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function formatDay($date, $dateType = null, $locale = null, $timeZone = null)
     {
         // Trigger pattern update
@@ -123,9 +109,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         return $this->dateTimeFormatter->formatDay($date, $this->getDateType($dateType), $locale, $timeZone);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function formatTime($date, $timeType = null, $locale = null, $timeZone = null)
     {
         // Trigger pattern update
@@ -134,9 +118,7 @@ class DateTimeFormatterDecorator implements DateTimeFormatterInterface
         return $this->dateTimeFormatter->formatTime($date, $timeType, $locale, $timeZone);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDateTime($date)
     {
         return $this->dateTimeFormatter->getDateTime($date);

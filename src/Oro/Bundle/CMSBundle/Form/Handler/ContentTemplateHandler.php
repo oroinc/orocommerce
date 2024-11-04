@@ -34,6 +34,7 @@ class ContentTemplateHandler implements FormHandlerInterface
      * @param ContentTemplate $data
      * @throw \InvalidArgumentException
      */
+    #[\Override]
     public function process($data, FormInterface $form, Request $request): bool
     {
         if (!$data instanceof ContentTemplate) {

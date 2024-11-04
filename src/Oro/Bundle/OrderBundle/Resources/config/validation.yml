@@ -29,6 +29,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
                         jsValidation:
                             type: Date
         currency:
+            -   NotBlank: ~
             -   Currency: ~
         totalValue:
             -   Type:

@@ -8,9 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class InventoryLevelStrategyHelper extends AbstractInventoryLevelStrategyHelper
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(
         InventoryLevel $importedEntity,
         array $importData = [],

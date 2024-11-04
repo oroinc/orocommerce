@@ -31,6 +31,7 @@ class AsyncIndexerTest extends \PHPUnit\Framework\TestCase
     /** @var AsyncIndexer */
     private $indexer;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);

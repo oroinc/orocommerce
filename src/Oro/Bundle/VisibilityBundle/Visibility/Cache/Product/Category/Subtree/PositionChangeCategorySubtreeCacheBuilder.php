@@ -67,6 +67,7 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
         return $categoryIds;
     }
 
+    #[\Override]
     protected function clearChangedEntities()
     {
         parent::clearChangedEntities();

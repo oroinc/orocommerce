@@ -29,9 +29,7 @@ class UrlItemsProviderCompilerPass implements CompilerPassInterface
         $this->tag = $tag;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function process(ContainerBuilder $container)
     {
         if (!$container->hasDefinition($this->service)) {

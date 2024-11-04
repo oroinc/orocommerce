@@ -16,6 +16,7 @@ class AddressModelFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var AddressModelFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);

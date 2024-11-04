@@ -16,6 +16,7 @@ class ProductShippingOptionsRepositoryTest extends WebTestCase
 {
     protected ProductShippingOptionsRepository $repository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

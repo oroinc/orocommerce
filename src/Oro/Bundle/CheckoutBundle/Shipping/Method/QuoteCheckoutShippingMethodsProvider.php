@@ -31,9 +31,7 @@ class QuoteCheckoutShippingMethodsProvider implements CheckoutShippingMethodsPro
         $this->quoteShippingConfigurationFactory = $quoteShippingConfigurationFactory;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getApplicableMethodsViews(Checkout $checkout): ShippingMethodViewCollection
     {
         $quote = $this->extractQuoteFromCheckout($checkout);
@@ -47,9 +45,7 @@ class QuoteCheckoutShippingMethodsProvider implements CheckoutShippingMethodsPro
         );
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPrice(Checkout $checkout): ?Price
     {
         $quote = $this->extractQuoteFromCheckout($checkout);

@@ -27,6 +27,7 @@ class AddCategoryToProductAutocompleteListenerTest extends \PHPUnit\Framework\Te
     /** @var AddCategoryToProductAutocompleteListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);

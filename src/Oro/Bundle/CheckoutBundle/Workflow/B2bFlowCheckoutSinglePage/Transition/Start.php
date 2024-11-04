@@ -23,6 +23,7 @@ class Start extends TransitionServiceAbstract
     ) {
     }
 
+    #[\Override]
     public function execute(WorkflowItem $workflowItem): void
     {
         /** @var Checkout $checkout */

@@ -33,6 +33,7 @@ class ProductKitItemLineItemQuantityUnitPrecisionValidator extends ConstraintVal
         $this->propertyAccessor = $propertyAccessor;
     }
 
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductKitItemLineItemQuantityUnitPrecision) {

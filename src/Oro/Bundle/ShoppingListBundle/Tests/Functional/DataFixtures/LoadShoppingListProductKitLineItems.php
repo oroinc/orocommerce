@@ -31,9 +31,7 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
         ],
     ];
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -43,9 +41,7 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function createLineItem(ObjectManager $manager, array $lineItemData): LineItem
     {
         $lineItem = parent::createLineItem($manager, $lineItemData);

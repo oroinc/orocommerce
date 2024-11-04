@@ -30,6 +30,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
     /** @var InventoryLevelGridType */
     private $type;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
@@ -40,9 +41,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         return [

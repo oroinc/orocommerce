@@ -18,7 +18,7 @@ class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterf
     use ContainerAwareTrait;
     const PROMOTION_CHECKOUT_1 = 'promo_checkout_1';
 
-    /** {@inheritdoc} */
+    #[\Override]
     public function getDependencies()
     {
         return [LoadCustomerUserData::class, LoadShoppingListLineItemsData::class];
@@ -42,9 +42,7 @@ class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterf
         ],
     ];
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         foreach ($this->checkoutData as $reference => $data) {

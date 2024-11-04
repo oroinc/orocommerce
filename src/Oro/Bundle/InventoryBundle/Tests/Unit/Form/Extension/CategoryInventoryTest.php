@@ -29,9 +29,7 @@ abstract class CategoryInventoryTest extends \PHPUnit\Framework\TestCase
      */
     abstract protected function assertCategoryFallBack(CategoryStub $category, $expectedFallBackId);
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->builder = $this->createMock(FormBuilderInterface::class);

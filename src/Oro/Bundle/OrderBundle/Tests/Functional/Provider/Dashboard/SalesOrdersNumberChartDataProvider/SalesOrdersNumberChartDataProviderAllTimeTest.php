@@ -4,7 +4,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\SalesOrders
 
 use Carbon\Carbon;
 use Oro\Bundle\DashboardBundle\Model\WidgetOptionBag;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\AbstractDateFilterType;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\Dashboard\SalesOrdersChartDataProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\OrdersCreatedAt as OrdersFixtures;
@@ -15,6 +17,7 @@ use Oro\Bundle\OrderBundle\Tests\Functional\Provider\Dashboard\AbstractBasicSale
  */
 class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOrdersChartDataProviderTest
 {
+    #[\Override]
     protected function getSalesOrdersChartDataProvider(): SalesOrdersChartDataProvider
     {
         return self::getContainer()
@@ -41,7 +44,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             array_merge(
                 $convertedDateRanges,
                 [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ]
             )
@@ -56,6 +59,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
+    #[\Override]
     public function getChartDataDataProvider(): array
     {
         $this->setCurrentDate();
@@ -78,7 +82,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 1 day - days)' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/durationOneDay.yml',
@@ -89,7 +93,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time < 31 days - days)' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/duration30Days.yml',
@@ -100,7 +104,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time 31 days - days)' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/duration31Days.yml',
@@ -111,7 +115,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time > 31 days and < 53 weeks - weeks)' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/duration52Weeks.yml',
@@ -122,7 +126,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time - 53 weeks - weeks)' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/duration53Weeks.yml',
@@ -133,7 +137,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'Scaling of X-axis (All Time > 53 weeks - month)' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/duration54Weeks.yml',
@@ -154,7 +158,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     'dateRange3' => null,
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/duration54Weeks.yml',
@@ -166,9 +170,12 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
                     'includedOrderStatuses' => array_merge(
-                        self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                        self::getDefaultIncludedOrderStatuses(),
                         [
-                            OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED,
+                            ExtendHelper::buildEnumOptionId(
+                                Order::INTERNAL_STATUS_CODE,
+                                OrderStatusesProviderInterface::INTERNAL_STATUS_CANCELLED
+                            )
                         ]
                     ),
                     'includeSubOrders' => false,
@@ -181,7 +188,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
             'with sub-orders' => [
                 'dateRanges' => $allTimeDateRange1,
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => true,
                 ],
                 'expectedResultsPath' => 'allTime/withSubOrders.yml',
@@ -214,7 +221,7 @@ class SalesOrdersNumberChartDataProviderAllTimeTest extends AbstractBasicSalesOr
                     ],
                 ],
                 'widgetOptions' => [
-                    'includedOrderStatuses' => self::DEFAULT_INCLUDED_ORDER_STATUSES,
+                    'includedOrderStatuses' => self::getDefaultIncludedOrderStatuses(),
                     'includeSubOrders' => false,
                 ],
                 'expectedResultsPath' => 'allTime/allTime,laterThan,laterThan.yml',

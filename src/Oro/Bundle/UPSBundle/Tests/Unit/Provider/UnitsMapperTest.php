@@ -19,6 +19,7 @@ class UnitsMapperTest extends TestCase
     /** @var UnitsMapper */
     private $mapper;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->registry = $this->createMock(ManagerRegistry::class);

@@ -24,6 +24,7 @@ class ProductKitItemDeleteHandlerExtensionTest extends \PHPUnit\Framework\TestCa
 
     private ProductKitItemRepository|\PHPUnit\Framework\MockObject\MockObject $productKitItemRepository;
 
+    #[\Override]
     protected function setUp(): void
     {
         $localizationHelper = $this->createMock(LocalizationHelper::class);

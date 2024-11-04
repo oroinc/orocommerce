@@ -47,6 +47,7 @@ class LoadPromotionDemoData extends AbstractFixture implements ContainerAwareInt
     public const SEGMENT_NAME_FORMAT = 'Items to Discount in promotion "%s"';
     public const COUPON_CODE_SALE25 = 'SALE25';
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -57,6 +58,7 @@ class LoadPromotionDemoData extends AbstractFixture implements ContainerAwareInt
     }
 
     /** @SuppressWarnings(PHPMD.ExcessiveMethodLength) */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         $user = $this->getFirstUser($manager);

@@ -89,6 +89,7 @@ class QuoteProductOffer extends BaseQuoteProductItem
         return $this->allowIncrements;
     }
 
+    #[\Override]
     public function getProductSku()
     {
         return parent::getProductSku() ?? $this->getQuoteProduct()?->getProductSku();

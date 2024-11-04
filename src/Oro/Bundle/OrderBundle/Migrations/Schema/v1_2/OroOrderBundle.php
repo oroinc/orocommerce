@@ -8,18 +8,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroOrderBundle implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->alterAddressTable($schema);
         $this->alterOrderTable($schema);
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function alterOrderTable(Schema $schema)
     {
         $table = $schema->getTable('orob2b_order');

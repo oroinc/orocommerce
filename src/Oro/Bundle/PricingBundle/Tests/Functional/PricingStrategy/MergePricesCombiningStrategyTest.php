@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\PricingStrategy\MergePricesCombiningStrategy;
  */
 class MergePricesCombiningStrategyTest extends AbstractPricesCombiningStrategyTest
 {
+    #[\Override]
     protected function getPricingStrategyName(): string
     {
         return MergePricesCombiningStrategy::NAME;

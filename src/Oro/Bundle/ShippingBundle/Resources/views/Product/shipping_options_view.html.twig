@@ -1,4 +1,14 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 {% import '@OroShipping/macros.html.twig' as PSO %}
 
-{{ PSO.renderProductShippingOptions(shippingOptions) }}
+{% if entity.isKit() %}
+    {{ UI.renderHtmlProperty(
+        'oro.product.kit_shipping_calculation_method.label'|trans,
+        kitShippingCalculationMethodValue,
+        entity,
+        'kitShippingCalculationMethod'
+    ) }}
+{% endif %}
+{% if shippingOptions is not empty %}
+    {{ PSO.renderProductShippingOptions(shippingOptions) }}
+{% endif %}

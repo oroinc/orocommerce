@@ -16,6 +16,7 @@ class ProductPriceUpdateListTest extends RestJsonApiUpdateListTestCase
 {
     use ProductPriceTestTrait;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

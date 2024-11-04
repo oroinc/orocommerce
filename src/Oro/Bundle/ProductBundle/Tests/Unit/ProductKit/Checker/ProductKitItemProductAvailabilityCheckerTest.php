@@ -18,6 +18,7 @@ class ProductKitItemProductAvailabilityCheckerTest extends TestCase
 
     private ProductKitItemProductAvailabilityChecker $checker;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);

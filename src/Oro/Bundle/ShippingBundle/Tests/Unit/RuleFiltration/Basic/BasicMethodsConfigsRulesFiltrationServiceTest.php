@@ -19,6 +19,7 @@ class BasicMethodsConfigsRulesFiltrationServiceTest extends \PHPUnit\Framework\T
     /** @var BasicMethodsConfigsRulesFiltrationService */
     private $basicMethodsConfigsRulesFiltrationService;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->filtrationService = $this->createMock(RuleFiltrationServiceInterface::class);

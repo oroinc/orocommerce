@@ -19,7 +19,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderNameInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\FormBundle\Form\Type\OroMoneyType;
@@ -48,10 +48,12 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- * @method AbstractEnumValue|null getInternalStatus()
- * @method $this setInternalStatus(AbstractEnumValue|null $internalStatus)
- * @method AbstractEnumValue|null getStatus()
- * @method $this setStatus(AbstractEnumValue|null $status)
+ * @method EnumOptionInterface getInternalStatus()
+ * @method $this setInternalStatus(EnumOptionInterface $status)
+ * @method EnumOptionInterface|null getStatus()
+ * @method $this setStatus(EnumOptionInterface|null $status)
+ * @method EnumOptionInterface|null getShippingStatus()
+ * @method $this setShippingStatus(EnumOptionInterface|null $status)
  * @mixin OroOrderBundle_Entity_Order
  */
 #[ORM\Entity(repositoryClass: OrderRepository::class)]
@@ -110,6 +112,7 @@ class Order implements
 
     public const INTERNAL_STATUS_CODE = 'order_internal_status';
     public const STATUS_CODE = 'order_status';
+    public const SHIPPING_STATUS_CODE = 'order_shipping_status';
 
     #[ORM\Id]
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
@@ -326,6 +329,7 @@ class Order implements
     }
 
     #[ORM\PostLoad]
+    #[\Override]
     public function loadMultiCurrencyFields()
     {
         $this->subtotal = MultiCurrency::create(
@@ -344,6 +348,7 @@ class Order implements
      * @return void
      */
     #[ORM\PreFlush]
+    #[\Override]
     public function updateMultiCurrencyFields()
     {
         $this->fixCurrencyInMultiCurrencyFields();
@@ -354,6 +359,7 @@ class Order implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->identifier;
@@ -387,17 +393,13 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceDocument()
     {
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getSourceDocumentIdentifier()
     {
         return $this->identifier;
@@ -453,19 +455,13 @@ class Order implements
         return $this;
     }
 
-    /**
-     * Pre persist event handler
-     */
     #[ORM\PrePersist]
     public function prePersist()
     {
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = clone $this->createdAt;
     }
 
-    /**
-     * Pre update event handler
-     */
     #[ORM\PreUpdate]
     public function preUpdate()
     {
@@ -542,9 +538,7 @@ class Order implements
         return $this->shipUntil;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setCurrency($currency)
     {
         $this->currency = $currency;
@@ -554,9 +548,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getCurrency()
     {
         return $this->currency;
@@ -598,9 +590,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getSubtotal()
     {
         return $this->subtotal->getValue();
@@ -752,14 +742,13 @@ class Order implements
      *
      * @return Collection|OrderLineItem[]
      */
+    #[\Override]
     public function getLineItems()
     {
         return $this->lineItems;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEmail()
     {
         if (null !== $this->getCustomerUser()) {
@@ -769,9 +758,7 @@ class Order implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getEmailHolderName()
     {
         if (null !== $this->getCustomerUser()) {
@@ -784,9 +771,7 @@ class Order implements
         return '';
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function setWebsite(Website $website)
     {
         $this->website = $website;
@@ -794,17 +779,13 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getWebsite()
     {
         return $this->website;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingCost()
     {
         $amount = $this->estimatedShippingCostAmount;
@@ -1016,6 +997,7 @@ class Order implements
      *
      * @return Collection|OrderDiscount[]
      */
+    #[\Override]
     public function getDiscounts()
     {
         return $this->discounts;
@@ -1045,9 +1027,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethod()
     {
         return $this->shippingMethod;
@@ -1064,9 +1044,7 @@ class Order implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingMethodType()
     {
         return $this->shippingMethodType;

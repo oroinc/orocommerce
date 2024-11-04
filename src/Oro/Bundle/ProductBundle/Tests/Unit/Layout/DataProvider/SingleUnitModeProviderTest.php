@@ -17,6 +17,7 @@ class SingleUnitModeProviderTest extends \PHPUnit\Framework\TestCase
     /** @var SingleUnitModeProvider */
     private $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->singleUnitService = $this->createMock(SingleUnitModeService::class);

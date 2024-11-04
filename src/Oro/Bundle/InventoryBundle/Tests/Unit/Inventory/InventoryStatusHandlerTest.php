@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Tests\Unit\Inventory;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
+use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue as InventoryStatus;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
@@ -22,6 +22,7 @@ class InventoryStatusHandlerTest extends \PHPUnit\Framework\TestCase
     /** @var InventoryStatusHandler */
     private $inventoryStatusHandler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
@@ -66,10 +67,10 @@ class InventoryStatusHandlerTest extends \PHPUnit\Framework\TestCase
         $this->entityFallbackResolver->expects($this->once())
             ->method('getFallbackValue')
             ->willReturn($inventoryThresholdValue);
-        $inventoryRepository = $this->createMock(EnumValueRepository::class);
+        $inventoryRepository = $this->createMock(EnumOptionRepository::class);
         $inventoryRepository->expects($this->once())
             ->method('findOneBy')
-            ->willReturn(new InventoryStatus(1, Product::INVENTORY_STATUS_OUT_OF_STOCK));
+            ->willReturn(new InventoryStatus('test', 'Test', Product::INVENTORY_STATUS_OUT_OF_STOCK));
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->willReturn($inventoryRepository);

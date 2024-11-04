@@ -20,6 +20,7 @@ class ShoppingListLineItemConverterTest extends TestCase
 {
     private ShoppingListLineItemConverter $converter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->converter = new ShoppingListLineItemConverter(new ProductKitItemLineItemConverter());

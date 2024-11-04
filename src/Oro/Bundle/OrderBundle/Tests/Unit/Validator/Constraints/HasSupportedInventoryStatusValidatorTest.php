@@ -3,7 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus;
 use Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatusValidator;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -20,6 +20,7 @@ class HasSupportedInventoryStatusValidatorTest extends ConstraintValidatorTestCa
 
     private ConfigManager|MockObject $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -27,6 +28,7 @@ class HasSupportedInventoryStatusValidatorTest extends ConstraintValidatorTestCa
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator(): HasSupportedInventoryStatusValidator
     {
         return new HasSupportedInventoryStatusValidator(
@@ -63,7 +65,7 @@ class HasSupportedInventoryStatusValidatorTest extends ConstraintValidatorTestCa
 
     public function testValidateWhenInventoryStatusIsSupported(): void
     {
-        $inventoryStatus = $this->createMock(AbstractEnumValue::class);
+        $inventoryStatus = $this->createMock(EnumOptionInterface::class);
         $inventoryStatus->expects(self::any())
             ->method('getId')
             ->willReturn('in_stock');
@@ -88,7 +90,7 @@ class HasSupportedInventoryStatusValidatorTest extends ConstraintValidatorTestCa
         ?string $configPath,
         ?array $supportedStatuses
     ): void {
-        $inventoryStatus = $this->createMock(AbstractEnumValue::class);
+        $inventoryStatus = $this->createMock(EnumOptionInterface::class);
         $inventoryStatus->expects(self::any())
             ->method('getId')
             ->willReturn('in_stock');

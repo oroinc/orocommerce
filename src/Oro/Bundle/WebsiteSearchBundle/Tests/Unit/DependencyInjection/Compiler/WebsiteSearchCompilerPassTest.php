@@ -11,6 +11,7 @@ class WebsiteSearchCompilerPassTest extends \PHPUnit\Framework\TestCase
     /** @var WebsiteSearchCompilerPass */
     private $compiler;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->compiler = new WebsiteSearchCompilerPass();

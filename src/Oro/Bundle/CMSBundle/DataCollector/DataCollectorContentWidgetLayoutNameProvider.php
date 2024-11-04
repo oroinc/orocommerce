@@ -13,6 +13,7 @@ use Oro\Component\Layout\ContextInterface;
  */
 class DataCollectorContentWidgetLayoutNameProvider implements DataCollectorLayoutNameProviderInterface
 {
+    #[\Override]
     public function getNameByContext(ContextInterface $context): string
     {
         $contentWidget = $context->getOr('content_widget');

@@ -36,6 +36,7 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
      */
     private $configManager;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -59,6 +60,7 @@ class PricingStorageSwitchHandlerTest extends WebTestCase
         );
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         $configManager = self::getConfigManager('global');

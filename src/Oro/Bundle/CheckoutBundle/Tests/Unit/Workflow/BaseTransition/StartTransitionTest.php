@@ -11,6 +11,7 @@ class StartTransitionTest extends TestCase
 {
     private StartTransition $transition;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->transition = new StartTransition();

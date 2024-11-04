@@ -20,6 +20,7 @@ class ResolvableMatcherTest extends \PHPUnit\Framework\TestCase
     /** @var ResolvableMatcher */
     private $resolvableMatcher;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();

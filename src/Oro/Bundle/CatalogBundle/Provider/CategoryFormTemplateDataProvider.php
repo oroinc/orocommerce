@@ -27,6 +27,7 @@ class CategoryFormTemplateDataProvider implements FormTemplateDataProviderInterf
      *
      * @return array
      */
+    #[\Override]
     public function getData($entity, FormInterface $form, Request $request): array
     {
         if (!$entity instanceof Category) {

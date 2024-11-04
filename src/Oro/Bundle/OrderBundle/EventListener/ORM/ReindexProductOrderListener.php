@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\EventListener\ORM;
 
 use Doctrine\ORM\Event\PreUpdateEventArgs;
-use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
@@ -71,7 +70,8 @@ class ReindexProductOrderListener
     public function processOrderRemove(Order $order): void
     {
         $website = $order->getWebsite();
-        if ($this->isFeaturesEnabledForWebsite($website) && $this->isAllowedStatus($order->getInternalStatus())) {
+        if ($this->isFeaturesEnabledForWebsite($website)
+            && $this->isAllowedStatus($order->getInternalStatus()->getId())) {
             $this->reindexOrderProducts($order, [$website]);
         }
     }
@@ -104,12 +104,14 @@ class ReindexProductOrderListener
 
     private function isInternalStatusChanged(Order $order, PreUpdateEventArgs $event): bool
     {
+        $changeSet = $event->getEntityChangeSet();
+
         return
-            $event->hasChangedField(self::INTERNAL_STATUS_FIELD)
+            isset($changeSet['serialized_data'][0][self::INTERNAL_STATUS_FIELD])
             && $this->isFeaturesEnabledForWebsite($order->getWebsite())
             && (
-                $this->isAllowedStatus($event->getNewValue(self::INTERNAL_STATUS_FIELD))
-                xor $this->isAllowedStatus($event->getOldValue(self::INTERNAL_STATUS_FIELD))
+                $this->isAllowedStatus($changeSet['serialized_data'][1][self::INTERNAL_STATUS_FIELD])
+                xor $this->isAllowedStatus($changeSet['serialized_data'][0][self::INTERNAL_STATUS_FIELD])
             );
     }
 
@@ -118,7 +120,7 @@ class ReindexProductOrderListener
         return
             $event->hasChangedField(self::CUSTOMER_USER_FIELD)
             && $this->isFeaturesEnabledForWebsite($order->getWebsite())
-            && $this->isAllowedStatus($order->getInternalStatus());
+            && $this->isAllowedStatus($order->getInternalStatus()->getId());
     }
 
     private function isCreatedAtChanged(Order $order, PreUpdateEventArgs $event): bool
@@ -126,21 +128,20 @@ class ReindexProductOrderListener
         return
             $event->hasChangedField(self::CREATED_AT_FIELD)
             && $this->isFeaturesEnabledForWebsite($order->getWebsite())
-            && $this->isAllowedStatus($order->getInternalStatus());
+            && $this->isAllowedStatus($order->getInternalStatus()->getId());
     }
 
     private function isWebsiteChanged(Order $order, PreUpdateEventArgs $event): bool
     {
         return
             $event->hasChangedField(self::WEBSITE_FIELD)
-            && $this->isAllowedStatus($order->getInternalStatus());
+            && $this->isAllowedStatus($order->getInternalStatus()->getId());
     }
 
-    private function isAllowedStatus(?AbstractEnumValue $status): bool
+    private function isAllowedStatus(?string $status): bool
     {
-        return
-            null !== $status
-            && \in_array($status->getId(), $this->statusesProvider->getAvailableStatuses(), true);
+        return null !== $status
+            && \in_array($status, $this->statusesProvider->getAvailableStatuses(), true);
     }
 
     private function isFeaturesEnabledForWebsite(?Website $website): bool

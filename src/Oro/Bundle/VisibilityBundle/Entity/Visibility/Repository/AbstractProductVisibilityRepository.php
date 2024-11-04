@@ -11,9 +11,7 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
  */
 class AbstractProductVisibilityRepository extends ServiceEntityRepository implements VisibilityRepositoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function findByScopeCriteriaForTarget(ScopeCriteria $criteria, $target)
     {
         if (!is_a($target, Product::class)) {

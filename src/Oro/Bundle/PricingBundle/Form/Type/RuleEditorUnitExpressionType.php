@@ -8,9 +8,7 @@ class RuleEditorUnitExpressionType extends PriceRuleEditorTextType
 {
     const NAME = 'oro_pricing_price_rule_editor_unit';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         parent::configureOptions($resolver);

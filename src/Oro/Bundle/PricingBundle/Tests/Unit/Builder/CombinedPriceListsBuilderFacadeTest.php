@@ -39,6 +39,7 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
      */
     private $facade;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);

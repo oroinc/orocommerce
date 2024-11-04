@@ -12,9 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class RemoveProductPriceAcl implements Migration
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         $entityClass = 'Oro\\Bundle\\PricingBundle\\Entity\\ProductPrice';

@@ -15,17 +15,13 @@ class LoadGuestShoppingLists extends AbstractFixture implements DependentFixture
     public const GUEST_SHOPPING_LIST_1 = 'guest_shopping_list_1';
     public const GUEST_SHOPPING_LIST_2 = 'guest_shopping_list_2';
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getDependencies(): array
     {
         return [LoadCustomerVisitors::class];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager): void
     {
         $this->createShoppingList(

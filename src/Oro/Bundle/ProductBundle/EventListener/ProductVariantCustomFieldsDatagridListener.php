@@ -10,6 +10,7 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\EventListener\RowSelectionListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\VariantFieldProvider;
@@ -80,11 +81,7 @@ class ProductVariantCustomFieldsDatagridListener
         }
 
         if ($variantFields) {
-            $variantAndWherePart = [];
-            foreach ($variantFields as $variantFieldName) {
-                $variantAndWherePart[] = sprintf('%s.%s IS NOT NULL', $rootEntityAlias, $variantFieldName);
-            }
-            $query->addAndWhere($variantAndWherePart);
+            $query->addAndWhere($this->getVariantAndWhereParts($variantFields, $rootEntityAlias));
         } else {
             $query->addAndWhere('1 = 0');
         }
@@ -92,6 +89,26 @@ class ProductVariantCustomFieldsDatagridListener
         // Show all linked variants
         $variantLinkLeftJoin = $this->getVariantLinkLeftJoin($config);
         $query->addOrWhere(sprintf('%s.id IS NOT NULL', $variantLinkLeftJoin['alias']));
+    }
+
+    private function getVariantAndWhereParts(array $variantFields, string $rootEntityAlias): array
+    {
+        $customFieldsData = $this->customFieldProvider->getEntityCustomFields($this->productClass);
+        $variantAndWherePart = [];
+        foreach ($variantFields as $variantFieldName) {
+            if (isset($customFieldsData[$variantFieldName]['type'])
+                && ExtendHelper::isEnumerableType($customFieldsData[$variantFieldName]['type'])) {
+                $variantAndWherePart[] = sprintf(
+                    'JSON_EXTRACT(%s.serialized_data, \'%s\') IS NOT NULL',
+                    $rootEntityAlias,
+                    $variantFieldName
+                );
+            } else {
+                $variantAndWherePart[] = sprintf('%s.%s IS NOT NULL', $rootEntityAlias, $variantFieldName);
+            }
+        }
+
+        return $variantAndWherePart;
     }
 
     private function removeExtendFields(BuildAfter $event, array  $variantFields)

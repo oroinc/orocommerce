@@ -16,9 +16,9 @@ Feature: Product attribute file
       | Field Name | FileField |
       | Type       | File      |
     And I click "Continue"
-    Then I should see that "Product Attribute Frontend Options" does not contain "Searchable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Filterable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Sortable"
+    Then I should see that "Product Attribute Storefront Options" does not contain "Searchable"
+    And I should see that "Product Attribute Storefront Options" does not contain "Filterable"
+    And I should see that "Product Attribute Storefront Options" does not contain "Sortable"
     And I should see "Allowed MIME Types" with options:
       | Value                                                                     |
       | text/csv                                                                  |

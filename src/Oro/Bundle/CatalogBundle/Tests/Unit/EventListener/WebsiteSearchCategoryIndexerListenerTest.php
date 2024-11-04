@@ -54,6 +54,7 @@ class WebsiteSearchCategoryIndexerListenerTest extends \PHPUnit\Framework\TestCa
     /** @var WebsiteSearchCategoryIndexerListener */
     private $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->repository = $this->createMock(CategoryRepository::class);

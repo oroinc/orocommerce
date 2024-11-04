@@ -20,6 +20,7 @@ class FinderDatabaseStrategy implements FinderStrategyInterface
     ) {
     }
 
+    #[\Override]
     public function findIds(Product $product): array
     {
         return $this->doFind($product, $this->configProvider->isBidirectional());

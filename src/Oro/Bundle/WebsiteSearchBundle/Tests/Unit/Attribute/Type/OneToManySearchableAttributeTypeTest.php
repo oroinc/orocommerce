@@ -6,9 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Attribute\Type\OneToManySearchableAttributeTy
 
 class OneToManySearchableAttributeTypeTest extends ManyToManySearchableAttributeTypeTest
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function getSearchableAttributeTypeClassName()
     {
         return OneToManySearchableAttributeType::class;

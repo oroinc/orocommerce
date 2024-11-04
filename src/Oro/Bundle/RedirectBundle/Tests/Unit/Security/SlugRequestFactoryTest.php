@@ -12,6 +12,7 @@ class SlugRequestFactoryTest extends \PHPUnit\Framework\TestCase
     /** @var SlugRequestFactory */
     private $factory;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->factory = new SlugRequestFactory();

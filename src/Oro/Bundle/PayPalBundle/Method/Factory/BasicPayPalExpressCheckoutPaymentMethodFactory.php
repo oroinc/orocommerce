@@ -27,6 +27,7 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
         $this->transactionOptionProvider = $transactionOptionProvider;
     }
 
+    #[\Override]
     public function create(PayPalExpressCheckoutConfigInterface $config)
     {
         return new PayPalExpressCheckoutPaymentMethod(

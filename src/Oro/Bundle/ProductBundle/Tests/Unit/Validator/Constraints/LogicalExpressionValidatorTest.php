@@ -18,6 +18,7 @@ class LogicalExpressionValidatorTest extends ConstraintValidatorTestCase
     /** @var ExpressionPreprocessorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $preprocessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->expressionParser = $this->createMock(ExpressionParser::class);
@@ -25,6 +26,7 @@ class LogicalExpressionValidatorTest extends ConstraintValidatorTestCase
         parent::setUp();
     }
 
+    #[\Override]
     protected function createValidator()
     {
         return new LogicalExpressionValidator($this->expressionParser, $this->preprocessor);

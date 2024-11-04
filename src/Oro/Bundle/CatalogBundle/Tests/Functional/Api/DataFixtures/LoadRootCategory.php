@@ -17,9 +17,7 @@ class LoadRootCategory extends AbstractFixture implements
     DependentFixtureInterface,
     InitialFixtureInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getDependencies()
     {
         return [
@@ -27,9 +25,7 @@ class LoadRootCategory extends AbstractFixture implements
         ];
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         /** @var CategoryRepository $repository */

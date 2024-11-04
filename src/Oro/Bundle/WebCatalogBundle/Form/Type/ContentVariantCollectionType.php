@@ -26,18 +26,14 @@ class ContentVariantCollectionType extends AbstractType
         $this->variantTypeRegistry = $variantTypeRegistry;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefault('prototype_name', '__variant_idx__');
         $resolver->setDefault('entry_options', []);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['prototype_name'] = $options['prototype_name'];
@@ -56,9 +52,7 @@ class ContentVariantCollectionType extends AbstractType
         }
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->initializeContentVariantPrototypes($builder, $options);
@@ -69,17 +63,12 @@ class ContentVariantCollectionType extends AbstractType
         );
     }
 
-    /**
-     * {@inheritdoc}
-     */
     public function getName()
     {
         return $this->getBlockPrefix();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getBlockPrefix(): string
     {
         return static::NAME;

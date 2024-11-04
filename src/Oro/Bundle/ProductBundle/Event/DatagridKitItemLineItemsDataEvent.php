@@ -18,6 +18,7 @@ class DatagridKitItemLineItemsDataEvent extends DatagridLineItemsDataEvent
     /**
      * @return array<int,ProductKitItemLineItemInterface> Line items indexed by ID.
      */
+    #[\Override]
     public function getLineItems(): array
     {
         return $this->lineItems;

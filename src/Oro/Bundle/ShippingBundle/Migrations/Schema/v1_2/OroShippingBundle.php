@@ -11,17 +11,13 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class OroShippingBundle implements Migration, OrderedMigrationInterface
 {
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getOrder()
     {
         return 2;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function up(Schema $schema, QueryBag $queries)
     {
         // fill createdAt and updatedAt

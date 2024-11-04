@@ -31,6 +31,7 @@ class SplitCheckoutActionTest extends \PHPUnit\Framework\TestCase
     /** @var SplitCheckoutAction */
     private $action;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->checkoutSplitter = $this->createMock(CheckoutSplitter::class);

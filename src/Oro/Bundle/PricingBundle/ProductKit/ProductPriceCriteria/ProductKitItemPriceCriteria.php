@@ -28,6 +28,7 @@ class ProductKitItemPriceCriteria extends ProductPriceCriteria
         parent::__construct($product, $productUnit, $quantity, $currency);
     }
 
+    #[\Override]
     protected function assertIsValid(): void
     {
         if (!$this->kitItem?->getId()) {
@@ -37,6 +38,7 @@ class ProductKitItemPriceCriteria extends ProductPriceCriteria
         parent::assertIsValid();
     }
 
+    #[\Override]
     public function getIdentifier(): string
     {
         if (!$this->identifier) {

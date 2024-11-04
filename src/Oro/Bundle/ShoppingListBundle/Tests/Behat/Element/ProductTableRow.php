@@ -6,17 +6,13 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\TableRow;
 
 class ProductTableRow extends TableRow implements ConfigurableProductTableRowAwareInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function clickProductLink(): void
     {
         $this->getElement('Shopping List Line Item Product View Link')->click();
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isRowContainingAttributes(array $attributeLabels): bool
     {
         foreach ($attributeLabels as $attributeLabel) {
@@ -31,9 +27,7 @@ class ProductTableRow extends TableRow implements ConfigurableProductTableRowAwa
         return true;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductSku(): string
     {
         return $this->getElement('ShoppingListLineItemProductSku')->getText();

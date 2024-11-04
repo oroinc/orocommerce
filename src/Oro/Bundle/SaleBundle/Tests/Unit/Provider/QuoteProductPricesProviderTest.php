@@ -37,6 +37,7 @@ class QuoteProductPricesProviderTest extends TestCase
 
     private QuoteProductPricesProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->productPriceProvider = $this->createMock(ProductPriceProviderInterface::class);

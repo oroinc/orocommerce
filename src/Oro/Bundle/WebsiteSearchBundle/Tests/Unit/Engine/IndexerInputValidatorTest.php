@@ -27,6 +27,7 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
     private ReindexationWebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject $reindexationWebsiteProvider;
     private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
 
+    #[\Override]
     protected function setUp(): void
     {
         $mappingProvider = $this->createMock(SearchMappingProvider::class);

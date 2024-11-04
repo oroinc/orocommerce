@@ -25,6 +25,7 @@ class WebsiteSearchDeleteTopicTest extends AbstractTopicTestCase
 
     private Proxy|null|\PHPUnit\Framework\MockObject\MockObject $reference = null;
 
+    #[\Override]
     protected function setUp(): void
     {
         $mappingProvider = $this->createMock(SearchMappingProvider::class);
@@ -74,6 +75,7 @@ class WebsiteSearchDeleteTopicTest extends AbstractTopicTestCase
         parent::setUp();
     }
 
+    #[\Override]
     public function getTopic(): WebsiteSearchDeleteTopic
     {
         return new WebsiteSearchDeleteTopic($this->indexerInputValidator);
@@ -82,6 +84,7 @@ class WebsiteSearchDeleteTopicTest extends AbstractTopicTestCase
     /**
      * @dataProvider validBodyDataProvider
      */
+    #[\Override]
     public function testConfigureMessageBodyWhenValid(array $body, array $expectedBody): void
     {
         $expectedBody['entity'][0] = $this->reference;
@@ -89,6 +92,7 @@ class WebsiteSearchDeleteTopicTest extends AbstractTopicTestCase
         parent::testConfigureMessageBodyWhenValid($body, $expectedBody);
     }
 
+    #[\Override]
     public function validBodyDataProvider(): array
     {
         return [
@@ -154,6 +158,7 @@ class WebsiteSearchDeleteTopicTest extends AbstractTopicTestCase
         ];
     }
 
+    #[\Override]
     public function invalidBodyDataProvider(): array
     {
         return [

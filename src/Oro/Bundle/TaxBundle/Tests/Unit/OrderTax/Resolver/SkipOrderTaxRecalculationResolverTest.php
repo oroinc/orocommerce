@@ -26,6 +26,7 @@ class SkipOrderTaxRecalculationResolverTest extends \PHPUnit\Framework\TestCase
     /** @var SkipOrderTaxRecalculationResolver */
     private $resolver;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);

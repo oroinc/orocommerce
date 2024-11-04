@@ -27,6 +27,7 @@ class RestrictContentVariantByPageEventListenerTest extends WebTestCase
      */
     private $contentNodeProvider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();

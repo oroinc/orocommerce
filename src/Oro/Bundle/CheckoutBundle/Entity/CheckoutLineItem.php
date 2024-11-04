@@ -155,6 +155,7 @@ class CheckoutLineItem implements
     /**
      * @return string
      */
+    #[\Override]
     public function __toString()
     {
         return (string)$this->productSku;
@@ -168,17 +169,13 @@ class CheckoutLineItem implements
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getEntityIdentifier()
     {
         return $this->id;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getProductHolder()
     {
         return $this;
@@ -216,17 +213,13 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProduct()
     {
         return $this->product;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getParentProduct()
     {
         return $this->parentProduct;
@@ -256,9 +249,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductSku()
     {
         return $this->productSku;
@@ -296,9 +287,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getQuantity()
     {
         return $this->quantity;
@@ -316,9 +305,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductUnit()
     {
         return $this->productUnit;
@@ -336,9 +323,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getProductUnitCode()
     {
         return $this->productUnitCode;
@@ -358,9 +343,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPrice()
     {
         return $this->price;
@@ -378,9 +361,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getPriceType()
     {
         return $this->priceType;
@@ -535,9 +516,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     public function getShippingCost(): ?Price
     {
         $amount = $this->shippingEstimateAmount;
@@ -587,6 +566,7 @@ class CheckoutLineItem implements
         return (bool)$this->getShippingMethod() && (bool)$this->getShippingMethodType();
     }
 
+    #[\Override]
     public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
     {
         return $this->checkout;
@@ -595,6 +575,7 @@ class CheckoutLineItem implements
     /**
      * @return Collection<CheckoutProductKitItemLineItem>
      */
+    #[\Override]
     public function getKitItemLineItems()
     {
         return $this->kitItemLineItems;
@@ -624,6 +605,7 @@ class CheckoutLineItem implements
         return $this;
     }
 
+    #[\Override]
     public function getChecksum(): string
     {
         return $this->checksum;

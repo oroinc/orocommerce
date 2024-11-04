@@ -8,9 +8,7 @@ use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 class BasicPayPalExpressCheckoutPaymentMethodViewFactory implements
     PayPalExpressCheckoutPaymentMethodViewFactoryInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(PayPalExpressCheckoutConfigInterface $config)
     {
         return new PayPalExpressCheckoutPaymentMethodView($config);

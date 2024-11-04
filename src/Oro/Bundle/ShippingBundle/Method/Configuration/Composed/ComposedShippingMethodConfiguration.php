@@ -13,49 +13,37 @@ class ComposedShippingMethodConfiguration extends ParameterBag implements Compos
     const FIELD_SHIPPING_METHOD_TYPE = 'shipping_method_type';
     const FIELD_SHIPPING_COST = 'shipping_cost';
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isAllowUnlistedShippingMethod()
     {
         return $this->get(self::FIELD_ALLOW_UNLISTED_SHIPPING_METHOD, false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isShippingMethodLocked()
     {
         return $this->get(self::FIELD_IS_SHIPPING_METHOD_LOCKED, false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isOverriddenShippingCost()
     {
         return $this->get(self::FIELD_IS_OVERRIDDEN_SHIPPING_COST, false);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShippingMethod()
     {
         return $this->get(self::FIELD_SHIPPING_METHOD);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShippingMethodType()
     {
         return $this->get(self::FIELD_SHIPPING_METHOD_TYPE);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function getShippingCost()
     {
         return $this->get(self::FIELD_SHIPPING_COST);

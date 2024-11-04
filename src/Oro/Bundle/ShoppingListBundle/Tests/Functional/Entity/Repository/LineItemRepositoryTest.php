@@ -27,6 +27,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class LineItemRepositoryTest extends WebTestCase
 {
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());
@@ -359,7 +360,7 @@ class LineItemRepositoryTest extends WebTestCase
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
-        $allowedStatuses = ['in_stock'];
+        $allowedStatuses = ['prod_inventory_status.in_stock'];
 
         $repo = $this->getLineItemRepository();
         $deletedNumber = $repo->deleteNotAllowedLineItemsFromShoppingList($shoppingList, $allowedStatuses);

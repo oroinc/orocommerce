@@ -11,6 +11,7 @@ use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Fixtures\TestEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
@@ -88,6 +89,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $productUnitLabelFormatter;
 
+    #[\Override]
     protected function setUp(): void
     {
         $defaultProductUnitProvider = $this->createMock(ChainDefaultProductUnitProvider::class);
@@ -115,9 +117,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         parent::setUp();
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getExtensions(): array
     {
         $productPrimaryUnitPrecision = new ProductPrimaryUnitPrecisionType();
@@ -151,7 +151,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                 [
                     $this->type,
                     EnumSelectType::class => new EnumSelectTypeStub([
-                        new TestEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock')
+                        new TestEnumValue(
+                            Product::INVENTORY_STATUS_ENUM_CODE,
+                            'In Stock',
+                            Product::INVENTORY_STATUS_IN_STOCK
+                        )
                     ]),
                     ImageType::class => new ImageTypeStub(),
                     $productPrimaryUnitPrecision,
@@ -217,7 +221,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    ),
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -246,7 +253,10 @@ class ProductTypeTest extends FormIntegrationTestCase
 
                         ],
                     ],
-                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    ),
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -262,7 +272,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    ),
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -290,7 +303,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    ),
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -306,7 +322,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    ),
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
@@ -323,7 +342,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'sku' => 'test sku',
                     'primaryUnitPrecision' => ['unit' => 'each', 'precision' => 0],
-                    'inventory_status' => Product::INVENTORY_STATUS_IN_STOCK,
+                    'inventory_status' => ExtendHelper::buildEnumOptionId(
+                        Product::INVENTORY_STATUS_ENUM_CODE,
+                        Product::INVENTORY_STATUS_IN_STOCK
+                    ),
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_CONFIGURABLE,
@@ -349,7 +371,11 @@ class ProductTypeTest extends FormIntegrationTestCase
 
         $expectedProduct
             ->setType(Product::TYPE_SIMPLE)
-            ->setInventoryStatus(new TestEnumValue('in_stock', 'In Stock'));
+            ->setInventoryStatus(new TestEnumValue(
+                Product::INVENTORY_STATUS_ENUM_CODE,
+                'In Stock',
+                Product::INVENTORY_STATUS_IN_STOCK
+            ));
 
         if ($hasVariants) {
             $expectedProduct->setType(Product::TYPE_CONFIGURABLE);
@@ -419,7 +445,11 @@ class ProductTypeTest extends FormIntegrationTestCase
         $expectedProduct->setPageTemplate(new EntityFieldFallbackValue());
         $expectedProduct->setAttributeFamily($this->getAttributeFamily());
 
-        $expectedProduct->setInventoryStatus(new TestEnumValue(Product::INVENTORY_STATUS_IN_STOCK, 'In Stock'));
+        $expectedProduct->setInventoryStatus(new TestEnumValue(
+            Product::INVENTORY_STATUS_ENUM_CODE,
+            'In Stock',
+            Product::INVENTORY_STATUS_IN_STOCK
+        ));
 
         return $expectedProduct->setSku('test sku');
     }

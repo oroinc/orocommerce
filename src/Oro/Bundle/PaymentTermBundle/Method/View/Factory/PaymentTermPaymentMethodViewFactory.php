@@ -28,9 +28,7 @@ class PaymentTermPaymentMethodViewFactory implements PaymentTermPaymentMethodVie
         $this->translator = $translator;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function create(PaymentTermConfigInterface $config)
     {
         return new PaymentTermView($this->paymentTermProvider, $this->translator, $config);

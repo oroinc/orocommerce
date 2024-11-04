@@ -14,6 +14,7 @@ class UrlLocalCacheTest extends \PHPUnit\Framework\TestCase
     /** @var UrlLocalCache */
     private $urlCache;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->cache = $this->createMock(CacheItemPoolInterface::class);

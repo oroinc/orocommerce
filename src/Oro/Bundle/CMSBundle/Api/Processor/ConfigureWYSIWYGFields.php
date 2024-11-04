@@ -105,9 +105,7 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         $definition->set(self::RENDERED_WYSIWYG_FIELDS, $renderedWysiwygFields);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var ConfigContext $context */

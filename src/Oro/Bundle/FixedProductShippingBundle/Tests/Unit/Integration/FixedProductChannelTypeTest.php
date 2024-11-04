@@ -9,6 +9,7 @@ class FixedProductChannelTypeTest extends TestCase
 {
     protected FixedProductChannelType $channel;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->channel = new FixedProductChannelType();

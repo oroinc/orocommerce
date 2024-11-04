@@ -12,6 +12,7 @@ use Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchResultHistory;
  */
 class SearchResultImportExportConfigurationProvider implements ImportExportConfigurationProviderInterface
 {
+    #[\Override]
     public function get(): ImportExportConfigurationInterface
     {
         return new ImportExportConfiguration([

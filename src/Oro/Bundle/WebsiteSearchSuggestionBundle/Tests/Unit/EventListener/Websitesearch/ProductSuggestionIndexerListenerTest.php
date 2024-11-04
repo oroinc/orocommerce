@@ -22,6 +22,7 @@ final class ProductSuggestionIndexerListenerTest extends \PHPUnit\Framework\Test
 
     private IndexEntityEvent $event;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->listener = new ProductSuggestionIndexerListener(

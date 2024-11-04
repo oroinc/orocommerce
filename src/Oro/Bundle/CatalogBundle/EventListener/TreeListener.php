@@ -24,9 +24,7 @@ class TreeListener extends GedmoTreeListener
         $this->enabled = $enabled;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function onFlush(EventArgs $args)
     {
         if (!$this->enabled) {
@@ -36,9 +34,7 @@ class TreeListener extends GedmoTreeListener
         parent::onFlush($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function preRemove(EventArgs $args)
     {
         if (!$this->enabled) {
@@ -48,9 +44,7 @@ class TreeListener extends GedmoTreeListener
         parent::preRemove($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function prePersist(EventArgs $args)
     {
         if (!$this->enabled) {
@@ -60,9 +54,7 @@ class TreeListener extends GedmoTreeListener
         parent::prePersist($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function preUpdate(EventArgs $args)
     {
         if (!$this->enabled) {
@@ -72,9 +64,7 @@ class TreeListener extends GedmoTreeListener
         parent::preUpdate($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function postPersist(EventArgs $args)
     {
         if (!$this->enabled) {
@@ -84,9 +74,7 @@ class TreeListener extends GedmoTreeListener
         parent::postPersist($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function postUpdate(EventArgs $args)
     {
         if (!$this->enabled) {
@@ -96,9 +84,7 @@ class TreeListener extends GedmoTreeListener
         parent::postUpdate($args);
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function postRemove(EventArgs $args)
     {
         if (!$this->enabled) {

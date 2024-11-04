@@ -17,6 +17,7 @@ class QuickAddRowCollectionBuilderTest extends WebTestCase
 {
     private QuickAddRowCollectionBuilder $quickAddRowCollectionBuilder;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient([], self::generateBasicAuthHeader());

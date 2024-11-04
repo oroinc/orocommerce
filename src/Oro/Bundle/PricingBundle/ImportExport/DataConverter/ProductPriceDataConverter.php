@@ -13,17 +13,13 @@ class ProductPriceDataConverter extends ConfigurableTableDataConverter implement
      */
     protected $context;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function setImportExportContext(ContextInterface $context)
     {
         $this->context = $context;
     }
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function convertToImportFormat(array $importedRecord, $skipNullValues = true)
     {
         if ($this->context && empty($importedRecord['price_list_id'])) {
@@ -33,9 +29,7 @@ class ProductPriceDataConverter extends ConfigurableTableDataConverter implement
         return parent::convertToImportFormat($importedRecord, $skipNullValues);
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getHeaderConversionRules()
     {
         return [
@@ -47,9 +41,7 @@ class ProductPriceDataConverter extends ConfigurableTableDataConverter implement
         ];
     }
 
-    /**
-     * {@inheritDoc}
-     */
+    #[\Override]
     protected function getBackendHeader()
     {
         return [

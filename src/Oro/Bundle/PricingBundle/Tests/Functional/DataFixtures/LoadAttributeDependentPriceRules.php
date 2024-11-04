@@ -27,6 +27,7 @@ class LoadAttributeDependentPriceRules extends LoadPriceRules implements Contain
         ],
     ];
 
+    #[\Override]
     public function load(ObjectManager $manager)
     {
         parent::load($manager);
@@ -47,6 +48,7 @@ class LoadAttributeDependentPriceRules extends LoadPriceRules implements Contain
         $manager->flush();
     }
 
+    #[\Override]
     public function getDependencies()
     {
         return array_merge(

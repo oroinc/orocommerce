@@ -29,3 +29,9 @@ layout:
             prepend: true
             options:
                 text: 'oro.product.frontend.quick_add.form_title'
+        - '@add':
+            id: quick_add_form_combined_buttons
+            parentId: quick_add_form_buttons
+            blockType: combined_buttons
+            options:
+                buttons: '=data["buttons"].getAll()'

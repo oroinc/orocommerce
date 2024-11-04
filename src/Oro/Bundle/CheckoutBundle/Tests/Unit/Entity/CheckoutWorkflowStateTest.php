@@ -12,6 +12,7 @@ class CheckoutWorkflowStateTest extends \PHPUnit\Framework\TestCase
     /** @var CheckoutWorkflowState */
     private $entity;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->entity = new CheckoutWorkflowState();

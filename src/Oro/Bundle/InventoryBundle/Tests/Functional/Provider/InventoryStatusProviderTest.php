@@ -14,6 +14,7 @@ class InventoryStatusProviderTest extends WebTestCase
 {
     private InventoryStatusProvider $provider;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->initClient();
@@ -66,17 +67,17 @@ class InventoryStatusProviderTest extends WebTestCase
         yield [
             'reference' => LoadProductData::PRODUCT_1,
             'label' => 'In Stock',
-            'code' => 'in_stock',
+            'code' => 'prod_inventory_status.in_stock',
         ];
         yield [
             'reference' => LoadProductData::PRODUCT_3,
             'label' => 'Out of Stock',
-            'code' => 'out_of_stock',
+            'code' => 'prod_inventory_status.out_of_stock',
         ];
         yield [
             'reference' => LoadProductData::PRODUCT_4,
             'label' => 'Discontinued',
-            'code' => 'discontinued',
+            'code' => 'prod_inventory_status.discontinued',
         ];
     }
 
