@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ValidationBundle\Validator\Constraints;
 
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Symfony\Component\Validator\Constraints\Regex;
 
 /**
@@ -10,9 +11,12 @@ use Symfony\Component\Validator\Constraints\Regex;
 class UrlSafe extends Regex implements AliasAwareConstraintInterface
 {
     const ALIAS = 'url_safe';
+    const DELIMITER = SluggableUrlGenerator::CONTEXT_DELIMITER;
 
     /** @var string */
     public $message = 'This value should contain only latin letters, numbers and symbols "-._~".';
+
+    public string $delimiterMessage = 'This value should not contain reserved keyword "' . self::DELIMITER . '"';
 
     /** @var string */
     public $pattern = '/^[a-zA-Z0-9\-\.\_\~]*$/';
@@ -47,7 +51,7 @@ class UrlSafe extends Regex implements AliasAwareConstraintInterface
     #[\Override]
     public function validatedBy(): string
     {
-        return 'Symfony\Component\Validator\Constraints\RegexValidator';
+        return UrlSafeValidator::class;
     }
 
     #[\Override]
