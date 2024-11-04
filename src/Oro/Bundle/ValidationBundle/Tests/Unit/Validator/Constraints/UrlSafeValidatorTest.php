@@ -3,14 +3,14 @@
 namespace Oro\Bundle\ValidationBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use Symfony\Component\Validator\Constraints\RegexValidator;
+use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafeValidator;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class UrlSafeValidatorTest extends ConstraintValidatorTestCase
 {
-    protected function createValidator(): RegexValidator
+    protected function createValidator(): UrlSafeValidator
     {
-        return new RegexValidator();
+        return new UrlSafeValidator();
     }
 
     public function testGetAlias(): void
@@ -59,6 +59,36 @@ class UrlSafeValidatorTest extends ConstraintValidatorTestCase
             'Url not safe with slash on end' => [
                 'allowSlashes' => true,
                 'value' => 'Abc/test/',
+            ],
+        ];
+    }
+
+    /**
+     * @dataProvider validateReservedValueDataProvider
+     */
+    public function testValidateReservedValue(string $value): void
+    {
+        $constraint = new UrlSafe(['allowSlashes' => true]);
+        $this->validator->validate($value, $constraint);
+
+        $this->buildViolation($constraint->delimiterMessage)
+            ->assertRaised();
+    }
+
+    public function validateReservedValueDataProvider(): array
+    {
+        return [
+            '_item' => [
+                'value' => '_item',
+            ],
+            '_item/abc' => [
+                'value' => '_item/abc',
+            ],
+            'abc/_item' => [
+                'value' => 'abc/_item',
+            ],
+            'abc/_item/def' => [
+                'value' => 'abc/_item/def',
             ],
         ];
     }
