@@ -1,22 +1,79 @@
 {% block _order_created_by_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     <div class="order-created-by">
+        {{ renderIcon.icon({name: 'info'}) }}
         {{ 'oro.frontend.order.created_by_seller.label'|trans }}
     </div>
 {% endblock %}
 
-{% block _order_body_widget %}
-    <div class="customer-info-grid">
+{% block _order_view_page_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__order"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block order_body_column_widget %}
+{% block _order_info_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " grid-col-4 grid-col-mobile-landscape-12"
+        '~class': " customer-info-grid__container"
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <table class="customer-info-grid__table">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _order_info_data_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__data"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _order_info_total_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid__total"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _order_info_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " customer-info-grid grid grid-columns-1"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block order_info_block_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid grid-columns-2"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block order_info_column_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid-col grid-col-mobile-landscape-12"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <table class="customer-info-grid__list">
             <tbody>
                 {{ block_widget(block) }}
             </tbody>
@@ -24,9 +81,9 @@
     </div>
 {% endblock %}
 
-{% block order_body_column_element_widget %}
+{% block order_info_column_element_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " customer-info-grid__element customer-info-grid__element--" ~ block.vars.id
+        '~class': " customer-info-grid__row customer-info-grid__row--" ~ block.vars.id
     }) %}
     <tr {{ block('block_attributes') }}>
         <td class="customer-info-grid__element-label">{{ label|trans }}</td>
@@ -50,54 +107,31 @@
 {% endblock %}
 
 {% block order_total_widget %}
-    <div class="summary-widget">
+    <div class="summary-widget__inner">
         <div class="summary-widget__summary">
             <table class="summary-table">
-                {% for subtotal in subtotals %}
                 <tr>
-                    <th>{{ subtotal.label }}</th>
-                    <td>{{ subtotal.signedAmount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                    <th class="summary-table__summary" scope="row">{{ 'oro.pricing.frontend.summary'|trans }}</th>
+                    <td></td>
                 </tr>
+                {% for subtotal in subtotals %}
+                    <tr>
+                        <th>{{ subtotal.label }}</th>
+                        <td>{{ subtotal.signedAmount|oro_format_currency({'currency': subtotal.currency}) }}</td>
+                    </tr>
                 {% endfor %}
-                <tr>
+                <tr aria-hidden="true" class="summary-table__presentation">
+                    <td colspan="2">
+                        <hr class="summary-table__divider">
+                    </td>
+                </tr>
+                <tr class="summary-table__total-row">
                     <th class="summary-table__total">{{ total.label }}</th>
                     <td class="summary-table__total"><span class="summary-table__total-price">{{ total.amount|oro_format_currency({'currency': total.currency}) }}</span></td>
                 </tr>
             </table>
         </div>
     </div>
-{% endblock %}
-
-{% block _order_after_line_items_grid_widget %}
-    <div class="grid-col-4 grid-col-mobile-landscape-12">
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _order_information_head_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " customer-info-grid__title"
-    }) %}
-
-    <h2 {{ block('block_attributes') }}>
-        {{- block_widget(block) -}}
-    </h2>
-{% endblock %}
-
-{% block order_body_block_container_widget %}
-    <div class="grid">
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _order_line_items_grid_title_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " customer-info-grid__title"
-    }) %}
-
-    <h2 {{ block('block_attributes') }}>
-        {{- block_widget(block) -}}
-    </h2>
 {% endblock %}
 
 {% block _order_po_number_widget %}
@@ -183,4 +217,48 @@
     {% set text = oro_order_shipping_method_label(shippingMethod, shippingMethodType, organization) %}
 
     {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _order_customer_notes_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    <table class="customer-info-grid__list">
+        <tbody>
+            <tr class="customer-info-grid__notes">
+                <td class="customer-info-grid__element-label">{{ label|trans }}</td>
+                <td class="customer-info-grid__element-content customer-info-grid__element-content--notes">
+                    <div id="collapse-order-view-more"
+                        class="collapse collapse-overflow no-transition"
+                        data-collapsed-text="{{ 'oro.ui.collapse.more'|trans }}"
+                        data-expanded-text="{{ 'oro.ui.collapse.less'|trans }}"
+                        data-check-overflow="true"
+                        data-trigger-icon-hide="chevron-down"
+                        data-trigger-icon-show="chevron-up"
+                        data-check-overflow="true"
+                        data-toggle="false">
+                        {{ text|nl2br }}
+                    </div>
+
+                    <button class="btn btn--flat btn--size-small collapse-toggle customer-info-grid__view-more" data-toggle="collapse" data-target="#collapse-order-view-more" aria-controls="collapse-order-view-more">
+                        {{ renderIcon.icon({name: 'chevron-down'}) }}
+                        <span data-text>{{ 'oro.ui.collapse.more'|trans }}</span>
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+{% endblock %}
+
+{% block _order_view_top_bar_status_widget %}
+    {% import '@OroUI/layouts/renderStatus.html.twig' as renderStatus %}
+    {{ renderStatus.status({
+        label: text,
+        code: text.id,
+        map: {
+            'order_internal_status.open': 'info',
+            'order_internal_status.cancelled': '',
+            'order_internal_status.closed': 'success',
+            'order_internal_status.archived': '',
+            'order_internal_status.shipped': 'success'
+        }
+    }) }}
 {% endblock %}

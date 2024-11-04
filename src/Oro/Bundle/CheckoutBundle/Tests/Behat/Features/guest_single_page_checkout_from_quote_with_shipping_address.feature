@@ -44,7 +44,7 @@ Feature: Guest Single Page checkout from quote with shipping address
     Given I proceed as the Guest
     And I visit guest quote link for quote Quote_1
     When I click "Accept and Submit to Order"
-    And click "Submit"
+    And I click "Checkout"
     Then I should see "Checkout"
 
   Scenario: Fill and save billing address via popup

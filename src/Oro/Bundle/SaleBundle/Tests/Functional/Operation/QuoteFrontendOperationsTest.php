@@ -100,7 +100,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         $crawler = $this->client->request('GET', $data['redirectUrl']);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $form = $crawler->selectButton('Submit')->form();
+        $form = $crawler->selectButton('Checkout')->form();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);

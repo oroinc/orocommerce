@@ -15,3 +15,7 @@ layout:
               optionName: visible
               optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
 
+        - '@appendOption':
+              id: page_title_container
+              optionName: class_prefix
+              optionValue: 'customer'

@@ -9,15 +9,16 @@ class OrderStub extends Order
 {
     private ?EnumOptionInterface $internalStatus = null;
     private ?EnumOptionInterface $status = null;
+    private ?EnumOptionInterface $shippingStatus = null;
 
     public function getInternalStatus(): ?EnumOptionInterface
     {
         return $this->internalStatus;
     }
 
-    public function setInternalStatus(?EnumOptionInterface $internalStatus): self
+    public function setInternalStatus(?EnumOptionInterface $status): self
     {
-        $this->internalStatus = $internalStatus;
+        $this->internalStatus = $status;
 
         return $this;
     }
@@ -30,6 +31,18 @@ class OrderStub extends Order
     public function setStatus(?EnumOptionInterface $status): self
     {
         $this->status = $status;
+
+        return $this;
+    }
+
+    public function getShippingStatus(): ?EnumOptionInterface
+    {
+        return $this->shippingStatus;
+    }
+
+    public function setShippingStatus(?EnumOptionInterface $status): self
+    {
+        $this->shippingStatus = $status;
 
         return $this;
     }

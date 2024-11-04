@@ -113,14 +113,14 @@ oro:
         new_arrival:
             label: New Arrival
             description: Specifies if the product is a new arrival.
-            tooltip: When set to "Yes" the product will be highlighted on the store frontend.
+            tooltip: When set to "Yes" the product will be highlighted on the storefront.
             yes: Yes
             no: No
         time_period.label: Time Period
         page_template:
             title: Product Page
             label: Page Template
-            description: Page Template style used for displaying product in frontend store
+            description: Page Template style used for displaying product in storefront
             tabs:
                 label: Tabs Template
                 description: Tabs template of product page (additional attribute groups are displayed in tabs)
@@ -146,6 +146,14 @@ oro:
         kit_items:
             label: Kit Items
             description: Items of the product kit
+        kit_shipping_calculation_method:
+            label: Calculate Shipping Based On
+            tooltip: This option is only applied when calculating fixed product shipping costs for product kits.
+            description: 'Specifies how to calculate fixed shipping price for product kit, available values: kit_shipping_all, kit_shipping_product, kit_shipping_items'
+            choices:
+                kit_shipping_all: Kit product and kit items
+                kit_shipping_product: Only kit product itself
+                kit_shipping_items: Only kit items
 
         simplified_preview:
             message: Current content view is simplified, please check the page on the Storefront to see the actual result
@@ -179,8 +187,8 @@ oro:
 
         entity_config:
             block_titles:
-                backend.label: Backoffice options
-                frontend.label: Frontend options
+                backend.label: Back-Office options
+                frontend.label: Storefront options
             field.items:
                 attribute:
                     searchable.tooltip: 'If enabled, attribute content can be found in the front store'
@@ -549,8 +557,8 @@ oro:
                 product_collections_general.title: 'General'
                 product_unit_rounding.title: 'Product Unit Rounding'
                 product_single_unit_mode.title: 'Product Single Unit Mode'
-                frontend_inventory_statuses_visibility.title: 'Store Frontend'
-                backend_inventory_statuses_visibility.title: 'Management Console'
+                frontend_inventory_statuses_visibility.title: 'Storefront'
+                backend_inventory_statuses_visibility.title: 'Back-Office'
                 product_inventory.title: 'Inventory'
                 allowed_statuses.title: 'Allowed Statuses'
                 related_items.title: 'Related Items'

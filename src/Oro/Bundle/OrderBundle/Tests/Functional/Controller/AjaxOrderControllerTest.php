@@ -10,25 +10,41 @@ use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\JsonResponse;
 
 class AjaxOrderControllerTest extends WebTestCase
 {
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(
-            [
-                LoadOrders::class,
-                LoadCustomerAddresses::class,
-                LoadCustomerUserAddresses::class
-            ]
-        );
+        $this->loadFixtures([
+            LoadOrders::class,
+            LoadCustomerAddresses::class,
+            LoadCustomerUserAddresses::class
+        ]);
     }
 
-    public function testNewOrderSubtotals()
+    private function assertTotal(Crawler $crawler, int $id = null): void
+    {
+        $form = $crawler->selectButton('Save and Close')->form();
+        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => $id]));
+
+        $this->client->submit($form);
+
+        $result = $this->client->getResponse();
+        self::assertJsonResponseStatusCodeEquals($result, 200);
+
+        $data = self::jsonToArray($result->getContent());
+        self::assertArrayHasKey('totals', $data);
+        self::assertArrayHasKey('subtotals', $data['totals']);
+        self::assertArrayHasKey(0, $data['totals']['subtotals']);
+        self::assertArrayHasKey('total', $data['totals']);
+    }
+
+    public function testNewOrderSubtotals(): void
     {
         $crawler = $this->client->request(
             'GET',
@@ -38,7 +54,7 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->assertTotal($crawler);
     }
 
-    public function testSubtotals()
+    public function testSubtotals(): void
     {
         $order = $this->getReference('simple_order');
 
@@ -51,44 +67,15 @@ class AjaxOrderControllerTest extends WebTestCase
     }
 
     /**
-     * @param Crawler $crawler
-     * @param null|int $id
-     */
-    private function assertTotal(Crawler $crawler, $id = null)
-    {
-        $form = $crawler->selectButton('Save and Close')->form();
-
-        $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => $id]));
-
-        $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
-
-        $data = json_decode($result->getContent(), true);
-
-        $this->assertArrayHasKey('totals', $data);
-        $this->assertArrayHasKey('subtotals', $data['totals']);
-        $this->assertArrayHasKey(0, $data['totals']['subtotals']);
-        $this->assertArrayHasKey('total', $data['totals']);
-    }
-
-    /**
      * @dataProvider getRelatedDataActionDataProvider
-     *
-     * @param string $customer
-     * @param string|null $customerUser
      */
-    public function testGetRelatedDataAction($customer, $customerUser = null)
+    public function testGetRelatedDataAction(string $customer, string $customerUser = null): void
     {
         /** @var Customer $order */
         $customerEntity = $this->getReference($customer);
-
         /** @var CustomerUser $order */
         $customerUserEntity = $customerUser ? $this->getReference($customerUser) : null;
-
-        $website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $website = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
         $this->client->request(
             'GET',
@@ -103,13 +90,13 @@ class AjaxOrderControllerTest extends WebTestCase
         );
 
         $response = $this->client->getResponse();
-        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
+        self::assertInstanceOf(JsonResponse::class, $response);
 
-        $result = $this->getJsonResponseContent($response, 200);
-        $this->assertArrayHasKey('billingAddress', $result);
-        $this->assertArrayHasKey('shippingAddress', $result);
-        $this->assertArrayHasKey('customerPaymentTerm', $result);
-        $this->assertArrayHasKey('customerGroupPaymentTerm', $result);
+        $result = self::getJsonResponseContent($response, 200);
+        self::assertArrayHasKey('billingAddress', $result);
+        self::assertArrayHasKey('shippingAddress', $result);
+        self::assertArrayHasKey('customerPaymentTerm', $result);
+        self::assertArrayHasKey('customerGroupPaymentTerm', $result);
     }
 
     public function getRelatedDataActionDataProvider(): array

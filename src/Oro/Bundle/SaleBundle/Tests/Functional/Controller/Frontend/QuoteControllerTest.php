@@ -309,16 +309,16 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'oro.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
                             'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
                         ],
                         [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
@@ -345,16 +345,16 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'oro.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
                             'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
                         ],
                         [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
@@ -381,16 +381,16 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'oro.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
                             'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
                         ],
                     ],
                 ],
@@ -409,16 +409,16 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'oro.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
                             'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
                         ],
                     ],
                 ],
@@ -437,16 +437,16 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'oro.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
                             'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
                         ],
                         [
                             'label' => 'oro.paymentterm.entity_label',
@@ -469,16 +469,16 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'oro.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
                             'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
                         ],
                         [
                             'label' => 'oro.paymentterm.entity_label',
@@ -501,16 +501,16 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'qid',
                         ],
                         [
-                            'label' => 'oro.frontend.sale.quote.valid_until.label',
-                            'property' => 'valid_until',
-                        ],
-                        [
                             'label' => 'oro.sale.quote.po_number.label',
                             'property' => 'po_number',
                         ],
                         [
                             'label' => 'oro.sale.quote.ship_until.label',
                             'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
                         ],
                         [
                             'label' => 'oro.paymentterm.entity_label',
@@ -774,7 +774,7 @@ class QuoteControllerTest extends WebTestCase
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit(
-            $crawler->selectButton('Submit')->form(),
+            $crawler->selectButton('Checkout')->form(),
             [
                 'oro_sale_quote_demand[demandProducts][0][quantity]'  => 50,
                 'oro_sale_quote_demand[demandProducts][1][quantity]'  => 50

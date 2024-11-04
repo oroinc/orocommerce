@@ -71,9 +71,9 @@
         'entityName': shoppingListLabel
     } %}
 
-    {% if options.iconName is defined %}
+    {% if options.icon is defined %}
         {% set buttonOptions = buttonOptions|merge({
-            'iconName': options.iconName
+            'icon': options.icon
         }) %}
     {% endif %}
     {% if options.ariaLabel %}

@@ -531,6 +531,7 @@ oro_behat_extension:
         - Oro\Bundle\UserBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\OrderBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
         - Oro\Bundle\CustomerBundle\Tests\Behat\Context\CustomerUserContext
         - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext

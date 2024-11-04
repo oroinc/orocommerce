@@ -1,0 +1,116 @@
+data:
+    type: orders
+    id: '<toString(@simple_order->id)>'
+    attributes:
+        poNumber: '1234567890'
+        customerNotes: null
+    relationships:
+        orderSubtotals:
+            data:
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "subtotal-0"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "discount-1"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "discount-3"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "tax-4"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "tax-5"]))>'
+                -
+                    type: ordersubtotals
+                    id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
+included:
+    -
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "subtotal-0"]))>'
+        attributes:
+            label: 'Subtotal'
+            amount: '789.0000'
+            currency: 'USD'
+            data: []
+    -
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "discount-1"]))>'
+        attributes:
+            label: 'Discount'
+            amount: '0.0000'
+            currency: 'USD'
+            data: []
+    -
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "shipping_cost-2"]))>'
+        attributes:
+            label: 'Shipping'
+            amount: '0.0000'
+            currency: 'USD'
+            data: []
+    -
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "discount-3"]))>'
+        attributes:
+            label: 'Shipping Discount'
+            amount: '0.0000'
+            currency: 'USD'
+            data: []
+    -
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "tax-4"]))>'
+        attributes:
+            label: 'Subtotal Tax'
+            amount: '0.0000'
+            currency: ''
+            data:
+                items:
+                    -
+                        unit:
+                            includingTax: '15.7'
+                            excludingTax: '15.7'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        row:
+                            includingTax: '78.5'
+                            excludingTax: '78.5'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        taxes: []
+                    -
+                        unit:
+                            includingTax: '30.5'
+                            excludingTax: '30.5'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        row:
+                            includingTax: '366'
+                            excludingTax: '366'
+                            taxAmount: '0'
+                            adjustment: '0'
+                            currency: 'USD'
+                        taxes: []
+    -
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "tax-5"]))>'
+        attributes:
+            label: 'Shipping Tax'
+            amount: '0.0000'
+            currency: null
+            data: []
+    -
+        type: ordersubtotals
+        id: '<(implode("-", [@simple_order->id, "tax-6"]))>'
+        attributes:
+            label: 'Tax'
+            amount: '0.0000'
+            currency: null
+            data: []

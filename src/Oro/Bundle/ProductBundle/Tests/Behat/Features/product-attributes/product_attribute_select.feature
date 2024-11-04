@@ -24,9 +24,9 @@ Feature: Product attribute select
       | Field Name | SelectField |
       | Type       | Select      |
     And I click "Continue"
-    Then I should see that "Product Attribute Frontend Options" contains "Searchable"
-    And I should see that "Product Attribute Frontend Options" contains "Filterable"
-    And I should see that "Product Attribute Frontend Options" contains "Sortable"
+    Then I should see that "Product Attribute Storefront Options" contains "Searchable"
+    And I should see that "Product Attribute Storefront Options" contains "Filterable"
+    And I should see that "Product Attribute Storefront Options" contains "Sortable"
 
     When I set Options with:
       | Label |

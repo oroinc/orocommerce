@@ -13,8 +13,10 @@ services:
         arguments:
             - '@.inner'
         calls:
-            - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\ProductPrice']]
+            - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\ProductPrice', ['get_list']]]
             - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Entity\PriceListSchedule', ['create']]]
+            - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Api\Model\CustomerPrice', ['get_list']]]
+            - [addSkippedEntity, ['Oro\Bundle\PricingBundle\Api\Model\ProductKitPrice', ['get_list']]]
 
     oro_pricing.tests.entity_name_resolver.data_loader:
         class: Oro\Bundle\PricingBundle\Tests\Functional\Environment\TestEntityNameResolverDataLoader

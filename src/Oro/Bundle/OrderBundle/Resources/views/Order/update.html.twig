@@ -249,7 +249,10 @@
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.order.sections.shipping_information'|trans,
         'subblocks': [{
-            'data': [shippingInformation]
+            'data': [
+                form_row(form.shippingStatus),
+                shippingInformation
+            ]
         }]
     }]) %}
 

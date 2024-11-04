@@ -23,10 +23,9 @@ Feature: Resubmit RFQ with Product Kits
 
   Scenario: Check original Request
     Given I should see RFQ with data:
-      | First Name | Amanda                  |
-      | Last Name  | Cole                    |
-      | Email      | AmandaRCole@example.org |
-      | PO Number  | PO013                   |
+      | Contact Person | Amanda Cole             |
+      | Email Address  | AmandaRCole@example.org |
+      | PO Number      | PO013                   |
     And I should see RFQ status is "Cancelled"
     And I should see next rows in "Storefront Request Line Items Table" table
       | Item                                                                                                                     | Requested Quantity | Target Price |
@@ -34,19 +33,18 @@ Feature: Resubmit RFQ with Product Kits
       | Product Kit 01 Item #: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 2 pieces Simple Product 02 | 1 pc               | $130.00      |
 
   Scenario: Check RFQs grid
-    When I follow "Back to List"
+    When I click "BackToListBtn"
     Then I should see following grid:
-      | Status    | Owner       | PO Number |
+      | Status    | Created by  | PO Number |
       | CANCELLED | Amanda Cole | PO013     |
       | SUBMITTED | Amanda Cole | PO013     |
 
   Scenario: Check resubmitted Request
     When I click view Submitted in grid
     Then I should see RFQ with data:
-      | First Name | Amanda                  |
-      | Last Name  | Cole                    |
-      | Email      | AmandaRCole@example.org |
-      | PO Number  | PO013                   |
+      | Contact Person | Amanda Cole             |
+      | Email Address  | AmandaRCole@example.org |
+      | PO Number      | PO013                   |
     And I should see RFQ status is "Submitted"
     And I should see next rows in "Storefront Request Line Items Table" table
       | Item                                                                                                                     | Requested Quantity | Target Price |

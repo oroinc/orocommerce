@@ -22,7 +22,7 @@ Feature: Content Node Delete
     Then I should see "Configuration saved" flash message
 
   Scenario: Prepare main commerce menu item
-    Given I go to System/Frontend Menus
+    Given I go to System/Storefront Menus
     And click "view" on row "commerce_main_menu" in grid
     And I click "Create Menu Item"
     When I fill "Commerce Menu Form" with:

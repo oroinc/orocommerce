@@ -49,12 +49,12 @@ Feature: Quotes Grid Sorting nullables
       | Quote # |
       | Quote1  |
       | Quote10 |
-    When I sort grid by "DNSLT"
+    When I sort grid by "Ship by"
     Then I should see following grid:
       | Quote # |
       | Quote13 |
       | Quote1  |
-    When I sort grid by "DNSLT" again
+    When I sort grid by "Ship by" again
     Then I should see following grid:
       | Quote # |
       | Quote20 |

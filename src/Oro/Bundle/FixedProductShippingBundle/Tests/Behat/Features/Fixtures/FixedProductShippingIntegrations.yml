@@ -1,0 +1,44 @@
+parameters:
+    fixed_product_type: 'fixed_product'
+    fixed_product_label_1: 'Fixed Product 1 (Surcharge Type: Percent, Surcharge On: Product Price, Surcharge Amount: 10%)'
+    fixed_product_label_2: 'Fixed Product 2 (Surcharge Type: Percent, Surcharge On: Product Shipping Cost, Surcharge Amount: 15%)'
+    fixed_product_label_3: 'Fixed Product 3 (Surcharge Type: Fixed Amount, Surcharge Amount: $20.00)'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    fixedProductLabel1:
+        string: '<{fixed_product_label_1}>'
+    fixedProductLabel2:
+        string: '<{fixed_product_label_2}>'
+    fixedProductLabel3:
+        string: '<{fixed_product_label_3}>'
+
+Oro\Bundle\FixedProductShippingBundle\Entity\FixedProductSettings:
+    fixedProductSettings1:
+        __calls:
+            - addLabel: ['@fixedProductLabel1']
+    fixedProductSettings2:
+        __calls:
+            - addLabel: [ '@fixedProductLabel2' ]
+    fixedProductSettings3:
+        __calls:
+            - addLabel: [ '@fixedProductLabel3' ]
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    fixedProductIntegration1:
+        type: '<{fixed_product_type}>'
+        name: '<{fixed_product_label_1}>'
+        enabled: true
+        organization: '@organization'
+        transport: '@fixedProductSettings1'
+    fixedProductIntegration2:
+        type: '<{fixed_product_type}>'
+        name: '<{fixed_product_label_2}>'
+        enabled: true
+        organization: '@organization'
+        transport: '@fixedProductSettings2'
+    fixedProductIntegration3:
+        type: '<{fixed_product_type}>'
+        name: '<{fixed_product_label_3}>'
+        enabled: true
+        organization: '@organization'
+        transport: '@fixedProductSettings3'

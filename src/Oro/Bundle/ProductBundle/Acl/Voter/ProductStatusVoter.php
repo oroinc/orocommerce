@@ -38,7 +38,7 @@ class ProductStatusVoter extends AbstractEntityVoter
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         /** @var Product|null $product */
-        $product = $this->doctrineHelper->getEntityRepository($class)->find($identifier);
+        $product = $this->doctrineHelper->getEntityManagerForClass($class)->find($class, $identifier);
         if (null === $product) {
             return self::ACCESS_ABSTAIN;
         }

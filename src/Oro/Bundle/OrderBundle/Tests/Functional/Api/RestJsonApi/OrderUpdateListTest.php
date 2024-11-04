@@ -319,7 +319,7 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
                         'id'            => 'li1',
                         'attributes'    => [
                             'quantity' => 123,
-                            'currency' => 'USD',
+                            'currency' => 'USD'
                         ],
                         'relationships' => [
                             'product'     => [
@@ -348,18 +348,25 @@ class OrderUpdateListTest extends RestJsonApiUpdateListTestCase
                     'id'     => $operationId.'-1-2',
                     'status' => 400,
                     'title'  => 'not blank constraint',
+                    'detail' => 'This value should not be blank.',
+                    'source' => ['pointer' => '/data/0/attributes/currency']
+                ],
+                [
+                    'id'     => $operationId.'-1-3',
+                    'status' => 400,
+                    'title'  => 'not blank constraint',
                     'detail' => 'Price value should not be blank. Source: price.',
                     'source' => ['pointer' => '/included/0']
                 ],
                 [
-                    'id'     => $operationId.'-1-3',
+                    'id'     => $operationId.'-1-4',
                     'status' => 400,
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
                     'source' => ['pointer' => '/data/0/relationships/customer/data']
                 ],
                 [
-                    'id'     => $operationId.'-1-4',
+                    'id'     => $operationId.'-1-5',
                     'status' => 400,
                     'title'  => 'not blank constraint',
                     'detail' => 'Price value should not be blank.',

@@ -35,6 +35,15 @@ services:
             - { name: oro.api.processor, action: update, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
             - { name: oro.api.processor, action: get, group: load_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility }
 
+    oro_visibility.set_visibility_id_to_context:
+        class: Oro\Bundle\VisibilityBundle\Api\Processor\SetVisibilityIdToContext
+        arguments:
+            - '@oro_api.form_property_accessor'
+        tags:
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility, priority: -18 }
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility, priority: -18 }
+            - { name: oro.api.processor, action: create, group: save_data, requestType: '!frontend', class: Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility, priority: -18 }
+
     oro_visibility.api.load_customer_product_visibility:
         class: Oro\Bundle\VisibilityBundle\Api\Processor\LoadCustomerProductVisibility
         arguments:

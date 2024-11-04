@@ -1,0 +1,34 @@
+oro:
+    workflow:
+        order_processing_flow:
+            label: Order Processing
+            step:
+                new:
+                    label: New
+                confirmed:
+                    label: Confirmed
+                processing:
+                    label: Processing
+                completed:
+                    label: Completed
+                declined:
+                    label: Declined
+            transition:
+                __start__:
+                    label: Start Order Processing
+                    warning_message: ''
+                confirm:
+                    label: Confirm
+                    warning_message: ''
+                process:
+                    label: Process
+                    warning_message: ''
+                mark_as_shipped:
+                    label: Mark As Shipped
+                    warning_message: ''
+                complete:
+                    label: Complete
+                    warning_message: ''
+                decline:
+                    label: Decline
+                    warning_message: ''

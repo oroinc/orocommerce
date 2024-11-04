@@ -1,5 +1,5 @@
 {% block _page_title_widget %}
-    {% set titleIcon = 'fa-flash' %}
+    {% set titleIcon = 'zap' %}
     {{ parent_block_widget(block) }}
 {% endblock %}
 
@@ -88,11 +88,12 @@
     {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
 
-{% block _quick_add_form_buttons_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' quick-order-add__buttons'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {% placeholder oro_product_quick_add_buttons %}
+{% block _quick_add_form_combined_buttons_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " quick-order-add__buttons"}) %}
+
+    <div{{ block('block_attributes') }}>
+        {% for button in buttons %}
+            {% include button.template with button.templateData|merge({aClass:'btn'}) %}
+        {% endfor %}
     </div>
 {% endblock %}

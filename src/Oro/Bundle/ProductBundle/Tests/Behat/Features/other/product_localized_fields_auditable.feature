@@ -42,13 +42,13 @@ Feature: Product Localized Fields Auditable
       | descriptions      | No        |
       | shortDescriptions | No        |
     When I click Edit descriptions in grid
-    And I press "Backoffice options"
+    And I press "Back-Office options"
     And fill form with:
       | Auditable | Yes |
     And save and close form
     Then I should see "Field saved" flash message
     When I click Edit shortDescriptions in grid
-    And I press "Backoffice options"
+    And I press "Back-Office options"
     And fill form with:
       | Auditable | Yes |
     And save and close form

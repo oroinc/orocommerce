@@ -42,7 +42,7 @@ Feature: Order External Statuses
       | SecondOrder  | Wait For Approval |
       | SimpleOrder  |                   |
     When I click view "SecondOrder" in grid
-    Then I should see "Order Status Wait For Approval"
+    Then I should see "Wait For Approval"
 
   Scenario: Disable Order External Status Management
     Given I operate as the Admin
@@ -63,4 +63,4 @@ Feature: Order External Statuses
       | SecondOrder  | Open         |
       | SimpleOrder  | Open         |
     When I click view "SecondOrder" in grid
-    Then I should see "Order Status Open"
+    Then I should see "Open"

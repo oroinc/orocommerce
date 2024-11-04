@@ -1,3 +1,7 @@
+parameters:
+    # the group name for workflows responsible for order processing
+    oro_order.order_processing_workflow_group: 'order_processing'
+
 services:
     oro_order.order.entity.id_generator:
         class: 'Oro\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
@@ -16,6 +20,15 @@ services:
         public: false
         arguments:
             - '@oro_order.provider.configuration'
+            - '@doctrine'
+            - '@oro_workflow.manager'
+            - '%oro_order.order_processing_workflow_group%'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
+
+    oro_order.order.listener.orm.order_shipping_status_listener:
+        class: Oro\Bundle\OrderBundle\EventListener\ORM\OrderShippingStatusListener
+        arguments:
             - '@doctrine'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
@@ -293,6 +306,15 @@ services:
             - '@oro_checkout.provider.multi_shipping_config'
         tags:
             - { name: layout.data_provider, alias: oro_order_frontend_multi_shipping_provider }
+
+    oro_order.acl.voter.edit_order:
+        class: 'Oro\Bundle\OrderBundle\Acl\Voter\EditOrderVoter'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setClassName, ['Oro\Bundle\OrderBundle\Entity\Order']]
+        tags:
+            - { name: security.voter }
 
     oro_order.acl.voter.sub_order_view:
         class: 'Oro\Bundle\OrderBundle\Acl\Voter\SubOrderViewVoter'

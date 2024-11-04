@@ -5,7 +5,7 @@ data:
         category_sort_order: null
         availability_date: null
         testAttrInvisible: null
-        testAttrBoolean: null
+        testAttrBoolean: false
         testAttrString: null
         testAttrInteger: null
         testAttrFloat: null

@@ -89,7 +89,7 @@ workflows:
                 step_to: cancelled
                 transition_definition: resubmit_transition_definition
                 frontend_options:
-                    icon: fa-repeat
+                    icon: resubmit
             reopen_transition:
                 step_to: submitted
                 transition_definition: reopen_transition_definition

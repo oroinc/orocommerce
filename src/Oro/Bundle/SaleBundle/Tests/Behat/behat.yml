@@ -35,7 +35,7 @@ oro_behat_extension:
   elements:
     Quote Frontend Page:
       class: Oro\Bundle\SaleBundle\Tests\Behat\Element\QuoteFrontendPage
-      selector: '.quote'
+      selector: '.page-content'
 
     Quote Shipping Address Select:
       selector: '[name="oro_sale_quote[shippingAddress][customerAddress]"]'

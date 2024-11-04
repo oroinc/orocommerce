@@ -497,6 +497,16 @@ Retrieve status record assigned to a specific order record.
 
 Retrieve the ID of the status record assigned to a specific order record.
 
+### shippingStatus
+
+#### get_subresource
+
+Retrieve shipping status record assigned to a specific order record.
+
+#### get_relationship
+
+Retrieve the ID of the shipping status record assigned to a specific order record.
+
 
 # Extend\Entity\EV_Order_Status
 
@@ -515,3 +525,16 @@ Retrieve a collection of order status records.
 ### internal
 
 Indicates whether the order status is an internal and cannot be used during creation of new orders.
+
+
+# Extend\Entity\EV_Order_Shipping_Status
+
+## ACTIONS
+
+### get
+
+Retrieve a specific order shipping status record.
+
+### get_list
+
+Retrieve a collection of order shipping status records.
