@@ -131,21 +131,7 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected function createQueryBuilder(PriceRule $rule)
     {
         // Add dummy expression conditions to process all required joins. Real restrictions will be applied later.
-        $ruleCondition = $this->getProcessedRuleCondition($rule);
-        if ($ruleCondition) {
-            $expression = sprintf('%s and (%s) >= 0', $ruleCondition, $rule->getRule());
-        } else {
-            $expression = sprintf('(%s) >= 0', $rule->getRule());
-        }
-        if ($rule->getCurrencyExpression()) {
-            $expression .= sprintf(' and %s != null', $rule->getCurrencyExpression());
-        }
-        if ($rule->getQuantityExpression()) {
-            $expression .= sprintf(' and %s != null', $rule->getQuantityExpression());
-        }
-        if ($rule->getProductUnitExpression()) {
-            $expression .= sprintf(' and %s != null', $rule->getProductUnitExpression());
-        }
+        $expression = $this->getAggregateExpression($rule);
 
         $node = $this->expressionParser->parse($expression);
         $this->saveUsedPriceRelations($node);
@@ -170,6 +156,8 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected function modifySelectPart(QueryBuilder $qb, PriceRule $rule, $rootAlias)
     {
         $params = [];
+
+        $this->addDivisionSafeguardConditions($qb, $this->getAggregateExpression($rule), $params);
         $priceValue = (string)$this->getValueByExpression($qb, $rule->getRule(), $params);
 
         $precision = $this->configManager->get('oro_pricing.price_calculation_precision');
@@ -587,5 +575,29 @@ class PriceListRuleCompiler extends AbstractRuleCompiler
     protected function getProcessedRuleCondition(PriceRule $rule)
     {
         return $this->expressionPreprocessor->process($rule->getRuleCondition());
+    }
+
+    /**
+     * Builds aggregated expression containing all possible expressions and conditions.
+     */
+    private function getAggregateExpression(PriceRule $rule): string
+    {
+        $ruleCondition = $this->getProcessedRuleCondition($rule);
+        if ($ruleCondition) {
+            $expression = sprintf('%s and (%s) >= 0', $ruleCondition, $rule->getRule());
+        } else {
+            $expression = sprintf('(%s) >= 0', $rule->getRule());
+        }
+        if ($rule->getCurrencyExpression()) {
+            $expression .= sprintf(' and %s != null', $rule->getCurrencyExpression());
+        }
+        if ($rule->getQuantityExpression()) {
+            $expression .= sprintf(' and %s != null', $rule->getQuantityExpression());
+        }
+        if ($rule->getProductUnitExpression()) {
+            $expression .= sprintf(' and %s != null', $rule->getProductUnitExpression());
+        }
+
+        return $expression;
     }
 }
