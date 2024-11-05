@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5ce362e33a0247ea857ec148d6e8be39",
+    "content-hash": "92e835d0795a0b93f10d081a6f578d98",
     "packages": [
         {
             "name": "ass/xmlsecurity",
@@ -5100,7 +5100,7 @@
             "dist": {
                 "type": "path",
                 "url": "../calendar",
-                "reference": "678754ea8401cbca5d637b9f4d02101709d83d15"
+                "reference": "2bc87740f9890c1c373cfe1570c8ddf735320428"
             },
             "require": {
                 "oro/platform": "6.0.*"
@@ -5128,7 +5128,7 @@
             "authors": [
                 {
                     "name": "Oro, Inc",
-                    "homepage": "http://www.orocrm.com"
+                    "homepage": "https://oroinc.com/"
                 }
             ],
             "description": "Calendar bundle for OroPlatform-based applications.\nSee https://doc.oroinc.com/user/back-office/activities/calendar-events/ for more information.",
@@ -5149,7 +5149,7 @@
             "dist": {
                 "type": "path",
                 "url": "../conversation",
-                "reference": "94b749b8d9dbf73f3c11235c7fb2bf79b24f1134"
+                "reference": "4b112add92055e5c4e93b7b1734d7420433a4c97"
             },
             "require": {
                 "oro/commerce": "~6.0.3",
@@ -5170,12 +5170,12 @@
                 ]
             },
             "license": [
-                "Commercial"
+                "proprietary"
             ],
             "authors": [
                 {
                     "name": "Oro, Inc",
-                    "homepage": "http://oroinc.com"
+                    "homepage": "https://oroinc.com/"
                 }
             ],
             "description": "Oro Conversation capabilities for Oro Commerce",
@@ -5195,7 +5195,7 @@
             "dist": {
                 "type": "path",
                 "url": "../customer-portal",
-                "reference": "0f06f79c056711f17c469df289b29a0af2f5084e"
+                "reference": "3d1b1e888cd98fd806391374056890ee9249a9d0"
             },
             "require": {
                 "oro/calendar-bundle": "6.0.*",
@@ -5234,7 +5234,7 @@
             "authors": [
                 {
                     "name": "Oro, Inc",
-                    "homepage": "http://www.orocommerce.com"
+                    "homepage": "https://oroinc.com/"
                 }
             ],
             "homepage": "https://github.com/oroinc/customer-portal",
@@ -5310,7 +5310,7 @@
             "dist": {
                 "type": "path",
                 "url": "../marketing",
-                "reference": "dd478e6680964fbae33338f8909ab10995e4ec02"
+                "reference": "f97de27ee3b1d7da84d801478b0027e1086754dc"
             },
             "require": {
                 "ext-curl": "*",
@@ -5339,7 +5339,7 @@
             "authors": [
                 {
                     "name": "Oro, Inc",
-                    "homepage": "http://www.orocrm.com"
+                    "homepage": "https://oroinc.com"
                 }
             ],
             "description": "Oro Marketing Bundles",
@@ -5360,7 +5360,7 @@
             "dist": {
                 "type": "path",
                 "url": "../platform",
-                "reference": "da20d8355c027d5b8dc9ff22be02a5d8b23d88b5"
+                "reference": "a05cce79160ad18fd8007a8a4afb48f185fd9799"
             },
             "require": {
                 "ass/xmlsecurity": "1.1.1",
@@ -5680,7 +5680,7 @@
             "authors": [
                 {
                     "name": "Oro, Inc",
-                    "homepage": "http://www.orocrm.com"
+                    "homepage": "https://oroinc.com/"
                 }
             ],
             "description": "Business Application Platform (BAP)",
@@ -5695,7 +5695,7 @@
             "dist": {
                 "type": "path",
                 "url": "../serialized-fields",
-                "reference": "26995f4e406e22c5a026bac13550ffe15b284389"
+                "reference": "874da7ec22587c33527de1192d06498f52f408e2"
             },
             "require": {
                 "oro/platform": "6.0.*"
@@ -5720,7 +5720,7 @@
             "authors": [
                 {
                     "name": "Oro, Inc",
-                    "homepage": "http://www.orocrm.com"
+                    "homepage": "https://oroinc.com/"
                 }
             ],
             "description": "OroPlatform Serialized Fields",
@@ -15133,7 +15133,7 @@
             "dist": {
                 "type": "path",
                 "url": "../twig-inspector",
-                "reference": "985f32a4abaa1545c4609702cca255f83dd03cfe"
+                "reference": "e9f9eeae7030052ea92128eaa131e769d63dd127"
             },
             "require": {
                 "php": ">=7.4",
@@ -15162,7 +15162,7 @@
             "authors": [
                 {
                     "name": "Oro, Inc",
-                    "homepage": "http://www.orocrm.com"
+                    "homepage": "https://oroinc.com/"
                 }
             ],
             "description": "Oro Twig Inspector adds the possibility to find twig templates and blocks used for rendering HTML pages faster during development",
