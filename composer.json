@@ -1,12 +1,12 @@
 {
     "name": "oro/commerce",
     "description": "OroCommerce - an open-source Business to Business Commerce application. \\nThis package contains bundles and needs to be added as a dependency in an OroCommerce application.",
-    "homepage": "https://github.com/orocommerce/orocommerce",
+    "homepage": "https://github.com/oroinc/orocommerce",
     "license": "OSL-3.0",
     "authors": [
         {
             "name": "Oro, Inc",
-            "homepage": "http://www.orocommerce.com"
+            "homepage": "https://oroinc.com/"
         }
     ],
     "require": {
@@ -48,7 +48,7 @@
     "repositories": {
         "oro": {
             "type": "composer",
-            "url": "https://packagist.orocrm.com"
+            "url": "https://packagist.oroinc.com"
         }
     },
     "minimum-stability": "dev",
