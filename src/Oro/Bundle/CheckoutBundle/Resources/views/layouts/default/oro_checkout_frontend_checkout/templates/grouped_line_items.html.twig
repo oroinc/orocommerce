@@ -1,14 +1,15 @@
 {% block _multiple_shipping_methods_widget %}
     {% for key, lineItems in groupedLineItems %}
-        <h3 class="heading-bottom-offset">{{ groupedLineItemsTitles[key] }}</h3>
-            {% do block|merge_context({
-                'acceptableGroupId': key,
-                'acceptableIds': lineItems,
-                'grid_full_name': 'frontend-checkout-line-items-grid'~':'~loop.index,
-            }) %}
-            {% for child in block %}
-                {{ block_widget(child) }}
-            {% endfor %}
+        {% do block|merge_context({
+            'acceptableGroupId': key,
+            'acceptableIds': lineItems,
+            'grid_full_name': 'frontend-checkout-line-items-grid'~':'~loop.index,
+            'title': groupedLineItemsTitles[key],
+            'itemsCount': groupedLineItems[key]|length
+        }) %}
+        {% for child in block %}
+            {{ block_widget(child) }}
+        {% endfor %}
     {% endfor %}
 {% endblock %}
 

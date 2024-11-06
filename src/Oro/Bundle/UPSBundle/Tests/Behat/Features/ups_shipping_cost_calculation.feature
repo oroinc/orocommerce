@@ -35,7 +35,7 @@ Feature: UPS shipping cost calculation
     Then Buyer is on enter billing information checkout step
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I should see "UPS 2nd Day Air: $1,199.75"
+    And I should see "UPS 2nd Day Air $1,199.75"
     And I check "UPS 2nd Day Air" on the "Shipping Method" checkout step and press Continue
     And I click "Expand Checkout Footer"
     Then I see next subtotals for "Checkout Step":
@@ -68,7 +68,7 @@ Feature: UPS shipping cost calculation
     Then Buyer is on enter billing information checkout step
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     When I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    Then I should see "UPS 2nd Day Air: $1,163.75"
+    Then I should see "UPS 2nd Day Air $1,163.75"
 
   Scenario: Check that UPS shipping cost is calculated correctly when product kit has no valid shipping options
     Given I expect the following shipping costs:
@@ -91,7 +91,7 @@ Feature: UPS shipping cost calculation
     Then Buyer is on enter billing information checkout step
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     When I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    Then I should see "UPS 2nd Day Air: $1,155.25"
+    Then I should see "UPS 2nd Day Air $1,155.25"
 
   Scenario: Set no valid shipping options for related simple product
     Given I proceed as the Admin

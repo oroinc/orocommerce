@@ -43,7 +43,7 @@ Feature: Enter coupon code on Front Store with shipping and review
 
   Scenario: Flat Rate Promotion is applied when Flat Rate shipping method is chosen
     When on the "Payment" checkout step I go back to "Edit Shipping Method"
-    And I click "Flat Rate Shipping Method"
+    And I click on "Flat Rate Shipping Method"
     And on the "Shipping Method" checkout step I press Continue
     And I click "Expand Checkout Footer"
     Then I should see "Shipping Discount -$2.00" in the "Subtotals" element

@@ -49,6 +49,9 @@ oro:
         confirm_email_flash_message: Please confirm your email before continue checkout
         late_registration.label: Save my data and create an account
         progress.label: Checkout Progress
+        summary_item_title: Order products
+        multishipping:
+            label_for: 'Shipping method for %label%'
         navigation_sidebar:
             status:
                 completed: Completed
@@ -373,6 +376,7 @@ oro:
                     title: 'General Options'
                 multishipping_line_items_grouping_options.title: 'Line Items Grouping Options'
                 multishipping_order_history_options.title: 'Order History Options'
+                items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
 
         privilege:
             category.checkout.label: 'Checkout'

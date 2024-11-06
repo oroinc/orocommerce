@@ -16,7 +16,7 @@ layout:
                   __shipping_methods_template_methods:
                       blockType: container
               tree:
-                  checkout_order_summary_line_items_container:
+                  checkout_order_additional_collapse_header:
                       __shipping_methods:
                           __shipping_methods_template:
                               __shipping_methods_template_methods: ~

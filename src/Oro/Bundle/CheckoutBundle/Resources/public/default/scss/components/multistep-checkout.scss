@@ -22,6 +22,11 @@
         grid-area: $multistep-checkout-main-grid-area;
         padding-block: $multistep-checkout-main-padding-block;
         padding-inline: $multistep-checkout-main-padding-inline;
+
+        .checkout-order-summary-container {
+            display: grid;
+            gap: $multistep-checkout-main-summary-container-gap;
+        }
     }
 
     &__footer {
@@ -116,9 +121,15 @@
         &__main {
             padding-block: $multistep-checkout-main-mobile-big-padding-block;
             padding-inline: $multistep-checkout-main-mobile-big-padding-inline;
+
+            .checkout-order-summary-container {
+                padding-inline: $multistep-checkout-main-summary-container-padding-inline;
+            }
         }
 
         &__footer {
+            margin-top: $multistep-checkout-footer-mobile-big-margin-top;
+
             &::before {
                 content: $multistep-checkout-footer-before-mobile-big-content;
             }

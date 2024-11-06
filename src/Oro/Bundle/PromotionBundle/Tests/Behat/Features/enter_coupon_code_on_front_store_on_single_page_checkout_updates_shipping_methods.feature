@@ -21,17 +21,17 @@ Feature: Enter coupon code on front store on single page checkout updates shippi
     When I scroll to "Create Order"
     And I click "Create Order"
     Then I should see "Checkout"
-    And I should see "SELECT A SHIPPING METHOD"
-    And I should see "Flat Rate: $3.00"
+    And I should see "SHIPPING METHOD"
+    And I should see "Flat Rate $3.00"
     When I scroll to "I have a Coupon Code"
     And I click "I have a Coupon Code"
     And I type "coupon-flat-rate" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts"
     And I scroll to top
-    And I should see "SELECT A SHIPPING METHOD"
-    And I should see "Flat Rate: $1.00"
-    And I check "Flat Rate: $1.00" on the checkout page
+    And I should see "SHIPPING METHOD"
+    And I should see "Flat Rate $1.00"
+    And I click on "Flat Rate Shipping Method"
     When I scroll to "Subtotals"
     Then I should see "Shipping Discount -$2.00" in the "Subtotals" element
 

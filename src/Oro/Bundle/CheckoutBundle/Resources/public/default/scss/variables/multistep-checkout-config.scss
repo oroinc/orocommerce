@@ -23,6 +23,8 @@ $multistep-checkout-main-grid-area: main !default;
 $multistep-checkout-main-padding-block: spacing('lg') !default;
 $multistep-checkout-main-padding-inline: spacing('lg') !default;
 
+$multistep-checkout-main-summary-container-gap: spacing('base') !default;
+
 $multistep-checkout-footer-background-color: get-color('neutral', 'grey1') !default;
 $multistep-checkout-footer-border-top: 1px solid get-color('neutral', 'grey2') !default;
 $multistep-checkout-footer-border-bottom: 1px solid get-color('neutral', 'grey2') !default;
@@ -81,4 +83,6 @@ $multistep-checkout-steps-mobile-big-border: none !default;
 $multistep-checkout-main-mobile-big-padding-block: 0 !default;
 $multistep-checkout-main-mobile-big-padding-inline: 0 !default;
 
+$multistep-checkout-main-summary-container-padding-inline: spacing('base') !default;
+$multistep-checkout-footer-mobile-big-margin-top: spacing('base') !default;
 $multistep-checkout-footer-before-mobile-big-content: none !default;

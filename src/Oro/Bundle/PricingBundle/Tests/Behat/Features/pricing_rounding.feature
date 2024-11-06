@@ -534,6 +534,7 @@ Feature: Pricing rounding
     And I type "3" in "Shopping List Line Item 1 Quantity Input"
     And I click on "Shopping List Line Item 1 Save Changes Button"
     And I click "Create Order"
+    And I click "Order products"
     Then Checkout "Order Summary Products Grid" should contain products:
       | TV | 3 | items | $33.495 | $100.49 |
     And I click "Expand Checkout Footer"

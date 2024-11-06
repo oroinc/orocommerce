@@ -36,7 +36,7 @@ oro:
             product_unit.label: Unit
             weight.label: Weight
             dimensions.label: Dimensions
-            freight_class.label: Freight Class            
+            freight_class.label: Freight Class
         weightunit:
             entity_label: Unit Of Weight
             entity_plural_label: Units Of Weight
@@ -115,7 +115,7 @@ oro:
 
         methods:
             label: "Shipping Method"
-            select_method: 'Select a Shipping Method'
+            select_method: 'Shipping Method'
             no_method: 'No shipping methods are available, please contact us to complete the order submission.'
         menu:
             shipping_rule.description: Shipping Rules

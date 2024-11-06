@@ -9,6 +9,13 @@ layout:
             optionValue:
                 use_line_items_shipping: true
 
+        - '@appendOption':
+            id: checkout_order_summary_line_items_datagrid
+            optionName: grid_render_parameters
+            optionValue:
+                toolbarOptions:
+                    hide: true
+
         - '@setOption':
             id: checkout_button_continue
             optionName: transitionData

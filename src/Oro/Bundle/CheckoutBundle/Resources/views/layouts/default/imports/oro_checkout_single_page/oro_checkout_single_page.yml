@@ -340,3 +340,18 @@ layout:
             optionName: attr
             optionValue:
                 class: ' checkout__container--single-page'
+
+        - '@move':
+            id: checkout_order_summary_line_items_datagrid_toolbar
+            parentId: checkout_order_summary_line_items_container
+
+        - '@move':
+            id: checkout_order_summary_line_items_datagrid
+            parentId: checkout_order_summary_line_items_container
+
+        - '@move':
+            id: checkout_order_summary_line_items_datagrid_views
+            parentId: checkout_order_summary_line_items_container
+
+        - '@remove':
+            id: checkout_order_summary_line_items_collapse_container

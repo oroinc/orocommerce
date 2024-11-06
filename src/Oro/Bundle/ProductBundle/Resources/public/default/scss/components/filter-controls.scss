@@ -47,6 +47,10 @@
     padding: spacing('sm') 0;
     margin-bottom: spacing('base');
 
+    &:empty {
+        display: none;
+    }
+
     &:not(.sticky) {
         position: relative;
     }
@@ -88,6 +92,10 @@
         &.scroll-down {
             transform: translateY(calc(var(--group-offset-y, 0) * -1));
         }
+    }
+
+    &.no-children {
+        display: none;
     }
 }
 

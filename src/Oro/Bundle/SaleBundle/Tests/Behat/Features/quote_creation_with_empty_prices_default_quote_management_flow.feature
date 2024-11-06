@@ -92,6 +92,7 @@ Feature: Quote creation with empty prices (Default Quote Management Flow)
     When click "Accept and Submit to Order"
     And click "Checkout"
     Then Page title equals to "Billing Information - Checkout"
+    And I click "Order products"
     And Checkout "Order Summary Products Grid" should contain products:
       | Product1 | 1 | item |
       | Product1 | 1 | item |
