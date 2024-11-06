@@ -30,7 +30,7 @@
             }
 
             &:not(.in-sticky):has(.open-filter) {
-                z-index: z() + 2;
+                z-index: z('dropdown') + 2;
             }
         }
     }

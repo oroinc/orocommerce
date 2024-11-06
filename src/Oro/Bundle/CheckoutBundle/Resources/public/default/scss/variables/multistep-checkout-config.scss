@@ -31,7 +31,7 @@ $multistep-checkout-footer-border-bottom: 1px solid get-color('neutral', 'grey2'
 $multistep-checkout-footer-grid-area: footer !default;
 $multistep-checkout-footer-position: sticky !default;
 $multistep-checkout-footer-bottom: 0 !default;
-$multistep-checkout-footer-z-index: z() + 1 !default;
+$multistep-checkout-footer-z-index: z('dropdown') + 1 !default;
 
 $multistep-checkout-footer-before-content: '' !default;
 $multistep-checkout-footer-before-background: linear-gradient(
