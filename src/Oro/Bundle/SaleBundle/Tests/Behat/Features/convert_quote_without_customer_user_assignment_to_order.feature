@@ -27,5 +27,6 @@ Feature: Convert Quote without customer user assignment to order
     And I click view Q123 in grid
     When I click "Accept and Submit to Order"
     And I click "Checkout"
+    And I click "Order products"
     Then Checkout "Order Summary Products Grid" should contain products:
       | Product1 | 5 | items |

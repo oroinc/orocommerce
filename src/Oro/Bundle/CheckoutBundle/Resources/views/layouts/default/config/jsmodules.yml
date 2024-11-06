@@ -13,6 +13,7 @@ dynamic-imports:
         - orocheckout/js/app/views/checkout-content-view
         - orocheckout/js/app/views/checkout-inner-content-view
         - orocheckout/js/app/views/late-checkout-registration-view
+        - orocheckout/js/datagrid/builder/grouped-line-items-subtotal-builder
         - tpl-loader!orocheckout/templates/datagrid/cell/inventory_status.html
         - tpl-loader!orocheckout/templates/datagrid/cell/item-message.html
         - tpl-loader!orocheckout/templates/datagrid/cell/item.html

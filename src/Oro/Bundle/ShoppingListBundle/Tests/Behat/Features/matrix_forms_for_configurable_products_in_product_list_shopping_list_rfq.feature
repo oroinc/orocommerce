@@ -317,6 +317,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Proceed"
     Then I should see "Some products have not been added to this order." flash message
     And I should see "Checkout"
+    And I click "Order products"
     And I should see "400-Watt Bulb Work Light"
     And I should not see "ConfigurableProductB"
     And click on "Flash Message Close Button"
@@ -354,6 +355,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     When I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
+    And I click "Order products"
     And I should see "ConfigurableProductB"
 
   Scenario: Create request for quote with configurable product
@@ -417,6 +419,7 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Create Order"
     Then I should not see "Confirmation This shopping list contains configurable products with no variations. Proceed to checkout without these products?"
     And I should see "Checkout"
+    And I click "Order products"
     And I should see "ConfigurableProductB"
     When I open shopping list widget
     And I click "View Details"

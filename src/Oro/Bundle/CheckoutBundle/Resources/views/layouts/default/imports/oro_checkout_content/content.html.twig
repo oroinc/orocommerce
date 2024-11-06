@@ -194,6 +194,39 @@
     {% endif %}
 {% endblock %}
 
+{% block __oro_checkout_content__checkout_order_additional_collapse_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-order-summary__additional_collapse_header"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_additional_collapse_header_items_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-order-summary__item"
+    }) %}
+
+    {% if lineItems is defined and itemsCount is not defined %}
+        {% set itemsCount = lineItems|length %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {{ 'oro.checkout.system_configuration.groups.items.label'|trans({'%count%': itemsCount|default(0)}) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_additional_collapse_header_subtotal_widget %}
+    {% if grid_full_name is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-role': grid_full_name ~ 'subtotal',
+            '~class': " checkout-order-summary__item bold"
+        }) %}
+        <span {{ block('block_attributes') }}></span>
+    {% endif %}
+{% endblock %}
+
 {% block __oro_checkout_content__checkout_order_summary_content_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " checkout-order-summary__content"

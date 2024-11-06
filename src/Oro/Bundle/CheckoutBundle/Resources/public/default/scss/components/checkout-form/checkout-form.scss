@@ -111,7 +111,7 @@
     }
 
     &__radio {
-        margin-bottom: spacing('sm');
+        flex-wrap: wrap;
 
         &:last-child {
             margin-bottom: 0;
@@ -128,7 +128,43 @@
     }
 
     .checkout-group-shipping-methods {
-        margin-bottom: spacing('base');
+        min-width: 320px;
+
+        .select2-chosen {
+            width: 100%;
+        }
+    }
+
+    &__shipping-methods-list {
+        max-width: 434px;
+
+        --checkbox-group-shipping-method-color: #{get-color('primary', 'base')};
+
+        .checkbox-label {
+            width: 100%;
+        }
+    }
+}
+
+.checkout-group-shipping-method-result {
+    display: flex;
+    gap: spacing('sm');
+    align-items: center;
+    width: 100%;
+
+    &__label {
+        max-width: $checkout-group-shipping-method-result-label-max-width;
+
+        @include ellipsis();
+
+        .select2-drop &,
+        .select2-choice & {
+            color: $checkout-group-shipping-method-result-label-color;
+        }
+    }
+
+    &__price {
+        margin-inline-start: auto;
     }
 }
 
@@ -177,6 +213,10 @@
 
         &__buttons {
             gap: spacing('base');
+        }
+
+        .checkout-group-shipping-methods {
+            min-width: 100%;
         }
     }
 }

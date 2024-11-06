@@ -1,7 +1,10 @@
+import $ from 'jquery';
 import StringCell from 'oro/datagrid/cell/string-cell';
 import NumberFormatter from 'orolocale/js/formatter/number';
 import mediator from 'oroui/js/mediator';
 import template from 'tpl-loader!oroshipping/templates/datagrid/cell/shipping-methods-cell.html';
+import multiShippingMethodsSelect2Template
+    from 'tpl-loader!oroshipping/templates/multi-shipping-methods-select2-template.html';
 
 import moduleConfig from 'module-config';
 const config = {
@@ -19,7 +22,7 @@ const ShippingMethodsCell = StringCell.extend({
         // events property should be a function to skip events delegation to the TR element
         // see `'orodatagrid/js/datagrid/cell-event-list'`
         return {
-            'change input[type=radio]': 'onChange'
+            'change [data-role="select-shipping-method"]': 'onChange'
         };
     },
 
@@ -40,7 +43,8 @@ const ShippingMethodsCell = StringCell.extend({
     },
 
     onChange(e) {
-        const methodType = this.$(e.target);
+        const data = $(e.target).inputWidget('data');
+        const methodType = $(data.element);
         const method = methodType.data('shipping-method');
         const type = methodType.data('shipping-type');
         const itemId = methodType.data('item-id');
@@ -68,6 +72,23 @@ const ShippingMethodsCell = StringCell.extend({
 
     render() {
         this.$el.html(this.template(this.getTemplateData()));
+
+        const selectFormat = state => {
+            return multiShippingMethodsSelect2Template({
+                ...state,
+                ...$(state.element).data(),
+                formatter: NumberFormatter
+            });
+        };
+
+        this.$('[data-role="select-shipping-method"]').inputWidget('create', 'select2', {
+            initializeOptions: {
+                minimumResultsForSearch: -1,
+                formatSelection: selectFormat,
+                formatResult: selectFormat
+            }
+        });
+
         return this;
     }
 });

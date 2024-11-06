@@ -89,6 +89,8 @@ define(function(require) {
 
             this.$transitionTriggers.css('cursor', 'pointer');
             this.$transitionTriggers.on('click.' + this.cid, this.transit.bind(this));
+
+            this.$el.trigger('operation-button:init');
         },
 
         /**
@@ -310,6 +312,7 @@ define(function(require) {
                 form => [...form.find('[form]')].map(input => this.unStashFormAttr(input))
             );
 
+            this.$el.trigger('operation-button:dispose');
             this.$el.off('.' + this.cid);
             this.$transitionTriggers.off('.' + this.cid);
 

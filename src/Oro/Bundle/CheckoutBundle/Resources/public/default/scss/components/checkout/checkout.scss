@@ -179,6 +179,14 @@
         &__content {
             padding-inline: spacing('base');
         }
+
+        &__botton-action {
+            width: 100%;
+
+            .tooltip-container {
+                width: 100%;
+            }
+        }
     }
 }
 

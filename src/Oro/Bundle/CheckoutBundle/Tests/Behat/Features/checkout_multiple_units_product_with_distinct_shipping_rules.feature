@@ -17,7 +17,7 @@ Feature: Checkout multiple units product with distinct shipping rules
     And I click "Create Order"
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Billing Information" checkout step and press Continue
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
-    And I should see "Flat Rate: <shippingPrice>"
+    And I should see "Flat Rate <shippingPrice>"
     And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | <subtotal>      |

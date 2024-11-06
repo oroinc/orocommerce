@@ -248,3 +248,6 @@ oro_behat_extension:
 
     Select2 results:
       selector: 'div.select2-drop-active ul.select2-results'
+
+    Flat Rate Shipping Method:
+      selector: '[data-shipping-method="flat_rate_1"]'

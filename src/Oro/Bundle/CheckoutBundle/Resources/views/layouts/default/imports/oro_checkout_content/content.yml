@@ -1,8 +1,13 @@
 layout:
     imports:
         -
-            id: checkout_line_items_grid
+            id: collapse_container
             root: __checkout_order_summary_line_items_container
+            namespace: checkout_order_summary_line_items
+
+        -
+            id: checkout_line_items_grid
+            root: checkout_order_summary_line_items_collapse_body
             namespace: checkout_order_summary_line_items
 
     actions:
@@ -24,6 +29,10 @@ layout:
             id: checkout_sidebar
             optionName: attr.class
             optionValue: 'multistep-checkout__steps-inner'
+        - '@setOption':
+            id: checkout_order_summary_line_items_collapse_toggle
+            optionName: vars.title
+            optionValue: oro.checkout.summary_item_title
         - '@add':
             id: order_taxes_template
             blockType: block
@@ -37,6 +46,23 @@ layout:
             parentId: checkout_order_summary_line_items_datagrid_toolbar_rightside_container
             options:
                 workflowItem: '=data["workflowItem"]'
+        - '@add':
+            id: __checkout_order_additional_collapse_header
+            blockType: container
+            parentId: checkout_order_summary_line_items_collapse_header
+
+        - '@add':
+            id: __checkout_order_additional_collapse_header_items
+            blockType: block
+            parentId: __checkout_order_additional_collapse_header
+            options:
+                vars:
+                    itemsCount: '=data["oro_checkout_line_items_totals"].getData(data["checkout"]).count()'
+
+        - '@add':
+            id: __checkout_order_additional_collapse_header_subtotal
+            blockType: block
+            parentId: __checkout_order_additional_collapse_header
 
         - '@addTree':
             items:

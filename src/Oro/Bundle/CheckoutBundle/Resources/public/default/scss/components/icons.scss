@@ -14,31 +14,31 @@
     }
 
     &_mastercard {
-        width: 39px;
-        height: 25px;
+        width: 42px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/mastercard.png') no-repeat;
+        background: url('#{$payment-icon-url}/mastercard.svg') no-repeat;
     }
 
     &_visa {
         width: 41px;
-        height: 25px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/visa.png') no-repeat;
+        background: url('#{$payment-icon-url}/visa.svg') no-repeat;
     }
 
     &_american_express {
-        width: 40px;
-        height: 25px;
+        width: 41px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/american_express.png') no-repeat;
+        background: url('#{$payment-icon-url}/american_express.svg') no-repeat;
     }
 
     &_discover {
-        width: 40px;
-        height: 25px;
+        width: 41px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/discover.png') no-repeat;
+        background: url('#{$payment-icon-url}/discover.svg') no-repeat;
     }
 
     &_jcb {

@@ -40,9 +40,9 @@ Feature: Single Page Checkout With Few Shipping Methods
     When I open page with shopping list List 1
     And I scroll to top
     And I click "Create Order"
-    Then Shipping Type "Flat Rate: $3.00" is shown for Buyer selection
-    And Shipping Type "Flat Rate 2: $2.00" is shown for Buyer selection
+    Then Shipping Type "Flat Rate $3.00" is shown for Buyer selection
+    And Shipping Type "Flat Rate 2 $2.00" is shown for Buyer selection
 
     When I reload the page
-    Then Shipping Type "Flat Rate: $3.00" is shown for Buyer selection
-    And Shipping Type "Flat Rate 2: $2.00" is shown for Buyer selection
+    Then Shipping Type "Flat Rate $3.00" is shown for Buyer selection
+    And Shipping Type "Flat Rate 2 $2.00" is shown for Buyer selection

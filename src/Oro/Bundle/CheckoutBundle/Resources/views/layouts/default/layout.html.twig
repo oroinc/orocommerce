@@ -65,7 +65,15 @@
 
     {% set attr = layout_attr_defaults(attr, {
         '~class': " btn checkout-form__btn-back",
-        'href': transitionUrl
+        'href': transitionUrl,
+        'data-responsive-styler': '',
+        'data-input-widget-options': {
+            responsive: {
+                'mobile-landscape': {
+                    classes: 'btn btn--outlined checkout-form__btn-back'
+                }
+            }
+        }
     }) %}
 
     <a {{ block('block_attributes') }}
