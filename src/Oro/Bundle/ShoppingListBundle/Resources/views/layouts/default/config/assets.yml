@@ -21,9 +21,7 @@ styles:
         - 'bundles/oroshoppinglist/default/scss/variables/responsive-shopping-list-grid/responsive-shopping-list-grid-view.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/responsive-shopping-list-grid/responsive-shopping-list-grid-edit-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/inline-editing/line-item-editing-config.scss'
-        - 'bundles/oroshoppinglist/default/scss/variables/cart-list-empty-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/shopping-list-owner-wrapper-config.scss'
-        - 'bundles/oroshoppinglist/default/scss/variables/my-shopping-list-owner-wrapper-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/responsive-product-kit-shopping-lists-grid-config.scss'
 
         - 'bundles/oroshoppinglist/default/scss/components/cart-list-empty.scss'
