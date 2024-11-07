@@ -2,15 +2,11 @@
 
 $consent-list-offset: 0 0 (spacing('sm') * 3) !default;
 
-$consent-list-item-position: relative !default;
+$consent-list-item-position: flex !default;
+$consent-list-item-gap: spacing('sm') !default;
 $consent-list-item-offset: 0 0 spacing('sm') !default;
 $consent-list-item-inner-offset: 0 0 0 20px !default;
 $consent-list-item-word-break: break-word !default;
 
-$consent-list-status-position: absolute !default;
-$consent-list-status-left: 0 !default;
-
-$consent-list-status-enabled: '' !default;
 $consent-list-status-enabled-color: get-color('success', 'dark') !default;
-$consent-list-status-disabled: '' !default;
 $consent-list-status-disabled-color: get-color('destructive', 'base') !default;

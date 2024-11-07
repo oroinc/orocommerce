@@ -8,16 +8,6 @@
     </div>
 {% endblock %}
 
-{% block _quote_view_controls_list_widget %}
-    {% apply spaceless %}
-    <ul class="controls-list">
-        <li><a href="#"><i class="fa-reply"></i>Share</a></li>
-        <li><a href="#"><i class="fa-print"></i>Print</a></li>
-        <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
-    </ul>
-    {% endapply %}
-{% endblock %}
-
 {% block _quote_view_top_bar_status_widget %}
     {% import '@OroUI/layouts/renderStatus.html.twig' as renderStatus %}
     {{ renderStatus.status({

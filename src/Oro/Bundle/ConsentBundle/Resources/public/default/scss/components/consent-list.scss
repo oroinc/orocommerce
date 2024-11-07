@@ -6,25 +6,19 @@
     }
 
     &__item {
-        position: $consent-list-item-position;
+        display: $consent-list-item-position;
+        gap: $consent-list-item-gap;
         margin: $consent-list-item-offset;
         padding: $consent-list-item-inner-offset;
         word-break: $consent-list-item-word-break;
     }
 
     &__status {
-        position: $consent-list-status-position;
-        left: $consent-list-status-left;
-
         &--enabled {
-            @include fa-icon($consent-list-status-enabled);
-
             color: $consent-list-status-enabled-color;
         }
 
         &--disabled {
-            @include fa-icon($consent-list-status-disabled);
-
             color: $consent-list-status-disabled-color;
         }
     }

@@ -15,9 +15,10 @@
             {{ form_widget(form) }}
         </div>
         <div class="request-form-lineitem-unit__kit">
-            {{ UI.clientLink({
+            {% import '@OroUI/layouts/macros.html.twig' as LayoutUI %}
+            {{ LayoutUI.clientLink({
                 'aCss': 'btn btn--default btn--size-s',
-                'iCss': 'fa-pencil-square-o',
+                'icon': 'pencil',
                 'label': 'oro.frontend.rfp.request_product_kit_configuration_view.edit_button.label'|trans,
                 'ariaLabel': 'oro.frontend.rfp.request_product_kit_configuration_view.edit_button.aria_label'|trans,
                 'ariaHaspopup': true,
