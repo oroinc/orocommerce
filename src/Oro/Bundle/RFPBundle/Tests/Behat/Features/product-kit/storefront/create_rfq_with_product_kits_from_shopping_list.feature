@@ -69,10 +69,9 @@ Feature: Create RFQ with Product Kits from Shopping List
 
   Scenario: Check submitted request
     Then I should see RFQ with data:
-      | First Name    | Amanda                  |
-      | Last Name     | Cole                    |
-      | Email         | AmandaRCole@example.org |
-      | PO Number     | PO013                   |
+      | Contact Person    | Amanda Cole             |
+      | Email Address     | AmandaRCole@example.org |
+      | PO Number         | PO013                   |
     And I should see next rows in "Storefront Request Line Items Table" table
       | Item                                                                                                                     | Requested Quantity | Target Price |
       | Product Kit 01 Item #: product-kit-01 Mandatory Item 1 piece Simple Product 01                                           | 1 pc               | $124.00      |

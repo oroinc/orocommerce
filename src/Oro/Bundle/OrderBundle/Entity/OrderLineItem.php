@@ -11,6 +11,7 @@ use Doctrine\ORM\Mapping\OrderBy;
 use Extend\Entity\Autocomplete\OroOrderBundle_Entity_OrderLineItem;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
@@ -53,6 +54,7 @@ class OrderLineItem implements
     ProductLineItemsHolderAwareInterface,
     ExtendEntityInterface
 {
+    use DatesAwareTrait;
     use ExtendEntityTrait;
 
     #[ORM\Id]
@@ -608,6 +610,19 @@ class OrderLineItem implements
     {
         $this->updatePrice();
         $this->updateItemInformation();
+    }
+
+    #[ORM\PrePersist]
+    public function prePersist()
+    {
+        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->updatedAt = clone $this->createdAt;
+    }
+
+    #[ORM\PreUpdate]
+    public function preUpdate()
+    {
+        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     public function updatePrice()

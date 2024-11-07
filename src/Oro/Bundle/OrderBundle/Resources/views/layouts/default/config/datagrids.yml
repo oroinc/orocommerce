@@ -56,9 +56,14 @@ datagrids:
                 select:
                     - partial order1.{id, shippingAddress}
                     - (CASE WHEN (order1.createdBy IS NOT NULL) THEN 1 ELSE 2 END) as createdBySeller
+                    - shippingStatus.id as shippingStatusId
+                    - shippingStatus.name as shippingStatusName
                 join:
                     left:
                         - { join: order1.shippingAddress, alias: shippingAddress }
+                        - { join: Oro\Bundle\EntityExtendBundle\Entity\EnumOption, alias: shippingStatus, conditionType: WITH, condition: "JSON_EXTRACT(order1.serialized_data, 'shippingStatus') = shippingStatus" }
+            hints:
+                - HINT_TRANSLATABLE
         columns:
             identifier:
                 label: oro.order.identifier.label
@@ -120,6 +125,10 @@ datagrids:
                 template: '@OroOrder/Order/Datagrid/frontendShippingAddress.html.twig'
                 frontend_type: html
                 renderable: false
+            shippingStatus:
+                label: oro.order.shipping_status.label
+                data_name: shippingStatusName
+                renderable: false
             shipUntil:
                 label: oro.order.ship_until.label
                 frontend_type: date
@@ -142,6 +151,8 @@ datagrids:
                     data_name: subtotal
                 total:
                     data_name: total
+                shippingStatus:
+                    data_name: shippingStatusName
                 shipUntil:
                     data_name: order1.shipUntil
             default:
@@ -193,6 +204,15 @@ datagrids:
                         field_options:
                             choices: "@oro_payment.formatter.payment_status_label->getAvailableStatuses"
                             translatable_options: false
+                shippingStatus:
+                    type: choice
+                    data_name: shippingStatusId
+                    options:
+                        field_options:
+                            choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('order_shipping_status')"
+                            translatable_options: false
+                            multiple: true
+                    renderable: false
                 shipUntil:
                     type: date
                     data_name: order1.shipUntil

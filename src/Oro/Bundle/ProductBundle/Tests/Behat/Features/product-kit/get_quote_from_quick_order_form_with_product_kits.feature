@@ -1,7 +1,7 @@
 @feature-BB-22738
 @fixture-OroProductBundle:quick_order_form_with_product_kits__product.yml
 
-Feature: Get Order from Quick order form with Product Kits
+Feature: Get Quote from Quick order form with Product Kits
 
   Scenario: Product Kit can be selected in Quick Order Form
     Given I login as AmandaRCole@example.org buyer

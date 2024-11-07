@@ -516,9 +516,9 @@ class PriceListRuleCompilerTest extends WebTestCase
         /** @var ProductUnit $unitLitre */
         $unitLitre = $this->getReference(LoadProductUnits::LITER);
 
-        $condition = '(product.category == '.$category1->getId()
-            .' or product.category == '.$category2->getId().')'
-            ." and product.price_attribute_price_list_1.currency == 'USD'";
+        $condition = '(product.category == ' . $category1->getId()
+            . ' or product.category == ' . $category2->getId() . ')'
+            . " and product.price_attribute_price_list_1.currency == 'USD'";
 
         $rule = 'product.price_attribute_price_list_1.value * 10';
 
@@ -750,6 +750,78 @@ class PriceListRuleCompilerTest extends WebTestCase
         $this->assertEmpty($actual);
     }
 
+    /**
+     * @dataProvider divisionByZeroDataProvider
+     */
+    public function testDivisionByZero(
+        string $qtyEpr,
+        string $ruleExpr,
+        ?string $conditionExpr
+    ): void {
+        /** @var ProductUnit $unitLitre */
+        $unitLitre = $this->getReference(LoadProductUnits::LITER);
+        /** @var Product $product2 */
+        $product2 = $this->getReference(LoadProductData::PRODUCT_2);
+
+        $mainPriceList = $this->createPriceList();
+        $this->assignProducts($mainPriceList, [$product2]);
+        $manualPrice = new ProductPrice();
+        $manualPrice->setPriceList($mainPriceList)
+            ->setProduct($product2)
+            ->setQuantity(1)
+            ->setUnit($unitLitre)
+            ->setPrice(Price::create(500, 'EUR'));
+        $priceManager = self::getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($manualPrice);
+        $priceManager->flush();
+
+        $priceList = $this->createPriceList();
+        $priceList->setProductAssignmentRule('product.id > 0');
+
+        $priceRule = new PriceRule();
+        $priceRule
+            ->setCurrencyExpression(sprintf('pricelist[%d].prices.currency', $mainPriceList->getId()))
+            ->setPriceList($priceList)
+            ->setPriority(1)
+            ->setQuantityExpression(sprintf($qtyEpr, $mainPriceList->getId()))
+            ->setProductUnitExpression(sprintf('pricelist[%d].prices.unit', $mainPriceList->getId()))
+            ->setRuleCondition(sprintf($conditionExpr, $mainPriceList->getId()))
+            ->setRule(sprintf($ruleExpr, $mainPriceList->getId()));
+
+        $em = $this->doctrine->getManagerForClass(PriceRule::class);
+        $em->persist($priceRule);
+        $em->flush();
+
+        $qb = $this->getQueryBuilder($priceRule);
+        $actual = $this->getActualResult($qb);
+        $this->assertEmpty($actual);
+    }
+
+    public static function divisionByZeroDataProvider(): array
+    {
+        return [
+            [
+                'qtyExpr' => 'pricelist[%1$s].prices.quantity' .
+                    '/(pricelist[%1$s].prices.quantity - pricelist[%1$s].prices.quantity)',
+                'ruleExpr' => 'pricelist[%1$s].prices.value',
+                'conditionExpr' => null
+            ],
+            [
+                'qtyExpr' => 'pricelist[%1$s].prices.quantity',
+                'ruleExpr' =>
+                    'pricelist[%1$s].prices.value*10/(pricelist[%1$s].prices.value - pricelist[%1$s].prices.value)',
+                'conditionExpr' => null
+            ],
+            [
+                'qtyExpr' => 'pricelist[%1$s].prices.quantity',
+                'ruleExpr' => 'pricelist[%1$s].prices.value',
+                'conditionExpr' => '(pricelist[%1$s].prices.quantity' .
+                    '/(pricelist[%1$s].prices.quantity - pricelist[%1$s].prices.quantity)' .
+                    ' + 20/(pricelist[%1$s].prices.value - pricelist[%1$s].prices.value)) > 0',
+            ]
+        ];
+    }
+
     private function createPriceList(): PriceList
     {
         $priceList = new PriceList();
@@ -769,7 +841,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         $qb = $this->compiler->compile($priceRule, $products);
         $aliases = $qb->getRootAliases();
         $rootAlias = reset($aliases);
-        $qb->orderBy($rootAlias.'.id');
+        $qb->orderBy($rootAlias . '.id');
 
         return $qb;
     }

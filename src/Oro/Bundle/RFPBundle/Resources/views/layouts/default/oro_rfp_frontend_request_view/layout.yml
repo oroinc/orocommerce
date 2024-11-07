@@ -2,10 +2,12 @@ layout:
     imports:
         -
             id: oro_customer_page
+
         -
-            id: oro_customer_toolbar_actions
+            id: oro_customer_top_bar
             root: rfp_request_view_page
-            namespace: rfp_request_view_toolbar
+            namespace: rfp_request_view_top_bar
+
         -
             id: oro_rfp_frontend_request_view_product_kit_configuration
             root: rfp_request_view_line_item_product_item_attributes
@@ -13,33 +15,11 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroRFP/layouts/default/oro_rfp_frontend_request_view/layout.html.twig'
-        - '@setOption':
-            id: title
-            optionName: params
-            optionValue:
-                '%id%': '=data["entity"].getId()'
-                '%firstName%': '=data["entity"].getFirstName()'
-                '%lastName%': '=data["entity"].getLastName()'
-        - '@setOption':
-            id: page_title
-            optionName: class_prefix
-            optionValue: 'customer'
-        - '@setOption':
-            id: page_title
-            optionName: defaultValue
-            optionValue:
-                label: 'oro.frontend.rfp.request.title.label'
-                parameters:
-                    '%id%': '=data["entity"].getId()'
+
         - '@addTree':
             items:
                 rfp_request_view_page:
                     blockType: container
-                rfp_request_view_toolbar_actions:
-                    blockType: line_buttons
-                    options:
-                        visible: '=data["entity"]!=null'
-                        buttons: '=data["buttons"].getAll(data["entity"])'
                 rfp_request_view_information:
                     blockType: rfp_request_information
                     options:
@@ -73,14 +53,7 @@ layout:
                     blockType: block
                 rfp_request_view_bottom:
                     blockType: container
-                rfp_request_view_back_btn:
-                    blockType: link
-                    options:
-                        route_name: oro_rfp_frontend_request_index
-                        text: 'oro.frontend.rfp.request.sections.back.label'
-                        icon: arrow-left
-                        attr:
-                            class: 'btn btn--no-padding btn--text btn--outlined btn--size-small hide-on-print'
+
             tree:
                 page_content:
                     rfp_request_view_page:
@@ -96,24 +69,44 @@ layout:
                                 rfp_request_view_line_item_product_quantity: ~
                                 rfp_request_view_line_item_product_price: ~
                             rfp_request_view_line_item_comment: ~
-                        rfp_request_view_bottom:
-                            rfp_request_view_back_btn: ~
-        - '@add':
-            id: rfp_request_view_customer_status
-            parentId: rfp_request_view_toolbar_wrapper
-            blockType: text
-            prepend: true
-            options:
-                visible: '=data["entity"].getCustomerStatus()!=null'
-                text: '=data["entity"].getCustomerStatus().getName()'
-        - '@add':
-            id: rfp_request_view_toolbar_actions
-            parentId: rfp_request_view_toolbar_actions_container
-            blockType: line_buttons
-            options:
-                visible: '=data["entity"]!=null'
-                buttons: '=data["buttons"].getAll(data["entity"])'
+
         - '@setOption':
-            id: rfp_request_view_toolbar_print_button
-            optionName: text
-            optionValue: 'oro.frontend.rfp.toolbar-actions.btn.print'
+              id: title
+              optionName: params
+              optionValue:
+                  '%id%': '=data["entity"].getId()'
+                  '%firstName%': '=data["entity"].getFirstName()'
+                  '%lastName%': '=data["entity"].getLastName()'
+
+        - '@setOption':
+              id: page_title
+              optionName: defaultValue
+              optionValue:
+                  label: 'oro.frontend.rfp.request.title.label'
+                  parameters:
+                      '%id%': '=data["entity"].getId()'
+
+        - '@setOption':
+              id: rfp_request_view_top_bar_back_button
+              optionName: route_name
+              optionValue: oro_rfp_frontend_request_index
+
+        - '@setOption':
+              id: rfp_request_view_top_bar_action_list
+              optionName: buttons
+              optionValue: '=data["buttons"].getAll(data["entity"])'
+
+        - '@setOption':
+              id: rfp_request_view_top_bar_action_list
+              optionName: visible
+              optionValue: '=data["entity"]!=null'
+
+        - '@setOption':
+              id: rfp_request_view_top_bar_status
+              optionName: visible
+              optionValue: '=data["entity"].getCustomerStatus()!=null'
+
+        - '@setOption':
+              id: rfp_request_view_top_bar_status
+              optionName: text
+              optionValue: '=data["entity"].getCustomerStatus()'

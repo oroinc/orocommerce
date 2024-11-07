@@ -9,7 +9,7 @@ use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumOptionRepository;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
- * Loads order internal status enum options fixtures
+ * Loads order internal statuses.
  */
 class LoadOrderInternalStatuses extends AbstractFixture
 {

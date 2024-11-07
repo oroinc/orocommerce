@@ -65,7 +65,7 @@ api:
                     description: Get Web Catalog Tree Node
                 get_list:
                     description: Get Web Catalog Tree Nodes
-                    page_size: -1 # disable paging
+                    disable_paging: true
                     disable_sorting: true
                 create: false
                 update: false
@@ -78,10 +78,10 @@ api:
                         exclusion_policy: all
                     actions:
                         get_relationship:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                             disable_sorting: true
                         get_subresource:
-                            page_size: -1 # disable paging
+                            disable_paging: true
                             disable_sorting: true
 
         Oro\Bundle\WebCatalogBundle\Api\Model\SystemPage:

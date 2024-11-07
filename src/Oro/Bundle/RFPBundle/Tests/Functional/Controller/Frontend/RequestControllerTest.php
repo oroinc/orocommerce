@@ -196,7 +196,7 @@ class RequestControllerTest extends WebTestCase
         }
 
         if (isset($expectedData['hideButtonEdit'])) {
-            $buttonEdit = $crawler->filter('.controls-list')->html();
+            $buttonEdit = $crawler->filter('.page-title-actions')->html();
             self::assertStringNotContainsString('edit', $buttonEdit);
         }
     }

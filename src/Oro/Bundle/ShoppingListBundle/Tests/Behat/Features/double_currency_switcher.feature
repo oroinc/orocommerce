@@ -1,7 +1,7 @@
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
-Feature: Sidebar menu currency footer
+Feature: Double currency switcher
   Double currency should renders inside a footer content
 
   Scenario: Create different window session

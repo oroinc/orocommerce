@@ -1,7 +1,7 @@
 @regression
 @ticket-BB-22609
 
-Feature: Price list rules. Attribute dependent Price List
+Feature: Price list rules Attribute dependent Price List
 
   Scenario: Create Admin Session
     And I login as administrator

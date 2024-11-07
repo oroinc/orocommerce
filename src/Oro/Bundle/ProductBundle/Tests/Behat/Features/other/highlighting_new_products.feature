@@ -10,7 +10,7 @@ Feature: Highlighting new products
 #  Type - Yes/No drop-down
 #  Default value - "No"
 #  Hint -
-#  When set to "Yes" the product will be highlighted on the store frontend.
+#  When set to "Yes" the product will be highlighted on the storefront.
 #  Modify the default frontend theme to highlight the new products (see the design below):
 #  on grid views with images - show an additional stamp "New" on the product image
 #  on the no-image-view - show "New Arrival" label below the "Item #: 1234" string

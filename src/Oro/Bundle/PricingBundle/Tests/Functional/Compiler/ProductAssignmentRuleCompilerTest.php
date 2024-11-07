@@ -164,6 +164,38 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @dataProvider expressionsWithDivisionByZeroDataProvider
+     */
+    public function testCompileRuleWithDivisionByZero(string $expression)
+    {
+        $basePriceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
+        $priceList = $this->createPriceList(sprintf($expression, $basePriceList->getId()));
+        $qb = $this->getQueryBuilder($priceList);
+        $actual = $this->getActualResult($qb);
+        $this->assertEmpty($actual);
+
+        // Check that cache does not affect results
+        $qb = $this->getQueryBuilder($priceList);
+        $actual = $this->getActualResult($qb);
+        $this->assertEmpty($actual);
+    }
+
+    public static function expressionsWithDivisionByZeroDataProvider(): array
+    {
+        return [
+            'one division' => ['product.id in pricelist[%1$s].assignedProducts' .
+                ' and 100/(pricelist[%1$s].id - %1$s) > 0'],
+            'two divisions' => [
+                'product.id in pricelist[%1$s].assignedProducts ' .
+                'and 100/(pricelist[%1$s].id - %1$s) > 0 ' .
+                'and (2200/(pricelist[%1$s].id - %1$s) + 2) > 0'
+            ],
+            'modulo' => ['product.id in pricelist[%1$s].assignedProducts ' .
+                'and 100%%(pricelist[%1$s].id - %1$s) > 0'],
+        ];
+    }
+
     public function testCompileWithManuallyAssigned()
     {
         /** @var Product $product1 */

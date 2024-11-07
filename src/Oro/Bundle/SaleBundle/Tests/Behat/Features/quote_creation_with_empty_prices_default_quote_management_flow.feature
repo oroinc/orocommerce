@@ -90,7 +90,7 @@ Feature: Quote creation with empty prices (Default Quote Management Flow)
       | Product1 SKU #: psku1 | 1 item or more | $1.00      |
       | Product1 SKU #: psku1 | 1 item or more | $0.00      |
     When click "Accept and Submit to Order"
-    And click "Submit"
+    And click "Checkout"
     Then Page title equals to "Billing Information - Checkout"
     And Checkout "Order Summary Products Grid" should contain products:
       | Product1 | 1 | item |

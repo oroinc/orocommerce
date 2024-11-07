@@ -21,9 +21,9 @@ Feature: Product attribute string
       | Field Name | StringField |
       | Type       | String      |
     And I click "Continue"
-    Then I should see that "Product Attribute Frontend Options" contains "Searchable"
-    And I should see that "Product Attribute Frontend Options" contains "Filterable"
-    And I should see that "Product Attribute Frontend Options" contains "Sortable"
+    Then I should see that "Product Attribute Storefront Options" contains "Searchable"
+    And I should see that "Product Attribute Storefront Options" contains "Filterable"
+    And I should see that "Product Attribute Storefront Options" contains "Sortable"
 
     When I fill form with:
       | Searchable | Yes |

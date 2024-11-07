@@ -36,7 +36,7 @@ oro:
             no.label: No
         customer:
             label:                        Customer
-            description:                  Customers are companies who buy products using OroCommerce store frontend. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
+            description:                  Customers are companies who buy products using OroCommerce storefront. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
             quick_access_button:
                 new_order:
                     label: New Order
@@ -46,7 +46,7 @@ oro:
                         title: Create Order
         customer_user:
             label:                        Customer User
-            description:                  Customer User represents a person who acts on behalf of the company to buy products using OroCommerce store frontend.
+            description:                  Customer User represents a person who acts on behalf of the company to buy products using OroCommerce storefront.
             quick_access_button:
                 new_order:
                     label: New Order
@@ -69,7 +69,7 @@ oro:
             label:                        PO Number
             description:                  A purchase order number provided by the buyer, if any.
         ship_until:
-            label:                        Do Not Ship Later Than
+            label:                        Ship by
             description:                  The latest shipping date that is acceptable to the customer user.
         payment_method.label:             Payment Method
         payment_status.label:             Payment Status
@@ -112,6 +112,9 @@ oro:
         status:
             label:                        Status
             description:                  An order status is managed by an external system and visible when "Enable External Status Management" configuration option is enabled.
+        shipping_status:
+            label:                        Shipping Status
+            description:                  Indicates whether an order is partially or fully shipped.
         recency.label:                    'Recency'
         parent:
             label:                        'Parent Order'

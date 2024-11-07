@@ -33,6 +33,8 @@ features:
         dashboard_widgets:
             - sales_orders_volume
             - sales_orders_number
+        workflows:
+            - order_processing_flow
 
     create_orders:
         label: oro.order.feature.create.label

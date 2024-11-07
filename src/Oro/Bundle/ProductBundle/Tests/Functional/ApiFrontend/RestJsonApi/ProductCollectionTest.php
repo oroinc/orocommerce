@@ -284,18 +284,20 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
 
         $url = '{baseUrl}/productcollection/' . $this->getReference('catalog1_node11_variant1')->getId();
         $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
-        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
-            'data' => [
-                'relationships' => [
-                    'products' => [
-                        'links' => [
-                            'next' => $urlWithFilter . '&page%5Bsize%5D=2&page%5Bnumber%5D=2'
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'relationships' => [
+                        'products' => [
+                            'links' => [
+                                'next' => $urlWithFilter . '&page%5Bsize%5D=2&page%5Bnumber%5D=2'
+                            ]
                         ]
                     ]
                 ]
-            ]
-        ]);
-        $this->assertResponseContains($expectedLinks, $response);
+            ],
+            $response
+        );
         self::assertCount(2, self::jsonToArray($response->getContent())['data']['relationships']['products']['data']);
     }
 
@@ -309,19 +311,21 @@ class ProductCollectionTest extends WebCatalogTreeTestCase
 
         $url = '{baseUrl}/productcollection/' . $this->getReference('catalog1_node11_variant1')->getId();
         $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
-        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
-            'data' => [
-                'relationships' => [
-                    'products' => [
-                        'links' => [
-                            'first' => $urlWithFilter . '&page%5Bsize%5D=2',
-                            'prev'  => $urlWithFilter . '&page%5Bsize%5D=2'
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'relationships' => [
+                        'products' => [
+                            'links' => [
+                                'first' => $urlWithFilter . '&page%5Bsize%5D=2',
+                                'prev'  => $urlWithFilter . '&page%5Bsize%5D=2'
+                            ]
                         ]
                     ]
                 ]
-            ]
-        ]);
-        $this->assertResponseContains($expectedLinks, $response);
+            ],
+            $response
+        );
         self::assertCount(1, self::jsonToArray($response->getContent())['data']['relationships']['products']['data']);
     }
 }

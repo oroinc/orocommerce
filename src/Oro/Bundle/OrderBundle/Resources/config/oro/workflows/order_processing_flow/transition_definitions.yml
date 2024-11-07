@@ -1,0 +1,45 @@
+workflows:
+    order_processing_flow:
+        transition_definitions:
+            create_definition:
+                actions:
+                    - '@request_enum_entity':
+                          enum_code: order_internal_status
+                          identifier: order_internal_status.pending
+                          attribute: $order.internal_status
+            confirm_definition:
+                actions:
+                    - '@request_enum_entity':
+                          enum_code: order_internal_status
+                          identifier: order_internal_status.open
+                          attribute: $order.internal_status
+            process_definition:
+                actions:
+                    - '@request_enum_entity':
+                          enum_code: order_internal_status
+                          identifier: order_internal_status.processing
+                          attribute: $order.internal_status
+            mark_as_shipped_definition:
+                preconditions:
+                    '@not_equal': [$order.shipping_status.internalId, shipped]
+                actions:
+                    - '@request_enum_entity':
+                          enum_code: order_internal_status
+                          identifier: order_internal_status.processing
+                          attribute: $order.internal_status
+                    - '@request_enum_entity':
+                          enum_code: order_shipping_status
+                          identifier: order_shipping_status.shipped
+                          attribute: $order.shippingStatus
+            complete_definition:
+                actions:
+                    - '@request_enum_entity':
+                          enum_code: order_internal_status
+                          identifier: order_internal_status.closed
+                          attribute: $order.internal_status
+            decline_definition:
+                actions:
+                    - '@request_enum_entity':
+                          enum_code: order_internal_status
+                          identifier: order_internal_status.cancelled
+                          attribute: $order.internal_status

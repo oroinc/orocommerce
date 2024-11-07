@@ -273,14 +273,16 @@
 {% endblock %}
 
 {% block _product_view_brand_inventory_status_widget %}
-    {% set inventoryStatus = oro_inventory_status_code(product) %}
-    {% set statusesMap = {
-        'in_stock': 'success',
-        'out_of_stock': 'destructive',
-        'discontinued': 'destructive'
-    } %}
-    {% set status = attribute(statusesMap, inventoryStatus) is defined ? ' status-label--' ~ statusesMap[inventoryStatus] : '' %}
-    <span class="status-label{{ status }}">{{- oro_inventory_status_label(product) -}}</span>
+    {% import '@OroUI/layouts/renderStatus.html.twig' as renderStatus %}
+    {{ renderStatus.status({
+        label: oro_inventory_status_label(product),
+        code: oro_inventory_status_code(product),
+        map: {
+            'prod_inventory_status.in_stock': 'success',
+            'prod_inventory_status.out_of_stock': 'destructive',
+            'prod_inventory_status.discontinued': 'destructive'
+        }
+    }) }}
 {% endblock %}
 
 {% block _product_view_attribute_group_general_widget %}

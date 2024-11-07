@@ -218,6 +218,52 @@ class CustomerPriceTest extends RestJsonApiTestCase
         );
     }
 
+    public function testGetListForUnauthorizedUser(): void
+    {
+        $response = $this->cget(
+            ['entity' => 'customerprices'],
+            [
+                'filter' => [
+                    'customer' => 0,
+                    'website' => '@US->id',
+                    'product' => ['@product-1->id'],
+                    'unit' => 'liter'
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    [
+                        'type' => 'customerprices',
+                        'id' => '<(implode("-", ["0", @US->id, @product-1->id, "USD-liter-10"]))>',
+                        'attributes' => [
+                            'currency' => 'USD',
+                            'quantity' => 10,
+                            'value' => '1.2000'
+                        ],
+                        'relationships' => [
+                            'unit' => [
+                                'data' => ['type' => 'productunits', 'id' => 'liter']
+                            ],
+                            'product' => [
+                                'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                            ],
+                            'customer' => [
+                                'data' => null
+                            ],
+                            'website' => [
+                                'data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testGetListWithFieldsFilter(): void
     {
         $response = $this->cget(
@@ -337,11 +383,6 @@ class CustomerPriceTest extends RestJsonApiTestCase
                         'type' => 'productunits',
                         'id' => 'bottle',
                         'attributes' => ['label' => 'bottle']
-                    ],
-                    [
-                        'type' => 'productunits',
-                        'id' => 'liter',
-                        'attributes' => ['label' => 'liter']
                     ]
                 ]
             ],
@@ -356,7 +397,7 @@ class CustomerPriceTest extends RestJsonApiTestCase
             ['filter' => ['website' => 999999, 'customer' => '@customer.level_1->id', 'product' => ['@product-1->id']]]
         );
 
-        $this->assertResponseContains([], $response);
+        $this->assertResponseContains(['data' => []], $response);
     }
 
     public function testGetListForNotExistingCustomer(): void
@@ -366,7 +407,7 @@ class CustomerPriceTest extends RestJsonApiTestCase
             ['filter' => ['customer' => 999999, 'website' => '@US->id', 'product' => ['@product-1->id']]]
         );
 
-        $this->assertResponseContains([], $response);
+        $this->assertResponseContains(['data' => []], $response);
     }
 
     public function testGetListForNotExistingProduct(): void
@@ -376,7 +417,7 @@ class CustomerPriceTest extends RestJsonApiTestCase
             ['filter' => ['product' => 999999, 'customer' => '@customer.level_1->id', 'website' => '@US->id']]
         );
 
-        $this->assertResponseContains([], $response);
+        $this->assertResponseContains(['data' => []], $response);
     }
 
     public function testTryToGet(): void

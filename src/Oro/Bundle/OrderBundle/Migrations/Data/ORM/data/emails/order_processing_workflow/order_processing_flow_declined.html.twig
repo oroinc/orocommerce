@@ -1,0 +1,22 @@
+{# @name = order_processing_flow_declined #}
+{# @entityName = Oro\Bundle\OrderBundle\Entity\Order #}
+{# @subject = Order Declined - #{{ entity.identifier }} #}
+{# @isSystem = 1 #}
+{# @isEditable = 1 #}
+
+{% extends oro_get_email_template('base_storefront') %}
+
+{% block content %}
+    <h1 style="{{ styleH1 }}">Hello {{ entity.customerUser|oro_format_name }},</h1>
+
+    <!--empty space-->
+    <table role="presentation" border="0" cellspacing="0" cellpadding="0">
+        <tr>
+            <td height="12" style="{{ styleEmptyRowH12 }}">&nbsp;</td>
+        </tr>
+    </table>
+
+    <p style="{{ styleP }}">Unfortunately, we were unable to process your recent order with us.</p>
+    <p style="{{ styleP }}">We apologize for any inconvenience and look forward to helping you complete your order.</p>
+{% endblock content %}
+

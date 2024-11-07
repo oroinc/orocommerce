@@ -357,3 +357,46 @@ services:
             - '@oro_order.provider.configuration'
         tags:
             - { name: oro.api.processor, action: create, group: normalize_input, requestType: frontend&json_api, class: Oro\Bundle\OrderBundle\Entity\Order, priority: -30 }
+
+    oro_order.api.order_subtotal_repository:
+        class: Oro\Bundle\OrderBundle\Api\Repository\OrderSubtotalRepository
+        arguments:
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@security.authorization_checker'
+
+    oro_order.api.handle_order_subtotal_filters:
+        class: Oro\Bundle\OrderBundle\Api\Processor\HandleOrderSubtotalFilters
+        tags:
+            - { name: oro.api.processor, action: get_list, group: normalize_input, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal, priority: -120 }
+
+    oro_order.api.load_order_subtotals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\LoadOrderSubtotals
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_order.api.order_subtotal_repository'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal }
+
+    oro_order.api.expand_order_subtotals_associated_entities:
+        class: Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\ExpandAssociatedEntities
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', collection: true, class: Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal, priority: 100 }
+
+    oro_order.api.compute_order_subtotals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\ComputeOrderSubtotals
+        arguments:
+            - '@oro_order.api.order_subtotal_repository'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.object_normalizer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: '!frontend', collection: true, class: Oro\Bundle\OrderBundle\Entity\Order }
+
+    oro_order.api.remember_order_subtotals:
+        class: Oro\Bundle\OrderBundle\Api\Processor\RememberOrderSubtotals
+        arguments:
+            - '@oro_order.api.order_subtotal_repository'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: rollback_validated_request, requestType: '!frontend', parentAction: create, class: Oro\Bundle\OrderBundle\Entity\Order }

@@ -36,10 +36,9 @@ Feature: RFQ with fractional price
 
     When I click "Submit Request"
     Then I should see RFQ with data:
-      | First Name    | Amanda                  |
-      | Last Name     | Cole                    |
-      | Email         | AmandaRCole@example.org |
-      | Company       | first customer          |
+      | Contact Person | Amanda Cole             |
+      | Email Address  | AmandaRCole@example.org |
+      | Company        | first customer          |
 
   Scenario: Create order from RFQ in back-office
     Given I login as administrator

@@ -35,7 +35,7 @@ Feature: Image with svg mime type on Landing page
     And "Example1 svg wysiwyg picture source" element "srcset" attribute should contain "-tiger.svg"
     And "Example1 svg wysiwyg picture source" element "srcset" attribute should not contain "-tiger.svg.webp"
 
-    When I go to System/Frontend Menus
+    When I go to System/Storefront Menus
     And click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:

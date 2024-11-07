@@ -1,3 +1,7 @@
+parameters:
+    # the group name for workflows responsible for order processing
+    oro_order.order_processing_workflow_group: 'order_processing'
+
 services:
     oro_order.order.entity.id_generator:
         class: 'Oro\Bundle\OrderBundle\Doctrine\ORM\Id\SimpleEntityAwareGenerator'
@@ -16,6 +20,15 @@ services:
         public: false
         arguments:
             - '@oro_order.provider.configuration'
+            - '@doctrine'
+            - '@oro_workflow.manager'
+            - '%oro_order.order_processing_workflow_group%'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
+
+    oro_order.order.listener.orm.order_shipping_status_listener:
+        class: Oro\Bundle\OrderBundle\EventListener\ORM\OrderShippingStatusListener
+        arguments:
             - '@doctrine'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist}
@@ -77,7 +90,7 @@ services:
         arguments:
             - '@oro_order.order.provider.order_address'
             - '@doctrine'
-            - 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+            - '@property_accessor'
         calls:
             - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
             - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]
@@ -294,11 +307,54 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_order_frontend_multi_shipping_provider }
 
+    oro_order.acl.voter.edit_order:
+        class: 'Oro\Bundle\OrderBundle\Acl\Voter\EditOrderVoter'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        calls:
+            - [setClassName, ['Oro\Bundle\OrderBundle\Entity\Order']]
+        tags:
+            - { name: security.voter }
+
     oro_order.acl.voter.sub_order_view:
         class: 'Oro\Bundle\OrderBundle\Acl\Voter\SubOrderViewVoter'
         arguments:
             - '@oro_checkout.provider.multi_shipping_config'
             - '@request_stack'
+        tags:
+            - { name: security.voter }
+
+    oro_order.access_rule.order_discount:
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'order'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderDiscount, permission: VIEW }
+
+    oro_order.acl.voter.order_discount:
+        class: Oro\Bundle\SecurityBundle\Acl\Voter\AssociationAwareVoter
+        arguments:
+            - '@security.authorization_checker'
+            - '@property_accessor'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderDiscount'
+            - 'order'
+        tags:
+            - { name: security.voter }
+
+    oro_order.access_rule.order_shipping_tracking:
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'order'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderShippingTracking, permission: VIEW }
+
+    oro_order.acl.voter.order_shipping_tracking:
+        class: Oro\Bundle\SecurityBundle\Acl\Voter\AssociationAwareVoter
+        arguments:
+            - '@security.authorization_checker'
+            - '@property_accessor'
+            - 'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'
+            - 'order'
         tags:
             - { name: security.voter }
 
@@ -476,12 +532,16 @@ services:
             - { name: kernel.event_listener, event: oro_config.update_after, method: reindexProducts }
 
     oro_order.access_rule.frontend_order_line_item:
-        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderLineItemAccessRule
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'order'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderLineItem, frontend: true }
 
     oro_order.access_rule.frontend_order_product_kit_item_line_item:
-        class: Oro\Bundle\OrderBundle\Acl\AccessRule\OrderProductKitItemLineItemAccessRule
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'lineItem'
         tags:
             - {name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, frontend: true}
 

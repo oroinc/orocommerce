@@ -1,0 +1,16 @@
+imports:
+    - { resource: 'order_processing_flow/steps.yml' }
+    - { resource: 'order_processing_flow/transitions.yml' }
+    - { resource: 'order_processing_flow/transition_definitions.yml' }
+
+workflows:
+    order_processing_flow:
+        entity: Oro\Bundle\OrderBundle\Entity\Order
+        entity_attribute: order
+        start_step: new
+        force_autostart: true
+        steps_display_ordered: true
+        exclusive_record_groups:
+            - order_processing
+        defaults:
+            active: false

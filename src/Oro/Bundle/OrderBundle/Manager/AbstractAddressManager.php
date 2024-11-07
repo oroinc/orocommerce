@@ -2,95 +2,49 @@
 
 namespace Oro\Bundle\OrderBundle\Manager;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
-use Oro\Bundle\EntityExtendBundle\PropertyAccess;
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
- * Base address manager class.
+ * The base class for address managers.
  */
 class AbstractAddressManager
 {
-    const DELIMITER = '_';
+    protected const DELIMITER = '_';
 
-    const ACCOUNT_LABEL = 'form.address.group_label.customer';
-    const ACCOUNT_USER_LABEL = 'form.address.group_label.customer_user';
+    protected const CUSTOMER_LABEL = 'form.address.group_label.customer';
+    protected const CUSTOMER_USER_LABEL = 'form.address.group_label.customer_user';
 
-    /**
-     * @var AddressProviderInterface
-     */
-    protected $addressProvider;
-
-    /** @var ArrayCollection */
-    protected $map;
-
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    private array $map = [];
 
     public function __construct(
-        AddressProviderInterface $addressProvider,
-        ManagerRegistry $registry
+        protected readonly AddressProviderInterface $addressProvider,
+        protected readonly ManagerRegistry $doctrine,
+        private readonly PropertyAccessorInterface $propertyAccessor
     ) {
-        $this->addressProvider = $addressProvider;
-        $this->registry = $registry;
-
-        $this->map = new ArrayCollection();
     }
 
-    /**
-     * @param string $alias
-     * @param string $className
-     */
-    public function addEntity($alias, $className)
+    public function addEntity(string $alias, string $className): void
     {
-        $this->map->set($alias, $className);
+        $this->map[$alias] = $className;
     }
 
-    /**
-     * @param AbstractAddress $from
-     * @param AbstractAddress $to
-     * @param string $property
-     */
-    protected function setValue(AbstractAddress $from, AbstractAddress $to, $property)
-    {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
-        try {
-            $value = $this->propertyAccessor->getValue($from, $property);
-            if (!$value || ($value instanceof Collection && $value->isEmpty())) {
-                return;
-            }
-
-            $this->propertyAccessor->setValue($to, $property, $value);
-        } catch (NoSuchPropertyException $e) {
-        }
-    }
-
-    /**
-     * @param CustomerOwnerAwareInterface $entity
-     * @param string $type
-     * @param string $groupLabelPrefix
-     * @return TypedOrderAddressCollection
-     */
-    public function getGroupedAddresses(CustomerOwnerAwareInterface $entity, $type, $groupLabelPrefix = 'oro.order.')
-    {
+    public function getGroupedAddresses(
+        CustomerOwnerAwareInterface $entity,
+        string $type,
+        string $groupLabelPrefix = 'oro.order.'
+    ): TypedOrderAddressCollection {
         $addresses = [];
 
         $customer = $entity->getCustomer();
         if ($customer) {
-            $customerGroupLabel = $groupLabelPrefix . static::ACCOUNT_LABEL;
+            $customerGroupLabel = $groupLabelPrefix . static::CUSTOMER_LABEL;
             $customerAddresses = $this->addressProvider->getCustomerAddresses($customer, $type);
             foreach ($customerAddresses as $customerAddress) {
                 $addresses[$customerGroupLabel][$this->getIdentifier($customerAddress)] = $customerAddress;
@@ -99,7 +53,7 @@ class AbstractAddressManager
 
         $customerUser = $entity->getCustomerUser();
         if ($customerUser) {
-            $customerUserGroupLabel = $groupLabelPrefix . static::ACCOUNT_USER_LABEL;
+            $customerUserGroupLabel = $groupLabelPrefix . static::CUSTOMER_USER_LABEL;
             $customerUserAddresses = $this->addressProvider->getCustomerUserAddresses($customerUser, $type);
             if ($customerUserAddresses) {
                 foreach ($customerUserAddresses as $customerUserAddress) {
@@ -112,26 +66,19 @@ class AbstractAddressManager
         return new TypedOrderAddressCollection($customerUser, $type, $addresses);
     }
 
-    /**
-     * @param AbstractAddress $address
-     * @return string
-     */
-    public function getIdentifier(AbstractAddress $address)
+    public function getIdentifier(AbstractAddress $address): string
     {
         $className = ClassUtils::getClass($address);
 
-        if (!$this->map->contains($className)) {
+        $index = array_search($className, $this->map, true);
+        if (false === $index) {
             throw new \InvalidArgumentException(sprintf('Entity with "%s" not registered', $className));
         }
 
-        return sprintf('%s%s%s', $this->map->indexOf($className), static::DELIMITER, $address->getId());
+        return sprintf('%s%s%s', $index, static::DELIMITER, $address->getId());
     }
 
-    /**
-     * @param string $identifier
-     * @return AbstractAddress
-     */
-    public function getEntityByIdentifier($identifier)
+    public function getEntityByIdentifier(string $identifier): ?AbstractAddress
     {
         $identifierData = explode(static::DELIMITER, $identifier);
         if (empty($identifierData[1]) || !empty($identifierData[2])) {
@@ -144,12 +91,41 @@ class AbstractAddressManager
         }
 
         $alias = $identifierData[0];
-        if (!$alias || !$this->map->containsKey($alias)) {
+        if (!$alias || !isset($this->map[$alias])) {
             throw new \InvalidArgumentException(sprintf('Unknown alias "%s"', $alias));
         }
 
-        $className = $this->map->get($alias);
+        $className = $this->map[$alias];
 
-        return $this->registry->getManagerForClass($className)->find($className, (int)$id);
+        return $this->doctrine->getManagerForClass($className)->find($className, (int)$id);
+    }
+
+    protected function copyAddress(AbstractAddress $from, AbstractAddress $to): void
+    {
+        $addressClassName = ClassUtils::getClass($from);
+        $addressMetadata = $this->doctrine->getManagerForClass($addressClassName)
+            ->getClassMetadata($addressClassName);
+        foreach ($addressMetadata->getFieldNames() as $fieldName) {
+            $this->setValue($from, $to, $fieldName);
+        }
+        foreach ($addressMetadata->getAssociationNames() as $associationName) {
+            $this->setValue($from, $to, $associationName);
+        }
+    }
+
+    protected function setValue(AbstractAddress $from, AbstractAddress $to, string $property): void
+    {
+        try {
+            $value = $this->propertyAccessor->getValue($from, $property);
+            if (!$this->isEmptyValue($value)) {
+                $this->propertyAccessor->setValue($to, $property, $value);
+            }
+        } catch (NoSuchPropertyException $e) {
+        }
+    }
+
+    private function isEmptyValue(mixed $value): bool
+    {
+        return !$value || ($value instanceof Collection && $value->isEmpty());
     }
 }

@@ -24,12 +24,11 @@ Feature: RFQ with empty product
 
     When I click "Submit Request"
     Then I should see RFQ with data:
-      | First Name    | Amanda                                                                |
-      | Last Name     | Cole                                                                  |
-      | Email         | AmandaRCole@example.org                                               |
-      | Phone Number  | 72 669 62 82                                                          |
-      | Company       | Red Fox Tavern                                                        |
-      | Role          | Sauce cook                                                            |
-      | Notes         | Parish so enable innate in formed missed. Hand two was eat busy fail. |
-      | PO Number     | PO Test 01                                                            |
-      | Assigned To   | Amanda Cole                                                           |
+      | Contact Person | Amanda Cole                                                           |
+      | Email Address  | AmandaRCole@example.org                                               |
+      | Phone Number   | 72 669 62 82                                                          |
+      | Company        | Red Fox Tavern                                                        |
+      | Title          | Sauce cook                                                            |
+      | Notes          | Parish so enable innate in formed missed. Hand two was eat busy fail. |
+      | PO Number      | PO Test 01                                                            |
+      | Assigned To    | Amanda Cole                                                           |

@@ -46,7 +46,7 @@ Feature: Language and currency switcher above the header
     And I fill "Theme Configuration Form" with:
       | Language and Currency Switchers | Above the header |
       | Quick Access Button Label       | Test Label       |
-      | Quick Access Button Type        | Frontend Menu    |
+      | Quick Access Button Type        | Storefront Menu  |
     And I save and close form
     Then I should see "Theme Configuration has been saved" flash message
 

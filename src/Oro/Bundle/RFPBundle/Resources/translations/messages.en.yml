@@ -350,15 +350,17 @@ oro:
                 id.label: 'RFQ #'
                 first_name.label: 'First Name'
                 last_name.label: 'Last Name'
-                email.label: 'Email'
+                contact_name.label: 'Contact Person'
+                email.label: 'Email Address'
                 phone.label: 'Phone Number'
                 company.label: 'Company'
-                role.label: 'Role'
+                role.label: 'Title'
                 customer_status.label: 'Status'
-                customer_user.label: 'Owner'
                 is_draft.label: 'Draft'
                 po_number.label: 'PO Number'
-                ship_until.label: 'Do Not Ship Later Than'
+                ship_until.label: 'Ship by'
+                created_at.label: 'Created at'
+                customer_user.label: 'Created by'
                 assigned_customer_users.label: 'Assigned To'
                 create_form.back.label: 'Back'
                 create_form.submit.label: 'Submit Request For Quote'
@@ -407,5 +409,4 @@ oro:
             toolbar-actions:
                 btn:
                     print: 'Print RFQ'
-
 oro.order.orderlineitem.offers.label: 'Requested QTY and price'

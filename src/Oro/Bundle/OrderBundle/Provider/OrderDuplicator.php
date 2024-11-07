@@ -30,6 +30,7 @@ class OrderDuplicator
                 [['setNull'], ['propertyName', ['id']]],
                 [['setNull'], ['propertyName', ['createdAt']]],
                 [['setNull'], ['propertyName', ['updatedAt']]],
+                [['setNull'], ['propertyName', ['updatedAtSet']]],
                 [['setNull'], ['propertyName', ['identifier']]],
                 [['setNull'], ['propertyName', ['parent']]],
 
@@ -68,6 +69,9 @@ class OrderDuplicator
                 [['collection'], ['propertyType', [Collection::class]]],
 
                 [['setNull'], ['property', [OrderLineItem::class, 'id']]],
+                [['setNull'], ['property', [OrderLineItem::class, 'createdAt']]],
+                [['setNull'], ['property', [OrderLineItem::class, 'updatedAt']]],
+                [['setNull'], ['property', [OrderLineItem::class, 'updatedAtSet']]],
                 [['keep'], ['property', [OrderLineItem::class, 'product']]],
                 [['keep'], ['property', [OrderLineItem::class, 'parentProduct']]],
                 [['keep'], ['property', [OrderLineItem::class, 'productVariantFields']]],

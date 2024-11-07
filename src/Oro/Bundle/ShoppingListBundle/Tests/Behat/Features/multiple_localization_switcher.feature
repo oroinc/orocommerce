@@ -2,7 +2,7 @@
 @fixture-OroLocaleBundle:LocalizationFixture.yml
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
-Feature: Sidebar menu footer with multiple localization options
+Feature: Multiple localization switcher
   Sidebar footer should contain select with localization options
 
   Scenario: Create different window session

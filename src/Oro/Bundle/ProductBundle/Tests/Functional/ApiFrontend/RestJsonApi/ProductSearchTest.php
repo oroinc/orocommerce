@@ -1398,13 +1398,15 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
         $url = '{baseUrl}/productsearch';
         $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
-        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
-            'links' => [
-                'self' => $url,
-                'next' => $urlWithFilter . '&page%5Bsize%5D=2&page%5Bnumber%5D=2'
-            ]
-        ]);
-        $this->assertResponseContains($expectedLinks, $response);
+        $this->assertResponseContains(
+            [
+                'links' => [
+                    'self' => $url,
+                    'next' => $urlWithFilter . '&page%5Bsize%5D=2&page%5Bnumber%5D=2'
+                ]
+            ],
+            $response
+        );
     }
 
     public function testPaginationLinksSecondPage()
@@ -1417,15 +1419,17 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
         $url = '{baseUrl}/productsearch';
         $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
-        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
-            'links' => [
-                'self'  => $url,
-                'first' => $urlWithFilter . '&page%5Bsize%5D=2',
-                'prev'  => $urlWithFilter . '&page%5Bsize%5D=2',
-                'next'  => $urlWithFilter . '&page%5Bnumber%5D=3&page%5Bsize%5D=2'
-            ]
-        ]);
-        $this->assertResponseContains($expectedLinks, $response);
+        $this->assertResponseContains(
+            [
+                'links' => [
+                    'self'  => $url,
+                    'first' => $urlWithFilter . '&page%5Bsize%5D=2',
+                    'prev'  => $urlWithFilter . '&page%5Bsize%5D=2',
+                    'next'  => $urlWithFilter . '&page%5Bnumber%5D=3&page%5Bsize%5D=2'
+                ]
+            ],
+            $response
+        );
     }
 
     public function testPaginationLinksLastPage()
@@ -1438,13 +1442,15 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
 
         $url = '{baseUrl}/productsearch';
         $urlWithFilter = $url . '?filter%5BsearchQuery%5D=isVariant%20%3D%200';
-        $expectedLinks = $this->getExpectedContentWithPaginationLinks([
-            'links' => [
-                'self'  => $url,
-                'first' => $urlWithFilter . '&page%5Bsize%5D=2',
-                'prev'  => $urlWithFilter . '&page%5Bnumber%5D=2&page%5Bsize%5D=2'
-            ]
-        ]);
-        $this->assertResponseContains($expectedLinks, $response);
+        $this->assertResponseContains(
+            [
+                'links' => [
+                    'self'  => $url,
+                    'first' => $urlWithFilter . '&page%5Bsize%5D=2',
+                    'prev'  => $urlWithFilter . '&page%5Bnumber%5D=2&page%5Bsize%5D=2'
+                ]
+            ],
+            $response
+        );
     }
 }

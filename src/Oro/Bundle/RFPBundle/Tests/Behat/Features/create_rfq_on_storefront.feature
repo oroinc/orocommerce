@@ -20,7 +20,7 @@ Feature: Create RFQ on storefront
   Scenario: Save "Requests For Quote" storefront menu item
     Given I proceed as the Admin
     And I login as administrator
-    And I go to System/Frontend Menus
+    And I go to System/Storefront Menus
     And I click view "oro_customer_menu" in grid
     And I click Orders in menu tree
     And I click Requests For Quote in menu tree

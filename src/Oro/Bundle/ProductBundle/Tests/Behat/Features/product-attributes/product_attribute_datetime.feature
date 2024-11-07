@@ -14,9 +14,9 @@ Feature: Product attribute datetime
       | Field Name | DateTimeField |
       | Type       | DateTime      |
     And I click "Continue"
-    Then I should see that "Product Attribute Frontend Options" does not contain "Searchable"
-    And I should see that "Product Attribute Frontend Options" does not contain "Filterable"
-    And I should see that "Product Attribute Frontend Options" contains "Sortable"
+    Then I should see that "Product Attribute Storefront Options" does not contain "Searchable"
+    And I should see that "Product Attribute Storefront Options" does not contain "Filterable"
+    And I should see that "Product Attribute Storefront Options" contains "Sortable"
 
     When I fill form with:
       | Sortable | Yes |

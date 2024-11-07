@@ -34,7 +34,7 @@ Feature: Landing Page Title Display
     Then I should see "Content Node has been saved" flash message
 
   Scenario: Add Landing page to a new menu item
-    When go to System/Frontend Menus
+    When go to System/Storefront Menus
     And I click "view" on row "commerce_main_menu" in grid
     And click "Create Menu Item"
     And I fill "Commerce Menu Form" with:

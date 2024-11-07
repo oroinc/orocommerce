@@ -1,7 +1,7 @@
 @fixture-OroLocaleBundle:ZuluLocalization.yml
 @fixture-OroCustomerBundle:CustomerUserAmandaRCole.yml
 
-Feature: Sidebar menu footer doesn't have content
+Feature: Single currency and localization
   Sidebar footer content should be empty with one localization and one currency
 
   Scenario: Create different window session
