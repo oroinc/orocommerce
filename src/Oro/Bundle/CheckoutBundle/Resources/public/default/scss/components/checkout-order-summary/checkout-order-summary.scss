@@ -33,6 +33,10 @@
         align-items: center;
         gap: spacing('sm');
 
+        .checkout-form {
+            margin-block-end: auto;
+        }
+
         &:has(> *:empty) {
             @include loading-blur();
         }

@@ -8,4 +8,9 @@ layout:
             optionName: visible
             optionValue: '=data["workflowItem"].getData().get("consents_available")'
 
+        - '@setOption':
+            id: checkout_form
+            optionName: vars.showRequiredLabel
+            optionValue: true
+
     conditions: 'context["workflowStepName"]=="enter_billing_address"'

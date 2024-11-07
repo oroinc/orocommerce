@@ -26,6 +26,16 @@ layout:
             prepend: true
 
         - '@setOption':
+            id: checkout_information_title
+            optionName: hideOnDesktop
+            optionValue: false
+
+        - '@appendOption':
+            id: checkout_information_title
+            optionName: attr.class
+            optionValue: 'checkout__title--order-review'
+
+        - '@setOption':
             id: checkout_button_continue
             optionName: vars.showRequiredLabel
             optionValue: false

@@ -102,6 +102,8 @@ layout:
                     options:
                         checkout: '=data["checkout"]'
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        vars:
+                            transitionData: '=data["oro_checkout_group_continue_transition_data"].getContinueTransition(data["workflowItem"])'
                 __checkout_form_errors:
                     blockType: checkout_form_errors
                     options:

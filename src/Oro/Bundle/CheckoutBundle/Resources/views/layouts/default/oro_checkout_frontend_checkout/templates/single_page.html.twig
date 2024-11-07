@@ -177,6 +177,8 @@
                 {{ form_widget(form.payment_validate) }}
             </div>
         {% endif %}
+
+        {{ dump('dwa') }}
         {% if form.additional_data is defined %}
             <div data-page-component-module="orocheckout/js/app/components/payment-additional-data-component">
                 {{ form_row(form.additional_data) }}

@@ -9,7 +9,7 @@
 
     {% set attr = layout_attr_defaults(attr, {'data-payment-method-forms': ''}) %}
 
-    <div class="{{ class_prefix }}-form grid" data-content="payment_method_form" data-page-component-module="oropayment/js/app/components/payment-method-selector-component">
+    <div class="{{ class_prefix }}-form {{ class_prefix }}-form--no-offset grid" data-content="payment_method_form" data-page-component-module="oropayment/js/app/components/payment-method-selector-component">
         {% set uniqueId = 'payment-methods-'|uniqid %}
         <div {{ block('block_attributes') }} role="group" aria-labelledby="{{ uniqueId }}">
             {% if views|length > 0 %}

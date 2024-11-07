@@ -3,5 +3,10 @@ layout:
         - '@setBlockTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/shipping_information.html.twig'
 
+        - '@setOption':
+            id: checkout_form
+            optionName: vars.showRequiredLabel
+            optionValue: true
+
     conditions: 'context["workflowStepName"]=="enter_shipping_address"'
 

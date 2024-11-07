@@ -21,6 +21,12 @@ layout:
                 toolbarOptions:
                     hide: true
 
+        - '@add':
+            id: shipping_methods_group_step_label
+            blockType: block
+            parentId: checkout_information_body
+            prepend: true
+
         - '@remove':
               id: shipping_methods
 

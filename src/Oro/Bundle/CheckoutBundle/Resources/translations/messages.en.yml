@@ -50,6 +50,7 @@ oro:
         late_registration.label: Save my data and create an account
         progress.label: Checkout Progress
         summary_item_title: Order products
+        optional_label: (Optional)
         multishipping:
             label_for: 'Shipping method for %label%'
         navigation_sidebar:
@@ -167,6 +168,8 @@ oro:
         shipping_information: Shipping
         shipping_method: Shipping Method
         payment: Payment
+
+        shipping_method.hint: Please select a shipping method for each group of line items below.
 
         order_review:
             label: Order Review

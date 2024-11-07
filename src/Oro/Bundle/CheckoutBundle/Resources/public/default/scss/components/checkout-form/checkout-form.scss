@@ -5,6 +5,14 @@
     flex-direction: column;
     gap: spacing('base');
 
+    &:not(&--no-offset) {
+        margin-block-end: spacing('base');
+    }
+
+    &:last-of-type {
+        margin-block-end: spacing('xxl');
+    }
+
     &__container {
         grid-gap: 0 #{spacing('base')};
     }

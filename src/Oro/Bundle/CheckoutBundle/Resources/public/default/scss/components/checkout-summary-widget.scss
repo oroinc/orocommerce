@@ -3,6 +3,7 @@
 .checkout-summary-widget {
     display: grid;
     padding: spacing('lg') spacing('lg') spacing('base');
+    gap: spacing('base');
 
     &__combined-buttons {
         display: grid;

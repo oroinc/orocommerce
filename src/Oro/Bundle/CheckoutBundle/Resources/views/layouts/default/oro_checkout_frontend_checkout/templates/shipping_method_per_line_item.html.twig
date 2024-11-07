@@ -4,3 +4,13 @@
         {{ form_widget(form.line_items_shipping_methods) }}
     </div>
 {% endblock %}
+
+{% block _shipping_methods_group_step_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__label-container"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <h5>{{ 'oro.checkout.shipping_method'|trans }}</h5>
+        <div class="checkout__hint">{{ 'oro.checkout.shipping_method.hint'|trans }}</div>
+    </div>
+{% endblock %}

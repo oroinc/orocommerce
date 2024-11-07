@@ -107,8 +107,15 @@
 
 {% block __oro_checkout_content__checkout_information_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__title hide-on-desktop-small"
+        '~class': " checkout__title"
     }) %}
+
+    {% if hideOnDesktop %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " hide-on-desktop-small"
+        }) %}
+    {% endif %}
+
     <h3 {{ block('block_attributes') }}>
         <span class="checkout__title-text">{{ workflowStep.label|trans({},'workflows') }}</span>
         {{ block_widget(block) }}
@@ -139,6 +146,17 @@
             {{ form_widget(form._token) }}
         </div>
         {{ block_widget(block) }}
+
+        {% if transitionData is defined and transitionData and transitionData.isAllowed == true and showRequiredLabel|default(false) == true %}
+            <div class="checkout__require-label">
+                <div data-role="checkout-require"
+                     class="required-label"
+                     aria-hidden="true"
+                ><span class="required-symbol" aria-hidden="true">*</span>
+                    {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+                </div>
+            </div>
+        {% endif %}
         </form>
         {{ oro_form_js_validation(form) }}
     {% else %}
@@ -395,23 +413,11 @@
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_button_continue_widget -%}
-    {% if transitionData is defined and transitionData %}
-        <div class="checkout__botton-container">
-            <div class="checkout__botton-action">
-                {{ block_widget(block) }}
-            </div>
-            {% if showRequiredLabel %}
-            <div class="checkout__require-label">
-                <div data-role="checkout-require"
-                     class="required-label {% if transitionData.isAllowed == false %}hidden{% endif %}"
-                     aria-hidden="true"
-                ><span class="required-symbol" aria-hidden="true">*</span>
-                    {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
-                </div>
-            </div>
-            {% endif %}
+    <div class="checkout__botton-container">
+        <div class="checkout__botton-action">
+            {{ block_widget(block) }}
         </div>
-    {% endif %}
+    </div>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_form_buttons_widget -%}
