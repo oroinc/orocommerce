@@ -42,7 +42,7 @@ layout:
         - '@appendOption':
               id: quote_choice_submit_button_wrapper
               optionName: attr.class
-              optionValue: hidden-before-relocation-on-mobile-big
+              optionValue: hide-on-mobile-landscape
 
         - '@appendOption':
               id: quote_choice_submit_button_wrapper
@@ -52,6 +52,7 @@ layout:
                       -
                           viewport: 'mobile-landscape'
                           moveTo: '.summary-widget__summary'
+                          startPointClass: 'hide-on-mobile-landscape'
                           endpointClass: 'checkout-form__buttons--full'
                           prepend: false
 
@@ -84,7 +85,7 @@ layout:
                     blockType: back_link
                     options:
                         attr:
-                            class: 'btn btn--outlined hidden-before-relocation-on-mobile-big'
+                            class: 'btn btn--outlined'
                             data-responsive-styler: ''
                             data-input-widget-options:
                                 responsive:

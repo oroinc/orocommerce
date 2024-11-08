@@ -69,12 +69,12 @@ workflows:
                                 constraints:
                                   - NotBlank: ~
                 frontend_options:
-                    icon: fa-comment-o
+                    icon: message-square
             cancel_transition:
                 step_to: cancelled
                 transition_definition: cancel_transition_definition
                 frontend_options:
-                    icon: fa-times
+                    icon: close
             decline_transition:
                 step_to: cancelled
                 transition_definition: decline_transition_definition
@@ -90,6 +90,13 @@ workflows:
                 transition_definition: resubmit_transition_definition
                 frontend_options:
                     icon: resubmit
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
             reopen_transition:
                 step_to: submitted
                 transition_definition: reopen_transition_definition
