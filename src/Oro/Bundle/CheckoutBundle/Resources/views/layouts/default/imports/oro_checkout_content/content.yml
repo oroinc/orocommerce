@@ -206,7 +206,9 @@ layout:
                             totalsConainerClassName: ''
 
                 __checkout_combined_buttons_container:
-                    blockType: container
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
                 __checkout_form_buttons:
                     blockType: container
                 __checkout_button_continue:

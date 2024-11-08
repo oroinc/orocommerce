@@ -3,6 +3,11 @@ layout:
         - '@setBlockTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/shipping_information.html.twig'
 
+        - '@appendOption':
+            id: checkout_combined_buttons_container
+            optionName: reloadEvents
+            optionValue: ['checkout:new-address-update']
+
         - '@setOption':
             id: checkout_form
             optionName: vars.showRequiredLabel
