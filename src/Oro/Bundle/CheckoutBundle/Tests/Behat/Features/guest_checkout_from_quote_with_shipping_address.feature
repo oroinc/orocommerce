@@ -44,7 +44,7 @@ Feature: Guest checkout from quote with shipping address
     Then I should see "Checkout"
 
   Scenario: Complete checkout
-    Given I click "Continue as a Guest"
+    Given I click "Continue As Guest User"
     When I fill form with:
       | Email           | tester@test.com |
       | First name      | Charlie         |
