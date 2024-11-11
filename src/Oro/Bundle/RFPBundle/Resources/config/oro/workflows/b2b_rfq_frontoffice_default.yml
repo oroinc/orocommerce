@@ -56,6 +56,13 @@ workflows:
                         require: "entity.getInternalStatus().getInternalId() === 'more_info_requested'"
                 frontend_options:
                     icon: help-circle
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
             provide_more_information_transition:
                 step_to: submitted
                 transition_definition: provide_more_information_transition_definition
@@ -70,12 +77,25 @@ workflows:
                                   - NotBlank: ~
                 frontend_options:
                     icon: message-circle
-
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
             cancel_transition:
                 step_to: cancelled
                 transition_definition: cancel_transition_definition
                 frontend_options:
                     icon: close
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
             decline_transition:
                 step_to: cancelled
                 transition_definition: decline_transition_definition
@@ -113,6 +133,13 @@ workflows:
                             prevEntity.getCustomerStatus().getInternalId() === 'cancelled'
                 frontend_options:
                     icon: external-link
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
 
         transition_definitions:
             __start___definition:
