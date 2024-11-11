@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Manager;
 
-use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
-use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
@@ -19,33 +18,49 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
-use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
-use PHPUnit\Framework\MockObject\MockObject;
 
 class OrderAddressManagerTest extends AbstractAddressManagerTest
 {
-    /** @var OrderAddressManager */
-    protected $manager;
-
-    /** @var MockObject|OrderAddressProvider */
-    private $provider;
-
-    /** @var MockObject|ManagerRegistry */
-    protected $registry;
+    private OrderAddressManager $manager;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->provider = $this->createMock(OrderAddressProvider::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        parent::setUp();
 
         $this->manager = new OrderAddressManager(
-            $this->provider,
-            $this->registry,
-            OrderAddress::class
+            $this->addressProvider,
+            $this->doctrine,
+            $this->propertyAccessor
         );
+    }
+
+    #[\Override]
+    protected function getAddressManager(): AbstractAddressManager
+    {
+        return $this->manager;
+    }
+
+    private function getAddressTypes(array $addresses, array $types): array
+    {
+        $result = [];
+        foreach ($addresses as $address) {
+            foreach ($types as $type) {
+                $typeEntity = new AddressType($type);
+                $typeToEntity = $this->createMock(AbstractAddressToAddressType::class);
+                $typeToEntity->expects($this->any())
+                    ->method('getAddress')
+                    ->willReturn($address);
+                $typeToEntity->expects($this->any())
+                    ->method('getType')
+                    ->willReturn($typeEntity);
+                $result[] = $typeToEntity;
+            }
+        }
+
+        return $result;
     }
 
     /**
@@ -57,7 +72,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         AbstractAddress $expectedCustomerAddress = null,
         AbstractAddress $expectedCustomerUserAddress = null,
         OrderAddress $orderAddress = null
-    ) {
+    ): void {
         $classMetadata = $this->createMock(ClassMetadata::class);
         $classMetadata->expects($this->once())
             ->method('getFieldNames')
@@ -71,15 +86,15 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             ->method('getClassMetadata')
             ->willReturn($classMetadata);
 
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with($this->isType('string'))
             ->willReturn($em);
 
         $orderAddress = $this->manager->updateFromAbstract($address, $orderAddress);
-        $this->assertEquals($expected, $orderAddress);
-        $this->assertEquals($expectedCustomerAddress, $orderAddress->getCustomerAddress());
-        $this->assertEquals($expectedCustomerUserAddress, $orderAddress->getCustomerUserAddress());
+        self::assertEquals($expected, $orderAddress);
+        self::assertSame($expectedCustomerAddress, $orderAddress->getCustomerAddress());
+        self::assertSame($expectedCustomerUserAddress, $orderAddress->getCustomerUserAddress());
     }
 
     public function orderDataProvider(): array
@@ -159,11 +174,11 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         array $customerAddresses = [],
         array $customerUserAddresses = [],
         array $expected = []
-    ) {
-        $this->provider->expects($this->any())
+    ): void {
+        $this->addressProvider->expects($this->any())
             ->method('getCustomerAddresses')
             ->willReturn($customerAddresses);
-        $this->provider->expects($this->any())
+        $this->addressProvider->expects($this->any())
             ->method('getCustomerUserAddresses')
             ->willReturn($customerUserAddresses);
 
@@ -172,8 +187,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
 
         $result = $this->manager->getGroupedAddresses($order, AddressType::TYPE_BILLING);
 
-        $this->assertInstanceOf(TypedOrderAddressCollection::class, $result);
-        $this->assertEquals($expected, $result->toArray());
+        self::assertEquals($expected, $result->toArray());
     }
 
     public function groupedAddressDataProvider(): array
@@ -228,22 +242,23 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
         array $customerAddresses = [],
         array $customerUserAddresses = [],
         array $addresses = []
-    ) {
-        $customerManager = $this->getManager(
-            $customerAddresses,
-            $this->getTypes($customerAddresses, ['billing'])
-        );
-        $customerUserManager = $this->getManager(
-            $customerUserAddresses,
-            $this->getTypes($customerUserAddresses, ['billing', 'shipping'])
-        );
-
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
+    ): void {
+        $repoCustomerAddressToAddressType = $this->createMock(EntityRepository::class);
+        $repoCustomerUserAddressToAddressType = $this->createMock(EntityRepository::class);
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
             ->willReturnMap([
-                [CustomerAddressToAddressType::class, $customerManager],
-                [CustomerUserAddressToAddressType::class, $customerUserManager]
+                [CustomerAddressToAddressType::class, null, $repoCustomerAddressToAddressType],
+                [CustomerUserAddressToAddressType::class, null, $repoCustomerUserAddressToAddressType]
             ]);
+        $repoCustomerAddressToAddressType->expects($this->any())
+            ->method('findBy')
+            ->with(['address' => $customerAddresses])
+            ->willReturn($this->getAddressTypes($customerAddresses, ['billing']));
+        $repoCustomerUserAddressToAddressType->expects($this->any())
+            ->method('findBy')
+            ->with(['address' => $customerUserAddresses])
+            ->willReturn($this->getAddressTypes($customerUserAddresses, ['billing', 'shipping']));
 
         $expectedTypes = [];
         if (array_key_exists('oro.order.form.address.group_label.customer', $addresses)) {
@@ -259,41 +274,6 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
 
         $this->manager->addEntity('au', CustomerUserAddress::class);
         $this->manager->addEntity('a', CustomerAddress::class);
-        $this->assertEquals($expectedTypes, $this->manager->getAddressTypes($addresses));
-    }
-
-    private function getManager(array $addresses, array $types): ObjectManager
-    {
-        $repo = $this->createMock(ObjectRepository::class);
-        $manager = $this->createMock(ObjectManager::class);
-        $manager->expects($this->any())
-            ->method('getRepository')
-            ->willReturn($repo);
-        $repo->expects($this->any())
-            ->method('findBy')
-            ->with(['address' => $addresses])
-            ->willReturn($types);
-
-        return $manager;
-    }
-
-    private function getTypes(array $addresses, array $types): array
-    {
-        $result = [];
-        foreach ($addresses as $address) {
-            foreach ($types as $type) {
-                $typeEntity = new AddressType($type);
-                $typeToEntity = $this->createMock(AbstractAddressToAddressType::class);
-                $typeToEntity->expects($this->any())
-                    ->method('getAddress')
-                    ->willReturn($address);
-                $typeToEntity->expects($this->any())
-                    ->method('getType')
-                    ->willReturn($typeEntity);
-                $result[] = $typeToEntity;
-            }
-        }
-
-        return $result;
+        self::assertEquals($expectedTypes, $this->manager->getAddressTypes($addresses));
     }
 }

@@ -7,6 +7,7 @@ use Oro\Bundle\PricingBundle\Cache\RuleCache;
 use Oro\Bundle\ProductBundle\Expression\NodeToQueryDesignerConverter;
 use Oro\Bundle\ProductBundle\Expression\QueryConverter;
 use Oro\Component\Expression\ExpressionParser;
+use Oro\Component\Expression\Node;
 use Oro\Component\Expression\Preprocessor\ExpressionPreprocessorInterface;
 use Oro\Component\Expression\QueryExpressionBuilder;
 
@@ -75,6 +76,66 @@ abstract class AbstractRuleCompiler
             $select[] = $fieldsMap[$fieldName] . ' ' . $fieldName;
         }
         $qb->select($select);
+    }
+
+    /**
+     * Add check that denominator is not equal to 0 for all denominators.
+     */
+    protected function addDivisionSafeguardConditions(QueryBuilder $qb, string $expression, array &$params): void
+    {
+        $node = $this->expressionParser->parse($expression);
+        if (!$node) {
+            return;
+        }
+
+        $denominatorNodes = $this->safeguardDenominators($node);
+        if (!$denominatorNodes) {
+            return;
+        }
+
+        $qb->andWhere(
+            $this->expressionBuilder->convert(
+                $denominatorNodes,
+                $qb->expr(),
+                $params,
+                $this->queryConverter->getTableAliasByColumn()
+            )
+        );
+    }
+
+    protected function safeguardDenominators(Node\NodeInterface $node): ?Node\NodeInterface
+    {
+        $resultNode = null;
+        foreach ($this->getDenominators($node) as $divisor) {
+            $notZeroNode = new Node\BinaryNode(
+                $divisor,
+                new Node\ValueNode(0.0),
+                '!='
+            );
+            if ($resultNode) {
+                $resultNode = new Node\BinaryNode(
+                    $resultNode,
+                    $notZeroNode,
+                    'and'
+                );
+            } else {
+                $resultNode = $notZeroNode;
+            }
+        }
+
+        return $resultNode;
+    }
+
+    protected function getDenominators(Node\NodeInterface $node): \Generator
+    {
+        if ($node instanceof Node\BinaryNode) {
+            if ($node->getOperation() === '/' || $node->getOperation() === '%') {
+                yield $node->getRight();
+            } else {
+                yield from $this->getDenominators($node->getLeft());
+                yield from $this->getDenominators($node->getRight());
+            }
+        }
     }
 
     /**
