@@ -176,6 +176,13 @@ operations:
         acl_resource: [CHECKOUT_CREATE, 'entity:Oro\Bundle\SaleBundle\Entity\QuoteDemand']
         button_options:
             class:  quota-accept-btn text-nowrap
+            data:
+                responsive-styler: ''
+                input-widget-options:
+                    responsive:
+                        mobile-landscape:
+                            constraint: 'inDropdown'
+                            classes: 'dropdown-item'
         frontend_options:
             options:
                 icon: shopping-cart

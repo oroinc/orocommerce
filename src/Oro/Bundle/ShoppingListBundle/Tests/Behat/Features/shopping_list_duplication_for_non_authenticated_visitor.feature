@@ -35,7 +35,7 @@ Feature: Shopping list duplication for non authenticated visitor
     And I open shopping list widget
     And I click "Open List"
     And click on "Create Order"
-    And I click "Continue as a Guest"
+    And I click "Continue As Guest User"
     And I fill form with:
       | Email           | Andy001@example.com |
       | First Name      | Andy                |
@@ -70,7 +70,7 @@ Feature: Shopping list duplication for non authenticated visitor
     And I open shopping list widget
     And I click "Open List"
     And click on "Create Order"
-    And I click "Continue as a Guest"
+    And I click "Continue As Guest User"
     And I fill form with:
       | Email           | Andy002@example.com |
       | First Name      | Andy2               |

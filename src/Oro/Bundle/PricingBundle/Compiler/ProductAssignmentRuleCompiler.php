@@ -106,10 +106,11 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
     protected function applyRuleConditions(QueryBuilder $qb, PriceList $priceList)
     {
         $params = [];
-        $rule = $this->getProcessedAssignmentRule($priceList);
+        $ruleExpression = $this->getProcessedAssignmentRule($priceList);
+        $this->addDivisionSafeguardConditions($qb, $ruleExpression, $params);
         $qb->andWhere(
             $this->expressionBuilder->convert(
-                $this->expressionParser->parse($rule),
+                $this->expressionParser->parse($ruleExpression),
                 $qb->expr(),
                 $params,
                 $this->queryConverter->getTableAliasByColumn()
@@ -119,7 +120,7 @@ class ProductAssignmentRuleCompiler extends AbstractRuleCompiler
     }
 
     /**
-     * Manually entered prices should not be rewritten by generator.
+     * Manually entered prices should not be rewritten by the generator.
      *
      * @param QueryBuilder $qb
      * @param PriceList $priceList

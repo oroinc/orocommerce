@@ -81,7 +81,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Model\RequestHelper'
         public: true
         arguments:
-            - "@doctrine"
+            - '@doctrine'
             - 'Oro\Bundle\SaleBundle\Entity\Quote'
             - 'Oro\Bundle\RFPBundle\Entity\Request'
 
@@ -89,9 +89,9 @@ services:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteAddressManager'
         public: false
         arguments:
-            - "@oro_sale.provider.quote_address"
-            - "@doctrine"
-            - 'Oro\Bundle\SaleBundle\Entity\QuoteAddress'
+            - '@oro_sale.provider.quote_address'
+            - '@doctrine'
+            - '@property_accessor'
         calls:
             - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
             - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]

@@ -90,7 +90,7 @@ services:
         arguments:
             - '@oro_order.order.provider.order_address'
             - '@doctrine'
-            - 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
+            - '@property_accessor'
         calls:
             - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
             - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]

@@ -2,20 +2,36 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Manager;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
-use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
+use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Oro\Component\Testing\ReflectionUtil;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    /** @var AddressProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $addressProvider;
 
-    /** @var OrderAddressManager */
-    protected $manager;
+    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    protected $doctrine;
+
+    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
+    protected $propertyAccessor;
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        $this->addressProvider = $this->createMock(AddressProviderInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+    }
+
+    abstract protected function getAddressManager(): AbstractAddressManager;
 
     protected function getCustomerAddress(int $id): CustomerAddress
     {
@@ -33,74 +49,75 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
         return $address;
     }
 
-    public function testGetIdentifierFailed()
+    public function testGetIdentifierFailed(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Entity with "Oro\Bundle\CustomerBundle\Entity\CustomerAddress" not registered');
+        $this->expectExceptionMessage(sprintf('Entity with "%s" not registered', CustomerAddress::class));
 
-        $this->manager->getIdentifier($this->getCustomerAddress(1));
+        $this->getAddressManager()->getIdentifier($this->getCustomerAddress(1));
     }
 
-    public function testGetIdentifier()
+    public function testGetIdentifier(): void
     {
-        $this->manager->addEntity('a', CustomerAddress::class);
+        $addressManager = $this->getAddressManager();
+        $addressManager->addEntity('a', CustomerAddress::class);
+        $addressManager->addEntity('au', CustomerUserAddress::class);
 
-        $this->assertEquals(
-            'a_1',
-            $this->manager->getIdentifier($this->getCustomerAddress(1))
-        );
+        self::assertEquals('a_1', $addressManager->getIdentifier($this->getCustomerAddress(1)));
+        self::assertEquals('au_2', $addressManager->getIdentifier($this->getCustomerUserAddress(2)));
     }
 
     /**
-     * @dataProvider identifierDataProvider
+     * @dataProvider getEntityByIdentifierFailedDataProvider
      */
-    public function testGetEntityByIdentifierFailed(string $identifier, int $expectedId, array $exception = [])
+    public function testGetEntityByIdentifierFailed(string $identifier, string $exceptionMessage): void
     {
-        if ($exception) {
-            [$exception, $message] = $exception;
-            $this->expectException($exception);
-            $this->expectExceptionMessage($message);
-        }
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage($exceptionMessage);
 
-        $em = $this->createMock(ObjectManager::class);
-        $em->expects($expectedId ? $this->atLeastOnce() : $this->never())
-            ->method('find')
-            ->with($this->isType('string'), $this->equalTo($expectedId));
+        $this->doctrine->expects(self::never())
+            ->method('getManagerForClass');
 
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->willReturn($em);
-
-        $this->manager->addEntity('au', CustomerUserAddress::class);
-        $this->manager->getEntityByIdentifier($identifier);
+        $addressManager = $this->getAddressManager();
+        $addressManager->addEntity('au', CustomerUserAddress::class);
+        $addressManager->getEntityByIdentifier($identifier);
     }
 
-    public function identifierDataProvider(): array
+    public static function getEntityByIdentifierFailedDataProvider(): array
     {
         return [
-            'no delimiter' => ['a1', 0, [\InvalidArgumentException::class, 'Wrong identifier "a1"']],
-            'not int id' => ['a_bla', 0, [\InvalidArgumentException::class, 'Wrong entity id "bla"']],
-            'wrong identifier' => ['au_1_bla', 0, [\InvalidArgumentException::class, 'Wrong identifier "au_1_bla"']],
-            'wrong identifier int' => ['au_1_1', 0, [\InvalidArgumentException::class, 'Wrong identifier "au_1_1"']],
-            'empty alias' => ['a_1', 0, [\InvalidArgumentException::class, 'Unknown alias "a"']],
+            'no delimiter' => ['a1', 'Wrong identifier "a1"'],
+            'not int id' => ['a_bla', 'Wrong entity id "bla"'],
+            'wrong identifier' => ['au_1_bla', 'Wrong identifier "au_1_bla"'],
+            'wrong identifier int' => ['au_1_1', 'Wrong identifier "au_1_1"'],
+            'empty alias' => ['a_1', 'Unknown alias "a"'],
         ];
     }
 
-    public function testGetEntityByIdentifier()
+    public function testGetEntityByIdentifier(): void
     {
-        $entity = $this->getCustomerUserAddress(1);
+        $customerAddress1 = $this->getCustomerAddress(1);
+        $customerUserAddress1 = $this->getCustomerUserAddress(1);
 
-        $em = $this->createMock(ObjectManager::class);
-        $em->expects($this->exactly(2))->method('find')
-            ->with($this->isType('string'), $this->isType('integer'))
-            ->willReturnOnConsecutiveCalls($entity, null);
-
-        $this->registry->expects($this->any())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects(self::exactly(3))
+            ->method('find')
+            ->with(self::isType('string'), self::isType('integer'))
+            ->willReturnMap([
+                [CustomerAddress::class, 1, $customerAddress1],
+                [CustomerUserAddress::class, 1, $customerUserAddress1],
+                [CustomerUserAddress::class, 2, null]
+            ]);
+        $this->doctrine->expects(self::exactly(3))
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->manager->addEntity('au', CustomerUserAddress::class);
-        $this->assertEquals($entity, $this->manager->getEntityByIdentifier('au_1'));
-        $this->assertNull($this->manager->getEntityByIdentifier('au_2'));
+        $addressManager = $this->getAddressManager();
+        $addressManager->addEntity('a', CustomerAddress::class);
+        $addressManager->addEntity('au', CustomerUserAddress::class);
+
+        self::assertSame($customerAddress1, $addressManager->getEntityByIdentifier('a_1'));
+        self::assertSame($customerUserAddress1, $addressManager->getEntityByIdentifier('au_1'));
+        self::assertNull($addressManager->getEntityByIdentifier('au_2'));
     }
 }

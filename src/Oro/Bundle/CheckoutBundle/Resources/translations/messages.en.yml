@@ -234,8 +234,11 @@ oro:
                     back_to_shipping_method.label: Edit Shipping Method
                     back_to_payment.label: Edit Payment
                     transitions.back_to_payment.label: Edit Payment
-                    continue_checkout_as_guest.label: Continue as a Guest
-                    continue_checkout_as_guest.tooltip: You'll have the option to register for an account after your purchase
+                    login_checkout_as_guest.label: Click here to Log In
+                    login_checkout_as_guest.tooltip: Already have an account?
+                    continue_checkout_as_guest.label: Proceed to Guest Checkout?
+                    continue_checkout_as_guest.divider: or
+                    continue_checkout_as_guest.tooltip: You’ll have an option to register an account when creating the order
                     place_order:
                         label: Submit Order
                         condition.extendable.message: There was an error while processing the order.
