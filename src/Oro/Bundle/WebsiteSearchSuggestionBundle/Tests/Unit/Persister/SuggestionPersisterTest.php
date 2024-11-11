@@ -40,7 +40,7 @@ final class SuggestionPersisterTest extends \PHPUnit\Framework\TestCase
     public function testThatSuggestionPersisted(): void
     {
         $this->suggestionRepository
-            ->expects(self::exactly(2))
+            ->expects(self::exactly(3))
             ->method('saveSuggestions')
             ->withConsecutive(
                 [
@@ -70,6 +70,20 @@ final class SuggestionPersisterTest extends \PHPUnit\Framework\TestCase
                             'words_count' => 1,
                         ]
                     ]
+                ],
+                [
+                    1,
+                    3,
+                    [
+                        12345 => [
+                            'phrase' => '12345',
+                            'words_count' => 1,
+                        ],
+                        'phrase2_localization3' => [
+                            'phrase' => 'phrase2_localization3',
+                            'words_count' => 1,
+                        ]
+                    ]
                 ]
             )
             ->willReturnOnConsecutiveCalls(
@@ -85,6 +99,13 @@ final class SuggestionPersisterTest extends \PHPUnit\Framework\TestCase
                     'inserted' => [
                         ['id' => 3, 'phrase' => 'phrase1_localization2'],
                         ['id' => 4, 'phrase' => 'phrase2_localization2']
+                    ],
+                    'skipped' => []
+                ],
+                [
+                    'inserted' => [
+                        ['id' => 3, 'phrase' => '12345'],
+                        ['id' => 4, 'phrase' => 'phrase2_localization3']
                     ],
                     'skipped' => []
                 ],
@@ -113,6 +134,10 @@ final class SuggestionPersisterTest extends \PHPUnit\Framework\TestCase
                 2 => [
                     'phrase1_localization2' => [1, 2],
                     'phrase2_localization2' => [3, 4]
+                ],
+                3 => [
+                    12345 => [1, 2],
+                    'phrase2_localization3' => [3, 4]
                 ]
             ]
         );
