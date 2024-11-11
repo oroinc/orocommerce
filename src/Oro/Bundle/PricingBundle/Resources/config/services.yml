@@ -1322,6 +1322,7 @@ services:
             - '@oro_pricing.model.price_list_tree_handler'
             - '@security.token_storage'
             - '@oro_customer.provider.customer_user_relations_provider'
+            - '@logger'
         tags:
             - { name: website_search.placeholder }
             - { name: oro_featuretogle.feature, feature: oro_price_lists_combined }

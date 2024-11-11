@@ -67,7 +67,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
 
   Scenario: Successful order payment with PayPal PayFlow Gateway
     Given I click on "Create Order"
-    And I click "Continue as a Guest"
+    And I click "Continue As Guest User"
     And I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |

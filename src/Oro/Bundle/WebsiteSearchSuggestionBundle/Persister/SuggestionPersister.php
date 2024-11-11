@@ -50,6 +50,7 @@ class SuggestionPersister
             $suggestions = [];
 
             foreach (array_keys($productsByPhrase) as $phrase) {
+                $phrase = strval($phrase);
                 $suggestions[$phrase] = [
                     'phrase' => $phrase,
                     'words_count' => count(explode(' ', $phrase)),

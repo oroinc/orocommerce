@@ -67,7 +67,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
 
   Scenario: Successful order payment with PayPal Payments Pro
     Given I click on "Create Order"
-    When I click "Continue as a Guest"
+    When I click "Continue As Guest User"
     And I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |

@@ -222,7 +222,8 @@ Feature: Consent management via Management Console UI
       | Email                                | AmandaRCole1@example.org  |
       | Password                             | AmandaRCole1@example.org  |
       | Confirm Password                     | AmandaRCole1@example.org  |
-    When click "Create Account"
+    When I scroll to bottom
+    And click "Create Account"
     Then I should see that "Required Consent" contains "This agreement is required"
     And I click "Presenting Personal Data"
     Then I should see "UiDialog" with elements:
@@ -242,7 +243,8 @@ Feature: Consent management via Management Console UI
     And the "Presenting Personal Data" checkbox should be checked
     And the "Email Newsletters" checkbox should not be checked
     And the "Collecting and storing personal data" checkbox should be checked
-    When click "Create Account"
+    When I scroll to bottom
+    And click "Create Account"
     Then I should see "Please check your email to complete registration" flash message
 
   Scenario: Confirmation of registration a new user who has accepted consents
@@ -736,7 +738,6 @@ Feature: Consent management via Management Console UI
     And I open shopping list widget
     And I click "Open List"
     And click on "Create Order"
-    And I click "Create Account"
     And I fill "Registration Form" with:
       | Company          | Company            |
       | First Name       | Sue                |
@@ -788,7 +789,7 @@ Feature: Consent management via Management Console UI
     And I open shopping list widget
     And I click "Open List"
     And click on "Create Order"
-    And I click "Continue as a Guest"
+    And I click "Continue As Guest User"
     And I should see "Agreements" in the "Checkout Step Title" element
     And I should see 3 elements "Required Consent"
     And I should not see "Back"

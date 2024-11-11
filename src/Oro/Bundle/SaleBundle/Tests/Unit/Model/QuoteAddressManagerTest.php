@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Model;
 
-use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
@@ -13,35 +12,32 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
-use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
+use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
 use Oro\Bundle\OrderBundle\Tests\Unit\Manager\AbstractAddressManagerTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
-use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 
 class QuoteAddressManagerTest extends AbstractAddressManagerTest
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|QuoteAddressProvider */
-    private $provider;
-
-    /** @var \PHPUnit\Framework\MockObject\MockObject|ManagerRegistry */
-    protected $registry;
-
-    /** @var QuoteAddressManager */
-    protected $manager;
+    private QuoteAddressManager $manager;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->provider = $this->createMock(QuoteAddressProvider::class);
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        parent::setUp();
 
         $this->manager = new QuoteAddressManager(
-            $this->provider,
-            $this->registry,
-            QuoteAddress::class
+            $this->addressProvider,
+            $this->doctrine,
+            $this->propertyAccessor
         );
+    }
+
+    #[\Override]
+    protected function getAddressManager(): AbstractAddressManager
+    {
+        return $this->manager;
     }
 
     /**
@@ -53,7 +49,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         AbstractAddress $expectedCustomerAddress = null,
         AbstractAddress $expectedCustomerUserAddress = null,
         QuoteAddress $quoteAddress = null
-    ) {
+    ): void {
         $classMetadata = $this->createMock(ClassMetadata::class);
         $classMetadata->expects($this->once())
             ->method('getFieldNames')
@@ -67,15 +63,15 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
             ->method('getClassMetadata')
             ->willReturn($classMetadata);
 
-        $this->registry->expects($this->any())
+        $this->doctrine->expects($this->any())
             ->method('getManagerForClass')
             ->with($this->isType('string'))
             ->willReturn($em);
 
         $quoteAddress = $this->manager->updateFromAbstract($address, $quoteAddress);
-        $this->assertEquals($expected, $quoteAddress);
-        $this->assertEquals($expectedCustomerAddress, $quoteAddress->getCustomerAddress());
-        $this->assertEquals($expectedCustomerUserAddress, $quoteAddress->getCustomerUserAddress());
+        self::assertEquals($expected, $quoteAddress);
+        self::assertSame($expectedCustomerAddress, $quoteAddress->getCustomerAddress());
+        self::assertSame($expectedCustomerUserAddress, $quoteAddress->getCustomerUserAddress());
     }
 
     public function quoteDataProvider(): array
@@ -155,11 +151,11 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         array $customerAddresses = [],
         array $customerUserAddresses = [],
         array $expected = []
-    ) {
-        $this->provider->expects($this->any())
+    ): void {
+        $this->addressProvider->expects($this->any())
             ->method('getCustomerAddresses')
             ->willReturn($customerAddresses);
-        $this->provider->expects($this->any())
+        $this->addressProvider->expects($this->any())
             ->method('getCustomerUserAddresses')
             ->willReturn($customerUserAddresses);
 
@@ -168,8 +164,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
 
         $result = $this->manager->getGroupedAddresses($quote, AddressType::TYPE_BILLING, 'oro.sale.quote.');
 
-        $this->assertInstanceOf(TypedOrderAddressCollection::class, $result);
-        $this->assertEquals($expected, $result->toArray());
+        self::assertEquals($expected, $result->toArray());
     }
 
     public function groupedAddressDataProvider(): array

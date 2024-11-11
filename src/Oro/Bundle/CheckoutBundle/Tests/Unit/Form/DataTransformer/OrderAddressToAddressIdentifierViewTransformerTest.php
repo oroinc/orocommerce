@@ -13,11 +13,11 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class OrderAddressToAddressIdentifierViewTransformerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var PropertyAccessor */
-    private $propertyAccessor;
-
     /** @var OrderAddressManager|\PHPUnit\Framework\MockObject\MockObject */
     private $addressManager;
+
+    /** @var PropertyAccessor */
+    private $propertyAccessor;
 
     #[\Override]
     protected function setUp(): void
@@ -38,64 +38,63 @@ class OrderAddressToAddressIdentifierViewTransformerTest extends \PHPUnit\Framew
     public function testTransformWhenNotOrderAddress(): void
     {
         $value = new \stdClass();
-        $this->assertSame($value, $this->getTransformer([])->transform($value));
+        self::assertSame($value, $this->getTransformer([])->transform($value));
     }
 
-    /**
-     * @dataProvider transformDataProvider
-     *
-     * @param OrderAddress $address
-     * @param array $requiredFields
-     * @param string $expectedIdentifier
-     */
-    public function testTransform(OrderAddress $address, array $requiredFields, $expectedIdentifier): void
+    public function testTransformForOrderAddressWithCustomerAddress(): void
     {
-        $this->addressManager
-            ->expects($this->any())
+        $address = new OrderAddress();
+        $address->setCustomerAddress(new CustomerAddress());
+        $identifier = 'sample_1';
+
+        $this->addressManager->expects(self::once())
             ->method('getIdentifier')
-            ->willReturn($expectedIdentifier);
+            ->willReturn($identifier);
 
-        $this->assertSame($expectedIdentifier, $this->getTransformer($requiredFields)->transform($address));
+        self::assertSame($identifier, $this->getTransformer([])->transform($address));
     }
 
-    public function transformDataProvider(): array
+    public function testTransformForOrderAddressWithCustomerUserAddress(): void
     {
-        $orderAddressWithCustomerAddress = new OrderAddress();
-        $orderAddressWithCustomerAddress->setCustomerAddress(new CustomerAddress());
+        $address = new OrderAddress();
+        $address->setCustomerUserAddress(new CustomerUserAddress());
+        $identifier = 'sample_1';
 
-        $orderAddressWithCustomerUserAddress = new OrderAddress();
-        $orderAddressWithCustomerUserAddress->setCustomerUserAddress(new CustomerUserAddress());
+        $this->addressManager->expects(self::once())
+            ->method('getIdentifier')
+            ->willReturn($identifier);
 
-        $orderAddressManual = new OrderAddress();
-        $orderAddressManual->setFirstName('SampleFirstName');
+        self::assertSame($identifier, $this->getTransformer([])->transform($address));
+    }
 
-        return [
-            [
-                'address' => $orderAddressWithCustomerAddress,
-                'requiredFields' => [],
-                'expectedIdentifier' => 'sample_1',
-            ],
-            [
-                'address' => $orderAddressWithCustomerUserAddress,
-                'requiredFields' => [],
-                'expectedIdentifier' => 'sample_2',
-            ],
-            [
-                'address' => $orderAddressManual,
-                'requiredFields' => ['firstName'],
-                'expectedIdentifier' => OrderAddressSelectType::ENTER_MANUALLY,
-            ],
-            [
-                'address' => $orderAddressManual,
-                'requiredFields' => ['lastName'],
-                'expectedIdentifier' => '',
-            ],
-        ];
+    public function testTransformForOrderAddressEnteredManual(): void
+    {
+        $address = new OrderAddress();
+        $address->setFirstName('SampleFirstName');
+
+        $this->addressManager->expects(self::never())
+            ->method('getIdentifier');
+
+        self::assertSame(
+            OrderAddressSelectType::ENTER_MANUALLY,
+            $this->getTransformer(['firstName'])->transform($address)
+        );
+    }
+
+    public function testTransformForOrderAddressEnteredManualAndRequiredFieldsAreNotFilled(): void
+    {
+        $address = new OrderAddress();
+        $address->setFirstName('SampleFirstName');
+
+        $this->addressManager->expects(self::never())
+            ->method('getIdentifier');
+
+        self::assertSame('', $this->getTransformer(['lastName'])->transform($address));
     }
 
     public function testReverseTransform(): void
     {
         $value = 'sampleValue';
-        $this->assertSame($value, $this->getTransformer([])->reverseTransform($value));
+        self::assertSame($value, $this->getTransformer([])->reverseTransform($value));
     }
 }
