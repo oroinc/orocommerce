@@ -10,6 +10,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingMethod;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
@@ -49,7 +51,7 @@ class ContinueToShippingMethodTest extends TestCase
         );
     }
 
-    public function testIsPreConditionAllowedWithValidConditions()
+    public function testIsPreConditionAllowedWithValidConditions(): void
     {
         $errors = new ArrayCollection();
         $workflowItem = $this->createMock(WorkflowItem::class);
@@ -64,7 +66,7 @@ class ContinueToShippingMethodTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testIsPreConditionAllowedWithInvalidConditions()
+    public function testIsPreConditionAllowedWithInvalidConditions(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
 
@@ -78,7 +80,7 @@ class ContinueToShippingMethodTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testIsConditionAllowedWithShipToBillingAddress()
+    public function testIsConditionAllowedWithShipToBillingAddress(): void
     {
         $checkout = new Checkout();
         $checkout->setShipToBillingAddress(true);
@@ -91,7 +93,7 @@ class ContinueToShippingMethodTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testIsConditionAllowedWithShippingAddress()
+    public function testIsConditionAllowedWithShippingAddress(): void
     {
         $checkout = new Checkout();
         $shippingAddress = new OrderAddress();
@@ -105,7 +107,7 @@ class ContinueToShippingMethodTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testIsConditionAllowedWithoutShippingAddress()
+    public function testIsConditionAllowedWithoutShippingAddress(): void
     {
         $checkout = new Checkout(); // No Shipping Address set
 
@@ -117,7 +119,7 @@ class ContinueToShippingMethodTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testExecuteWithMultiShippingDisabled()
+    public function testExecuteWithMultiShippingDisabled(): void
     {
         $checkout = new Checkout();
         $workflowItem = $this->createMock(WorkflowItem::class);
@@ -144,7 +146,7 @@ class ContinueToShippingMethodTest extends TestCase
         $this->transition->execute($workflowItem);
     }
 
-    public function testExecuteWithShippingSelectionByLineItemEnabled()
+    public function testExecuteWithShippingSelectionByLineItemEnabled(): void
     {
         $checkout = new Checkout();
         $workflowItem = $this->createMock(WorkflowItem::class);
@@ -175,7 +177,7 @@ class ContinueToShippingMethodTest extends TestCase
         $this->transition->execute($workflowItem);
     }
 
-    public function testExecuteWithLineItemsGroupingEnabled()
+    public function testExecuteWithLineItemsGroupingEnabled(): void
     {
         $checkout = new Checkout();
         $workflowItem = $this->createMock(WorkflowItem::class);
@@ -208,5 +210,39 @@ class ContinueToShippingMethodTest extends TestCase
             ->with($checkout);
 
         $this->transition->execute($workflowItem);
+    }
+
+    public function testExecuteUpdateEmail(): void
+    {
+        $address = new OrderAddress();
+        $address->setCustomerUserAddress(new CustomerUserAddress());
+        $checkout = new Checkout();
+        $checkout->setBillingAddress($address);
+        $checkout->setCustomerUser((new CustomerUser())->setEmail('test@test.com'));
+
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setEntity($checkout);
+
+        $this->addressActions->expects($this->once())
+            ->method('updateShippingAddress')
+            ->with($checkout);
+
+        $this->configProvider->expects($this->once())
+            ->method('isMultiShippingEnabled')
+            ->willReturn(false);
+
+        $this->defaultShippingMethodSetter->expects($this->once())
+            ->method('setDefaultShippingMethod')
+            ->with($checkout);
+
+        $this->defaultMultiShippingMethodSetter->expects($this->never())
+            ->method('setDefaultShippingMethods');
+
+        $this->defaultMultiShippingGroupMethodSetter->expects($this->never())
+            ->method('setDefaultShippingMethods');
+
+        $this->transition->execute($workflowItem);
+
+        self::assertEquals('test@test.com', $workflowItem->getData()->get('email'));
     }
 }

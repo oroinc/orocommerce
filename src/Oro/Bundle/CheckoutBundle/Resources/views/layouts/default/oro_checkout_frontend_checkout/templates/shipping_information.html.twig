@@ -24,8 +24,13 @@
              }|json_encode }}">
 
             <div class="grid-col-6 grid-col-tablet-12">
+                {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
                 {{ form_row(form.shipping_address.customerAddress, {
-                    parentClass: 'checkout-form__customer-address'
+                    parentClass: 'checkout-form__customer-address',
+                    attr: {
+                        'data-new-address-label': renderedAddress,
+                        'data-address-type': 'shipping',
+                    }
                 }) }}
             </div>
 
@@ -38,7 +43,9 @@
             </div>
 
             <div class="grid-col-12">
-                {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress, null, true) }}
+                {% if hasCustomAddress %}
+                    {{ address.address_form(form.shipping_address, form.save_shipping_address, null, true) }}
+                {% endif %}
 
                 {%  if form.state_token is defined %}
                     {{ form_row(form.state_token) }}
@@ -55,7 +62,12 @@
                                 'view': 'orocheckout/js/app/views/add-address-button-view',
                                 'options': {
                                     fieldId: form.shipping_address.customerAddress.vars.id,
-                                    entityId: checkout.id
+                                    entityId: checkout.id,
+                                    entityClass: oro_class_name(checkout),
+                                    operations: {
+                                        billing: 'b2b_flow_checkout_new_billing_address',
+                                        shipping: 'b2b_flow_checkout_new_shipping_address'
+                                    },
                                 }
                             }
                         }) }}

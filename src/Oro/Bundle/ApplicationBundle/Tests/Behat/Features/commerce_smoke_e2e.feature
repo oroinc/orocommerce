@@ -707,8 +707,6 @@ Feature: Commerce smoke e2e
       |Zip/Postal Code|90001         |
     And click "Continue" in modal window
     And click "Continue"
-    # TODO remove next line after backend fix
-    And click "Continue"
     And I select "Branda Sanborn, Smoke Org, Market St. 12, SAN FRANCISCO CA US 90001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue

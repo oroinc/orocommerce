@@ -97,6 +97,7 @@ workflows:
                                 addressType: 'billing'
                                 required: true
                                 translation_domain: messages
+                                multiStepCheckout: true
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~
@@ -126,6 +127,7 @@ workflows:
                                 required: true
                                 disabled: $disallow_shipping_address_edit
                                 translation_domain: messages
+                                multiStepCheckout: true
                                 constraints:
                                     - Valid: ~
                                     - NotBlank: ~

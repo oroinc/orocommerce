@@ -1,6 +1,6 @@
-{% macro address_form(address_form, save_address_checkbox, hasCustomAddress, email_form, compact) %}
+{% macro address_form(address_form, save_address_checkbox, email_form, compact) %}
     {% import '@OroUI/macros.html.twig' as UI %}
-    <div id="checkout-address-fields-container" class="grid{% if not hasCustomAddress %} hidden{% endif %} checkout-form__address-form">
+    <div id="checkout-address-fields-container" class="grid checkout-form__address-form">
         <div class="grid grid-col-6 grid-col-mobile-big-12">
             {% if email_form %}
                 <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12 grid-col-mobile-landscape-12{% endif %}">
@@ -59,10 +59,12 @@
             </div>
 
             <div class="hidden">
-                {{ form_row(save_address_checkbox) }}
                 {{ form_widget(address_form.id) }}
                 {{ form_widget(address_form.region_text) }}
             </div>
+        </div>
+        <div class="grid-col-12">
+            <div>{{ form_row(save_address_checkbox) }}</div>
         </div>
     </div>
 {% endmacro %}

@@ -34,7 +34,7 @@
         --grid-auto-rows: max-content;
         --grid-gap: #{spacing('xl')} #{spacing('base')};
 
-        grid-gap: #{spacing('xl')} #{spacing('xxxl')};
+        grid-gap: 0 #{spacing('xxxl')};
         max-width: 850px;
         margin-bottom: spacing('lg');
 

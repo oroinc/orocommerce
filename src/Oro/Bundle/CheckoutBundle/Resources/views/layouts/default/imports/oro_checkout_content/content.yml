@@ -96,7 +96,7 @@ layout:
                 __checkout_information_body:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: [ 'checkout:new-address-update' ]
+                        reloadEvents: ['checkout:new-address-update']
                 __checkout_form:
                     blockType: checkout_form
                     options:

@@ -6,18 +6,17 @@ import BaseView from 'oroui/js/app/views/base/view';
 import DialogWidget from 'oro/dialog-widget';
 
 const AddAddressButtonView = BaseView.extend({
-    optionNames: BaseView.prototype.optionNames.concat(['entityId', 'routeName', 'fieldId', 'operationName']),
+    optionNames: BaseView.prototype.optionNames.concat(
+        ['entityId', 'entityClass', 'routeName', 'operations', 'fieldId', 'operationName']
+    ),
 
     entityId: null,
 
-    entityClass: 'Oro\\Bundle\\CheckoutBundle\\Entity\\Checkout',
+    entityClass: null,
 
     routeName: 'oro_frontend_action_widget_form',
 
-    operations: {
-        billing: 'b2b_flow_checkout_new_billing_address',
-        shipping: 'b2b_flow_checkout_new_shipping_address'
-    },
+    operations: {},
 
     titles: {
         billing: __('oro.checkout.billing_address.label'),
