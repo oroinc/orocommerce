@@ -190,7 +190,6 @@ datagrids:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-options-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-grid-representation-builder
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-product-kit-builder
-                - orocheckout/js/datagrid/builder/grouped-line-items-subtotal-builder
             toolbarOptions:
                 pageSize:
                     default_per_page: 10
