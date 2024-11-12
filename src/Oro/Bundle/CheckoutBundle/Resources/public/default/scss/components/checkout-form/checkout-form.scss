@@ -34,13 +34,20 @@
         --grid-auto-rows: max-content;
         --grid-gap: #{spacing('xl')} #{spacing('base')};
 
-        grid-gap: 0 #{spacing('xxxl')};
         max-width: 850px;
         margin-bottom: spacing('lg');
+
+        &--no-offset {
+            margin-bottom: 0;
+        }
 
         .ui-dialog & {
             max-width: 100%;
         }
+    }
+
+    &__row {
+        grid-column-gap: #{spacing('xxxl')};
     }
 
     &__select-container {
@@ -253,6 +260,10 @@
             grid-gap: #{spacing('xl')} 0;
         }
 
+        &__row {
+            grid-column-gap: #{spacing('base')};
+        }
+
         &__buttons {
             gap: spacing('base');
         }
@@ -264,6 +275,12 @@
 }
 
 @include breakpoint('mobile-landscape') {
+    .checkout-form {
+        &__row {
+            grid-column-gap: 0;
+        }
+    }
+
     .summary-collapse-content:not(.show) {
         .checkout-form {
             &__buttons {

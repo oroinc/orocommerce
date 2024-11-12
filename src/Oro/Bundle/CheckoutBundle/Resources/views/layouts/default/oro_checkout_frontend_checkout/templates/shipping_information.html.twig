@@ -44,7 +44,7 @@
 
             <div class="grid-col-12">
                 {% if hasCustomAddress %}
-                    {{ address.address_form(form.shipping_address, form.save_shipping_address, null, true) }}
+                    {{ address.address_form(form.shipping_address, form.save_shipping_address, null, false) }}
                 {% endif %}
 
                 {%  if form.state_token is defined %}

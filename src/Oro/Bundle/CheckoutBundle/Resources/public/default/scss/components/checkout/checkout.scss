@@ -121,6 +121,9 @@
 
 @include breakpoint('tablet') {
     .checkout {
+        display: grid;
+        gap: spacing('md');
+
         &--no-background {
             background: none;
             padding: 0;
@@ -174,9 +177,6 @@
 
 @include breakpoint('mobile-big') {
     .checkout {
-        display: grid;
-        gap: spacing('md');
-
         &__steps {
             padding-top: 0;
             position: static;
