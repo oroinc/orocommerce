@@ -1,6 +1,6 @@
 {% macro address_form(address_form, save_address_checkbox, email_form, compact) %}
     {% import '@OroUI/macros.html.twig' as UI %}
-    <div id="checkout-address-fields-container" class="grid checkout-form__address-form checkout-form__address-form--no-offset" {{ UI.attributes(address_form.vars.attr) }}>
+    <div id="checkout-address-fields-container" class="grid checkout-form__address-form checkout-form__address-form--no-offset">
         <div class="grid grid-col-12 checkout-form__row">
             {% if email_form %}
                 <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12 grid-col-mobile-landscape-12{% endif %}">
@@ -12,21 +12,23 @@
             </div>
         </div>
 
-        <div class="grid grid-col-12 checkout-form__row">
-            <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
-                {{ form_row(address_form.firstName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.first_name'|trans}}) }}
+        <div class="grid grid-col-12" {{ UI.attributes(address_form.vars.attr) }}>
+            <div class="grid grid-col-12 checkout-form__row">
+                <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
+                    {{ form_row(address_form.firstName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.first_name'|trans}}) }}
+                </div>
+                <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
+                    {{ form_row(address_form.lastName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.last_name'|trans}}) }}
+                </div>
             </div>
-            <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
-                {{ form_row(address_form.lastName, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.name.last_name'|trans}}) }}
-            </div>
-        </div>
 
-        <div class="grid grid-col-12 checkout-form__row">
-            <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
-                {{ form_row(address_form.organization, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.organization'|trans}}) }}
-            </div>
-            <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
-                {{ form_row(address_form.phone, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.phone'|trans}}) }}
+            <div class="grid grid-col-12 checkout-form__row">
+                <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
+                    {{ form_row(address_form.organization, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.organization'|trans}}) }}
+                </div>
+                <div class="{% if compact %}grid-col-12{% else %}grid-col-6 grid-col-mobile-landscape-12{% endif %}">
+                    {{ form_row(address_form.phone, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.phone'|trans}}) }}
+                </div>
             </div>
         </div>
 
