@@ -46,4 +46,4 @@ Feature: Product fields website search indexation
     Given I proceed as the User
     And I am on the homepage
     When click "Phones" in hamburger menu
-    Then should see "Xiaomi Redmi 3S"
+    Then I should see "Xiaomi Redmi 3S" and continue checking the condition is met for maximum 10 seconds
