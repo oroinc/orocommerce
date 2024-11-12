@@ -92,9 +92,17 @@ operations:
         button_options:
             class: text-nowrap
             icon: 'shopping-cart'
+            data:
+                responsive-styler: ''
+                input-widget-options:
+                    responsive:
+                        mobile-landscape:
+                            constraint: 'inDropdown'
+                            classes: 'dropdown-item'
         frontend_options:
             options:
                 icon: 'shopping-cart'
+
         preconditions:
             '@and':
                 - '@workflow_available_by_record_group':

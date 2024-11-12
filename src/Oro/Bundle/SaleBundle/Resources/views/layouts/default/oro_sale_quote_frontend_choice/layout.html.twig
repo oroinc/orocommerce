@@ -45,19 +45,20 @@
 {% endblock %}
 
 {% block _quote_choice_submit_button_wrapper_widget %}
-    <div{{ block('block_attributes') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _quote_choice_back_button_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' ',
+        '~class': ' hide-on-mobile-landscape',
         'data-dom-relocation-options': {
             responsive: [
                 {
                     viewport: 'mobile-landscape',
                     moveTo: '.page-title-wrapper',
+                    startPointClass: 'hide-on-mobile-landscape',
                     prepend: true
                 }
             ]

@@ -9,7 +9,7 @@ Feature: Visibility of product with additional attributes
 
   Scenario: Add additional attribute for product entity
     Given I login as administrator
-    And I go to System/Entities/Entity Management
+    When I go to System/Entities/Entity Management
     And filter Name as is equal to "Product"
     And click View Product in grid
     And I click on "Create Field"
@@ -17,8 +17,10 @@ Feature: Visibility of product with additional attributes
       | Field name    | additional_name |
       | Type          | String      |
     And I click "Continue"
-    When I save and close form
-    Then click update schema
+    Then I save and close form
+    When I click "Update schema"
+    And I click "Yes, Proceed"
+    Then I should see Schema updated flash message
 
   Scenario: Edit product`s additional attribute
     Given I go to Products / Products
