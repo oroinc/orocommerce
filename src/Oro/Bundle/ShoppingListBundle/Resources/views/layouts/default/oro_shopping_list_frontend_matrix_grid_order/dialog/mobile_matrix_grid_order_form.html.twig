@@ -27,6 +27,8 @@
 {% endblock %}
 
 {% block _matrix_collection_widget_body_row_head %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     <div class="{{ class_prefix }}__item-info"
          data-toggle="collapse"
          data-target="{{ '#' ~ collapseId }}"
@@ -50,8 +52,10 @@
                 <span data-rows-price="{{ rowIndex }}">0</span>
             </div>
         </div>
-        <div class="{{ class_prefix }}__item-icon-wrapper">
-            <span class="{{ class_prefix }}__item-icon fa-plus fa--large" data-icon aria-hidden="true"></span>
+        <div class="{{ class_prefix }}__item-icon-wrapper collapse-toggle">
+            <span class="{{ class_prefix }}__item-icon trigger-icon" data-icon>
+                {{ renderIcon.icon({name: 'plus'}) }}
+            </span>
         </div>
     </div>
 {% endblock %}
@@ -59,8 +63,8 @@
 {% block _matrix_collection_widget_body_row_cells %}
     {% set cells = columnsCount > 1 ? row.columns : form.rows %}
     <div class="{{ class_prefix }}__item-container collapse" id="{{ collapseId }}"
-         data-trigger-icon-show-class="fa-minus"
-         data-trigger-icon-hide-class="fa-plus"
+         data-trigger-icon-show="minus"
+         data-trigger-icon-hide="plus"
     >
         <div class="{{ class_prefix }}__item-content-wrapper">
             {% for cell in cells %}

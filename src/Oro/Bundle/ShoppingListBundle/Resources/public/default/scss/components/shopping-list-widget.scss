@@ -69,18 +69,6 @@
         @include hover {
             text-decoration: underline;
         }
-
-        [class^='fa-'] {
-            margin-right: 5px;
-
-            vertical-align: middle;
-
-            &::before {
-                font-size: 18px;
-
-                color: $shopping-list-widget-wrapper-create-btn-icon-color;
-            }
-        }
     }
 
     &--disabled {

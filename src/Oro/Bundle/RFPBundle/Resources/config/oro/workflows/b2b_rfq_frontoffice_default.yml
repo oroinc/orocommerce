@@ -42,7 +42,7 @@ workflows:
                 step_to: submitted
                 transition_definition: __start___definition
                 frontend_options:
-                    icon: fa-envelope-o
+                    icon: send
             more_information_requested_transition:
                 step_to: requires_attention
                 transition_definition: more_information_requested_transition_definition
@@ -55,7 +55,14 @@ workflows:
                         field: serialized_data
                         require: "entity.getInternalStatus().getInternalId() === 'more_info_requested'"
                 frontend_options:
-                    icon: fa-question-circle-o
+                    icon: help-circle
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
             provide_more_information_transition:
                 step_to: submitted
                 transition_definition: provide_more_information_transition_definition
@@ -69,12 +76,26 @@ workflows:
                                 constraints:
                                   - NotBlank: ~
                 frontend_options:
-                    icon: message-square
+                    icon: message-circle
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
             cancel_transition:
                 step_to: cancelled
                 transition_definition: cancel_transition_definition
                 frontend_options:
                     icon: close
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
             decline_transition:
                 step_to: cancelled
                 transition_definition: decline_transition_definition
@@ -111,7 +132,14 @@ workflows:
                             entity.getCustomerStatus().getInternalId() === 'submitted' &&
                             prevEntity.getCustomerStatus().getInternalId() === 'cancelled'
                 frontend_options:
-                    icon: fa-external-link
+                    icon: external-link
+                    data:
+                        responsive-styler:
+                        input-widget-options:
+                            responsive:
+                                mobile-landscape:
+                                    constraint: 'inDropdown'
+                                    classes: 'dropdown-item'
 
         transition_definitions:
             __start___definition:

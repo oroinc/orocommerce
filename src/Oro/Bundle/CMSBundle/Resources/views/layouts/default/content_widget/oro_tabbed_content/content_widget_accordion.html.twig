@@ -18,6 +18,8 @@
 {% endblock %}
 
 {% block _tabbed_content_content_widget_accordion_items_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% for key, item in tabbedContentItems %}
         {% set itemId = 'content-widget-item-'|uniqid %}
         <div class="accordion-group__item">
