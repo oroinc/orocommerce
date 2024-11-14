@@ -28,6 +28,10 @@
 
     &__customer-address {
         margin-block-end: spacing('xs');
+
+        &:has(select:disabled) {
+            display: none;
+        }
     }
 
     &__address-form {

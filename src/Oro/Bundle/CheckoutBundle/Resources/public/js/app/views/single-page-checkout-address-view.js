@@ -14,8 +14,7 @@ define(function(require) {
             dialogWidth: 1000,
             dialogHeight: 'auto',
             resizable: false,
-            autoResize: true,
-            dialogTitleIcon: 'map-pin'
+            autoResize: true
         },
 
         enterManuallyOriginLabel: null,

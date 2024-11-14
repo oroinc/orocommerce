@@ -25,6 +25,9 @@
 {% block _oro_action_operation_address_row %}
     {% import '@OroUI/macros.html.twig' as UI %}
     <div class="grid grid-col-12 checkout-form__row">
+        <p class="grid-col-12  required-label" aria-hidden="true"><span class="required-symbol">*</span> {{ 'oro.customer.form.label.required'|trans }}</p>
+    </div>
+    <div class="grid grid-col-12 checkout-form__row">
         {% if emailField is not null %}
             <div class="grid-col-6 grid-col-mobile-landscape-12">
                 {{ emailField }}
@@ -34,7 +37,6 @@
             {{ form_row(form.label, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.label'|trans}}) }}
         </div>
     </div>
-
     <div class="grid grid-col-12 checkout-form__row" {{ UI.attributes(form.vars.attr) }}>
         <div class="hidden">
             {{ form_widget(form.id) }}
@@ -53,7 +55,6 @@
             {{ form_row(form.phone, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.phone'|trans}}) }}
         </div>
     </div>
-
     <div class="grid grid-col-12 checkout-form__row">
         <div class="grid-col-6 grid-col-mobile-landscape-12">
             {{ form_row(form.street, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street'|trans}}) }}
@@ -62,24 +63,18 @@
             {{ form_row(form.street2, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.street2'|trans}}) }}
         </div>
     </div>
-
     <div class="grid grid-col-12 checkout-form__row">
         <div class="grid-col-6 grid-col-mobile-landscape-12">
             {{ form_row(form.city, {'attr': {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.city'|trans}}) }}
         </div>
-
-        <div class="grid grid-col-6 grid-col-mobile-landscape-12">
-            <div class="grid-col-7 grid-col-mobile-big-6">
-                {{ form_row(form.region) }}
-            </div>
-
-            <div class="grid-col-5 grid-col-mobile-big-6">
-                {{ form_row(form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
-            </div>
+        <div class="grid-col-6 grid-col-mobile-landscape-12">
+            {{ form_row(form.postalCode, {'attr' : {'placeholder': 'oro.checkout.workflow.b2b_flow_checkout.form.placeholder.address.zip'|trans}}) }}
         </div>
     </div>
-
     <div class="grid grid-col-12 checkout-form__row">
+        <div class="grid-col-6 grid-col-mobile-landscape-12">
+            {{ form_row(form.region) }}
+        </div>
         <div class="grid-col-6 grid-col-mobile-landscape-12">
             {{ form_row(form.country) }}
         </div>

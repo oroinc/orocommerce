@@ -36,7 +36,7 @@
 
             <div class="grid grid-columns-1 grid-col-12 checkout-form__billing-address">
                 {% if hasCustomAddress %}
-                    {{ address.address_form(form.billing_address, form.save_billing_address, form.email, false) }}
+                    {{ address.address_form(form.billing_address, form.save_billing_address, form.email) }}
                 {% endif %}
 
                 {% if not workflowItem.data.get('disallow_shipping_address_edit') %}

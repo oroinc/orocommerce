@@ -53,11 +53,7 @@ const AddAddressButtonView = BaseView.extend({
                 width: 1000,
                 height: 'auto',
                 resizable: false,
-                autoResize: true,
-                dialogTitleIcon: 'map-pin'
-            },
-            fullscreenDialogOptions: {
-                dialogTitleIcon: 'map-pin'
+                autoResize: true
             }
         }));
 
