@@ -90,7 +90,9 @@
                                 data-toggle="false">{{ request.note|nl2br }}
                             </div>
                             <button class="btn btn--flat btn--size-small collapse-toggle customer-info-grid__view-more" data-toggle="collapse" data-target="#collapse-rfq-view-more" aria-controls="collapse-rfq-view-more">
-                                {{ renderIcon.icon({name: 'chevron-down'}) }}
+                                <span class="trigger-icon" data-icon>
+                                    {{ renderIcon.icon({name: 'chevron-down'}) }}
+                                </span>
                                 <span data-text>{{ 'oro.ui.collapse.more'|trans }}</span>
                             </button>
                         </td>
@@ -104,7 +106,6 @@
 {% block _rfp_request_view_additional_notes_widget %}
     {% import '@OroUI/macros.html.twig' as UI %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-
     {% if block.vars.visible %}
         {% set attr = attr|merge({
             class: attr.class|default('') ~ " notes"
@@ -115,21 +116,25 @@
             <h3 class="section-title section-title--size-m">
                 {{ 'oro.frontend.rfp.request.sections.notes.label'|trans }}
                 <span class="notes__count">({{ requestAdditionalNotes|length }})</span>
-                <button type="button" class="btn btn--simple" title="{{ 'Show less'|trans }}"
+                <button type="button"
+                        class="btn btn--simple btn--size-small collapse-toggle"
+                        title="{{ 'Show less'|trans }}"
                         data-toggle="collapse"
                         data-target="{{ '#' ~  collapseId }}"
                         aria-expanded="false"
                         aria-controls="{{ collapseId }}"
                 >
-                    {{ renderIcon.icon({name: 'chevron-down'}) }}
+                    <span class="trigger-icon" data-icon>
+                        {{ renderIcon.icon({name: 'chevron-down'}) }}
+                    </span>
                 </button>
             </h3>
             <div id="{{ collapseId }}"
                  class="collapse show"
                  data-toggle="false"
                  data-state-id="{{ id }}"
-                 data-trigger-icon-show-class="fa-caret-down"
-                 data-trigger-icon-hide-class="fa-caret-right"
+                 data-trigger-icon-show="chevron-up"
+                 data-trigger-icon-hide="chevron-down"
                  data-collapsed-title="{{ 'Show more'|trans }}"
                  data-expanded-title="{{ 'Show less'|trans }}"
             >

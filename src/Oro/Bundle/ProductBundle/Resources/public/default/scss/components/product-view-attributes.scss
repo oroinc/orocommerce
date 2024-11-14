@@ -44,13 +44,6 @@
     &__attribute-files {
         @include clearfix();
 
-        .grid-cell .filename {
-            [class^='fa-'],
-            [class*=' fa-'] {
-                color: $product-view-attribute-files-icon-color;
-            }
-        }
-
         &.show-less {
             .table-responsive table {
                 position: relative;
