@@ -34,8 +34,12 @@ Feature: Enter coupon code on Front Store
     When I type "coupon-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    When I type "coupon-4" in "CouponCodeInput"
+    And I click "Apply"
+    Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should see "coupon-1 First Promotion Label" in the "Coupons List" element
-    And I should see "Discount -$1.00" in the "Subtotals" element
+    And I should see "coupon-4 Fourth Promotion Name" in the "Coupons List" element
+    And I should see "Discount -$2.00" in the "Subtotals" element
 
   Scenario: Entered invalid coupon should not pass validation
     When I type "coupon-1" in "CouponCodeInput"
@@ -47,10 +51,25 @@ Feature: Enter coupon code on Front Store
     And I should not see "not-existing-coupon" in the "Coupons List" element
 
   Scenario: Removed coupon should not give discount
-    When I click "Coupon Delete Button"
+    When I click "First Coupon Delete Button"
     Then I should see "Coupon code has been removed" flash message
     And I should not see "coupon-1 First Promotion Label"
-    And I should see "I have a Coupon Code"
+    And I should see "Discount -$1.00" in the "Subtotals" element
+
+  Scenario: Change the coupon date to expired
+    Given I proceed as the Admin
+    And go to Marketing/Promotions/Coupons
+    And click edit Fourth Promotion Name in grid
+    When I fill "Coupon Form" with:
+      | Valid Until | <DateTime:Jul 1, 2000, 12:00 AM> |
+    And I save and close form
+    Then I should see "Coupon has been saved" flash message
+
+  Scenario: Removed expired coupon
+    Given I proceed as the Buyer
+    And I reload the page
+    Then I should see "Coupon coupon-4 has expired" flash message
+    And I should not see "coupon-4 First Promotion Name"
     And I should not see "Discount -$1.00" in the "Subtotals" element
 
   Scenario: Coupon promotion label should have fallback as promotion name
