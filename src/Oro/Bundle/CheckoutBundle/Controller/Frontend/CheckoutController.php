@@ -4,12 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutRequestEvent;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\LayoutBundle\Attribute\Layout;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -88,6 +90,9 @@ class CheckoutController extends AbstractController
             ]
         );
 
+        $event = new CheckoutRequestEvent($request, $checkout);
+        $this->container->get(EventDispatcherInterface::class)->dispatch($event, 'oro_checkout.request');
+
         $currentStep = $this->container->get(CheckoutWorkflowHelper::class)
             ->processWorkflowAndGetCurrentStep($request, $checkout);
 
@@ -150,6 +155,7 @@ class CheckoutController extends AbstractController
             parent::getSubscribedServices(),
             [
                 KernelInterface::class,
+                EventDispatcherInterface::class,
                 CheckoutWorkflowHelper::class,
                 PreloadingManager::class,
             ]
