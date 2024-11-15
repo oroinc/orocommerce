@@ -20,8 +20,8 @@ class SimpleProductPriceByMatchingCriteriaProviderTest extends TestCase
     private const USD = 'USD';
 
     private SimpleProductPriceByMatchingCriteriaProvider $provider;
-
     private ConfigManager $configManager;
+
     #[\Override]
     protected function setUp(): void
     {

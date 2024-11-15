@@ -2,20 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Brand;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Yaml\Yaml;
 
-class LoadBrandData extends LoadProductData implements DependentFixtureInterface, ContainerAwareInterface
+class LoadBrandData extends LoadProductData
 {
     use MakeProductAttributesTrait;
-    use UserUtilityTrait;
 
     const BRAND_1 = 'brand-1';
     const BRAND_2 = 'brand-2';
@@ -36,7 +34,8 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData'
+            LoadUser::class,
+            LoadLocalizationData::class
         ];
     }
 
@@ -45,8 +44,8 @@ class LoadBrandData extends LoadProductData implements DependentFixtureInterface
     {
         $this->makeBrandFilterable();
 
-        /** @var EntityManager $manager */
-        $user = $this->getFirstUser($manager);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         $organization = $user->getOrganization();
         $businessUnit1 = $user->getOwner();
 
