@@ -9,7 +9,6 @@
     &__row {
         display: flex;
         flex-direction: column;
-        row-gap: spacing('xs');
 
         &:last-child {
             flex-grow: 1;
@@ -95,8 +94,6 @@
 
         display: inline-flex;
         justify-content: center;
-        margin-left: spacing('xs');
-        padding: 0;
         min-height: initial;
     }
 
@@ -146,15 +143,11 @@
         &__title {
             position: relative;
         }
-    }
-}
 
-@include breakpoint('tablet') {
-    @include grid-line-items-tablet;
-}
+        &__row {
+            row-gap: spacing('xs');
+        }
 
-@include breakpoint('tablet-small') {
-    .grid-line-items {
         &__row-item {
             display: flex;
             flex-direction: column;
@@ -163,12 +156,12 @@
 
         &__row-entry {
             align-items: center;
-            padding: $grid-line-items-container-offset-tablet;
             gap: $grid-line-items-container-gap-tablet;
         }
 
         &__configuration {
             flex-direction: column;
+            gap: $grid-line-items-configuration-gap-tablet;
         }
 
         &__field {
@@ -179,13 +172,20 @@
     }
 }
 
+@include breakpoint('tablet') {
+    @include grid-line-items-tablet;
+}
+
+@include breakpoint('mobile-big') {
+    .grid-line-items {
+        &__row {
+            row-gap: spacing('sm');
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .grid-line-items {
-        .column-on-mobile {
-            flex-direction: column;
-            align-items: start;
-        }
-
         &__field {
             &:not(:last-child)::after {
                 content: none;

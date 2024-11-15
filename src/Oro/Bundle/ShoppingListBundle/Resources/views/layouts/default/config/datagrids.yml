@@ -454,10 +454,6 @@ datagrids:
                 frontend_template:
                     default: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku.html
                     message: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku-message.html
-            item:
-                frontend_template:
-                    default: tpl-loader!oroshoppinglist/templates/datagrid/cell/item-edit.html
-                    message: tpl-loader!oroshoppinglist/templates/datagrid/cell/item-message.html
             quantity:
                 frontend_type: shoppinglist-line-item
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html

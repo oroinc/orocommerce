@@ -7,15 +7,22 @@
 
     &__sidebar {
         position: $customer-shopping-list-sidebar-position;
+        margin: 0 -28px;
+        bottom: 0;
+        // For sticky panel on mobile devices
+        z-index: z('fixed');
     }
 }
 
-@include breakpoint('desktop-small') {
+@include breakpoint('desktop-big') {
     .customer-shopping-list {
         grid-template-columns: $customer-shopping-list-desktop-small-grid-template-columns;
 
         &__sidebar {
             top: $customer-shopping-list-sidebar-desktop-small-top;
+            bottom: initial;
+            z-index: initial;
+            margin: initial;
             height: $customer-shopping-list-sidebar-desktop-small-height;
         }
     }
@@ -25,10 +32,6 @@
     .customer-shopping-list {
         &__sidebar {
             margin: 0 -#{spacing('base')};
-            bottom: 0;
-
-            // For sticky panel on mobile devices
-            z-index: z('fixed');
         }
     }
 }

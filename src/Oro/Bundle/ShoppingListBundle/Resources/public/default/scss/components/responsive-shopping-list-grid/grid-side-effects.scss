@@ -150,7 +150,7 @@
     }
 }
 
-@include breakpoint('mobile-landscape') {
+@include breakpoint('mobile-big') {
     .responsive-shopping-list-grid {
         .grid-row {
             > .grid-cell:first-child {

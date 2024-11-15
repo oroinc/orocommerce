@@ -83,7 +83,6 @@ dynamic-imports:
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/item-message.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/item.html
-        - tpl-loader!oroshoppinglist/templates/datagrid/cell/item-edit.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/price.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/quantity.html
         - tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html

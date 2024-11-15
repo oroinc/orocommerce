@@ -1,10 +1,9 @@
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <% if (obj.isKit) { %>
     <div class="product-kit-sku">
-        <span class="action-holder hide-on-mobile-landscape">
+        <span class="action-holder hide-on-tablet">
             <%= oroshoppinglist.renderExpandKitsButton({
                 productName: obj.name,
-                productId: obj.productId,
                 btnClass: 'btn btn--size-small btn--simple'
             }) %>
         </span>

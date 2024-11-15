@@ -41,6 +41,7 @@ define(function(require) {
                     $select: $select
                 });
                 $select.after(this.unitsAsRadioGroupView.$el);
+                $select.inputWidget('dispose');
             } else {
                 $select.removeClass('invisible');
             }

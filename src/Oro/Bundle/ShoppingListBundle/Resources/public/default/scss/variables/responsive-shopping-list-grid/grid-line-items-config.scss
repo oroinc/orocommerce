@@ -22,8 +22,8 @@ $grid-line-field-label-color: get-var-color('text', 'secondary') !default;
 $grid-line-field-label-offset: spacing('xs') !default;
 
 // Tablet
-$grid-line-items-container-offset-tablet: spacing('md') 0 !default;
 $grid-line-items-container-gap-tablet: 0 spacing('sm') !default;
+$grid-line-items-configuration-gap-tablet: spacing('xs') 0 !default;
 
 // Mobile
 $grid-line-items-row-offset-x-mobile: spacing('sm') !default;

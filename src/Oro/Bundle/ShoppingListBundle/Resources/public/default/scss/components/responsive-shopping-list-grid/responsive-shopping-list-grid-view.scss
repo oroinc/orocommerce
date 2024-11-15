@@ -18,6 +18,22 @@
         }
     }
 
+    .grid-header-cell-subtotal {
+        text-align: right;
+    }
+
+    .grid-header-cell-quantity,
+    .grid-body-cell-quantity {
+        padding-right: spacing('xs');
+        color: $responsive-shopping-grid-quantity-unit-color;
+    }
+
+    .grid-header-cell-unit,
+    .grid-body-cell-unit {
+        padding-left: spacing('xs');
+        color: $responsive-shopping-grid-quantity-unit-color;
+    }
+
     .sub-row-last,
     .filtered-out {
         .grid-body-cell-sku::after {
@@ -131,16 +147,68 @@
 
 @include breakpoint('tablet') {
     .responsive-shopping-list-grid-view {
+        .grid-main-container {
+            display: grid;
+            grid-template-areas: 'product price subtotal';
+            grid-template-columns: auto min-content min-content;
+        }
+
+        .grid-header,
+        .grid-body,
+        .grid-header-row,
+        .grid-row {
+            display: grid;
+            grid-template-columns: subgrid;
+            grid-column: product / subtotal;
+        }
+
+        .grid-body-cell-quantity {
+            display: grid;
+            grid-template-columns: subgrid;
+            grid-column: product / subtotal;
+            grid-row: 2/3;
+            padding-top: 0;
+            // padding-left:  $datagrid-body-cell-offset + 44 + 8;
+            padding-left: 68px;
+            padding-bottom: $datagrid-body-cell-offset;
+
+            &:not(:has(.btn, .input)) {
+                text-align: left;
+            }
+        }
+
+        .product-kit-general-error,
+        .sub-row-product-kit {
+            .select-row-cell,
+            .grid-body-cell-item,
+            .grid-body-cell-price,
+            .grid-body-cell-subtotal {
+                padding-bottom: 0;
+            }
+        }
+
+        .notification-row {
+            .grid-body-cell-sku,
+            .grid-body-cell-item {
+                padding-left: 68px;
+            }
+
+            .grid-body-cell-item,
+            &.group-row-has-children .grid-body-cell-sku {
+                display: grid;
+                grid-column: product / subtotal;
+            }
+        }
+
         .grid-header-cell-quantity,
         .grid-header-cell-unit,
-        .grid-body-cell-quantity,
         .grid-body-cell-unit {
             display: none;
         }
     }
 }
 
-@include breakpoint('mobile-landscape') {
+@include breakpoint('mobile-big') {
     .responsive-shopping-list-grid-view .grid-body {
         .sub-row {
             padding: 0 $responsive-shopping-body-cell-offset-x-mobile;

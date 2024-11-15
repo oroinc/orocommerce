@@ -31,7 +31,7 @@
             <% } %>
         <% } else { %>
             <% if (obj._isKitItemLineItem) { %>
-                <div class="grid-line-items__row-item height-as-image-tablet column-on-mobile">
+                <div class="grid-line-items__row-item height-as-image-tablet">
                     <div class="bold"><%- obj.kitItemLabel %>:</div>
                     <% if (name && name.length <= clipLength) { %>
                         <%= oroshoppinglist.renderProductItemName({...obj, link: productId ? productUrl(productId, variantId) : null, popover_image_src: obj.image}) %>

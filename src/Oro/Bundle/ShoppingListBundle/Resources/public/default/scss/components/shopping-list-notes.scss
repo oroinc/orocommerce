@@ -58,4 +58,8 @@
 
         text-align: right;
     }
+
+    &:has(.shopping-list-notes__content.hide) {
+        margin: 0;
+    }
 }

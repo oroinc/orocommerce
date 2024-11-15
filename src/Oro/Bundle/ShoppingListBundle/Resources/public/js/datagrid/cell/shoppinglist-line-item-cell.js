@@ -81,12 +81,21 @@ const ShoppinglistLineItemCell = HtmlTemplateCell.extend({
             });
 
             const launcher = this.updateConfigurableAction.createLauncher({
-                className: 'btn btn--flat',
+                className: 'btn btn--flat btn-select-variants',
                 label: __('oro.frontend.shoppinglist.actions.update_configurable_line_item.select_variant_label')
             });
 
-            launcher.render().$el.appendTo(this.$el);
+            launcher.render().$el.appendTo(this.getCellRootElement());
         }
+    },
+
+    /**
+     * @returns {jQuery.Element}
+     */
+    getCellRootElement() {
+        return this.$('[data-role="cell-quantity-root"]').length
+            ? this.$('[data-role="cell-quantity-root"]')
+            : this.$el;
     }
 });
 

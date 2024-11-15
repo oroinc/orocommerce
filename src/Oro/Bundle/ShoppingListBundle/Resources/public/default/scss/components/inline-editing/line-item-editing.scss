@@ -159,21 +159,30 @@
     }
 }
 
+@include breakpoint('tablet') {
+    .grid-inline-editing-quantity .view-mode.editable {
+        width: initial;
+        min-width: initial;
+
+        &:has(.form-quantity-row) {
+            width: initial;
+            min-width: initial;
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .responsive-shopping-list-grid {
         .edit-mode,
         .view-mode {
             &.editable {
-                width: auto;
-                min-width: auto;
-
                 background: $edit-mode-cell-background-color;
             }
         }
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('mobile-big') {
     .responsive-shopping-list-grid {
         .input-quantity-btn {
             display: none;

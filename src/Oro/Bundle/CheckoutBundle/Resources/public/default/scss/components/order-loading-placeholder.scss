@@ -1,6 +1,6 @@
 /* @theme: default; */
 
-@include breakpoint('desktop-small') {
+@include breakpoint('desktop-big') {
     .totals-placeholder {
         height: 110px;
         text-align: right;

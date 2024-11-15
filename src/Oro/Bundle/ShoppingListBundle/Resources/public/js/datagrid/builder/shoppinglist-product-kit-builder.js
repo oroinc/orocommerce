@@ -35,10 +35,6 @@ const productKitData = data => data.map(item => {
                 if (kitLineItemById[kitLineItem.id]) {
                     kitLineItem.kitHasGeneralError = true;
                     addClass(kitLineItem, 'product-kit-general-error');
-                    kitLineItem.row_attributes = {
-                        ...(kitLineItem.row_attributes ?? {}),
-                        'data-product-group': kitLineItem._groupId
-                    };
                 }
             });
         }

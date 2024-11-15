@@ -58,6 +58,7 @@ oro:
                 full: '{0} none|{1} {{ count }} each|]1,Inf]{{ count }} each'
                 short: '{0} none|{1} {{ count }} ea|]1,Inf]{{ count }} ea'
                 label: '{0} none|{1} ea|]1,Inf] ea'
+                label_long: '{0} none|{1} each|]1,Inf] each'
 
         product_unit.hour:
             label:
@@ -69,6 +70,7 @@ oro:
                 full: '{0} none|]0,1] {{ count }} hour|]1,Inf]{{ count }} hours'
                 short: '{0} none|]0,1] {{ count }} hr|]1,Inf]{{ count }} hrs'
                 label: '{0} none|]0,1] hr|]1,Inf] hrs'
+                label_long: '{0} none|{1} hour|]1,Inf] hours'
 
         product_unit.item:
             label:
@@ -80,6 +82,7 @@ oro:
                 full: '{0} none|]0,1] {{ count }} item|]1,Inf]{{ count }} items'
                 short: '{0} none|]0,1] {{ count }} item|]1,Inf]{{ count }} items'
                 label: '{0} none|]0,1] item|]1,Inf] items'
+                label_long: '{0} none|{1} item|]1,Inf] items'
 
         product_unit.kg:
             label:
@@ -91,6 +94,7 @@ oro:
                 full: '{0} none|]0,1] {{ count }} kilogram|]1,Inf]{{ count }} kilograms'
                 short: '{0} none|]0,1] {{ count }} kg|]1,Inf]{{ count }} kgs'
                 label: '{0} none|]0,1] kg|]1,Inf] kgs'
+                label_long: '{0} none|{1} kilogram|]1,Inf] kilograms'
 
         product_unit.piece:
             label:
@@ -102,6 +106,7 @@ oro:
                 full: '{0} none|]0,1] {{ count }} piece|]1,Inf]{{ count }} pieces'
                 short: '{0} none|]0,1] {{ count }} pc|]1,Inf]{{ count }} pcs'
                 label: '{0} none|]0,1] pc|]1,Inf] pcs'
+                label_long: '{0} none|{1} piece|]1,Inf] pieces'
 
         product_unit.set:
             label:
@@ -113,6 +118,7 @@ oro:
                 full: '{0} none|]0,1] {{ count }} set|]1,Inf]{{ count }} sets'
                 short: '{0} none|]0,1] {{ count }} set|]1,Inf]{{ count }} sets'
                 label: '{0} none|]0,1] set|]1,Inf] sets'
+                label_long: '{0} none|{1} set|]1,Inf] sets'
 
         product_unit.liter:
             label:
@@ -124,6 +130,7 @@ oro:
                 full: '{0} none|]0,1] %count% liter|]1,Inf] %count% liters'
                 short: '{0} none|]0,1] %count% liter|]1,Inf] %count% liters'
                 label: '{0} none|]0,1] liter|]1,Inf] liters'
+                label_long: '{0} none|{1} liter|]1,Inf] liters'
 
         product_unit.milliliter:
             label:
@@ -135,6 +142,7 @@ oro:
                 full: '{0} none|]0,1] %count% milliliter|]1,Inf] %count% milliliters'
                 short: '{0} none|]0,1] %count% milliliter|]1,Inf] %count% milliliters'
                 label: '{0} none|]0,1] milliliter|]1,Inf] milliliters'
+                label_long: '{0} none|{1} milliliter|]1,Inf] milliliters'
 
         product_unit.box:
             label:
@@ -146,6 +154,7 @@ oro:
                 full: '{0} none|]0,1] %count% box|]1,Inf] %count% boxes'
                 short: '{0} none|]0,1] %count% box|]1,Inf] %count% boxes'
                 label: '{0} none|]0,1] box|]1,Inf] boxes'
+                label_long: '{0} none|{1} box|]1,Inf] boxes'
 
         product_unit.bottle:
             label:
@@ -157,6 +166,7 @@ oro:
                 full: '{0} none|]0,1] %count% bottle|]1,Inf] %count% bottles'
                 short: '{0} none|]0,1] %count% bottle|]1,Inf] %count% bottles'
                 label: '{0} none|]0,1] bottle|]1,Inf] bottles'
+                label_long: '{0} none|{1} bottle|]1,Inf] bottles'
 
         validation:
             sku:

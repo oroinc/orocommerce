@@ -14,13 +14,15 @@ $responsive-shopping-sub-row-border-offset: $responsive-shopping-sub-row-border-
     solid get-color('neutral', 'white-100') !default;
 $responsive-shopping-row-color-hover: rgba(get-color('primary', 'light'), .5) !default;
 
-$responsive-shopping-sub-row-cell-inner-offset: spacing('base') !default;
+$responsive-shopping-sub-row-cell-inner-offset: 16px !default;
 $responsive-shopping-sub-row-cell-desktop-inner-offset: $datagrid-body-cell-offset * .5 !default;
 
 $responsive-shopping-grid-body-cell-sku-width: 114px !default;
 $responsive-shopping-grid-body-cell-inventory-width: 150px !default;
 $responsive-shopping-grid-body-cell-item-width: 604px !default;
 $responsive-shopping-grid-quantity-unit-color: get-var-color('text', 'secondary') !default;
+
+$responsive-shopping-grid-price-offset: 24px !default;
 
 $responsive-shopping-page-sidebar: 280px !default;
 
@@ -39,20 +41,20 @@ $responsive-shopping-subrow-body-cell-offset-y-tablet: 24px !default;
 $responsive-shopping-body-cell-offset-y-mobile: 0 !default;
 $responsive-shopping-body-cell-offset-x-mobile: spacing('base') !default;
 $responsive-shopping-grid-row-offset-mobile: spacing('lg') !default;
-$responsive-shopping-grid-row-offset-bottom-mobile: spacing('base') !default;
+$responsive-shopping-grid-row-offset-bottom-mobile: 20px !default;
 $responsive-shopping-sub-row-offset-top-mobile: spacing('lg') !default;
-$responsive-shopping-sub-row-offset-bottom-mobile: 20px !default;
-$responsive-shopping-sub-row-border-mobile-color: get-color('neutral', 'grey1') !default;
+$responsive-shopping-sub-row-offset-bottom-mobile: spacing('lg') !default;
+$responsive-shopping-sub-row-border-mobile-color: $base-table-border-color !default;
 $responsive-shopping-sub-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
 $responsive-shopping-grid-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color;
 $responsive-shopping-header-row-border-mobile: 1px solid $responsive-shopping-sub-row-border-mobile-color !default;
 $responsive-shopping-grid-label-in-mobile-color: $grid-line-field-label-color !default;
 $responsive-shopping-extension-row-error-offset-mobile: 0 !default;
 $responsive-shopping-extension-row-offset-top-mobile: $responsive-shopping-body-cell-offset-y-mobile !default;
-$responsive-shopping-extension-row-offset-bottom-mobile: 7px !default;
-$responsive-shopping-extension-sub-row-offset-top-mobile: 7px !default;
+$responsive-shopping-extension-row-offset-bottom-mobile: 0 !default;
+$responsive-shopping-extension-sub-row-offset-top-mobile: 0 !default;
 
 $responsive-shopping-body-cell-offset-mobile: $responsive-shopping-body-cell-offset-y-mobile
     $responsive-shopping-body-cell-offset-x-mobile !default;
 
-$responsive-shopping-grid-line-items-offset: spacing('md') !default;
+$responsive-shopping-grid-line-items-offset: 16px !default;
