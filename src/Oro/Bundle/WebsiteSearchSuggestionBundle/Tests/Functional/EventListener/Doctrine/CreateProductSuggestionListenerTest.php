@@ -11,7 +11,7 @@ use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Repository\SuggestionRepository;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion;
@@ -22,10 +22,8 @@ use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion;
 final class CreateProductSuggestionListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
-    use UserUtilityTrait;
 
     private ObjectManager $manager;
-
     private SuggestionRepository $suggestionRepository;
 
     #[\Override]
@@ -34,6 +32,7 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
         $this->initClient();
 
         $this->loadFixtures([
+            LoadUser::class,
             LoadProductData::class
         ]);
 
@@ -60,12 +59,12 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
         $product->setSku('sku');
         $product->setStatus(Product::STATUS_ENABLED);
         $product->setInventoryStatus($inStockInventoryStatus);
-        $product->setOrganization($this->getFirstUser($this->manager)->getOrganization());
+        $product->setOrganization($this->getReference(LoadUser::USER)->getOrganization());
 
         $this->manager->persist($product);
         $this->manager->flush();
 
-        self::consumeAllMessages();
+        $this->consumeAllMessages();
 
         self::assertCount(6, $this->suggestionRepository->findAll());
     }
@@ -81,21 +80,16 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
 
         $this->manager->flush();
 
-        self::consumeAllMessages();
+        $this->consumeAllMessages();
 
         self::assertCount(14, $this->suggestionRepository->findAll());
     }
 
     public function testThatNewProductsAddedForAlreadyExistedSuggestions(): void
     {
-        /**
-         * @var Product $product1
-         */
+        /** @var Product $product1 */
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
-
-        /**
-         * @var Product $product2
-         */
+        /** @var Product $product2*/
         $product2 = $this->getReference(LoadProductData::PRODUCT_2);
 
         $suggestion = new Suggestion();
@@ -117,7 +111,7 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
 
         $this->manager->flush();
 
-        self::consumeAllMessages();
+        $this->consumeAllMessages();
 
         $productSuggestions = $this->manager->getRepository(ProductSuggestion::class)->findBy([
             'suggestion' => $suggestion

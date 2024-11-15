@@ -9,6 +9,8 @@
 {% endblock %}
 
 {% block _checkout_consent_message_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' consent-notification notification notification--success',
         'role': 'alert'
@@ -17,7 +19,7 @@
     {% if consents is empty %}
         <div {{ block('block_attributes') }}>
             <span class="notification__item">
-                <span class="fa-check" aria-hidden="true"></span>
+                {{ renderIcon.icon({name: 'check'}) }}
                 {{ 'oro.consent.frontend.checkout.form.messages.all_agreements_accepted'|trans }}
                 {{ parent_block_widget(block) }}
             </span>

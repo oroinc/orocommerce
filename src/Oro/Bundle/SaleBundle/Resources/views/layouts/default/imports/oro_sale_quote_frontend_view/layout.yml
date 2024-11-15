@@ -66,11 +66,6 @@ layout:
                 quote_view_data:
                     blockType: container
 
-                quote_view_controls_list:
-                    blockType: block
-                    options:
-                        visible: '=false'
-
                 quote_view_information:
                     blockType: quote_view_information
                     options:

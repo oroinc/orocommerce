@@ -8,15 +8,12 @@ use Oro\Bundle\FormBundle\Event\FormHandler\Events;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class IndexationRequestListenerTest extends WebTestCase
 {
-    use UserUtilityTrait;
-
     #[\Override]
     protected function setUp(): void
     {

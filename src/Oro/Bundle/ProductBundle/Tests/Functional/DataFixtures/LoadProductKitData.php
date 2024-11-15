@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
@@ -20,7 +19,8 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -32,7 +32,6 @@ class LoadProductKitData extends AbstractFixture implements
     DependentFixtureInterface
 {
     use ContainerAwareTrait;
-    use UserUtilityTrait;
 
     public const PRODUCT_KIT_1 = 'product-kit-1';
     public const PRODUCT_KIT_2 = 'product-kit-2';
@@ -48,9 +47,10 @@ class LoadProductKitData extends AbstractFixture implements
     public function getDependencies(): array
     {
         return [
+            LoadUser::class,
             LoadProductUnits::class,
             LoadProductUnitPrecisions::class,
-            LoadProductData::class,
+            LoadProductData::class
         ];
     }
 
@@ -148,8 +148,8 @@ class LoadProductKitData extends AbstractFixture implements
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        /** @var EntityManager $manager */
-        $user = $this->getFirstUser($manager);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 
@@ -258,7 +258,7 @@ class LoadProductKitData extends AbstractFixture implements
         ]);
     }
 
-    private function getProduct(EntityManager $manager, string $sku): ?Product
+    private function getProduct(ObjectManager $manager, string $sku): ?Product
     {
         if (!array_key_exists($sku, $this->products)) {
             $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
@@ -267,7 +267,7 @@ class LoadProductKitData extends AbstractFixture implements
         return $this->products[$sku];
     }
 
-    private function getProductUnit(EntityManager $manager, ?string $code): ?ProductUnit
+    private function getProductUnit(ObjectManager $manager, ?string $code): ?ProductUnit
     {
         if ($code === null) {
             return null;

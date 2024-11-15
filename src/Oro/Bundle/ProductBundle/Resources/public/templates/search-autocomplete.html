@@ -97,7 +97,8 @@ function inventoryStatusToLabelClass(inventoryStatus) {
                 <% }) %>
                 <li class="search-autocomplete__item" role="option">
                     <button class="btn btn--flat search-autocomplete__submit" type="submit">
-                        <%- _.__('oro.product.autocomplete.popup.button.all.label', { productCount: total_count }, total_count) %> <span class="fa-angle-right" aria-hidden="true"></span>
+                        <%- _.__('oro.product.autocomplete.popup.button.all.label', { productCount: total_count }, total_count) %>
+                        <%= oroui.renderIcon({ name: 'chevron-right', extraClass: 'theme-icon--small' }) %>
                     </button>
                 </li>
             </ul>

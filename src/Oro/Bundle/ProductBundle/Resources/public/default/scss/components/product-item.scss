@@ -272,13 +272,6 @@
             margin-bottom: spacing('sm');
             grid-area: title;
         }
-
-        .view-product {
-            [class^='fa-'] {
-                font-size: $font-icon-button-s;
-                padding: 0 6px;
-            }
-        }
     }
 
     &__specification {

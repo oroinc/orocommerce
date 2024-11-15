@@ -9,12 +9,11 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     public const REFERENCE_PREFIX = 'product_tax_code';
 
     public const TAX_1 = 'TAX1';
@@ -44,6 +43,7 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
     public function getDependencies(): array
     {
         return [
+            LoadUser::class,
             LoadProductData::class,
             LoadProductKitData::class
         ];
@@ -52,7 +52,9 @@ class LoadProductTaxCodes extends AbstractFixture implements DependentFixtureInt
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        $organization = $this->getFirstUser($manager)->getOrganization();
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
+        $organization = $user->getOrganization();
         foreach (self::DATA as $code => $item) {
             $productTaxCode = new ProductTaxCode();
             $productTaxCode->setCode($code);

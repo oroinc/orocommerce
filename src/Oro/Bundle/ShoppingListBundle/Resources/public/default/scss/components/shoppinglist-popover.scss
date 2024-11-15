@@ -10,19 +10,4 @@
         display: $shoppinglist-popover-image-display;
         position: $shoppinglist-popover-image-position;
     }
-
-    .fa--loader-icon {
-        font-size: $shoppinglist-popover-loader-font-size;
-        line-height: $shoppinglist-popover-loader-line-height;
-        display: $shoppinglist-popover-loader-display;
-        text-align: $shoppinglist-popover-loader-text-align;
-        position: $shoppinglist-popover-loader-position;
-        top: $shoppinglist-popover-loader-top;
-        left: $shoppinglist-popover-loader-left;
-        right: $shoppinglist-popover-loader-right;
-        bottom: $shoppinglist-popover-loader-bottom;
-
-        @extend %fa-spinner;
-        @extend %fa-pulse;
-    }
 }

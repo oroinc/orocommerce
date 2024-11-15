@@ -66,14 +66,14 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             [],
             $this->generateBasicAuthHeader(TestCustomerUserData::AUTH_USER, TestCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures(array_merge([
+        $this->loadFixtures(array_merge($this->getInventoryFixtures(), [
             LoadCustomerUserData::class,
             LoadCustomerAddresses::class,
             LoadProductUnitPrecisions::class,
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
-        ], $this->getPaymentFixtures(), $this->getInventoryFixtures()));
+        ], $this->getPaymentFixtures()));
         $this->registry = self::getContainer()->get('doctrine');
     }
 

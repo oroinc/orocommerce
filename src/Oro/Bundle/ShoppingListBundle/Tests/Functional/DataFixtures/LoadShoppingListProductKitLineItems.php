@@ -34,11 +34,11 @@ class LoadShoppingListProductKitLineItems extends AbstractShoppingListLineItemsF
     #[\Override]
     public function getDependencies(): array
     {
-        return [
+        return array_merge(parent::getDependencies(), [
             LoadProductUnitPrecisions::class,
             LoadShoppingLists::class,
             LoadProductKitData::class,
-        ];
+        ]);
     }
 
     #[\Override]

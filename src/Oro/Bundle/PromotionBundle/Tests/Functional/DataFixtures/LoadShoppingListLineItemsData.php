@@ -11,12 +11,11 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadShoppingListLineItemsData extends AbstractFixture implements DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     const LINE_ITEM_1 = 'promo_sl_line_item_1';
 
     /**
@@ -35,6 +34,7 @@ class LoadShoppingListLineItemsData extends AbstractFixture implements Dependent
     public function getDependencies()
     {
         return [
+            LoadUser::class,
             LoadProductUnitPrecisions::class,
             LoadShoppingListsData::class,
         ];
@@ -43,6 +43,8 @@ class LoadShoppingListLineItemsData extends AbstractFixture implements Dependent
     #[\Override]
     public function load(ObjectManager $manager)
     {
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         foreach ($this->lineItems as $name => $lineItem) {
             /** @var ShoppingList $shoppingList */
             $shoppingList = $this->getReference($lineItem['shoppingList']);
@@ -53,12 +55,11 @@ class LoadShoppingListLineItemsData extends AbstractFixture implements Dependent
             /** @var Product $product */
             $product = $this->getReference($lineItem['product']);
 
-            $owner = $this->getFirstUser($manager);
             $item = new LineItem();
             $item->setNotes('Test Notes')
                 ->setCustomerUser($shoppingList->getCustomerUser())
                 ->setOrganization($shoppingList->getOrganization())
-                ->setOwner($owner)
+                ->setOwner($user)
                 ->setShoppingList($shoppingList)
                 ->setUnit($unit)
                 ->setProduct($product)
