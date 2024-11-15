@@ -35,6 +35,7 @@ Feature: Enter coupon code on Front Store
     When I type "coupon-1" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
+    And I click "Expand Checkout Footer"
     When I type "coupon-4" in "CouponCodeInput"
     And I click "Apply"
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
@@ -78,6 +79,7 @@ Feature: Enter coupon code on Front Store
 
   Scenario: Coupon promotion label should have fallback as promotion name
     When I scroll to "I have a Coupon Code"
+    And I click "Expand Checkout Footer"
     And I click "I have a Coupon Code"
     And I type "coupon-2" in "Coupon Code Input"
     And I click "Apply"
