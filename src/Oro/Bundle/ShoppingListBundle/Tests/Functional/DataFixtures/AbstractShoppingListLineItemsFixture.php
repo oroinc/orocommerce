@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -16,7 +16,6 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
     DependentFixtureInterface
 {
     use ContainerAwareTrait;
-    use UserUtilityTrait;
 
     protected static array $lineItems = [];
 
@@ -41,17 +40,24 @@ abstract class AbstractShoppingListLineItemsFixture extends AbstractFixture impl
         $manager->flush();
     }
 
+    #[\Override]
+    public function getDependencies(): array
+    {
+        return [
+            LoadUser::class
+        ];
+    }
+
     protected function createLineItem(ObjectManager $manager, array $lineItemData): LineItem
     {
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference($lineItemData['shoppingList']);
 
-        $owner = $this->getFirstUser($manager);
         $lineItem = new LineItem();
         $lineItem->setNotes('Test Notes');
         $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         $lineItem->setOrganization($shoppingList->getOrganization());
-        $lineItem->setOwner($owner);
+        $lineItem->setOwner($this->getReference(LoadUser::USER));
         $lineItem->setShoppingList($shoppingList);
         $lineItem->setUnit($this->getReference($lineItemData['unit']));
         $lineItem->setProduct($this->getReference($lineItemData['product']));

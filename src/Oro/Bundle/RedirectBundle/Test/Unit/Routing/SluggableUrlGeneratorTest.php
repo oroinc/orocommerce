@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Exception\RouteNotFoundException;
 class SluggableUrlGeneratorTest extends TestCase
 {
     private MockObject|SluggableUrlGenerator $urlGenerator;
+
     #[\Override]
     protected function setUp(): void
     {

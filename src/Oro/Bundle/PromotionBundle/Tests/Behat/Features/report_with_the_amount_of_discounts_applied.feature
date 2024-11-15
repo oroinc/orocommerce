@@ -17,12 +17,10 @@ Feature: Report with the amount of discounts applied
       | Product       | SKU            |
     And click "Add Coupon Code"
     # Add first coupon
-    And type "coupon-1" in "Coupon Code"
-    And click on "Highlighted Suggestion"
+    And fill in "Coupon Code" with "coupon-1"
     And click "Add" in modal window
     # Add second coupon
-    And type "coupon-2" in "Coupon Code"
-    And click on "Highlighted Suggestion"
+    And fill in "Coupon Code" with "coupon-2"
     And click "Add" in modal window
     # Check and save
     Then I should see next rows in "Added Coupons" table

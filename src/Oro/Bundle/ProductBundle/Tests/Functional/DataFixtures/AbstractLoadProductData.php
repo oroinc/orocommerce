@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
@@ -24,7 +23,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -38,13 +37,13 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    use UserUtilityTrait;
     use ContainerAwareTrait;
 
     #[\Override]
     public function getDependencies()
     {
         return [
+            LoadUser::class,
             LoadLocalizationData::class,
             LoadProductUnits::class,
             LoadAttributeFamilyData::class,
@@ -68,14 +67,8 @@ abstract class AbstractLoadProductData extends AbstractFixture implements
         $this->setReference(LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE, $defaultAttributeFamily);
 
         foreach ($data as $referenceName => $item) {
-            if (isset($item['user'])) {
-                /** @var User $user */
-                $user = $this->getReference($item['user']);
-            } else {
-                /** @var EntityManager $manager */
-                $user = $this->getFirstUser($manager);
-            }
-
+            /** @var User $user */
+            $user = $this->getReference($item['user'] ?? LoadUser::USER);
             $businessUnit = $user->getOwner();
             $organization = $user->getOrganization();
 

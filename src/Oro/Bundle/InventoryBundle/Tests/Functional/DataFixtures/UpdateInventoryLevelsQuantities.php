@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures;
 
+use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
-use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Symfony\Component\Yaml\Yaml;
 
-class UpdateInventoryLevelsQuantities extends AbstractEntityReferenceFixture implements DependentFixtureInterface
+class UpdateInventoryLevelsQuantities extends AbstractFixture implements DependentFixtureInterface
 {
     #[\Override]
     public function getDependencies()
     {
         return [
-            LoadProductUnitPrecisions::class,
+            LoadProductUnitPrecisions::class
         ];
     }
 

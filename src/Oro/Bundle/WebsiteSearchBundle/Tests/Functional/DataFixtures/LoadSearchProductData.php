@@ -4,7 +4,6 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
@@ -16,18 +15,18 @@ use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadSearchProductData extends AbstractFixture implements DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     private const PRODUCTS_QUANTITY = 1001;
 
     #[\Override]
     public function getDependencies()
     {
         return [
+            LoadUser::class,
             LoadLocalizationData::class,
             LoadProductUnits::class,
             LoadAttributeFamilyData::class,
@@ -37,8 +36,8 @@ class LoadSearchProductData extends AbstractFixture implements DependentFixtureI
     #[\Override]
     public function load(ObjectManager $manager)
     {
-        /** @var EntityManager $manager */
-        $user = $this->getFirstUser($manager);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 

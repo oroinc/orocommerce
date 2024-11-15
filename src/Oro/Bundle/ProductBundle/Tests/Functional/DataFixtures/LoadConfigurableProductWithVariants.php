@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
@@ -15,13 +14,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class LoadConfigurableProductWithVariants extends AbstractFixture implements DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     const CONFIGURABLE_SKU = 'PARENTCONFIG';
     const FIRST_VARIANT_SKU = 'FIRSTVARIANT';
     const SECOND_VARIANT_SKU = 'SECONDVARIANT';
@@ -46,6 +44,7 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
     public function getDependencies()
     {
         return [
+            LoadUser::class,
             LoadProductUnits::class,
             LoadVariantFields::class,
             LoadProductMultiEnumValues::class
@@ -94,8 +93,8 @@ class LoadConfigurableProductWithVariants extends AbstractFixture implements Dep
         ?string $variantName = null,
         array $multiEnumCodes = []
     ) {
-        /** @var EntityManager $manager */
-        $user = $this->getFirstUser($manager);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         $businessUnit = $user->getOwner();
         $organization = $user->getOrganization();
 

@@ -20,9 +20,9 @@ class LoadShoppingListEmptyConfigurableLineItems extends AbstractShoppingListLin
     #[\Override]
     public function getDependencies(): array
     {
-        return [
+        return array_merge(parent::getDependencies(), [
             LoadConfigurableProductWithVariants::class,
             LoadShoppingLists::class,
-        ];
+        ]);
     }
 }

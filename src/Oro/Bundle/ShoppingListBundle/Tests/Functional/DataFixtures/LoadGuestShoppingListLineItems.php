@@ -4,12 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
 class LoadGuestShoppingListLineItems extends AbstractShoppingListLineItemsFixture
 {
-    use UserUtilityTrait;
-
     public const LINE_ITEM_1 = 'guest_shopping_list_line_item.1';
     public const LINE_ITEM_2 = 'guest_shopping_list_line_item.2';
 
@@ -31,9 +28,9 @@ class LoadGuestShoppingListLineItems extends AbstractShoppingListLineItemsFixtur
     #[\Override]
     public function getDependencies(): array
     {
-        return [
+        return array_merge(parent::getDependencies(), [
             LoadProductUnitPrecisions::class,
             LoadGuestShoppingLists::class,
-        ];
+        ]);
     }
 }
