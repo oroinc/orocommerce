@@ -60,6 +60,10 @@ $checkout-view-summary-grid-container-shadow-background: linear-gradient(
 
 $checkout-view-breakpoint-max-desktop: $site-width !default;
 
+$checkout-view-container-single-page-sidebar-viewportfit: calc(
+    100vh - var(--sticky-page-header-element-offset-top, 0) - #{spacing('xl')}
+) !default;
+
 // tablet-small
 $checkout-view-column-tablet-width: 50% !default;
 $checkout-view-column-extended-tablet-width: 100% !default;
