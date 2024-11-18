@@ -49,12 +49,10 @@
         '~class': " btn btn--flat checkout-order-summary__edit-link"
     }) %}
     {% if editLink %}
-        <% if (toolbarPosition === 'top') { %>
-            <a {{ block('block_attributes') }}>
-                {{ renderIcon.icon({name: 'settings'}) }}
-                <span class="hide-on-tablet-small">{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
-            </a>
-        <% } %>
+        <a {{ block('block_attributes') }}>
+            {{ renderIcon.icon({name: 'arrow-left'}) }}
+            <span>{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
+        </a>
     {% endif %}
 {% endblock %}
 

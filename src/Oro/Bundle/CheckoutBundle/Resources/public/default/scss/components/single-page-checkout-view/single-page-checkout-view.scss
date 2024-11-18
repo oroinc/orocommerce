@@ -212,7 +212,7 @@
     }
 
     .checkout-order-summary__edit-link {
-        align-self: flex-end;
+        margin-bottom: spacing('base');
     }
 
     .datepicker-input {
@@ -242,6 +242,10 @@
 
     .checkout__container--single-page {
         .checkout {
+            &__content-head {
+                grid-row: 1 / 2;
+            }
+
             &__content-main {
                 grid-row: 2 / 3;
             }
@@ -332,6 +336,10 @@
 
             padding: spacing('sm') 0;
             border-bottom: $checkout-view-column-border;
+        }
+
+        .checkout-order-summary__edit-link {
+            margin-bottom: spacing('xs');
         }
     }
 

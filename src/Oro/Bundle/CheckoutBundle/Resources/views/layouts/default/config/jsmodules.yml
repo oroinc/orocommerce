@@ -10,6 +10,7 @@ dynamic-imports:
         - orocheckout/js/app/components/single-page-checkout-component
         - orocheckout/js/app/components/transition-button-component
         - orocheckout/js/app/views/address-view
+        - orocheckout/js/app/views/checkout-back-button-view
         - orocheckout/js/app/views/checkout-content-view
         - orocheckout/js/app/views/checkout-inner-content-view
         - orocheckout/js/app/views/late-checkout-registration-view

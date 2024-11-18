@@ -170,6 +170,11 @@ layout:
                 checkout: '=data["checkout"]'
                 transitionData: '=data["oro_checkout_single_page_transition"].getContinueTransition(data["workflowItem"])'
 
+        - '@add':
+            id: checkout_content_head
+            parentId: checkout_view
+            blockType: container
+
         - '@move':
             id: checkout_content_main
             parentId: checkout_view
@@ -201,8 +206,7 @@ layout:
 
         - '@move':
             id: page_title_container
-            parentId: checkout_view
-            prepend: true
+            parentId: checkout_content_head
 
         - '@add':
             id: checkout_summary_additional_options

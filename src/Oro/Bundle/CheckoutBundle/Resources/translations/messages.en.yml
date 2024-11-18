@@ -401,6 +401,8 @@ oro:
                         inventory_status.label: 'Availability'
                         quantity.label: 'Quantity'
                         unit.label: 'Unit'
+                back_action:
+                    text: 'Back'
             start_from_order: 'Re-Order'
 
         errors:

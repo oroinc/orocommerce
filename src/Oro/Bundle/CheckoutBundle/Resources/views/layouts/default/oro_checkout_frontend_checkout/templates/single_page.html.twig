@@ -32,6 +32,16 @@
     </div>
 {% endblock %}
 
+{% block _checkout_content_head_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__content-head"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _top_sticky_panel_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' sticky-panel--background-less',

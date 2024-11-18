@@ -14,11 +14,12 @@ layout:
             parentId: head
             siblingId: ~
             prepend: false
+
         - '@add':
             id: __checkout_order_summary_edit_link
             blockType: checkout_order_summary_edit_link
             prepend: true
-            parentId: checkout_order_summary_line_items_datagrid_toolbar_rightside_container
+            parentId: checkout_content_head
             options:
                 workflowItem: '=data["workflowItem"]'
 
@@ -61,10 +62,6 @@ layout:
                         checkout: '=data["checkout"]'
                 __checkout_order_summary_title:
                     blockType: container
-                __checkout_order_summary_edit_link:
-                    blockType: checkout_order_summary_edit_link
-                    options:
-                        workflowItem: '=data["workflowItem"]'
                 __checkout_order_summary_content:
                     blockType: container
                 __checkout_order_summary_line_items_container:
@@ -132,7 +129,7 @@ layout:
             tree:
                 __root:
                     __checkout_container:
-                        __checkout_content_main:
+                        __checkout_content_main: ~
                         __checkout_form:
                             __checkout_form_errors: ~
                             __checkout_form_fields:
