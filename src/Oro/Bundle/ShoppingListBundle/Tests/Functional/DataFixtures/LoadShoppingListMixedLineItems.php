@@ -65,11 +65,11 @@ class LoadShoppingListMixedLineItems extends LoadShoppingListProductKitLineItems
     #[\Override]
     public function getDependencies(): array
     {
-        return [
+        return array_merge(parent::getDependencies(), [
             LoadProductUnitPrecisions::class,
             LoadShoppingLists::class,
             LoadProductKitData::class,
             LoadConfigurableProductWithVariants::class,
-        ];
+        ]);
     }
 }

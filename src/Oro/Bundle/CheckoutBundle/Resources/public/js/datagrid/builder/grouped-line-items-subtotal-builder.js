@@ -11,20 +11,6 @@ const GroupedLineItemsSubtotalBuilder = {
             }
         }
 
-        // Update grid toolbar ofter expand collapsed container
-        options.gridPromise.done(grid => {
-            if (grid.$el.closest('[data-role="collapse-body"]').length) {
-                grid.$el.closest('[data-role="collapse-body"]')
-                    .on(`shown.bs.collapse${grid.eventNamespace()}`, () => grid.callToolbar('noChildrenVisibility'));
-            }
-
-            grid.once('dispose', () => {
-                if (grid.$el.closest('[data-role="collapse-body"]').length) {
-                    grid.$el.closest('[data-role="collapse-body"]').off(grid.eventNamespace());
-                }
-            });
-        });
-
         return deferred.resolve();
     },
 

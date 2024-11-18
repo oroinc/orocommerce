@@ -7,10 +7,10 @@
     vertical-align: middle;
 
     &_paypal {
-        width: 39px;
-        height: 25px;
+        width: 42px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/paypal.png') no-repeat;
+        background: url('#{$payment-icon-url}/paypal.svg') no-repeat;
     }
 
     &_mastercard {
@@ -42,23 +42,23 @@
     }
 
     &_jcb {
-        width: 40px;
-        height: 25px;
+        width: 41px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/jcb.png') no-repeat;
+        background: url('#{$payment-icon-url}/jcb.svg') no-repeat;
     }
 
     &_diners_club {
-        width: 40px;
-        height: 25px;
+        width: 41px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/diners_club.png') no-repeat;
+        background: url('#{$payment-icon-url}/diners_club.svg') no-repeat;
     }
 
     &_china_union_pay {
-        width: 40px;
-        height: 25px;
+        width: 45px;
+        height: 28px;
 
-        background: url('#{$payment-icon-url}/china_union_pay.png') no-repeat;
+        background: url('#{$payment-icon-url}/china_union_pay.svg') no-repeat;
     }
 }

@@ -13,6 +13,16 @@ layout:
             optionName: visible
             optionValue: '=data["workflowItem"].getData().get("consents_available")'
 
+        - '@appendOption':
+            id: checkout_combined_buttons_container
+            optionName: reloadEvents
+            optionValue: ['checkout:new-address-update']
+
+        - '@setOption':
+            id: checkout_form
+            optionName: vars.showRequiredLabel
+            optionValue: true
+
         - '@add':
             id: checkout_button_cap
             blockType: checkout_transition_continue

@@ -6,7 +6,7 @@
         'data-page-component-view': 'oroform/js/app/views/form-validate-view'
     }) %}
     <form {{ block('block_attributes') }}>
-        <h4 class="heading-bottom-offset">{{ "oro.checkout.workflow.order_options.label"|trans }}</h4>
+        <h4 class="heading-bottom-offset hide-on-mobile-big">{{ "oro.checkout.workflow.order_options.label"|trans }}</h4>
         <div class="order-review-options grid">
             {% set shippingDateId= 'shipping-date-uid-'|uniqid %}
             <div class="grid-col-6 grid-col-mobile-landscape-12" role="group">
@@ -25,7 +25,7 @@
             </div>
             <div class="grid-col-6 grid-col-mobile-landscape-12">
                 {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
-                <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }}</label>
+                <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }} <span class="caption-italic">{{ 'oro.checkout.optional_label'|trans }}</span></label>
                 {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
                     'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
                     'form': form.vars.id,
@@ -34,7 +34,7 @@
             </div>
             <div class="grid-col-12">
                 {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
-                <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
+                <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }} <span class="caption-italic">{{ 'oro.checkout.optional_label'|trans }}</span></label>
                 {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
                     'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
                     'form': form.vars.id,
@@ -110,4 +110,8 @@
         {% set view = options.views[options.payment_method] %}
         {{ parent_block_widget(block) }}
     {% endif %}
+{% endblock %}
+
+{% block _order_review_step_label_widget %}
+    <h5>{{ 'oro.checkout.order_review.label'|trans }}</h5>
 {% endblock %}

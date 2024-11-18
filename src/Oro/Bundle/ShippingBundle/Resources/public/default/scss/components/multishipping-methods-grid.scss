@@ -38,7 +38,8 @@
 
 @include breakpoint('desktop-small') {
     .responsive-checkout-grid {
-        .actions-panel-container {
+        .actions-panel-container,
+        .datagrid-tool:has(.page-size .hide) {
             display: none;
         }
     }

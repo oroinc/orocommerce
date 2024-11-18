@@ -71,7 +71,6 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
     And I fill form with:
       | First Name      | Tester1         |
       | Last Name       | Testerson       |
-      | Middle Name     | M.              |
       | Email           | tester@test.com |
       | Street          | Fifth avenue    |
       | City            | Berlin          |

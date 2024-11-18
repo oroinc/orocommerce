@@ -36,6 +36,8 @@
 {% endblock %}
 
 {% block __oro_consent_list__consent_items_status_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% set attr = layout_attr_defaults(attr, {
         'class': 'consent-list__status ' ~
             (consent.accepted ? 'consent-list__status--enabled' : 'consent-list__status--disabled'),
@@ -43,7 +45,10 @@
         'aria-hidden': 'true'
     }) %}
 
-    <span {{ block('block_attributes') }}></span>
+    <span {{ block('block_attributes') }}>
+         {% set icon = consent.accepted ? 'check' : 'minus-circle' %}
+        {{ renderIcon.icon({name: icon}) }}
+    </span>
 {% endblock %}
 
 {% block __oro_consent_list__consent_items_link_widget %}

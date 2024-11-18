@@ -95,7 +95,7 @@ class FrontendInventoryFilterDatagridListener
     private function isOldTheme(): bool
     {
         return $this->themeManager->themeHasParent(
-            $this->currentThemeProvider->getCurrentThemeId(),
+            $this->currentThemeProvider->getCurrentThemeId() ?? '',
             ['default_50', 'default_51']
         );
     }

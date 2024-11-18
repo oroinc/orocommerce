@@ -5,6 +5,55 @@
     flex-direction: column;
     gap: spacing('base');
 
+    &:not(&--no-offset) {
+        margin-block-end: spacing('base');
+    }
+
+    &:last-of-type {
+        margin-block-end: spacing('xxl');
+    }
+
+    &__container {
+        grid-gap: 0 #{spacing('base')};
+    }
+
+    &__billing-address,
+    &__shipping-address {
+        grid-gap: #{spacing('xs')} #{spacing('base')};
+    }
+
+    &__ship-to-billing-container:has(.hidden) {
+        min-height: 0;
+    }
+
+    &__customer-address {
+        margin-block-end: spacing('xs');
+
+        &:has(select:disabled) {
+            display: none;
+        }
+    }
+
+    &__address-form {
+        --grid-auto-rows: max-content;
+        --grid-gap: #{spacing('xl')} #{spacing('base')};
+
+        max-width: 850px;
+        margin-bottom: spacing('lg');
+
+        &--no-offset {
+            margin-bottom: 0;
+        }
+
+        .ui-dialog & {
+            max-width: 100%;
+        }
+    }
+
+    &__row {
+        grid-column-gap: #{spacing('xxxl')};
+    }
+
     &__select-container {
         display: $checkout-form-select-container-display;
         flex-direction: $checkout-form-select-container-flex-direction;
@@ -211,6 +260,14 @@
             max-width: 100%;
         }
 
+        &__address-form {
+            grid-gap: #{spacing('xl')} 0;
+        }
+
+        &__row {
+            grid-column-gap: #{spacing('base')};
+        }
+
         &__buttons {
             gap: spacing('base');
         }
@@ -222,6 +279,12 @@
 }
 
 @include breakpoint('mobile-landscape') {
+    .checkout-form {
+        &__row {
+            grid-column-gap: 0;
+        }
+    }
+
     .summary-collapse-content:not(.show) {
         .checkout-form {
             &__buttons {

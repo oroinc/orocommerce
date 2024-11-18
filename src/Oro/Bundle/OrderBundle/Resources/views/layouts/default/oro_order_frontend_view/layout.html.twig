@@ -239,7 +239,9 @@
                     </div>
 
                     <button class="btn btn--flat btn--size-small collapse-toggle customer-info-grid__view-more" data-toggle="collapse" data-target="#collapse-order-view-more" aria-controls="collapse-order-view-more">
-                        {{ renderIcon.icon({name: 'chevron-down'}) }}
+                            <span class="trigger-icon" data-icon>
+                                {{ renderIcon.icon({name: 'chevron-down'}) }}
+                            </span>
                         <span data-text>{{ 'oro.ui.collapse.more'|trans }}</span>
                     </button>
                 </td>

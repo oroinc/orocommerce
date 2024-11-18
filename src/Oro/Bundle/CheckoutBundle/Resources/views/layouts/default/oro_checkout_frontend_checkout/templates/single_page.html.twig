@@ -130,12 +130,16 @@
     {% else %}
         <div class="grid-col-12">
             {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
-            {{ form_row(form.shipping_address, {'attr': {
-                'data-role': 'checkout-shipping-address',
-                'data-address-type': 'shipping',
-                'data-new-address-label': renderedAddress,
-                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-            }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
+            {{ form_row(form.shipping_address, {
+                'attr': {
+                    'data-role': 'checkout-shipping-address',
+                    'data-address-type': 'shipping',
+                    'data-new-address-label': renderedAddress,
+                    'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+                },
+                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+                'entity_id': checkout.id
+            }) }}
         </div>
         <div class="grid-col-12">
             {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
@@ -146,12 +150,16 @@
 {% block _billing_address_widget -%}
     {% set renderedAddress = checkout.billingAddress ? checkout.billingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
     <div {{ block('block_attributes') }}>
-        {{ form_row(form.billing_address, {'attr': {
-            'data-role': 'checkout-billing-address',
-            'data-address-type': 'billing',
-            'data-new-address-label': renderedAddress,
-            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-        }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
+        {{ form_row(form.billing_address, {
+            'attr': {
+                'data-role': 'checkout-billing-address',
+                'data-address-type': 'billing',
+                'data-new-address-label': renderedAddress,
+                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+            },
+            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+            'entity_id': checkout.id
+        }) }}
     </div>
 {%- endblock %}
 
@@ -179,6 +187,7 @@
                 {{ form_widget(form.payment_validate) }}
             </div>
         {% endif %}
+
         {% if form.additional_data is defined %}
             <div data-page-component-module="orocheckout/js/app/components/payment-additional-data-component">
                 {{ form_row(form.additional_data) }}

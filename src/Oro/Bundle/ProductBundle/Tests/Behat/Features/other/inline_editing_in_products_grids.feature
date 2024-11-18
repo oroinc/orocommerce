@@ -186,8 +186,8 @@ Feature: Inline Editing in Products Grids
     And I go to Products / Products
     When I edit "Product4" Name as "Product5" without saving
     And I click "Save changes"
-    Then I should not see "Changing Page URLs"
     Then I should see "Record has been successfully updated" flash message
+    And I should not see "Changing Page URLs"
     Then I should see following records in grid:
       | Product5 |
 
@@ -208,8 +208,8 @@ Feature: Inline Editing in Products Grids
     And I go to Products / Products
     When I edit "Product5" Name as "Product6" without saving
     And I click "Save changes"
-    Then I should not see "Changing Page URLs"
     Then I should see "Record has been successfully updated" flash message
+    And I should not see "Changing Page URLs"
     Then I should see following records in grid:
       | Product6 |
 

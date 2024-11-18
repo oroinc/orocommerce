@@ -10,12 +10,11 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class LoadCustomerTaxCodes extends AbstractFixture implements DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     public const REFERENCE_PREFIX = 'customer_tax_code';
 
     public const TAX_1 = 'TAX1';
@@ -49,13 +48,17 @@ class LoadCustomerTaxCodes extends AbstractFixture implements DependentFixtureIn
     #[\Override]
     public function getDependencies(): array
     {
-        return [LoadCustomers::class];
+        return [
+            LoadUser::class,
+            LoadCustomers::class
+        ];
     }
 
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        $user = $this->getFirstUser($manager);
+        /** @var User $user */
+        $user = $this->getReference(LoadUser::USER);
         $organization = $user->getOrganization();
         foreach (self::DATA as $code => $item) {
             $customerTaxCode = new CustomerTaxCode();

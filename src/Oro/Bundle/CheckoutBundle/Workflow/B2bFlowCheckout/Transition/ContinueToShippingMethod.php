@@ -60,6 +60,8 @@ class ContinueToShippingMethod implements TransitionServiceInterface
         $checkout = $workflowItem->getEntity();
         $this->addressActions->updateShippingAddress($checkout);
 
+        $this->updateEmail($workflowItem, $checkout);
+
         if (!$this->configProvider->isMultiShippingEnabled()) {
             $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         }
@@ -73,5 +75,14 @@ class ContinueToShippingMethod implements TransitionServiceInterface
         ) {
             $this->defaultMultiShippingGroupMethodSetter->setDefaultShippingMethods($checkout);
         }
+    }
+
+    private function updateEmail(WorkflowItem $workflowItem, Checkout $checkout): void
+    {
+        if (!$checkout->getBillingAddress()?->getCustomerUserAddress()) {
+            return;
+        }
+
+        $workflowItem->getData()->set('email', $checkout->getCustomerUser()?->getEmail());
     }
 }

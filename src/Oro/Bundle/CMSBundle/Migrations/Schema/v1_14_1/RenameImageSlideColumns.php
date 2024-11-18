@@ -124,6 +124,7 @@ class RenameImageSlideColumns implements
             ->select('m.version')
             ->from('oro_migrations', 'm')
             ->andWhere('m.bundle = :bundle')
+            ->orderBy('m.loaded_at', 'DESC')
             ->setParameter('bundle', 'OroCMSBundle', Types::STRING);
         $version = $qb->execute()->fetchOne();
 

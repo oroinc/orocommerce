@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\ThemeBundle\Tests\Functional\DataFixtures\LoadThemeConfigurationData as BaseLoadThemeConfigurationData;
 
-class LoadThemeConfigurationData extends BaseLoadThemeConfigurationData implements DependentFixtureInterface
+class LoadThemeConfigurationData extends BaseLoadThemeConfigurationData
 {
     #[\Override]
     public function getDependencies(): array
     {
-        return [LoadContentBlockData::class];
+        return array_merge(parent::getDependencies(), [
+            LoadContentBlockData::class
+        ]);
     }
 
     #[\Override]

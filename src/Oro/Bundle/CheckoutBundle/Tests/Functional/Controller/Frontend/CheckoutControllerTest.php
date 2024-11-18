@@ -291,8 +291,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         self::assertStringContainsString(self::LAST_NAME, $html);
         self::assertStringContainsString(self::STREET, $html);
         self::assertStringContainsString(self::POSTAL_CODE, $html);
-        self::assertStringContainsString(self::COUNTRY, $html);
-        self::assertStringContainsString(self::REGION, $html);
+        self::assertStringContainsString('Ukraine', $html);
     }
 
     private function getRequiredFields(string $type): array

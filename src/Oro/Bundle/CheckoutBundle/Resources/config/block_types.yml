@@ -36,6 +36,7 @@ services:
                         workflowStep: {required: true}
                         stepOrder: {default: '-'}
                         excludedSteps: {default: []} # Defines steps which will not be displayed with sidebar and in sidebar
+                        hideOnDesktop: {default: true}
             - [setName, ['checkout_information_title']]
         tags:
             - { name: layout.block_type, alias: checkout_information_title }

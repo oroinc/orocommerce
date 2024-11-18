@@ -57,8 +57,8 @@ Feature: Single Page Checkout From Quote
       | Checkout | Quote #1     | 1     | $50.00   |
     And I click "Check Out" on row "Quote #1" in grid "OpenOrdersGrid"
 
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+    And I select "Fifth avenue, 10115 Berlin, Germany" from "Billing Address"
+    And I select "Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     And I click "Submit Order"

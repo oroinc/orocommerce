@@ -94,12 +94,16 @@ layout:
                         stepOrder: '=data["oro_checkout_steps"].getStepOrder(data["workflowItem"], context["workflowStepName"], excludedSteps)'
                         excludedSteps: '=["enter_credentials_step"]'
                 __checkout_information_body:
-                    blockType: container
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['checkout:new-address-update']
                 __checkout_form:
                     blockType: checkout_form
                     options:
                         checkout: '=data["checkout"]'
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        vars:
+                            transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
                 __checkout_form_errors:
                     blockType: checkout_form_errors
                     options:
@@ -202,7 +206,9 @@ layout:
                             totalsConainerClassName: ''
 
                 __checkout_combined_buttons_container:
-                    blockType: container
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: []
                 __checkout_form_buttons:
                     blockType: container
                 __checkout_button_continue:

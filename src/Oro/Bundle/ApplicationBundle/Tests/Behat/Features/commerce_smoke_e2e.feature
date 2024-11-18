@@ -694,8 +694,8 @@ Feature: Commerce smoke e2e
 
     And should see "test note Redmi"
     When click "Create Order"
-    And fill form with:
-      |SELECT BILLING ADDRESS|New address|
+    And I click "Add Address"
+    And I fill "New Address Popup Form" with:
       |Label          |Home Address  |
       |First name     |NewFname      |
       |Last name      |NewLname      |
@@ -705,6 +705,7 @@ Feature: Commerce smoke e2e
       |Country        |United States |
       |State          |California    |
       |Zip/Postal Code|90001         |
+    And click "Continue" in modal window
     And click "Continue"
     And I select "Branda Sanborn, Smoke Org, Market St. 12, SAN FRANCISCO CA US 90001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue

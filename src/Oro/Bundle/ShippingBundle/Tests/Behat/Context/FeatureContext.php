@@ -238,39 +238,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
-     * Example: Given Buyer created order with next shipping address:
-     *            | Country         | Ukraine              |
-     *            | City            | Kyiv                 |
-     *            | State           | Kyïvs'ka mis'ka rada |
-     *            | Zip/Postal Code | 01000                |
-     *            | Street          | Hreschatik           |
-     *
-     * @When Buyer created order with next shipping address:
-     */
-    public function buyerCreatedOrderWithNextShippingAddress(TableNode $table)
-    {
-        /** @var checkoutStep $checkoutStep */
-        $checkoutStep = $this->createElement('CheckoutStep');
-        $checkoutStep->assertTitle('Shipping Method');
-
-        $this->getSession()->getPage()->clickLink('Back');
-        $this->waitForAjax();
-        $checkoutStep->assertTitle('Shipping Information');
-
-        /** @var Form $form */
-        $form = $this->createElement('Address');
-        $form->fillField('Select Shipping Address', 'New address');
-        $this->waitForAjax();
-        /** @var int $row */
-        if ($row = array_search('Country', $table->getColumn(0))) {
-            $form->fillField('Country', $table->getRow($row)[1]);
-            $this->waitForAjax();
-        }
-        $form->fill($table);
-        $this->getSession()->getPage()->pressButton('Continue');
-    }
-
-    /**
      * Verify that Existing Shipping Rules popup appears
      *
      * Example: I should see Existing Shipping Rules popup

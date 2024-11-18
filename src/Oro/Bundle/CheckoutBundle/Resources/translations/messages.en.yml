@@ -50,6 +50,7 @@ oro:
         late_registration.label: Save my data and create an account
         progress.label: Checkout Progress
         summary_item_title: Order products
+        optional_label: (Optional)
         multishipping:
             label_for: 'Shipping method for %label%'
         navigation_sidebar:
@@ -163,10 +164,12 @@ oro:
             id.label: Id
             deleted.label: Deleted
 
-        billing_information: Billing Information
-        shipping_information: Shipping Information
+        billing_information: Billing
+        shipping_information: Shipping
         shipping_method: Shipping Method
         payment: Payment
+
+        shipping_method.hint: Please select a shipping method for each group of line items below.
 
         order_review:
             label: Order Review
@@ -276,9 +279,13 @@ oro:
                 customer: Global Address Book
                 customer_user: My address book
             address.select.billing.label: Select Billing Address
+            address.select.billing.label.short: Billing Address
             address.enter.billing.label: Enter Billing Address
+            address.enter.billing.label.short: Billing Address
             address.select.shipping.label: Select Shipping Address
+            address.select.shipping.label.short: Shipping Address
             address.enter.shipping.label: Enter Shipping Address
+            address.enter.shipping.label.short: Shipping Address
             address.enter.new_address.placeholder.label: Please select an address
 
         grid:

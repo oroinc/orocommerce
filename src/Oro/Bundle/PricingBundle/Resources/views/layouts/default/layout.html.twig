@@ -151,10 +151,9 @@
 
 {% block product_price_hint_trigger_js_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
-    {% set productTierClass = productTierClass|default('btn btn--simple btn--size-small product-tier-prices') %}
-    {% set productTierIcon = productTierIcon|default('fa-caret-down fa--no-offset') %}
+    {% set productTierClass = productTierClass|default('btn btn--simple-colored btn--size-small product-tier-prices') %}
     {% set productAriaLabel = productAriaLabel|default('oro.pricing.view_all_prices'|trans) %}
-    {% set icon = icon|default(false) %}
+    {% set icon = icon|default('info') %}
     {% if toggleAttrValue is not defined %}
         {% set toggleAttrValue = 'popover' %}
     {% endif %}
@@ -168,11 +167,8 @@
           title="{{ 'oro.pricing.view_all_prices'|trans }}"
           aria-label="{{ productAriaLabel }}"
           type="button"
-    >   {% if icon %}
-            {{ renderIcon.icon({name: icon, extraClass: productTierIcon}) }}
-        {% else %}
-            <span class="popover-trigger {{ productTierIcon }}" aria-hidden="true"></span>
-        {% endif %}
+    >
+        {{ renderIcon.icon({name: icon, extraClass: 'theme-icon--small'}) }}
     </button>
 {% endblock %}
 

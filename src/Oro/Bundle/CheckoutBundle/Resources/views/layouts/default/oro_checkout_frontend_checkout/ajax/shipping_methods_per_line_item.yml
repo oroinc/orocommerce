@@ -16,6 +16,12 @@ layout:
                 toolbarOptions:
                     hide: true
 
+        - '@add':
+              id: shipping_methods_group_step_label
+              blockType: block
+              parentId: checkout_form
+              prepend: true
+
         - '@setOption':
             id: checkout_button_continue
             optionName: transitionData
