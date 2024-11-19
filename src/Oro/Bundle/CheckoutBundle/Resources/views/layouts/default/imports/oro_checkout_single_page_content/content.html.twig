@@ -35,7 +35,7 @@
 
 {% block __oro_checkout_single_page_content__checkout_form_errors_widget -%}
     {% if form != null and not form.vars.valid %}
-        <div class="checkout-form-errors" id="checkout-form-errors">
+        <div class="checkout-form-errors notification--error" id="checkout-form-errors">
             {{ form_errors(form) }}
         </div>
     {% endif %}
