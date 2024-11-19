@@ -132,13 +132,19 @@
             {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
             {{ form_row(form.shipping_address, {
                 'attr': {
+                    'class': 'select-multiline',
                     'data-role': 'checkout-shipping-address',
                     'data-address-type': 'shipping',
                     'data-new-address-label': renderedAddress,
                     'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
                 },
                 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
-                'entity_id': checkout.id
+                'entity_id': checkout.id,
+                'configs': form.shipping_address.vars.configs|default({})|merge({
+                    containerCssClass: 'oro-select2 select-multiline',
+                    dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+                    dropdownAutoWidth: false
+                })
             }) }}
         </div>
         <div class="grid-col-12">
@@ -152,13 +158,19 @@
     <div {{ block('block_attributes') }}>
         {{ form_row(form.billing_address, {
             'attr': {
+                'class': 'select-multiline',
                 'data-role': 'checkout-billing-address',
                 'data-address-type': 'billing',
                 'data-new-address-label': renderedAddress,
                 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
             },
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
-            'entity_id': checkout.id
+            'entity_id': checkout.id,
+            'configs': form.billing_address.vars.configs|default({})|merge({
+                containerCssClass: 'oro-select2 select-multiline',
+                dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+                dropdownAutoWidth: false
+            })
         }) }}
     </div>
 {%- endblock %}
