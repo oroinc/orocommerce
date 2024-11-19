@@ -177,6 +177,10 @@ api:
                 create:
                     form_options:
                         validation_groups: [ Default, api, api_frontend_order_line_item_create ]
+                    fields:
+                        checksum:
+                            form_options:
+                                mapped: false
                     status_codes:
                         200: false
                         201: false
