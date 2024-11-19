@@ -1020,6 +1020,54 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains($responseData, $response);
     }
 
+    public function testUpdateReadonlyChecksumLineItem(): void
+    {
+        $response = $this->post(
+            ['entity' => 'orders'],
+            'create_order_min.yml'
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        $orderLineItem = $order->getLineItems()->first();
+        $orderLineItemId = $orderLineItem->getId();
+        $orderLineItemChecksum = $orderLineItem->getChecksum();
+
+        $newResponse = $this->patch(
+            ['entity' => 'orderlineitems', 'id' => (string)$orderLineItemId],
+            [
+                'data' => [
+                    'type' => 'orderlineitems',
+                    'id' => (string)$orderLineItemId,
+                    'attributes' => [
+                        'checksum' => '5701254f5e38e7af63749d1d03db69175a901119',
+                    ],
+                ],
+            ],
+            [],
+            false
+        );
+        self::assertResponseStatusCodeEquals($newResponse, Response::HTTP_OK);
+        $orderLineItemId = (int)$this->getResourceId($newResponse);
+        $orderLineItem = $this->getEntityManager()->find(OrderLineItem::class, $orderLineItemId);
+        self::assertEquals($orderLineItemChecksum, $orderLineItem->getChecksum());
+    }
+
+    public function testCreateReadonlyChecksumLineItem(): void
+    {
+        $response = $this->post(
+            ['entity' => 'orders'],
+            'create_order_min_checksum.yml'
+        );
+
+        $orderId = (int)$this->getResourceId($response);
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        $orderLineItem = $order->getLineItems()->first();
+        self::assertNotEquals('5701254f5901119', $orderLineItem->getChecksum());
+    }
+
     public function testGetSubresourceForOwner(): void
     {
         /** @var Order $order */
