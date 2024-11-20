@@ -714,7 +714,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping $120.00"
     And should see "Tax $153.90"
     And should see "TOTAL $1,893.90"
-    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And I click "Account Dropdown"
     And click "Sign Out"
@@ -742,7 +742,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping $120.00"
     And should not see "Tax"
     And should see "TOTAL $295.20"
-    When I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    When I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And click "click here to review"
     And should see "Billing Address Home Address NewAmanda NewCole NewOrg Stanyan St 12 SAN FRANCISCO CA US 90001"

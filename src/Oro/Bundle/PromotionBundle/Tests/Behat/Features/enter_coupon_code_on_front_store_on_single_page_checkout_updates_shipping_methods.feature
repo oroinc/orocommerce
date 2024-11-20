@@ -45,7 +45,7 @@ Feature: Enter coupon code on front store on single page checkout updates shippi
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should see "line-item-coupon Line Item Discount Promotion" in the "Coupons List" element
     And I scroll to top
-    And I should see "Order Summary"
+    And I should see "Summary"
     Then Checkout "Order Summary Products Grid" should contain products:
       | Product 2 | 5 | items | $2.00 | $10.00 -$1.00 |
     When I scroll to "Subtotals"

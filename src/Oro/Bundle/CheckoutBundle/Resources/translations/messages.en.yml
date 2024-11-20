@@ -19,6 +19,7 @@ oro:
         save_billing_address.label: Save address to my address book
         save_shipping_address.label: Save address to my address book
         ship_to_billing_address.label: Ship to billing address
+        add_address: Add
         quoted_shipping_amount.label: Quoted shipping amount
         preferred_shipping_method.label: Preferred shipping method
         source.label: Source

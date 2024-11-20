@@ -37,7 +37,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         'Flat Rate' => 'shippingMethodType',
         'Payment Terms' => 'paymentMethod',
         'Value' => 'paymentMethod',
-        'Delete this shopping list after submitting order' => 'oro_workflow_transition[remove_source]',
+        'Delete this shopping list after ordering' => 'oro_workflow_transition[remove_source]',
         'Save shipping address' => 'oro_workflow_transition[save_shipping_address]',
         'Save my data and create an account' =>
             'oro_workflow_transition[late_registration][is_late_registration_enabled]'

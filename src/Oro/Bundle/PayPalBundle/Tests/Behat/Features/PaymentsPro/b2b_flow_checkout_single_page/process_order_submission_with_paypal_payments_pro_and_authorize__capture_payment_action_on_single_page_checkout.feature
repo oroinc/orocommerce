@@ -31,7 +31,7 @@ Feature: Process order submission with PayPal Payments Pro and Authorize & Captu
       | Month            | 11               |
       | Year             | 2027             |
       | CVV              | 123              |
-    And I click "Delete this shopping list after submitting order"
+    And I click "Delete this shopping list after ordering"
     And I click "Submit Order"
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And I should not see "Payment has not been processed."

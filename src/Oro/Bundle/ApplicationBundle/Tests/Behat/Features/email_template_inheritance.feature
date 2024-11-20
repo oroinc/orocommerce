@@ -45,7 +45,7 @@ Feature: Email Template Inheritance
     And I select "ORO, Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    And I uncheck "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    And I uncheck "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And Email should contains the following:
       | From    | admin@example           |

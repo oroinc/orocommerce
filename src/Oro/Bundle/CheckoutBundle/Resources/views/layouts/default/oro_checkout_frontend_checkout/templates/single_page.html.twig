@@ -128,6 +128,11 @@
             {{ renderAddress(checkout.shippingAddress, true) }}
         </div>
     {% else %}
+        {% set containerCssClass = '' %}
+        {% if form.shipping_address.vars.choices|length == 1 and form.shipping_address.vars.data.street == null %}
+            {% set containerCssClass = ' hidden' %}
+        {% endif %}
+
         <div class="grid-col-12">
             {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
             {{ form_row(form.shipping_address, {
@@ -141,7 +146,7 @@
                 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
                 'entity_id': checkout.id,
                 'configs': form.shipping_address.vars.configs|default({})|merge({
-                    containerCssClass: 'oro-select2 select-multiline',
+                    containerCssClass: 'oro-select2 select-multiline' ~ containerCssClass,
                     dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
                     dropdownAutoWidth: false
                 })
@@ -155,6 +160,12 @@
 
 {% block _billing_address_widget -%}
     {% set renderedAddress = checkout.billingAddress ? checkout.billingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
+
+    {% set containerCssClass = '' %}
+    {% if form.billing_address.vars.choices|length == 1 and form.billing_address.vars.data.street == null %}
+        {% set containerCssClass = ' hidden' %}
+    {% endif %}
+
     <div {{ block('block_attributes') }}>
         {{ form_row(form.billing_address, {
             'attr': {
@@ -162,12 +173,12 @@
                 'data-role': 'checkout-billing-address',
                 'data-address-type': 'billing',
                 'data-new-address-label': renderedAddress,
-                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
             },
             'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
             'entity_id': checkout.id,
             'configs': form.billing_address.vars.configs|default({})|merge({
-                containerCssClass: 'oro-select2 select-multiline',
+                containerCssClass: 'oro-select2 select-multiline' ~ containerCssClass,
                 dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
                 dropdownAutoWidth: false
             })

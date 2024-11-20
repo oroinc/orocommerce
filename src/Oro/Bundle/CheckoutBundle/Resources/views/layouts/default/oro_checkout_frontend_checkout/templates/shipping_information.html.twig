@@ -25,9 +25,15 @@
 
             <div class="grid-col-6 grid-col-tablet-12">
                 {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
+                {% set containerCssClass = '' %}
+                {% if form.shipping_address.customerAddress.vars.choices|length == 1 and form.shipping_address.customerAddress.vars.data == null %}
+                    {% set containerCssClass = ' hidden' %}
+                {% endif %}
+
                 {{ form_row(form.shipping_address.customerAddress, {
                     parentClass: 'checkout-form__customer-address',
                     attr: {
+                        'class': containerCssClass,
                         'data-new-address-label': renderedAddress,
                         'data-address-type': 'shipping',
                     }

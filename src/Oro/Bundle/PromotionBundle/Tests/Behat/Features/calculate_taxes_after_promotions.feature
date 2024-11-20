@@ -80,7 +80,7 @@ Feature: Calculate taxes after promotions
     And I should see "Total: $5.74"
     When I fill form with:
       | PO Number | PONumber2 |
-    And I click "Delete this shopping list after submitting order"
+    And I click "Delete this shopping list after ordering"
     And I wait "Submit Order" button
     And I focus on "Submit Order"
     And I click "Submit Order"
@@ -155,7 +155,7 @@ Feature: Calculate taxes after promotions
     And I should see "Total: $5.50"
     When I fill form with:
       | PO Number | PONumber4 |
-    And I click "Delete this shopping list after submitting order"
+    And I click "Delete this shopping list after ordering"
     And I wait "Submit Order" button
     And I focus on "Submit Order"
     And I click "Submit Order"

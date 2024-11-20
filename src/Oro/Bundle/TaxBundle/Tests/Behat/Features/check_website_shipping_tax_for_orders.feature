@@ -50,7 +50,7 @@ Feature: Check website shipping tax for orders
     And I select "Fifth avenue, 10115 Berlin, Germany" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     When I click "click here to review"
     Then I should be on Order Frontend View page
