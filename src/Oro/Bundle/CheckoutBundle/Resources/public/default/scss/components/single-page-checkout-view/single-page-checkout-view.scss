@@ -42,6 +42,11 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: spacing('base') spacing('huge');
+            align-items: start;
+
+            .summary-widget__summary {
+                padding-bottom: initial;
+            }
 
             &:not(.show) {
                 display: grid;

@@ -277,18 +277,19 @@
             {% endif %}
 
             {% if feature_enabled('checkout_customer_users_registration') and
-            checkout.registeredCustomerUser == null and
-            checkout.customerUser.isGuest
+                checkout.registeredCustomerUser == null and
+                checkout.customerUser.isGuest
             %}
-                <div class="grid-col-6 grid-col-mobile-landscape-12 grid"
-                          data-page-component-module="oroui/js/app/components/view-component"
-                          data-page-component-options="{{ {
-                              view: 'orocheckout/js/app/views/late-checkout-registration-view',
-                              selectors: {
-                                  switcher: '#' ~ form.late_registration.offsetGet('is_late_registration_enabled').vars.id,
-                                  fieldsContainer: '#checkout-late-registration-fields'
-                              }
-                          }|json_encode }}">
+                <div class="grid grid-col-12"
+                      data-page-component-module="oroui/js/app/components/view-component"
+                      data-page-component-options="{{ {
+                          view: 'orocheckout/js/app/views/late-checkout-registration-view',
+                          selectors: {
+                              switcher: '#' ~ form.late_registration.offsetGet('is_late_registration_enabled').vars.id,
+                              fieldsContainer: '#checkout-late-registration-fields'
+                          }
+                      }|json_encode }}"
+                >
                     <div id="checkout-late-registration-toggler" class="grid-col-12">
                         {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
                     </div>
@@ -408,7 +409,14 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <button class="btn btn--circle btn--size-small checkout__footer-toggle {{ isMobileVersion() ? 'collapsed' : '' }}" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="{{ isMobileVersion() ? 'false' : 'true' }}" aria-controls="{{ collapseId }}">
+        <button class="btn btn--circle btn--size-small checkout__footer-toggle {{ isMobileVersion() ? 'collapsed' : '' }}"
+                type="button"
+                data-toggle="collapse"
+                data-target="#{{ collapseId }}"
+                data-validation-ignore-onblur=""
+                aria-expanded="{{ isMobileVersion() ? 'false' : 'true' }}"
+                aria-controls="{{ collapseId }}"
+        >
             {{ renderIcon.icon({name: 'chevron-up'}) }}
         </button>
         <div id="{{ collapseId }}" class="checkout__footer-collapse summary-collapse-content {{ isMobileVersion() ? '' : 'show' }}">
