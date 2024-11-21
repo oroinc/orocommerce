@@ -102,64 +102,7 @@ operations:
         frontend_options:
             options:
                 icon: 'shopping-cart'
-
-        preconditions:
-            '@and':
-                - '@workflow_available_by_record_group':
-                    group_name: b2b_checkout_flow
-                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
-        actions:
-            - '@call_service_method':
-                attribute: $.checkoutLineItems
-                service: oro_checkout.line_items.factory
-                method: create
-                method_parameters: [$.data]
-
-            - '@flash_message':
-                conditions:
-                    '@not':
-                        - '@has_elements': $.checkoutLineItems
-                message: oro.checkout.frontend.checkout.cannot_create_reorder_no_line_items
-                type: 'warning'
-
-            - '@tree':
-                conditions:
-                    '@has_elements': $.checkoutLineItems
-                actions:
-                    - '@run_action_group':
-                        action_group: start_checkout
-                        parameters_mapping:
-                            force: true
-                            forceStartCheckout: true
-                            sourceCriteria:
-                                order: $.data
-                            settings:
-                                allow_manual_source_remove: false
-                                remove_source: false
-                            showErrors: true
-                            validateOnStartCheckout: true
-                        results:
-                            redirectUrl: $.redirectUrl
-                            checkout: $.checkout
-                            errors: $.errors
-                    - '@call_service_method':
-                        attribute: $.changedSkus
-                        service: oro_checkout.provider.checkout_line_items
-                        method: getProductSkusWithDifferences
-                        method_parameters: [$.checkout.lineItems, $.data.lineItems]
-                    - '@tree':
-                        conditions:
-                            '@has_elements': $.changedSkus
-                        actions:
-                            - '@call_method':
-                                attribute: $.changedSkus
-                                method: implode
-                                method_parameters: [', ', $.changedSkus]
-                            - '@flash_message':
-                                message: oro.checkout.frontend.checkout.some_changes_in_line_items
-                                message_parameters:
-                                    skus: $.changedSkus
-                                type: 'warning'
+        service: oro_checkout.operation.start_from_order
 
 action_groups:
     oro_update_shipping_price:

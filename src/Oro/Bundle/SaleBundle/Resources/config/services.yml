@@ -416,6 +416,30 @@ services:
     oro_sale.quote.pricing.comparator:
         class: Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator
 
+    oro_sale.operation.frontend_quote_submit_to_order:
+        class: Oro\Bundle\SaleBundle\Workflow\Operation\QuoteSubmitToOrder
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_action.action_executor'
+            - '@doctrine'
+            - '@oro_sale.manager.quote_demand_manager'
+            - '@oro_security.token_accessor'
+            - '@router'
+        tags:
+            - { name: 'oro_operation_service' }
+
+    oro_sale.operation.frontend_guest_quote_submit_to_order:
+        class: Oro\Bundle\SaleBundle\Workflow\Operation\GuestQuoteSubmitToOrder
+        arguments:
+            - '@oro_sale.operation.frontend_quote_submit_to_order'
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@doctrine'
+            - '@oro_sale.manager.quote_demand_manager'
+            - '@oro_security.token_accessor'
+            - '@router'
+        tags:
+            - { name: 'oro_operation_service' }
+
     oro_sale.emailtemplate.variable_provider.system:
         class: Oro\Bundle\SaleBundle\Provider\EmailTemplateSystemVariablesProvider
         arguments:

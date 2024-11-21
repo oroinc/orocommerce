@@ -151,6 +151,14 @@ Delete a collection of request product item records.
 
 **The required field.**
 
+### checksum
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ## SUBRESOURCES
 
 ### productUnit

@@ -3,3 +3,10 @@ services:
         class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\RFPBundle\Entity\RequestProductItem }
+
+    oro_rfp.api.complete_new_line_item:
+        class: Oro\Bundle\RFPBundle\Api\Processor\SetChecksum
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+        tags:
+            - {name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create, class: Oro\Bundle\RFPBundle\Entity\RequestProductItem, priority: 30}

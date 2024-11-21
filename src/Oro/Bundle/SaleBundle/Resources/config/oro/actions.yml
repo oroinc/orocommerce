@@ -106,67 +106,6 @@ operations:
                 message_parameters:
                     id: $qid
 
-    oro_sale_accept_quote:
-        label: oro.sale.quote.actions.accept_quote
-        enabled: true
-        applications: [commerce]
-        routes:
-            - oro_sale_quote_frontend_view
-        order: 10
-        button_options:
-            icon: fa-clock-o
-        acl_resource: oro_alternativecheckout_checkout_approve
-        preactions:
-            - '@get_active_user': $.currentUser
-            - '@get_available_workflow_by_record_group':
-                attribute: $.currentWorkflow
-                entity_class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
-                group_name: 'b2b_checkout_flow'
-            - '@call_service_method':
-                conditions:
-                    '@and':
-                        - '@not_empty': $.currentUser
-                        - '@instanceof': [$.data, 'Oro\Bundle\SaleBundle\Entity\Quote']
-                parameters:
-                    attribute: $.checkout
-                    service: 'oro_sale.provider.quote_checkout'
-                    method: getCheckoutByQuote
-                    method_parameters: [$.data, $.currentUser, $.currentWorkflow.name]
-            - '@tree':
-                conditions:
-                    '@not_empty': $.checkout
-                actions:
-                    - '@call_service_method':
-                        attribute: $.workflowItems
-                        service: oro_workflow.manager
-                        method: getWorkflowItemsByEntity
-                        method_parameters: [$.checkout]
-                    - '@count':
-                        value: $.workflowItems
-                        attribute: $.workflowItemsCount
-                    - '@traverse':
-                        conditions:
-                            '@lte':
-                                parameters: [$.workflowItemsCount, 1]
-                                message: "Count of WorkflowItems must be less than or equal to 1"
-                        parameters:
-                            array: $.workflowItems
-                            value: $.workflowItemTemp
-                            actions:
-                                - '@assign_value':
-                                    attribute: $.workflowItem
-                                    value: $.workflowItemTemp
-        preconditions:
-            '@and':
-                - '@not_empty': $.checkout
-                - '@not_empty': $.workflowItem
-                - '@equal': [$.workflowItem.data.requested_for_approve, true]
-        actions:
-            - '@redirect':
-                route: 'oro_checkout_frontend_checkout'
-                route_parameters:
-                    id: $.checkout.id
-
     oro_sale_frontend_quote_submit_to_order:
         label: oro.sale.quote.actions.submit_to_order
         applications: [commerce]
@@ -186,43 +125,7 @@ operations:
         frontend_options:
             options:
                 icon: shopping-cart
-        preconditions:
-            '@and':
-                - '@quote_acceptable': $.data
-                - '@workflow_available_by_record_group':
-                    group_name: b2b_checkout_flow
-                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
-        actions:
-            - '@get_active_user': $.currentUser
-            - '@find_entity':
-                class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                attribute: $.quoteDemand
-                where:
-                    quote: $.data
-                    customerUser: $.currentUser
-            - '@tree':
-                conditions:
-                    '@empty': $.quoteDemand
-                actions:
-                    - '@create_entity':
-                        parameters:
-                            attribute: $.quoteDemand
-                            class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                            data:
-                                quote: $.data
-                                customerUser: $.currentUser
-                    - '@call_service_method':
-                        service: oro_sale.manager.quote_demand_manager
-                        method: recalculateSubtotals
-                        method_parameters: [$.quoteDemand]
-                    - '@call_service_method':
-                        service: oro_sale.manager.quote_demand_manager
-                        method: updateQuoteProductDemandChecksum
-                        method_parameters: [$.quoteDemand]
-                    - '@flush_entity': $.quoteDemand
-            - '@redirect':
-                 route: 'oro_sale_quote_frontend_choice'
-                 route_parameters: {id: $.quoteDemand.id}
+        service: oro_sale.operation.frontend_quote_submit_to_order
 
     oro_sale_frontend_guest_quote_submit_to_order:
         label: oro.sale.quote.actions.submit_to_order
@@ -237,90 +140,7 @@ operations:
         frontend_options:
             options:
                 icon: shopping-cart
-        preactions:
-            - '@call_service_method':
-                service: 'oro_security.token_accessor'
-                method: 'getToken'
-                attribute: $.currentToken
-        preconditions:
-            '@and':
-                - '@quote_acceptable': $.data
-                - '@workflow_available_by_record_group':
-                    group_name: b2b_checkout_flow
-                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
-                - '@or':
-                    - '@not':
-                        - '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
-                    - '@and':
-                        - '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
-                        - '@feature_enabled': guest_checkout
-        actions:
-            - '@tree':
-                conditions:
-                    '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
-                actions:
-                    - '@get_active_visitor': $.visitor
-                    - '@find_entity':
-                        class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                        attribute: $.quoteDemand
-                        where:
-                            quote: $.data
-                            visitor: $.visitor
-                    - '@tree':
-                        conditions:
-                            '@empty': $.quoteDemand
-                        actions:
-                            - '@create_entity':
-                                parameters:
-                                    attribute: $.quoteDemand
-                                    class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                                    data:
-                                        quote: $.data
-                                        visitor: $.visitor
-                            - '@call_service_method':
-                                service: oro_sale.manager.quote_demand_manager
-                                method: recalculateSubtotals
-                                method_parameters: [$.quoteDemand]
-                            - '@call_service_method':
-                                service: oro_sale.manager.quote_demand_manager
-                                method: updateQuoteProductDemandChecksum
-                                method_parameters: [$.quoteDemand]
-                            - '@flush_entity': $.quoteDemand
-            - '@tree':
-                conditions:
-                    '@not':
-                        - '@instanceof': [$.currentToken, Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken]
-                actions:
-                    - '@get_active_user': $.currentUser
-                    - '@find_entity':
-                        class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                        attribute: $.quoteDemand
-                        where:
-                            quote: $.data
-                            customerUser: $.currentUser
-                    - '@tree':
-                        conditions:
-                            '@empty': $.quoteDemand
-                        actions:
-                            - '@create_entity':
-                                parameters:
-                                    attribute: $.quoteDemand
-                                    class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                                    data:
-                                        quote: $.data
-                                        customerUser: $.currentUser
-                            - '@call_service_method':
-                                service: oro_sale.manager.quote_demand_manager
-                                method: recalculateSubtotals
-                                method_parameters: [$.quoteDemand]
-                            - '@call_service_method':
-                                service: oro_sale.manager.quote_demand_manager
-                                method: updateQuoteProductDemandChecksum
-                                method_parameters: [$.quoteDemand]
-                            - '@flush_entity': $.quoteDemand
-            - '@redirect':
-                route: 'oro_sale_quote_frontend_choice'
-                route_parameters: {id: $.quoteDemand.id}
+        service: oro_sale.operation.frontend_guest_quote_submit_to_order
 
 action_groups:
     oro_sale_quote_duplicate:

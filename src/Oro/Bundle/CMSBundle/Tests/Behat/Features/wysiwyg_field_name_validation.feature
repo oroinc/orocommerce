@@ -4,18 +4,11 @@ Feature: WYSIWYG field name validation
   As an administrator
   I create WYSIWYG fields and check validation
 
-  Scenario: Create entity
+  Scenario: Create table column with `WYSIWYG` type
     Given I login as administrator
     And I go to System/Entities/Entity Management
-    And I click "Create Entity"
-    When I fill form with:
-      | Name         | EntityWithWYSIWYGField |
-      | Label        | EntityWithWYSIWYGField |
-      | Plural Label | EntityWithWYSIWYGField |
-    And I save and close form
-    Then I should see "Entity saved" flash message
-
-  Scenario: Create table column with `WYSIWYG` type
+    And filter Name as is equal to "User"
+    And click View User in grid
     Given I click "Create Field"
     When I fill form with:
       | Field name   | wysiwyg      |
@@ -111,7 +104,7 @@ Feature: WYSIWYG field name validation
     And I click "Cancel"
 
   Scenario: Check import validation
-    Given I download Data Template file for "EntityWithWYSIWYGField" extend entity
+    Given I download Data Template file for "Oro\Bundle\UserBundle\Entity\User" entity
     When I fill template with data:
       | fieldName          | is_serialized | type    | importexport.header | importexport.order | importexport.excluded | form.is_enabled | entity.label | entity.description | datagrid.order | view.is_displayable | view.priority  | attachment.acl_protected |
       | wysiwyg_properties |               | wysiwyg | header_value        | order_value        | 0                     | yes             | label_value  | description_value  | order_value    | yes                 | priority_value | yes                      |
