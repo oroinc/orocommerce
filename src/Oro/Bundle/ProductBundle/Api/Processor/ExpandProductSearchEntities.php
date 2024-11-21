@@ -69,6 +69,10 @@ class ExpandProductSearchEntities implements ProcessorInterface
             if (null === $targetConfig || $field->isCollectionValuedAssociation()) {
                 continue;
             }
+            $targetClass = $field->getTargetClass();
+            if (!$targetClass) {
+                continue;
+            }
             if (!$this->doctrineHelper->isManageableEntityClass($field->getTargetClass())) {
                 continue;
             }
