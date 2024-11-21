@@ -319,6 +319,38 @@ services:
         tags:
             - { name: 'oro_workflow.transition_service' }
 
+    oro_checkout.workflow.b2b_flow_checkout_single_page.new_billing_address:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewBillingAddress
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.b2b_flow_checkout.address_actions'
+            - '@oro_checkout.action_group.update_shipping_price'
+            - '@oro_checkout.action.default_shipping_method_setter'
+        tags:
+            - { name: 'oro_operation_service' }
+
+    oro_checkout.workflow.b2b_flow_checkout_single_page.new_shipping_address:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewShippingAddress
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.update_shipping_price'
+            - '@oro_checkout.action.default_shipping_method_setter'
+        tags:
+            - { name: 'oro_operation_service' }
+
+    # Common operations
+    oro_checkout.operation.start_from_order:
+        class: Oro\Bundle\CheckoutBundle\Workflow\Operation\StartFromOrder
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_checkout.line_items.factory'
+            - '@oro_checkout.action_group.start_checkout'
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_action.action_executor'
+        tags:
+            - { name: 'oro_operation_service' }
+
     # Common action groups
     oro_checkout.action_group.update_shipping_price:
         class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPrice
