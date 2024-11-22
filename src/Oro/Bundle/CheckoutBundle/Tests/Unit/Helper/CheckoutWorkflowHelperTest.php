@@ -13,24 +13,27 @@ use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
 use Oro\Bundle\CustomerBundle\Handler\CustomerRegistrationHandler;
 use Oro\Bundle\CustomerBundle\Handler\ForgotPasswordHandler;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
-class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
+class CheckoutWorkflowHelperTest extends TestCase
 {
-    /** @var WorkflowManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var WorkflowManager|MockObject */
     private $workflowManager;
 
-    /** @var CheckoutLineItemGroupingInvalidationHelper|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CheckoutLineItemGroupingInvalidationHelper|MockObject */
     private $checkoutLineItemGroupingInvalidationHelper;
 
-    /** @var ActionGroupRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ActionGroupRegistry|MockObject */
     private $actionGroupRegistry;
 
     /** @var CheckoutWorkflowHelper */
@@ -258,5 +261,139 @@ class CheckoutWorkflowHelperTest extends \PHPUnit\Framework\TestCase
             ->with($checkout, reset($items));
 
         $this->helper->processWorkflowAndGetCurrentStep($request, $checkout);
+    }
+
+    /**
+     * @dataProvider isCheckoutWorkflowDataProvider
+     */
+    public function testIsCheckoutWorkflow(?array $metadata, bool $expected)
+    {
+        $workflowItem = new WorkflowItem();
+        $definition = new WorkflowDefinition();
+        $workflowItem->setDefinition($definition);
+        if ($metadata !== null) {
+            $definition->setMetadata($metadata);
+        }
+
+        self::assertSame($expected, CheckoutWorkflowHelper::isCheckoutWorkflow($workflowItem));
+    }
+
+    public function isCheckoutWorkflowDataProvider(): iterable
+    {
+        yield [
+            [],
+            false
+        ];
+
+        yield [
+            null,
+            false
+        ];
+
+        yield [
+            ['is_checkout_workflow' => true],
+            true
+        ];
+
+        yield [
+            ['is_checkout_workflow' => false],
+            false
+        ];
+    }
+
+    /**
+     * @dataProvider isSinglePageCheckoutWorkflowDataProvider
+     */
+    public function testIsSinglePageCheckoutWorkflow(?array $metadata, bool $expected)
+    {
+        $workflowItem = new WorkflowItem();
+        $definition = new WorkflowDefinition();
+        $workflowItem->setDefinition($definition);
+        if ($metadata !== null) {
+            $definition->setMetadata($metadata);
+        }
+
+        self::assertSame($expected, CheckoutWorkflowHelper::isSinglePageCheckoutWorkflow($workflowItem));
+    }
+
+    public function isSinglePageCheckoutWorkflowDataProvider(): iterable
+    {
+        yield [
+            [],
+            false
+        ];
+
+        yield [
+            null,
+            false
+        ];
+
+        yield [
+            ['is_checkout_workflow' => true],
+            false
+        ];
+
+        yield [
+            ['is_checkout_workflow' => false],
+            false
+        ];
+
+        yield [
+            ['is_checkout_workflow' => true, 'is_single_page_checkout' => true],
+            true
+        ];
+
+        yield [
+            ['is_checkout_workflow' => true, 'is_single_page_checkout' => false],
+            false
+        ];
+    }
+
+    /**
+     * @dataProvider isMultiStepCheckoutWorkflowDataProvider
+     */
+    public function testIsMultiStepCheckoutWorkflow(?array $metadata, bool $expected)
+    {
+        $workflowItem = new WorkflowItem();
+        $definition = new WorkflowDefinition();
+        $workflowItem->setDefinition($definition);
+        if ($metadata !== null) {
+            $definition->setMetadata($metadata);
+        }
+
+        self::assertSame($expected, CheckoutWorkflowHelper::isMultiStepCheckoutWorkflow($workflowItem));
+    }
+
+    public function isMultiStepCheckoutWorkflowDataProvider(): iterable
+    {
+        yield [
+            [],
+            false
+        ];
+
+        yield [
+            null,
+            false
+        ];
+
+        yield [
+            ['is_checkout_workflow' => true],
+            true
+        ];
+
+        yield [
+            ['is_checkout_workflow' => false],
+            false
+        ];
+
+        yield [
+            ['is_checkout_workflow' => true, 'is_single_page_checkout' => true],
+            false
+        ];
+
+        yield [
+            ['is_checkout_workflow' => true, 'is_single_page_checkout' => false],
+            true
+        ];
     }
 }

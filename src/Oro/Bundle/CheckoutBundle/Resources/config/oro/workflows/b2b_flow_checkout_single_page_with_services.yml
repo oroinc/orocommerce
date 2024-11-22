@@ -1,0 +1,30 @@
+imports:
+    - { resource: 'b2b_flow_checkout_single_page_with_services/attributes.yml' }
+    - { resource: 'b2b_flow_checkout_single_page_with_services/steps.yml' }
+    - { resource: 'b2b_flow_checkout_single_page_with_services/transitions.yml' }
+
+workflows:
+    b2b_flow_checkout_single_page:
+        entity: Oro\Bundle\CheckoutBundle\Entity\Checkout
+        entity_attribute: checkout
+        steps_display_ordered: true
+
+        defaults:
+            active: false
+
+        metadata:
+            is_checkout_workflow: true
+            is_single_page_checkout: true
+            checkout_state_config:
+                enable_state_protection: true
+                additionally_update_state_after: ['save_state']
+                protect_transitions: ['create_order']
+
+        applications: ['commerce']
+
+        exclusive_active_groups:
+            - b2b_checkout_flow
+        exclusive_record_groups:
+            - b2b_checkout_flow
+
+        priority: 200

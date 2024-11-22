@@ -8,6 +8,7 @@ use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionAfterEvent;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent;
 use Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionEventSubscriber;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
@@ -64,6 +65,26 @@ class CheckoutTransitionEventSubscriberTest extends \PHPUnit\Framework\TestCase
             ->expects($this->once())
             ->method('set')
             ->with('currentCheckoutState', $sampleState);
+
+        $this->eventSubscriber->onBefore($event);
+    }
+
+    public function testOnBeforeNotSupported(): void
+    {
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $event = new CheckoutTransitionBeforeEvent($workflowItem, $this->createMock(Transition::class));
+
+        $definition = $this->createMock(WorkflowDefinition::class);
+        $definition->expects($this->any())
+            ->method('getMetadata')
+            ->willReturn(['checkout_state_config' => []]);
+        $workflowItem
+            ->expects($this->once())
+            ->method('getDefinition')
+            ->willReturn($definition);
+
+        $this->checkoutStateDiffManager->expects($this->never())
+            ->method('getCurrentState');
 
         $this->eventSubscriber->onBefore($event);
     }

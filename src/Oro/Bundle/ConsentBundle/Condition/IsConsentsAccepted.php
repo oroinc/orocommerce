@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ConsentBundle\Condition;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\ConsentBundle\Feature\Voter\FeatureVoter;
 use Oro\Bundle\ConsentBundle\Provider\ConsentAcceptanceProvider;
 use Oro\Bundle\ConsentBundle\Provider\EnabledConsentProvider;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -24,16 +23,11 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
 
     const NAME = 'is_consents_accepted';
 
-    /** @var EnabledConsentProvider */
-    private $enabledConsentProvider;
+    private EnabledConsentProvider $enabledConsentProvider;
+    private ConsentAcceptanceProvider $consentAcceptanceProvider;
+    private TokenStorageInterface $tokenStorage;
 
-    /** @var ConsentAcceptanceProvider */
-    private $consentAcceptanceProvider;
-
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var PropertyPath */
+    /** @var PropertyPath|mixed */
     private $acceptedConsents;
 
     public function __construct(
@@ -71,33 +65,25 @@ class IsConsentsAccepted extends AbstractCondition implements ContextAccessorAwa
      */
     protected function isConditionAllowed($context)
     {
-        if ($this->featureChecker->isFeatureEnabled(FeatureVoter::FEATURE_NAME)) {
-            $customerConsentAcceptances = $this->isCustomerUser()
-                ? $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
-                : [];
-
-            $consentAcceptances = $this->resolveValue($context, $this->acceptedConsents);
-            if ($consentAcceptances instanceof ArrayCollection) {
-                $consentAcceptances = $consentAcceptances->toArray();
-            }
-            $consentAcceptances = array_merge($customerConsentAcceptances, (array)$consentAcceptances);
-
-            return !$this->enabledConsentProvider->getUnacceptedRequiredConsents($consentAcceptances);
+        if (!$this->isFeaturesEnabled()) {
+            return true;
         }
 
-        return true;
+        $customerConsentAcceptances = $this->isCustomerUser()
+            ? $this->consentAcceptanceProvider->getCustomerConsentAcceptances()
+            : [];
+
+        $consentAcceptances = $this->resolveValue($context, $this->acceptedConsents);
+        if ($consentAcceptances instanceof ArrayCollection) {
+            $consentAcceptances = $consentAcceptances->toArray();
+        }
+        $consentAcceptances = array_merge($customerConsentAcceptances, (array)$consentAcceptances);
+
+        return !$this->enabledConsentProvider->getUnacceptedRequiredConsents($consentAcceptances);
     }
 
-    /**
-     * @return bool
-     */
-    private function isCustomerUser()
+    private function isCustomerUser(): bool
     {
-        $token = $this->tokenStorage->getToken();
-        if ($token) {
-            return $token->getUser() instanceof CustomerUser;
-        }
-
-        return false;
+        return $this->tokenStorage->getToken()?->getUser() instanceof CustomerUser;
     }
 }

@@ -1,3 +1,7 @@
 imports:
-    - { resource: 'workflows/b2b_flow_checkout.yml' }
-    - { resource: 'workflows/b2b_flow_checkout_single_page.yml' }
+    # BC. Load workflows with definition-based transitions when oro_checkout.use_transition_services DI parameter is not present or set to false.
+    - { resource: 'workflows/b2b_flow_checkout.yml', import_condition: "parameter_or_null('oro_checkout.use_transition_services') !== true" }
+    - { resource: 'workflows/b2b_flow_checkout_single_page.yml', import_condition: "parameter_or_null('oro_checkout.use_transition_services') !== true" }
+    # NEW. Load workflows with transition as a service implementation when oro_checkout.use_transition_services DI parameter is present and set to true
+    - { resource: 'workflows/b2b_flow_checkout_with_services.yml', import_condition: "parameter_or_null('oro_checkout.use_transition_services') === true" }
+    - { resource: 'workflows/b2b_flow_checkout_single_page_with_services.yml', import_condition: "parameter_or_null('oro_checkout.use_transition_services') === true" }

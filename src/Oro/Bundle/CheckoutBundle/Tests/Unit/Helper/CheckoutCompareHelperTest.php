@@ -2,18 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Helper;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutCompareHelper;
-use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShoppingListLineItemDiffMapper;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface;
-use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -25,7 +21,6 @@ class CheckoutCompareHelperTest extends TestCase
     private CheckoutDiffStorageInterface|MockObject $diffStorage;
     private ShoppingListLineItemDiffMapper|MockObject $diffMapper;
     private WorkflowManager|MockObject $workflowManager;
-    private ActionGroupRegistry|MockObject $actionGroupRegistry;
     private CheckoutCompareHelper $helper;
 
     protected function setUp(): void
@@ -33,51 +28,13 @@ class CheckoutCompareHelperTest extends TestCase
         $this->diffStorage = $this->createMock(CheckoutDiffStorageInterface::class);
         $this->diffMapper = $this->createMock(ShoppingListLineItemDiffMapper::class);
         $this->workflowManager = $this->createMock(WorkflowManager::class);
-        $this->actionGroupRegistry = $this->createMock(ActionGroupRegistry::class);
 
         $this->helper = new CheckoutCompareHelper(
             $this->diffStorage,
             $this->diffMapper,
             $this->workflowManager,
-            $this->actionGroupRegistry
+            $this->createMock(ActionGroupRegistry::class)
         );
-    }
-
-    public function testCompare(): void
-    {
-        $checkout = $this->createMock(Checkout::class);
-        $shoppingList = new ShoppingList();
-
-        $checkout->expects($this->once())
-            ->method('getSourceEntity')
-            ->willReturn($shoppingList);
-        $actionData = new ActionData(['shoppingList' => $shoppingList, 'forceStartCheckout' => false]);
-        $actionGroup = $this->createMock(ActionGroup::class);
-
-        $this->actionGroupRegistry->expects($this->once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn($actionGroup);
-        $actionGroup->expects($this->once())
-            ->method('execute')
-            ->with($actionData);
-
-        $this->helper->compare($checkout);
-    }
-
-    public function testCompareIgnore(): void
-    {
-        $checkout = $this->createMock(Checkout::class);
-        $quoteDemand = new QuoteDemand();
-
-        $checkout->expects($this->once())
-            ->method('getSourceEntity')
-            ->willReturn($quoteDemand);
-        $this->actionGroupRegistry->expects($this->never())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout');
-
-        $this->helper->compare($checkout);
     }
 
     public function testRestartCheckoutIfSourceLineItemsChangedWithChanges(): void
@@ -101,37 +58,9 @@ class CheckoutCompareHelperTest extends TestCase
 
         $this->compareStates($checkout, $token, $state1, $rawCheckout, $state2, false);
 
-        $workflowName = '_checkout_workflow_name';
-        $shoppingList = new ShoppingList();
-        $checkoutSource = $this->createMock(CheckoutSourceStub::class);
-        $actionData = new ActionData(['shoppingList' => $shoppingList, 'forceStartCheckout' => true]);
-        $actionGroup = $this->createMock(ActionGroup::class);
-
-        $workflowItem->expects($this->once())
-            ->method('getWorkflowName')
-            ->willReturn($workflowName);
-        $workflowItem->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($checkout);
-        $checkout->expects($this->once())
-            ->method('getSource')
-            ->willReturn($checkoutSource);
-        $checkoutSource->expects($this->once())
-            ->method('getShoppingList')
-            ->willReturn($shoppingList);
         $this->workflowManager->expects($this->once())
-            ->method('resetWorkflowItem')
-            ->with($workflowItem);
-        $this->workflowManager->expects($this->once())
-            ->method('startWorkflow')
-            ->with($workflowName, $checkout);
-        $this->actionGroupRegistry->expects($this->once())
-            ->method('findByName')
-            ->with('start_shoppinglist_checkout')
-            ->willReturn($actionGroup);
-        $actionGroup->expects($this->once())
-            ->method('execute')
-            ->with($actionData);
+            ->method('transitWithoutChecks')
+            ->with($workflowItem, TransitionManager::DEFAULT_START_TRANSITION_NAME);
 
         $this->helper->resetCheckoutIfSourceLineItemsChanged($checkout, $rawCheckout);
     }
@@ -165,9 +94,6 @@ class CheckoutCompareHelperTest extends TestCase
             ->method('resetWorkflowItem');
         $this->workflowManager->expects($this->never())
             ->method('startWorkflow');
-        $this->actionGroupRegistry->expects($this->never())
-            ->method('get')
-            ->with('start_shoppinglist_checkout');
 
         $this->helper->resetCheckoutIfSourceLineItemsChanged($checkout, $rawCheckout);
     }

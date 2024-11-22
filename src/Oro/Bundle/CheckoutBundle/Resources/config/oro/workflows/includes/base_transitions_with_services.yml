@@ -1,0 +1,32 @@
+imports:
+    - { resource: './base_transitions.yml' }
+
+workflows:
+    b2b_flow_checkout:
+        transitions:
+            __start__:
+                transition_definition: ~
+                transition_service: 'oro_checkout.workflow.base_transition.start'
+
+            start_from_quote:
+                transition_definition: ~
+
+            start_from_quote_as_guest:
+                transition_definition: ~
+
+            start_from_shoppinglist:
+                acl_resource: ~
+                transition_definition: ~
+                transition_service: 'oro_checkout.workflow.base_transition.start_from_shopping_list'
+
+            start_from_quickorderform:
+                transition_definition: ~
+                transition_service: 'oro_checkout.workflow.base_transition.start_from_quick_order_form'
+
+            finish_checkout:
+                transition_definition: ~
+                transition_service: 'oro_checkout.workflow.base_transition.finish_checkout'
+
+            payment_error:
+                transition_definition: ~
+                transition_service: 'oro_checkout.workflow.base_transition.payment_error'

@@ -71,6 +71,32 @@ class CheckoutWorkflowHelper
         $this->translator = $translator;
     }
 
+    public static function isSinglePageCheckoutWorkflow(WorkflowItem $workflowItem): bool
+    {
+        $metadata = $workflowItem->getDefinition()?->getMetadata();
+
+        return self::isCheckoutWorkflow($workflowItem)
+            && !empty($metadata['is_single_page_checkout']);
+    }
+
+    public static function isMultiStepCheckoutWorkflow(WorkflowItem $workflowItem): bool
+    {
+        $metadata = $workflowItem->getDefinition()?->getMetadata();
+
+        return self::isCheckoutWorkflow($workflowItem)
+            && empty($metadata['is_single_page_checkout']);
+    }
+
+    public static function isCheckoutWorkflow(WorkflowItem $workflowItem): bool
+    {
+        $metadata = $workflowItem->getDefinition()?->getMetadata();
+
+        return !empty($metadata['is_checkout_workflow']);
+    }
+
+    /**
+     * @deprecated replaced with Oro\Bundle\CheckoutBundle\Handler\HandlerRegistry
+     */
     public function processWorkflowAndGetCurrentStep(Request $request, Checkout $checkout): WorkflowStep
     {
         $this->actionGroupRegistry->findByName('actualize_currency')
@@ -121,6 +147,9 @@ class CheckoutWorkflowHelper
         return $this->workflowItems[$checkoutId];
     }
 
+    /**
+     * @deprecated
+     */
     protected function checkLineItemsCount(Checkout $checkout, Request $request): void
     {
         $allOrderLineItemsCount = $this->lineItemsManager->getData($checkout, true)->count();
@@ -147,9 +176,12 @@ class CheckoutWorkflowHelper
         }
     }
 
+    /**
+     * @deprecated replaced with Oro\Bundle\CheckoutBundle\Handler\CheckoutPostRequestHandler
+     */
     protected function handlePostTransition(WorkflowItem $workflowItem, Request $request): void
     {
-        $transition = $this->getContinueTransition($workflowItem, (string) $request->get('transition'));
+        $transition = $this->getContinueTransition($workflowItem, (string)$request->get('transition'));
         if (!$transition) {
             return;
         }
@@ -185,6 +217,9 @@ class CheckoutWorkflowHelper
         $this->transitionProvider->clearCache();
     }
 
+    /**
+     * @deprecated
+     */
     private function getTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
     {
         $workflow = $this->workflowManager->getWorkflow($workflowItem);
@@ -196,6 +231,9 @@ class CheckoutWorkflowHelper
         return $transition;
     }
 
+    /**
+     * @deprecated
+     */
     private function getContinueTransition(WorkflowItem $workflowItem, string $transitionName): ?Transition
     {
         if ($transitionName) {
@@ -213,6 +251,9 @@ class CheckoutWorkflowHelper
         return $transition ?? null;
     }
 
+    /**
+     * @deprecated replaced with Oro\Bundle\CheckoutBundle\Handler\CheckoutGetRequestHandler
+     */
     protected function handleGetTransition(WorkflowItem $workflowItem, Request $request): void
     {
         if ($request->query->has('transition')) {
@@ -226,6 +267,9 @@ class CheckoutWorkflowHelper
         }
     }
 
+    /**
+     * @deprecated
+     */
     protected function validateStep(WorkflowItem $workflowItem): WorkflowStep
     {
         $verifyTransition = null;
@@ -245,6 +289,9 @@ class CheckoutWorkflowHelper
         return $workflowItem->getCurrentStep();
     }
 
+    /**
+     * @deprecated
+     */
     protected function handleRegistration(WorkflowItem $workflowItem, Request $request): void
     {
         if ($request->isMethod(Request::METHOD_POST)) {
@@ -256,6 +303,9 @@ class CheckoutWorkflowHelper
         }
     }
 
+    /**
+     * @deprecated
+     */
     private function stopPropagation(WorkflowItem $workflowItem): bool
     {
         $stopPropagation = false;
@@ -274,17 +324,23 @@ class CheckoutWorkflowHelper
         return $stopPropagation;
     }
 
+    /**
+     * @deprecated
+     */
     private function addTransitionErrors(TransitionData $continueTransition, Request $request): void
     {
         $errors = $continueTransition->getErrors();
         foreach ($errors as $error) {
             $request->getSession()->getFlashBag()->add(
                 'error',
-                $this->translator->trans((string) ($error['message'] ?? ''), (array) ($error['parameters'] ?? []))
+                $this->translator->trans((string)($error['message'] ?? ''), (array)($error['parameters'] ?? []))
             );
         }
     }
 
+    /**
+     * @deprecated
+     */
     private function isValidationNeeded(Checkout $checkout, WorkflowItem $workflowItem, Request $request): bool
     {
         if (!$checkout->getId()) {
@@ -315,6 +371,9 @@ class CheckoutWorkflowHelper
         return true;
     }
 
+    /**
+     * @deprecated
+     */
     private function processHandlers(WorkflowItem $workflowItem, Request $request): void
     {
         if ($this->registrationHandler->isRegistrationRequest($request)) {
@@ -326,6 +385,9 @@ class CheckoutWorkflowHelper
         }
     }
 
+    /**
+     * @deprecated
+     */
     private function handleTransition(WorkflowItem $workflowItem, Request $request): void
     {
         if ($request->isMethod(Request::METHOD_GET)) {

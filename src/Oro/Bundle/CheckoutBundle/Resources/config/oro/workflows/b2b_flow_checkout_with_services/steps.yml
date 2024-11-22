@@ -1,0 +1,2 @@
+imports:
+    - { resource: '../b2b_flow_checkout/steps.yml' }

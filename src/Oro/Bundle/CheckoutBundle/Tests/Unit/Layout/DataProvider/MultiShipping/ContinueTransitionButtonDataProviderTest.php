@@ -7,6 +7,7 @@ use Oro\Bundle\CheckoutBundle\Layout\DataProvider\MultiShipping\ContinueTransiti
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Event\EventDispatcher;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 
@@ -33,7 +34,7 @@ class ContinueTransitionButtonDataProviderTest extends \PHPUnit\Framework\TestCa
     public function testGetContinueTransition()
     {
         $transitionOptionsResolver = $this->createMock(TransitionOptionsResolver::class);
-        $transition = new Transition($transitionOptionsResolver);
+        $transition = new Transition($transitionOptionsResolver, $this->createMock(EventDispatcher::class));
         $transition->setFrontendOptions([]);
 
         $transitionData = new TransitionData($transition, true, new ArrayCollection());

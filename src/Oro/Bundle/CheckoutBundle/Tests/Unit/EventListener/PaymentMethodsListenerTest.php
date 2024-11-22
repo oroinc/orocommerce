@@ -78,14 +78,6 @@ class PaymentMethodsListenerTest extends \PHPUnit\Framework\TestCase
             ->method('isManualEditGranted');
     }
 
-    public function testOnStartCheckoutWhenContextIsNotOfActionDataType(): void
-    {
-        $this->expectsNoInvocationOfManualEditGranted();
-
-        $event = new ExtendableConditionEvent(new \stdClass());
-        $this->listener->onStartCheckout($event);
-    }
-
     public function testOnStartCheckoutWhenCheckoutParameterIsNotOfCheckoutType(): void
     {
         $context = new ActionData(['checkout' => new \stdClass()]);

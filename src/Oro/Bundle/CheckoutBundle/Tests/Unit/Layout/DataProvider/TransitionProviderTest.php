@@ -7,18 +7,24 @@ use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
+use Oro\Bundle\WorkflowBundle\Event\EventDispatcher;
 use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
 class TransitionProviderTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var \PHPUnit\Framework\MockObject\MockObject|WorkflowManager */
+    /** @var MockObject|WorkflowManager */
     private $workflowManager;
 
-    /** @var \PHPUnit\Framework\MockObject\MockObject|TransitionOptionsResolver */
+    /** @var MockObject|TransitionOptionsResolver */
     private $optionsResolver;
+
+    /** @var EventDispatcherInterface|MockObject */
+    private $eventDispatcher;
 
     /** @var TransitionProvider */
     private $provider;
@@ -27,6 +33,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->workflowManager = $this->createMock(WorkflowManager::class);
         $this->optionsResolver = $this->createMock(TransitionOptionsResolver::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
 
         $this->provider = new TransitionProvider($this->workflowManager);
     }
@@ -176,7 +183,7 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     private function createTransition(string $name): Transition
     {
-        $transition = new Transition($this->optionsResolver);
+        $transition = new Transition($this->optionsResolver, $this->eventDispatcher);
         $transition->setName($name);
 
         return $transition;

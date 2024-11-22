@@ -468,6 +468,7 @@ class ShoppingListControllerTest extends WebTestCase
                 'status' => 403,
                 'expectedCreateOrderButtonVisible' => false
             ],
+            # Check ACL resource on an object, not class, may fail if ACL resource is checked before object initialized
             'VIEW (user from parent customer : DEEP_VIEW_ONLY)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,

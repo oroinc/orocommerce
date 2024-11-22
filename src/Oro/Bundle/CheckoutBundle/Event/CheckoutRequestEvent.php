@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Event;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Contracts\EventDispatcher\Event;
 
@@ -11,8 +12,12 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 class CheckoutRequestEvent extends Event
 {
-    public function __construct(private Request $request, private Checkout $checkout)
-    {
+    private ?WorkflowStep $workflowStep = null;
+
+    public function __construct(
+        private Request $request,
+        private Checkout $checkout
+    ) {
     }
 
     public function getRequest(): Request
@@ -23,5 +28,15 @@ class CheckoutRequestEvent extends Event
     public function getCheckout(): Checkout
     {
         return $this->checkout;
+    }
+
+    public function getWorkflowStep(): ?WorkflowStep
+    {
+        return $this->workflowStep;
+    }
+
+    public function setWorkflowStep(?WorkflowStep $workflowStep): void
+    {
+        $this->workflowStep = $workflowStep;
     }
 }

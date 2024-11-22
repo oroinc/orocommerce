@@ -383,6 +383,20 @@ services:
         tags:
             - { name: oro_action.condition, alias: is_quote_valid }
 
+    oro_sale.workflow.action_group.accept_quote_and_submit_order:
+        class: Oro\Bundle\SaleBundle\Workflow\ActionGroup\AcceptQuoteAndSubmitToOrder
+        arguments:
+            - '@router'
+            - '@oro_sale.quote_demand.subtotals_calculator_main'
+            - '@oro_checkout.action_group.start_checkout'
+            - '@oro_checkout.provider.checkout_line_items'
+            - '@oro_action.action_executor'
+        tags:
+            - { name: 'oro_action_group_service' }
+
+    Oro\Bundle\SaleBundle\Workflow\ActionGroup\AcceptQuoteAndSubmitToOrder:
+        alias: oro_sale.workflow.action_group.accept_quote_and_submit_order
+
     oro_sale.provider.quote_product_prices:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider'
         public: true
@@ -401,6 +415,30 @@ services:
 
     oro_sale.quote.pricing.comparator:
         class: Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator
+
+    oro_sale.operation.frontend_quote_submit_to_order:
+        class: Oro\Bundle\SaleBundle\Workflow\Operation\QuoteSubmitToOrder
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_action.action_executor'
+            - '@doctrine'
+            - '@oro_sale.manager.quote_demand_manager'
+            - '@oro_security.token_accessor'
+            - '@router'
+        tags:
+            - { name: 'oro_operation_service' }
+
+    oro_sale.operation.frontend_guest_quote_submit_to_order:
+        class: Oro\Bundle\SaleBundle\Workflow\Operation\GuestQuoteSubmitToOrder
+        arguments:
+            - '@oro_sale.operation.frontend_quote_submit_to_order'
+            - '@oro_featuretoggle.checker.feature_checker'
+            - '@doctrine'
+            - '@oro_sale.manager.quote_demand_manager'
+            - '@oro_security.token_accessor'
+            - '@router'
+        tags:
+            - { name: 'oro_operation_service' }
 
     oro_sale.emailtemplate.variable_provider.system:
         class: Oro\Bundle\SaleBundle\Provider\EmailTemplateSystemVariablesProvider

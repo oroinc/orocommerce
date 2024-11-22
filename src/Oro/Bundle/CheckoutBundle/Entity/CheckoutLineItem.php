@@ -14,6 +14,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutLineItemRepository;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
+use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -42,8 +44,11 @@ class CheckoutLineItem implements
     ProductLineItemsHolderAwareInterface,
     ProductLineItemChecksumAwareInterface,
     ProductKitItemLineItemsAwareInterface,
-    ShippingAwareInterface
+    ShippingAwareInterface,
+    ExtendEntityInterface
 {
+    use ExtendEntityTrait;
+
     #[ORM\Id]
     #[ORM\Column(type: Types::INTEGER)]
     #[ORM\GeneratedValue(strategy: 'AUTO')]

@@ -12,7 +12,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  * Sets a default shipping method and a shipping cost for a checkout and its line item groups
  * when Multi Shipping Per Line Item Groups functionality is enabled.
  */
-class DefaultMultiShippingGroupMethodSetter
+class DefaultMultiShippingGroupMethodSetter implements DefaultMultiShippingGroupMethodSetterInterface
 {
     private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutShippingMethodsProviderInterface $shippingPriceProvider;

@@ -185,14 +185,6 @@ workflows:
                                     parameters_mapping:
                                         checkout: $checkout
                                 - '@assign_value': [$.result.updateCheckoutState, true]
-                        - '@run_action_group':
-                            action_group: update_checkout_state
-                            parameters_mapping:
-                                checkout: $checkout
-                                state_token: $state_token
-                                update_checkout_state: $.result.updateCheckoutState
-                            results:
-                                result.updateCheckoutState: $.update_checkout_state
                     attribute_fields:
                         billing_address:
                             form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType

@@ -7,6 +7,10 @@
 "Checkout": "Checkout"
 oro:
     workflow:
+        checkout:
+            state_token:
+                attribute_label: 'Token to track checkout state'
+                form_label: ''
         b2b_flow_checkout:
             label: Checkout
             step:
@@ -99,6 +103,8 @@ oro:
                     label: 'Line item groups shipping methods'
                 grouped_line_items:
                     label: 'Grouped line items'
+                shipping_data_ready:
+                    label: 'Shipping data is ready'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
@@ -307,6 +313,8 @@ oro:
                     label: 'Customer consents'
                 consents_available:
                     label: 'Is consents available'
+                shipping_data_ready:
+                    label: 'Shipping data is ready'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'

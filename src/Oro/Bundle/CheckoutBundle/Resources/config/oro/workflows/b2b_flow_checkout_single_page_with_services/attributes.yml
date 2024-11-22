@@ -1,0 +1,8 @@
+imports:
+    - { resource: '../includes/attributes.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: [] }
+
+workflows:
+    b2b_flow_checkout_single_page:
+        attributes:
+            shipping_data_ready:
+                type: boolean

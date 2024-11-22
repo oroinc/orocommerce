@@ -24,6 +24,72 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
+### Changed
+
+#### CheckoutBundle
+
+* CheckoutLineItem entity was made extendable
+* Changed logic of PreloadCheckoutOnStartEventListener and PreloadCheckoutOnStartFromShoppingListEventListener to allow to configure a list of preloaded entities
+* UpdateShippingCost was introduced as a listener, calls were removed from form_init section
+* Migrated the `b2b_flow_checkout_single_page_new_billing_address` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewBillingAddress`.
+* Migrated the `b2b_flow_checkout_single_page_new_shipping_address` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewShippingAddress`.
+* Migrated the `oro_checkout_frontend_start_from_order` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\Operation\StartFromOrder`.
+
+##### Checkout start transitions
+
+* Start transitions and used action .groups logic was moved from YAML definition to PHP services
+* Reworked start transitions to not change step several times, now step is resolved and set only once
+* Used conditional `step_to` to resolve destination step for not logged in customer users
+* Disallowed transit workflow or change step during form_init, pre-action, pre-conditions and conditions executions
+* Reworked reset checkout on shopping list item changes, now workflow item is moved back by default start transition instead of remove/create/start, removed not needed start from shopping list action group call during a restart.
+* Added transitWithoutChecks to WorkflowManager to execute transition that is not allowed for a step (used by the restart to execute `__start__` transition to restart workflow)
+* If guest returns to checkout from source entity he must be redirected to enter_credentials_step is now handled by the ReturnGuestToEnterCredentialsStep workflow event listener. On workflow start guest will be transitioned to the enter_credentials_step automatically by the workflow and conditional_steps_to, ReturnGuestToEnterCredentialsStep will be skipped in this case
+* Ad-hocked problem of stub workflow item created during double-start. 1 * during start from shopping list info from the actual workflowItem is merged into the stub workflowItem by the transition. 2 - to simplify listeners ActualizeWorkflowItem listener was added which replaces workflowItem in event with actual one, this will allow correct event processing of completed and finish events.  !Note that start, leave, enter, entered and transition are still  operate the stub and workflowItem may be in incomplete or incorrect state there!
+
+##### Consents
+
+* Consents checking was moved to VerifyCustomerConsentsListener
+* Removed the stop_propagation hack from checkouts (CheckoutWorkflowHelper)
+* Extracted checkout request transition processing and step resolving to listeners
+
+##### Checkout Workflow State
+
+* migrated all workflow array and json_array fields to JSONb type for data uniformity
+* added workflow metadata which may be used to store data specific for some workflow and accessible by listeners, metadata was added as a separate column to workflow definition
+* added next metadata for checkout
+  * is_checkout_workflow
+  * is_single_page_checkout
+  * guest_checkout
+    * return_to_login_transition * used by ReturnGuestToEnterCredentialsStep
+  * checkout_state_config * used by CheckoutStateListener
+    * enable_state_protection * enables checkout state protection
+    * additionally_update_state_after * updates state after listed transitions
+    * protect_transitions * if defined only listed transitions are protected
+
+##### CheckoutWorkflowHelper
+
+Previously known as GOD Object
+
+* Checkout request processing was removed from CheckoutWorkflowHelper and moved to separate oro_checkout.request event listeners
+* Extracted CheckLineItemsCount as oro_checkout.request event listener
+* Extracted InvalidateCheckoutLineItemsGrouping as oro_checkout.request event listener
+* Checkout request handling moved to ProcessWorkflowRequestEventListener
+* Introduced checkout request handlers, tagged with oro_checkout.request_handler
+  * CheckoutGetRequestHandler extracted from CheckoutWorkflowHelper
+  * CheckoutPostRequestHandler extracted from CheckoutWorkflowHelper
+  * ForgotPasswordHandler and CustomerRegistrationHandler are isolated in the CustomerBundle, dependency removed from CheckoutWorkflowHelper
+
+#### SaleBundle
+* Migrated the `oro_sale_frontend_quote_submit_to_order` operation body to the class `\Oro\Bundle\SaleBundle\Workflow\Operation\QuoteSubmitToOrder`.
+* Migrated the `oro_sale_frontend_guest_quote_submit_to_order` operation body to the class `\Oro\Bundle\SaleBundle\Workflow\Operation\GuestQuoteSubmitToOrder`.
+
+#### ProductBundle
+* Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
+
+#### WebCatalogBundle
+* Changed the type of `oro_web_catalog.empty_search_result_page` system config setting from `array` to `scalar` to get rid of serialized objects in `oro_config_value` table.
+
+
 ### Added
 
 #### WebsiteSearchSuggestionBundle
@@ -56,19 +122,14 @@ The current file describes significant changes in the code that may affect the u
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
 
-### Changed
-
-#### ProductBundle
-* Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
-
-#### WebCatalogBundle
-* Changed the type of `oro_web_catalog.empty_search_result_page` system config setting from `array` to `scalar` to get rid of serialized objects in `oro_config_value` table.
-
 ### Removed
 
 #### ProductBundle
 * Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.
 * Removed `oro_product.product_details_display_price_tiers_as` system configuration option.
+
+#### SaleBundle
+* Removed `oro_sale_accept_quote` as it is not used anywhere.
 
 ## 6.0.0 (2024-03-30)
 [Show detailed list of changes](incompatibilities-6-0.md)

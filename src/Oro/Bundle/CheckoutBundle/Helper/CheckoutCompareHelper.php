@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Helper;
 
-use Exception;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -12,6 +11,7 @@ use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -20,26 +20,19 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
  */
 class CheckoutCompareHelper
 {
-    private CheckoutDiffStorageInterface $diffStorage;
-
-    private ShoppingListLineItemDiffMapper $diffMapper;
-
-    private WorkflowManager $workflowManager;
-
-    private ActionGroupRegistry $actionGroupRegistry;
+    private bool $restartInProgress = false;
 
     public function __construct(
-        CheckoutDiffStorageInterface $diffStorage,
-        ShoppingListLineItemDiffMapper $diffMapper,
-        WorkflowManager $workflowManager,
-        ActionGroupRegistry $actionGroupRegistry
+        private CheckoutDiffStorageInterface $diffStorage,
+        private ShoppingListLineItemDiffMapper $diffMapper,
+        private WorkflowManager $workflowManager,
+        private ActionGroupRegistry $actionGroupRegistry
     ) {
-        $this->diffStorage = $diffStorage;
-        $this->diffMapper = $diffMapper;
-        $this->workflowManager = $workflowManager;
-        $this->actionGroupRegistry = $actionGroupRegistry;
     }
 
+    /**
+     * @deprecated
+     */
     public function compare(CheckoutInterface $checkout)
     {
         $shoppingList = $checkout->getSourceEntity();
@@ -53,49 +46,44 @@ class CheckoutCompareHelper
      */
     public function resetCheckoutIfSourceLineItemsChanged(?Checkout $checkout, ?Checkout $rawCheckout): ?Checkout
     {
-        if ($checkout !== null && $rawCheckout !== null) {
-            /** @var WorkflowItem $workflowItem */
-            $items = $this->workflowManager->getWorkflowItemsByEntity($checkout);
+        if ($this->restartInProgress || $checkout === null || $rawCheckout === null) {
+            return $checkout;
+        }
 
-            if (count($items) !== 1) {
-                throw new NotFoundHttpException('Unable to find correct WorkflowItem for current checkout');
-            }
+        $workflowItem = $this->getWorkflowItem($checkout);
+        $workflowData = $workflowItem->getData();
 
-            $workflowItem = reset($items);
-            $workflowData = $workflowItem->getData();
+        if ($workflowData->has('state_token')) {
+            $stateToken = $workflowData->get('state_token');
 
-            if ($workflowData->has('state_token')) {
-                $stateToken = $workflowData->get('state_token');
+            $diffKey = $this->diffMapper->getName();
+            $state1 = $this->diffStorage->getState($checkout, $stateToken);
+            $state1 = array_key_exists($diffKey, $state1) ? $state1[$diffKey] : [];
+            $state2 = $this->diffMapper->getCurrentState($rawCheckout);
 
-                $diffKey = $this->diffMapper->getName();
-                $state1 = $this->diffStorage->getState($checkout, $stateToken);
-                $state1 = array_key_exists($diffKey, $state1) ? $state1[$diffKey] : [];
-                $state2 = $this->diffMapper->getCurrentState($rawCheckout);
-
-                if (!$this->diffMapper->isStatesEqual($checkout, $state1, $state2)) {
-                    $this->restartCheckout($workflowItem);
-                }
+            if (!$this->diffMapper->isStatesEqual($checkout, $state1, $state2)) {
+                $this->restartCheckout($workflowItem);
             }
         }
 
         return $checkout;
     }
 
-    /**
-     * @throws WorkflowException
-     * @throws Exception
-     */
     protected function restartCheckout(WorkflowItem $workflowItem): void
     {
-        $workflowName = $workflowItem->getWorkflowName();
-        /** @var Checkout $checkout */
-        $checkout = $workflowItem->getEntity();
+        $this->restartInProgress = true;
+        $this->workflowManager->transitWithoutChecks($workflowItem, TransitionManager::DEFAULT_START_TRANSITION_NAME);
+        $this->restartInProgress = false;
+    }
 
-        $this->workflowManager->resetWorkflowItem($workflowItem);
-        $this->workflowManager->startWorkflow($workflowName, $checkout);
+    private function getWorkflowItem(Checkout $checkout): WorkflowItem
+    {
+        $items = $this->workflowManager->getWorkflowItemsByEntity($checkout);
+        if (count($items) !== 1) {
+            throw new NotFoundHttpException('Unable to find correct WorkflowItem for current checkout');
+        }
 
-        $shoppingList = $checkout->getSource()->getShoppingList();
-        $this->startShoppingListCheckoutAction($shoppingList, true);
+        return reset($items);
     }
 
     private function startShoppingListCheckoutAction(ShoppingList $shoppingList, $forceStartCheckout = false): void

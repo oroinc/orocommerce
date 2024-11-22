@@ -1,3 +1,61 @@
+parameters:
+    oro_checkout.preload_config.base:
+        product: &base_preload_config.product
+            backOrder: []
+            category:
+                backOrder: []
+                decrementQuantity: []
+                highlightLowInventory: []
+                inventoryThreshold: []
+                isUpcoming: []
+                lowInventoryThreshold: []
+                manageInventory: []
+                maximumQuantityToOrder: []
+                minimumQuantityToOrder: []
+            decrementQuantity: []
+            highlightLowInventory: []
+            inventoryThreshold: []
+            isUpcoming: []
+            lowInventoryThreshold: []
+            manageInventory: []
+            maximumQuantityToOrder: []
+            minimumQuantityToOrder: []
+            unitPrecisions: []
+        kitItemLineItems:
+            kitItem: &base_preload_config.kit_line_item.kit_item
+                labels: []
+                productUnit: []
+            product: &base_preload_config.kit_line_item.product
+                names: []
+                unitPrecisions: []
+                images:
+                    types: []
+                    image:
+                        digitalAsset:
+                            titles: []
+                            sourceFile:
+                                digitalAsset: []
+
+    oro_checkout.preload_config.shopping_list:
+        product:
+            <<: *base_preload_config.product
+        kitItemLineItems:
+            kitItem:
+                <<: *base_preload_config.kit_line_item.kit_item
+            product:
+                <<: *base_preload_config.kit_line_item.product
+            unit: []
+
+    oro_checkout.preload_config.checkout:
+        product:
+            <<: *base_preload_config.product
+        kitItemLineItems:
+            kitItem:
+                <<: *base_preload_config.kit_line_item.kit_item
+            product:
+                <<: *base_preload_config.kit_line_item.product
+            productUnit: []
+
 services:
     # Data Providers
     oro_checkout.data_provider.converter.checkout_line_items:
@@ -770,6 +828,29 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_checkout_forgot_password_check_email }
 
+    oro_checkout.handler.checkout_request_handler_registry:
+        class: Oro\Bundle\CheckoutBundle\Handler\HandlerRegistry
+        arguments:
+            - !tagged_iterator oro_checkout.request_handler
+
+    oro_checkout.handler.checkout_post_request_handler:
+        class: Oro\Bundle\CheckoutBundle\Handler\CheckoutPostRequestHandler
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_checkout.layout.data_provider.transition'
+            - '@oro_checkout.layout.data_provider.transition_form'
+            - '@oro_checkout.workflow_state.handler.checkout_error'
+            - '@event_dispatcher'
+        tags:
+            - { name: 'oro_checkout.request_handler', priority: 50 }
+
+    oro_checkout.handler.checkout_get_request_handler:
+        class: Oro\Bundle\CheckoutBundle\Handler\CheckoutGetRequestHandler
+        arguments:
+            - '@oro_workflow.manager'
+        tags:
+            - { name: 'oro_checkout.request_handler', priority: 0 }
+
     oro_checkout.helper.checkout_workflow_helper:
         class: Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper
         public: true
@@ -1009,6 +1090,8 @@ services:
         class: Oro\Bundle\CheckoutBundle\EventListener\PreloadCheckoutOnStartEventListener
         arguments:
             - '@oro_entity.manager.preloading_manager'
+        calls:
+            - ['setFieldsToPreload', ['%oro_checkout.preload_config.checkout%']]
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStart, priority: 128 }
 
@@ -1016,5 +1099,7 @@ services:
         class: Oro\Bundle\CheckoutBundle\EventListener\PreloadCheckoutOnStartFromShoppingListEventListener
         arguments:
             - '@oro_entity.manager.preloading_manager'
+        calls:
+            - ['setFieldsToPreload', ['%oro_checkout.preload_config.shopping_list%']]
         tags:
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }

@@ -12,7 +12,7 @@ use Psr\Log\NullLogger;
 /**
  * Sets the first applicable payment method for checkout.
  */
-class DefaultPaymentMethodSetter implements LoggerAwareInterface
+class DefaultPaymentMethodSetter implements LoggerAwareInterface, DefaultPaymentMethodSetterInterface
 {
     use LoggerAwareTrait;
 

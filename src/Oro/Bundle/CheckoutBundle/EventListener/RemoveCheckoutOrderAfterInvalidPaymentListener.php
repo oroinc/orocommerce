@@ -66,6 +66,7 @@ class RemoveCheckoutOrderAfterInvalidPaymentListener implements EventSubscriberI
         if ($order) {
             $workflowItem->getData()->remove('order');
             $entityManager->remove($order);
+            $entityManager->flush($order);
         }
     }
 }

@@ -58,8 +58,12 @@ class RemoveCheckoutOrderAfterInvalidPaymentListenerTest extends TestCase
 
         $objectManager = self::createMock(ObjectManager::class);
         $objectManager
-            ->expects(self::any())
+            ->expects(self::once())
             ->method('remove')
+            ->with($order);
+        $objectManager
+            ->expects(self::once())
+            ->method('flush')
             ->with($order);
         $objectManager
             ->expects(self::any())

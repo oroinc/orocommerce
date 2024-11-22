@@ -4,12 +4,14 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\EventListener\PreloadCheckoutOnStartFromShoppingListEventListener;
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Action\Event\ExtendableEventData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -19,79 +21,24 @@ class PreloadCheckoutOnStartFromShoppingListEventListenerTest extends TestCase
 
     private PreloadCheckoutOnStartFromShoppingListEventListener $listener;
 
-    private array $fieldsToPreload = [
-        'product' => [
-            'backOrder' => [],
-            'category' => [
-                'backOrder' => [],
-                'decrementQuantity' => [],
-                'highlightLowInventory' => [],
-                'inventoryThreshold' => [],
-                'isUpcoming' => [],
-                'lowInventoryThreshold' => [],
-                'manageInventory' => [],
-                'maximumQuantityToOrder' => [],
-                'minimumQuantityToOrder' => [],
-            ],
-            'decrementQuantity' => [],
-            'highlightLowInventory' => [],
-            'inventoryThreshold' => [],
-            'isUpcoming' => [],
-            'lowInventoryThreshold' => [],
-            'manageInventory' => [],
-            'maximumQuantityToOrder' => [],
-            'minimumQuantityToOrder' => [],
-            'unitPrecisions' => [],
-        ],
-        'kitItemLineItems' => [
-            'kitItem' => [
-                'labels' => [],
-                'productUnit' => [],
-            ],
-            'product' => [
-                'names' => [],
-                'images' => [
-                    'image' => [
-                        'digitalAsset' => [
-                            'titles' => [],
-                            'sourceFile' => [
-                                'digitalAsset' => [],
-                            ],
-                        ],
-                    ],
-                    'types' => [],
-                ],
-                'unitPrecisions' => [],
-            ],
-            'unit' => [],
-        ],
-    ];
+    private array $fieldsToPreload = ['product' =>  []];
 
     protected function setUp(): void
     {
         $this->preloadingManager = $this->createMock(PreloadingManager::class);
 
         $this->listener = new PreloadCheckoutOnStartFromShoppingListEventListener($this->preloadingManager);
-    }
-
-    public function testOnStartFromShoppingListWhenContextNotWorkflowItem(): void
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->preloadingManager
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $this->listener->onStartFromShoppingList($event);
+        $this->listener->setFieldsToPreload($this->fieldsToPreload);
     }
 
     public function testOnStartFromShoppingListWhenEntityNotShoppingList(): void
     {
         $context = new WorkflowItem();
-        $context
-            ->getResult()
-            ->set('shoppingList', new \stdClass());
+        $context->getResult()->set('shoppingList', new \stdClass());
+
+        $data = new ExtendableEventData(['checkout' => new Checkout()]);
         $event = new ExtendableConditionEvent($context);
+        $event->setData($data);
 
         $this->preloadingManager
             ->expects(self::never())
@@ -105,10 +52,11 @@ class PreloadCheckoutOnStartFromShoppingListEventListenerTest extends TestCase
         $shoppingList = (new ShoppingList())
             ->addLineItem(new LineItem());
         $context = new WorkflowItem();
-        $context
-            ->getResult()
-            ->set('shoppingList', $shoppingList);
+        $context->getResult()->set('shoppingList', $shoppingList);
+        $data = new ExtendableEventData(['checkout' => new Checkout(), 'shoppingList' => $shoppingList]);
+
         $event = new ExtendableConditionEvent($context);
+        $event->setData($data);
 
         $this->preloadingManager
             ->expects(self::once())

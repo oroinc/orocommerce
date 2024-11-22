@@ -1,0 +1,282 @@
+imports:
+    - { resource: '../includes/base_transitions_with_services.yml' }
+
+workflows:
+    b2b_flow_checkout:
+        transitions:
+            __start__:
+                # Overrides base_transitions.__start__
+                step_to: enter_billing_address
+                conditional_steps_to:
+                    enter_credentials_step:
+                        conditions:
+                            '@or':
+                                - '@empty': $checkout.customerUser
+                                - '@equal': [$checkout.customerUser.isGuest, true]
+
+            start_from_quote:
+                # Overrides base_transitions.start_from_quote
+                step_to: enter_billing_address
+
+            start_from_quote_as_guest:
+                # Overrides base_transitions.start_from_quote_as_guest
+                step_to: enter_credentials_step
+
+            start_from_shoppinglist:
+                # Overrides base_transitions.start_from_shoppinglist
+                step_to: enter_billing_address
+
+            start_from_quickorderform:
+                # Overrides base_transitions.start_from_quickorderform
+                step_to: enter_billing_address
+
+            finish_checkout:
+                # Overrides base_transitions.finish_checkout
+                step_to: order_created
+
+            payment_error:
+                # Overrides base_transitions.payment_error
+                step_to: enter_payment
+
+            paid_partially:
+                step_to: enter_payment
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.paid_partially'
+                is_hidden: true
+
+            continue_to_billing_address_as_guest:
+                step_to: enter_billing_address
+                conditional_steps_to:
+                    customer_consents:
+                        conditions:
+                            '@not':
+                                - '@is_consents_accepted':
+                                    acceptedConsents: $customerConsents
+                frontend_options:
+                    icon: fa-briefcase
+                    is_checkout_continue: true
+
+            continue_to_billing_address:
+                step_to: enter_billing_address
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_billing_address'
+                display_type: page
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                form_options:
+                    form_init:
+                        - '@tree':
+                            conditions:
+                                '@and':  #For logged customer user only
+                                    - '@not_empty': $checkout.customerUser
+                                    - '@equal': [$checkout.customerUser.isGuest, false]
+                            actions:
+                                - '@assign_value': [$customerConsents, null]
+                    attribute_fields:
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
+                                constraints:
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
+
+            continue_to_shipping_address:
+                step_to: enter_shipping_address
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_address'
+                display_type: page
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                form_options:
+                    attribute_fields:
+                        billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            options:
+                                object: $checkout
+                                addressType: 'billing'
+                                required: true
+                                translation_domain: messages
+                                constraints:
+                                    - Valid: ~
+                                    - NotBlank: ~
+                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
+                                disabled: $disallow_billing_address_edit
+                        save_billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+                        ship_to_billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
+                        email:
+                            form_type: Oro\Bundle\CustomerBundle\Form\Type\CustomerVisitorEmailAddressType
+
+            continue_to_shipping_method:
+                step_to: enter_shipping_method
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_shipping_method'
+                display_type: page
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                form_options:
+                    attribute_fields:
+                        shipping_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType
+                            options:
+                                object: $checkout
+                                addressType: 'shipping'
+                                required: true
+                                disabled: $disallow_shipping_address_edit
+                                translation_domain: messages
+                                constraints:
+                                    - Valid: ~
+                                    - NotBlank: ~
+                                    - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
+                        save_shipping_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+                        ship_to_billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
+
+            continue_to_payment:
+                step_to: enter_payment
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_payment'
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                    page_component_module: 'orocheckout/js/app/components/shipping-transition-button-component'
+                form_options:
+                    form_init:
+                        - '@call_service_method':
+                            service: oro_checkout.manager.multi_shipping.checkout_line_items_shipping
+                            method: getCheckoutLineItemsShippingData
+                            method_parameters: [$checkout]
+                            attribute: $line_items_shipping_methods
+                        - '@call_service_method':
+                              service: oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping
+                              method: getCheckoutLineItemGroupsShippingData
+                              method_parameters: [$checkout]
+                              attribute: $line_item_groups_shipping_methods
+                    attribute_fields:
+                        shipping_method:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        shipping_method_type:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        line_items_shipping_methods:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LineItemShippingMethodsType
+                            options:
+                                checkout: $checkout
+                        line_item_groups_shipping_methods:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LineItemGroupShippingMethodsType
+                            options:
+                                checkout: $checkout
+
+            continue_to_order_review:
+                step_to: order_review
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.continue_to_order_review'
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                    page_component_module: 'orocheckout/js/app/components/payment-transition-button-component'
+                form_options:
+                    form_init:
+                        - '@tree':
+                            conditions:
+                                '@blank': $payment_validate
+                            actions:
+                                - '@assign_value': [$payment_validate, true]
+                                - '@call_service_method':
+                                    conditions:
+                                        '@blank': $.result.validatePaymentTransaction
+                                    parameters:
+                                        service: oro_payment.provider.payment_transaction
+                                        method: getActiveValidatePaymentTransaction
+                                        method_parameters: [$payment_method]
+                                        attribute: $.result.validatePaymentTransaction
+                                - '@assign_value':
+                                    conditions:
+                                        '@not_empty': [$.result.validatePaymentTransaction]
+                                    parameters: [$payment_validate, false]
+                    attribute_fields:
+                        payment_method: ~
+                        payment_validate:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
+                        payment_save_for_later:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
+                        additional_data:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
+
+            back_to_enter_credentials:
+                step_to: enter_credentials_step
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
+
+            back_to_customer_consents:
+                step_to: customer_consents
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
+                frontend_options:
+                    is_checkout_back: true
+
+            back_to_billing_address:
+                step_to: enter_billing_address
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
+                frontend_options:
+                    is_checkout_back: true
+
+            back_to_shipping_address:
+                step_to: enter_shipping_address
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.clear_payment_method_and_recalculate_state'
+                frontend_options:
+                    is_checkout_back: true
+
+            back_to_shipping_address_on_fail_address:
+                step_to: enter_shipping_address
+                transition_service: 'oro_checkout.workflow.transition.unblock_and_recalculate'
+                is_hidden: true
+
+            back_to_shipping_method:
+                step_to: enter_shipping_method
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.back_to_shipping_method'
+                frontend_options:
+                    is_checkout_back: true
+
+            back_to_payment:
+                step_to: enter_payment
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.recalculate_state'
+                frontend_options:
+                    is_checkout_back: true
+
+            verify_customer_consents:
+                step_to: customer_consents
+                is_hidden: true
+
+            verify_payment:
+                step_to: enter_payment
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.verify_payment'
+                is_hidden: true
+                frontend_options:
+                    is_checkout_verify: true
+
+            place_order:
+                step_to: order_review
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout.transition.place_order'
+                display_type: page
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                form_options:
+                    form_init:
+                        - '@assign_value': [$late_registration.email, $email]
+                    attribute_fields:
+                        remove_source: ~
+                        po_number: ~
+                        ship_until:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
+                            options:
+                                checkout: $checkout
+                        late_registration:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                            options:
+                                required: true
+                        customer_notes:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType

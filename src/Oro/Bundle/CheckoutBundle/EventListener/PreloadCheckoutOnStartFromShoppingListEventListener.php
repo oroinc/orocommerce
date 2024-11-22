@@ -6,7 +6,6 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\Manager\PreloadingManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
@@ -16,53 +15,7 @@ class PreloadCheckoutOnStartFromShoppingListEventListener
 {
     private PreloadingManager $preloadingManager;
 
-    private array $fieldsToPreload = [
-        'product' => [
-            'backOrder' => [],
-            'category' => [
-                'backOrder' => [],
-                'decrementQuantity' => [],
-                'highlightLowInventory' => [],
-                'inventoryThreshold' => [],
-                'isUpcoming' => [],
-                'lowInventoryThreshold' => [],
-                'manageInventory' => [],
-                'maximumQuantityToOrder' => [],
-                'minimumQuantityToOrder' => [],
-            ],
-            'decrementQuantity' => [],
-            'highlightLowInventory' => [],
-            'inventoryThreshold' => [],
-            'isUpcoming' => [],
-            'lowInventoryThreshold' => [],
-            'manageInventory' => [],
-            'maximumQuantityToOrder' => [],
-            'minimumQuantityToOrder' => [],
-            'unitPrecisions' => [],
-        ],
-        'kitItemLineItems' => [
-            'kitItem' => [
-                'labels' => [],
-                'productUnit' => [],
-            ],
-            'product' => [
-                'names' => [],
-                'images' => [
-                    'image' => [
-                        'digitalAsset' => [
-                            'titles' => [],
-                            'sourceFile' => [
-                                'digitalAsset' => [],
-                            ],
-                        ],
-                    ],
-                    'types' => [],
-                ],
-                'unitPrecisions' => [],
-            ],
-            'unit' => [],
-        ],
-    ];
+    private array $fieldsToPreload = [];
 
     public function __construct(PreloadingManager $preloadingManager)
     {
@@ -76,16 +29,14 @@ class PreloadCheckoutOnStartFromShoppingListEventListener
 
     public function onStartFromShoppingList(ExtendableConditionEvent $event): void
     {
-        $context = $event->getContext();
-        if (!$context instanceof WorkflowItem) {
-            return;
-        }
-
-        $shoppingList = $context->getResult()->get('shoppingList');
+        $shoppingList = $event->getData()?->offsetGet('shoppingList');
         if (!$shoppingList instanceof ShoppingList) {
             return;
         }
 
-        $this->preloadingManager->preloadInEntities($shoppingList->getLineItems()->toArray(), $this->fieldsToPreload);
+        $this->preloadingManager->preloadInEntities(
+            $shoppingList->getLineItems()?->toArray() ?? [],
+            $this->fieldsToPreload
+        );
     }
 }

@@ -12,6 +12,7 @@ use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Action\Event\ExtendableEventData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Validator\Constraints\GroupSequence;
@@ -36,17 +37,6 @@ class ValidateCheckoutOnStartEventListenerTest extends TestCase
             $this->validator,
             $this->validationGroupsProvider
         );
-    }
-
-    public function testOnStartWhenContextNotActionData(): void
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->validator
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $this->listener->onStart($event);
     }
 
     public function testOnStartWhenEntityNotCheckout(): void
@@ -124,24 +114,14 @@ class ValidateCheckoutOnStartEventListenerTest extends TestCase
         );
     }
 
-    public function testOnStartFromShoppingListWhenContextNotWorkflowItem(): void
-    {
-        $event = new ExtendableConditionEvent(new \stdClass());
-
-        $this->validator
-            ->expects(self::never())
-            ->method(self::anything());
-
-        $this->listener->onStartFromShoppingList($event);
-    }
-
     public function testOnStartFromShoppingListWhenEntityNotShoppingList(): void
     {
+        $checkout = new Checkout();
         $context = new WorkflowItem();
-        $context
-            ->getResult()
-            ->set('shoppingList', new \stdClass());
+        $context->getResult()->set('shoppingList', new \stdClass());
+        $data = new ExtendableEventData(['shoppingList' => null, 'checkout' => $checkout]);
         $event = new ExtendableConditionEvent($context);
+        $event->setData($data);
 
         $this->validator
             ->expects(self::never())
@@ -153,11 +133,12 @@ class ValidateCheckoutOnStartEventListenerTest extends TestCase
     public function testOnStartFromShoppingListWhenNoViolations(): void
     {
         $shoppingList = new ShoppingList();
+        $checkout = new Checkout();
         $context = new WorkflowItem();
-        $context
-            ->getResult()
-            ->set('shoppingList', $shoppingList);
+        $context->getResult()->set('shoppingList', $shoppingList);
+        $data = new ExtendableEventData(['shoppingList' => $shoppingList, 'checkout' => $checkout]);
         $event = new ExtendableConditionEvent($context);
+        $event->setData($data);
 
         $validationGroups = new GroupSequence(['Default', 'checkout_start%from_alias%']);
         $this->validationGroupsProvider
@@ -180,10 +161,8 @@ class ValidateCheckoutOnStartEventListenerTest extends TestCase
     public function testOnStartFromShoppingListWhenHasViolations(): void
     {
         $shoppingList = new ShoppingList();
-        $context = new WorkflowItem();
-        $context
-            ->getResult()
-            ->set('shoppingList', $shoppingList);
+        $checkout = new Checkout();
+        $context = new ExtendableEventData(['shoppingList' => $shoppingList, 'checkout' => $checkout]);
         $event = new ExtendableConditionEvent($context);
 
         $validationGroups = new GroupSequence(['Default', 'checkout_start%from_alias%']);

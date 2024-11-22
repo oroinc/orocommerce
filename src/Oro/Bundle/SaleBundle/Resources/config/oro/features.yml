@@ -12,7 +12,6 @@ features:
         operations:
             - oro_sale_expire_quote
             - oro_sale_notify_customer_by_email
-            - oro_sale_accept_quote
         entities:
             - Oro\Bundle\SaleBundle\Entity\Quote
             - Oro\Bundle\SaleBundle\Entity\QuoteAddress
@@ -43,7 +42,6 @@ features:
         description: oro.sale.feature.quote_frontend.description
         toggle: oro_sale.quote_frontend_feature_enabled
         operations:
-            - oro_sale_accept_quote
             - oro_sale_frontend_quote_submit_to_order
             - oro_sale_frontend_guest_quote_submit_to_order
         routes:

@@ -12,7 +12,7 @@ use Symfony\Bridge\Doctrine\ManagerRegistry;
  * Sets a default shipping method and a shipping cost for a checkout and its line items
  * when Multi Shipping Per Line Items functionality is enabled.
  */
-class DefaultMultiShippingMethodSetter
+class DefaultMultiShippingMethodSetter implements DefaultMultiShippingMethodSetterInterface
 {
     private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutShippingMethodsProviderInterface $shippingPriceProvider;

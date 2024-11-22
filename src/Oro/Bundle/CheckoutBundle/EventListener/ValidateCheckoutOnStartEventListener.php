@@ -4,11 +4,9 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutValidationGroupsBySourceEntityProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -50,12 +48,7 @@ class ValidateCheckoutOnStartEventListener
 
     public function onStart(ExtendableConditionEvent $event): void
     {
-        $context = $event->getContext();
-        if (!$context instanceof ActionData) {
-            return;
-        }
-
-        $checkout = $context->get('checkout');
+        $checkout = $event->getData()?->offsetGet('checkout');
         if (!$checkout instanceof Checkout) {
             return;
         }
@@ -68,12 +61,7 @@ class ValidateCheckoutOnStartEventListener
 
     public function onStartFromShoppingList(ExtendableConditionEvent $event): void
     {
-        $context = $event->getContext();
-        if (!$context instanceof WorkflowItem) {
-            return;
-        }
-
-        $shoppingList = $context->getResult()->get('shoppingList');
+        $shoppingList = $event->getData()?->offsetGet('shoppingList');
         if (!$shoppingList instanceof ShoppingList) {
             return;
         }

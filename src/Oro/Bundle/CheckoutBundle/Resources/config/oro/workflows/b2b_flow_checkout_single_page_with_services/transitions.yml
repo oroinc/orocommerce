@@ -1,0 +1,251 @@
+imports:
+    - { resource: '../includes/base_transitions_with_services.yml', workflow: b2b_flow_checkout, as: b2b_flow_checkout_single_page, replace: []}
+
+workflows:
+    b2b_flow_checkout_single_page:
+        transitions:
+            __start__:
+                # Overrides base_transitions.__start__
+                step_to: checkout
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.start'
+
+            start_from_quote:
+                # Overrides base_transitions.start_from_quote
+                step_to: checkout
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.start'
+
+            start_from_quote_as_guest:
+                # Overrides base_transitions.start_from_quote_as_guest
+                step_to: checkout
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.start'
+
+            start_from_shoppinglist:
+                # Overrides base_transitions.start_from_shoppinglist
+                step_to: checkout
+
+            start_from_quickorderform:
+                # Overrides base_transitions.start_from_quickorderform
+                step_to: checkout
+
+            payment_error:
+                # Overrides base_transitions.payment_error
+                step_to: checkout
+
+            finish_checkout:
+                # Overrides base_transitions.finish_checkout
+                step_to: order_created
+
+            save_state:
+                step_to: checkout
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.save_state'
+                is_hidden: true
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                form_options:
+                    attribute_fields:
+                        billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
+                            options:
+                                object: $checkout
+                                address_type: 'billing'
+                                required: true
+                                translation_domain: messages
+                                configs:
+                                    allowClear: false
+                        shipping_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
+                            options:
+                                object: $checkout
+                                address_type: 'shipping'
+                                required: true
+                                disabled: $disallow_shipping_address_edit
+                                translation_domain: messages
+                                configs:
+                                    allowClear: false
+                        ship_to_billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
+                        shipping_method: ~
+                        shipping_method_type: ~
+                        payment_method: ~
+                        payment_validate:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
+                        payment_save_for_later:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
+                        additional_data:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
+                        ship_until:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
+                            options:
+                                checkout: $checkout
+                        po_number: ~
+                        customer_notes:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+                        remove_source: ~
+                        late_registration:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                            options:
+                                # No need in late registration validation for save_state transition.
+                                validation_groups: false
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
+                                constraints:
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
+
+            create_order:
+                step_to: checkout
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.create_order'
+                display_type: page
+                frontend_options:
+                    is_checkout_continue: true
+                    is_checkout_show_errors: true
+                    page-component-module: 'orocheckout/js/app/components/single-page-checkout-component'
+                    page-component-options:
+                        saveStateUrl: $.result.saveStateUrl
+                        targetLayoutBlocks:
+                            '[data-role="checkout-ship-to"]':
+                                - 'shipping_address_wrapper'
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-billing-address"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-billing-address"].custom-address':
+                                - 'billing_address_wrapper'
+                                - 'shipping_address_wrapper'
+                            'select[data-role="checkout-shipping-address"]':
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                            'select[data-role="checkout-shipping-address"].custom-address':
+                                - 'shipping_address_wrapper'
+                            '[name="shippingMethodType"]':
+                                - 'checkout_order_summary_totals_wrapper'
+                                - 'payment_methods_wrapper'
+                            '[name="paymentMethod"]':
+                                - 'checkout_order_summary_totals_wrapper'
+                            '[data-role="coupon-code"]':
+                                - 'checkout_coupon_form_container_wrapper'
+                                - 'checkout_order_summary_totals_wrapper'
+                                - 'payment_methods_wrapper'
+                                - 'shipping_methods_wrapper'
+                                - 'checkout_order_summary_line_item_wrapper'
+                                - 'checkout_form_errors_wrapper'
+                form_options:
+                    form_init:
+                        - '@tree':
+                            conditions:
+                                '@blank': $payment_validate
+                            actions:
+                                - '@assign_value': [$payment_validate, true]
+                                - '@tree':
+                                    conditions:
+                                        '@blank': $.result.validatePaymentTransaction
+                                    actions:
+                                        - '@call_service_method':
+                                            service: oro_payment.provider.payment_transaction
+                                            method: getActiveValidatePaymentTransaction
+                                            method_parameters: [$payment_method]
+                                            attribute: $.result.validatePaymentTransaction
+                                - '@assign_value':
+                                    conditions:
+                                        '@not_empty': [$.result.validatePaymentTransaction]
+                                    parameters: [$payment_validate, false]
+                        - '@assign_value': [$billing_address_has_shipping, $ship_to_billing_address]
+                        - '@tree':
+                            conditions:
+                                '@empty': $billing_address
+                            actions:
+                                - '@call_service_method':
+                                    attribute: $.result.customerUserAddresses
+                                    service: 'oro_order.manager.order_address'
+                                    method: getGroupedAddresses
+                                    method_parameters: [$checkout, 'billing']
+                                - '@call_service_method':
+                                    attribute: $billing_address
+                                    service: 'oro_order.manager.order_address'
+                                    method: updateFromAbstract
+                                    method_parameters: [$.result.customerUserAddresses.defaultAddress]
+                        - '@tree':
+                            conditions:
+                                '@empty': $shipping_address
+                            actions:
+                                - '@call_service_method':
+                                    attribute: $.result.customerUserAddresses
+                                    service: 'oro_order.manager.order_address'
+                                    method: getGroupedAddresses
+                                    method_parameters: [$checkout, 'shipping']
+                                - '@call_service_method':
+                                    attribute: $shipping_address
+                                    service: 'oro_order.manager.order_address'
+                                    method: updateFromAbstract
+                                    method_parameters: [$.result.customerUserAddresses.defaultAddress]
+                        - '@assign_value': [$shipping_data_ready, true]
+                        - '@assign_value': [$.result.updateCheckoutState, true]
+                    attribute_fields:
+                        billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
+                            options:
+                                object: $checkout
+                                address_type: 'billing'
+                                required: true
+                                translation_domain: messages
+                                configs:
+                                    allowClear: false
+                        shipping_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType
+                            options:
+                                object: $checkout
+                                address_type: 'shipping'
+                                required: true
+                                disabled: $disallow_shipping_address_edit
+                                translation_domain: messages
+                                configs:
+                                    allowClear: false
+                        ship_to_billing_address:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
+                        shipping_method:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        shipping_method_type:
+                            options:
+                                constraints:
+                                    - NotBlank: ~
+                        payment_method: ~
+                        payment_validate:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
+                        payment_save_for_later:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\CheckboxType
+                        additional_data:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\HiddenType
+                        remove_source: ~
+                        po_number: ~
+                        ship_until:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutShipUntilType
+                            options:
+                                checkout: $checkout
+                        late_registration:
+                            form_type: Oro\Bundle\CheckoutBundle\Form\Type\LateRegistrationType
+                            options:
+                                required: true
+                        customer_notes:
+                            form_type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+                        customerConsents:
+                            form_type: Oro\Bundle\ConsentBundle\Form\Type\ConsentAcceptanceType
+                            options:
+                                required: true
+                                property_path: customerConsents
+                                constraints:
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedConsents: ~
+                                    - Oro\Bundle\ConsentBundle\Validator\Constraints\RemovedLandingPages: ~
+
+            purchase:
+                step_to: checkout
+                transition_service: 'oro_checkout.workflow.b2b_flow_checkout_single_page.transition.purchase'

@@ -101,7 +101,7 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
                 'options' => [
                     CreateOrder::OPTION_KEY_CHECKOUT => new PropertyPath('checkout'),
                     CreateOrder::OPTION_KEY_ATTRIBUTE => new PropertyPath('order'),
-                    CreateOrder::OPTION_KEY_DATA => new PropertyPath('order'),
+                    CreateOrder::OPTION_KEY_DATA => new \stdClass(),
                 ],
                 'expectedException' => InvalidParameterException::class,
                 'expectedExceptionMessage' => 'Object data must be an array',

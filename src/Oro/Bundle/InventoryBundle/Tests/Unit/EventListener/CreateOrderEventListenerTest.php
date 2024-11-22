@@ -3,7 +3,6 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\DataProvider\Manager\CheckoutLineItemsManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -11,28 +10,28 @@ use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\EventListener\CreateOrderEventListener;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
-use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderInterface;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Event\ExtendableActionEvent;
-use Oro\Component\Action\Event\ExtendableConditionEvent;
+use Oro\Component\Action\Event\ExtendableEventData;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
+class CreateOrderEventListenerTest extends TestCase
 {
-    /** @var InventoryQuantityManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var InventoryQuantityManager|MockObject */
     private $quantityManager;
 
-    /** @var InventoryStatusHandler|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var InventoryStatusHandler|MockObject */
     private $statusHandler;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var ManagerRegistry|MockObject */
     private $doctrine;
 
-    /** @var CheckoutLineItemsManager|\PHPUnit\Framework\MockObject\MockObject */
+    /** @var CheckoutLineItemsManager|MockObject */
     private $checkoutLineItemsManager;
 
     /** @var CreateOrderEventListener */
@@ -55,28 +54,9 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
 
     private function getExtendableActionEvent(): ExtendableActionEvent
     {
-        return new ExtendableActionEvent(new ActionData(['checkout' => $this->createMock(Checkout::class)]));
-    }
+        $context = new ExtendableEventData(['order' => new Order(), 'checkout' => new Checkout()]);
 
-    private function getExtendableEmptyActionEvent(): ExtendableActionEvent
-    {
-        return new ExtendableActionEvent(new ActionData([]));
-    }
-
-    private function getExtendableConditionEvent(): ExtendableConditionEvent
-    {
-        $checkoutSource = $this->createMock(CheckoutSourceStub::class);
-        $checkoutSource->expects(self::any())
-            ->method('getEntity')
-            ->willReturn($this->createMock(ProductLineItemsHolderInterface::class));
-
-        $checkout = new Checkout();
-        $checkout->setSource($checkoutSource);
-
-        $workflowItem = new WorkflowItem();
-        $workflowItem->setEntity($checkout);
-
-        return new ExtendableConditionEvent($workflowItem);
+        return new ExtendableActionEvent($context);
     }
 
     private function getOrderLineItem(): OrderLineItem
@@ -91,27 +71,6 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $lineItem->setProductUnit($productUnit);
         $lineItem->setQuantity(10);
         $lineItem->preSave();
-
-        return $lineItem;
-    }
-
-    private function getLineItem(): ProductLineItemInterface
-    {
-        $product = new Product();
-        $product->setSku('TEST001');
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('item');
-
-        $lineItem = $this->createMock(ProductLineItemInterface::class);
-        $lineItem->expects(self::any())
-            ->method('getProduct')
-            ->willReturn($product);
-        $lineItem->expects(self::any())
-            ->method('getProductUnit')
-            ->willReturn($productUnit);
-        $lineItem->expects(self::any())
-            ->method('getQuantity')
-            ->willReturn(10);
 
         return $lineItem;
     }
@@ -149,12 +108,40 @@ class CreateOrderEventListenerTest extends \PHPUnit\Framework\TestCase
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
+    public function testOnCreateOrderWithFailedPurshace(): void
+    {
+        $this->checkoutLineItemsManager
+            ->expects(self::never())
+            ->method('getData');
+        $this->quantityManager
+            ->expects(self::never())
+            ->method('canDecrementInventory');
+        $this->quantityManager
+            ->expects(self::never())
+            ->method('decrementInventory');
+        $this->quantityManager
+            ->expects(self::never())
+            ->method('shouldDecrement');
+        $this->statusHandler
+            ->expects(self::never())
+            ->method('changeInventoryStatusWhenDecrement');
+
+        $event = new ExtendableActionEvent();
+        $this->createOrderEventListener->onCreateOrder($event);
+    }
+
     public function testWrongContext(): void
     {
+        $workflowData = $this->createMock(WorkflowData::class);
+        $event = $this->createMock(ExtendableActionEvent::class);
+        $event->expects(self::any())
+            ->method('getContext');
+        $workflowData->expects(self::never())
+            ->method('get')
+            ->with('order');
         $this->quantityManager->expects(self::never())
             ->method('shouldDecrement');
 
-        $event = $this->getExtendableEmptyActionEvent();
         $this->createOrderEventListener->onCreateOrder($event);
     }
 
