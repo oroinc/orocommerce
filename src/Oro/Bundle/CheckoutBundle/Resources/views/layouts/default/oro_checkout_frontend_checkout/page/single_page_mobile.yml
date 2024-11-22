@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+              themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/single_page_mobile.html.twig'
+
+        - '@move':
+            id: checkout_billing_information_require_info
+            parentId: page_title_container
+
+    conditions: 'context["workflowStepName"]=="checkout" && !context["widget_container"] && context["is_mobile"]'

@@ -40,6 +40,8 @@
 {% endmacro %}
 
 {% macro transitionConditionMessages(transitionData) %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {{ renderIcon.icon({name: 'alert-circle'}) }}
     {%- apply spaceless -%}
         <div>{{ 'oro.checkout.workflow.unavailable_transition.message'|trans }}</div>
         <ul class="list-style-position-inside">

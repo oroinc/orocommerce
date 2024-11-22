@@ -438,3 +438,12 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block _checkout_billing_information_require_info_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' required-label',
+        'aria-hidden': 'true'
+    }) %}
+
+    <div {{ block('block_attributes') }}><span class="required-symbol" aria-hidden="true">*</span> {{ 'oro.customer.form.label.required'|trans }}</div>
+{% endblock %}

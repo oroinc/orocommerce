@@ -7,7 +7,7 @@ $checkout-view-margin: 0 !default;
 $checkout-view-column-gap: spacing('xl') !default;
 
 $checkout-view-column-margin: 0 !default;
-$checkout-view-column-offset: 0 $checkout-view-column-gap  spacing('base') !default;
+$checkout-view-column-offset: 0 $checkout-view-column-gap spacing('base') !default;
 $checkout-view-column-min-width: 0 !default;
 
 $checkout-view-column-border: 1px solid get-color('neutral', 'grey2') !default;
@@ -63,6 +63,9 @@ $checkout-view-breakpoint-max-desktop: $site-width !default;
 $checkout-view-container-single-page-sidebar-viewportfit: calc(
     100vh - var(--sticky-page-header-element-offset-top, 0) - #{spacing('xl')}
 ) !default;
+
+// tablet
+$checkout-view-column-offset-tablet: 2px $checkout-view-column-gap !default;
 
 // tablet-small
 $checkout-view-column-tablet-width: 50% !default;

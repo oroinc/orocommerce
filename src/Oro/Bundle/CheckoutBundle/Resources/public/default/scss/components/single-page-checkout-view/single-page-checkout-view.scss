@@ -126,6 +126,21 @@
 
     margin: $checkout-view-margin;
 
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 44px;
+
+        &-icon {
+            transition: transform 230ms ease-in-out;
+        }
+
+        &:not(.collapsed) &-icon {
+            transform: rotate(180deg);
+        }
+    }
+
     &__columns {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -142,7 +157,8 @@
         overflow: auto;
 
         &:last-of-type {
-            padding-right: 0;
+            padding-right: spacing('xs');
+            margin-right: -#{spacing('xs')};
         }
 
         &:not(:first-of-type) {
@@ -151,10 +167,15 @@
 
         &-inner {
             padding: $checkout-view-column-inner-offset;
+            
+            .required-label {
+                margin-top: spacing('base');
+            }
         }
 
         &--first {
-            padding-left: 0;
+            padding-left: spacing('xs');
+            margin-left: -#{spacing('xs')};
         }
 
         &-header {
@@ -200,16 +221,6 @@
             padding-top: $checkout-view-sticky-totals-summary-inner-offset-top;
             float: $checkout-view-sticky-totals-summary-float;
         }
-    }
-
-    .checkout {
-        padding: $checkout-padding-narrow;
-    }
-
-    .checkout-form__payment-methods {
-        max-width: 300px;
-        padding: 0 0 0 (spacing('sm') + 2);
-        margin: 0 0 0 spacing('base');
     }
 
     .checkout-form__img {
@@ -322,7 +333,21 @@
 
     .single-page-checkout-view {
         &__columns {
+            margin-top: spacing('base');
             border-bottom: $checkout-view-column-border;
+        }
+
+        &__column {
+            padding: $checkout-view-column-offset-tablet;
+            gap: spacing('xs');
+
+            &--first {
+                padding-left: spacing('xs');
+            }
+        }
+
+        &__column-inner {
+            padding-bottom: spacing('base');
         }
     }
 }
@@ -330,17 +355,19 @@
 @include breakpoint('mobile-big') {
     .single-page-checkout-view {
         &__columns {
+            margin-top: spacing('sm');
             grid-template-columns: 1fr;
             border-bottom: none;
         }
 
         &__column {
+            padding: spacing('sm') spacing('xs');
+            margin: 0 -#{spacing('xs')};
+            border-bottom: $checkout-view-column-border;
+
             &:not(:first-of-type) {
                 border-left: none;
             }
-
-            padding: spacing('sm') 0;
-            border-bottom: $checkout-view-column-border;
         }
 
         .checkout-order-summary__edit-link {

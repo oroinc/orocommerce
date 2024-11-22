@@ -16,6 +16,11 @@ layout:
             parentId: checkout_order_summary_inner
             prepend: false
 
+        - '@add':
+            id: checkout_billing_information_require_info
+            parentId: checkout_billing_information
+            blockType: block
+
         - '@remove':
             id: coupon_summary_container
 

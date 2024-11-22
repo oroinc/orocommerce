@@ -9,7 +9,7 @@
         margin-block-end: spacing('base');
     }
 
-    &:last-of-type {
+    &:last-of-type:not(&--no-offset) {
         margin-block-end: spacing('xxl');
     }
 
