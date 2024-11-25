@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\EventListener;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
-use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionFormInitEvent;
 
 /**
  * Update shipping price on form init for the checkout continue transitions when shippingMethod is selected.
@@ -17,7 +17,7 @@ class UpdateShippingPrice
     ) {
     }
 
-    public function updateShippingPrice(TransitionEvent $event): void
+    public function updateShippingPrice(TransitionFormInitEvent $event): void
     {
         $workflowItem = $event->getWorkflowItem();
         if (!CheckoutWorkflowHelper::isCheckoutWorkflow($workflowItem)) {

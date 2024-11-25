@@ -95,7 +95,7 @@ class AcceptQuoteAndSubmitToOrder implements AcceptQuoteAndSubmitToOrderInterfac
 
     protected function getStartTransitionName(Quote $quote): string
     {
-        if ($quote->getCustomerUser()?->isGuest()) {
+        if (!$quote->getCustomerUser() || $quote->getCustomerUser()->isGuest()) {
             return 'start_from_quote_as_guest';
         }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
+namespace Oro\Bundle\CheckoutBundle\Workflow\BaseTransition;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
@@ -12,7 +12,7 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 /**
  * Base implementation of B2bCheckout workflow continue transition (transition that leads to the next step).
  */
-class BaseContinueTransition extends TransitionServiceAbstract
+class ContinueTransition extends TransitionServiceAbstract
 {
     public function __construct(
         protected ActionExecutor $actionExecutor,

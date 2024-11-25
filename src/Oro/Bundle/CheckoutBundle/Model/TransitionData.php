@@ -5,6 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Model;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 
+/**
+ * Transition Data DTO.
+ */
 class TransitionData
 {
     /**
@@ -31,7 +34,18 @@ class TransitionData
     {
         $this->transition = $transition;
         $this->allowed = $allowed;
-        $this->errors = $errors;
+        $this->setErrors($errors);
+    }
+
+    private function setErrors(ArrayCollection $errors): void
+    {
+        $this->errors = $errors->map(function ($error) {
+            if (is_array($error) && empty($error['parameters'])) {
+                $error['parameters'] = [];
+            }
+
+            return $error;
+        });
     }
 
     /**

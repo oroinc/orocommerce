@@ -29,7 +29,7 @@ class PreloadCheckoutOnStartEventListener
 
     public function onStart(ExtendableConditionEvent $event): void
     {
-        $checkout = $event->getContext()?->offsetGet('checkout');
+        $checkout = $event->getData()?->offsetGet('checkout');
         if (!$checkout instanceof Checkout) {
             return;
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\ActionGroup;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
@@ -10,7 +10,7 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActions;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActions;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;

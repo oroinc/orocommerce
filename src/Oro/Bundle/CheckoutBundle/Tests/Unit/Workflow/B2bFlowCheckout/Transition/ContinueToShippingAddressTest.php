@@ -5,8 +5,8 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\Transiti
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;

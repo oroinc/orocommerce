@@ -40,7 +40,7 @@ class HasPriceInShoppingLineItemsListener
 
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $conditionEvent)
     {
-        $checkout = $conditionEvent->getContext()?->offsetGet('checkout');
+        $checkout = $conditionEvent->getData()?->offsetGet('checkout');
         if (!$checkout instanceof Checkout) {
             return;
         }

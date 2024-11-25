@@ -8,7 +8,7 @@ use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingGroupMeth
 use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\AddressActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 

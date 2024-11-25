@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\ActionGroup;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
@@ -12,8 +12,8 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActions;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\ShippingMethodActions;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 

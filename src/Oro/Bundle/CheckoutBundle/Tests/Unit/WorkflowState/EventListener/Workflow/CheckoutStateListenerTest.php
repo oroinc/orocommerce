@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\EventListener\Workf
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutTransitionBeforeEvent;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateCheckoutStateInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\EventListener\Workflow\CheckoutStateListener;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Manager\CheckoutStateDiffManager;
@@ -12,9 +13,11 @@ use Oro\Bundle\CheckoutBundle\WorkflowState\Storage\CheckoutDiffStorageInterface
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Oro\Bundle\WorkflowBundle\Event\Transition\GuardEvent;
-use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
-use Oro\Bundle\WorkflowBundle\Event\WorkflowItemAwareEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\PreGuardEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionCompletedEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionFormInitEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\WorkflowFinishEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\WorkflowStartEvent;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -60,7 +63,7 @@ class CheckoutStateListenerTest extends TestCase
         ];
         $this->configureMetadata($metadata, $workflowItem);
 
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new CheckoutTransitionBeforeEvent($workflowItem, $this->createMock(Transition::class));
 
         $this->checkoutStateDiffManager->expects($this->once())
             ->method('getCurrentState')
@@ -80,7 +83,7 @@ class CheckoutStateListenerTest extends TestCase
         $metadata = [];
         $this->configureMetadata($metadata, $workflowItem);
 
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new CheckoutTransitionBeforeEvent($workflowItem, $this->createMock(Transition::class));
 
         $this->checkoutStateDiffManager->expects($this->never())
             ->method('getCurrentState');
@@ -98,7 +101,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $metadata = [
             'checkout_state_config' => ['enable_state_protection' => true],
@@ -129,7 +132,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $metadata = [
             'checkout_state_config' => ['enable_state_protection' => true],
@@ -158,7 +161,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $transition->expects($this->once())
             ->method('getName')
@@ -191,7 +194,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $transition->expects($this->once())
             ->method('getName')
@@ -223,7 +226,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new GuardEvent($workflowItem, $transition, true, $errors);
+        $event = new PreGuardEvent($workflowItem, $transition, true, $errors);
 
         $transition->expects($this->once())
             ->method('getFrontendOptions')
@@ -281,7 +284,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new GuardEvent($workflowItem, $transition, $isAllowed, $errors);
+        $event = new PreGuardEvent($workflowItem, $transition, $isAllowed, $errors);
 
         $transition->expects($this->any())
             ->method('getFrontendOptions')
@@ -349,7 +352,7 @@ class CheckoutStateListenerTest extends TestCase
         $currentStep = new WorkflowStep();
         $currentStep->setFinal(false);
         $workflowItem->setCurrentStep($currentStep);
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new WorkflowStartEvent($workflowItem, $this->createMock(Transition::class));
 
         $metadata = [
             'checkout_state_config' => ['enable_state_protection' => true],
@@ -377,7 +380,7 @@ class CheckoutStateListenerTest extends TestCase
         $currentStep = new WorkflowStep();
         $currentStep->setFinal($isFinalStep);
         $workflowItem->setCurrentStep($currentStep);
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new WorkflowStartEvent($workflowItem, $this->createMock(Transition::class));
 
         $metadata = [
             'checkout_state_config' => ['enable_state_protection' => $isProtectionEnabled],
@@ -408,7 +411,7 @@ class CheckoutStateListenerTest extends TestCase
         $currentStep = new WorkflowStep();
         $currentStep->setFinal(false);
         $workflowItem->setCurrentStep($currentStep);
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new TransitionCompletedEvent($workflowItem, $this->createMock(Transition::class));
 
         $metadata = [
             'checkout_state_config' => ['enable_state_protection' => true],
@@ -437,7 +440,7 @@ class CheckoutStateListenerTest extends TestCase
         $currentStep = new WorkflowStep();
         $currentStep->setFinal($isFinalStep);
         $workflowItem->setCurrentStep($currentStep);
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new TransitionCompletedEvent($workflowItem, $this->createMock(Transition::class));
 
         $metadata = [
             'checkout_state_config' => ['enable_state_protection' => $isProtectionEnabled],
@@ -473,7 +476,7 @@ class CheckoutStateListenerTest extends TestCase
         ];
         $this->configureMetadata($metadata, $workflowItem);
 
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new WorkflowFinishEvent($workflowItem, $this->createMock(Transition::class));
 
         $this->diffStorage->expects($this->once())
             ->method('deleteStates')
@@ -494,7 +497,7 @@ class CheckoutStateListenerTest extends TestCase
         ];
         $this->configureMetadata($metadata, $workflowItem);
 
-        $event = new WorkflowItemAwareEvent($workflowItem);
+        $event = new WorkflowFinishEvent($workflowItem, $this->createMock(Transition::class));
 
         $this->diffStorage->expects($this->never())
             ->method('deleteStates');
@@ -510,7 +513,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $transition->expects($this->once())
             ->method('isStart')
@@ -542,7 +545,7 @@ class CheckoutStateListenerTest extends TestCase
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($data);
         $transition = $this->createMock(Transition::class);
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $transition->expects($this->any())
             ->method('isStart')

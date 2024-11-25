@@ -29,7 +29,7 @@ class PreloadCheckoutOnStartFromShoppingListEventListener
 
     public function onStartFromShoppingList(ExtendableConditionEvent $event): void
     {
-        $shoppingList = $event->getContext()?->offsetGet('shoppingList');
+        $shoppingList = $event->getData()?->offsetGet('shoppingList');
         if (!$shoppingList instanceof ShoppingList) {
             return;
         }
