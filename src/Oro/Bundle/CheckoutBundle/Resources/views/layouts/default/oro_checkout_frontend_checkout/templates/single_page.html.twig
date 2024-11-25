@@ -51,7 +51,7 @@
 
 {% block _checkout_billing_information_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
+        class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first styled-scrollbar"
     }) %}
     <div {{ block('block_attributes') }}>
         <h3>{{ 'oro.checkout.billing_information'|trans }}</h3>
@@ -83,7 +83,7 @@
 {% endblock %}
 
 {% block _checkout_shipping_information_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column styled-scrollbar"}) %}
     <div {{ block('block_attributes') }}>
         <h3>{{ 'oro.checkout.shipping_information'|trans }}</h3>
         <div class="single-page-checkout-view__column-inner">
