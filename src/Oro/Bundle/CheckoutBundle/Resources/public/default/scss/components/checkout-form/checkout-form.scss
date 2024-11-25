@@ -34,6 +34,12 @@
         }
     }
 
+    &__container:has(&__customer-address select:disabled) {
+        .checkout-form__add-address {
+            display: none;
+        }
+    }
+
     &__address-form {
         --grid-auto-rows: max-content;
         --grid-gap: #{spacing('xl')} #{spacing('base')};

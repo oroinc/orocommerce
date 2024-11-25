@@ -143,7 +143,8 @@ oro:
             choice:
                 'true': Yes
                 'false': No
-
+        has_enough_inventory_level:
+            not_enough_quantity: 'There is not enough quantity for this product'
     product:
         manage_inventory:
             description: Option which defines if inventory for products is managed or not
