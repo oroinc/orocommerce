@@ -19,6 +19,9 @@ operations:
             save_address:
                 label: oro.checkout.save_billing_address.label
                 type: boolean
+            ship_to_billing_address:
+                label: oro.checkout.workflow.b2b_flow_checkout.attribute.ship_to_billing_address.label
+                type: boolean
         form_options:
             attribute_fields:
                 visitor_email:
@@ -35,6 +38,8 @@ operations:
                             - Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
                 save_address:
                     form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
+                ship_to_billing_address:
+                    form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
         form_init:
             - '@call_service_method':
                 service: oro_workflow.manager
@@ -43,6 +48,13 @@ operations:
                 attribute: $.workflowItem
             - '@assign_value': [$.visitor_email, $.workflowItem.data.email]
             - '@assign_value': [$.address, $.data.billingAddress]
+            - '@assign_value': [$.ship_to_billing_address, $.data.shipToBillingAddress]
+            - '@tree':
+                conditions:
+                    '@and':
+                        - '@empty': $.address
+                actions: # by default, for new checkout checkbox should be checked
+                    - '@assign_value': [$.ship_to_billing_address, true]
             - '@tree':
                 conditions:
                     '@and':
@@ -57,6 +69,7 @@ operations:
                 method: setUpdated
             - '@flush_entity': $.workflowItem
             - '@assign_value': [$.data.saveBillingAddress, $.save_address]
+            - '@assign_value': [$.data.shipToBillingAddress, $.ship_to_billing_address]
             - '@flush_entity': [$.address]
             - '@flush_entity': [$.data]
             - '@run_action_group':
@@ -108,6 +121,7 @@ operations:
                 method: setUpdated
             - '@flush_entity': $.workflowItem
             - '@assign_value': [$.data.saveShippingAddress, $.save_address]
+            - '@assign_value': [$.data.shipToBillingAddress, false]
             - '@flush_entity': [$.address]
             - '@flush_entity': [$.data]
             - '@run_action_group':

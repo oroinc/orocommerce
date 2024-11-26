@@ -1,5 +1,7 @@
 /* @theme: default; */
 
+$checkout-form-address-checkbox-container-gap: spacing('base') spacing('xxxl') !default;
+$checkout-form-address-checkbox-container-offset: spacing('md') !default;
 $checkout-form-select-container-display: flex !default;
 $checkout-form-select-container-flex-direction: row;
 $checkout-form-select-container-justify-content: space-between !default;

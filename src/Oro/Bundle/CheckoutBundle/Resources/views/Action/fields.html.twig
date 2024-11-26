@@ -12,8 +12,11 @@
             emailField: emailField|default(null)
         }) }}
 
-        <div class="grid-col-6 grid-col-mobile-landscape-12">
+        <div class="grid grid-col-12 checkout-form__address-checkbox-container">
             {{ form_row(form.save_address) }}
+            {% if form.ship_to_billing_address is defined and form.ship_to_billing_address %}
+                {{ form_row(form.ship_to_billing_address) }}
+            {% endif %}
         </div>
 
         <div class="hidden">

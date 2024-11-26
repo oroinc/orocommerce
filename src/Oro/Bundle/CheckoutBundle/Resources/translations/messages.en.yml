@@ -220,6 +220,8 @@ oro:
 
                 attribute:
                     remove_source.label: Remove Source Entity
+                    ship_to_billing_address:
+                        label: 'Ship to this address'
 
                 step:
                     enter_billing_address.label: Billing Information

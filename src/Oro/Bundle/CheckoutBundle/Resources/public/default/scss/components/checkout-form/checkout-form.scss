@@ -60,6 +60,13 @@
         grid-column-gap: #{spacing('xxxl')};
     }
 
+    &__address-checkbox-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $checkout-form-address-checkbox-container-gap;
+        margin-top: $checkout-form-address-checkbox-container-offset;
+    }
+
     &__select-container {
         display: $checkout-form-select-container-display;
         flex-direction: $checkout-form-select-container-flex-direction;
