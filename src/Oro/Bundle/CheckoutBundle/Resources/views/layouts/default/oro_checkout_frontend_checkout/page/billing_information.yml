@@ -19,7 +19,7 @@ layout:
             optionValue: ['checkout:new-address-update']
 
         - '@setOption':
-            id: checkout_form
+            id: checkout_form_required_label
             optionName: vars.showRequiredLabel
             optionValue: true
 

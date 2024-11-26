@@ -22,6 +22,11 @@ layout:
             optionName: attr.class
             optionValue: 'multistep-checkout__title'
         - '@appendOption':
+            id: page_title_container
+            optionName: attr
+            optionValue:
+                'data-role': 'checkout-title'
+        - '@appendOption':
             id: page_main
             optionName: attr.class
             optionValue: 'multistep-checkout-layout'
@@ -102,6 +107,11 @@ layout:
                     options:
                         checkout: '=data["checkout"]'
                         form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        vars:
+                            transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
+                __checkout_form_required_label:
+                    blockType: block
+                    options:
                         vars:
                             transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
                 __checkout_form_errors:
@@ -241,6 +251,7 @@ layout:
                                         __checkout_form:
                                             __checkout_form_errors: ~
                                             __checkout_form_fields: ~
+                                            __checkout_form_required_label: ~
                             __checkout_order_summary_container:
                                 __checkout_order_summary:
                                     __checkout_order_summary_content:

@@ -40,6 +40,7 @@ oro:
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
+        rest_of_items: Rest of items
         open_order:
             label: Checkout
             plural_label: Open Orders

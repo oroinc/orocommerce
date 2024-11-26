@@ -25,7 +25,7 @@
             </div>
             <div class="grid-col-6 grid-col-mobile-landscape-12">
                 {% set poNumberId = 'oro_workflow_transition_po_number-uid-'|uniqid %}
-                <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }} <span class="caption-italic">{{ 'oro.checkout.optional_label'|trans }}</span></label>
+                <label class=" label label--full" for="{{ poNumberId }}">{{ "oro.checkout.order_review.po_number"|trans }} <span class="caption-italic caption-italic--text-normal">{{ 'oro.checkout.optional_label'|trans }}</span></label>
                 {{ form_widget(form.po_number, { 'id': poNumberId, 'attr': {
                     'placeholder': 'oro.checkout.order_review.po_number_placeholder'|trans,
                     'form': form.vars.id,
@@ -34,7 +34,7 @@
             </div>
             <div class="grid-col-12">
                 {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
-                <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }} <span class="caption-italic">{{ 'oro.checkout.optional_label'|trans }}</span></label>
+                <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }} <span class="caption-italic caption-italic--text-normal">{{ 'oro.checkout.optional_label'|trans }}</span></label>
                 {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
                     'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
                     'form': form.vars.id,

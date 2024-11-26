@@ -166,6 +166,32 @@
     {% endif %}
 {%- endblock %}
 
+{% block __oro_checkout_content__checkout_form_required_label_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__require-label",
+        'data-role': 'require-label',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    viewport: 'mobile-big',
+                    moveTo: '.multistep-checkout__title'
+                }
+            ]
+        }
+    }) %}
+
+    {% if transitionData is defined and transitionData and transitionData.isAllowed == true and showRequiredLabel|default(false) == true %}
+        <div {{ block('block_attributes') }}>
+            <div data-role="checkout-require"
+                 class="required-label"
+                 aria-hidden="true"
+            ><span class="required-symbol" aria-hidden="true">*</span>
+                {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
 {% block __oro_checkout_content__checkout_form_errors_widget -%}
     {% if form != null and not form.vars.valid %}
         <div class="checkout-form-errors" id="checkout-form-errors">
