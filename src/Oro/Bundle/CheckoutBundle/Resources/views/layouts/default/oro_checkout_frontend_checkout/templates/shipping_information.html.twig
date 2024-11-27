@@ -30,7 +30,11 @@
                     attr: {
                         'data-new-address-label': renderedAddress,
                         'data-address-type': 'shipping',
-                    }
+                    },
+                    'configs': form.shipping_address.customerAddress.vars.configs|default({})|merge({
+                        dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+                        dropdownAutoWidth: false
+                    })
                 }) }}
             </div>
 

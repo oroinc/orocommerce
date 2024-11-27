@@ -178,7 +178,7 @@
 @include breakpoint('mobile-big') {
     .checkout {
         &__steps {
-            padding-top: 0;
+            padding-top: spacing('xs');
             position: static;
         }
 
