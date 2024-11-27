@@ -43,7 +43,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -99,6 +99,8 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
         $queries->addPostQuery(
             new RenameConfigSectionQuery('oro_warehouse', 'oro_inventory', 'manage_inventory')
         );
+
+        $this->addUniqueIndex($schema);
     }
 
     private function renameTablesUpdateRelation(Schema $schema, QueryBag $queries): void
@@ -689,5 +691,18 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
                 ],
             ]
         );
+    }
+
+    private function addUniqueIndex(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_inventory_level');
+        $indexName = 'oro_inventory_level_unique_index';
+
+        if (!$table->hasIndex($indexName)) {
+            $table->addUniqueIndex(
+                ["product_id", "product_unit_precision_id", "organization_id"],
+                $indexName
+            );
+        }
     }
 }
