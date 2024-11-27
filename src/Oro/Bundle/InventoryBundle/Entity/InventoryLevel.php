@@ -21,6 +21,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  */
 #[ORM\Entity(repositoryClass: InventoryLevelRepository::class)]
 #[ORM\Table(name: 'oro_inventory_level')]
+#[ORM\UniqueConstraint(
+    name: 'oro_inventory_level_unique_index',
+    columns: ['product_id', 'product_unit_precision_id', 'organization_id']
+)]
 #[Config(
     defaultValues: [
         'security' => ['type' => 'ACL', 'group_name' => ''],

@@ -1,21 +1,21 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\Transition;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\BaseTransition;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmptyInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\BaseContinueTransition;
+use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\ContinueTransition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
-class BaseContinueTransitionTest extends TestCase
+class ContinueTransitionTest extends TestCase
 {
     private ActionExecutor|MockObject $actionExecutor;
     private OrderLineItemsNotEmptyInterface|MockObject $orderLineItemsNotEmpty;
-    private BaseContinueTransition $transition;
+    private ContinueTransition $transition;
 
     #[\Override]
     protected function setUp(): void
@@ -23,7 +23,7 @@ class BaseContinueTransitionTest extends TestCase
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
         $this->orderLineItemsNotEmpty = $this->createMock(OrderLineItemsNotEmptyInterface::class);
 
-        $this->transition = new BaseContinueTransition(
+        $this->transition = new ContinueTransition(
             $this->actionExecutor,
             $this->orderLineItemsNotEmpty
         );

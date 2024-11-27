@@ -3,8 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\BaseTransition;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CustomerUserActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\FinishCheckout;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;

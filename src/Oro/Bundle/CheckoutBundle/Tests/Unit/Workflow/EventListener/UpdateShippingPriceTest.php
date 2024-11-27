@@ -7,7 +7,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\EventListener\UpdateShippingPrice;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionFormInitEvent;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -39,7 +39,7 @@ class UpdateShippingPriceTest extends TestCase
         $transition->expects($this->never())
             ->method('getFrontendOptions');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $this->listener->updateShippingPrice($event);
     }
@@ -61,7 +61,7 @@ class UpdateShippingPriceTest extends TestCase
             ->method('getFrontendOptions')
             ->willReturn(['is_checkout_continue' => false]);
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $this->listener->updateShippingPrice($event);
     }
@@ -83,7 +83,7 @@ class UpdateShippingPriceTest extends TestCase
             ->method('getResult')
             ->willReturn($result);
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $this->listener->updateShippingPrice($event);
     }
@@ -115,7 +115,7 @@ class UpdateShippingPriceTest extends TestCase
             ->method('getData')
             ->willReturn($data);
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $this->listener->updateShippingPrice($event);
     }
@@ -156,7 +156,7 @@ class UpdateShippingPriceTest extends TestCase
             ->method('getEntity')
             ->willReturn($checkout);
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $this->listener->updateShippingPrice($event);
     }
@@ -205,7 +205,7 @@ class UpdateShippingPriceTest extends TestCase
             ->method('offsetSet')
             ->with('shippingPriceUpdated', true);
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionFormInitEvent($workflowItem, $transition);
 
         $this->listener->updateShippingPrice($event);
     }

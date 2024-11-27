@@ -10,6 +10,7 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartCheckoutInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
@@ -52,7 +53,10 @@ class AcceptQuoteAndSubmitToOrderTest extends TestCase
         );
     }
 
-    public function testExecute()
+    /**
+     * @dataProvider executeDataProvider
+     */
+    public function testExecute(?CustomerUser $customerUser, string $startTransition)
     {
         $quoteShippingAddress = $this->getQuoteAddress();
         $quote = $this->getEntity(Quote::class, ['id' => 1]);
@@ -63,6 +67,8 @@ class AcceptQuoteAndSubmitToOrderTest extends TestCase
         $quote->setShippingMethodType('Next Day Air');
         $quote->setShipUntil(new \DateTime('2024-12-31'));
         $quote->setPoNumber('PO123456');
+
+        $quote->setCustomerUser($customerUser);
 
         $quoteDemand = $this->getEntity(QuoteDemand::class, ['id' => 123]);
         $quoteDemand->setQuote($quote);
@@ -120,12 +126,21 @@ class AcceptQuoteAndSubmitToOrderTest extends TestCase
                 ],
                 true,
                 false,
-                'start_from_quote'
+                $startTransition
             )
             ->willReturn(['checkout' => $checkout]);
 
         $result = $this->service->execute($quoteDemand);
         $this->assertArrayHasKey('checkout', $result);
+    }
+
+    public static function executeDataProvider(): array
+    {
+        return [
+            [null, 'start_from_quote_as_guest'],
+            [(new CustomerUser())->setIsGuest(true), 'start_from_quote_as_guest'],
+            [(new CustomerUser())->setIsGuest(false), 'start_from_quote'],
+        ];
     }
 
     public function testExecuteWithoutShippingAddressAndDiffProducts()
@@ -137,6 +152,10 @@ class AcceptQuoteAndSubmitToOrderTest extends TestCase
         $quote->setShippingMethodType('Next Day Air');
         $quote->setShipUntil(new \DateTime('2024-12-31'));
         $quote->setPoNumber('PO123456');
+
+        $customerUser = new CustomerUser();
+        $customerUser->setIsGuest(false);
+        $quote->setCustomerUser($customerUser);
 
         $quoteDemand = $this->getEntity(QuoteDemand::class, ['id' => 123]);
         $quoteDemand->setQuote($quote);

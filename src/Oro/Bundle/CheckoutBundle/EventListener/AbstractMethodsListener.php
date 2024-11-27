@@ -52,7 +52,7 @@ abstract class AbstractMethodsListener
         }
 
         /** @var Checkout $checkout */
-        $checkout = clone $event->getContext()?->offsetGet('checkout');
+        $checkout = clone $event->getData()?->offsetGet('checkout');
 
         $isManualEditGranted = $this->isManualEditGranted();
 
@@ -78,10 +78,10 @@ abstract class AbstractMethodsListener
 
     protected function isApplicable(ExtendableConditionEvent $event): bool
     {
-        $context = $event->getContext();
+        $data = $event->getData();
 
-        return $context
-            && $context->offsetGet('checkout') instanceof Checkout
-            && $context->offsetGet('validateOnStartCheckout');
+        return $data
+            && $data->offsetGet('checkout') instanceof Checkout
+            && $data->offsetGet('validateOnStartCheckout');
     }
 }

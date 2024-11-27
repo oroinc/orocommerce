@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\EventListener;
 use Oro\Bundle\CheckoutBundle\Workflow\EventListener\ActualizeWorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionCompletedEvent;
 use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
@@ -51,6 +52,7 @@ class ActualizeWorkflowItemTest extends TestCase
 
         $transition = $this->createMock(Transition::class);
         $event = new TransitionEvent($workflowItem, $transition);
+        $completedEvent = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->workflowManager->expects($this->once())
             ->method('getWorkflowItem')
@@ -58,9 +60,9 @@ class ActualizeWorkflowItemTest extends TestCase
             ->willReturn($actualWorkflowItem);
 
         $this->listener->onTransition($event);
-        $this->listener->onComplete($event);
+        $this->listener->onComplete($completedEvent);
 
-        $this->assertEquals($actualWorkflowItem->getId(), $event->getWorkflowItem()->getId());
+        $this->assertEquals($actualWorkflowItem->getId(), $completedEvent->getWorkflowItem()->getId());
     }
 
     public function testOnTransitionDoesNotRequireActualization(): void
@@ -72,11 +74,12 @@ class ActualizeWorkflowItemTest extends TestCase
 
         $transition = $this->createMock(Transition::class);
         $event = new TransitionEvent($workflowItem, $transition);
+        $completedEvent = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onTransition($event);
         $this->workflowManager->expects($this->never())
             ->method('getWorkflowItem');
-        $this->listener->onComplete($event);
+        $this->listener->onComplete($completedEvent);
 
         $this->assertSame($workflowItem, $event->getWorkflowItem());
     }
