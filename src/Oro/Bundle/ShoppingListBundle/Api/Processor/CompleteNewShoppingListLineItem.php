@@ -3,7 +3,6 @@
 namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
-use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -13,15 +12,8 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  * If a customer user is not assigned to the line item,
  * the shopping list's customer user will be assigned to it.
  */
-class CompleteNewLineItem implements ProcessorInterface
+class CompleteNewShoppingListLineItem implements ProcessorInterface
 {
-    private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator;
-
-    public function __construct(LineItemChecksumGeneratorInterface $lineItemChecksumGenerator)
-    {
-        $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
-    }
-
     #[\Override]
     public function process(ContextInterface $context): void
     {
@@ -35,11 +27,6 @@ class CompleteNewLineItem implements ProcessorInterface
             && null !== $shoppingList->getCustomerUser()
         ) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
-        }
-
-        $checksum = $this->lineItemChecksumGenerator->getChecksum($lineItem);
-        if ($checksum !== null) {
-            $lineItem->setChecksum($checksum);
         }
     }
 }

@@ -199,3 +199,11 @@ The currency for the product price.
 {@inheritdoc}
 
 **This field must not be empty, if it is passed.**
+
+### checksum
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**

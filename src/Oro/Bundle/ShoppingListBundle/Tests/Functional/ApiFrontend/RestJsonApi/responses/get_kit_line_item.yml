@@ -2,7 +2,6 @@ data:
     type: shoppinglistitems
     id: '<toString(@kit_line_item1->id)>'
     attributes:
-        checksum: kit_line_item1_checksum
         quantity: 2
         notes: null
         currency: USD

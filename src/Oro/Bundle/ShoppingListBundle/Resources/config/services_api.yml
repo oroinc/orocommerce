@@ -114,12 +114,17 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 40 }
 
-    oro_shopping_list.api.complete_new_line_item:
-        class: Oro\Bundle\ShoppingListBundle\Api\Processor\CompleteNewLineItem
+    oro_shopping_list.api.complete_new_shopping_list_line_item:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\CompleteNewShoppingListLineItem
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 30 }
+
+    oro_shopping_list.api.set_shopping_list_line_item_checksum:
+        class: Oro\Bundle\ShoppingListBundle\Api\Processor\SetShoppingListLineItemChecksum
         arguments:
             - '@oro_product.line_item_checksum_generator'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: 30 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create|update, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -100 }
 
     oro_shopping_list.api.compute_shopping_list_default:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListDefault
@@ -258,10 +263,3 @@ services:
             - 'shoppingList'
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!descriptions', requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, priority: -250 }
-
-    oro_shopping_list.api.reset_line_item_checksum:
-        class: 'Oro\Bundle\ShoppingListBundle\Api\Processor\ResetLineItemChecksum'
-        arguments:
-            - '@oro_product.line_item_checksum_generator'
-        tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: update, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }

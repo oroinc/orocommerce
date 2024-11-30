@@ -5,7 +5,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -50,6 +52,16 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    private function generateLineItemChecksum(OrderLineItem $lineItem): string
+    {
+        /** @var LineItemChecksumGeneratorInterface $lineItemChecksumGenerator */
+        $lineItemChecksumGenerator = self::getContainer()->get('oro_product.line_item_checksum_generator');
+        $checksum = $lineItemChecksumGenerator->getChecksum($lineItem);
+        self::assertNotEmpty($checksum, 'Impossible to generate the line item checksum.');
+
+        return $checksum;
+    }
+
     public function testCreate(): void
     {
         $shipUntil = (new \DateTime('now + 10 day'))->format('Y-m-d');
@@ -72,6 +84,8 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         // the status should be read-only when "Enable External Status Management" configuration option is disabled
         self::assertNull($order->getStatus());
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($this->generateLineItemChecksum($lineItem), $lineItem->getChecksum());
     }
 
     public function testCreateWithRequiredDataOnly(): void
@@ -81,8 +95,15 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             'create_order_min.yml'
         );
 
+        $orderId = (int)$this->getResourceId($response);
+
         $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
+
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($this->generateLineItemChecksum($lineItem), $lineItem->getChecksum());
     }
 
     public function testCreateWithCurrency(): void

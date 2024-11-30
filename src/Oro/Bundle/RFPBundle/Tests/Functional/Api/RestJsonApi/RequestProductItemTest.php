@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
@@ -30,6 +31,16 @@ class RequestProductItemTest extends RestJsonApiTestCase
         $requestProductItem = $requestProduct->getRequestProductItems()->first();
 
         return $requestProductItem->getId();
+    }
+
+    private function generateRequestProductItemChecksum(RequestProductItem $requestProductItem): string
+    {
+        /** @var LineItemChecksumGeneratorInterface $lineItemChecksumGenerator */
+        $lineItemChecksumGenerator = self::getContainer()->get('oro_product.line_item_checksum_generator');
+        $checksum = $lineItemChecksumGenerator->getChecksum($requestProductItem);
+        self::assertNotEmpty($checksum, 'Impossible to generate the request product item checksum.');
+
+        return $checksum;
     }
 
     private function getCreateData(): array
@@ -162,6 +173,23 @@ class RequestProductItemTest extends RestJsonApiTestCase
         );
     }
 
+    public function testCreateWithReadonlyChecksum(): void
+    {
+        $data = $this->getCreateData();
+        $data['data']['attributes']['checksum'] = '123456789';
+        $response = $this->post(['entity' => 'rfqproductitems'], $data);
+
+        $entityId = $this->getResourceId($response);
+        /** @var RequestProductItem $entity */
+        $entity = $this->getEntityManager()->find(RequestProductItem::class, $entityId);
+        $expectedChecksum = $this->generateRequestProductItemChecksum($entity);
+        $expectedData = $data;
+        $expectedData['data']['id'] = $entityId;
+        $expectedData['data']['attributes']['checksum'] = $expectedChecksum;
+        $this->assertResponseContains($expectedData, $response);
+        self::assertEquals($expectedChecksum, $entity->getChecksum());
+    }
+
     public function testUpdate(): void
     {
         $entityId = $this->getRequestProductItemId();
@@ -182,6 +210,33 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
         $result = self::jsonToArray($response->getContent());
         self::assertEquals(150, $result['data']['attributes']['value']);
+    }
+
+    public function testTryToUpdateReadonlyChecksum(): void
+    {
+        $entityId = $this->getRequestProductItemId();
+
+        $data = [
+            'data' => [
+                'type' => 'rfqproductitems',
+                'id' => (string)$entityId,
+                'attributes' => [
+                    'checksum' => '123456789'
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => 'rfqproductitems', 'id' => (string)$entityId],
+            $data
+        );
+
+        /** @var RequestProductItem $entity */
+        $entity = $this->getEntityManager()->find(RequestProductItem::class, $entityId);
+        $expectedChecksum = $this->generateRequestProductItemChecksum($entity);
+        $expectedData = $data;
+        $expectedData['data']['attributes']['checksum'] = $expectedChecksum;
+        $this->assertResponseContains($expectedData, $response);
+        self::assertEquals($expectedChecksum, $entity->getChecksum());
     }
 
     public function testDelete(): void
