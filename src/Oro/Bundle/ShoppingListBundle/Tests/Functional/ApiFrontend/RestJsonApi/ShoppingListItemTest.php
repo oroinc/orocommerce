@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\ApiFrontend\RestJsonApi
 
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
+use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -53,22 +54,26 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $this->originalShoppingListLimit = null;
     }
 
-    /**
-     * @return int
-     */
-    private function getShoppingListLimit()
+    private function getShoppingListLimit(): int
     {
-        return $this->getConfigManager()->get('oro_shopping_list.shopping_list_limit');
+        return self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
     }
 
-    /**
-     * @param int $limit
-     */
-    private function setShoppingListLimit($limit)
+    private function setShoppingListLimit(int $limit): void
     {
-        $configManager = $this->getConfigManager();
+        $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.shopping_list_limit', $limit);
         $configManager->flush();
+    }
+
+    private function generateLineItemChecksum(LineItem $lineItem): string
+    {
+        /** @var LineItemChecksumGeneratorInterface $lineItemChecksumGenerator */
+        $lineItemChecksumGenerator = self::getContainer()->get('oro_product.line_item_checksum_generator');
+        $checksum = $lineItemChecksumGenerator->getChecksum($lineItem);
+        self::assertNotEmpty($checksum, 'Impossible to generate the line item checksum.');
+
+        return $checksum;
     }
 
     private static function assertLineItem(
@@ -239,14 +244,13 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         );
 
         $lineItemId = (int)$this->getResourceId($response);
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
+        self::assertNotNull($lineItem);
         $responseContent = $this->updateResponseContent('create_line_item.yml', $response);
+        $responseContent['data']['attributes']['checksum'] = $this->generateLineItemChecksum($lineItem);
         $this->assertResponseContains($responseContent, $response);
 
-        /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
-        self::assertNotNull($lineItem);
         self::assertLineItem(
             $lineItem,
             $organizationId,
@@ -1314,16 +1318,18 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
             $data,
         );
 
-        $responseContent = $this->updateResponseContent('get_kit_line_item.yml', $response);
-        $responseContent['data']['relationships']['shoppingList']['data']['id'] = (string)$shoppingList2Id;
-        $this->assertResponseContains($responseContent, $response);
-
         $lineItemId = (int)$this->getResourceId($response);
         /** @var LineItem $lineItem */
         $lineItem = $this->getEntityManager()
             ->getRepository(LineItem::class)
             ->find($lineItemId);
         self::assertNotNull($lineItem);
+
+        $responseContent = $this->updateResponseContent('get_kit_line_item.yml', $response);
+        $responseContent['data']['attributes']['checksum'] = $this->generateLineItemChecksum($lineItem);
+        $responseContent['data']['relationships']['shoppingList']['data']['id'] = (string)$shoppingList2Id;
+        $this->assertResponseContains($responseContent, $response);
+
         self::assertEquals($shoppingList2Id, $lineItem->getShoppingList()->getId());
 
         // Check shopping list totals

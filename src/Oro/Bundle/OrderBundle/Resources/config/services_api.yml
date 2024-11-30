@@ -201,7 +201,7 @@ services:
         arguments:
             - '@oro_product.line_item_checksum_generator'
         tags:
-            - {name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 30}
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create|update, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: -100 }
 
     oro_order.api.fill_order_line_item_price:
         class: Oro\Bundle\OrderBundle\Api\Processor\FillOrderLineItemPrice

@@ -100,6 +100,9 @@ api:
                 productUnitCode:
                     form_options:
                         mapped: false
+                checksum:
+                    form_options:
+                        mapped: false
             filters:
                 fields:
                     createdAt: ~
@@ -112,17 +115,9 @@ api:
                 create:
                     form_options:
                         validation_groups: [ [ Default, api_order_line_item_create ], api ]
-                    fields:
-                        checksum:
-                            form_options:
-                                mapped: false
                 update:
                     form_options:
                         validation_groups: [ [ Default, api_order_line_item_update ], api ]
-                    fields:
-                        checksum:
-                            form_options:
-                                mapped: false
             subresources:
                 order:
                     actions:

@@ -50,17 +50,9 @@ api:
                         mapped: false
                 productUnitCode:
                     exclude: true
-            actions:
-                create:
-                    fields:
-                        checksum:
-                            form_options:
-                                mapped: false
-                update:
-                    fields:
-                        checksum:
-                            form_options:
-                                mapped: false
+                checksum:
+                    form_options:
+                        mapped: false
 
         Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote:
             documentation_resource: '@OroRFPBundle/Resources/doc/api/request_additional_note.md'

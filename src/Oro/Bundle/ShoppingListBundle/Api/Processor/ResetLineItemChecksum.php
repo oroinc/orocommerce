@@ -9,7 +9,7 @@ use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Once line item has been updated (not product kit), reset its checksum value for duplicated check.
+ * Once line item has been updated, reset its checksum value for duplicated check.
  */
 class ResetLineItemChecksum implements ProcessorInterface
 {
@@ -29,7 +29,7 @@ class ResetLineItemChecksum implements ProcessorInterface
         /** @var LineItem $lineItem */
         $lineItem = $context->getData();
 
-        if ($lineItem->getProduct() && !$lineItem->getProduct()?->isKit()) {
+        if ($lineItem->getProduct()) {
             $checksum = $this->lineItemChecksumGenerator->getChecksum($lineItem);
             if ($checksum !== null) {
                 $lineItem->setChecksum($checksum);

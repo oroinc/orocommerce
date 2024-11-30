@@ -103,6 +103,9 @@ api:
                     depends_on: [product, quantity, unit]
                 kitItems:
                     property_path: kitItemLineItems
+                checksum:
+                    form_options:
+                        mapped: false
             actions:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
