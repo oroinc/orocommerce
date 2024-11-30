@@ -253,10 +253,7 @@ class ShoppingListItemForBuyerTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
-
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertTrue(null === $lineItem);
     }
 

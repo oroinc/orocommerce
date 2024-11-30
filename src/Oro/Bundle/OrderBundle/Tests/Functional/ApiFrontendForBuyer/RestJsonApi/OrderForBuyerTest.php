@@ -59,11 +59,11 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
     {
         return [
             'order' => [
-                'orderReference' => '<toString(@order1->id)>',
+                'orderReference' => '<toString(@order1->id)>'
             ],
             'order with product kit line items' => [
-                'orderReference' => '<toString(@order4->id)>',
-            ],
+                'orderReference' => '<toString(@order4->id)>'
+            ]
         ];
     }
 
@@ -175,17 +175,17 @@ class OrderForBuyerTest extends FrontendRestJsonApiTestCase
                 'orderReference' => '<toString(@order1->id)>',
                 'expectedLineItemsData' => [
                     ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>'],
-                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item2->id)>'],
-                ],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item2->id)>']
+                ]
             ],
             'order with product kit line items' => [
                 'orderReference' => '<toString(@order4->id)>',
                 'expectedLineItemsData' => [
                     ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.1->id)>'],
                     ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_3_line_item.1->id)>'],
-                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.2->id)>'],
-                ],
-            ],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.2->id)>']
+                ]
+            ]
         ];
     }
 

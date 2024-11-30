@@ -140,9 +140,7 @@ class ShoppingListForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
         self::assertEquals('Updated Shopping List', $shoppingList->getLabel());
     }
@@ -246,10 +244,7 @@ class ShoppingListForBuyerTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
-
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertTrue(null === $shoppingList);
     }
 
@@ -475,7 +470,7 @@ class ShoppingListForBuyerTest extends FrontendRestJsonApiTestCase
                 'data' => [
                     ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
                     ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>'],
-                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>'],
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>']
                 ]
             ],
             $response

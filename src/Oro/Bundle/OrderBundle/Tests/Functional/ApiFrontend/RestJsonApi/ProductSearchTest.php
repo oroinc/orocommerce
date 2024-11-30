@@ -27,7 +27,7 @@ class ProductSearchTest extends FrontendRestJsonApiTestCase
     }
 
     #[\Override]
-    protected function postFixtureLoad()
+    protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();
 

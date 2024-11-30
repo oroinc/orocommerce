@@ -6,14 +6,13 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdmi
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
  */
 class CreateOrderWithProductKitTest extends FrontendRestJsonApiTestCase
 {
-    use OrderResponseTrait;
-
     #[\Override]
     protected function setUp(): void
     {
@@ -26,12 +25,21 @@ class CreateOrderWithProductKitTest extends FrontendRestJsonApiTestCase
     }
 
     #[\Override]
-    protected function postFixtureLoad()
+    protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();
         self::getContainer()->get('oro_payment_term.provider.payment_term_association')
             ->setPaymentTerm($this->getReference('customer'), $this->getReference('payment_term_net_10'));
         $this->getEntityManager()->flush();
+    }
+
+    private function updateOrderResponseContent(array|string $expectedContent, Response $response): array
+    {
+        return $this->updateResponseContent(
+            $this->updateResponseContent($expectedContent, $response),
+            $response,
+            'identifier'
+        );
     }
 
     public function testCreateWithProductKit(): void

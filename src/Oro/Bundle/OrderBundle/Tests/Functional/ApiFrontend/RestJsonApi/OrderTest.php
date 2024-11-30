@@ -381,12 +381,7 @@ class OrderTest extends FrontendRestJsonApiTestCase
         $response = $this->getSubresource(
             ['entity' => 'orders', 'id' => $orderReference, 'association' => 'lineItems']
         );
-        $this->assertResponseContains(
-            [
-                'data' => $expectedLineItemsData,
-            ],
-            $response
-        );
+        $this->assertResponseContains(['data' => $expectedLineItemsData], $response);
     }
 
     /**
@@ -397,12 +392,7 @@ class OrderTest extends FrontendRestJsonApiTestCase
         $response = $this->getRelationship(
             ['entity' => 'orders', 'id' => $orderReference, 'association' => 'lineItems']
         );
-        $this->assertResponseContains(
-            [
-                'data' => $expectedLineItemsData,
-            ],
-            $response
-        );
+        $this->assertResponseContains(['data' => $expectedLineItemsData], $response);
     }
 
     public function getLineItemsDataProvider(): array
@@ -412,17 +402,17 @@ class OrderTest extends FrontendRestJsonApiTestCase
                 'orderReference' => '<toString(@order1->id)>',
                 'expectedLineItemsData' => [
                     ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>'],
-                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item2->id)>'],
-                ],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@order1_line_item2->id)>']
+                ]
             ],
             'order with product kit line items' => [
                 'orderReference' => '<toString(@order4->id)>',
                 'expectedLineItemsData' => [
                     ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.1->id)>'],
                     ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_3_line_item.1->id)>'],
-                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.2->id)>'],
-                ],
-            ],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.2->id)>']
+                ]
+            ]
         ];
     }
 

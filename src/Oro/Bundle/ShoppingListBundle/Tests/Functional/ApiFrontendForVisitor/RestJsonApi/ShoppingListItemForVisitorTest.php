@@ -79,12 +79,9 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         }
     }
 
-    /**
-     * @param bool $status
-     */
-    private function setGuestShoppingListFeatureStatus($status = true): void
+    private function setGuestShoppingListFeatureStatus(bool $status = true): void
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.availability_for_guests', $status);
         $configManager->flush();
     }
@@ -131,9 +128,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
         $shoppingList = $lineItem->getShoppingList();
         self::assertCount(3, $shoppingList->getLineItems());
@@ -210,10 +205,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
-
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertEquals(10, $lineItem->getQuantity());
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
@@ -230,10 +223,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
-
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertTrue(null === $lineItem);
     }
 
@@ -251,10 +241,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
-
+        /** @var LineItem $lineItem */
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         $this->assertTrue(null !== $lineItem);
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
@@ -371,7 +359,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -395,7 +383,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -419,7 +407,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -445,7 +433,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -481,7 +469,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -494,10 +482,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
-
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertTrue(null === $lineItem);
     }
 
@@ -511,7 +496,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -530,9 +515,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $content = self::jsonToArray($response->getContent());
         $shoppingListId = (int)$content['included'][0]['id'];
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
 
         $shoppingList = $lineItem->getShoppingList();

@@ -42,7 +42,7 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
                     ['type' => 'orderlineitems', 'id' => '<toString(@order2_line_item1->id)>'],
                     ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.1->id)>'],
                     ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_3_line_item.1->id)>'],
-                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.2->id)>'],
+                    ['type' => 'orderlineitems', 'id' => '<toString(@product_kit_2_line_item.2->id)>']
                 ]
             ],
             $response
@@ -92,11 +92,11 @@ class OrderLineItemForBuyerTest extends FrontendRestJsonApiTestCase
     {
         return [
             'line item' => [
-                'lineItemReference' => '<toString(@order3_line_item1->id)>',
+                'lineItemReference' => '<toString(@order3_line_item1->id)>'
             ],
             'product kit line item' => [
-                'lineItemReference' => '<toString(@order5_product_kit_2_line_item.1->id)>',
-            ],
+                'lineItemReference' => '<toString(@order5_product_kit_2_line_item.1->id)>'
+            ]
         ];
     }
 

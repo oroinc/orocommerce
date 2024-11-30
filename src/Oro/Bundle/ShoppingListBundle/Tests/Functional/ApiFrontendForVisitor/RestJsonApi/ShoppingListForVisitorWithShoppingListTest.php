@@ -132,9 +132,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(3, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
@@ -163,9 +161,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains($responseContent, $response);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find((int)$responseContent['data'][0]['id']);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, (int)$responseContent['data'][0]['id']);
         $shoppingList = $lineItem->getShoppingList();
         self::assertEquals(
             self::getContainer()->get('translator')->trans('oro.shoppinglist.default.label'),
@@ -201,9 +197,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(3, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
@@ -306,9 +300,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $lineItemId = (int)$this->getResourceId($response);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
         $shoppingList = $lineItem->getShoppingList();
         self::assertNotNull($shoppingList);
@@ -362,7 +354,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -378,9 +370,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
 
         self::assertCount(1, $shoppingList->getLineItems());
@@ -396,7 +386,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -419,7 +409,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -442,7 +432,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 
@@ -469,7 +459,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
                 'CREATE' => AccessLevel::NONE_LEVEL,
                 'DELETE' => AccessLevel::NONE_LEVEL,
                 'ASSIGN' => AccessLevel::NONE_LEVEL,
-                'EDIT' => AccessLevel::NONE_LEVEL,
+                'EDIT' => AccessLevel::NONE_LEVEL
             ]
         );
 

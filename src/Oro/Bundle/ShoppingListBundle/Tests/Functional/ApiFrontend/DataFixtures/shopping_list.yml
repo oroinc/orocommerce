@@ -120,27 +120,22 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
         kitItem: '@product_kit1_item1'
         product: '@product1'
         sortOrder: 1
-
     product_kit1_item1_product2:
         kitItem: '@product_kit1_item1'
         product: '@product2'
         sortOrder: 2
-
     product_kit1_item2_product3:
         kitItem: '@product_kit1_item2'
         product: '@product3'
         sortOrder: 1
-
     product_kit1_item3_product4:
         kitItem: '@product_kit1_item3'
         product: '@product4'
         sortOrder: 1
-
     product_kit1_item1_product5:
         kitItem: '@product_kit1_item1'
         product: '@disabled_product5'
         sortOrder: 3
-
     product_kit1_item2_product5:
         kitItem: '@product_kit1_item2'
         product: '@disabled_product5'
@@ -159,7 +154,6 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
             - addKitItemProduct: ['@product_kit1_item1_product1']
             - addKitItemProduct: ['@product_kit1_item1_product2']
             - addKitItemProduct: ['@product_kit1_item1_product5']
-
     product_kit1_item2:
         optional: true
         sortOrder: 10
@@ -171,7 +165,6 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItem:
             - addLabel: ['@product_kit1_item2_label']
             - addKitItemProduct: ['@product_kit1_item2_product3']
             - addKitItemProduct: ['@product_kit1_item2_product5']
-
     product_kit1_item3:
         optional: true
         sortOrder: 10
@@ -256,7 +249,6 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
         quantity: 2
         unit: '@item'
         sortOrder: 0
-
     product_kit_item1_line_item2:
         lineItem: '@kit_line_item1'
         kitItem: '@product_kit1_item2'
@@ -264,7 +256,6 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
         quantity: 3
         unit: '@item'
         sortOrder: 1
-
     product_kit_item2_line_item1:
         lineItem: '@kit_line_item2'
         kitItem: '@product_kit1_item1'
@@ -272,7 +263,6 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
         quantity: 2
         unit: '@item'
         sortOrder: 0
-
     product_kit_item3_line_item1:
         lineItem: '@kit_line_item3'
         kitItem: '@product_kit1_item1'
@@ -280,7 +270,6 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
         quantity: 2
         unit: '@item'
         sortOrder: 0
-
     product_kit_item4_line_item1:
         lineItem: '@kit_line_item4'
         kitItem: '@product_kit1_item1'

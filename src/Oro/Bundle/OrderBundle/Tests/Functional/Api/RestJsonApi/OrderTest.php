@@ -491,7 +491,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals((string)$orderId, $order->getIdentifier());
         self::assertNull($order->getPoNumber());
@@ -520,7 +520,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('new_order', $order->getIdentifier());
         self::assertEquals('2345678', $order->getPoNumber());
@@ -555,7 +555,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         // createdAt and updatedAt fields are read-only for orders
         self::assertNotEquals($createdAt, $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
@@ -577,7 +577,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -602,7 +602,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -643,7 +643,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -665,7 +665,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -695,7 +695,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -725,7 +725,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -758,7 +758,7 @@ class OrderTest extends RestJsonApiTestCase
             $response
         );
 
-        /** @var Order $updatedOrder */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertTrue($order->isExternal());
     }
@@ -791,7 +791,7 @@ class OrderTest extends RestJsonApiTestCase
             $response
         );
 
-        /** @var Order $updatedOrder */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('shipped', $order->getShippingStatus()->getInternalId());
     }
@@ -1041,9 +1041,9 @@ class OrderTest extends RestJsonApiTestCase
                     'type' => 'orderlineitems',
                     'id' => (string)$orderLineItemId,
                     'attributes' => [
-                        'checksum' => '5701254f5e38e7af63749d1d03db69175a901119',
-                    ],
-                ],
+                        'checksum' => '5701254f5e38e7af63749d1d03db69175a901119'
+                    ]
+                ]
             ],
             [],
             false
@@ -1523,6 +1523,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
         self::assertTrue(null === $lineItem);
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         self::assertSame('78.5000', $order->getSubtotal());
@@ -1556,8 +1557,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
         $order = $this->getEntityManager()->find(Order::class, $orderId);
-
-        self::assertNull($order);
+        self::assertTrue(null === $order);
     }
 
     public function testCreateWhenValidateEqualsToFalse(): void
@@ -1571,9 +1571,7 @@ class OrderTest extends RestJsonApiTestCase
 
         /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
-
         self::assertNotNull($order);
-
         self::assertEquals('new_order', $order->getIdentifier());
         self::assertEquals('2345678', $order->getPoNumber());
         self::assertAllMessagesSent([

@@ -24,7 +24,7 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
     }
 
     #[\Override]
-    protected function postFixtureLoad()
+    protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();
         self::getContainer()->get('oro_payment_term.provider.payment_term_association')
@@ -62,9 +62,9 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The relationship should have \'data\' property',
-                        'source' => ['pointer' => '/included/4/relationships/product'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product']
+                    ]
+                ]
             ],
             'data as string' => [
                 'productData' => ['data' => 'product'],
@@ -72,9 +72,9 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The \'data\' property should be an array',
-                        'source' => ['pointer' => '/included/4/relationships/product/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data']
+                    ]
+                ]
             ],
             'data as non-associative array' => [
                 'productData' => ['data' => ['test']],
@@ -82,14 +82,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The \'type\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type']
                     ],
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The \'id\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id']
+                    ]
+                ]
             ],
             'data as associative array without type/id properties' => [
                 'productData' => ['data' => ['foo' => 'bar']],
@@ -97,14 +97,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'type\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/type']
                     ],
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'id\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/id']
+                    ]
+                ]
             ],
             'type/id as arrays' => [
                 'productData' => ['data' => ['type' => [], 'id' => []]],
@@ -112,14 +112,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The \'type\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/type']
                     ],
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The \'id\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/id']
+                    ]
+                ]
             ],
             'type/id as integers' => [
                 'productData' => ['data' => ['type' => 1, 'id' => 1]],
@@ -127,14 +127,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The \'type\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/type']
                     ],
                     [
                         'title' => 'request data constraint',
                         'detail' => 'The \'id\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/id']
+                    ]
+                ]
             ],
             'type unknowns' => [
                 'productData' => ['data' => ['type' => 'test', 'id' => 'test']],
@@ -142,9 +142,9 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title' => 'entity type constraint',
                         'detail' => 'Unknown entity type: test.',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/type'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/type']
+                    ]
+                ]
             ],
             'data as non-associative array in array' => [
                 'productData' => ['data' => [['test']]],
@@ -152,14 +152,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'type\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type']
                     ],
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'id\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id']
+                    ]
+                ]
             ],
             'data as associative array without type/id properties in array' => [
                 'productData' => ['data' => [['foo' => 'bar']]],
@@ -167,14 +167,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'type\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type']
                     ],
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'id\' property is required',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id']
+                    ]
+                ]
             ],
             'type/id as arrays in array' => [
                 'productData' => ['data' => [['type' => [], 'id' => []]]],
@@ -182,14 +182,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'type\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type']
                     ],
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'id\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id']
+                    ]
+                ]
             ],
             'type/id as integers in array' => [
                 'productData' => ['data' => [['type' => 1, 'id' => 1]]],
@@ -197,14 +197,14 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'type\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type'],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type']
                     ],
                     [
                         'title'  => 'request data constraint',
                         'detail' => 'The \'id\' property should be a string',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/id']
+                    ]
+                ]
             ],
             'type unknowns in array' => [
                 'productData' => ['data' => [['type' => 'test', 'id' => 'test']]],
@@ -212,10 +212,10 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     [
                         'title'  => 'entity type constraint',
                         'detail' => 'Unknown entity type: test.',
-                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type'],
-                    ],
-                ],
-            ],
+                        'source' => ['pointer' => '/included/4/relationships/product/data/0/type']
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -236,23 +236,23 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'not null constraint',
                     'detail' => 'Please choose a product',
-                    'source' => ['pointer' => '/included/4/relationships/product/data'],
+                    'source' => ['pointer' => '/included/4/relationships/product/data']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'Please choose a product',
-                    'source' => ['pointer' => '/included/4/attributes/productId'],
+                    'source' => ['pointer' => '/included/4/attributes/productId']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'Please choose a product',
-                    'source' => ['pointer' => '/included/4/attributes/productSku'],
+                    'source' => ['pointer' => '/included/4/attributes/productSku']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'Please choose a product',
-                    'source' => ['pointer' => '/included/4/attributes/productName'],
-                ],
+                    'source' => ['pointer' => '/included/4/attributes/productName']
+                ]
             ],
             $response
         );
@@ -275,13 +275,13 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
-                    'source' => ['pointer' => '/included/4/relationships/productUnit/data'],
+                    'source' => ['pointer' => '/included/4/relationships/productUnit/data']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
-                    'source' => ['pointer' => '/included/4/attributes/productUnitCode'],
-                ],
+                    'source' => ['pointer' => '/included/4/attributes/productUnitCode']
+                ]
             ],
             $response
         );
@@ -299,15 +299,11 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'product kit item line item product unit available constraint',
-                    'detail' => 'The selected product unit is not allowed',
-                    'source' => [
-                        'pointer' => '/included/4/relationships/productUnit/data',
-                    ],
-                ],
+                'title' => 'product kit item line item product unit available constraint',
+                'detail' => 'The selected product unit is not allowed',
+                'source' => ['pointer' => '/included/4/relationships/productUnit/data']
             ],
             $response
         );
@@ -325,13 +321,11 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'product kit item line item quantity unit precision constraint',
-                    'detail' => 'Only whole numbers are allowed for unit "milliliter"',
-                    'source' => ['pointer' => '/included/4/attributes/quantity'],
-                ],
+                'title' => 'product kit item line item quantity unit precision constraint',
+                'detail' => 'Only whole numbers are allowed for unit "milliliter"',
+                'source' => ['pointer' => '/included/4/attributes/quantity']
             ],
             $response
         );
@@ -349,13 +343,11 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'not null constraint',
-                    'detail' => 'The quantity should be greater than 0',
-                    'source' => ['pointer' => '/included/4/attributes/quantity'],
-                ],
+                'title' => 'not null constraint',
+                'detail' => 'The quantity should be greater than 0',
+                'source' => ['pointer' => '/included/4/attributes/quantity']
             ],
             $response
         );
@@ -373,13 +365,11 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'greater than constraint',
-                    'detail' => 'The quantity should be greater than 0',
-                    'source' => ['pointer' => '/included/4/attributes/quantity'],
-                ],
+                'title' => 'greater than constraint',
+                'detail' => 'The quantity should be greater than 0',
+                'source' => ['pointer' => '/included/4/attributes/quantity']
             ],
             $response
         );
@@ -397,13 +387,11 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'form constraint',
-                    'detail' => 'Please enter a number.',
-                    'source' => ['pointer' => '/included/4/attributes/quantity'],
-                ],
+                'title' => 'form constraint',
+                'detail' => 'Please enter a number.',
+                'source' => ['pointer' => '/included/4/attributes/quantity']
             ],
             $response
         );
@@ -426,13 +414,13 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'price match constraint',
                     'detail' => 'The specified price must be equal to 11.59.',
-                    'source' => ['pointer' => '/included/4/attributes/price'],
+                    'source' => ['pointer' => '/included/4/attributes/price']
                 ],
                 [
                     'title' => 'currency match constraint',
                     'detail' => 'The specified currency must be equal to "USD".',
-                    'source' => ['pointer' => '/included/4/attributes/currency'],
-                ],
+                    'source' => ['pointer' => '/included/4/attributes/currency']
+                ]
             ],
             $response
         );
@@ -455,13 +443,13 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'price match constraint',
                     'detail' => 'The specified price must be equal to 11.59.',
-                    'source' => ['pointer' => '/included/4/attributes/price'],
+                    'source' => ['pointer' => '/included/4/attributes/price']
                 ],
                 [
                     'title' => 'currency match constraint',
                     'detail' => 'The specified currency must be equal to "USD".',
-                    'source' => ['pointer' => '/included/4/attributes/currency'],
-                ],
+                    'source' => ['pointer' => '/included/4/attributes/currency']
+                ]
             ],
             $response
         );
@@ -483,13 +471,13 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'price not found constraint',
                     'detail' => 'No matching price found.',
-                    'source' => ['pointer' => '/included/3/attributes/price'],
+                    'source' => ['pointer' => '/included/3/attributes/price']
                 ],
                 [
                     'title' => 'price not found constraint',
                     'detail' => 'No matching price found.',
-                    'source' => ['pointer' => '/included/4/attributes/price'],
-                ],
+                    'source' => ['pointer' => '/included/4/attributes/price']
+                ]
             ],
             $response
         );
@@ -513,23 +501,23 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
                     'title' => 'product kit line item contains required kit items constraint',
                     'detail' => 'Product kit "product-kit-1" is missing the required kit item '
                         . '"PKSKU1 - Unit of Quantity Taken from Product Kit"',
-                    'source' => ['pointer' => '/included/3/relationships/kitItemLineItems/data'],
+                    'source' => ['pointer' => '/included/3/relationships/kitItemLineItems/data']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'Product kit item must not be blank',
-                    'source' => ['pointer' => '/included/4/relationships/kitItem/data'],
+                    'source' => ['pointer' => '/included/4/relationships/kitItem/data']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'Product kit item must not be blank',
-                    'source' => ['pointer' => '/included/4/attributes/kitItemId'],
+                    'source' => ['pointer' => '/included/4/attributes/kitItemId']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'Product kit item must not be blank',
-                    'source' => ['pointer' => '/included/4/attributes/kitItemLabel'],
-                ],
+                    'source' => ['pointer' => '/included/4/attributes/kitItemLabel']
+                ]
             ],
             $response
         );
