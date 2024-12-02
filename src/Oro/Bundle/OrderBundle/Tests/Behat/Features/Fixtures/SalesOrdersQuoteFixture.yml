@@ -53,15 +53,17 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         productSku: 'ORD1'
         quantity: '20'
         productUnit: '@item'
-        order: '@firstOrder'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@firstOrder' ]
     lineitem2:
         product: '@product2'
         productSku: 'ORD2'
         quantity: '15'
         productUnit: '@set'
-        order: '@secondOrder'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@secondOrder' ]
 
 Oro\Bundle\OrderBundle\Entity\Order:
     firstOrder:

@@ -8,7 +8,7 @@ Feature: Promotions with coupons on Order page
     Given I login as administrator
     When go to Sales / Orders
     And click edit SimpleOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     When I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     Then I should see a "Highlighted Suggestion" element
@@ -35,14 +35,14 @@ Feature: Promotions with coupons on Order page
       | Total    | $40.00  |
 
   Scenario: Possible to view details about added promotion in popup
-    When I click "Promotions and Discounts"
+    When I click "Discounts"
     And I click "View" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see "General Information"
     And I should see "Conditions"
     Then I click "Close Line Item Discount Promotion Details"
 
   Scenario: Delete added coupon from grid
-    When I click "Promotions and Discounts"
+    When I click "Discounts"
     And I click "Remove" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see no records in "Promotions" table
     And see next subtotals for "Backend Order":
@@ -101,7 +101,7 @@ Feature: Promotions with coupons on Order page
   Scenario: Deactivate button in Promotions grid
     When go to Sales / Orders
     And click edit SimpleOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And I click "Deactivate" on row "Line Item Discount Promotion" in "Promotions"
     Then I should see next rows in "Promotions" table
       | Code   | Promotion                    | Type            | Status   | Discount |

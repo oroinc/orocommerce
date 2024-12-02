@@ -24,8 +24,16 @@ class OrderDuplicator
 
     public function duplicate(Order $order): Order
     {
+        $orderToClone = clone $order;
+        if ($order->getParent()) {
+            $parent = $order->getParent();
+            foreach ($orderToClone->getLineItems() as $lineItem) {
+                $lineItem->removeOrder($parent);
+            }
+        }
+
         return $this->duplicatorFactory->create()->duplicate(
-            $order,
+            $orderToClone,
             [
                 [['setNull'], ['propertyName', ['id']]],
                 [['setNull'], ['propertyName', ['createdAt']]],

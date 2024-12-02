@@ -76,7 +76,7 @@ class OrderLineItemMapperTest extends TestCase
 
         $lineItem = $this->getEntity(OrderLineItem::class, ['id' => self::ITEM_ID]);
         $lineItem
-            ->setOrder(new Order())
+            ->addOrder(new Order())
             ->setProduct($productKit);
 
         $taxable = $this->mapper->map($lineItem);
@@ -99,7 +99,7 @@ class OrderLineItemMapperTest extends TestCase
 
         $lineItem = $this->getEntity(OrderLineItem::class, ['id' => self::ITEM_ID]);
         $lineItem
-            ->setOrder(new Order())
+            ->addOrder(new Order())
             ->setProduct($productKit)
             ->setPrice(Price::create(1300, 'USD'))
             ->addKitItemLineItem($kitItem1)
@@ -127,7 +127,7 @@ class OrderLineItemMapperTest extends TestCase
         $lineItem = $this->getEntity(OrderLineItem::class, ['id' => $id]);
         $lineItem
             ->setQuantity($quantity)
-            ->setOrder(new Order())
+            ->addOrder(new Order())
             ->setValue($priceValue)
             ->setCurrency('USD')
             ->setPrice(Price::create($priceValue, 'USD'));

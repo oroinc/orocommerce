@@ -97,6 +97,10 @@ Previously known as GOD Object
 * Added a new backend `ordersubtotals` API resource representing calculated subtotals for a specific order.
 * Added an `orderSubtotals` relation for the backend `orders` API resource.
 * Enabled an `enable_validation` flag for the backend `orders` API resource.
+* Relation between Order and OrderLineItem entities changed to ManyToMany. Reports and segments that use `order`
+  relation of OrderLineItem entity should be manually updated after update. 
+* Relation between Order and OrderShippingTracking entities changed to ManyToMany. Reports and segments that use `order`
+  relation of OrderShippingTracking entity should be manually updated after update.
 
 #### ProductBundle
 * Added a new frontend `inventory-switcher` filter.

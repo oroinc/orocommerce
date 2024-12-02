@@ -21,16 +21,18 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     configurableOrderLineItem1:
         product: '@simpleProduct1'
         parentProduct: '@configurableProduct'
-        order: '@configurableOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@configurableOrder' ]
     configurableOrderLineItem2:
         product: '@simpleProduct2'
         parentProduct: '@configurableProduct'
-        order: '@configurableOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@configurableOrder' ]

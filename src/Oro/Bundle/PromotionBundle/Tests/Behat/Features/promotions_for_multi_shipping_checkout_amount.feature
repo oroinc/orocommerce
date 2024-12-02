@@ -89,7 +89,7 @@ Feature: Promotions for multi shipping checkout amount
       | 1            | $52.00 |
     And number of records should be 1
     When I click view "$52.00" in grid
-    And I click "Promotions and Discounts"
+    And I click "Discounts"
     Then I should see following rows in "Promotions" table
       | Code                  | Promotion                               | Type        | Status | Discount |
       |                       | Shipping Discount                       | Shipping    | Active | -$2.00   |

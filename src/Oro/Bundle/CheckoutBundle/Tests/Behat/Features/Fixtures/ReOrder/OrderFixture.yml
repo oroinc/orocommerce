@@ -116,53 +116,59 @@ Oro\Bundle\CurrencyBundle\Entity\Price:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     orderLineItem1:
-        order: '@order1'
         product: '@product1'
         productSku: 'AAA1'
         quantity: 15
         productUnit: '@piece'
         price: '@price1'
         productUnitCode: piece
+        __calls:
+            -   addOrder: [ '@order1' ]
     orderLineItem2:
-        order: '@order1'
         product: '@product2'
         productSku: 'BBB2'
         quantity: 25
         productUnit: '@item'
         price: '@price2'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order1' ]
     orderLineItem3:
-        order: '@order1'
         product: '@product3'
         productSku: 'CCC3'
         quantity: 1
         productUnit: '@item'
         price: '@price3'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order1' ]
     orderLineItem4:
-        order: '@order1'
         product: '@product4'
         productSku: 'DDD4'
         quantity: 1
         productUnit: '@item'
         price: '@price4'
         productUnitCode: piece
+        __calls:
+            -   addOrder: [ '@order1' ]
     orderLineItem5:
-        order: '@order2'
         product: '@product3'
         productSku: 'CCC3'
         quantity: 1
         productUnit: '@item'
         price: '@price5'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order2' ]
     orderLineItem6:
-        order: '@order2'
         product: '@product4'
         productSku: 'DDD4'
         quantity: 1
         productUnit: '@item'
         price: '@price6'
         productUnitCode: piece
+        __calls:
+            -   addOrder: [ '@order2' ]
 
 Oro\Bundle\PromotionBundle\Entity\AppliedPromotion:
     order_orderAppliedPromotion:

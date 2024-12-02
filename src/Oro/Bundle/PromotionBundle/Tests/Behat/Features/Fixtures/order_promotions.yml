@@ -219,8 +219,9 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     orderLineItem:
         product: '@product1'
-        order: '@order'
         price: '@price'
         quantity: 1
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -  addOrder: [ '@order' ]

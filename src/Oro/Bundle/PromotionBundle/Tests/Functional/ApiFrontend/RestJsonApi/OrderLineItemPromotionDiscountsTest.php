@@ -87,7 +87,7 @@ class OrderLineItemPromotionDiscountsTest extends FrontendRestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'orderlineitems'],
-            ['filter[order]' => '<toString(@order1->id)>']
+            ['filter[orders]' => '<toString(@order1->id)>']
         );
 
         $this->assertResponseContains(

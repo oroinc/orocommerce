@@ -80,14 +80,6 @@
 
     {% set id = 'order-edit' %}
 
-    {% set subtotals %}
-        <div class="subtotal-error"></div>
-        {% include '@OroPricing/Totals/totals.html.twig' with {
-            pageComponent: 'oroorder/js/app/components/totals-component',
-            options: {totals: orderData.totals}
-        } only %}
-    {% endset %}
-
     {% set ownerSelectors %}
 
         <div data-page-component-module="oroorder/js/app/components/related-data-component"
@@ -104,27 +96,30 @@
         </div>
     {% endset %}
 
-    {% set lineItems %}
-        {% set subtotalType = constant('Oro\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
-        <div class="order-line-items"
-             data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ {
-                 view: 'oroorder/js/app/views/line-items-view',
-                 tierPrices: orderData.tierPrices|default({}),
-                 currency: entity.currency,
-                 customer: entity.customer is null ? null : entity.customer.id,
-                 subtotalType: subtotalType
-             }|json_encode }}"
-             data-layout="separate">
-            {{ form_widget(form.lineItems) }}
-            {{ form_errors(form.lineItems) }}
-        </div>
+    {% if form.shippingMethod is defined %}
+        {% set lineItems %}
+            {% set subtotalType = constant('Oro\\Bundle\\PricingBundle\\SubtotalProcessor\\Provider\\LineItemSubtotalProvider::TYPE') %}
+            <div class="order-line-items"
+                 data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ {
+                     view: 'oroorder/js/app/views/line-items-view',
+                     tierPrices: orderData.tierPrices|default({}),
+                     currency: entity.currency,
+                     customer: entity.customer is null ? null : entity.customer.id,
+                     subtotalType: subtotalType
+                 }|json_encode }}"
+                 data-layout="separate">
+                {{ form_widget(form.lineItems) }}
+                {{ form_errors(form.lineItems) }}
+            </div>
 
-        {% set entityDataOptions = {entityData: orderData} %}
-        <div
-                data-page-component-module="oroorder/js/app/components/data-load-component"
-                data-page-component-options="{{ entityDataOptions|json_encode }}"></div>
-    {% endset %}
+            {% set entityDataOptions = {entityData: orderData} %}
+            <div
+                    data-page-component-module="oroorder/js/app/components/data-load-component"
+                    data-page-component-options="{{ entityDataOptions|json_encode }}">
+            </div>
+        {% endset %}
+    {% endif %}
 
     {% set currencyBlock %}
         {% if entity.id %}
@@ -146,16 +141,19 @@
                     currencyBlock
                 ]
             }]
-        },
-        {
+        }
+    ] %}
+
+    {% if lineItems is defined %}
+        {% set dataBlocks = dataBlocks|merge([{
             'title': 'oro.order.sections.order_line_items'|trans,
             'content_attr': {'class': 'order-line-items-content'},
             'subblocks': [{
                 'title': '',
                 'data': [lineItems]
             }]
-        }
-    ] %}
+        }]) %}
+    {% endif %}
 
     {% if isBillingAddressGranted %}
         {% set billingAddress %}
@@ -188,7 +186,7 @@
         }]) %}
     {% endif %}
 
-    {% if isShippingAddressGranted %}
+    {% if isShippingAddressGranted and form.shippingAddress is defined %}
         {% set shippingAddress %}
             {% if form.shippingAddress.customerAddress is defined %}
                 {% set idAddressBlock = '#' ~ form.shippingAddress.customerAddress.vars.id %}
@@ -224,6 +222,7 @@
         }]) %}
     {% endif %}
 
+    {% if form.shippingMethod is defined %}
     {% set shippingInformation %}
         <div class="possible-shipping-methods-info">
             {{ UI.renderControlGroup('oro.order.form.shipping_options.label'|trans,
@@ -255,6 +254,7 @@
             ]
         }]
     }]) %}
+    {% endif %}
 
     {% set additionalData = [
         form_row(form.poNumber),
@@ -264,7 +264,7 @@
 
     {% set dataBlocks = dataBlocks|merge(oro_form_additional_data(form, 'oro.order.sections.additional'|trans, additionalData)) %}
 
-    {% if entity.id %}
+    {% if entity.id and form.discounts is defined and form.discountsSum is defined %}
         {% set discounts %}
             <div class="oro-discount-collection-container">
                 {{ form_widget(form.discounts) }}
@@ -283,13 +283,22 @@
         }) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.order.sections.order_totals'|trans,
-        'priority': 900,
-        'subblocks': [{
-            'data': [subtotals]
-        }]
-    }]) %}
+    {% if entity.getSubOrders().count() == 0 %}
+        {% set subtotals %}
+            <div class="subtotal-error"></div>
+            {% include '@OroPricing/Totals/totals.html.twig' with {
+                pageComponent: 'oroorder/js/app/components/totals-component',
+                options: {totals: orderData.totals}
+            } only %}
+        {% endset %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.order.sections.order_totals'|trans,
+            'priority': 900,
+            'subblocks': [{
+                'data': [subtotals]
+            }]
+        }]) %}
+    {% endif %}
 
     {% set data = {
         'formErrors': form_errors(form),

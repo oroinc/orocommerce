@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -105,12 +106,17 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
      */
     public function getSubtotals(object $entity): ArrayCollection
     {
+        if ($entity instanceof Order && $entity->getId() && !$entity->getSubOrders()->isEmpty()) {
+            $entities = $entity->getSubOrders();
+        } else {
+            $entities = [$entity];
+        }
+
         $subtotals = [];
-        $providers = $this->subtotalProviderRegistry->getSupportedProviders($entity);
-        foreach ($providers as $provider) {
-            $entitySubtotals = $this->getEntitySubtotals($provider, $entity);
-            foreach ($entitySubtotals as $subtotal) {
-                $subtotals[] = $subtotal;
+        foreach ($entities as $entity) {
+            $providers = $this->subtotalProviderRegistry->getSupportedProviders($entity);
+            foreach ($providers as $provider) {
+                $subtotals = $this->summTotals($subtotals, $this->getEntitySubtotals($provider, $entity));
             }
         }
 
@@ -119,6 +125,34 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         });
 
         return new ArrayCollection($subtotals);
+    }
+
+    private function summTotals(array $totals, array $providerTotals): array
+    {
+        /**
+         * @var string $totalKey
+         * @var Subtotal $total
+         */
+        foreach ($providerTotals as $totalKey => $total) {
+            if (is_numeric($totalKey)) {
+                // use label as the part of key to be sure that 2 totals with different label but the same type
+                // are shown separately.
+                $totalKey = md5($total->getType() . $total->getLabel());
+            }
+
+            if (!array_key_exists($totalKey, $totals)) {
+                $totals[$totalKey] = $total;
+
+                continue;
+            }
+
+            /** @var Subtotal $subtotal */
+            $subtotal = $totals[$totalKey];
+            $subtotal->setAmount($this->rounding->round($subtotal->getAmount() + $total->getAmount()));
+            $subtotal->setVisible($subtotal->getAmount() > 0.0);
+        }
+
+        return $totals;
     }
 
     private function getEntitySubtotals(SubtotalProviderInterface $provider, object $entity): array

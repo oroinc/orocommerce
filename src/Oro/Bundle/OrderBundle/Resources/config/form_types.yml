@@ -8,6 +8,15 @@ services:
         tags:
             - { name: form.type, alias: oro_order_type }
 
+    oro_order.form.type.suborder:
+        class: 'Oro\Bundle\OrderBundle\Form\Type\SubOrderType'
+        arguments:
+            - '@oro_order.order.provider.order_address_security'
+            - '@oro_order.handler.order_currency_handler'
+            - '@oro_order.form.type.event_listener.subtotals_subscriber'
+        tags:
+            - { name: form.type, alias: oro_suborder_type }
+
     oro_order.form.type.order_address_select:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType'
         arguments:

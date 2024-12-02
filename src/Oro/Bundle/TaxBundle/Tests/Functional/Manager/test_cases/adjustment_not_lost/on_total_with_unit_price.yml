@@ -74,58 +74,67 @@ databaseBeforeSecondPart:
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
             productSku: order_line_item_1
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-4' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_2:
             productSku: order_line_item_2
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-5' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_3:
             productSku: order_line_item_3
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-6' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_4:
             productSku: order_line_item_4
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'продукт-7' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_5:
             productSku: order_line_item_5
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-8' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_6:
             productSku: order_line_item_6
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: '@product_9'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_7:
             productSku: order_line_item_7
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: '@product_10'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_8:
             productSku: order_line_item_8
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: '@product_11'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_9:
             productSku: order_line_item_9
-            order: '@simple_order'
             quantity: 1
             price: '@usd_price_22.21'
             product: '@product_12'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
 disableTaxCalculation: false
 expectedResult:
     total:

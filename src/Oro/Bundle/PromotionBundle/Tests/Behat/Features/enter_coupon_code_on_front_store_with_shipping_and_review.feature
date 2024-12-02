@@ -61,7 +61,7 @@ Feature: Enter coupon code on Front Store with shipping and review
       | Shipping          |  $3.00 |
       | Shipping Discount | -$2.00 |
       | Total             | $21.00 |
-    When I click "Shipping Information"
+    When I click "Shipping"
     And I click on "Backend Flat Rate2 Shipping Method"
     And I click "Totals"
     Then I see next subtotals for "Backend Order":

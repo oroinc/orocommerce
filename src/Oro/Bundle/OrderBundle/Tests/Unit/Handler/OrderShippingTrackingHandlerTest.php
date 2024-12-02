@@ -50,7 +50,9 @@ class OrderShippingTrackingHandlerTest extends \PHPUnit\Framework\TestCase
         ReflectionUtil::setId($orderShippingTracking, $id);
         $orderShippingTracking->setMethod($method);
         $orderShippingTracking->setNumber($number);
-        $orderShippingTracking->setOrder($order);
+        if ($order) {
+            $orderShippingTracking->addOrder($order);
+        }
 
         return $orderShippingTracking;
     }

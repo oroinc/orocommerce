@@ -13,12 +13,14 @@ use Oro\Bundle\FormBundle\Provider\SaveAndReturnActionFormTemplateDataProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\Form\Type\SubOrderType;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderDuplicator;
 use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -40,8 +42,28 @@ class OrderController extends AbstractController
     #[Route(path: '/view/{id}', name: 'oro_order_view', requirements: ['id' => '\d+'])]
     #[Template]
     #[Acl(id: 'oro_order_view', type: 'entity', class: Order::class, permission: 'VIEW', category: 'orders')]
-    public function viewAction(Order $order): array
+    public function viewAction(Order $order): array|RedirectResponse
     {
+        if ($order->getParent()) {
+            return $this->redirectToRoute('oro_order_suborder_view', ['id' => $order->getId()]);
+        }
+
+        return [
+            'entity' => $order,
+            'totals' => $this->container->get(TotalProvider::class)
+                ->getTotalWithSubtotalsWithBaseCurrencyValues($order),
+        ];
+    }
+
+    #[Route(path: '/view-suborder/{id}', name: 'oro_order_suborder_view', requirements: ['id' => '\d+'])]
+    #[Template]
+    #[Acl(id: 'oro_order_view', type: 'entity', class: Order::class, permission: 'VIEW', category: 'orders')]
+    public function viewSubOrderAction(Order $order): array|RedirectResponse
+    {
+        if (!$order->getParent()) {
+            return $this->redirectToRoute('oro_order_view', ['id' => $order->getId()]);
+        }
+
         return [
             'entity' => $order,
             'totals' => $this->container->get(TotalProvider::class)
@@ -181,7 +203,24 @@ class OrderController extends AbstractController
     #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
     public function updateAction(Order $order, Request $request): array|RedirectResponse
     {
+        if ($order->getParent()) {
+            return $this->redirectToRoute('oro_order_suborder_update', ['id' => $order->getId()]);
+        }
+
         return $this->update($order, $request);
+    }
+
+    #[Route(path: '/update-suborder/{id}', name: 'oro_order_suborder_update', requirements: ['id' => '\d+'])]
+    #[ParamConverter('order', options: ['repository_method' => 'getOrderWithRelations'])]
+    #[Template]
+    #[Acl(id: 'oro_order_update', type: 'entity', class: Order::class, permission: 'EDIT')]
+    public function updateSubOrderAction(Order $order, Request $request): array|RedirectResponse
+    {
+        if (!$order->getParent()) {
+            return $this->redirectToRoute('oro_order_update', ['id' => $order->getId()]);
+        }
+
+        return $this->update($order, $request, null, SubOrderType::class);
     }
 
     #[Route(path: '/reorder/{id}', name: 'oro_order_reorder', requirements: ['id' => '\d+'])]
@@ -215,13 +254,17 @@ class OrderController extends AbstractController
     protected function update(
         Order $order,
         Request $request,
-        callable|FormTemplateDataProviderInterface|null $resultProvider = null
+        callable|FormTemplateDataProviderInterface|null $resultProvider = null,
+        string $formType = OrderType::class
     ): array|RedirectResponse {
         if (\in_array($request->getMethod(), ['POST', 'PUT'], true)) {
             $orderRequestHandler = $this->container->get(OrderRequestHandler::class);
-            $order->setCustomer($orderRequestHandler->getCustomer());
-            $order->setCustomerUser($orderRequestHandler->getCustomerUser());
-
+            if ($orderRequestHandler->getCustomer()) {
+                $order->setCustomer($orderRequestHandler->getCustomer());
+            }
+            if ($orderRequestHandler->getCustomerUser()) {
+                $order->setCustomerUser($orderRequestHandler->getCustomerUser());
+            }
             if (null === $order->getId()) {
                 $user = $this->getUser();
 
@@ -232,7 +275,7 @@ class OrderController extends AbstractController
         }
 
         $form = $this->createForm(
-            OrderType::class,
+            $formType,
             $order,
             ['validation_groups' => $this->getValidationGroups($order)]
         );
@@ -281,6 +324,7 @@ class OrderController extends AbstractController
     public static function getSubscribedServices(): array
     {
         return array_merge(parent::getSubscribedServices(), [
+            AclHelper::class,
             OrderRequestHandler::class,
             TotalProvider::class,
             OrderAddressSecurityProvider::class,

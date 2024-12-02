@@ -20,7 +20,7 @@ services:
         arguments:
             - '@oro_checkout.api.guest_checkout_checker'
             - 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
-            - ['order', 'kitItemLineItems']
+            - ['orders', 'kitItemLineItems']
         tags:
             - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
 

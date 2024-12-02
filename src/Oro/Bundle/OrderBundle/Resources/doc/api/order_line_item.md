@@ -38,11 +38,13 @@ Example:
       "shipBy": "2016-04-30"
     },
     "relationships": {
-      "order": {
-        "data": {
-          "type": "orders",
-          "id": "1"
-        }
+      "orders": {
+        "data": [
+          {
+            "type": "orders",
+            "id": "1"
+          }
+        ]
       },
       "product": {
         "data": {
@@ -111,7 +113,7 @@ Delete a collection of line item records.
 
 ## FIELDS
 
-### order
+### orders
 
 #### create
 
@@ -207,15 +209,15 @@ The calculated price is the result of the following: a product kit product price
 
 ## SUBRESOURCES
 
-### order
+### orders
 
 #### get_subresource
 
-Retrieve the order record a specific line item record is assigned to.
+Retrieve the order records a specific line item record is assigned to.
 
 #### get_relationship
 
-Retrieve the ID of the order record which a specific line item record is assigned to.
+Retrieve the IDs of the order records which a specific line item record is assigned to.
 
 ### parentProduct
 

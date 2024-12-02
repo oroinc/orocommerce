@@ -16,13 +16,16 @@ class OrderDuplicatorTest extends DuplicatorTestCase
 {
     public function testDuplicate(): void
     {
+        $parentOrder = new Order();
+        $parentOrder->setPoNumber('parent_order');
+
         $order = new Order();
         ReflectionUtil::setId($order, 1);
         $order->setCreatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
         $order->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
         $order->setIdentifier('identifier');
         $order->setPoNumber('po number');
-        $order->setParent(new Order());
+        $order->setParent($parentOrder);
         $order->setCustomer(new Customer());
         $lineItem = new OrderLineItem();
         ReflectionUtil::setId($lineItem, 10);

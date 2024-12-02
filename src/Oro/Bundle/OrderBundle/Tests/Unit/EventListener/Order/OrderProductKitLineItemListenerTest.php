@@ -34,8 +34,11 @@ class OrderProductKitLineItemListenerTest extends TestCase
         $form = $this->createMock(FormInterface::class);
         $form
             ->expects(self::once())
-            ->method('get')
-            ->willReturn($form);
+            ->method('has')
+            ->willReturn(false);
+        $form
+            ->expects(self::never())
+            ->method('get');
         $order = new Order();
         $event = new OrderEvent($form, $order);
 
@@ -53,6 +56,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
     {
         $form = $this->createMock(FormInterface::class);
         $lineItemForm = $this->createMock(FormInterface::class);
+        $form
+            ->expects(self::once())
+            ->method('has')
+            ->willReturn(true);
         $form
             ->expects(self::once())
             ->method('get')
@@ -79,6 +86,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
             ->expects(self::once())
             ->method('getData')
             ->willReturn($lineItem);
+        $form
+            ->expects(self::once())
+            ->method('has')
+            ->willReturn(true);
         $form->expects(self::once())
             ->method('get')
             ->with('lineItems')
@@ -109,6 +120,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
             ->expects(self::once())
             ->method('getData')
             ->willReturn($lineItem);
+        $form
+            ->expects(self::once())
+            ->method('has')
+            ->willReturn(true);
         $form->expects(self::once())
             ->method('get')
             ->with('lineItems')
@@ -133,6 +148,10 @@ class OrderProductKitLineItemListenerTest extends TestCase
     {
         $form = $this->createMock(FormInterface::class);
         $lineItemForm = $this->createMock(FormInterface::class);
+        $form
+            ->expects(self::once())
+            ->method('has')
+            ->willReturn(true);
         $form->expects(self::once())
             ->method('get')
             ->with('lineItems')

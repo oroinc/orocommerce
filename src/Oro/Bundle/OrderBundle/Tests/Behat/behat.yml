@@ -112,6 +112,15 @@ oro_behat_extension:
         locator: '//td[contains(text(),"DPD Classic")]/../td/label[contains(text(),"DPD")]'
         type: xpath
 
+    Sub Order Form:
+      selector: '[id^="oro_suborder_type"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Quantity:
+            locator: '//input[@name="oro_suborder_type[lineItems][0][quantity]"]'
+            type: xpath
+
     Order Form:
       selector: '[id^="oro_order_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form

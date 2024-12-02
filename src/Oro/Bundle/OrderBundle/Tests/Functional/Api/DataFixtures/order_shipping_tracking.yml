@@ -90,37 +90,43 @@ Oro\Bundle\OrderBundle\Entity\Order:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order_line_item.1:
-        order: '@order1'
         product: '@product1'
         quantity: 10
         productUnit: '@item'
         value: 20
         currency: USD
+        __calls:
+            -   addOrder: [ '@order1' ]
     order_line_item.2:
-        order: '@order2'
         product: '@product1'
         quantity: 1
         productUnit: '@item'
         value: 20
         currency: USD
+        __calls:
+            -   addOrder: [ '@order2' ]
     order_line_item.3:
-        order: '@order3'
         product: '@product1'
         quantity: 1
         productUnit: '@item'
         value: 20
         currency: USD
+        __calls:
+            -   addOrder: [ '@order3' ]
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     order_shipping_tracking.1:
         method: 'method 1'
         number: 'number 1'
-        order: '@order1'
+        __calls:
+            -   addOrder: [ '@order1' ]
     order_shipping_tracking.2:
         method: 'method 2'
         number: 'number 3'
-        order: '@order2'
+        __calls:
+            -   addOrder: [ '@order2' ]
     order_shipping_tracking.3:
         method: 'method 3'
         number: 'number 3'
-        order: '@order3'
+        __calls:
+            -   addOrder: [ '@order3' ]

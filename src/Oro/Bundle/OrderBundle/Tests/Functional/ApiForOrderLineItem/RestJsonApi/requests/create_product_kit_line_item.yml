@@ -6,10 +6,11 @@ data:
         currency: 'USD'
         checksum: 'product_kit_1_line_item.1.checksum'
     relationships:
-        order:
+        orders:
             data:
-                type: orders
-                id: '<toString(@simple_order3->id)>'
+                -
+                    type: orders
+                    id: '<toString(@simple_order3->id)>'
         productUnit:
             data:
                 type: productunits

@@ -13,7 +13,6 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     # <with extra mandatory kit item>
     order1_line_item3:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item3_price'
         quantity: 1
         productUnit: '@piece'
@@ -22,12 +21,12 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             -   addKitItemLineItem: [ '@order1_line_item3_kit_item1' ]
             -   addKitItemLineItem: [ '@order1_line_item3_kit_item2' ]
             -   addKitItemLineItem: [ '@order1_line_item3_kit_item3' ]
+            -   addOrder: [ '@order1' ]
     # </with extra mandatory kit item>
 
     # <with extra optional kit item>
     order1_line_item4:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item4_price'
         quantity: 1
         productUnit: '@piece'
@@ -36,6 +35,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             -   addKitItemLineItem: [ '@order1_line_item4_kit_item1' ]
             -   addKitItemLineItem: [ '@order1_line_item4_kit_item2' ]
             -   addKitItemLineItem: [ '@order1_line_item4_kit_item3' ]
+            -   addOrder: [ '@order1' ]
     # </with extra optional kit item>
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:

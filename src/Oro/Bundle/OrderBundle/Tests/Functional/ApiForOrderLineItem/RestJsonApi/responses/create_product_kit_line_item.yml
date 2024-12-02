@@ -5,10 +5,11 @@ data:
         value: '21.1800'
         currency: 'USD'
     relationships:
-        order:
+        orders:
             data:
-                type: orders
-                id: '<toString(@simple_order3->id)>'
+                -
+                    type: orders
+                    id: '<toString(@simple_order3->id)>'
         productUnit:
             data:
                 type: productunits

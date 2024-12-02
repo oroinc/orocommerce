@@ -4,26 +4,29 @@ dependencies:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     product_kit_2_line_item.1:
-        order: '@simple_order'
         product: '@product-kit-2'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 20.59
         currency: USD
+        __calls:
+            -   addOrder: [ '@simple_order' ]
     product_kit_3_line_item.1:
-        order: '@simple_order'
         product: '@product-kit-3'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 60.36
         currency: USD
+        __calls:
+            -   addOrder: [ '@simple_order' ]
     product_kit_2_line_item.2:
-        order: '@simple_order'
         product: '@product-kit-2'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 20.59
         currency: USD
+        __calls:
+            -   addOrder: [ '@simple_order' ]
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
     order_product_kit_2_line_item.1_kit_item_line_item.1:

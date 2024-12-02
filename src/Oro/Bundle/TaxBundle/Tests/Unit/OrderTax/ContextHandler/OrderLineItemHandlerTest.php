@@ -122,7 +122,7 @@ class OrderLineItemHandlerTest extends \PHPUnit\Framework\TestCase
             $this->order->getCustomer()->setGroup(new CustomerGroup());
         }
 
-        $orderLineItem->setOrder($this->order);
+        $orderLineItem->addOrder($this->order);
 
         if ($hasProduct) {
             $orderLineItem->setProduct(new Product());

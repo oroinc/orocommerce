@@ -11,7 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class OrderPaymentCaptureTest extends WebTestCase
 {
-    private const PAYMENT_HISTORY_SECTION_NAME = 'Payment History';
+    private const PAYMENT_HISTORY_SECTION_NAME = 'Payments';
 
     #[\Override]
     protected function setUp(): void

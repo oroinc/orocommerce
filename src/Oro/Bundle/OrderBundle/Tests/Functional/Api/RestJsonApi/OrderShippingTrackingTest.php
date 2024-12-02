@@ -82,11 +82,11 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
                     'number' => 'number 3'
                 ],
                 'relationships' => [
-                    'order' => [
-                        'data' => [
+                    'orders' => [
+                        'data' => [[
                             'type' => 'orders',
                             'id'   => (string)$orderId
-                        ]
+                        ]]
                     ]
                 ]
             ]
@@ -120,7 +120,7 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
                         'number' => 'number 3'
                     ],
                     'relationships' => [
-                        'order' => ['data' => ['type' => 'orders', 'id' => '<toString(@order3->id)>']]
+                        'orders' => ['data' => [['type' => 'orders', 'id' => '<toString(@order3->id)>']]]
                     ]
                 ]
             ],
@@ -132,7 +132,7 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
             [
                 'title' => 'access granted constraint',
                 'detail' => 'The "VIEW" permission is denied for the related resource.',
-                'source' => ['pointer' => '/data/relationships/order/data']
+                'source' => ['pointer' => '/data/relationships/orders/data/0']
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -270,11 +270,11 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
         $orderId = $shippingTracking->getOrder()->getId();
 
         $response = $this->getRelationship(
-            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId, 'association' => 'order']
+            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId, 'association' => 'orders']
         );
 
         $this->assertResponseContains(
-            ['data' => ['type' => 'orders', 'id' => (string)$orderId]],
+            ['data' => [['type' => 'orders', 'id' => (string)$orderId]]],
             $response
         );
     }
@@ -285,12 +285,12 @@ class OrderShippingTrackingTest extends RestJsonApiTestCase
         $targetOrderId = $this->getReference('order2')->getId();
 
         $this->patchRelationship(
-            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId, 'association' => 'order'],
+            ['entity' => 'ordershippingtrackings', 'id' => (string)$shippingTrackingId, 'association' => 'orders'],
             [
-                'data' => [
+                'data' => [[
                     'type' => 'orders',
                     'id'   => (string)$targetOrderId
-                ]
+                ]]
             ]
         );
 

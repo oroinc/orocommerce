@@ -668,7 +668,7 @@ datagrids:
                         - { join: order_item.product, alias: product }
                 where:
                     and:
-                        - order_item.order = :order_id
+                        - :order_id MEMBER OF order_item.orders
                 orderBy:
                     - column: order_item.id
                       dir: ASC
@@ -733,7 +733,7 @@ datagrids:
                     - { table: 'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking', alias: shipping_tracking }
                 where:
                     and:
-                        - shipping_tracking.order = :order_id
+                        - :order_id MEMBER OF shipping_tracking.orders
             bind_parameters:
                 - order_id
         columns:

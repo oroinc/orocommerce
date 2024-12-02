@@ -482,6 +482,7 @@ services:
              - '@oro_promotion.applied_promotion_manager'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_order_type, method: onBeforeFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_suborder_type, method: onBeforeFlush }
 
     oro_promotion.promotion_executor.link:
         tags:
@@ -538,6 +539,11 @@ services:
         class: Oro\Bundle\PromotionBundle\Form\Extension\OrderTypeExtension
         tags:
             - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\OrderType' }
+
+    oro_promotion.form.extension.suborder:
+        class: Oro\Bundle\PromotionBundle\Form\Extension\SubOrderTypeExtension
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\OrderBundle\Form\Type\SubOrderType' }
 
     oro_promotion.event_listener.order_line_item_applied_discounts_listener:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderLineItemAppliedDiscountsListener

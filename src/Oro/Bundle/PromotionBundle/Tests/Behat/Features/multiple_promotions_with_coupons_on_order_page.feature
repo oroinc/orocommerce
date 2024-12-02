@@ -10,7 +10,7 @@ Feature: Multiple promotions with coupons on Order page
     Given I login as administrator
     And go to Sales / Orders
     And click edit SimpleOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     When I click "Add Coupon Code"
 
     # Add all 4 promotions by coupons
@@ -55,7 +55,7 @@ Feature: Multiple promotions with coupons on Order page
       Then there is no records in grid
       When go to Sales / Orders
       And click edit SimpleOrder in grid
-      And click "Promotions and Discounts"
+      And click "Discounts"
       And I click "Remove" on row "Promotion 5" in "Promotions"
       Then I should see next rows in "Promotions" table
         | Code   | Promotion     | Type        | Status | Discount |

@@ -83,7 +83,7 @@ Feature: Product tax start calculation
     When I filter "Total ($)" as equals "$337.90"
     Then number of records should be 1
     When I click "View" on first row in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     Then I see next subtotals for "Backend Order":
       | Subtotal | $281.42 |
       | Tax      | $53.48  |
@@ -101,7 +101,7 @@ Feature: Product tax start calculation
     When I filter "Total ($)" as equals "$337.89"
     Then number of records should be 1
     When I click "View" on first row in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     Then I see next subtotals for "Backend Order":
       | Subtotal | $281.42 |
       | Tax      | $53.47  |

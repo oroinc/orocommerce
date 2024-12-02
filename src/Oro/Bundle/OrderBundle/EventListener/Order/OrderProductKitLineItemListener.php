@@ -31,7 +31,9 @@ class OrderProductKitLineItemListener
     public function onOrderEvent(OrderEvent $event): void
     {
         $kitItemLineItems = $checksum = $disabledKitPrices = [];
-        $lineItemsForm = $event->getForm()->get('lineItems')->all();
+        $lineItemsForm = $event->getForm()->has('lineItems')
+            ? $event->getForm()->get('lineItems')->all()
+            : [];
         foreach ($lineItemsForm as $lineItemForm) {
             /** @var OrderLineItem|null $orderLineItem */
             $orderLineItem = $lineItemForm->getData();

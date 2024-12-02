@@ -6,10 +6,13 @@ features:
         routes:
             - oro_order_index
             - oro_order_view
+            - oro_suborder_view
             - oro_order_info
             - oro_order_create
             - oro_order_update
+            - oro_suborder_update
             - oro_order_entry_point
+            - oro_suborder_entry_point
         entities:
             - Oro\Bundle\OrderBundle\Entity\Order
             - Extend\Entity\EV_Order_Internal_Status

@@ -582,7 +582,6 @@ Oro\Bundle\OrderBundle\Entity\Order:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order1_line_item1:
-        order: '@order1'
         productSku: 'SKU1'
         productName: 'Product 1'
         freeFormProduct: 'product_1'
@@ -592,78 +591,89 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         currency: 'USD'
         shipBy: '<(new DateTime("2018-05-20 00:00:00 UTC"))>'
         comment: 'Test comment for line item 1'
+        __calls:
+            -   addOrder: [ '@order1' ]
     order1_line_item2:
-        order: '@order1'
         productSku: 'SKU2'
         productName: 'Product 2'
         quantity: 12
         productUnit: '@item'
         value: 30.5
         currency: 'USD'
+        __calls:
+            -   addOrder: [ '@order1' ]
     order2_line_item1:
-        order: '@order2'
         productSku: 'SKU2'
         productName: 'Product 2'
         quantity: 3
         productUnit: '@item'
         value: 10.4
         currency: 'EUR'
+        __calls:
+            -   addOrder: [ '@order2' ]
     order3_line_item1:
-        order: '@order3'
         productSku: 'SKU2'
         productName: 'Product 2'
         quantity: 12
         productUnit: '@item'
         value: 30.5
         currency: 'USD'
+        __calls:
+            -   addOrder: [ '@order3' ]
     another_order_line_item1:
-        order: '@another_order'
         productSku: 'SKU2'
         productName: 'Product 2'
         quantity: 1
         productUnit: '@item'
         value: 1.1
         currency: 'USD'
+        __calls:
+            -   addOrder: [ '@another_order' ]
     product_kit_2_line_item.1:
-        order: '@order4'
         product: '@product-kit-2'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 20.59
         currency: USD
         checksum: 'product_kit_2_line_item.1.checksum'
+        __calls:
+            -   addOrder: [ '@order4' ]
     product_kit_3_line_item.1:
-        order: '@order4'
         product: '@product-kit-3'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 60.36
         currency: USD
         checksum: 'product_kit_3_line_item.1.checksum'
+        __calls:
+            -   addOrder: [ '@order4' ]
     product_kit_2_line_item.2:
-        order: '@order4'
         product: '@product-kit-2'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 20.59
         currency: USD
         checksum: 'product_kit_2_line_item.2.checksum'
+        __calls:
+            -   addOrder: [ '@order4' ]
     order5_product_kit_2_line_item.1:
-        order: '@order5'
         product: '@product-kit-2'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 20.59
         currency: USD
         checksum: 'o5_product_kit_2_line_item.1.checksum'
+        __calls:
+            -   addOrder: [ '@order5' ]
     another_order2_product_kit_2_line_item.1:
-        order: '@another_order2'
         product: '@product-kit-2'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 20.59
         currency: USD
         checksum: 'ao2_product_kit_2_line_item.1.checksum'
+        __calls:
+            -   addOrder: [ '@another_order2' ]
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
     order_product_kit_2_line_item.1_kit_item_line_item.1:
@@ -767,29 +777,35 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     order1_shipping_tracking1:
-        order: '@order1'
         method: 'method 1'
         number: 'number 1'
+        __calls:
+            -   addOrder: [ '@order1' ]
     order2_shipping_tracking1:
-        order: '@order2'
         method: 'method 2'
         number: 'number 2'
+        __calls:
+            -   addOrder: [ '@order2' ]
     order3_shipping_tracking1:
-        order: '@order3'
         method: 'method 1'
         number: 'number 1'
+        __calls:
+            -   addOrder: [ '@order3' ]
     order4_shipping_tracking1:
-        order: '@order4'
         method: 'method 1'
         number: 'number 1'
+        __calls:
+            -   addOrder: [ '@order4' ]
     order5_shipping_tracking1:
-        order: '@order5'
         method: 'method 1'
         number: 'number 1'
+        __calls:
+            -   addOrder: [ '@order5' ]
     another_order_shipping_tracking1:
-        order: '@another_order'
         method: 'method 1'
         number: 'number 1'
+        __calls:
+            -   addOrder: [ '@another_order' ]
 
 Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
     customer_address_billing:
