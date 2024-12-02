@@ -130,14 +130,11 @@
 
     &__payment-methods-list {
         @include list-normalize();
-        @include clearfix();
 
+        display: flex;
+        flex-wrap: wrap;
+        gap: $checkout-form-payment-methods-list-form-gap;
         margin: $checkout-form-payment-methods-list-form-margin;
-    }
-
-    &__payment-methods-item {
-        float: $checkout-form-payment-methods-item-float;
-        margin: $checkout-form-payment-methods-item-margin;
     }
 
     &__payment-methods-form {

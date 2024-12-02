@@ -24,17 +24,26 @@
              }|json_encode }}">
 
             <div class="grid-col-6 grid-col-tablet-12">
+                {% set customerAddressSelect2 = {
+                    dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+                    dropdownAutoWidth: false
+                } %}
+                {% if
+                    form.shipping_address.customerAddress.vars.value|default('') is empty or
+                    form.shipping_address.customerAddress.vars.value|default('') == '0'
+                %}
+                    {% set customerAddressSelect2 = customerAddressSelect2|merge({
+                        selectElementClass: 'hidden', containerCssClass: 'hidden'
+                    }) %}
+                {% endif %}
                 {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
                 {{ form_row(form.shipping_address.customerAddress, {
                     parentClass: 'checkout-form__customer-address',
                     attr: {
                         'data-new-address-label': renderedAddress,
-                        'data-address-type': 'shipping',
+                        'data-address-type': 'shipping'
                     },
-                    'configs': form.shipping_address.customerAddress.vars.configs|default({})|merge({
-                        dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
-                        dropdownAutoWidth: false
-                    })
+                    'configs': form.shipping_address.customerAddress.vars.configs|default({})|merge(customerAddressSelect2)
                 }) }}
             </div>
 
