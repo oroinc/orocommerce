@@ -24,11 +24,9 @@ $checkout-form-payment-methods-max-width: 400px !default;
 
 $checkout-form-payment-methods-authorized-card-margin: 0 0 spacing('sm') !default;
 
-$checkout-form-payment-methods-item-float: left !default;
-$checkout-form-payment-methods-item-margin: 0 spacing('sm') 0 0 !default;
-
 $checkout-form-payment-methods-form-margin: spacing('base') 0 0 !default;
 $checkout-form-payment-methods-list-form-margin: 0 0 spacing('base') !default;
+$checkout-form-payment-methods-list-form-gap: spacing('sm') !default;
 
 $checkout-form-asterix-offset: 0 spacing('xs') !default;
 $checkout-form-asterix-color: get-color('secondary', 'c3') !default;

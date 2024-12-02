@@ -32,6 +32,7 @@
             viewport: 'mobile-big',
             component: 'oroui/js/app/components/view-component',
             view: 'orofrontend/default/js/app/views/overlay-popup-view',
+            view: 'orocheckout/js/app/views/checkout-overlay-popup-view',
             popupLabel: 'oro.checkout.progress.label'|trans,
             disableBackDrop: true,
             contentElement: '[data-role="checkout-sidebar"]',
@@ -168,13 +169,14 @@
 
 {% block __oro_checkout_content__checkout_form_required_label_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__require-label",
+        '~class': " checkout__require-label hide-on-mobile-big",
         'data-role': 'require-label',
         'data-dom-relocation-options': {
             responsive: [
                 {
                     viewport: 'mobile-big',
-                    moveTo: '.multistep-checkout__title'
+                    moveTo: '.multistep-checkout__title',
+                    startPointClass: 'hide-on-mobile-big'
                 }
             ]
         }

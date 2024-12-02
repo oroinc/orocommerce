@@ -22,8 +22,19 @@
                      fieldsContainer: '#checkout-address-fields-container'
                  }
              }|json_encode }}">
-
             <div class="grid-col-6 grid-col-tablet-12">
+                {% set customerAddressSelect2 = {
+                    dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+                    dropdownAutoWidth: false
+                } %}
+                {% if
+                    form.billing_address.customerAddress.vars.value|default('') is empty or
+                    form.billing_address.customerAddress.vars.value|default('') == '0'
+                %}
+                    {% set customerAddressSelect2 = customerAddressSelect2|merge({
+                        selectElementClass: 'hidden', containerCssClass: 'hidden'
+                    }) %}
+                {% endif %}
                 {% set renderedAddress = checkout.billingAddress ? checkout.billingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
                 {% set containerCssClass = '' %}
                 {% if form.billing_address.customerAddress.vars.choices|length == 1 and form.billing_address.customerAddress.vars.data == null %}
@@ -35,12 +46,9 @@
                     attr: {
                         'class': containerCssClass,
                         'data-new-address-label': renderedAddress,
-                        'data-address-type': 'billing',
+                        'data-address-type': 'billing'
                     },
-                    'configs': form.billing_address.customerAddress.vars.configs|default({})|merge({
-                        dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
-                        dropdownAutoWidth: false
-                    })
+                    'configs': form.billing_address.customerAddress.vars.configs|default({})|merge(customerAddressSelect2)
                 }) }}
             </div>
 

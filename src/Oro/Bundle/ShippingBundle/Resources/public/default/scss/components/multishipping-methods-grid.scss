@@ -26,7 +26,7 @@
     .collapse & {
         .toolbar {
             &.sticky:not(.in-sticky) {
-                z-index: initial;
+                z-index: z();
             }
 
             &:not(.in-sticky):has(.open-filter) {
