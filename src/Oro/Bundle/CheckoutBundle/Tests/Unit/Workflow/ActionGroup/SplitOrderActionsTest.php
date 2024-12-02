@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\ActionGroup;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Action\MultiShipping\SubOrderMultiShippingMethodSetter;
@@ -11,8 +11,8 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProvide
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProviderInterface;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutSubOrderShippingPriceProvider;
 use Oro\Bundle\CheckoutBundle\Splitter\MultiShipping\CheckoutSplitter;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActions;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActions;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActions;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActions;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;

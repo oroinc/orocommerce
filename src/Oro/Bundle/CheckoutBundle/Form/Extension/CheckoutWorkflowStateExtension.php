@@ -57,7 +57,7 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
         }
 
         $transition = $form->getConfig()->getOption('transition_name');
-        if (!in_array($transition, array_keys(self::TRANSITION_ATTRIBUTES), true)) {
+        if (!in_array($transition, \array_keys(self::TRANSITION_ATTRIBUTES), true)) {
             return;
         }
 
@@ -68,7 +68,7 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
 
         $attributes = self::TRANSITION_ATTRIBUTES[$transition];
         foreach ($form->all() as $child) {
-            if (in_array($child->getName(), $attributes, true)) {
+            if (\in_array($child->getName(), $attributes, true)) {
                 FormUtils::replaceFieldOptionsRecursive($form, $child->getName(), ['mapped' => false]);
             }
         }

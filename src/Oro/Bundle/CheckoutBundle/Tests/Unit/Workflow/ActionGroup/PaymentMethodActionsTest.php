@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\ActionGroup;
+namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\PaymentMethodActions;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\PaymentMethodActions;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;

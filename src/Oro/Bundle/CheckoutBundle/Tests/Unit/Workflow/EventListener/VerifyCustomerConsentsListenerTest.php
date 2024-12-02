@@ -12,7 +12,7 @@ use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Oro\Bundle\WorkflowBundle\Event\WorkflowItemAwareEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\StepEnteredEvent;
 use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\StepManager;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
@@ -421,10 +421,7 @@ class VerifyCustomerConsentsListenerTest extends TestCase
             ->method('getData')
             ->willReturn($data);
 
-        $event = $this->createMock(WorkflowItemAwareEvent::class);
-        $event->expects($this->once())
-            ->method('getWorkflowItem')
-            ->willReturn($workflowItem);
+        $event = new StepEnteredEvent($workflowItem, $this->createMock(Transition::class));
 
         $this->listener->onStepEntered($event);
         $this->assertNull($data->offsetGet('consents_available'));
@@ -452,10 +449,7 @@ class VerifyCustomerConsentsListenerTest extends TestCase
             ->method('getDefinition')
             ->willReturn($definition);
 
-        $event = $this->createMock(WorkflowItemAwareEvent::class);
-        $event->expects($this->once())
-            ->method('getWorkflowItem')
-            ->willReturn($workflowItem);
+        $event = new StepEnteredEvent($workflowItem, $this->createMock(Transition::class));
 
         $this->listener->onStepEntered($event);
         $this->assertNull($data->offsetGet('consents_available'));
@@ -483,10 +477,7 @@ class VerifyCustomerConsentsListenerTest extends TestCase
             ->method('getDefinition')
             ->willReturn($definition);
 
-        $event = $this->createMock(WorkflowItemAwareEvent::class);
-        $event->expects($this->once())
-            ->method('getWorkflowItem')
-            ->willReturn($workflowItem);
+        $event = new StepEnteredEvent($workflowItem, $this->createMock(Transition::class));
 
         $this->listener->onStepEntered($event);
         $this->assertTrue($data->offsetGet('consents_available'));

@@ -6,7 +6,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
-use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionCompletedEvent;
 
 /**
  * Initializes grouped_line_items when entering multistep checkout workflow with start transition.
@@ -19,7 +19,7 @@ class InitializeGroupedLineItems
     ) {
     }
 
-    public function onComplete(TransitionEvent $event): void
+    public function onComplete(TransitionCompletedEvent $event): void
     {
         if (!$event->getTransition()->isStart()) {
             return;

@@ -11,6 +11,7 @@ use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Component\Action\Event\ExtendableActionEvent;
+use Oro\Component\Action\Model\AbstractStorage;
 
 /**
  * Decrement the inventory levels of the products after a checkout is finished.
@@ -36,13 +37,12 @@ class CreateOrderEventListener
 
     public function onCreateOrder(ExtendableActionEvent $event): void
     {
-        $context = $event->getContext();
-        if (!$context->has('checkout') || !$context->get('checkout') instanceof CheckoutInterface) {
+        $data = $event->getData();
+        if (!$data || !$this->isSupportedData($data)) {
             return;
         }
 
-        $checkout = $context->get('checkout');
-        $orderLineItems = $this->checkoutLineItemsManager->getData($checkout);
+        $orderLineItems = $this->checkoutLineItemsManager->getData($data->offsetGet('checkout'));
         foreach ($orderLineItems as $lineItem) {
             if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
                 continue;
@@ -62,5 +62,10 @@ class CreateOrderEventListener
     {
         return $this->doctrine->getRepository(InventoryLevel::class)
             ->getLevelByProductAndProductUnit($product, $productUnit);
+    }
+
+    private function isSupportedData(AbstractStorage $data): bool
+    {
+        return $data->offsetGet('checkout') instanceof CheckoutInterface;
     }
 }

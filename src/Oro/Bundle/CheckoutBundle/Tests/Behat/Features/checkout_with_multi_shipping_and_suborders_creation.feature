@@ -55,13 +55,11 @@ Feature: Checkout With Multi Shipping And Suborders Creation
     Then Page title equals to "Shipping Information - Checkout"
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
-    And I click "Lighting Products"
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Item                     | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   | Flat Rate $3.00                        |
     And records in "First Checkout Shipping Grid" should be 1
-    And I click "Phones"
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |

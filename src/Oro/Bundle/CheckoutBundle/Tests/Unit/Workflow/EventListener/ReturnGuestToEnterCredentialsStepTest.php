@@ -8,7 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionCompletedEvent;
 use Oro\Bundle\WorkflowBundle\Model\Step;
 use Oro\Bundle\WorkflowBundle\Model\StepManager;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
@@ -44,7 +44,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
         $this->workflowManager->expects($this->never())
             ->method('transit');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -61,7 +61,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
         $this->workflowManager->expects($this->never())
             ->method('transit');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -78,7 +78,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
         $this->workflowManager->expects($this->never())
             ->method('transit');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -102,7 +102,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
         $this->workflowManager->expects($this->never())
             ->method('transit');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -133,7 +133,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
         $this->workflowManager->expects($this->never())
             ->method('transit');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -166,7 +166,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
         $this->workflowManager->expects($this->never())
             ->method('transit');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -200,7 +200,7 @@ class ReturnGuestToEnterCredentialsStepTest extends TestCase
             ->method('transit')
             ->with($workflowItem, $backTransition);
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }

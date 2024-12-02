@@ -51,7 +51,6 @@ Feature: Checkout With Multi Shipping And Missing Shipping Method
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
     And I should not see an "Lighting Products Checkout Category Name" element
-    And I click "Order products"
     And I should see following "Multi Shipping Checkout Line Items Grid" grid:
       | SKU  | Item                     | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   |                                        |

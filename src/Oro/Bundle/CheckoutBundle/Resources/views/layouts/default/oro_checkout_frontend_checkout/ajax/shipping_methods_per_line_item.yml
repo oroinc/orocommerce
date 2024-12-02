@@ -30,4 +30,9 @@ layout:
         - '@remove':
               id: shipping_methods
 
+        - '@setOption':
+            id: checkout_order_summary_line_items_collapse_container
+            optionName: vars.open
+            optionValue: true
+
     conditions: 'context["workflowStepName"]=="enter_shipping_method" && context["multi_shipping_type"]=="per_line_item" && context["workflowName"]=="b2b_flow_checkout"'

@@ -48,9 +48,9 @@ class ValidateCheckoutOnStartEventListener
 
     public function onStart(ExtendableConditionEvent $event): void
     {
-        $context = $event->getContext();
-        $checkout = $context?->offsetGet('checkout');
-        if (!$context?->offsetGet('checkout') instanceof Checkout) {
+        $data = $event->getData();
+        $checkout = $data?->offsetGet('checkout');
+        if (!$data?->offsetGet('checkout') instanceof Checkout) {
             return;
         }
 
@@ -62,7 +62,7 @@ class ValidateCheckoutOnStartEventListener
 
     public function onStartFromShoppingList(ExtendableConditionEvent $event): void
     {
-        $shoppingList = $event->getContext()?->offsetGet('shoppingList');
+        $shoppingList = $event->getData()?->offsetGet('shoppingList');
         if (!$shoppingList instanceof ShoppingList) {
             return;
         }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup;
+namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
@@ -11,7 +11,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemGroupsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
 
 /**
  * Checkout workflow shipping method-related actions.

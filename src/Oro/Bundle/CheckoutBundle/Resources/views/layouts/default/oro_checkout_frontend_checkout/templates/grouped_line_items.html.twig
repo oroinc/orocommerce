@@ -4,7 +4,7 @@
             'acceptableGroupId': key,
             'acceptableIds': lineItems,
             'grid_full_name': 'frontend-checkout-line-items-grid'~':'~loop.index,
-            'title': groupedLineItemsTitles[key],
+            'title': groupedLineItemsTitles[key]|default('oro.checkout.rest_of_items'),
             'itemsCount': groupedLineItems[key]|length
         }) %}
         {% for child in block %}

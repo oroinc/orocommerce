@@ -36,7 +36,11 @@
                         'class': containerCssClass,
                         'data-new-address-label': renderedAddress,
                         'data-address-type': 'shipping',
-                    }
+                    },
+                    'configs': form.shipping_address.customerAddress.vars.configs|default({})|merge({
+                        dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+                        dropdownAutoWidth: false
+                    })
                 }) }}
             </div>
 
@@ -61,9 +65,10 @@
                     <div class="grid-col">
                         {{ UI.clientBtn({
                             'id': form.shipping_address.customerAddress.vars.id ~ '-btn',
-                            'btnCss': 'btn btn--flat',
+                            'btnCss': 'btn btn--flat btn--size-small checkout-form__add-address',
                             'label' : 'Add Address'|trans,
                             'icon': 'plus',
+                            'iconExtraClass': 'theme-icon--small',
                             'pageComponent': {
                                 'view': 'orocheckout/js/app/views/add-address-button-view',
                                 'options': {

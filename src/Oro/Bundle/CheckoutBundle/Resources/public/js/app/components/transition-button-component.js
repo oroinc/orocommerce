@@ -20,6 +20,7 @@ define(function(require) {
                 checkoutContent: '[data-role="checkout-content"]',
                 checkoutSummary: '[data-role="checkout-summary"]',
                 checkoutTotals: '[data-role="checkout-totals"]',
+                checkoutTitleRequiredLabel: '[data-role="checkout-title"] [data-role="require-label"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
                 transitionTrigger: '[data-role="transition-trigger"]',
                 stateToken: '[name$="[state_token]"]'
@@ -250,8 +251,11 @@ define(function(require) {
                 const contentSelector = this.options.selectors.checkoutContent;
                 const summarySelector = this.options.selectors.checkoutSummary;
                 const totalsSelector = this.options.selectors.checkoutTotals;
+                const checkoutTitleRequiredLabelSelector = this.options.selectors.checkoutTitleRequiredLabel;
 
                 mediator.trigger('checkout-content:before-update');
+
+                $(checkoutTitleRequiredLabelSelector).remove();
 
                 const $sidebar = $(sidebarSelector);
                 $sidebar.html($response.find(sidebarSelector).html());

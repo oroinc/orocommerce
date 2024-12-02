@@ -8,7 +8,7 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsPro
 use Oro\Bundle\CheckoutBundle\Workflow\EventListener\InitializeGroupedLineItems;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionCompletedEvent;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -49,7 +49,7 @@ class InitializeGroupedLineItemsTest extends TestCase
         $this->checkoutLineItemsProvider->expects($this->never())
             ->method('getGroupedLineItemsIds');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
         $this->listener->onComplete($event);
     }
 
@@ -72,7 +72,7 @@ class InitializeGroupedLineItemsTest extends TestCase
         $this->checkoutLineItemsProvider->expects($this->never())
             ->method('getGroupedLineItemsIds');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -99,7 +99,7 @@ class InitializeGroupedLineItemsTest extends TestCase
         $this->checkoutLineItemsProvider->expects($this->never())
             ->method('getGroupedLineItemsIds');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -132,7 +132,7 @@ class InitializeGroupedLineItemsTest extends TestCase
         $this->checkoutLineItemsProvider->expects($this->never())
             ->method('getGroupedLineItemsIds');
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
     }
@@ -172,7 +172,7 @@ class InitializeGroupedLineItemsTest extends TestCase
             ->method('getGroupedLineItemsIds')
             ->willReturn($groupedIds);
 
-        $event = new TransitionEvent($workflowItem, $transition);
+        $event = new TransitionCompletedEvent($workflowItem, $transition);
 
         $this->listener->onComplete($event);
 

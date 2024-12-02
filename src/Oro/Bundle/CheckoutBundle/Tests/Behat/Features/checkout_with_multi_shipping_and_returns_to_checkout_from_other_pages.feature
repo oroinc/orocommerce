@@ -44,13 +44,11 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
-    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Item                     | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   | Flat Rate $3.00                        |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
-    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
       | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   | Flat Rate 2 $0.00                      |
@@ -122,13 +120,11 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
-    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Item                     | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
       | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00 | $12.00   | Flat Rate 2 $0.00                      |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
-    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Item      | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
       | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   | Flat Rate 2 $0.00                      |

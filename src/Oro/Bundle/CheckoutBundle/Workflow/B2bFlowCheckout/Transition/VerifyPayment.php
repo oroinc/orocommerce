@@ -4,12 +4,13 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\ContinueTransition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
 /**
  * B2bCheckout workflow transition verify_payment logic implementation.
  */
-class VerifyPayment extends BaseContinueTransition
+class VerifyPayment extends ContinueTransition
 {
     #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool

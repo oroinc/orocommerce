@@ -17,7 +17,7 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
-class CheckoutWorkflowStateExtensionTest extends TestCase
+final class CheckoutWorkflowStateExtensionTest extends TestCase
 {
     private CheckoutErrorHandler&MockObject $checkoutErrorHandler;
     private CurrentThemeProvider&MockObject $currentThemeProvider;
