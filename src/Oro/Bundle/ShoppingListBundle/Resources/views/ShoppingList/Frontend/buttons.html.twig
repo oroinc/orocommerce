@@ -60,7 +60,7 @@
     }) %}
 
     {% set buttonOptions = {
-        'type': options.type|default('submit'),
+        'type': options.type|default('button'),
         'dataAttributes': dataAttributes,
         'btnCss': 'btn btn--block btn-main add-to-shopping-list-button ' ~ options.btnCss,
         'moreButtonExtraClass': 'btn--action',
