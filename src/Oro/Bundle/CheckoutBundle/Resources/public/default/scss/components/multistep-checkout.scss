@@ -6,9 +6,6 @@
     grid-template-columns: $multistep-checkout-grid-template-columns;
     grid-template-rows: $multistep-checkout-grid-template-rows;
 
-    position: relative;
-    z-index: 0;
-
     &__title {
         grid-area: $multistep-checkout-title-grid-area;
         padding-block: $multistep-checkout-title-padding-block;
