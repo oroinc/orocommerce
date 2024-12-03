@@ -32,7 +32,6 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
     private MockObject $configManager;
     private MockObject $featureChecker;
-
     private EventDispatcher $eventDispatcher;
 
     protected function setUp(): void
@@ -51,7 +50,6 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
             $this->getContainer()->get('oro_seo.modifier.scope_query_builder_modifier')
         );
 
-        /** @var EventDispatcher eventDispatcher */
         $this->eventDispatcher = new EventDispatcher();
         $this->eventDispatcher->addListener(self::EVENT_NAME, [$listener, 'restrictQueryBuilder']);
     }

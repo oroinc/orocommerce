@@ -2,18 +2,14 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\EventListener;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Symfony\Component\EventDispatcher\EventDispatcher;
 
 class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 {
-    /**
-     * @var EntityManager
-     */
-    private $entityManager;
+    private EntityManagerInterface $entityManager;
 
     protected function setUp(): void
     {
@@ -24,14 +20,9 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
     public function testTriggersEventWhenWebsiteIsAdded()
     {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
         $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent|null $triggeredEvent */
         $triggeredEvent = null;
 
         $eventDispatcher->addListener(
@@ -49,14 +40,9 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
     public function testTriggersEventWhenWebsiteIsDeleted()
     {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
         $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent|null $triggeredEvent */
         $triggeredEvent = null;
 
         $website = $this->createWebsite();
@@ -80,14 +66,9 @@ class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 
     public function testDoesNotTriggersEventWhenWebsiteIsUpdated()
     {
-        /**
-         * @var EventDispatcher $eventDispatcher
-         */
         $eventDispatcher = $this->client->getContainer()->get('event_dispatcher');
 
-        /**
-         * @var ReindexationRequestEvent $triggeredEvent
-         */
+        /** @var ReindexationRequestEvent|null $triggeredEvent */
         $triggeredEvent = null;
 
         $website = $this->createWebsite();
