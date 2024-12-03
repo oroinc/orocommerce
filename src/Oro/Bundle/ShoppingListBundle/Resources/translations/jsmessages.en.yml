@@ -107,8 +107,10 @@ oro:
                 updated.label: 'Product has been updated in "<a href="{{ shoppinglistPath }}">{{ shoppinglistLabel }}</a>"'
                 dialog:
                     add.title: 'Add note to "{{ productName }}" product'
+                    add.sku_title: 'Add note to "{{ productSku }} - {{ productName }}"'
                     add_note.title: 'Add note to "{{ productName }}" product'
                     edit.title: 'Edit note for "{{ productName }}" product'
+                    edit.sku_title: 'Edit note for "{{ productSku }} - {{ productName }}"'
                     cancel.label: Cancel
                     add.label: Add
                     add_note.label: Add Note

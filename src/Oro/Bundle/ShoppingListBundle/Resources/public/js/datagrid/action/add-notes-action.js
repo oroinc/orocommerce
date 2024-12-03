@@ -55,8 +55,9 @@ const AddNotesAction = ModelAction.extend({
 
         if (!notes || viewportManager.isApplicable('mobile-big')) {
             const shoppingListAddNotesModalView = new ShoppinglistAddNotesModalView({
-                title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
-                    productName: _.escape(this.model.get('name'))
+                title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.sku_title`, {
+                    productName: _.escape(this.model.get('name')),
+                    productSku: _.escape(this.model.get('sku'))
                 }),
                 okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}_note.label`),
                 cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
