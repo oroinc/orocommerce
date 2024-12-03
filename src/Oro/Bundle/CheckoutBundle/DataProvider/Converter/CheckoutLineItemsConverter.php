@@ -16,6 +16,16 @@ class CheckoutLineItemsConverter
     /** @var array<EntityReflectionClass> */
     private array $reflectionClass;
 
+    private $exisingLineItems = [];
+
+    private bool $reuseLineItems = false;
+
+    public function setReuseLineItems(bool $reuseLineItems): void
+    {
+        $this->reuseLineItems = $reuseLineItems;
+        $this->exisingLineItems = [];
+    }
+
     /**
      * @param array<int|string,array<string,mixed>> $data Line items data
      *  [
@@ -34,21 +44,28 @@ class CheckoutLineItemsConverter
     {
         $result = new ArrayCollection();
         foreach ($data as $lineItemData) {
-            $kitItemLineItemsData = [];
-            if (isset($lineItemData['kitItemLineItems']) && is_array($lineItemData['kitItemLineItems'])) {
-                $kitItemLineItemsData = $lineItemData['kitItemLineItems'];
-                unset($lineItemData['kitItemLineItems']);
+            $hash = $lineItemData['checksum'] ?? null;
+            if ($this->reuseLineItems && array_key_exists($hash, $this->exisingLineItems)) {
+                $orderLineItem = $this->exisingLineItems[$hash];
+            } else {
+                $kitItemLineItemsData = [];
+                if (isset($lineItemData['kitItemLineItems']) && is_array($lineItemData['kitItemLineItems'])) {
+                    $kitItemLineItemsData = $lineItemData['kitItemLineItems'];
+                    unset($lineItemData['kitItemLineItems']);
+                }
+
+                /** @var OrderLineItem $orderLineItem */
+                $orderLineItem = $this->hydrate(OrderLineItem::class, $lineItemData);
+
+                foreach ($kitItemLineItemsData as $kitItemLineItemDatum) {
+                    $orderLineItem->addKitItemLineItem(
+                        $this->hydrate(OrderProductKitItemLineItem::class, $kitItemLineItemDatum)
+                    );
+                }
+                if ($this->reuseLineItems) {
+                    $this->exisingLineItems[$hash] = $orderLineItem;
+                }
             }
-
-            /** @var OrderLineItem $orderLineItem */
-            $orderLineItem = $this->hydrate(OrderLineItem::class, $lineItemData);
-
-            foreach ($kitItemLineItemsData as $kitItemLineItemDatum) {
-                $orderLineItem->addKitItemLineItem(
-                    $this->hydrate(OrderProductKitItemLineItem::class, $kitItemLineItemDatum)
-                );
-            }
-
             $result->add($orderLineItem);
         }
 

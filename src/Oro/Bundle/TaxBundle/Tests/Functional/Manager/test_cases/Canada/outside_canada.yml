@@ -50,10 +50,11 @@ databaseBeforeSecondPart:
             currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            order: '@simple_order'
             quantity: 5
             price: '@usd_price_15.99'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
 disableTaxCalculation: false
 expectedResult:
     total:

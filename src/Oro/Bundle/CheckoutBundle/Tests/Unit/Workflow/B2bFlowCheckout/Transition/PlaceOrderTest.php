@@ -4,13 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\Transiti
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\ShippingMethodActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\PlaceOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
@@ -34,6 +35,7 @@ class PlaceOrderTest extends TestCase
     private ConfigProvider|MockObject $configProvider;
     private SplitOrderActionsInterface|MockObject $splitOrderActions;
     private ShippingMethodActionsInterface|MockObject $shippingMethodActions;
+    private CheckoutLineItemsConverter|MockObject $checkoutLineItemsConverter;
     private PlaceOrder $placeOrder;
 
     #[\Override]
@@ -47,6 +49,7 @@ class PlaceOrderTest extends TestCase
         $this->configProvider = $this->createMock(ConfigProvider::class);
         $this->splitOrderActions = $this->createMock(SplitOrderActionsInterface::class);
         $this->shippingMethodActions = $this->createMock(ShippingMethodActionsInterface::class);
+        $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
 
         $this->placeOrder = new PlaceOrder(
             $this->actionExecutor,
@@ -58,6 +61,7 @@ class PlaceOrderTest extends TestCase
             $this->splitOrderActions,
             $this->shippingMethodActions
         );
+        $this->placeOrder->setCheckoutLineItemsConverter($this->checkoutLineItemsConverter);
     }
 
     /**
@@ -82,7 +86,7 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->shippingMethodActions->expects($this->once())
+        $this->shippingMethodActions->expects(self::once())
             ->method('actualizeShippingMethods')
             ->with(
                 $checkout,
@@ -90,18 +94,18 @@ class PlaceOrderTest extends TestCase
                 ['group1' => ['method2']]
             );
 
-        $this->shippingMethodActions->expects($this->any())
+        $this->shippingMethodActions->expects(self::any())
             ->method('hasApplicableShippingRules')
             ->with($checkout, $errors)
             ->willReturn($hasApplicableShippingRules);
 
         $paymentContext = $this->createMock(PaymentContextInterface::class);
-        $this->paymentContextProvider->expects($this->any())
+        $this->paymentContextProvider->expects(self::any())
             ->method('getContext')
             ->with($checkout)
             ->willReturn($paymentContext);
 
-        $this->actionExecutor->expects($this->any())
+        $this->actionExecutor->expects(self::any())
             ->method('evaluateExpression')
             ->willReturnMap([
                 [
@@ -116,7 +120,7 @@ class PlaceOrderTest extends TestCase
                 ]
             ]);
 
-        $this->baseContinueTransition->expects($this->any())
+        $this->baseContinueTransition->expects(self::any())
             ->method('isPreConditionAllowed')
             ->with($workflowItem, $errors)
             ->willReturn(true);
@@ -151,27 +155,27 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects($this->once())
+        $this->orderActions->expects(self::once())
             ->method('placeOrder')
             ->with($checkout)
             ->willReturn($order);
 
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::exactly(2))
             ->method('isCreateSubOrdersForEachGroupEnabled')
             ->willReturn(true);
 
-        $this->splitOrderActions->expects($this->once())
+        $this->splitOrderActions->expects(self::once())
             ->method('createChildOrders')
             ->with($checkout, $order, $groupedLineItems);
 
-        $this->checkoutActions->expects($this->any())
+        $this->checkoutActions->expects(self::any())
             ->method('getCheckoutUrl')
             ->willReturnMap([
                 [$checkout, 'back_to_shipping_address_on_fail_address', 'back_to_shipping_address_on_fail_address_url'],
                 [$checkout, 'paid_partially', 'paid_partially_url']
             ]);
 
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('purchase')
             ->with(
                 $checkout,
@@ -184,7 +188,7 @@ class PlaceOrderTest extends TestCase
             )
             ->willReturn(['responseData' => []]);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('executeAction')
             ->with(
                 ExtendableAction::NAME,
@@ -198,6 +202,10 @@ class PlaceOrderTest extends TestCase
                     ]
                 ]
             );
+
+        $this->checkoutLineItemsConverter->expects(self::exactly(2))
+            ->method('setReuseLineItems')
+            ->withConsecutive([true], [false]);
 
         $this->placeOrder->execute($workflowItem);
 
@@ -217,19 +225,19 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects($this->once())
+        $this->orderActions->expects(self::once())
             ->method('placeOrder')
             ->with($checkout)
             ->willReturn($order);
 
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::any())
             ->method('isCreateSubOrdersForEachGroupEnabled')
             ->willReturn(false);
 
         $this->splitOrderActions->expects($this->never())
             ->method('createChildOrders');
 
-        $this->checkoutActions->expects($this->any())
+        $this->checkoutActions->expects(self::any())
             ->method('getCheckoutUrl')
             ->willReturnMap([
                 [$checkout, 'back_to_shipping_address_on_fail_address', 'back_to_shipping_address_on_fail_address_url'],
@@ -241,7 +249,7 @@ class PlaceOrderTest extends TestCase
             'purchaseSuccessful' => true,
             'paymentMethodSupportsValidation' => true
         ];
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('purchase')
             ->with(
                 $checkout,
@@ -254,7 +262,7 @@ class PlaceOrderTest extends TestCase
             )
             ->willReturn(['responseData' => $purchaseResult]);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('executeAction')
             ->with(
                 ExtendableAction::NAME,
@@ -288,19 +296,19 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects($this->once())
+        $this->orderActions->expects(self::once())
             ->method('placeOrder')
             ->with($checkout)
             ->willReturn($order);
 
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::any())
             ->method('isCreateSubOrdersForEachGroupEnabled')
             ->willReturn(false);
 
         $this->splitOrderActions->expects($this->never())
             ->method('createChildOrders');
 
-        $this->checkoutActions->expects($this->any())
+        $this->checkoutActions->expects(self::any())
             ->method('getCheckoutUrl')
             ->willReturnMap([
                 [$checkout, 'back_to_shipping_address_on_fail_address', 'back_to_shipping_address_on_fail_address_url'],
@@ -312,7 +320,7 @@ class PlaceOrderTest extends TestCase
             'purchaseSuccessful' => true,
             'paymentMethodSupportsValidation' => false
         ];
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('purchase')
             ->with(
                 $checkout,
@@ -325,7 +333,7 @@ class PlaceOrderTest extends TestCase
             )
             ->willReturn(['responseData' => $purchaseResult]);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('executeAction')
             ->with(
                 ExtendableAction::NAME,
@@ -359,12 +367,12 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects($this->once())
+        $this->orderActions->expects(self::once())
             ->method('placeOrder')
             ->with($checkout)
             ->willReturn($order);
 
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::any())
             ->method('isCreateSubOrdersForEachGroupEnabled')
             ->willReturn(false);
 
@@ -378,14 +386,14 @@ class PlaceOrderTest extends TestCase
             'purchasePartial' => true
         ];
 
-        $this->checkoutActions->expects($this->any())
+        $this->checkoutActions->expects(self::any())
             ->method('getCheckoutUrl')
             ->willReturnMap([
                 [$checkout, 'back_to_shipping_address_on_fail_address', 'back_to_shipping_address_on_fail_address_url'],
                 [$checkout, 'paid_partially', 'paid_partially_url']
             ]);
 
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('purchase')
             ->with(
                 $checkout,
@@ -398,7 +406,7 @@ class PlaceOrderTest extends TestCase
             )
             ->willReturn(['responseData' => $purchaseResult]);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('executeAction')
             ->with(
                 ExtendableAction::NAME,

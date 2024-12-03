@@ -3,7 +3,8 @@
 namespace Oro\Bundle\CheckoutBundle\Workflow\EventListener;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionCompletedEvent;
+use Oro\Bundle\WorkflowBundle\Event\WorkflowItemAwareEvent;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
@@ -16,7 +17,7 @@ class ReturnGuestToEnterCredentialsStep
     ) {
     }
 
-    public function onComplete(TransitionEvent $event): void
+    public function onComplete(TransitionCompletedEvent $event): void
     {
         $backToLoginTransition = $this->getBackTransitionName($event);
         if (!$backToLoginTransition) {
@@ -63,7 +64,7 @@ class ReturnGuestToEnterCredentialsStep
         $this->workflowManager->transit($workflowItem, $backTransition);
     }
 
-    private function getBackTransitionName(TransitionEvent $event): ?string
+    private function getBackTransitionName(WorkflowItemAwareEvent $event): ?string
     {
         $workflowMetadata = $event->getWorkflowItem()->getDefinition()?->getMetadata() ?? [];
 

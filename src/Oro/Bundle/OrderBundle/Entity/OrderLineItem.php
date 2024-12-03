@@ -62,9 +62,11 @@ class OrderLineItem implements
     #[ORM\GeneratedValue(strategy: 'AUTO')]
     protected ?int $id = null;
 
-    #[ORM\ManyToOne(targetEntity: Order::class, inversedBy: 'lineItems')]
-    #[ORM\JoinColumn(name: 'order_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
-    protected ?Order $order = null;
+    #[ORM\ManyToMany(targetEntity: Order::class, inversedBy: 'lineItems')]
+    #[ORM\JoinTable(name: 'oro_order_line_items')]
+    #[ORM\JoinColumn(name: 'line_item_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\InverseJoinColumn(name: 'order_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    protected ?Collection $orders = null;
 
     #[ORM\ManyToOne(targetEntity: Product::class)]
     #[ORM\JoinColumn(name: 'product_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
@@ -171,6 +173,7 @@ class OrderLineItem implements
     public function __construct()
     {
         $this->kitItemLineItems = new ArrayCollection();
+        $this->orders = new ArrayCollection();
     }
 
     /**
@@ -192,9 +195,20 @@ class OrderLineItem implements
         return $this->id;
     }
 
-    public function setOrder(Order $order = null): self
+    public function addOrder(Order $order): self
     {
-        $this->order = $order;
+        if (!$this->orders->contains($order)) {
+            $this->orders->add($order);
+        }
+
+        return $this;
+    }
+
+    public function removeOrder(Order $order): self
+    {
+        if ($this->orders->contains($order)) {
+            $this->orders->removeElement($order);
+        }
 
         return $this;
     }
@@ -202,7 +216,22 @@ class OrderLineItem implements
     #[\Override]
     public function getOrder(): ?Order
     {
-        return $this->order;
+        foreach ($this->orders as $order) {
+            if (!$order->getSubOrders()->isEmpty()) {
+                return $order;
+            }
+        }
+
+        if ($this->orders->count()) {
+            return $this->orders->first();
+        }
+
+        return null;
+    }
+
+    public function getOrders(): ?Collection
+    {
+        return $this->orders;
     }
 
     /**
@@ -665,7 +694,7 @@ class OrderLineItem implements
     #[\Override]
     public function getLineItemsHolder(): ?ProductLineItemsHolderInterface
     {
-        return $this->order;
+        return $this->getOrder();
     }
 
     /**

@@ -31,16 +31,18 @@ Oro\Bundle\OrderBundle\Entity\Order:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order1_line_item1:
-        order: '@order1'
         product: '@product1'
         quantity: 1
         productUnit: '@item'
         value: 10
         currency: 'USD'
+        __calls:
+            -   addOrder: [ '@order1' ]
     order2_line_item1:
-        order: '@order2'
         product: '@product3'
         quantity: 1
         productUnit: '@item'
         value: 10
         currency: 'USD'
+        __calls:
+            -   addOrder: [ '@order2' ]

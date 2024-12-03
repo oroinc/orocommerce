@@ -59,7 +59,7 @@ class CheckoutLineItemsManager
         $configVisibilityPath = 'oro_order.frontend_product_visibility'
     ) {
         return $this->memoryCacheProvider->get(
-            ['checkout' => $checkout, $disablePriceFilter, $configVisibilityPath],
+            ['checkout' => $checkout, $disablePriceFilter, $configVisibilityPath, uniqid()],
             function () use ($checkout, $disablePriceFilter, $configVisibilityPath) {
                 return $this->getOrderLineItems($checkout, $disablePriceFilter, $configVisibilityPath);
             }

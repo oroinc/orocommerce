@@ -18,17 +18,17 @@ class RequestTest extends RestJsonApiTestCase
         $this->loadFixtures([LoadRequestData::class]);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'rfqs'],
             ['page' => ['size' => 100]]
         );
 
-        $this->assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
+        self::assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $entity = $this->getEntityManager()
             ->getRepository(Request::class)
@@ -38,10 +38,10 @@ class RequestTest extends RestJsonApiTestCase
             ['entity' => 'rfqs', 'id' => $entity->getId()]
         );
 
-        $this->assertResponseNotEmpty($response);
+        self::assertResponseNotEmpty($response);
     }
 
-    public function testUpdateEntity()
+    public function testUpdate(): void
     {
         /** @var Request $requestEntity */
         $requestEntity = $this->getReference('rfp.request.1');
@@ -76,7 +76,7 @@ class RequestTest extends RestJsonApiTestCase
             $data
         );
 
-        $result = $this->jsonToArray($response->getContent());
+        $result = self::jsonToArray($response->getContent());
         $this->assertUpdatedRequest($oldRequestEntity, $result, $data);
     }
 
@@ -89,24 +89,21 @@ class RequestTest extends RestJsonApiTestCase
         unset($attributes['createdAt'], $attributes['updatedAt']);
 
         foreach ($attributes as $name => $attribute) {
-            $this->assertEquals($result['data']['attributes'][$name], $attribute);
+            self::assertEquals($result['data']['attributes'][$name], $attribute);
         }
 
-        $this->assertEquals(
+        self::assertEquals(
             $newRequest->getInternalStatus()->getId(),
             $oldRequest->getInternalStatus()->getId()
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             $newRequest->getCustomerStatus()->getId(),
             $oldRequest->getCustomerStatus()->getId()
         );
     }
 
-    /**
-     * @return int
-     */
-    public function testCreate()
+    public function testCreate(): int
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -188,26 +185,23 @@ class RequestTest extends RestJsonApiTestCase
             $data
         );
 
-        $result = $this->jsonToArray($response->getContent());
+        $result = self::jsonToArray($response->getContent());
 
-        $this->assertEquals($data['data']['attributes']['firstName'], $result['data']['attributes']['firstName']);
+        self::assertEquals($data['data']['attributes']['firstName'], $result['data']['attributes']['firstName']);
 
         return (int)$result['data']['id'];
     }
 
     /**
      * @depends testCreate
-     *
-     * @param int $entityId
      */
-    public function testDeleteEntity($entityId)
+    public function testDelete(int $entityId): void
     {
         $this->delete(
             ['entity' => 'rfqs', 'id' => $entityId]
         );
 
-        $this->assertNull(
-            $this->getEntityManager()->find(Request::class, $entityId)
-        );
+        $entity = $this->getEntityManager()->find(Request::class, $entityId);
+        self::assertTrue(null === $entity);
     }
 }

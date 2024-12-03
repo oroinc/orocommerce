@@ -3,7 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Workflow\EventListener;
 
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionCompletedEvent;
 use Oro\Bundle\WorkflowBundle\Event\Transition\TransitionEvent;
+use Oro\Bundle\WorkflowBundle\Event\WorkflowItemAwareEvent;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
@@ -23,7 +25,7 @@ class ActualizeWorkflowItem
         $this->requiresActualization = $this->requiresActualization || !$event->getWorkflowItem()->getEntityId();
     }
 
-    public function onComplete(TransitionEvent $event): void
+    public function onComplete(TransitionCompletedEvent $event): void
     {
         if (!$this->requiresActualization) {
             return;
@@ -36,7 +38,7 @@ class ActualizeWorkflowItem
         $this->requiresActualization = false;
     }
 
-    private function getActualWorkflowItem(TransitionEvent $event): ?WorkflowItem
+    private function getActualWorkflowItem(WorkflowItemAwareEvent $event): ?WorkflowItem
     {
         $workflowItem = $event->getWorkflowItem();
 

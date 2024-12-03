@@ -23,8 +23,9 @@ Oro\Bundle\CurrencyBundle\Entity\Price :
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     simpleOrderLineItem:
         product: '@product1'
-        order: '@simpleOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@simpleOrder' ]

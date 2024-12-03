@@ -5,7 +5,10 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -16,8 +19,6 @@ use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPayment
  */
 class CreateOrderTest extends FrontendRestJsonApiTestCase
 {
-    use OrderResponseTrait;
-
     #[\Override]
     protected function setUp(): void
     {
@@ -42,6 +43,25 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $this->getEntityManager()->flush();
     }
 
+    private function updateOrderResponseContent(array|string $expectedContent, Response $response): array
+    {
+        return $this->updateResponseContent(
+            $this->updateResponseContent($expectedContent, $response),
+            $response,
+            'identifier'
+        );
+    }
+
+    private function generateLineItemChecksum(OrderLineItem $lineItem): string
+    {
+        /** @var LineItemChecksumGeneratorInterface $lineItemChecksumGenerator */
+        $lineItemChecksumGenerator = self::getContainer()->get('oro_product.line_item_checksum_generator');
+        $checksum = $lineItemChecksumGenerator->getChecksum($lineItem);
+        self::assertNotEmpty($checksum, 'Impossible to generate the line item checksum.');
+
+        return $checksum;
+    }
+
     public function testCreate(): void
     {
         $shipUntil = (new \DateTime('now + 10 day'))->format('Y-m-d');
@@ -60,10 +80,12 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $responseContent = $this->updateResponseContent($responseContent, $response);
         $this->assertResponseContains($responseContent, $response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         // the status should be read-only when "Enable External Status Management" configuration option is disabled
         self::assertNull($order->getStatus());
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($this->generateLineItemChecksum($lineItem), $lineItem->getChecksum());
     }
 
     public function testCreateWithRequiredDataOnly(): void
@@ -73,8 +95,15 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             'create_order_min.yml'
         );
 
+        $orderId = (int)$this->getResourceId($response);
+
         $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
+
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($this->generateLineItemChecksum($lineItem), $lineItem->getChecksum());
     }
 
     public function testCreateWithCurrency(): void
@@ -160,7 +189,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseContains($responseContent, $response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('shipped', $order->getShippingStatus()->getInternalId());
     }
@@ -182,7 +211,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         $responseContent = $this->updateOrderResponseContent('create_order_min.yml', $response);
         $this->assertResponseContains($responseContent, $response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         // createdAt and updatedAt fields are read-only for orders and line items
         self::assertNotEquals($createdAt, $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
@@ -213,12 +242,12 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/billingAddress/data'],
+                    'source' => ['pointer' => '/data/relationships/billingAddress/data']
                 ],
                 [
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/shippingAddress/data'],
+                    'source' => ['pointer' => '/data/relationships/shippingAddress/data']
                 ],
                 [
                     'title'  => 'count constraint',
@@ -256,7 +285,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                     'title'  => 'line item product constraint',
                     'detail' => 'Please choose Product.',
                     'source' => ['pointer' => '/included/3/relationships/product/data']
-                ],
+                ]
             ],
             $response
         );
@@ -311,7 +340,7 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                     'title'  => 'not blank constraint',
                     'detail' => 'The product unit does not exist for the product.',
                     'source' => ['pointer' => '/included/3/relationships/productUnit/data']
-                ],
+                ]
             ],
             $response
         );
@@ -336,13 +365,13 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'product unit exists constraint',
                     'detail' => 'The product unit does not exist for the product.',
-                    'source' => ['pointer' => '/included/0/relationships/productUnit/data'],
+                    'source' => ['pointer' => '/included/0/relationships/productUnit/data']
                 ],
                 [
                     'title'  => 'product unit exists constraint',
                     'detail' => 'The product unit does not exist for the product.',
-                    'source' => ['pointer' => '/included/3/relationships/productUnit/data'],
-                ],
+                    'source' => ['pointer' => '/included/3/relationships/productUnit/data']
+                ]
             ],
             $response
         );
@@ -390,13 +419,13 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'quantity unit precision constraint',
                     'detail' => 'The precision for the unit "item" is not valid.',
-                    'source' => ['pointer' => '/included/0/attributes/quantity'],
+                    'source' => ['pointer' => '/included/0/attributes/quantity']
                 ],
                 [
                     'title'  => 'quantity unit precision constraint',
                     'detail' => 'The precision for the unit "milliliter" is not valid.',
-                    'source' => ['pointer' => '/included/3/attributes/quantity'],
-                ],
+                    'source' => ['pointer' => '/included/3/attributes/quantity']
+                ]
             ],
             $response
         );
@@ -424,13 +453,13 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/included/0/attributes/quantity'],
+                    'source' => ['pointer' => '/included/0/attributes/quantity']
                 ],
                 [
                     'title'  => 'not blank constraint',
                     'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/included/3/attributes/quantity'],
-                ],
+                    'source' => ['pointer' => '/included/3/attributes/quantity']
+                ]
             ],
             $response
         );
@@ -455,18 +484,18 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'greater than constraint',
                     'detail' => 'This value should be greater than 0.',
-                    'source' => ['pointer' => '/included/0/attributes/quantity'],
+                    'source' => ['pointer' => '/included/0/attributes/quantity']
                 ],
                 [
                     'title'  => 'greater than constraint',
                     'detail' => 'This value should be greater than 0.',
-                    'source' => ['pointer' => '/included/3/attributes/quantity'],
+                    'source' => ['pointer' => '/included/3/attributes/quantity']
                 ],
                 [
                     'title'  => 'greater than constraint',
                     'detail' => 'The quantity should be greater than 0',
-                    'source' => ['pointer' => '/included/4/attributes/quantity'],
-                ],
+                    'source' => ['pointer' => '/included/4/attributes/quantity']
+                ]
             ],
             $response
         );
@@ -511,13 +540,13 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'price match constraint',
                     'detail' => 'The specified price must be equal to 1.01.',
-                    'source' => ['pointer' => '/included/0/attributes/price'],
+                    'source' => ['pointer' => '/included/0/attributes/price']
                 ],
                 [
                     'title'  => 'price match constraint',
                     'detail' => 'The specified price must be equal to 11.59.',
-                    'source' => ['pointer' => '/included/3/attributes/price'],
-                ],
+                    'source' => ['pointer' => '/included/3/attributes/price']
+                ]
             ],
             $response
         );
@@ -570,13 +599,13 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
                 [
                     'title'  => 'currency match constraint',
                     'detail' => 'The specified currency must be equal to "USD".',
-                    'source' => ['pointer' => '/included/0/attributes/currency'],
+                    'source' => ['pointer' => '/included/0/attributes/currency']
                 ],
                 [
                     'title'  => 'currency match constraint',
                     'detail' => 'The specified currency must be equal to "USD".',
-                    'source' => ['pointer' => '/included/3/attributes/currency'],
-                ],
+                    'source' => ['pointer' => '/included/3/attributes/currency']
+                ]
             ],
             $response
         );

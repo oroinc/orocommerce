@@ -44,13 +44,15 @@ class OroOrderBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_23';
+        return 'v1_24';
     }
 
     #[\Override]
     public function up(Schema $schema, QueryBag $queries): void
     {
         /** Tables generation **/
+        $this->createOroLineItemsTable($schema);
+        $this->createOroShippingTrackingsTable($schema);
         $this->createOroOrderTable($schema, $queries);
         $this->createOroOrderAddressTable($schema);
         $this->createOroOrderLineItemTable($schema);
@@ -59,12 +61,13 @@ class OroOrderBundleInstaller implements
         $this->createOroOrderShippingTrackingTable($schema);
 
         /** Foreign keys generation **/
+        $this->addOroLineItemsForeignKeys($schema);
+        $this->addOroShippingTrackingsKeys($schema);
         $this->addOroOrderForeignKeys($schema);
         $this->addOroOrderAddressForeignKeys($schema);
         $this->addOroOrderLineItemForeignKeys($schema);
         $this->addOroOrderProductKitItemLineItemForeignKeys($schema);
         $this->addOroOrderDiscountForeignKeys($schema);
-        $this->addOroOrderShippingTrackingForeignKeys($schema);
 
         $this->addOrderInternalStatusField($schema);
         $this->addOrderStatusField($schema);
@@ -240,7 +243,6 @@ class OroOrderBundleInstaller implements
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
         $table->addColumn('parent_product_id', 'integer', ['notnull' => false]);
-        $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_sku', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
@@ -271,7 +273,6 @@ class OroOrderBundleInstaller implements
         $table->setPrimaryKey(['id']);
         $table->addIndex(['product_id'], 'idx_de9136094584665a');
         $table->addIndex(['product_unit_id'], 'idx_de91360929646bbd');
-        $table->addIndex(['order_id'], 'idx_de9136098d9f6d38');
     }
 
     /**
@@ -281,7 +282,6 @@ class OroOrderBundleInstaller implements
     {
         $table = $schema->createTable('oro_order_shipping_tracking');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('order_id', 'integer', ['notnull' => true]);
         $table->addColumn('method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('number', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
@@ -405,12 +405,6 @@ class OroOrderBundleInstaller implements
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_order'),
-            ['order_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
     }
 
     /**
@@ -419,20 +413,6 @@ class OroOrderBundleInstaller implements
     private function addOroOrderDiscountForeignKeys(Schema $schema): void
     {
         $table = $schema->getTable('oro_order_discount');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_order'),
-            ['order_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
-     * Add oro_order_shipping_tracking foreign keys.
-     */
-    private function addOroOrderShippingTrackingForeignKeys(Schema $schema): void
-    {
-        $table = $schema->getTable('oro_order_shipping_tracking');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_order'),
             ['order_id'],
@@ -551,6 +531,60 @@ class OroOrderBundleInstaller implements
             ['product_unit_id'],
             ['code'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    private function createOroLineItemsTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_order_line_items');
+        $table->addColumn('order_id', 'integer');
+        $table->addColumn('line_item_id', 'integer');
+        $table->setPrimaryKey(['line_item_id', 'order_id']);
+        $table->addIndex(['order_id'], 'IDX_order_id395');
+        $table->addIndex(['line_item_id'], 'IDX_line_item_id2AC');
+    }
+
+    private function createOroShippingTrackingsTable(Schema $schema): void
+    {
+        $table = $schema->createTable('oro_order_shipping_trackings');
+        $table->addColumn('order_id', 'integer');
+        $table->addColumn('tracking_id', 'integer');
+        $table->setPrimaryKey(['tracking_id', 'order_id']);
+        $table->addIndex(['order_id'], 'IDX_order_id454');
+        $table->addIndex(['tracking_id'], 'IDX_line_item_id2AT');
+    }
+
+    private function addOroLineItemsForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_order_line_items');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order'),
+            ['order_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order_line_item'),
+            ['line_item_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+    }
+
+    private function addOroShippingTrackingsKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_order_shipping_trackings');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order'),
+            ['order_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order_shipping_tracking'),
+            ['tracking_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE']
         );
     }
 }

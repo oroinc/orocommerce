@@ -13,10 +13,11 @@ data:
             shipUntil: '2018-05-20'
             comment: 'Test comment for line item 1'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order1->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order1->id)>'
     -
         type: orderlineitems
         id: '<toString(@order1_line_item2->id)>'
@@ -31,7 +32,8 @@ data:
             shipUntil: null
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order1->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order1->id)>'

@@ -6,10 +6,11 @@ data:
         value: 200
         currency: 'USD'
     relationships:
-        order:
+        orders:
             data:
-                type: orders
-                id: '<toString(@simple_order->id)>'
+                -
+                    type: orders
+                    id: '<toString(@simple_order->id)>'
         product:
             data:
                 type: products

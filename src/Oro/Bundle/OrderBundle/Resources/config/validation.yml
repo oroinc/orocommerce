@@ -126,7 +126,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
                     # Used in CREATE action by orderlineitems storefront API resource
                     - api_frontend_order_line_item_create
     properties:
-        order:
+        orders:
             -   NotBlank: ~
             -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
                     message: oro.order.orderlineitem.order.changed

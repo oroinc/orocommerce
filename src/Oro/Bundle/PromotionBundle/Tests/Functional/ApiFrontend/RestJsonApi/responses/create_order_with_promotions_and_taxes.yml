@@ -79,10 +79,11 @@ included:
                     taxAmount: '0.58'
                     taxableAmount: '5.5'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: new
+                    -
+                        type: orders
+                        id: new
             product:
                 data:
                     type: products
@@ -116,10 +117,11 @@ included:
             rowTotalTaxAmount: '0.0000'
             taxes: []
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: new
+                    -
+                        type: orders
+                        id: new
             product:
                 data:
                     type: products

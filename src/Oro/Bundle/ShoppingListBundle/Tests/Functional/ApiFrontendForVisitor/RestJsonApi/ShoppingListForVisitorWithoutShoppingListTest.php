@@ -33,9 +33,7 @@ class ShoppingListForVisitorWithoutShoppingListTest extends FrontendRestJsonApiT
         }
 
         // guard
-        self::assertFalse(
-            $this->getConfigManager()->get('oro_shopping_list.availability_for_guests')
-        );
+        self::assertFalse(self::getConfigManager()->get('oro_shopping_list.availability_for_guests'));
     }
 
     #[\Override]

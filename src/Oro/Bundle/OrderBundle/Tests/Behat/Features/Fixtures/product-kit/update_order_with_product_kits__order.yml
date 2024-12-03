@@ -12,22 +12,21 @@ Oro\Bundle\OrderBundle\Entity\Order:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order1_line_item1:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item1_price'
         quantity: 1
         productUnit: '@piece'
         __calls:
             -   addKitItemLineItem: [ '@order1_line_item1_kit_item1' ]
             -   addKitItemLineItem: [ '@order1_line_item1_kit_item2' ]
-
+            -   addOrder: [ '@order1' ]
     order1_line_item2:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item2_price'
         quantity: 2
         productUnit: '@piece'
         __calls:
             -   addKitItemLineItem: [ '@order1_line_item2_kit_item1' ]
+            -   addOrder: [ '@order1' ]
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
     order1_line_item1_kit_item1:

@@ -115,7 +115,6 @@ class CheckoutLineItemsConverterTest extends TestCase
         $kitItemLineItemPrice = Price::create(12.3456, 'USD');
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
 
-
         return [
             'empty data' => [
                 'data' => [],
@@ -281,5 +280,38 @@ class CheckoutLineItemsConverterTest extends TestCase
                 ]),
             ],
         ];
+    }
+
+    public function testConvertWithDisabledReuse(): void
+    {
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'shipBy' => $now,
+                'comment' => null,
+                'checksum' => 123
+            ],
+        ];
+        $result1 = $this->checkoutLineItemsConverter->convert($data);
+        $result2 = $this->checkoutLineItemsConverter->convert($data);
+
+        self::assertNotSame($result1->first(), $result2->first());
+    }
+
+    public function testConvertWithEnabledReuse(): void
+    {
+        $this->checkoutLineItemsConverter->setReuseLineItems(true);
+        $now = new \DateTime('now', new \DateTimeZone('UTC'));
+        $data = [
+            [
+                'shipBy' => $now,
+                'comment' => null,
+                'checksum' => 123
+            ],
+        ];
+        $result1 = $this->checkoutLineItemsConverter->convert($data);
+        $result2 = $this->checkoutLineItemsConverter->convert($data);
+
+        self::assertSame($result1->first(), $result2->first());
     }
 }

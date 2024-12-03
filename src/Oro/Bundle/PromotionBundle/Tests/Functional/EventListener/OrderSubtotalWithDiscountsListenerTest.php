@@ -279,7 +279,7 @@ class OrderSubtotalWithDiscountsListenerTest extends WebTestCase
     private function createOrderLineItem(Order $order, Product $product, Price $price): OrderLineItem
     {
         return (new OrderLineItem())
-            ->setOrder($order)
+            ->addOrder($order)
             ->setProduct($product)
             ->setPrice($price)
             ->setQuantity(1.0);

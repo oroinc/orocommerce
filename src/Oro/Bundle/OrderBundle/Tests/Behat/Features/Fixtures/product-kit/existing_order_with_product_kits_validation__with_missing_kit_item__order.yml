@@ -13,13 +13,13 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     # <with missing mandatory kit item>
     order1_line_item2:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item2_price'
         quantity: 1
         productUnit: '@piece'
         comment: 'with missing mandatory kit item'
         __calls:
             -   addKitItemLineItem: [ '@order1_line_item2_kit_item2' ]
+            -   addOrder: [ '@order1' ]
     # </with missing mandatory kit item>
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:

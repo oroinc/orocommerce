@@ -180,6 +180,9 @@ api:
                     exclude: true
                 shippingMethodType:
                     exclude: true
+                checksum:
+                    form_options:
+                        mapped: false
             filters:
                 fields:
                     createdAt: ~

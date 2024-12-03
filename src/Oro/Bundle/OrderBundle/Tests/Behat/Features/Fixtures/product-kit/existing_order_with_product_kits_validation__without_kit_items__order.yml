@@ -13,11 +13,12 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     # <without kit items>
     order1_line_item2:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item2_price'
         quantity: 1
         productUnit: '@piece'
         comment: 'without kit items'
+        __calls:
+            -   addOrder: [ '@order1' ]
     # </without kit items>
 
 Oro\Bundle\CurrencyBundle\Entity\Price:

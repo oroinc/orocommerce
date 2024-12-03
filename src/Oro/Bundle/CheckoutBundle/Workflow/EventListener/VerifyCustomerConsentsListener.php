@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerAwareInterface;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Event\WorkflowItemAwareEvent;
+use Oro\Bundle\WorkflowBundle\Event\Transition\StepEnteredEvent;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
@@ -79,7 +79,7 @@ class VerifyCustomerConsentsListener implements FeatureCheckerAwareInterface
     /**
      * Set consents_available to true when consent page was shown for checkout workflow.
      */
-    public function onStepEntered(WorkflowItemAwareEvent $event): void
+    public function onStepEntered(StepEnteredEvent $event): void
     {
         $workflowItem = $event->getWorkflowItem();
         if ($workflowItem->getCurrentStep()?->getName() !== self::CUSTOMER_CONSENTS_STEP) {

@@ -106,7 +106,7 @@ Feature: Promotions on Order page
       | Total             | $8.50  |
 
   Scenario: Deactivate automatic promotion
-    Given I click "Promotions and Discounts"
+    Given I click "Discounts"
     And I click "Deactivate" on row "order Discount Promotion Order Total" in "Promotions"
     Then I should see next rows in "Promotions" table
       | Promotion                    | Status   |
@@ -137,7 +137,7 @@ Feature: Promotions on Order page
       | Total             | $15.00 |
 
   Scenario: Delete automatic promotion
-    Given I click "Promotions and Discounts"
+    Given I click "Discounts"
     And I click "Remove" on row "order Discount Promotion Order Total" in "Promotions"
     Then I should see next rows in "Promotions" table
       | Promotion                    | Status |

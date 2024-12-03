@@ -92,8 +92,8 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
     {
         $data = [
             'data' => [
-                'type' => 'shoppinglistkititems',
-            ],
+                'type' => 'shoppinglistkititems'
+            ]
         ];
 
         $response = $this->post(
@@ -108,23 +108,23 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
-                    'source' => ['pointer' => '/data/relationships/lineItem/data'],
+                    'source' => ['pointer' => '/data/relationships/lineItem/data']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
-                    'source' => ['pointer' => '/data/relationships/kitItem/data'],
+                    'source' => ['pointer' => '/data/relationships/kitItem/data']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
-                    'source' => ['pointer' => '/data/relationships/product/data'],
+                    'source' => ['pointer' => '/data/relationships/product/data']
                 ],
                 [
                     'title' => 'not null constraint',
                     'detail' => 'This value should not be null.',
-                    'source' => ['pointer' => '/data/relationships/unit/data'],
-                ],
+                    'source' => ['pointer' => '/data/relationships/unit/data']
+                ]
             ],
             $response
         );
@@ -153,9 +153,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem, 'ProductKitItemLineItem is not found');
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
@@ -193,9 +191,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $lineItemId = (int)$content['included'][0]['id'];
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem, 'ProductKitItemLineItem is not found');
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
@@ -242,9 +238,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $lineItemId = (int)$content['included'][0]['id'];
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem, 'ProductKitItemLineItem is not found');
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
@@ -290,9 +284,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $lineItemId = (int)$content['included'][0]['id'];
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
 
         $kitItemLineItemShoppingList = $lineItem->getShoppingList();
@@ -304,9 +296,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem, 'ProductKitItemLineItem is not found');
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
@@ -349,7 +339,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'create shopping list constraint',
                 'detail' => 'It is not allowed to create a new shopping list.',
-                'source' => ['pointer' => '/included/1'],
+                'source' => ['pointer' => '/included/1']
             ],
             $response
         );
@@ -372,9 +362,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $lineItemId = (int)$content['included'][0]['id'];
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
 
         $responseContent = $this->updateResponseContent('create_kit_item_line_item_with_line_item.yml', $response);
@@ -382,9 +370,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem, 'ProductKitItemLineItem is not found');
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
@@ -433,13 +419,13 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 [
                     'title' => 'access granted constraint',
                     'detail' => 'The "EDIT" permission is denied for the related resource.',
-                    'source' => ['pointer' => '/data/relationships/shoppingList/data'],
+                    'source' => ['pointer' => '/data/relationships/shoppingList/data']
                 ],
                 [
                     'title' => 'access granted constraint',
                     'detail' => 'The "VIEW" permission is denied for the related resource.',
-                    'source' => ['pointer' => '/data/relationships/shoppingList/data'],
-                ],
+                    'source' => ['pointer' => '/data/relationships/shoppingList/data']
+                ]
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -454,7 +440,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $data = array_merge(
             [
                 'type' => 'shoppinglistkititems',
-                'id' => '<toString(@product_kit_item1_line_item2->id)>',
+                'id' => '<toString(@product_kit_item1_line_item2->id)>'
             ],
             $parameters
         );
@@ -478,266 +464,246 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
             'quantity null' => [
                 'parameters' => [
                     'attributes' => [
-                        'quantity' => null,
-                    ],
+                        'quantity' => null
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'not blank constraint',
                         'detail' => 'The quantity cannot be empty',
-                        'source' => ['pointer' => '/data/attributes/quantity'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/attributes/quantity']
+                    ]
+                ]
             ],
             'quantity out of range' => [
                 'parameters' => [
                     'attributes' => [
-                        'quantity' => 10,
-                    ],
+                        'quantity' => 10
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'range constraint',
                         'detail' => 'The quantity should be between 0 and 5.',
-                        'source' => ['pointer' => '/data/attributes/quantity'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/attributes/quantity']
+                    ]
+                ]
             ],
             'quantity wrong type' => [
                 'parameters' => [
                     'attributes' => [
-                        'quantity' => 'string',
-                    ],
+                        'quantity' => 'string'
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'form constraint',
                         'detail' => 'Please enter a number.',
-                        'source' => ['pointer' => '/data/attributes/quantity'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/attributes/quantity']
+                    ]
+                ]
             ],
             'quantity negative' => [
                 'parameters' => [
                     'attributes' => [
-                        'quantity' => -10,
-                    ],
+                        'quantity' => -10
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'greater than constraint',
                         'detail' => 'The quantity should be greater than 0.',
-                        'source' => ['pointer' => '/data/attributes/quantity'],
+                        'source' => ['pointer' => '/data/attributes/quantity']
                     ],
                     [
                         'title' => 'range constraint',
                         'detail' => 'The quantity should be between 0 and 5.',
-                        'source' => ['pointer' => '/data/attributes/quantity'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/attributes/quantity']
+                    ]
+                ]
             ],
             'quantity when no KitItem' => [
                 'parameters' => [
                     'attributes' => [
-                        'quantity' => 10,
+                        'quantity' => 10
                     ],
                     'relationships' => [
-                        'kitItem' => ['data' => null],
+                        'kitItem' => ['data' => null]
                     ],
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/data/relationships/kitItem/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/kitItem/data']
+                    ]
+                ]
             ],
             'sortOrder wrong type' => [
                 'parameters' => [
                     'attributes' => [
-                        'sortOrder' => 'string',
-                    ],
+                        'sortOrder' => 'string'
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'form constraint',
                         'detail' => 'Please enter an integer.',
-                        'source' => ['pointer' => '/data/attributes/sortOrder'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/attributes/sortOrder']
+                    ]
+                ]
             ],
             'sortOrder out of range' => [
                 'parameters' => [
                     'attributes' => [
-                        'sortOrder' => 2147483648,
-                    ],
+                        'sortOrder' => 2147483648
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'range constraint',
                         'detail' => 'This value should be between -2147483648 and 2147483647.',
-                        'source' => ['pointer' => '/data/attributes/sortOrder'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/attributes/sortOrder']
+                    ]
+                ]
             ],
             'kitItem null' => [
                 'parameters' => [
                     'relationships' => [
-                        'kitItem' => ['data' => null],
-                    ],
+                        'kitItem' => ['data' => null]
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/data/relationships/kitItem/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/kitItem/data']
+                    ]
+                ]
             ],
             'product null' => [
                 'parameters' => [
                     'relationships' => [
-                        'product' => ['data' => null],
-                    ],
+                        'product' => ['data' => null]
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/product/data']
+                    ]
+                ]
             ],
             'kitItem products does not contains product' => [
                 'parameters' => [
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id' => '<toString(@product4->id)>',
-                            ],
-                        ],
-                    ],
+                            'data' => ['type' => 'products', 'id' => '<toString(@product4->id)>']
+                        ]
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'at least one of constraint',
                         'detail' => 'Original selection no longer available',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/product/data']
+                    ]
+                ]
             ],
             'disabled product and optional kitItem' => [
                 'parameters' => [
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id' => '<toString(@disabled_product5->id)>',
-                            ],
-                        ],
-                    ],
+                            'data' => ['type' => 'products', 'id' => '<toString(@disabled_product5->id)>']
+                        ]
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'at least one of constraint',
                         'detail' => 'Original selection no longer available',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
+                        'source' => ['pointer' => '/data/relationships/product/data']
                     ],
                     [
                         'title' => 'access granted constraint',
                         'detail' => 'The "VIEW" permission is denied for the related resource.',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/product/data']
+                    ]
+                ]
             ],
             'disabled product and required kitItem' => [
                 'parameters' => [
                     'relationships' => [
                         'product' => [
-                            'data' => [
-                                'type' => 'products',
-                                'id' => '<toString(@disabled_product5->id)>',
-                            ],
+                            'data' => ['type' => 'products', 'id' => '<toString(@disabled_product5->id)>']
                         ],
                         'kitItem' => [
-                            'data' => [
-                                'type' => 'productkititems',
-                                'id' => '<toString(@product_kit1_item1->id)>',
-                            ],
-                        ],
-                    ],
+                            'data' => ['type' => 'productkititems', 'id' => '<toString(@product_kit1_item1->id)>']
+                        ]
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'at least one of constraint',
                         'detail' => 'Selection required',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
+                        'source' => ['pointer' => '/data/relationships/product/data']
                     ],
                     [
                         'title' => 'access granted constraint',
                         'detail' => 'The "VIEW" permission is denied for the related resource.',
-                        'source' => ['pointer' => '/data/relationships/product/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/product/data']
+                    ]
+                ]
             ],
             'unit null' => [
                 'parameters' => [
                     'relationships' => [
-                        'unit' => ['data' => null],
-                    ],
+                        'unit' => ['data' => null]
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/data/relationships/unit/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/unit/data']
+                    ]
+                ]
             ],
             'unit when no KitItem' => [
                 'parameters' => [
                     'relationships' => [
                         'unit' => [
-                            'data' => [
-                                'type' => 'productunits',
-                                'id' => 'item',
-                            ],
+                            'data' => ['type' => 'productunits', 'id' => 'item']
                         ],
-                        'kitItem' => ['data' => null],
+                        'kitItem' => ['data' => null]
                     ],
                 ],
                 'expectedErrors' => [
                     [
                         'title' => 'not null constraint',
                         'detail' => 'This value should not be null.',
-                        'source' => ['pointer' => '/data/relationships/kitItem/data'],
-                    ],
-                ],
+                        'source' => ['pointer' => '/data/relationships/kitItem/data']
+                    ]
+                ]
             ],
             'unit not equal to kitItem.productUnit' => [
                 'parameters' => [
                     'relationships' => [
                         'unit' => [
-                            'data' => [
-                                'type' => 'productunits',
-                                'id' => 'each',
-                            ],
-                        ],
-                    ],
+                            'data' => ['type' => 'productunits', 'id' => 'each']
+                        ]
+                    ]
                 ],
                 'expectedErrors' => [
                     [
                         'status' => '400',
                         'title' => 'product kit item line item product unit available constraint',
                         'detail' => 'The selected product unit is not allowed',
-                        'source' => [
-                            'pointer' => '/data/relationships/unit/data',
-                        ],
-                    ],
-                ],
-            ],
+                        'source' => ['pointer' => '/data/relationships/unit/data']
+                    ]
+                ]
+            ]
         ];
     }
 
@@ -758,13 +724,10 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'id' => $kitItemLineItemId,
                 'relationships' => [
                     'lineItem' => [
-                        'data' => [
-                            'type' => 'shoppinglistitems',
-                            'id' => '<toString(@kit_line_item2->id)>',
-                        ],
-                    ],
-                ],
-            ],
+                        'data' => ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item2->id)>']
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -776,9 +739,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem);
         self::assertEquals(2, $kitItemLineItem->getQuantity());
         self::assertEquals($kitLineItemId, $kitItemLineItem->getLineItem()->getId());
@@ -799,9 +760,9 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 'type' => 'shoppinglistkititems',
                 'id' => $kitItemLineItemId,
                 'attributes' => [
-                    'quantity' => 123.45,
-                ],
-            ],
+                    'quantity' => 123.45
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -811,9 +772,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem);
         self::assertEquals(123.45, $kitItemLineItem->getQuantity());
 
@@ -836,15 +795,11 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNull($kitItemLineItem);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
         self::assertCount(1, $lineItem->getKitItemLineItems());
 
@@ -868,15 +823,11 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNull($kitItemLineItem);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
         self::assertCount(1, $lineItem->getKitItemLineItems());
 

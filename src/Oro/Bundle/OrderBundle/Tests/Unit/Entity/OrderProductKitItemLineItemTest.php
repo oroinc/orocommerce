@@ -473,7 +473,7 @@ class OrderProductKitItemLineItemTest extends TestCase
     {
         $order = new Order();
         $entity = new OrderProductKitItemLineItem();
-        $entity->setLineItem((new OrderLineItem())->setOrder($order));
+        $entity->setLineItem((new OrderLineItem())->addOrder($order));
 
         self::assertEquals($order, $entity->getOrder());
     }

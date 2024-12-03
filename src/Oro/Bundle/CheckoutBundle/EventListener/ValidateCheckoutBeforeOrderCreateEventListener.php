@@ -39,7 +39,7 @@ class ValidateCheckoutBeforeOrderCreateEventListener
 
     public function onBeforeOrderCreate(ExtendableConditionEvent $event): void
     {
-        $entity = $event->getContext()?->offsetGet('checkout');
+        $entity = $event->getData()?->offsetGet('checkout');
         if (!$entity instanceof Checkout) {
             return;
         }

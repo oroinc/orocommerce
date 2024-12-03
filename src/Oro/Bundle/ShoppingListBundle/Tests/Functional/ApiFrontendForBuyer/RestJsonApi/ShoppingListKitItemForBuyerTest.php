@@ -76,7 +76,7 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'access denied exception',
-                'detail' => 'No access to the entity.',
+                'detail' => 'No access to the entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -87,14 +87,14 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
     {
         return [
             'another customer user' => [
-                'productKitItemLineItemId' => '<toString(@product_kit_item2_line_item1->id)>',
+                'productKitItemLineItemId' => '<toString(@product_kit_item2_line_item1->id)>'
             ],
             'another website' => [
-                'productKitItemLineItemId' => '<toString(@product_kit_item3_line_item1->id)>',
+                'productKitItemLineItemId' => '<toString(@product_kit_item3_line_item1->id)>'
             ],
             'another customer' => [
-                'productKitItemLineItemId' => '<toString(@product_kit_item4_line_item1->id)>',
-            ],
+                'productKitItemLineItemId' => '<toString(@product_kit_item4_line_item1->id)>'
+            ]
         ];
     }
 
@@ -121,9 +121,7 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem);
         self::assertEquals(123.45, $kitItemLineItem->getQuantity());
 
@@ -157,7 +155,7 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'access denied exception',
-                'detail' => 'No access to the entity.',
+                'detail' => 'No access to the entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -190,9 +188,7 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem, 'ProductKitItemLineItem is not found');
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
@@ -225,7 +221,7 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'access denied exception',
-                'detail' => 'No access to the entity.',
+                'detail' => 'No access to the entity.'
             ],
             $response,
             Response::HTTP_FORBIDDEN
@@ -246,15 +242,11 @@ class ShoppingListKitItemForBuyerTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNull($kitItemLineItem);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
         self::assertCount(1, $lineItem->getKitItemLineItems());
 

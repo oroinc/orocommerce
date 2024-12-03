@@ -19,7 +19,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductKitForAdditionalOrganizationData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
-use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
@@ -154,7 +153,7 @@ class ProductStrategyTest extends WebTestCase
         $this->strategy->setImportExportContext($context);
 
         $productKitItem = new ProductKitItemProduct();
-        $productKitItem->setProduct((new ProductStub())->setSku('TEST'));
+        $productKitItem->setProduct((new Product())->setSku('TEST'));
 
         /** @var Product $product */
         $product = $this->getReference(LoadProductKitData::PRODUCT_KIT_1);

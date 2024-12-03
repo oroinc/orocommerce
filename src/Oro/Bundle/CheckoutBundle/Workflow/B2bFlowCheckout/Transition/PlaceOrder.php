@@ -4,13 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\CheckoutActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\OrderActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\ShippingMethodActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\ActionGroup\SplitOrderActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PlaceOrder as BasePlaceOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -22,6 +23,8 @@ use Oro\Component\Action\Action\ExtendableAction;
  */
 class PlaceOrder extends BasePlaceOrder
 {
+    private ?CheckoutLineItemsConverter $checkoutLineItemsConverter = null;
+
     public function __construct(
         ActionExecutor $actionExecutor,
         CheckoutPaymentContextProvider $paymentContextProvider,
@@ -39,6 +42,11 @@ class PlaceOrder extends BasePlaceOrder
             $checkoutActions,
             $baseContinueTransition
         );
+    }
+
+    public function setCheckoutLineItemsConverter(CheckoutLineItemsConverter $checkoutLineItemsConverter): void
+    {
+        $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
     }
 
     #[\Override]
@@ -113,10 +121,18 @@ class PlaceOrder extends BasePlaceOrder
 
     private function placeOrder(Checkout $checkout, ?array $groupedLineItems): Order
     {
+        if ($groupedLineItems && $this->configProvider->isCreateSubOrdersForEachGroupEnabled()) {
+            $this->checkoutLineItemsConverter->setReuseLineItems(true);
+        }
+
         $order = $this->orderActions->placeOrder($checkout);
 
-        if ($groupedLineItems && $this->configProvider->isCreateSubOrdersForEachGroupEnabled()) {
-            $this->splitOrderActions->createChildOrders($checkout, $order, $groupedLineItems);
+        try {
+            if ($groupedLineItems && $this->configProvider->isCreateSubOrdersForEachGroupEnabled()) {
+                $this->splitOrderActions->createChildOrders($checkout, $order, $groupedLineItems);
+            }
+        } finally {
+            $this->checkoutLineItemsConverter->setReuseLineItems(false);
         }
 
         return $order;

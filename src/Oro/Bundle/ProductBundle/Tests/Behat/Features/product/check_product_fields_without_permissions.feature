@@ -167,7 +167,7 @@ Feature: Check product fields without permissions
     When I click View 1GB81 in grid
     Then I should see that "Navbar" contains "General"
     And I should see that "Navbar" contains "Activity"
-    And I should see that "Navbar" contains "Additional Information"
+    And I should see that "Navbar" contains "Additional"
     And I should see that "Navbar" contains "Related Items"
     And I should see that "Navbar" does not contain "Short Description"
     And I should see that "Navbar" does not contain "Description"
@@ -226,7 +226,7 @@ Feature: Check product fields without permissions
     When I click View 1GB81 in grid
     Then I should see that "Navbar" contains "General"
     And I should see that "Navbar" contains "Activity"
-    And I should see that "Navbar" contains "Additional Information"
+    And I should see that "Navbar" contains "Additional"
     And I should see that "Navbar" contains "Related Items"
     And I should see that "Navbar" does not contain "Short Description"
     And I should see that "Navbar" does not contain "Description"

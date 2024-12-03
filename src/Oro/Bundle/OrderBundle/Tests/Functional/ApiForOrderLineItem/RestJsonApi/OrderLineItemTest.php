@@ -88,7 +88,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'orderlineitems'],
-            ['sort' => '-createdAt', 'filter[order]' => '<toString(@simple_order->id)>']
+            ['sort' => '-createdAt', 'filter[orders]' => '<toString(@simple_order->id)>']
         );
         $responseData = self::jsonToArray($response->getContent());
         self::assertCount(2, $responseData['data']);
@@ -98,7 +98,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'orderlineitems'],
-            ['sort' => '-updatedAt', 'filter[order]' => '<toString(@simple_order->id)>']
+            ['sort' => '-updatedAt', 'filter[orders]' => '<toString(@simple_order->id)>']
         );
         $responseData = self::jsonToArray($response->getContent());
         self::assertCount(2, $responseData['data']);
@@ -360,11 +360,11 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $orderId = $lineItem->getOrder()->getId();
 
         $response = $this->getSubresource(
-            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'order']
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'orders']
         );
 
         $this->assertResponseContains(
-            ['data' => ['type' => 'orders', 'id' => (string)$orderId]],
+            ['data' => [['type' => 'orders', 'id' => (string)$orderId]]],
             $response
         );
     }
@@ -377,11 +377,11 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $orderId = $lineItem->getOrder()->getId();
 
         $response = $this->getRelationship(
-            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'order']
+            ['entity' => 'orderlineitems', 'id' => (string)$lineItemId, 'association' => 'orders']
         );
 
         $this->assertResponseContains(
-            ['data' => ['type' => 'orders', 'id' => (string)$orderId]],
+            ['data' => [['type' => 'orders', 'id' => (string)$orderId]]],
             $response
         );
     }
@@ -392,9 +392,9 @@ class OrderLineItemTest extends RestJsonApiTestCase
             [
                 'entity'      => 'orderlineitems',
                 'id'          => '<toString(@order_line_item.1->id)>',
-                'association' => 'order'
+                'association' => 'orders'
             ],
-            ['data' => ['type' => 'orders', 'id' => '<toString(@my_order->id)>']],
+            ['data' => [['type' => 'orders', 'id' => '<toString(@my_order->id)>']]],
             [],
             false
         );
@@ -653,7 +653,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
                     'type'          => 'orderlineitems',
                     'id'            => (string)$lineItemId,
                     'relationships' => [
-                        'order' => ['data' => ['type' => 'orders', 'id' => (string)$orderId]]
+                        'orders' => ['data' => [['type' => 'orders', 'id' => (string)$orderId]]]
                     ]
                 ]
             ]
@@ -675,8 +675,8 @@ class OrderLineItemTest extends RestJsonApiTestCase
                     'type'          => 'orderlineitems',
                     'id'            => (string)$lineItemId,
                     'relationships' => [
-                        'order' => [
-                            'data' => null
+                        'orders' => [
+                            'data' => []
                         ]
                     ]
                 ]
@@ -687,14 +687,9 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title'  => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/relationships/order/data']
-                ],
-                [
                     'title'  => 'unchangeable field constraint',
                     'detail' => 'Line Item order cannot be changed once set.',
-                    'source' => ['pointer' => '/data/relationships/order/data']
+                    'source' => ['pointer' => '/data/relationships/orders/data']
                 ]
             ],
             $response
@@ -713,7 +708,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
                     'type'          => 'orderlineitems',
                     'id'            => (string)$lineItemId,
                     'relationships' => [
-                        'order' => ['data' => ['type' => 'orders', 'id' => (string)$orderId]]
+                        'orders' => ['data' => [['type' => 'orders', 'id' => (string)$orderId]]]
                     ]
                 ]
             ],
@@ -724,7 +719,7 @@ class OrderLineItemTest extends RestJsonApiTestCase
             [
                 'title'  => 'unchangeable field constraint',
                 'detail' => 'Line Item order cannot be changed once set.',
-                'source' => ['pointer' => '/data/relationships/order/data']
+                'source' => ['pointer' => '/data/relationships/orders/data']
             ],
             $response
         );

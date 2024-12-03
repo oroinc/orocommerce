@@ -41,7 +41,6 @@ class OrderLineItemTest extends TestCase
         $checksum = sha1('sample-line-item');
         $properties = [
             ['id', 123],
-            ['order', new Order()],
             ['product', new ProductStub()],
             ['parentProduct', new ProductStub()],
             ['productSku', '1234'],
@@ -80,6 +79,7 @@ class OrderLineItemTest extends TestCase
 
         $entity->removeKitItemLineItem($orderProductKitItemLineItem);
         self::assertSame([], $entity->getKitItemLineItems()->toArray());
+        self::assertPropertyCollection($entity, 'orders', new Order());
     }
 
     public function testCreatePrice(): void

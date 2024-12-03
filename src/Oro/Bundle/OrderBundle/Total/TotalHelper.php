@@ -43,17 +43,27 @@ class TotalHelper
 
     public function fillSubtotals(Order $order): void
     {
-        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
+        if (!$order->getSubOrders()->isEmpty()) {
+            $subTotalAmount = 0;
+            foreach ($order->getSubOrders() as $subOrder) {
+                $subTotalAmount += $subOrder->getSubtotal();
+            }
+            $subtotalObject = MultiCurrency::create($subTotalAmount, $order->getCurrency());
+            $order->setSubtotalObject($subtotalObject);
+        } else {
+            $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
 
-        $subtotalObject = MultiCurrency::create($subtotal->getAmount(), $subtotal->getCurrency());
-        $baseSubtotal = $this->rateConverter->getBaseCurrencyAmount($subtotalObject);
-        $subtotalObject->setBaseCurrencyValue($baseSubtotal);
+            $subtotalObject = MultiCurrency::create($subtotal->getAmount(), $subtotal->getCurrency());
+            $baseSubtotal = $this->rateConverter->getBaseCurrencyAmount($subtotalObject);
+            $subtotalObject->setBaseCurrencyValue($baseSubtotal);
 
-        $order->setSubtotalObject($subtotalObject);
-        if ($subtotal->getAmount() > 0) {
-            foreach ($order->getDiscounts() as $discount) {
-                if ($discount->getType() === OrderDiscount::TYPE_AMOUNT) {
-                    $discount->setPercent($this->calculatePercent($subtotal, $discount));
+            $order->setSubtotalObject($subtotalObject);
+
+            if ($subtotal->getAmount() > 0) {
+                foreach ($order->getDiscounts() as $discount) {
+                    if ($discount->getType() === OrderDiscount::TYPE_AMOUNT) {
+                        $discount->setPercent($this->calculatePercent($subtotal, $discount));
+                    }
                 }
             }
         }
@@ -61,22 +71,45 @@ class TotalHelper
 
     public function fillDiscounts(Order $order): void
     {
-        $discountSubtotals = $this->discountSubtotalProvider->getSubtotal($order);
-
         $discountSubtotalAmount = new Price();
-        if (\count($discountSubtotals) > 0) {
-            foreach ($discountSubtotals as $discount) {
-                $newAmount = $discount->getAmount() + (float)$discountSubtotalAmount->getValue();
-                $discountSubtotalAmount->setValue($newAmount);
+
+        if (!$order->getSubOrders()->isEmpty()) {
+            $discountSubtotalAmount = new Price();
+            foreach ($order->getSubOrders() as $subOrder) {
+                $subOrderDiscount = $subOrder->getTotalDiscounts();
+                if ($subOrderDiscount) {
+                    $newAmount = $subOrderDiscount->getValue() + (float)$discountSubtotalAmount->getValue();
+                    $discountSubtotalAmount->setValue($newAmount);
+                }
+            }
+        } else {
+            $discountSubtotals = $this->discountSubtotalProvider->getSubtotal($order);
+            if (\count($discountSubtotals) > 0) {
+                foreach ($discountSubtotals as $discount) {
+                    $newAmount = $discount->getAmount() + (float)$discountSubtotalAmount->getValue();
+                    $discountSubtotalAmount->setValue($newAmount);
+                }
             }
         }
+
         $order->setTotalDiscounts($discountSubtotalAmount);
     }
 
     public function fillTotal(Order $order): void
     {
-        $total = $this->totalProvider->enableRecalculation()->getTotal($order);
-        $totalObject = MultiCurrency::create($total->getAmount(), $total->getCurrency());
+        if (!$order->getSubOrders()->isEmpty()) {
+            $totalAmount = 0;
+            $totalCurrency = $order->getCurrency();
+            foreach ($order->getSubOrders() as $subOrder) {
+                $totalAmount += $subOrder->getTotal();
+            }
+        } else {
+            $total = $this->totalProvider->enableRecalculation()->getTotal($order);
+            $totalAmount = $total->getAmount();
+            $totalCurrency = $total->getCurrency();
+        }
+
+        $totalObject = MultiCurrency::create($totalAmount, $totalCurrency);
         $baseTotal = $this->rateConverter->getBaseCurrencyAmount($totalObject);
         $totalObject->setBaseCurrencyValue($baseTotal);
         $order->setTotalObject($totalObject);

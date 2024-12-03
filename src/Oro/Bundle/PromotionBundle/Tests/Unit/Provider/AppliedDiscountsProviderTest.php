@@ -49,9 +49,9 @@ class AppliedDiscountsProviderTest extends \PHPUnit\Framework\TestCase
     {
         $order = new Order();
         $lineItem = new OrderLineItem();
-        $lineItem->setOrder($order);
+        $lineItem->addOrder($order);
         $someOtherLineItem = new OrderLineItem();
-        $someOtherLineItem->setOrder($order);
+        $someOtherLineItem->addOrder($order);
         $order->addAppliedPromotion($this->createAppliedPromotion('some type', [2, 3, 5], $lineItem));
         $order->addAppliedPromotion($this->createAppliedPromotion('some type', [2, 3, 5], $someOtherLineItem));
         $order->addAppliedPromotion($this->createAppliedPromotion(ShippingDiscount::NAME, [33, 66], $lineItem));

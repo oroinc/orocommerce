@@ -77,7 +77,8 @@
     {% set orderTotals %}
         {% include '@OroPricing/Totals/totals.html.twig' with {
             pageComponent: 'oroorder/js/app/components/totals-component',
-            options: {totals: totals}
+            options: {totals: totals},
+            hidePricingTotals: not entity.subOrders.empty
         } only %}
     {% endset %}
 
@@ -147,19 +148,10 @@
             'title': 'oro.order.sections.payment_history'|trans,
             'priority': -20,
             'subblocks': [{'data' : [
-                dataGrid.renderGrid('order-payment-transactions-grid', { order_id: entity.id })
+                dataGrid.renderGrid('order-payment-transactions-grid', { order_id: entity.id }),
+                oro_order_get_template_content('@OroOrder/Order/Datagrid/subOrderPaymentTransactions.html.twig', {entity: entity})
             ]}]
         }]) %}
-
-        {% if entity.subOrders is not empty %}
-            {% set dataBlocks = dataBlocks|merge([{
-                'title': 'oro.order.sections.sub_orders_payment_history'|trans,
-                'priority': -20,
-                'subblocks': [{'data' : [
-                    oro_order_get_template_content('@OroOrder/Order/Datagrid/subOrderPaymentTransactions.html.twig', {entity: entity})
-                ]}]
-            }]) %}
-        {% endif %}
     {% endif %}
 
     {% set id = 'order-view' %}

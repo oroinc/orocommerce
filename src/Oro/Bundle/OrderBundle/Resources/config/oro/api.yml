@@ -122,6 +122,9 @@ api:
                 productUnitCode:
                     form_options:
                         mapped: false
+                checksum:
+                    form_options:
+                        mapped: false
             filters:
                 fields:
                     createdAt: ~
@@ -138,9 +141,11 @@ api:
                     form_options:
                         validation_groups: [ [ Default, api_order_line_item_update ], api ]
             subresources:
-                order:
+                orders:
                     actions:
+                        add_relationship: false
                         update_relationship: false
+                        delete_relationship: false
                 kitItemLineItems:
                     actions:
                         add_relationship: false

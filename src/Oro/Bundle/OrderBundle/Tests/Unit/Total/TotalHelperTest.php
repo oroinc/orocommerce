@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Total;
 
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
@@ -44,7 +45,7 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testFillSubtotals()
+    public function testFillSubtotals(): void
     {
         $subtotal = new Subtotal();
         $subtotalAmount = 42;
@@ -68,7 +69,23 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, $order->getSubtotal());
     }
 
-    public function testFillDiscounts()
+    public function testFillSubtotalsForOrderWithSuborders(): void
+    {
+        $order = new Order();
+        $subOrder1 = new Order();
+        $subOrder1->setSubtotal(42);
+        $subOrder2 = new Order();
+        $subOrder2->setSubtotal(55);
+
+        $order->addSubOrder($subOrder1);
+        $order->addSubOrder($subOrder2);
+
+        $this->helper->fillSubtotals($order);
+
+        $this->assertEquals(97, $order->getSubtotal());
+    }
+
+    public function testFillDiscounts(): void
     {
         $discountSubtotal = new Subtotal();
         $discountSubtotalAmount = 42;
@@ -89,7 +106,27 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
     }
 
-    public function testFillTotal()
+    public function testFillDiscountsWithSuborders(): void
+    {
+        $order = new Order();
+        $discount1 = new Price();
+        $discount1->setValue(89);
+        $subOrder1 = new Order();
+        $subOrder1->setTotalDiscounts($discount1);
+        $discount2 = new Price();
+        $discount2->setValue(10);
+        $subOrder2 = new Order();
+        $subOrder2->setTotalDiscounts($discount2);
+
+        $order->addSubOrder($subOrder1);
+        $order->addSubOrder($subOrder2);
+
+        $this->helper->fillDiscounts($order);
+
+        $this->assertEquals(99, $order->getTotalDiscounts()->getValue());
+    }
+
+    public function testFillTotal(): void
     {
         $order = new Order();
 
@@ -116,5 +153,21 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
         $this->helper->fillTotal($order);
 
         $this->assertEquals($totalAmount, $order->getTotal());
+    }
+
+    public function testFillTotalForOrderWithSuborders(): void
+    {
+        $order = new Order();
+        $subOrder1 = new Order();
+        $subOrder1->setTotal(32);
+        $subOrder2 = new Order();
+        $subOrder2->setTotal(33);
+
+        $order->addSubOrder($subOrder1);
+        $order->addSubOrder($subOrder2);
+
+        $this->helper->fillTotal($order);
+
+        $this->assertEquals(65, $order->getTotal());
     }
 }

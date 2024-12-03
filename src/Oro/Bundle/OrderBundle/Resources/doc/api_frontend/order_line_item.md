@@ -108,15 +108,15 @@ This value can be omitted if the **productSku** field is specified in the reques
 
 ## SUBRESOURCES
 
-### order
+### orders
 
 #### get_subresource
 
-Retrieve the order record a specific line item record is assigned to.
+Retrieve the orders a specific line item record is assigned to.
 
 #### get_relationship
 
-Retrieve the ID of the order record which a specific line item record is assigned to.
+Retrieve the IDs of the orders which a specific line item record is assigned to.
 
 ### parentProduct
 

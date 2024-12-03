@@ -45,7 +45,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($order);
+            ->addOrder($order);
 
         $this->innerMapper
             ->expects(self::exactly(2))
@@ -141,7 +141,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($order);
+            ->addOrder($order);
         $this->innerMapper->expects(self::once())
             ->method('map')
             ->with($lineItem)
@@ -172,7 +172,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($order);
+            ->addOrder($order);
         $this->innerMapper->expects(self::once())
             ->method('map')
             ->with($lineItem)
@@ -205,7 +205,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($order)
+            ->addOrder($order)
             ->setProductSku('item')
             ->setQuantity(1)
             ->setProductUnitCode('item')
@@ -218,7 +218,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem1 = new OrderLineItem();
         $lineItem1
             ->setPrice($price)
-            ->setOrder($order)
+            ->addOrder($order)
             ->setProductSku('item')
             ->setQuantity(2)
             ->setProductUnitCode('item')
@@ -261,7 +261,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($order);
+            ->addOrder($order);
         $this->innerMapper->expects(self::once())
             ->method('map')
             ->with($lineItem)
@@ -326,7 +326,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($order);
+            ->addOrder($order);
         $this->innerMapper->expects(self::once())
             ->method('map')
             ->with($lineItem)
@@ -385,7 +385,7 @@ class OrderLineItemAfterDiscountsMapperTest extends TestCase
         $lineItem = new OrderLineItem();
         $lineItem
             ->setPrice($price)
-            ->setOrder($suborder);
+            ->addOrder($suborder);
         $this->innerMapper->expects(self::once())
             ->method('map')
             ->with($lineItem)
