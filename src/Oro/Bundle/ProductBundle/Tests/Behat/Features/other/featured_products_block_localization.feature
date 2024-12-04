@@ -54,8 +54,6 @@ Feature: Featured Products Block Localization
     And I should see an "Search Autocomplete Product Image" element
     And I should see picture "Search Autocomplete Product Picture" element
 
-  @skip
-# Unskip when BB-20324 will be fixed
   Scenario: Check that product name is displayed properly in shopping lists widget
     Given click "Add to Shopping List" for "SKU1" product
     When click "In Shopping List" for "SKU1" product
@@ -77,7 +75,6 @@ Feature: Featured Products Block Localization
     Then I should see preview image with alt "Product1 (Localization 1)" for "SKU1" product
 
   Scenario: Check that product name is localized in shopping lists widget
-    Given click "Add to Shopping List" for "SKU1" product
     When click "In Shopping List" for "SKU1" product
     Then I should see "UiDialog" with elements:
       | Title | Product1 (Localization 1) |

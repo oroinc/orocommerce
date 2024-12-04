@@ -47,8 +47,6 @@ Feature: Top Selling Items Block Localization
     Then I should see preview image with alt "Product1`\"'&йёщ®&reg;>" for "SKU1" product
     And I should see picture for "SKU1" product in the "Top Selling Items Block"
 
-  @skip
-# Unskip when BB-20324 will be fixed
   Scenario: Check that product name is displayed properly in shopping lists widget
     When click "Add to Shopping List" for "SKU1" product
     And click "In Shopping List" for "SKU1" product
@@ -70,7 +68,6 @@ Feature: Top Selling Items Block Localization
     Then I should see preview image with alt "Product1 (Localization 1)" for "SKU1" product
 
   Scenario: Check that product name is localized in shopping lists widget
-    When click "Add to Shopping List" for "SKU1" product
-    And I click "In Shopping List" for "SKU1" product
+    When I click "In Shopping List" for "SKU1" product
     Then I should see "UiDialog" with elements:
       | Title | Product1 (Localization 1) |

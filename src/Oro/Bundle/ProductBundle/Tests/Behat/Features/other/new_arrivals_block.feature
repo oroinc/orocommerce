@@ -283,8 +283,6 @@ Feature: New Arrivals Block
     Then I should see preview image with alt "Product6`\"'&йёщ®&reg;>" for "SKU6" product
     And I should see picture for "SKU6" product in the "New Arrivals Block"
 
-  @skip
-# Unskip when BB-20324 will be fixed
   Scenario: Check that product name is localized in shopping lists widget
     When I click "Add to Shopping List" for "SKU6" product
     And click "In Shopping List" for "SKU6" product
@@ -306,7 +304,6 @@ Feature: New Arrivals Block
     Then I should see preview image with alt "Product6 (Localization 1)" for "SKU6" product
 
   Scenario: Check that product name is localized in shopping lists widget
-    When I click "Add to Shopping List" for "SKU6" product
     When I click "In Shopping List" for "SKU6" product
     Then I should see "UiDialog" with elements:
       | Title | Product6 (Localization 1) |

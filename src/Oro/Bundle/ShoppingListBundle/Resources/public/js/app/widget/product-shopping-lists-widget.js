@@ -96,7 +96,7 @@ define(function(require) {
             }
             this.initializeElements(options);
 
-            this.options.title = this.model.get('name');
+            this.options.title = _.unescape(this.model.get('name'));
             this.options.url = options.url = false;
             this.options.template = options.template = _.template(this.options.template);
 
