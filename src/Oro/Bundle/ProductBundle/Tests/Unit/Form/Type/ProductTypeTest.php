@@ -25,9 +25,11 @@ use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductShortDescription;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Extension\ProductBrandExtension;
 use Oro\Bundle\ProductBundle\Form\Type\BrandSelectType;
+use Oro\Bundle\ProductBundle\Form\Type\DefaultVariantChoiceType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductImageCollectionType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType;
@@ -54,6 +56,7 @@ use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -62,12 +65,8 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
-    /** @var ProductType */
-    private $type;
-
-    /** @var UrlGeneratorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $urlGenerator;
-
+    private ProductType $type;
+    private UrlGeneratorInterface|MockObject $urlGenerator;
     private AuthorizationCheckerInterface $authorizationChecker;
 
     private array $submitCustomFields = [
@@ -81,13 +80,9 @@ class ProductTypeTest extends FormIntegrationTestCase
         ],
     ];
 
-    /** @var AttributeFamily */
-    private $attributeFamily;
-
+    private ?AttributeFamily $attributeFamily = null;
     private array $images = [];
-
-    /** @var UnitLabelFormatterInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnitLabelFormatter;
+    private UnitLabelFormatterInterface|MockObject $productUnitLabelFormatter;
 
     #[\Override]
     protected function setUp(): void
@@ -180,6 +175,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                         'en' => (new Localization())->setName('en'),
                         'en_US' => (new Localization())->setName('en_US'),
                     ]),
+                    new DefaultVariantChoiceType(
+                        $this->createMock(ProductRepository::class),
+                        $variantFieldProvider
+                    ),
                 ],
                 [
                     FormType::class => [
@@ -195,7 +194,7 @@ class ProductTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitProvider
      */
-    public function testSubmit(Product $defaultData, array $submittedData, Product $expectedData)
+    public function testSubmit(Product $defaultData, array $submittedData, Product $expectedData): void
     {
         $form = $this->factory->create(ProductType::class, $defaultData);
 
@@ -454,7 +453,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         return $expectedProduct->setSku('test sku');
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(ProductType::class, $this->createDefaultProductEntity());
 
@@ -498,7 +497,7 @@ class ProductTypeTest extends FormIntegrationTestCase
         return $productUnitPrecision;
     }
 
-    public function testGenerateChangedSlugsUrlOnPresetData()
+    public function testGenerateChangedSlugsUrlOnPresetData(): void
     {
         $generatedUrl = '/some/url';
         $this->urlGenerator->expects($this->once())

@@ -158,6 +158,10 @@ oro:
                 short: '{0} none|]0,1] %count% bottle|]1,Inf] %count% bottles'
                 label: '{0} none|]0,1] bottle|]1,Inf] bottles'
 
+        product_variants:
+            default_variant:
+                no_default_variant.label: ' - No Default Variant - '
+
         validation:
             sku:
                 not_found: 'Item number cannot be found'

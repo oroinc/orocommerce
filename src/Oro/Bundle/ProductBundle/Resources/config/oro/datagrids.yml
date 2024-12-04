@@ -516,6 +516,8 @@ datagrids:
                 selectors:
                     included: '#productAppendVariants'
                     excluded: '#productRemoveVariants'
+            jsmodules:
+                - oroproduct/js/app/datagrid/builder/product-variants-edit-builder
         source:
             query:
                 select:
@@ -578,6 +580,12 @@ datagrids:
             query:
                 select:
                     - productVariantLink.visible as visible
+                    - >
+                        (CASE
+                              WHEN IDENTITY(parentProduct.defaultVariant) = product.id
+                              THEN true
+                              ELSE false
+                         END) as defaultVariant
                 join:
                     inner:
                         -
@@ -585,9 +593,17 @@ datagrids:
                             alias: productVariantLink
                             conditionType: WITH
                             condition: productVariantLink.product = product.id AND productVariantLink.parentProduct = :parentProduct
+                        -
+                            join: 'Oro\Bundle\ProductBundle\Entity\Product'
+                            alias: parentProduct
+                            conditionType: WITH
+                            condition: productVariantLink.parentProduct = parentProduct.id
         columns:
             id:
                 label:         oro.product.id.label
+            defaultVariant:
+                label:         oro.product.default_variant.label
+                frontend_type: boolean
             sku:
                 label:         oro.product.sku.label
             productName:
@@ -609,7 +625,10 @@ datagrids:
             columns:
                 visible:
                     data_name: visible
+                defaultVariant:
+                    data_name: defaultVariant
             default:
+                defaultVariant: DESC
                 visible: DESC
                 sku: ASC
 

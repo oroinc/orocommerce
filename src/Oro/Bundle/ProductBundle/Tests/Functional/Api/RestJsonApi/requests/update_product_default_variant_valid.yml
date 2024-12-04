@@ -1,0 +1,8 @@
+data:
+  type: products
+  id: '<toString(@product-8->id)>'
+  relationships:
+    defaultVariant:
+      data:
+        type: 'products'
+        id: '<toString(@product-1->id)>'

@@ -177,6 +177,11 @@ class ProductVariantAvailabilityProvider
             throw new \InvalidArgumentException('Variant values provided don\'t match exactly one simple product');
         }
 
+        $defaultVariant = $configurableProduct->getDefaultVariant();
+        if (\in_array($defaultVariant, $simpleProducts, true)) {
+            return $defaultVariant;
+        }
+
         return $simpleProducts ? reset($simpleProducts) : null;
     }
 

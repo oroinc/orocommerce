@@ -6,6 +6,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\DefaultProductVariant: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\NotEmptyConfigurableAttributes:

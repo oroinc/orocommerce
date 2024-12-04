@@ -219,6 +219,9 @@ class ProductType extends AbstractType
             ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function preSetDataListener(FormEvent $event)
     {
         /** @var Product $product */
@@ -274,6 +277,15 @@ class ProductType extends AbstractType
 
         if ($product->isConfigurable()) {
             $form
+                ->add(
+                    DefaultVariantChoiceType::DEFAULT_VARIANT_FORM_FIELD,
+                    DefaultVariantChoiceType::class,
+                    [
+                        'label' => 'oro.product.default_variant.label',
+                        'configs' => ['allowClear' => true],
+                        'parentProduct' => $product,
+                    ]
+                )
                 ->add(
                     'variantLinks',
                     ProductVariantLinksType::class,

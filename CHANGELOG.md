@@ -104,6 +104,7 @@ Previously known as GOD Object
 
 #### ProductBundle
 * Added a new frontend `inventory-switcher` filter.
+* Added a default variant field for the Product entity. This allows to choose a default variant from the product variants for a configurable product. This variant will be selected by default on the product view page. It can be set on product create and edit pages as well as via API or product import.  
 
 #### PricingBundle
 * Added a new backend `customerprices` API resource.

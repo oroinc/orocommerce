@@ -40,6 +40,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
             ['owner', new BusinessUnit()],
             ['organization', new Organization()],
             ['primaryUnitPrecision',  null],
+            ['defaultVariant', new Product()],
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED],
@@ -296,6 +297,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $product->getDescriptions()->add(new LocalizedFallbackValue());
         $product->getShortDescriptions()->add(new LocalizedFallbackValue());
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
+        $product->setDefaultVariant(new Product());
         $product->setVariantFields(['field']);
         $product->addImage(new ProductImage());
         $product->addSlugPrototype(new LocalizedFallbackValue());
@@ -308,6 +310,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         self::assertCount(1, $product->getShortDescriptions());
         self::assertCount(1, $product->getImages());
         self::assertCount(1, $product->getVariantLinks());
+        self::assertInstanceOf(Product::class, $product->getDefaultVariant());
         self::assertCount(1, $product->getVariantFields());
         self::assertCount(1, $product->getSlugPrototypes());
         self::assertCount(1, $product->getSlugs());
@@ -321,6 +324,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         self::assertEmpty($productCopy->getShortDescriptions());
         self::assertEmpty($productCopy->getImages());
         self::assertEmpty($productCopy->getVariantLinks());
+        self::assertNull($productCopy->getDefaultVariant());
         self::assertEmpty($productCopy->getVariantFields());
         self::assertEmpty($productCopy->getSlugPrototypes());
         self::assertEmpty($productCopy->getSlugs());

@@ -120,6 +120,16 @@ Retrieve records of products that are variants for a specific configurable produ
 
 Retrieve the IDs of products that are variants for a specific configurable product.
 
+### defaultVariant
+
+#### get_subresource
+
+Retrieve the default variant record for the configurable product.
+
+#### get_relationship
+
+Retrieve the ID of the default variant for the configurable product.
+
 ### parentProducts
 
 #### get_subresource
