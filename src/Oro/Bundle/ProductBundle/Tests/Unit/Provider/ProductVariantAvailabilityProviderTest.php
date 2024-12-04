@@ -21,6 +21,8 @@ use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Component\Testing\Unit\PropertyAccess\PropertyAccessTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -32,30 +34,17 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
+final class ProductVariantAvailabilityProviderTest extends TestCase
 {
     use PropertyAccessTrait;
 
-    /** @var ProductRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productRepository;
-
-    /** @var QueryBuilder|\PHPUnit\Framework\MockObject\MockObject */
-    private $qb;
-
-    /** @var AbstractQuery|\PHPUnit\Framework\MockObject\MockObject */
-    private $query;
-
-    /** @var CustomFieldProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $customFieldProvider;
-
-    /** @var EnumVariantFieldValueHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $enumHandler;
-
-    /** @var EventDispatcherInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $dispatcher;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
+    private ProductRepository|MockObject $productRepository;
+    private QueryBuilder|MockObject $qb;
+    private AbstractQuery|MockObject $query;
+    private CustomFieldProvider|MockObject $customFieldProvider;
+    private EnumVariantFieldValueHandler|MockObject $enumHandler;
+    private EventDispatcherInterface|MockObject $dispatcher;
+    private TranslatorInterface|MockObject $translator;
 
     /** @var ProductVariantAvailabilityProvider */
     private $availabilityProvider;
@@ -140,7 +129,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
             ->willReturn($result);
     }
 
-    public function testGetSimpleProductsByVariantFields()
+    public function testGetSimpleProductsByVariantFields(): void
     {
         $configurableProduct = $this->getConfigurableProduct(100);
         $variantParameters = [
@@ -172,7 +161,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSimpleProductByVariantFields()
+    public function testGetSimpleProductByVariantFields(): void
     {
         $configurableProduct = $this->getConfigurableProduct(100);
 
@@ -187,7 +176,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSimpleProductByVariantFieldsSeveralProducts()
+    public function testGetSimpleProductByVariantFieldsSeveralProducts(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Variant values provided don't match exactly one simple product");
@@ -203,7 +192,60 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct);
     }
 
-    public function testGetSimpleProductByVariantFieldsNoProducts()
+    public function testGetSimpleProductByVariantFieldsSeveralProductsWithoutException(): void
+    {
+        $configurableProduct = $this->getConfigurableProduct(100);
+
+        $product1 = $this->getSimpleProduct(1);
+        $product2 = $this->getSimpleProduct(2);
+        $products = [$product1, $product2];
+
+        $this->setUpRepositoryResult($configurableProduct, [], $products);
+
+        $this->assertSame(
+            $product1,
+            $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct, [], false)
+        );
+    }
+
+    public function testGetSimpleProductByVariantFieldsSeveralProductsWithDefaultVariant(): void
+    {
+        $configurableProduct = $this->getConfigurableProduct(100);
+
+        $product1 = $this->getSimpleProduct(1);
+        $product2 = $this->getSimpleProduct(2);
+        $products = [$product1, $product2];
+
+        $configurableProduct->setDefaultVariant($product2);
+
+        $this->setUpRepositoryResult($configurableProduct, [], $products);
+
+        $this->assertSame(
+            $product2,
+            $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct, [], false)
+        );
+    }
+
+    public function testGetSimpleProductByVariantFieldsSeveralProductsWithDefaultVariantNotInVariants(): void
+    {
+        $configurableProduct = $this->getConfigurableProduct(100);
+
+        $product1 = $this->getSimpleProduct(1);
+        $product2 = $this->getSimpleProduct(2);
+        $product3 = $this->getSimpleProduct(3);
+        $products = [$product1, $product2];
+
+        $configurableProduct->setDefaultVariant($product3);
+
+        $this->setUpRepositoryResult($configurableProduct, [], $products);
+
+        $this->assertSame(
+            $product1,
+            $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct, [], false)
+        );
+    }
+
+    public function testGetSimpleProductByVariantFieldsNoProducts(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage("Variant values provided don't match exactly one simple product");
@@ -216,7 +258,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct);
     }
 
-    public function testGetSimpleProductByVariantFieldsWrongProductType()
+    public function testGetSimpleProductByVariantFieldsWrongProductType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Product with type "configurable" expected, "simple" given');
@@ -229,7 +271,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct);
     }
 
-    public function testGetSimpleProductIdsByVariantFieldsGroupedByConfigurable()
+    public function testGetSimpleProductIdsByVariantFieldsGroupedByConfigurable(): void
     {
         $configurableProductIds = [100, 101, 102];
         $queryResult = [
@@ -270,7 +312,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSimpleProductIdsByVariantFieldsGroupedByConfigurableWhenConfigurableProductIdsAreEmpty()
+    public function testGetSimpleProductIdsByVariantFieldsWhenConfigurableProductIdsAreEmpty(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The list of configurable product IDs must not be empty.');
@@ -283,7 +325,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider->getSimpleProductIdsByVariantFieldsGroupedByConfigurable([]);
     }
 
-    public function testGetVariantFieldsValuesForVariant()
+    public function testGetVariantFieldsValuesForVariant(): void
     {
         $configurableProduct = $this->getConfigurableProduct(100);
         $configurableProduct->setVariantFields(['color', 'new']);
@@ -333,7 +375,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         array $variantParameters,
         array $variantFields,
         array $expected
-    ) {
+    ): void {
         $configurableProduct = $this->getConfigurableProduct(100);
         $configurableProduct->setVariantFields($variantFields);
 
@@ -460,7 +502,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetSimpleProductIdsGroupedByConfigurableForEmptyProductIds()
+    public function testGetSimpleProductIdsGroupedByConfigurableForEmptyProductIds(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The list of configurable product IDs must not be empty.');
@@ -468,7 +510,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->availabilityProvider->getSimpleProductIdsGroupedByConfigurable([]);
     }
 
-    public function testGetSimpleProductIdsGroupedByConfigurableNoSimple()
+    public function testGetSimpleProductIdsGroupedByConfigurableNoSimple(): void
     {
         $productIds = [1];
 
@@ -478,7 +520,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertSame([], $this->availabilityProvider->getSimpleProductIdsGroupedByConfigurable($productIds));
     }
 
-    public function testGetSimpleProductIdsGroupedByConfigurable()
+    public function testGetSimpleProductIdsGroupedByConfigurable(): void
     {
         $productIds = [1, 2, 3];
 
@@ -508,7 +550,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetSimpleProductIdsByConfigurable()
+    public function testGetSimpleProductIdsByConfigurable(): void
     {
         $simpleProductResult = [
             ['id' => 1],

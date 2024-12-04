@@ -1,0 +1,41 @@
+include:
+    - '@OroCustomerBundle:BuyerCustomerFixture.yml'
+    - '@OroProductBundle:ConfigurableAttributeFamily.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1_name:
+        string: 'Green shirt L'
+    product2_name:
+        string: 'Red shirt M'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    unit_precision1:
+        unit: '@item'
+        precision: '1'
+    unit_precision2:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        type: 'simple'
+        sku: 'gtsh_l'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        primaryUnitPrecision: '@unit_precision1'
+        unitPrecisions: [ '@unit_precision1' ]
+        __calls:
+            - addName: ['@product1_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'
+    product2:
+        type: 'simple'
+        sku: 'rtsh_m'
+        organization: '@organization'
+        attributeFamily: '@productAttributeFamily'
+        primaryUnitPrecision: '@unit_precision2'
+        unitPrecisions: [ '@unit_precision2' ]
+        __calls:
+            - addName: ['@product2_name']
+        status: 'enabled'
+        inventoryStatus: '@enumInventoryStatuses'

@@ -339,6 +339,14 @@ class Product implements
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['excluded' => true]])]
     protected ?Collection $parentVariantLinks = null;
 
+    #[ORM\ManyToOne(targetEntity: Product::class)]
+    #[ORM\JoinColumn(name: 'default_variant_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
+    #[ConfigField(defaultValues: [
+        'dataaudit' => ['auditable' => true],
+        'importexport' => ['order' => 100]
+    ])]
+    protected ?Product $defaultVariant = null;
+
     /**
      * @var Collection<int, ProductShortDescription>
      */
@@ -1054,6 +1062,18 @@ class Product implements
         return $this;
     }
 
+    public function getDefaultVariant(): ?Product
+    {
+        return $this->defaultVariant;
+    }
+
+    public function setDefaultVariant(?Product $defaultVariant): Product
+    {
+        $this->defaultVariant = $defaultVariant;
+
+        return $this;
+    }
+
     /**
      * @return Collection|ProductImage[]
      */
@@ -1250,6 +1270,7 @@ class Product implements
             $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->parentVariantLinks = new ArrayCollection();
+            $this->defaultVariant = null;
             $this->slugPrototypes = new ArrayCollection();
             $this->slugs = new ArrayCollection();
             $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);

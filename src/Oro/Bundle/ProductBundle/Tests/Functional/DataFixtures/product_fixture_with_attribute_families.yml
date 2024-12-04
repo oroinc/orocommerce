@@ -1,0 +1,244 @@
+product-1:
+    productCode: product-1
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-1.names.default, string: product-1.names.default }
+        - { reference: product-1.names.en_CA, string: product-1.names.en_CA, localization: en_CA }
+    slugPrototypes:
+        - { reference: product-1.slugPrototypes.default, string: product-1.slugPrototypes.default }
+        - { reference: product-1.slugPrototypes.en_CA, string: product-1.slugPrototypes.en_CA, localization: en_CA }
+    descriptions:
+        - { reference: product-1.descriptions.default, wysiwyg: product-1.descriptions.default }
+        - { reference: product-1.descriptions.en_CA, wysiwyg: product-1.descriptions.en_CA, localization: en_CA }
+    shortDescriptions:
+        - { reference: product-1.shortDescriptions.default, text: product-1.shortDescriptions.default }
+        - { reference: product-1.shortDescriptions.en_CA, text: product-1.shortDescriptions.en_CA, localization: en_CA }
+    images:
+        - { reference: img, type: listing }
+    featured: true
+    manageInventory:
+        reference: product-1.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    minimumQuantityToOrder:
+        reference: product-1.minimumQuantityToOrder
+        scalarValue: 1
+    maximumQuantityToOrder:
+        reference: product-1.maximumQuantityToOrder
+        scalarValue: 99999
+    highlightLowInventory:
+        reference: product-1.highlightLowInventory
+        scalarValue: 0
+    isUpcoming:
+        reference: product-1.isUpcoming
+        scalarValue: 0
+    attributeFamily: attribute_family_1
+product-2:
+    productCode: product-2
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-2.names.default, string: product-2.names.default }
+    slugPrototypes:
+        - { reference: product-2.slugPrototypes.default, string: product-2.slugPrototypes.default }
+    descriptions:
+        - { reference: product-2.descriptions.default, wysiwyg: product-2.descriptions.default }
+    shortDescriptions:
+        - { reference: product-2.shortDescriptions.default, text: product-2.shortDescriptions.default }
+        - { reference: product-2.shortDescriptions.es, fallback: system, localization: es }
+    images:
+        - { reference: img, type: main }
+    featured: true
+    manageInventory:
+        reference: product-2.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    attributeFamily: attribute_family_1
+product-3:
+    productCode: product-3
+    inventoryStatus: out_of_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-3.names.default, string: product-3.names.default }
+    slugPrototypes:
+        - { reference: product-3.slugPrototypes.default, string: product-3.slugPrototypes.default }
+    descriptions:
+        - { reference: product-3.descriptions.default, wysiwyg: product-3.descriptions.default }
+    shortDescriptions:
+        - { reference: product-3.shortDescriptions.default, text: product-3.shortDescriptions.default }
+    images:
+        - { reference: img, type: main }
+    featured: true
+    related_products: [product-1, product-2]
+    manageInventory:
+        reference: product-3.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    attributeFamily: attribute_family_1
+product-4:
+    productCode: product-4
+    inventoryStatus: discontinued
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-4.names.default, string: product-4.names.default }
+    slugPrototypes:
+        - { reference: product-4.slugPrototypes.default, string: product-4.slugPrototypes.default }
+    descriptions:
+        - { reference: product-4.descriptions.default, wysiwyg: product-4.descriptions.default }
+    shortDescriptions:
+        - { reference: product-4.shortDescriptions.default, text: product-4.shortDescriptions.default }
+    featured: true,
+    related_products: [product-3]
+    manageInventory:
+        reference: product-4.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    attributeFamily: attribute_family_2
+product-5:
+    productCode: product-5
+    inventoryStatus: in_stock
+    status: disabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-5.names.default, string: product-5.names.default }
+    slugPrototypes:
+        - { reference: product-5.slugPrototypes.default, string: product-5.slugPrototypes.default }
+    descriptions:
+        - { reference: product-5.descriptions.default, wysiwyg: product-5.descriptions.default }
+    shortDescriptions:
+        - { reference: product-5.shortDescriptions.default, text: product-5.shortDescriptions.default }
+    featured: false
+    manageInventory:
+        reference: product-5.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    attributeFamily: attribute_family_1
+    minimumQuantityToOrder:
+        reference: product-5.minimumQuantityToOrder
+        scalarValue: 1
+    maximumQuantityToOrder:
+        reference: product-5.maximumQuantityToOrder
+        scalarValue: 99999
+    highlightLowInventory:
+        reference: product-5.highlightLowInventory
+        scalarValue: 0
+    isUpcoming:
+        reference: product-5.isUpcoming
+        fallback: "category"
+product-6:
+    productCode: product-6
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-6.names.default, string: product-6.names.default }
+    slugPrototypes:
+        - { reference: product-6.slugPrototypes.default, string: product-6.slugPrototypes.default }
+    descriptions:
+        - { reference: product-6.descriptions.default, wysiwyg: product-6.descriptions.default }
+    shortDescriptions:
+        - { reference: product-6.shortDescriptions.default, text: product-6.shortDescriptions.default }
+    featured: false
+    manageInventory:
+        reference: product-6.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+продукт-7:
+    productCode: продукт-7
+    inventoryStatus: in_stock
+    status: enabled
+    type: simple
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: продукт-7.names.default, string: продукт-7.names.default }
+    slugPrototypes:
+        - { reference: продукт-7.slugPrototypes.default, string: продукт-7.slugPrototypes.default }
+    descriptions:
+        - { reference: продукт-7.descriptions.default, wysiwyg: продукт-7.descriptions.default }
+    shortDescriptions:
+        - { reference: продукт-7.shortDescriptions.default, text: продукт-7.shortDescriptions.default }
+    featured: false
+    manageInventory:
+        reference: продукт-7.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+product-8:
+    productCode: product-8
+    inventoryStatus: in_stock
+    status: enabled
+    type: configurable
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: product-8.names.default, string: product-8.names.default }
+    slugPrototypes:
+        - { reference: product-8.slugPrototypes.default, string: product-8.slugPrototypes.default }
+    descriptions:
+        - { reference: product-8.descriptions.default, wysiwyg: product-8.descriptions.default }
+    shortDescriptions:
+        - { reference: product-8.shortDescriptions.default, text: product-8.shortDescriptions.default }
+    featured: false
+    images:
+        - { reference: img, type: listing }
+    manageInventory:
+        reference: product-8.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    attributeFamily: attribute_family_1
+продукт-9:
+    productCode: продукт-9
+    inventoryStatus: in_stock
+    status: enabled
+    type: configurable
+    primaryUnitPrecision:
+        code: milliliter
+        precision: 0
+    names:
+        - { reference: продукт-9.names.default, string: продукт-9.names.default }
+    slugPrototypes:
+        - { reference: продукт-9.slugPrototypes.default, string: продукт-9.slugPrototypes.default }
+    descriptions:
+        - { reference: продукт-9.descriptions.default, wysiwyg: продукт-9.descriptions.default }
+    shortDescriptions:
+        - { reference: продукт-9.shortDescriptions.default, text: продукт-9.shortDescriptions.default }
+    featured: false
+    manageInventory:
+        reference: продукт-9.manageInventory
+        fallback: "systemConfig"
+        scalarValue: null
+        arrayValue: null
+    attributeFamily: attribute_family_1

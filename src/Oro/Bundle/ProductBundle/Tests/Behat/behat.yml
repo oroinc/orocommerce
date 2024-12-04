@@ -315,6 +315,7 @@ oro_behat_extension:
           Name Default Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Name First Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
           Name First Slug Use Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
+          Default Variant Select: 'oro_product[defaultVariant]'
         # for testing product attributes
           Color:
             type: 'css'
@@ -419,6 +420,9 @@ oro_behat_extension:
           Multiple Images Field:
             type: xpath
             locator: '//input[contains(@name,"multiple_images_field") and contains(@type,"file")]'
+
+    Default Variant Select:
+      selector: '[name="oro_product[defaultVariant]"]'
 
     Multiple Files DAM Attribute:
       selector:

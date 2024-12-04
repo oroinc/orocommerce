@@ -340,6 +340,11 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
 
+    oro_product.form.type.default_variant_choice:
+        class: Oro\Bundle\ProductBundle\Form\Type\DefaultVariantChoiceType
+        tags:
+            - { name: form.type }
+
     # Component added back for theme layout BC from version 5.0
     oro_product.form.type.extension.is_optimized_quick_add:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\IsOptimizedQuickAddTypeExtension'
@@ -352,3 +357,10 @@ services:
             - '@assets.packages'
         tags:
             - { name: oro_theme.form.configuration_child_builder }
+
+    oro_product.form.type.extension.default_variant_choice:
+        class: Oro\Bundle\ProductBundle\Form\Extension\DefaultVariantChoiceExtension
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }

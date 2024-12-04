@@ -47,7 +47,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_34_2';
+        return 'v1_35';
     }
 
     /**
@@ -89,6 +89,7 @@ class OroProductBundleInstaller implements
         $this->addOroProductNameForeignKeys($schema);
         $this->addOroProductDescriptionForeignKeys($schema);
         $this->addOroProductVariantLinkForeignKeys($schema);
+        $this->addOroDefaultVariantForeignKeys($schema);
         $this->addOroProductShortDescriptionForeignKeys($schema);
         $this->addOroProductImageForeignKeys($schema);
         $this->addOroProductImageTypeForeignKeys($schema);
@@ -133,6 +134,7 @@ class OroProductBundleInstaller implements
         $table->addColumn('created_at', 'datetime');
         $table->addColumn('updated_at', 'datetime');
         $table->addColumn('variant_fields', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
+        $table->addColumn('default_variant_id', 'integer', ['notnull' => false]);
         $table->addColumn('status', 'string', ['length' => 16]);
         $table->addColumn('primary_unit_precision_id', 'integer', ['notnull' => false]);
         $table->addColumn('type', 'string', ['length' => 32]);
@@ -384,6 +386,17 @@ class OroProductBundleInstaller implements
             ['parent_product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+    }
+
+    private function addOroDefaultVariantForeignKeys(Schema $schema): void
+    {
+        $table = $schema->getTable('oro_product');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['default_variant_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 
