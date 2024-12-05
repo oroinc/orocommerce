@@ -29,7 +29,7 @@ class CreateOrderWithNotValidAddressesTest extends FrontendRestJsonApiTestCase
     }
 
     #[\Override]
-    protected function postFixtureLoad()
+    protected function postFixtureLoad(): void
     {
         parent::postFixtureLoad();
         self::getContainer()->get('oro_payment_term.provider.payment_term_association')

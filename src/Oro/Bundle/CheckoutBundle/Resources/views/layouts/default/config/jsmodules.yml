@@ -22,4 +22,6 @@ dynamic-imports:
         - tpl-loader!orocheckout/templates/datagrid/cell/price.html
         - tpl-loader!orocheckout/templates/datagrid/cell/quantity.html
         - tpl-loader!orocheckout/templates/datagrid/cell/subtotal.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/sku.html
+        - tpl-loader!orocheckout/templates/datagrid/cell/sku-message.html
         - tpl-loader!orocheckout/templates/datagrid/cell/unit.html

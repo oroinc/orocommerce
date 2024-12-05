@@ -5,6 +5,5 @@ $shopping-list-grid-effect-transition: background-color 1s !default;
 $shopping-list-grid-effect-highlight: get-color('warning', 'light') !default;
 $shopping-list-grid-effect-success: get-color('success', 'light') !default;
 $shopping-list-grid-effect-error: get-color('destructive', 'light') !default;
-$shopping-list-grid-effect-error-dark: get-color('destructive', 'dark') !default;
-$shopping-list-grid-effect-warning: get-color('warning', 'light') !default;
-$shopping-list-grid-effect-warning-dark: get-color('warning', 'dark') !default;
+$shopping-list-grid-effect-error-dark: get-color('destructive', 'main') !default;
+$shopping-list-grid-effect-warning-dark: get-color('warning', 'base') !default;

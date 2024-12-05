@@ -29,7 +29,7 @@ Feature: Promotions for multi shipping checkout percent
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price  | Subtotal |
+      | SKU  | Product                             | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
       | SKU2 | iPhone 13                           | $2.00  | $20.00   |
       | SKU3 | iPhone X                            | $2.00  | $20.00   |
@@ -92,7 +92,7 @@ Feature: Promotions for multi shipping checkout percent
       | 1            | $51.00 |
     And number of records should be 1
     When I click view "$51.00" in grid
-    And I click "Promotions and Discounts"
+    And I click "Discounts"
     Then I should see following rows in "Promotions" table
       | Code                  | Promotion                               | Type        | Status | Discount |
       |                       | Shipping Discount                       | Shipping    | Active | -$3.00   |

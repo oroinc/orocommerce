@@ -136,6 +136,10 @@
         &__grid-body {
             .matrix-order-widget__form__col {
                 justify-content: start;
+
+                &--grow {
+                    justify-content: end;
+                }
             }
         }
 
@@ -170,6 +174,8 @@
         }
 
         &__grid-head-label {
+            padding-inline-start: spacing('base');
+
             &::before,
             &::after {
                 border-bottom: $matrix-order-widget-grid-multi-rows-grid-area-items-label-pseudo-border-bottom;
@@ -179,7 +185,7 @@
         &__grid-footer-label {
             font-weight: font-weight('semi-bold');
             text-align: start;
-            padding: 0 spacing('sm');
+            padding-inline-start: spacing('base');
             border-top: $matrix-order-widget-grid-multi-rows-grid-footer-border-top;
 
             &::before,
@@ -210,6 +216,10 @@
                     content: $matrix-order-widget-grid-multi-rows-grid-head-after-content;
                     z-index: $matrix-order-widget-grid-multi-rows-grid-head-after-z-index;
                 }
+
+                &--grow {
+                    justify-content: end;
+                }
             }
         }
 
@@ -232,7 +242,9 @@
 
     &__grid-body {
         display: $matrix-order-widget-grid-body-display;
-
+        gap: $matrix-order-widget-grid-body-gap;
+        padding-block: $matrix-order-widget-grid-body-padding-block;
+        padding-inline: $matrix-order-widget-grid-body-padding-inline;
         overflow: $matrix-order-widget-grid-body-overflow;
 
         .form-row {
@@ -245,20 +257,6 @@
     &__grid-body & {
         &__form__row {
             align-items: $matrix-order-widget-grid-body-form-row-align-items;
-
-            &:not(:last-child) {
-                .matrix-order-widget__form__col::after {
-                    position: $matrix-order-widget-form-row-not-last-child-position;
-
-                    border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
-                    width: $matrix-order-widget-form-row-not-last-child-width;
-                    left: $matrix-order-widget-form-row-not-last-child-left;
-                    bottom: $matrix-order-widget-form-row-not-last-child-bottom;
-
-                    content: $matrix-order-widget-form-row-not-last-child-content;
-                    z-index: $matrix-order-widget-form-row-not-last-child-z-index;
-                }
-            }
         }
     }
 
@@ -312,6 +310,10 @@
         overflow: $matrix-order-widget-grid-side-overflow;
 
         &-wrapper {
+            display: $matrix-order-widget-grid-side-wrapper-display;
+            gap: $matrix-order-widget-grid-side-wrapper-gap;
+            padding-block: $matrix-order-widget-grid-side-wrapper-padding-block;
+            padding-inline-start: $matrix-order-widget-grid-side-wrapper-padding-inline-start;
             overflow: $matrix-order-widget-grid-side-wrapper-overflow;
         }
 
@@ -361,24 +363,22 @@
             overflow: $matrix-order-widget-grid-side-form-row-overflow;
 
             margin: $matrix-order-widget-grid-side-form-row-offset;
-            padding: $matrix-order-widget-grid-side-form-row-offset-inner;
 
             font-weight: $matrix-order-widget-grid-side-form-row-font-weight;
             text-align: $matrix-order-widget-grid-side-form-row-text-align;
             white-space: $matrix-order-widget-grid-side-form-row-white-space;
             word-break: $matrix-order-widget-grid-side-form-row-word-break;
             line-height: $matrix-order-widget-grid-side-form-row-line-height;
-
-            &:not(:last-child) {
-                border-bottom: $matrix-order-widget-form-row-not-last-child-border-bottom;
-            }
         }
     }
 
     &__grid-scrollable-area {
+        background: $matrix-order-widget-grid-scrollable-area-background;
         display: $matrix-order-widget-grid-scrollable-area-display;
         min-height: $matrix-order-widget-grid-scrollable-area-min-height;
         flex-grow: $matrix-order-widget-grid-scrollable-area-flex-grow;
+        padding-inline: $matrix-order-widget-grid-scrollable-area-padding-inline;
+        gap: $matrix-order-widget-grid-scrollable-area-gap;
     }
 
     &__form {
@@ -395,6 +395,7 @@
         height: $matrix-order-widget-form-row-height;
 
         white-space: $matrix-order-widget-form-row-white-space;
+        gap: $matrix-order-widget-form-row-gap;
     }
 
     &__form__col {
@@ -404,7 +405,6 @@
         position: $matrix-order-widget-form-col-position;
 
         margin: $matrix-order-widget-form-col-offset;
-        padding: $matrix-order-widget-form-col-offset-inner;
         width: $matrix-order-widget-form-col-width;
         min-width: $matrix-order-widget-form-col-min-width;
         color: $matrix-order-widget-form-col-color;
@@ -421,15 +421,21 @@
             }
         }
 
+        &--grow {
+            flex-grow: $matrix-order-widget-form-col-grow-flex-grow;
+        }
+
         &-wrapper {
             display: $matrix-order-widget-form-col-wrapper-display;
             align-items: $matrix-order-widget-form-col-wrapper-align-items;
 
             margin: $matrix-order-widget-form-col-wrapper-offset;
+            padding-left: $input-padding-y;
             color: $matrix-order-widget-form-col-wrapper-color;
 
             white-space: $matrix-order-widget-form-col-wrapper-white-space;
             word-break: $matrix-order-widget-form-col-wrapper-word-break;
+            opacity: $matrix-order-widget-form-col-wrapper-opacity;
         }
 
         .form-field-quantity {
@@ -508,6 +514,11 @@
 
             padding: $matrix-order-widget-item-content-wrapper-offset-inner;
             width: $matrix-order-widget-item-content-wrapper-width;
+        }
+
+        &-quantity,
+        &-not-available {
+            padding-left: $input-padding-y;
         }
     }
 

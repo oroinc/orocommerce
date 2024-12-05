@@ -1,5 +1,23 @@
 /* @theme: default; */
 
+.shopping-list {
+    &__header {
+        display: grid;
+        grid-template-columns: minmax(0, auto) repeat(auto-fit, minmax(0, max-content));
+        grid-gap: spacing('md') spacing('xl');
+        min-height: 44px;
+
+        .page-title {
+            gap: spacing('sm');
+        }
+    }
+
+    &__title-wrapper {
+        display: flex;
+        align-items: center;
+    }
+}
+
 .shopping-lists {
     .btn {
         --btn-outlined-background: #{$shopping-lists-btn-background-color};
@@ -26,5 +44,16 @@
         align-items: $shopping-lists-text-align-items;
         justify-content: $shopping-lists-text-justify-content;
         border-radius: $shopping-lists-text-border-radius;
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .shopping-list {
+        &__header {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) max-content;
+            grid-auto-rows: auto;
+            grid-gap: 0 spacing('md');
+        }
     }
 }

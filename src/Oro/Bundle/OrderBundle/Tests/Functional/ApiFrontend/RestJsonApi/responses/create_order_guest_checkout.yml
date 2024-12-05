@@ -88,10 +88,11 @@ included:
             rowTotalAfterDiscountExcludingTax: '10.1000'
             rowTotalAfterDiscount: '10.1000'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: new
+                    -
+                        type: orders
+                        id: new
             product:
                 data:
                     type: products
@@ -196,10 +197,11 @@ included:
             rowTotalAfterDiscountExcludingTax: '57.9500'
             rowTotalAfterDiscount: '57.9500'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: new
+                    -
+                        type: orders
+                        id: new
             product:
                 data:
                     type: products

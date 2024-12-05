@@ -344,17 +344,17 @@ services:
     oro_order.access_rule.order_shipping_tracking:
         class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
         arguments:
-            - 'order'
+            - 'orders'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderShippingTracking, permission: VIEW }
 
     oro_order.acl.voter.order_shipping_tracking:
-        class: Oro\Bundle\SecurityBundle\Acl\Voter\AssociationAwareVoter
+        class: Oro\Bundle\SecurityBundle\Acl\Voter\CollectionAssociationAwareVoter
         arguments:
             - '@security.authorization_checker'
             - '@property_accessor'
             - 'Oro\Bundle\OrderBundle\Entity\OrderShippingTracking'
-            - 'order'
+            - 'orders'
         tags:
             - { name: security.voter }
 
@@ -534,7 +534,7 @@ services:
     oro_order.access_rule.frontend_order_line_item:
         class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
         arguments:
-            - 'order'
+            - 'orders'
         tags:
             - { name: oro_security.access_rule, entityClass: Oro\Bundle\OrderBundle\Entity\OrderLineItem, frontend: true }
 
@@ -784,3 +784,12 @@ services:
         class: Oro\Bundle\OrderBundle\Provider\OrderDuplicator
         arguments:
             - '@oro_action.factory.duplicator_factory'
+
+    oro_order.event_listener.recalculate_totals:
+        class: Oro\Bundle\OrderBundle\EventListener\Order\RecalculateOrdersOnSave
+        arguments:
+            - '@oro_order.order.total.total_helper'
+            - '@oro_order.pricing.price_matcher'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: onBeforeFlush }

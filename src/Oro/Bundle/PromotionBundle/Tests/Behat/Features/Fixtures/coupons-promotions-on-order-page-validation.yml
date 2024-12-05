@@ -195,22 +195,25 @@ Oro\Bundle\CurrencyBundle\Entity\Price :
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     firstOrderLineItem:
         product: '@product1'
-        order: '@firstOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@firstOrder' ]
     secondOrderLineItem:
         product: '@product1'
-        order: '@secondOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@secondOrder' ]
     thirdOrderLineItem:
         product: '@product1'
-        order: '@thirdOrder'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@thirdOrder' ]

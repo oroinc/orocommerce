@@ -6,10 +6,11 @@ data:
             method: 'method 1'
             number: 'number 1'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order1->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order1->id)>'
     -
         type: ordershippingtrackings
         id: '<toString(@order_shipping_tracking.2->id)>'
@@ -17,7 +18,8 @@ data:
             method: 'method 2'
             number: 'number 3'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order2->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order2->id)>'

@@ -120,12 +120,12 @@
 
         &.highlight,
         &.parent-row-has-highlight {
-            box-shadow: 2px 0 0 0 $shopping-list-grid-effect-warning-dark inset;
+            box-shadow: 4px 0 0 0 $shopping-list-grid-effect-warning-dark inset;
         }
 
         &.highlight-error,
         &.parent-row-has-highlight-error {
-            box-shadow: 2px 0 0 0 $shopping-list-grid-effect-error-dark inset;
+            box-shadow: 4px 0 0 0 $shopping-list-grid-effect-error-dark inset;
         }
 
         &.has-message-row {
@@ -150,7 +150,7 @@
     }
 }
 
-@include breakpoint('mobile-landscape') {
+@include breakpoint('mobile-big') {
     .responsive-shopping-list-grid {
         .grid-row {
             > .grid-cell:first-child {

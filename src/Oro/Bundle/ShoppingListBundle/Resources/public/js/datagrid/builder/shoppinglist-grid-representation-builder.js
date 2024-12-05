@@ -19,8 +19,8 @@ const shoppingListGridRepresentationBuilder = {
                     translationPrefix: 'oro_frontend.btn'
                 });
 
-                topToolBar.$('[data-section="left-side"]').append(togglePaginationView.render().$el);
-                togglePaginationView.$el.after(toggleGroupView.render().$el);
+                topToolBar.$('[data-grid-extra-actions-panel]').after(togglePaginationView.render().$el);
+                togglePaginationView.$el.before(toggleGroupView.render().$el);
             }
         });
 

@@ -114,7 +114,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     When I click "Edit"
-    And I click "Shipping Information"
+    And I click "Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $10.00"
     And I should see "Shipping $3.00"
@@ -233,7 +233,7 @@ Feature: Verification Calculation of Taxes Toggling Shipping Rates or Shipping R
     And I click "Save" in modal window
     Then I should see "Order has been saved" flash message
     When I click "Edit"
-    And I click "Shipping Information"
+    And I click "Shipping"
     And I click "Shipping Method Flat Rate Radio Button"
     Then I should see "Subtotal $10.00"
     And I should see "Shipping $3.00"

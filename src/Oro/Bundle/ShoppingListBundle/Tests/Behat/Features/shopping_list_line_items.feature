@@ -19,8 +19,8 @@ Feature: Shopping List Line Items
     And I click "Edit"
     Then I should see following grid:
       | SKU | Qty Update All |
-      | AA1 | 1 set          |
-      | AA1 | 2 item         |
+      | AA1 | 1 item ( set ) |
+      | AA1 | 2 ( item ) set |
     When I click on "Shopping List Line Item 2 Quantity"
     And I fill "Shopping List Line Item Form" with:
       | Quantity | 1   |
@@ -34,8 +34,8 @@ Feature: Shopping List Line Items
     And I click "Update All"
     Then I should see following grid:
       | SKU | Qty Update All |
-      | AA1 | 1 set          |
-      | AA1 | 3 item         |
+      | AA1 | 1 item ( set ) |
+      | AA1 | 3 ( item ) set |
 
   Scenario: Merge Line items
     When I click on "Shopping List Line Item 1 Quantity"
@@ -47,11 +47,64 @@ Feature: Shopping List Line Items
     When I save changes for "Shopping List Line Item 1" row
     Then I should see following grid:
       | SKU | Qty Update All |
-      | AA1 | 5 item         |
+      | AA1 | 5 ( item ) set |
+
+  Scenario: Add an additional product unit to the product
+    When I proceed as the Admin
+    And login as administrator
+    And I go to Products / Products
+    Then click "Edit" on row "AA1" in grid
+    When set Additional Unit with:
+      | Unit | Precision | Rate |
+      | each | 1         | 1    |
+    And I check "ProductAdditionalSellFieldSecondRow" element
+    And save and close form
+    Then I should see "Product has been saved" flash message
+
+    Scenario: Check inline editing for simple products with three available units per product
+      When I proceed as the Buyer
+      And I reload the page
+      Then I should see following grid:
+        | SKU | Qty Update All |
+        | AA1 | 5 item         |
+      When I click on "Shopping List Line Item 1 Quantity"
+      And I fill "Shopping List Line Item Form" with:
+        | Quantity | 7    |
+        | Unit     | each |
+      And I save changes for "Shopping List Line Item 1" row
+      Then I should see following grid:
+        | SKU | Qty Update All |
+        | AA1 | 7 each         |
+
+      And I click on "Decrement Product Quantity In Row 1"
+      And I fill "Shopping List Line Item Form" with:
+        | Quantity | 6    |
+        | Unit     | each |
+      And I save changes for "Shopping List Line Item 1" row
+
+      And I click on "Increment Product Quantity In Row 1"
+      And I fill "Shopping List Line Item Form" with:
+        | Quantity | 7    |
+        | Unit     | each |
+      And I save changes for "Shopping List Line Item 1" row
+
+  Scenario: Enable "Plain" view mode for product quantity
+    When I proceed as the Admin
+    And I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Quantity Inputs in Shopping List | Plain |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+
+  Scenario: Check that standard quantity input field without stepper buttons
+    When I proceed as the Buyer
+    And I reload the page
+    Then I should not see "Decrement Product Quantity In Row 1" element inside "Frontend Shopping List Edit Grid" element
+    And I should not see "Increment Product Quantity In Row 1" element inside "Frontend Shopping List Edit Grid" element
 
   Scenario: Check edit permission for line item
     When I proceed as the Admin
-    And login as administrator
     And I go to Customers / Customer User Roles
     And I click edit "Buyer" in grid
     And select following permissions:
@@ -73,5 +126,5 @@ Feature: Shopping List Line Items
     When I proceed as the Buyer
     And I reload the page
     Then I should see only following actions for row #1 on grid:
-      | Add Shopping List item Note |
-      | Delete                      |
+      | Add a note |
+      | Delete     |

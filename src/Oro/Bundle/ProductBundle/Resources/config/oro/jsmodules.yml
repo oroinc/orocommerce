@@ -32,6 +32,7 @@ dynamic-imports:
         - oroproduct/js/app/components/product-unit-selection-limitations-component
         - oroproduct/js/app/components/product-variant-component
         - oroproduct/js/app/components/product-variant-field-component
+        - oroproduct/js/app/datagrid/builder/product-variants-edit-builder
         - oroproduct/js/app/components/related-items-tabs-component
         - oroproduct/js/app/views/variant-fields-view
     productskit:

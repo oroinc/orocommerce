@@ -1,0 +1,20 @@
+<form class="shopping-list-notes__edit-form" data-role="edit-notes-form" novalidate>
+    <textarea class="textarea full shopping-list-notes-modal__editor" name="notes"><%- notes %></textarea>
+    <div class="shopping-lists-modify">
+        <% const oroui = _.macros('oroui'); %>
+        <span class="shopping-lists-modify__edit">
+            <button class="btn" type="submit" title="Apply" aria-label="Apply changes in the Note" data-role="apply" disabled="disabled">
+                <%= oroui.renderIcon({
+                    name: 'check'
+                }) %>
+            </button>
+        </span>
+        <span class="shopping-lists-modify__edit">
+            <button class="btn btn--neutral" type="button" title="Decline" aria-label="Decline changes in the Note" data-role="decline">
+                <%= oroui.renderIcon({
+                    name: 'close'
+                }) %>
+            </button>
+        </span>
+    </div>
+</form>

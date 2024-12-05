@@ -1,3 +1,5 @@
+@skip
+#Should be unskipped after BB-24801
 @regression
 @ticket-BB-16680
 @ticket-BB-19380

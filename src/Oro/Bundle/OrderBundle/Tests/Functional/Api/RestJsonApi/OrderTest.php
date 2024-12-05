@@ -10,6 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\SearchBundle\Async\Topic\IndexEntitiesByIdTopic;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -37,6 +38,16 @@ class OrderTest extends RestJsonApiTestCase
 
         $this->getOptionalListenerManager()
             ->enableListener('oro_order.order.listener.orm.order_shipping_status_listener');
+    }
+
+    private function generateLineItemChecksum(OrderLineItem $lineItem): string
+    {
+        /** @var LineItemChecksumGeneratorInterface $lineItemChecksumGenerator */
+        $lineItemChecksumGenerator = self::getContainer()->get('oro_product.line_item_checksum_generator');
+        $checksum = $lineItemChecksumGenerator->getChecksum($lineItem);
+        self::assertNotEmpty($checksum, 'Impossible to generate the line item checksum.');
+
+        return $checksum;
     }
 
     public function testGetList(): void
@@ -491,7 +502,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals((string)$orderId, $order->getIdentifier());
         self::assertNull($order->getPoNumber());
@@ -507,6 +518,8 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('open', $order->getInternalStatus()->getInternalId());
         self::assertEquals('not_shipped', $order->getShippingStatus()->getInternalId());
         self::assertEquals(1, $order->getLineItems()->count());
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($this->generateLineItemChecksum($lineItem), $lineItem->getChecksum());
     }
 
     public function testCreate(): void
@@ -520,7 +533,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('new_order', $order->getIdentifier());
         self::assertEquals('2345678', $order->getPoNumber());
@@ -537,6 +550,8 @@ class OrderTest extends RestJsonApiTestCase
         self::assertEquals('not_shipped', $order->getShippingStatus()->getInternalId());
         $lineItems = $order->getLineItems();
         self::assertEquals(2, $lineItems->count());
+        $lineItem = $order->getLineItems()->first();
+        self::assertEquals($this->generateLineItemChecksum($lineItem), $lineItem->getChecksum());
 
         /** @var OrderLineItem $productKitLineItem */
         $productKitLineItem = $lineItems->get(1);
@@ -555,7 +570,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         // createdAt and updatedAt fields are read-only for orders
         self::assertNotEquals($createdAt, $order->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
@@ -577,7 +592,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -602,7 +617,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -643,7 +658,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -665,7 +680,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -695,7 +710,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -725,7 +740,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
 
-        /** @var Order $item */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -758,7 +773,7 @@ class OrderTest extends RestJsonApiTestCase
             $response
         );
 
-        /** @var Order $updatedOrder */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertTrue($order->isExternal());
     }
@@ -791,9 +806,31 @@ class OrderTest extends RestJsonApiTestCase
             $response
         );
 
-        /** @var Order $updatedOrder */
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertEquals('shipped', $order->getShippingStatus()->getInternalId());
+    }
+
+    public function testCreateWithLineItemReadonlyChecksum(): void
+    {
+        $data = $this->getRequestData('create_order_min.yml');
+        $data['included'][0]['attributes']['checksum'] = '123456789';
+        $response = $this->post(['entity' => 'orders'], $data);
+
+        $orderId = (int)$this->getResourceId($response);
+        /** @var Order $order */
+        $order = $this->getEntityManager()->find(Order::class, $orderId);
+        self::assertCount(1, $order->getLineItems());
+        $orderLineItem = $order->getLineItems()->first();
+        $expectedChecksum = $this->generateLineItemChecksum($orderLineItem);
+        $expectedData = $data;
+        $expectedData['data']['id'] = (string)$orderId;
+        $expectedData['data']['relationships']['lineItems']['data'][0]['id'] = (string)$orderLineItem->getId();
+        $expectedData['included'][0]['id'] = (string)$orderLineItem->getId();
+        $expectedData['included'][0]['attributes']['value'] = '10.0000';
+        $expectedData['included'][0]['attributes']['checksum'] = $expectedChecksum;
+        $this->assertResponseContains($expectedData, $response);
+        self::assertEquals($expectedChecksum, $orderLineItem->getChecksum());
     }
 
     public function testUpdate(): void
@@ -1020,52 +1057,31 @@ class OrderTest extends RestJsonApiTestCase
         $this->assertResponseContains($responseData, $response);
     }
 
-    public function testUpdateReadonlyChecksumLineItem(): void
+    public function testTryToUpdateLineItemReadonlyChecksum(): void
     {
-        $response = $this->post(
-            ['entity' => 'orders'],
-            'create_order_min.yml'
-        );
+        $orderLineItemId = $this->getReference('order_line_item.3')->getId();
 
-        $orderId = (int)$this->getResourceId($response);
-        $order = $this->getEntityManager()->find(Order::class, $orderId);
-        self::assertCount(1, $order->getLineItems());
-        $orderLineItem = $order->getLineItems()->first();
-        $orderLineItemId = $orderLineItem->getId();
-        $orderLineItemChecksum = $orderLineItem->getChecksum();
-
-        $newResponse = $this->patch(
+        $data = [
+            'data' => [
+                'type' => 'orderlineitems',
+                'id' => (string)$orderLineItemId,
+                'attributes' => [
+                    'checksum' => '123456789'
+                ]
+            ]
+        ];
+        $response = $this->patch(
             ['entity' => 'orderlineitems', 'id' => (string)$orderLineItemId],
-            [
-                'data' => [
-                    'type' => 'orderlineitems',
-                    'id' => (string)$orderLineItemId,
-                    'attributes' => [
-                        'checksum' => '5701254f5e38e7af63749d1d03db69175a901119',
-                    ],
-                ],
-            ],
-            [],
-            false
+            $data
         );
-        self::assertResponseStatusCodeEquals($newResponse, Response::HTTP_OK);
-        $orderLineItemId = (int)$this->getResourceId($newResponse);
+
+        /** @var OrderLineItem $orderLineItem */
         $orderLineItem = $this->getEntityManager()->find(OrderLineItem::class, $orderLineItemId);
-        self::assertEquals($orderLineItemChecksum, $orderLineItem->getChecksum());
-    }
-
-    public function testCreateReadonlyChecksumLineItem(): void
-    {
-        $response = $this->post(
-            ['entity' => 'orders'],
-            'create_order_min_checksum.yml'
-        );
-
-        $orderId = (int)$this->getResourceId($response);
-        $order = $this->getEntityManager()->find(Order::class, $orderId);
-        self::assertCount(1, $order->getLineItems());
-        $orderLineItem = $order->getLineItems()->first();
-        self::assertNotEquals('5701254f5901119', $orderLineItem->getChecksum());
+        $expectedChecksum = $this->generateLineItemChecksum($orderLineItem);
+        $expectedData = $data;
+        $expectedData['data']['attributes']['checksum'] = $expectedChecksum;
+        $this->assertResponseContains($expectedData, $response);
+        self::assertEquals($expectedChecksum, $orderLineItem->getChecksum());
     }
 
     public function testGetSubresourceForOwner(): void
@@ -1523,6 +1539,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $lineItem = $this->getEntityManager()->find(OrderLineItem::class, $lineItemId);
         self::assertTrue(null === $lineItem);
+        /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
         self::assertCount(1, $order->getLineItems());
         self::assertSame('78.5000', $order->getSubtotal());
@@ -1556,8 +1573,7 @@ class OrderTest extends RestJsonApiTestCase
 
         $orderId = (int)$this->getResourceId($response);
         $order = $this->getEntityManager()->find(Order::class, $orderId);
-
-        self::assertNull($order);
+        self::assertTrue(null === $order);
     }
 
     public function testCreateWhenValidateEqualsToFalse(): void
@@ -1571,9 +1587,7 @@ class OrderTest extends RestJsonApiTestCase
 
         /** @var Order $order */
         $order = $this->getEntityManager()->find(Order::class, $orderId);
-
         self::assertNotNull($order);
-
         self::assertEquals('new_order', $order->getIdentifier());
         self::assertEquals('2345678', $order->getPoNumber());
         self::assertAllMessagesSent([

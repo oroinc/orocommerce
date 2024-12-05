@@ -70,7 +70,12 @@ define(function(require) {
 
             $datagridEl.trigger('ajaxStart');
             this.toggleLoadingOverlay();
-            this.model.destroy({
+
+            if (this.request) {
+                this.request.abort();
+            }
+
+            this.request = this.model.destroy({
                 url: this.getLink(),
                 wait: true,
                 reset: false,

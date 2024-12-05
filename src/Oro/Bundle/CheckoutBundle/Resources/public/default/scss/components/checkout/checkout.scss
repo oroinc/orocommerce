@@ -111,6 +111,10 @@
             position: sticky;
             top: var(--sticky-page-header-element-offset-top, 0);
             height: max-content;
+
+            .summary-collapse-content:not(.show) .summary-widget__summary {
+                grid-template-columns: initial;
+            }
         }
 
         &__title--order-review {

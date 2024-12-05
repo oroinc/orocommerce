@@ -31,9 +31,9 @@ Feature: Product kits remove from in shopping list dialog
     Then I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1                                           |
       | Shopping List 1 Label         | Product Kit Shopping List                               |
-      | Shopping List 1 Configuration | Barcode Scanner[x 2] Product 3 Base Unit[x 2] Product 2 |
+      | Shopping List 1 Configuration | Barcode Scanner(x2) Product 3 Base Unit(x2) Product 2 |
       | Shopping List 2 Label         | Product Kit Shopping List                               |
-      | Shopping List 2 Configuration | Base Unit[x 1] Product 1                                |
+      | Shopping List 2 Configuration | Base Unit(x1) Product 1                                |
 
   Scenario: Remove Product Kit Line Item from "In Shopping List" dialog
     When I click "Shopping List 1 Kit Line Item Delete Button"
@@ -43,15 +43,15 @@ Feature: Product kits remove from in shopping list dialog
     And I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1             |
       | Shopping List 1 Label         | Product Kit Shopping List |
-      | Shopping List 1 Configuration | Base Unit[x 1] Product 1  |
+      | Shopping List 1 Configuration | Base Unit(x1) Product 1  |
 
   Scenario: Check shopping list view page
     Given I open a new browser tab and set "ProductKitShoppingList" alias for it
     And Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU               | Item                                          |          | Qty | Unit  | Price  | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock | 1   | piece | $41.00 | $41.00   |
-      | simple-product-01 | Base Unit: Product 1                          |          | 1   | piece | $31.00 |          |
+      | SKU               | Product                                       | Availability | Qty | Unit  | Price  | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1   | piece | $41.00 | $41.00   |
+      | simple-product-01 | Base Unit: Product 1                          |              | 1   | piece | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Total $41.00"
 
@@ -59,9 +59,9 @@ Feature: Product kits remove from in shopping list dialog
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          |          | Qty Update All | Price  | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock | 1 piece        | $41.00 | $41.00   |
-      | simple-product-01 | Base Unit: Product 1                          |          | 1 piece        | $31.00 |          |
+      | SKU               | Product                                       | Availability | Qty Update All | Price  | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1 piece        | $41.00 | $41.00   |
+      | simple-product-01 | Base Unit: Product 1                          |              | 1 piece        | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Total $41.00"
 

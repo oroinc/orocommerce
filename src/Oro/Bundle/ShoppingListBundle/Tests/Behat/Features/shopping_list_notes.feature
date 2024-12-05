@@ -9,9 +9,10 @@ Feature: Shopping list notes
     When Buyer is on "Another List" shopping list
     And I click "Shopping List Actions"
     And I click "Edit"
-    And I click "Add a note to entire Shopping List"
-    And I type "My shopping list <script>alert('malicious script')</script> notes" in "Shopping List Notes"
-    And I click on "Save Shopping List Notes"
+    When I click "Shopping List Actions"
+    And I click "Add Note"
+    And I type "My shopping list <script>alert('malicious script')</script> notes" in "Shopping List Notes in Modal"
+    And I press "Space" key on "UiWindow okButton" element
     Then I should see "My shopping list <script>alert('malicious script')</script> notes"
 
   Scenario: Open shopping list as admin

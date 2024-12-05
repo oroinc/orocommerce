@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Controller;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
+use Oro\Bundle\OrderBundle\Form\Type\SubOrderType;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -35,6 +36,27 @@ class AjaxOrderController extends AbstractController
         }
 
         $form = $this->getType($order);
+
+        $submittedData = $request->get($form->getName());
+
+        $form->submit($submittedData);
+
+        $event = new OrderEvent($form, $form->getData(), $submittedData);
+        $this->container->get(EventDispatcherInterface::class)->dispatch($event, OrderEvent::NAME);
+
+        return new JsonResponse($event->getData());
+    }
+
+    #[Route(path: '/suborder-entry-point/{id}', name: 'oro_suborder_entry_point', defaults: ['id' => 0])]
+    #[AclAncestor('oro_order_update')]
+    public function suborderEntryPointAction(Request $request, Order $order = null)
+    {
+        if (!$order) {
+            $order = new Order();
+            $order->setWebsite($this->container->get(WebsiteManager::class)->getDefaultWebsite());
+        }
+
+        $form = $this->createForm(SubOrderType::class, $order, ['validation_groups' => ['order_entry_point']]);
 
         $submittedData = $request->get($form->getName());
 

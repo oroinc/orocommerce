@@ -188,7 +188,7 @@ oro:
             conditions.label: Conditions
             matching_items.label: Items To Discount
             assigned_coupons.label: Assigned Coupons
-            promotion_and_discounts.label: Promotions and Discounts
+            promotion_and_discounts.label: Discounts
 
         applieddiscount:
             entity_label: Applied Discount

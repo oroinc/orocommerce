@@ -67,10 +67,11 @@ included:
             shipUntil: null
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: new
+                    -
+                        type: orders
+                        id: new
             product:
                 data:
                     type: products
@@ -97,10 +98,11 @@ included:
             shipUntil: null
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: new
+                    -
+                        type: orders
+                        id: new
             product:
                 data:
                     type: products

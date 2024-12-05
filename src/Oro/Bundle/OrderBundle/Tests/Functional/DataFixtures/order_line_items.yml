@@ -6,35 +6,39 @@ dependencies:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order_line_item.1:
-        order: '@simple_order'
         product: '@product-1'
         parentProduct: '@product-3'
         quantity: 5
         productUnit: '@product_unit.bottle'
         value: 15.7
         currency: USD
+        __calls:
+            -   addOrder: [ '@simple_order' ]
     order_line_item.2:
-        order: '@simple_order'
         product: '@product-2'
         quantity: 12
         productUnit: '@product_unit.box'
         value: 30.5
         currency: USD
+        __calls:
+            -   addOrder: [ '@simple_order' ]
     order_line_item.3:
-        order: '@simple_order2'
         product: '@product-2'
         quantity: 1
         productUnit: '@product_unit.box'
         value: 10
         currency: USD
+        __calls:
+            -   addOrder: [ '@simple_order2' ]
     product_kit_2_line_item.1:
-        order: '@simple_order3'
         product: '@product-kit-2'
         quantity: 1
         productUnit: '@product_unit.milliliter'
         value: 30.59
         currency: USD
         checksum: 'product_kit_2_line_item.1.checksum'
+        __calls:
+            -   addOrder: [ '@simple_order3' ]
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
     order_product_kit_2_line_item.1_kit_item_line_item.1:

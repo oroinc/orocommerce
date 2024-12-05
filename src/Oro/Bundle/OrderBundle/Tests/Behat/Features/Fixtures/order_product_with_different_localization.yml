@@ -62,15 +62,17 @@ Oro\Bundle\OrderBundle\Entity\Order:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     orderLineItem1:
         product: '@product1'
-        order: '@order'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            - addOrder: [ '@order' ]
     orderLineItem2:
         product: '@product2'
-        order: '@order'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            - addOrder: [ '@order' ]

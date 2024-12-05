@@ -13,7 +13,6 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     # <with missing product>
     order1_line_item1:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item1_price'
         quantity: 1
         productUnit: '@piece'
@@ -21,12 +20,12 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         __calls:
             -   addKitItemLineItem: [ '@order1_line_item1_kit_item1' ]
             -   addKitItemLineItem: [ '@order1_line_item1_kit_item2' ]
+            -   addOrder: [ '@order1' ]
     # </with missing product>
 
     # <with disabled product>
     order1_line_item2:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item2_price'
         quantity: 1
         productUnit: '@piece'
@@ -34,6 +33,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         __calls:
             -   addKitItemLineItem: [ '@order1_line_item2_kit_item1' ]
             -   addKitItemLineItem: [ '@order1_line_item2_kit_item2' ]
+            -   addOrder: [ '@order1' ]
     # </with disabled product>
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:

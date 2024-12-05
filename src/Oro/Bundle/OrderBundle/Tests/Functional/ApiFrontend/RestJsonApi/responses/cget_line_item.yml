@@ -13,10 +13,11 @@ data:
             shipUntil: '2018-05-20'
             comment: 'Test comment for line item 1'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order1->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order1->id)>'
     -
         type: orderlineitems
         id: '<toString(@order1_line_item2->id)>'
@@ -31,10 +32,11 @@ data:
             shipUntil: null
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order1->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order1->id)>'
     -
         type: orderlineitems
         id: '<toString(@order2_line_item1->id)>'
@@ -49,10 +51,11 @@ data:
             shipUntil: null
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order2->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order2->id)>'
     -
         type: orderlineitems
         id: '<toString(@order3_line_item1->id)>'
@@ -67,10 +70,11 @@ data:
             shipUntil: null
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order3->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order3->id)>'
     -
         type: orderlineitems
         id: '<toString(@product_kit_2_line_item.1->id)>'
@@ -86,10 +90,11 @@ data:
             comment: null
             checksum: 'product_kit_2_line_item.1.checksum'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order4->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order4->id)>'
             product:
                 data:
                     type: products
@@ -120,10 +125,11 @@ data:
             comment: null
             checksum: 'product_kit_3_line_item.1.checksum'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order4->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order4->id)>'
             product:
                 data:
                     type: products
@@ -160,10 +166,11 @@ data:
             comment: null
             checksum: 'product_kit_2_line_item.2.checksum'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order4->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order4->id)>'
             product:
                 data:
                     type: products
@@ -197,10 +204,11 @@ data:
             comment: null
             checksum: 'o5_product_kit_2_line_item.1.checksum'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@order5->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@order5->id)>'
             product:
                 data:
                     type: products

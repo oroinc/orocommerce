@@ -33,15 +33,17 @@ Oro\Bundle\CurrencyBundle\Entity\Price:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order1CreatedByLineItem:
         product: '@product1'
-        order: '@order1CreatedBy'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order1CreatedBy' ]
     order2CreatedByLineItem:
         product: '@product1'
-        order: '@order2CreatedBy'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order2CreatedBy' ]

@@ -1,4 +1,4 @@
-import template from 'tpl-loader!oroproduct/templates/units-as-radio-group.html';
+import template from 'tpl-loader!orofrontend/templates/units-as-radio-group.html';
 import BaseView from 'oroui/js/app/views/base/view';
 import InputWidgetManager from 'oroui/js/input-widget-manager';
 
@@ -73,15 +73,11 @@ const UnitsAsRadioGroupView = BaseView.extend({
 
         if (Array.isArray(data.units)) {
             data.units = data.units.reduce((obj, unit) => {
-                if (typeof unit === 'object') {
-                    obj[unit.size] = unit.label;
-                } else {
-                    obj[unit] = unit;
-                }
+                obj[unit] = unit;
                 return obj;
             }, {});
         }
-        data.selectValue = this.$select.val();
+        data.selectedValue = this.$select.val();
 
         return data;
     },

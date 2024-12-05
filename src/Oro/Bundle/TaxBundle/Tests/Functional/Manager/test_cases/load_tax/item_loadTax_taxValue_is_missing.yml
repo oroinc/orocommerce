@@ -25,16 +25,18 @@ databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
             productSku: order_line_item_1
-            order: '@simple_order'
             quantity: 5
             price: '@usd_price_15.99'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_2:
             productSku: order_line_item_2
-            order: '@simple_order'
             quantity: 6
             price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
+            __calls:
+                -   addOrder: [ '@simple_order' ]
 databaseBeforeSecondPart: []
 disableTaxCalculation: true
 expectedResult: []

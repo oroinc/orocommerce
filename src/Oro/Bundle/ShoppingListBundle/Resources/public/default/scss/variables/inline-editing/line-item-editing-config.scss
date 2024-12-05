@@ -1,11 +1,8 @@
 /* @theme: default; */
 
-$edit-mode-cell-width: 300px !default;
-$view-mode-cell-width: $edit-mode-cell-width !default;
 $edit-mode-cell-background-color: transparent !default;
-$view-mode-cell-background-color: $edit-mode-cell-background-color !default;
+$edit-mode-cell-width: 334px !default;
+$edit-mode-cell-stepper-width: 414px !default;
 
-// Mobile
-
-$edit-mode-cell-top-offset-mobile: 6px !default;
-$edit-mode-cell-bottom-offset-mobile: 6px !default;
+$edit-mode-cell-stepper-input-width: 150px !default;
+$edit-mode-cell-qty-input-width: 86px !default;

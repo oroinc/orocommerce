@@ -233,7 +233,10 @@ datagrids:
                 renderable: false
             sku:
                 label:         oro.frontend.shoppinglist.lineitem.sku.label
-                frontend_type: shoppinglist-string
+                frontend_type: shoppinglist-sku
+                frontend_template:
+                    default: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku-with-action.html
+                    message: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku-message.html
             item:
                 label:         oro.frontend.shoppinglist.lineitem.item.label
                 frontend_type: shoppinglist-item
@@ -244,7 +247,7 @@ datagrids:
                 image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             inventoryStatus:
-                label:         oro.frontend.shoppinglist.lineitem.inventory_status.label
+                label:         oro.frontend.shoppinglist.lineitem.inventory_status.full_label
                 frontend_type: shoppinglist-html-template
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/inventory_status.html
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
@@ -447,6 +450,10 @@ datagrids:
             jsmodules:
                 - oroshoppinglist/js/datagrid/builder/shoppinglist-editing-builder
         columns:
+            sku:
+                frontend_template:
+                    default: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku.html
+                    message: tpl-loader!oroshoppinglist/templates/datagrid/cell/sku-message.html
             quantity:
                 frontend_type: shoppinglist-line-item
                 frontend_template: tpl-loader!oroshoppinglist/templates/datagrid/cell/shoppinglist-line-item.html
@@ -489,16 +496,19 @@ datagrids:
             update_configurable:
                 type: update-configurable-product
                 label: oro.shoppinglist.actions.update_configurable_line_item.label
-                icon: pencil
+                icon: settings
             update_product_kit_line_item:
                 type: update-product-kit-line-item
                 label: oro.shoppinglist.actions.update_product_kit_line_item.label
-                icon: pencil
+                icon: settings
             delete:
                 type: delete-product
                 label: oro.shoppinglist.actions.delete_line_item.label
                 link: deleteLink
                 icon: trash
+                launcherOptions:
+                    className: 'dropdown-item--destructive'
+                    dropdownActionWithDivider: true
                 defaultMessages:
                     confirm_title: oro.shoppinglist.actions.delete_line_item.confirm_title
                     confirm_content: oro.shoppinglist.actions.delete_line_item.confirm_content

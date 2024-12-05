@@ -2,16 +2,37 @@
 <%
 function highlightWords(inputString, value) {
     if (!!inputString && _.isString(inputString)) {
-        const highlightPattern = '<u class="search-autocomplete__highlight">$&</u>';
-        const inputWords = _.escape(inputString.trim()).split(' ');
-        const reg = new RegExp(inputWords.join('|'), 'gi');
-        return _.escape(value).replace(reg, highlightPattern);
+        const highlightPattern = '<u class="search-autocomplete__highlight">$&</u>',
+            inputWords = _.escape(inputString.trim()).split(' '),
+            reg = new RegExp(inputWords.join('|'), 'gi'),
+            fullText = decodeHTMLEntities(value.replace(reg, highlightPattern)),
+            <!-- Split text to highlight or not highlight-->
+            partsFullTextReg = /(<u[^>]*\bclass=["']search-autocomplete__highlight["'][^>]*>.*?<\/u>)/gi;
+
+        return fullText.split(partsFullTextReg);
     } else {
-        return _.escape(value);
+        return value.split();
     }
 }
 %>
+<%
+    <!-- Align syntax, symbol and html entity to symbol (& and &amp; to &)-->
+    function decodeHTMLEntities(text) {
+        var textArea = document.createElement('textarea');
+        textArea.innerHTML = text;
 
+        return textArea.value;
+    }
+%>
+<%
+    function getValueFromTag(text) {
+        const parser = new DOMParser(),
+            element = parser.parseFromString(text, 'text/html'),
+            ulElement = element.querySelector('u');
+
+        return ulElement.textContent.trim();
+    }
+%>
 <%
 function inventoryStatusToLabelClass(inventoryStatus) {
     switch(inventoryStatus) {
@@ -38,7 +59,7 @@ function inventoryStatusToLabelClass(inventoryStatus) {
                             </div>
                             <div class="search-autocomplete-product__info">
                                 <div class="search-autocomplete-product__suggest">
-                                    <%= highlightWords(inputString, suggest.phrase) %>
+                                    <% _.each(highlightWords(inputString, suggest.phrase), function (part) { %><% if (part.startsWith('<u class="search-autocomplete__highlight">')) { %><u class="search-autocomplete__highlight"><%- getValueFromTag(part) %></u><%} else {%><%- part %><%}%><% }); %>
                                 </div>
                             </div>
                         </a>
@@ -82,14 +103,18 @@ function inventoryStatusToLabelClass(inventoryStatus) {
                         </div>
                         <div class="search-autocomplete-product__info">
                             <div class="search-autocomplete-product__head">
-                                <p class="search-autocomplete-product__title"><%= highlightWords(inputString, product.name) %></p>
+                                <p class="search-autocomplete-product__title">
+                                    <!-- Use such code style cause in other way it's create a lot of white space in p tag -->
+                                    <% _.each(highlightWords(inputString, product.name), function (part) { %><% if (part.startsWith('<u class="search-autocomplete__highlight">')) { %><u class="search-autocomplete__highlight"><%- getValueFromTag(part) %></u><%} else {%><%- part %><%}%><% }); %></p>
                                 <% if (product.formatted_price) { %>
                                     <div class="search-autocomplete-product__price"><%- product.formatted_price %></div>
                                 <% } %>
                             </div>
                             <div class="search-autocomplete-product__body">
-                                <div class="search-autocomplete-product__sku"><%= highlightWords(inputString, product.sku) %></div>
-                                <div class="search-autocomplete-product__status status-label <%- inventoryStatusToLabelClass(product.inventory_status) %>"><%- product.inventory_status_label %></div>
+                                <div class="search-autocomplete-product__sku">
+                                    <% _.each(highlightWords(inputString, product.sku), function (part) { %><% if (part.startsWith('<u class="search-autocomplete__highlight">')) { %><u class="search-autocomplete__highlight"><%- getValueFromTag(part) %></u><%} else {%><%- part %><%}%><% }); %>
+                                </div>
+                                <div class="search-autocomplete-product__status status-label <%- inventoryStatusToLabelClass(product.inventory_status) %>"><%- decodeHTMLEntities(product.inventory_status_label) %></div>
                             </div>
                         </div>
                     </a>

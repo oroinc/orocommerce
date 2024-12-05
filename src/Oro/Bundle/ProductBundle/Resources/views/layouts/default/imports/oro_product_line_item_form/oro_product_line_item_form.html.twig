@@ -57,7 +57,7 @@
                         {% else %}
                             {% if singleUnitModeCodeVisible %}
                                 {% if currentProduct.unit == defaultUnitCode %}
-                                    <div class="product-item__placeholder-label" data-role="unit-label">
+                                    <div class="product-item__placeholder-label" data-role="unit-label" data-toggle-type="single">
                                         {{- currentProduct.unit|oro_format_product_unit_label -}}
                                     </div>
                                     {% set unitAttr = layout_attr_defaults(unitAttr, {
@@ -80,7 +80,7 @@
                     {% endif %}
                 {% else %}
                     {% if singleUnitModeCodeVisible %}
-                        <div class="product-item__placeholder-label" data-role="unit-label">
+                        <div class="product-item__placeholder-label" data-role="unit-label" data-toggle-type="single">
                             {{- currentProduct.unit|oro_format_product_unit_label -}}
                         </div>
                     {% endif %}

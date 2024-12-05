@@ -16,7 +16,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
         $this->loadFixtures([LoadRequestAdditionalNoteData::class]);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'rfqadditionalnotes'],
@@ -29,7 +29,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
         self::assertResponseCount($expectedCount, $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $entity = $this->getEntityManager()
             ->getRepository(RequestAdditionalNote::class)
@@ -42,7 +42,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
         self::assertResponseNotEmpty($response);
     }
 
-    public function testOptionsForList()
+    public function testOptionsForList(): void
     {
         $response = $this->options(
             $this->getListRouteName(),
@@ -51,7 +51,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
-    public function testOptionsForItem()
+    public function testOptionsForItem(): void
     {
         $response = $this->options(
             $this->getItemRouteName(),
@@ -63,7 +63,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
     /**
      * @dataProvider notAllowedActionProvider
      */
-    public function testNotAllowedActions(string $method, string $routeName, array $param = [])
+    public function testNotAllowedActions(string $method, string $routeName, array $param = []): void
     {
         $response = $this->request(
             $method,
@@ -88,7 +88,7 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
                 'method' => 'DELETE',
                 'routeName' => $this->getItemRouteName(),
                 'param' => ['id' => 1]
-            ],
+            ]
         ];
     }
 }

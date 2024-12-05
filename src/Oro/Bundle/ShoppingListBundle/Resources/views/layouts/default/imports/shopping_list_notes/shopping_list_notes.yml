@@ -1,0 +1,40 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroShoppingList/layouts/default/imports/shopping_list_notes/shopping_list_notes.html.twig'
+
+        - '@addTree':
+            items:
+                __shopping_list_notes:
+                    blockType: container
+                    siblingId: header
+                    prepend: false
+                    options:
+                        vars:
+                            shoppingList: '=data["entity"]'
+                __shopping_list_notes_edit_form:
+                    blockType: shopping_list_notes_block
+                    options:
+                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update")'
+                        shoppingList: '=data["entity"]'
+                __shopping_list_notes_text:
+                    blockType: container
+                    options:
+                        vars:
+                            shoppingList: '=data["entity"]'
+                __shopping_list_notes_actions:
+                    blockType: container
+                    options:
+                        visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update")'
+                __shopping_list_notes_edit:
+                    blockType: block
+                __shopping_list_notes_remove:
+                    blockType: block
+            tree:
+                __root:
+                    __shopping_list_notes:
+                        __shopping_list_notes_edit_form: ~
+                        __shopping_list_notes_text:
+                            __shopping_list_notes_actions:
+                                __shopping_list_notes_edit: ~
+                                __shopping_list_notes_remove: ~

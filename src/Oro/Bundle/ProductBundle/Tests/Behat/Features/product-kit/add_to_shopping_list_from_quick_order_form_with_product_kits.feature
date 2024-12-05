@@ -25,18 +25,17 @@ Feature: Add to Shopping List from Quick order form with Product Kits
     Then I should see "2 products were added (view shopping list)" flash message
     When I click "view shopping list"
     Then I should see following grid:
-      | SKU               | Item                                                                           |          | Qty Update All | Price     | Subtotal |
-      | product-kit-01    | Product Kit 01                                                                 | In Stock | 3 piece        | $123.4567 | $370.37  |
-      |                   | Product kit "product-kit-01" is missing the required kit item "Mandatory Item" |          |                |           |          |
-
-      | simple-product-01 | Simple Product 01                                                              | In Stock | 2 piece        | $1.2345   | $2.47    |
+      | SKU                                                                            | Product           | Availability | Qty Update All | Price     | Subtotal |
+      | product-kit-01                                                                 | Product Kit 01    | IN STOCK     | 3 piece        | $123.4567 | $370.37  |
+      | Product kit "product-kit-01" is missing the required kit item "Mandatory Item" |                   |              |                |           |          |
+      | simple-product-01                                                              | Simple Product 01 | IN STOCK     | 2 piece        | $1.2345   | $2.47    |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $372.84"
     And I should see "Total $372.84"
     And I should not see "Create Order"
 
   Scenario: Configure Product Kit
-    When I click "Shopping List 1 Kit Line Item Edit Button"
+    And I click "Configure" on row "Product Kit 01" in grid
     Then I should see "Product Kit Dialog" with elements:
       | Title                | Product Kit 01                       |
       | Kit Item 1 Name      | Optional Item                        |
@@ -45,7 +44,7 @@ Feature: Add to Shopping List from Quick order form with Product Kits
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Total: $374.06         |
+      | Price                | Total: $374.06                       |
     And "Product Kit Line Item Form" must contain values:
       | Readonly Kit Item Line Item 1 Quantity |   |
       | Kit Item Line Item 2 Quantity          | 1 |
@@ -55,11 +54,11 @@ Feature: Add to Shopping List from Quick order form with Product Kits
 
   Scenario: Check Shopping List
     Given I should see following grid:
-      | SKU               | Item                              |          | Qty Update All | Price     | Subtotal |
-      | product-kit-01    | Product Kit 01                    | In Stock | 3 piece        | $124.6867 | $374.06  |
-      | simple-product-01 | Mandatory Item: Simple Product 01 |          | 1 piece        | $1.2345   |          |
+      | SKU               | Product                           | Availability | Qty Update All | Price     | Subtotal |
+      | product-kit-01    | Product Kit 01                    | IN STOCK     | 3 piece        | $124.6867 | $374.06  |
+      | simple-product-01 | Mandatory Item: Simple Product 01 |              | 1 piece        | $1.2345   |          |
 
-      | simple-product-01 | Simple Product 01                 | In Stock | 2 piece        | $1.2345   | $2.47    |
+      | simple-product-01 | Simple Product 01                 | IN STOCK     | 2 piece        | $1.2345   | $2.47    |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $376.53"
     And I should see "Total $376.53"

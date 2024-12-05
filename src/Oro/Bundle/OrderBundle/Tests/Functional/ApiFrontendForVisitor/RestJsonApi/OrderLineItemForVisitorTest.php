@@ -93,7 +93,7 @@ class OrderLineItemForVisitorTest extends FrontendRestJsonApiTestCase
     public function testTryToGetSubresourceForOrder()
     {
         $response = $this->getSubresource(
-            ['entity' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>', 'association' => 'order'],
+            ['entity' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>', 'association' => 'orders'],
             [],
             [],
             false
@@ -104,7 +104,7 @@ class OrderLineItemForVisitorTest extends FrontendRestJsonApiTestCase
     public function testTryToGetRelationshipForOrder()
     {
         $response = $this->getRelationship(
-            ['entity' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>', 'association' => 'order'],
+            ['entity' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>', 'association' => 'orders'],
             [],
             [],
             false
@@ -115,7 +115,7 @@ class OrderLineItemForVisitorTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdateRelationshipForOrder()
     {
         $response = $this->patchRelationship(
-            ['entity' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>', 'association' => 'order'],
+            ['entity' => 'orderlineitems', 'id' => '<toString(@order1_line_item1->id)>', 'association' => 'orders'],
             [],
             [],
             false

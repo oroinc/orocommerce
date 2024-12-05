@@ -5,6 +5,7 @@ import messenger from 'oroui/js/messenger';
 import routing from 'routing';
 import DialogAction from 'oro/datagrid/action/dialog-action';
 import WidgetComponent from 'oroui/js/app/components/widget-component';
+import actionsTemplate from 'tpl-loader!oroshoppinglist/templates/datagrid/action/dialog-actions.html';
 
 /**
  * Update configurable products action with matrix grid order dialog
@@ -28,6 +29,7 @@ const UpdateConfigurableProductAction = DialogAction.extend({
         'multiple': false,
         'reload-grid-name': '',
         'options': {
+            actionsTemplate: actionsTemplate,
             simpleActionTemplate: false,
             contentElement: '.matrix-grid-update-container',
             renderActionsFromTemplate: true,
@@ -121,6 +123,20 @@ const UpdateConfigurableProductAction = DialogAction.extend({
                     }
                 });
             });
+
+            this.widgetComponent.listenTo(this.widgetComponent.view, 'close', () => {
+                this.widgetComponent.view.getAction(
+                    'delete',
+                    'adopted',
+                    action => action.off(this.eventNamespace()));
+            });
+
+            this.widgetComponent.view.getAction(
+                'delete',
+                'adopted',
+                action => action.on(`click${this.eventNamespace()}`, () =>
+                    this.model.deleteItemAction()?.once('ok', () => this.widgetComponent.dispose()))
+            );
         });
     },
 
@@ -137,4 +153,3 @@ const UpdateConfigurableProductAction = DialogAction.extend({
 });
 
 export default UpdateConfigurableProductAction;
-

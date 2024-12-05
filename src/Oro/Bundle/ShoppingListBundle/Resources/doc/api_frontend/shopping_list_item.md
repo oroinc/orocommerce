@@ -150,9 +150,17 @@ Delete a collection of shopping list item records.
 
 ### kitItems
 
+#### create
+
 {@inheritdoc}
 
-**The field is required if base product is kit**
+**The required field if the base product is a kit.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed and the base product is a kit.**
 
 ### shoppingList
 
@@ -199,3 +207,11 @@ The currency for the product price.
 {@inheritdoc}
 
 **This field must not be empty, if it is passed.**
+
+### checksum
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**

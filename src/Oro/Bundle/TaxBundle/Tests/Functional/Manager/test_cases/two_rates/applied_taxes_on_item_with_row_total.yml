@@ -83,28 +83,32 @@ databaseBeforeSecondPart:
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
             productSku: order_line_item_1
-            order: '@simple_order'
             quantity: 41
             price: '@usd_price_3.42'
             product: '@product_1'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_2:
             productSku: order_line_item_2
-            order: '@simple_order'
             quantity: 15
             price: '@usd_price_8.55'
             product: '@product_2'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_3:
             productSku: order_line_item_3
-            order: '@simple_order'
             quantity: 13
             price: '@usd_price_18.05'
             product: '@product_3'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
         order_line_item_4:
             productSku: order_line_item_4
-            order: '@simple_order'
             quantity: 35
             price: '@usd_price_24.80'
             product: '@product_4'
+            __calls:
+                -   addOrder: [ '@simple_order' ]
 disableTaxCalculation: false
 expectedResult:
     total:

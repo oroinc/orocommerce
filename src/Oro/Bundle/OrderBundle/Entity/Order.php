@@ -244,12 +244,18 @@ class Order implements
     /**
      * @var Collection<int, OrderLineItem>
      */
-    #[ORM\OneToMany(mappedBy: 'order', targetEntity: OrderLineItem::class, cascade: ['ALL'], orphanRemoval: true)]
+    #[ORM\ManyToMany(
+        targetEntity: OrderLineItem::class,
+        mappedBy: 'orders',
+        cascade: ['ALL'],
+        orphanRemoval: true
+    )]
     #[ORM\OrderBy(['id' => Criteria::ASC])]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?Collection $lineItems = null;
 
     #[ORM\Column(name: 'shipping_method', type: Types::STRING, length: 255, nullable: true)]
+    #[ORM\JoinTable(name: 'oro_order_line_items')]
     protected ?string $shippingMethod = null;
 
     #[ORM\Column(name: 'shipping_method_type', type: Types::STRING, length: 255, nullable: true)]
@@ -297,12 +303,13 @@ class Order implements
     /**
      * @var Collection<int, OrderShippingTracking>
      */
-    #[ORM\OneToMany(
-        mappedBy: 'order',
+    #[ORM\ManyToMany(
         targetEntity: OrderShippingTracking::class,
+        mappedBy: 'orders',
         cascade: ['ALL'],
         orphanRemoval: true
     )]
+    #[ORM\JoinTable(name: 'oro_order_shipping_trackings')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?Collection $shippingTrackings = null;
 
@@ -701,7 +708,9 @@ class Order implements
     {
         if (!$this->hasLineItem($lineItem)) {
             $this->lineItems[] = $lineItem;
-            $lineItem->setOrder($this);
+            $lineItem->addOrder($this);
+
+            $this->parent?->addLineItem($lineItem);
         }
 
         return $this;
@@ -717,6 +726,8 @@ class Order implements
     {
         if ($this->hasLineItem($lineItem)) {
             $this->lineItems->removeElement($lineItem);
+
+            $this->parent?->removeLineItem($lineItem);
         }
 
         return $this;
@@ -729,7 +740,7 @@ class Order implements
     public function setLineItems(Collection $lineItems)
     {
         foreach ($lineItems as $lineItem) {
-            $lineItem->setOrder($this);
+            $lineItem->addOrder($this);
         }
 
         $this->lineItems = $lineItems;
@@ -1095,9 +1106,10 @@ class Order implements
      */
     public function addShippingTracking(OrderShippingTracking $shippingTracking)
     {
-        $shippingTracking->setOrder($this);
+        $shippingTracking->addOrder($this);
         if (!$this->hasShippingTracking($shippingTracking)) {
             $this->shippingTrackings->add($shippingTracking);
+            $this->parent?->addShippingTracking($shippingTracking);
         }
 
         return $this;
@@ -1111,6 +1123,7 @@ class Order implements
     {
         if ($this->hasShippingTracking($shippingTracking)) {
             $this->shippingTrackings->removeElement($shippingTracking);
+            $this->parent?->removeShippingTracking($shippingTracking);
         }
 
         return $this;

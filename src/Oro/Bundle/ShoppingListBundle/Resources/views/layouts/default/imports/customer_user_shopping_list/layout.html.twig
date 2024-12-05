@@ -9,15 +9,26 @@
 
 {% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
     <div class="datagrid-toolbar__end" data-section="right-side">
-        <% if (toolbarPosition !== 'bottom') { %>
-            {{ block_widget(block) }}
-        <% } %>
+        {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block __datagrid_toolbar__datagrid_toolbar_page_size_widget %}
+    <% if (toolbarPosition !== 'top') { %>
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' page-size',
+        'data-grid-pagesize': ''
+    }) %}
+
+    <div class="datagrid-tool">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </div>
+    <% } %>
 {% endblock %}
 
 {% block __customer_user_shopping_list__container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' customer-shopping-list'
+        '~class': ' customer-shopping-list shopping-list__container'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -47,7 +58,7 @@
 
 {% block __customer_user_shopping_list__header_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' customer-profile__header'
+        '~class': ' shopping-list__header'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -60,12 +71,12 @@
         '~class': ' page-title with-ellipsis'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
+    <h2 {{ block('block_attributes') }}>{{ block_widget(block) }}</h2>
 {%- endblock -%}
 
 {% block __customer_user_shopping_list__header_title_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' customer-profile__title-wrapper'
+        '~class': ' shopping-list__title-wrapper'
     }) %}
 
     {{ parent_block_widget(block) }}
@@ -73,7 +84,7 @@
 
 {%- block __customer_user_shopping_list__header_title_text_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title__text page-title__text--offset-x-end-s'
+        '~class': ' page-title__text'
     }) %}
 
     <span {{ block('block_attributes') }}>{{ shoppingList.label }}</span>
@@ -81,39 +92,40 @@
 
 {%- block __customer_user_shopping_list__header_status_widget -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' badge-rectangle'
+        '~class': ' status-label status-label--info'
     }) %}
 
-    <span {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </span>
+    {% if shoppingLists|length > 1 %}
+        <span {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </span>
+    {% endif %}
 {%- endblock -%}
 
 {% block __customer_user_shopping_list__header_owner_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' my-shopping-list-owner-wrapper'
+        '~class': ' shopping-list-owner__wrapper'
     }) %}
 
-    {% if block.children|length >= 2 %}
-        {% set attr = layout_attr_defaults(attr, {
-            '~class': ' show-separator'
-        }) %}
-    {% endif %}
+    {{ parent_block_widget(block) }}
+{%- endblock -%}
+
+{% block __customer_user_shopping_list__header_owner_actions_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-owner__actions-wrapper'
+    }) %}
 
     {{ parent_block_widget(block) }}
 {%- endblock -%}
 
 {% block __customer_user_shopping_list__shopping_list_actions_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' my-shopping-list-owner-wrapper__actions'
+        '~class': ' shopping-list-owner-wrapper__actions'
     }) %}
 
-    {% if block.children %}
-        <div{{ block('block_attributes') }}>
-            <span class="separator" aria-hidden="true"></span>
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block __customer_user_shopping_list__header_owner_widget %}

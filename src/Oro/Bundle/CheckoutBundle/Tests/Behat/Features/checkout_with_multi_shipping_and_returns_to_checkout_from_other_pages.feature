@@ -30,11 +30,11 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light            | $2.00 | $10.00   |
-      | SKU2 | iPhone 13                           | $2.00 | $20.00   |
-      | SKU3 | iPhone X                            | $2.00 | $20.00   |
-      | SKU4 | Round Meeting Table, 30 in. x 30in. |       |          |
+      | SKU  | Product                             | Price  | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
+      | SKU2 | iPhone 13                           | $2.00  | $20.00   |
+      | SKU3 | iPhone X                            | $2.00  | $20.00   |
+      | SKU4 | Round Meeting Table, 30 in. x 30in. |        |          |
     And I should see notification "This product will be available later" for "SKU1" line item "Checkout Line Item"
     And I should see notification "This product will be available later" for "SKU3" line item "Checkout Line Item"
     When I click "Create Order"
@@ -45,14 +45,14 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   | Flat Rate $3.00                        |
+      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate $3.00                        |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   | Flat Rate 2 $0.00                      |
-      | SKU3 | iPhone X  | 10  | $2.00 | $20.00   | Flat Rate 2 $0.00                      |
+      | SKU  | Product   | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
     And records in "Second Checkout Shipping Grid" should be 2
     When I type "Flat Rate" in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
     And I type "Flat Rate" in "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
@@ -64,15 +64,15 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Payment - Checkout"
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price | Subtotal |
-      | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   |
-      | SKU3 | iPhone X  | 10  | $2.00 | $20.00   |
+      | SKU  | Product   | Qty | Price  | Subtotal |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
     And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
@@ -86,15 +86,15 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Payment - Checkout"
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00 | $10.00   |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price | Subtotal |
-      | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   |
-      | SKU3 | iPhone X  | 10  | $2.00 | $20.00   |
+      | SKU  | Product   | Qty | Price  | Subtotal |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
     And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
@@ -105,11 +105,11 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     When I go to homepage
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light            | $2.00 | $10.00   |
-      | SKU2 | iPhone 13                           | $2.00 | $20.00   |
-      | SKU3 | iPhone X                            | $2.00 | $20.00   |
-      | SKU4 | Round Meeting Table, 30 in. x 30in. |       |          |
+      | SKU  | Product                             | Price  | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
+      | SKU2 | iPhone 13                           | $2.00  | $20.00   |
+      | SKU3 | iPhone X                            | $2.00  | $20.00   |
+      | SKU4 | Round Meeting Table, 30 in. x 30in. |        |          |
     And I click on "Shopping List Line Item 1 Quantity"
     And I type "6" in "Shopping List Line Item 1 Quantity Input"
     And I click on "Shopping List Line Item 1 Save Changes Button"
@@ -121,14 +121,14 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00 | $12.00   | Flat Rate 2 $0.00                      |
+      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   | Flat Rate 2 $0.00                      |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   | Flat Rate 2 $0.00                      |
-      | SKU3 | iPhone X  | 10  | $2.00 | $20.00   | Flat Rate 2 $0.00                      |
+      | SKU  | Product   | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
     And records in "Second Checkout Shipping Grid" should be 2
     When I type "Flat Rate 2" in "First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method"
     And I type "Flat Rate" in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
@@ -141,15 +141,15 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Payment - Checkout"
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00 | $12.00   |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price | Subtotal |
-      | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   |
-      | SKU3 | iPhone X  | 10  | $2.00 | $20.00   |
+      | SKU  | Product   | Qty | Price  | Subtotal |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
     And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
@@ -166,14 +166,14 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
     Then Page title equals to "Order Review - Checkout"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price | Subtotal |
-      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00 | $12.00   |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
+      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price | Subtotal |
-      | SKU2 | iPhone 13 | 10  | $2.00 | $20.00   |
-      | SKU3 | iPhone X  | 10  | $2.00 | $20.00   |
+      | SKU  | Product   | Qty | Price  | Subtotal |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
     And I should see Checkout Totals with data:
       | Subtotal | $52.00 |

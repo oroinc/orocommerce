@@ -69,7 +69,7 @@ class OrderLineItemTaxableListenerTest extends \PHPUnit\Framework\TestCase
     public function testOnSkipOrderTaxRecalculationOrderRequiredRecalculation(): void
     {
         $lineItem = new OrderLineItem();
-        $lineItem->setOrder(new Order());
+        $lineItem->addOrder(new Order());
 
         $taxable = new Taxable();
         $taxable->setClassName(OrderLineItem::class)
@@ -92,7 +92,7 @@ class OrderLineItemTaxableListenerTest extends \PHPUnit\Framework\TestCase
         ReflectionUtil::setId($order, 1);
 
         $lineItem = new OrderLineItem();
-        $lineItem->setOrder($order);
+        $lineItem->addOrder($order);
 
         $taxable = new Taxable();
         $taxable->setClassName(OrderLineItem::class)
@@ -120,7 +120,7 @@ class OrderLineItemTaxableListenerTest extends \PHPUnit\Framework\TestCase
 
         $lineItem = new OrderLineItem();
         ReflectionUtil::setId($lineItem, 1);
-        $lineItem->setOrder($order);
+        $lineItem->addOrder($order);
 
         $taxable = new Taxable();
         $taxable->setClassName(OrderLineItem::class)

@@ -46,29 +46,33 @@ Oro\Bundle\CurrencyBundle\Entity\Price:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     quoteproductWithoutCustomerUser:
         product: '@product1'
-        order: '@orderWithoutCustomerUser'
         price: '@price1'
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@orderWithoutCustomerUser' ]
     quoteproductWithChildCustomerAndWithCustomerUser:
         product: '@product1'
-        order: '@orderWithChildCustomerAndWithCustomerUser'
         price: '@price1'
         quantity: 5
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@orderWithChildCustomerAndWithCustomerUser' ]
     quoteproductWithChildCustomerAndWithoutCustomerUser:
         product: '@product1'
-        order: '@orderWithChildCustomerAndWithoutCustomerUser'
         price: '@price1'
         quantity: 5
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@orderWithChildCustomerAndWithoutCustomerUser' ]
     quoteproductWithCustomerAndCustomerUser:
         product: '@product1'
-        order: '@orderWithCustomerAndCustomerUser'
         price: '@price1'
         quantity: 5
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@orderWithCustomerAndCustomerUser' ]

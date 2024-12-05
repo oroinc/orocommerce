@@ -97,9 +97,14 @@ Previously known as GOD Object
 * Added a new backend `ordersubtotals` API resource representing calculated subtotals for a specific order.
 * Added an `orderSubtotals` relation for the backend `orders` API resource.
 * Enabled an `enable_validation` flag for the backend `orders` API resource.
+* Relation between Order and OrderLineItem entities changed to ManyToMany. Reports and segments that use `order`
+  relation of OrderLineItem entity should be manually updated after update. 
+* Relation between Order and OrderShippingTracking entities changed to ManyToMany. Reports and segments that use `order`
+  relation of OrderShippingTracking entity should be manually updated after update.
 
 #### ProductBundle
 * Added a new frontend `inventory-switcher` filter.
+* Added a default variant field for the Product entity. This allows to choose a default variant from the product variants for a configurable product. This variant will be selected by default on the product view page. It can be set on product create and edit pages as well as via API or product import.  
 
 #### PricingBundle
 * Added a new backend `customerprices` API resource.
@@ -199,7 +204,7 @@ Previously known as GOD Object
 * Added `\Oro\Bundle\PaymentBundle\Context\PaymentKitItemLineItem` model to make `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` store payment kit item line items.
 
 #### RFPBundle
-* Added `\Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider` instead of the deprecated `\Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider`.
+* Added `\Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider` instead of the deprecated `\Oro\Bundle\RFPBundle\Provider\ProductAvailabilityProvider`.[[f]](#upgrade-toolkit-coverage)
 * Disabled the ability to add a product kit to RFP via `\Oro\Bundle\RFPBundle\Provider\ProductRFPAvailabilityProvider::setNotAllowedProductTypes`.
 * Added the ability to create on a storefront a request for quote with product kits.
 * Added the ability to edit in a back-office a request for quote with product kits.
@@ -226,7 +231,7 @@ Previously known as GOD Object
 * Added the ability to display product kit line items on the shopping list line items storefront datagrid. See more in [documentation](https://doc.oroinc.com/bundles/commerce/ShoppingListBundle/shopping-list-on-storefront/).
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the storefront API as `shoppinglistkititem` resource.
 * Added `\Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem` entity to the back-office API.
-* Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.
+* Added `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead of the deprecated `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`.[[f]](#upgrade-toolkit-coverage)
 * Added `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\ProductKitItemProductHasPrice` validation constraint for checking if product kit item product has price.
 * Added `Oro\Bundle\ShoppingListBundle\Entity\LineItem::$checksum` property as a part of allowing to add the same product with the same unit code multiple times.
 * Added `Oro\Bundle\ShoppingListBundle\Entity\ShoppingList::$currency` property.
@@ -354,8 +359,8 @@ Previously known as GOD Object
 * `\Oro\Bundle\ShoppingListBundle\Storage\ProductDataStorage` now additionally puts kit item line items data into the product data storage.
 
 #### CMSBundle
-* Renamed field `title` to `altImageText`.
-* Renamed field `mainImage` to `extraLargeImage`.
+* Renamed field `title` to `altImageText`.[[f]](#upgrade-toolkit-coverage)
+* Renamed field `mainImage` to `extraLargeImage`.[[f]](#upgrade-toolkit-coverage)
 
 ### WebCatalogBundle
 * Added a new field `doNotRenderTitle` to `Oro\Bundle\WebCatalogBundle\Entity\ContentVariant`.
@@ -369,9 +374,9 @@ Previously known as GOD Object
 
 #### CheckoutBundle
 * Removed `\Oro\Bundle\CheckoutBundle\DataProvider\LineItem\CheckoutLineItemsDataProvider`, added `\Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider` instead.
-* Removed `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`, use `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead. 
+* Removed `\Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataViolationsListener`, use `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead.[[f]](#upgrade-toolkit-coverage)
 * Removed unused `\Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent`.
-* Removed `\Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider`, added `\Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider` instead to make it work with product kit line items in checkout.
+* Removed `\Oro\Bundle\CheckoutBundle\Provider\CheckoutSubtotalProvider`, added `\Oro\Bundle\CheckoutBundle\Provider\SubtotalProvider` instead to make it work with product kit line items in checkout.[[f]](#upgrade-toolkit-coverage)
 * Removed `\Oro\Bundle\CheckoutBundle\Helper\CheckoutWorkflowHelper::restartCheckout`.
 * Removed checkout event `extendable_condition.checkout`.
 
@@ -387,17 +392,17 @@ Previously known as GOD Object
 * Removed `\Oro\Bundle\InventoryBundle\EventListener\LowInventoryCheckoutLineItemValidationListener` that checked if product inventory level is running low and added the corresponding warning. Moved to the validation.yml config in CheckoutBundle instead.
 * Removed `\Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener` that checked the checkout line items quantity to order limits to prevent a checkout from starting. Moved to the validation.yml config in CheckoutBundle instead.
 * Removed `\Oro\Bundle\InventoryBundle\EventListener\UpcomingLabelCheckoutLineItemValidationListener` that checked if product is upcoming low and added the corresponding warning. Moved to the validation.yml config in CheckoutBundle instead.
-* Removed `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::isLineItemRunningLow`, use `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::isRunningLow` instead.
-* Removed `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::getMessageIfLineItemRunningLow`, use `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::getMessageIfRunningLow` instead.
+* Removed `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::isLineItemRunningLow`, use `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::isRunningLow` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::getMessageIfLineItemRunningLow`, use `\Oro\Bundle\InventoryBundle\Validator\LowInventoryCheckoutLineItemValidator::getMessageIfRunningLow` instead.[[f]](#upgrade-toolkit-coverage)
 
 #### OrderBundle
-* Removed `\Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener`, its responsibility is fulfilled by `\Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber`.
-* Removed `\Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener`, its responsibility is fulfilled by `\Oro\Bundle\OrderBundle\EventListener\Order\OrderLineItemTierPricesEventListener` now that adds both tier prices for simple products and for product kits.
-* Removed `getMatchingPrices`, `fillMatchingPrices` methods from `\Oro\Bundle\OrderBundle\Pricing\PriceMatcher`, use `addMatchingPrices` instead. 
+* Removed `\Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener`, its responsibility is fulfilled by `\Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber`.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\OrderBundle\EventListener\Order\TierPriceEventListener`, its responsibility is fulfilled by `\Oro\Bundle\OrderBundle\EventListener\Order\OrderLineItemTierPricesEventListener` now that adds both tier prices for simple products and for product kits.[[f]](#upgrade-toolkit-coverage)
+* Removed `getMatchingPrices`, `fillMatchingPrices` methods from `\Oro\Bundle\OrderBundle\Pricing\PriceMatcher`, use `addMatchingPrices` instead.[[f]](#upgrade-toolkit-coverage)
 
 #### PaymentBundle
-* Removed `\Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface`, use `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` instead.
-* Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface` and `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection`, use collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` entities instead.
+* Removed `\Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface`, use `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface` and `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection`, use collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\PaymentBundle\Context\PaymentLineItem` entities instead.[[f]](#upgrade-toolkit-coverage)
 * Removed `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Factory\PaymentLineItemCollectionFactoryInterface` and `\Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrinePaymentLineItemCollectionFactory`, use `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactoryInterface::createCollection` instead.
 * Removed `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Factory\PaymentLineItemBuilderFactoryInterface`, `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic\Factory\BasicPaymentLineItemBuilderFactory`, `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\PaymentLineItemBuilderInterface`, `\Oro\Bundle\PaymentBundle\Context\LineItem\Builder\Basic\BasicPaymentLineItemBuilder`. Use `\Oro\Bundle\PaymentBundle\Context\LineItem\Factory\PaymentLineItemFromProductLineItemFactory` instead.
 
@@ -411,12 +416,12 @@ Previously known as GOD Object
 
 #### SaleBundle
 * Removed unused `tierPrices`, `matchedPrices`, `isShippingAddressGranted` from `\Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider`.
-* Removed `\Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider` (`oro_sale.provider.quote_product_price`), use `\Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider` (`oro_sale.provider.quote_product_prices`) instead.
-* Removed `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator`, use `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator` (`oro_sale.quote.pricing.comparator`) instead.
+* Removed `\Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider` (`oro_sale.provider.quote_product_price`), use `\Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider` (`oro_sale.provider.quote_product_prices`) instead.[[p]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePriceComparator`, use `\Oro\Bundle\SaleBundle\Quote\Pricing\QuotePricesComparator` (`oro_sale.quote.pricing.comparator`) instead.[[p]](#upgrade-toolkit-coverage)
 
 #### ShippingBundle
-* Removed `\Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface`, use `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead.
-* Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface` and `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection`, use collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` entities instead.
+* Removed `\Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface`, use `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface` and `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection`, use collection `\Doctrine\Common\Collections\Collection` of `\Oro\Bundle\ShippingBundle\Context\ShippingLineItem` entities instead.[[f]](#upgrade-toolkit-coverage)
 * Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Factory\ShippingLineItemCollectionFactoryInterface` and `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\Factory\DoctrineShippingLineItemCollectionFactory`, use `\Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactoryInterface::createCollection` instead.
 * Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Factory\ShippingLineItemBuilderFactoryInterface`, `\Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory`, `\Oro\Bundle\ShippingBundle\Context\LineItem\Builder\ShippingLineItemBuilderInterface`, `\Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\BasicShippingLineItemBuilder`, `Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicLineItemBuilderByLineItemFactory`. Use `\Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactory` instead.
 * Removed `\Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingOptions\Factory\ShippingOptionsLineItemCollectionFactoryDecorator`, use `\Oro\Bundle\ShippingBundle\Context\LineItem\Factory\ShippingLineItemFromProductLineItemFactoryInterface::createCollection` instead
@@ -424,14 +429,14 @@ Previously known as GOD Object
 #### ShoppingListBundle
 * Removed option `productsMatchedPrices` from shopping_lists_awere_container layout block type, added productLineItemsPricesByShoppingList instead
 * Removed methods `getMatchedPrices`, `getMatchedPrice` from `\Oro\Bundle\ShoppingListBundle\Layout\DataProvider\FrontendShoppingListProductsProvider`, added `getProductLineItemPricesForShoppingLists` instead.
-* Removed `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener`, use `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead.
+* Removed `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataViolationsListener`, use `\Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener` instead.[[f]](#upgrade-toolkit-coverage)
 * Removed `\Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent`, `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection`, `\Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator`, `\Oro\Bundle\ShoppingListBundle\Validator\LineItemViolationsProvider`.
-* Removed `\Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface` and implementations. Use `\Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface` instead.
-* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitAvailabilityChecker` instead.
-* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker` instead.
-* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker` instead.
-* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider` instead.
-* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemProductsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider` instead.
+* Removed `\Oro\Bundle\ShoppingListBundle\ProductKit\Checksum\LineItemChecksumGeneratorInterface` and implementations. Use `\Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitAvailabilityChecker` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemAvailabilityChecker` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker`, use `\Oro\Bundle\ProductBundle\ProductKit\Checker\ProductKitItemProductAvailabilityChecker` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemsProvider` instead.[[f]](#upgrade-toolkit-coverage)
+* Removed `\Oro\Bundle\ShoppinglistBundle\ProductKit\Provider\ProductKitItemProductsProvider`, use `\Oro\Bundle\ProductBundle\ProductKit\Provider\ProductKitItemProductsProvider` instead.[[f]](#upgrade-toolkit-coverage)
 
 #### ValidationBundle
 * Removed `\Oro\Bundle\ValidationBundle\Validator\Constraints\UniqueEntity` validation constraint and validator. Use instead `\Oro\Bundle\FormBundle\Validator\Constraints\UniqueEntity`.
@@ -504,10 +509,10 @@ Previously known as GOD Object
 ### Changed
 
 #### ShippingBundle
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface` and all classes that implement this interface. 
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface. 
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and all classes that implement this interface.
-* Added strict types to `Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface` and all classes that implement this interface.
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage)
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage) 
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage)
+* Added strict types to `Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface` and all classes that implement this interface.[[f]](#upgrade-toolkit-coverage)
 * Removed unneeded classes that implement `Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface` and replace them with `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider`.
 
 #### WebCatalogBundle
@@ -604,11 +609,11 @@ Previously known as GOD Object
 
 ### Changed
 #### CatalogBundle
-* Website search field `category_path_CATEGORY_PATH` has been renamed to `category_paths.CATEGORY_PATH`
+* Website search field `category_path_CATEGORY_PATH` has been renamed to `category_paths.CATEGORY_PATH`[[f]](#upgrade-toolkit-coverage)
 
 #### ProductBundle
-* Website search field `assigned_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `assigned_to.ASSIGN_TYPE_ASSIGN_ID.CATEGORY_PATH`
-* Website search field `manually_added_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `manually_added_to.ASSIGN_TYPE_ASSIGN_ID`
+* Website search field `assigned_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `assigned_to.ASSIGN_TYPE_ASSIGN_ID.CATEGORY_PATH`[[f]](#upgrade-toolkit-coverage)
+* Website search field `manually_added_to_ASSIGN_TYPE_ASSIGN_ID` has been renamed to `manually_added_to.ASSIGN_TYPE_ASSIGN_ID`[[f]](#upgrade-toolkit-coverage)
 * In order to improve page performance, some JS-components within product item blocks are initialized only on `click` and `focusin` DOM-events. See  [Initialize Components on DOM events](https://doc.oroinc.com/frontend/javascript/page-component/#initialize-components-on-dom-events)
 * Changes in `/admin/api/files/{id}` REST API resource:
     - the attribute `filePath` structure was updated from **\["product_original": "/path/to/image.jpeg"\]** to **\[{"url": "/path/to/image.jpeg", "dimension": "product_original"}\]**
@@ -621,7 +626,7 @@ Previously known as GOD Object
   (service ID: `oro_shopping_list.datagrid.event_listener.frontend_matrix_product_grid`)
 
 #### VisibilityBundle
-* Website search field `visibility_customer_CUSTOMER_ID` has been renamed to `visibility_customer.CUSTOMER_ID`
+* Website search field `visibility_customer_CUSTOMER_ID` has been renamed to `visibility_customer.CUSTOMER_ID`[[f]](#upgrade-toolkit-coverage)
 
 #### WebsiteSearchBundle
 * Changed `oro_website_search.event_listener.orm.fulltext_index_listener` to use `doctrine.dbal.search_connection`
@@ -696,7 +701,7 @@ Previously known as GOD Object
 * The name for `/admin/api/rfpinternalstatuses` REST API resource was changed to `/admin/api/rfqinternalstatuses`.
 
 #### ShippingBundle
-* The method `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findByProductsAndUnits()` was renamed to  `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findIndexedByProductsAndUnits()` and now uses a plain DQL query without entity hydration.
+* The method `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findByProductsAndUnits()` was renamed to  `Oro\Bundle\ShippingBundle\Entity\Repository\ProductShippingOptionsRepository::findIndexedByProductsAndUnits()` and now uses a plain DQL query without entity hydration.[[f]](#upgrade-toolkit-coverage)
 
 #### ShoppingListBundle
 * The shopping list page has been completely redesigned. Removed all layout config, styles, javascript, translations,
@@ -725,10 +730,10 @@ was dispatched has been removed. At listeners please add full configuration that
     - `checkout_order_summary_line_items`
 
 #### PaymentBundle
-* Method `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory::createLineItemWithDecoratedProductByLineItem()` is removed, use `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory::createPaymentLineItemWithDecoratedProduct()` instead.
+* Method `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory::createLineItemWithDecoratedProductByLineItem()` is removed, use `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory::createPaymentLineItemWithDecoratedProduct()` instead.[[f]](#upgrade-toolkit-coverage)
 
 #### ProductBundle
-* Method `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProductByProductHolders()` is removed, use `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProduct()` instead.
+* Method `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProductByProductHolders()` is removed, use `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory::createDecoratedProduct()` instead.[[f]](#upgrade-toolkit-coverage)
 * Removed the `oro_product.matrix_form_on_shopping_list` option from the system configuration.
 
 #### PricingBundle
@@ -736,11 +741,11 @@ was dispatched has been removed. At listeners please add full configuration that
 
 #### ShoppingListBundle
 * Method `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicate()` is removed, use
-`Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicateInShoppingList()` instead.
+`Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::findDuplicateInShoppingList()` instead.[[f]](#upgrade-toolkit-coverage)
 * Methods `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::deleteItemsByShoppingListAndInventoryStatuses()`,
 	`Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::deleteDisabledItemsByShoppingList()` are
 	removed, use `Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository::deleteNotAllowedLineItemsFromShoppingList()`
-	instead.
+	instead.[[f]](#upgrade-toolkit-coverage)
 * Removed the following layout block types:
     - `shopping_list_owner_select_block`
     - `shopping_list_line_items_list`
@@ -755,9 +760,9 @@ was dispatched has been removed. At listeners please add full configuration that
 #### WebsiteSearchBundle
 
 * Removed `Oro\Bundle\WebsiteSearchBundle\Event\WebsiteSearchMappingEvent` event class and used 
-`Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` class instead of.
+`Oro\Bundle\SearchBundle\Event\SearchMappingCollectEvent` class instead of.[[f]](#upgrade-toolkit-coverage)
 * Removed `Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider` and used
-`\Oro\Bundle\SearchBundle\Provider\SearchMappingProvider` class instead of.
+`\Oro\Bundle\SearchBundle\Provider\SearchMappingProvider` class instead of.[[f]](#upgrade-toolkit-coverage)
 
 
 
@@ -805,7 +810,7 @@ instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid 
 
 #### Config component
 * The trait `Oro\Component\Cache\Layout\DataProviderCacheTrait` was removed as it added additional complexity
-  to cacheable layout data providers instead of simplify them.
+  to cacheable layout data providers instead of simplify them.[[f]](#upgrade-toolkit-coverage)
 * The unneeded class `Oro\Component\Cache\Layout\DataProviderCacheCleaner` was removed.
 
 #### PricingBundle
@@ -815,7 +820,7 @@ instead of `'%oro_email.email.entity.class%'` (in service definitions, datagrid 
 #### PromotionBundle
 * The handling of `priority` attribute for `oro_promotion.discount_context_converter`,
   `oro_promotion.promotion_context_converter` and `oro_promotion.discount_strategy` DIC tags
-  was changed to correspond Symfony recommendations.
+  was changed to correspond Symfony recommendations.[[f]](#upgrade-toolkit-coverage)
   If you have services with these tags, change the sign of the priority value for them.
   E.g. `{ name: oro_promotion.discount_context_converter, priority: 100 }` should be changed to
   `{ name: oro_promotion.discount_context_converter, priority: -100 }`
@@ -1568,3 +1573,10 @@ Was added 2 provider implementations: `database` and `cache`. `database` is set 
 * the `protected $websiteUrlResolver` property was removed from `WebsitePathExtension`
 #### WebsiteSearchBundle
 * the following method [`IndexationRequestListener::getEntitiesWithUpdatedIndexedFields`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/IndexationRequestListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener") was removed 
+
+---
+###### Upgrade-Toolkit coverage
+
+[f] - Fully covered with `oro/upgrade-toolkit`
+
+[p] - Partially covered with `oro/upgrade-toolkit`

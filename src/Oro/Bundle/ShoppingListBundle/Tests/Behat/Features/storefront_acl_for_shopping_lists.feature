@@ -184,7 +184,7 @@ Feature: Storefront acl for shopping lists
     Given I open page with shopping list <name>
     When I click "Shopping List Actions"
     Then I should not see "Rename"
-    And I should not see "Add a note to entire Shopping List"
+    And I should not see "Add note"
     And I should see "Simple note"
 
     Examples:

@@ -201,8 +201,6 @@ Feature: Showing related products
       Then I should see preview image with alt "Product2Localization1`\"'&йёщ®&reg;>" for "PSKU2" product
       And I should see picture for "PSKU2" product in the "Related Products Block"
 
-    @skip
-#   Unskip when BB-20324 will be fixed
     Scenario: Check that product name is localized and displayed properly in shopping lists widget
       When I click "Add to Shopping List" for "PSKU2" product
       And I click "In Shopping List" for "PSKU2" product
@@ -260,10 +258,10 @@ Feature: Showing related products
     And I should see the following products in the "Related Products Block":
       | Title                               |
       | Product2Localization1`"'&йёщ®&reg;> |
-#    When click "In Shopping List" for "PSKU2" product
-#    Then I should see "UiDialog" with elements:
-#      | Title | Product2Localization1`"'&йёщ®&reg;> |
-#    And I close ui dialog
+    When click "In Shopping List" for "PSKU2" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
+    And I close ui dialog
 
   Scenario: Verify that "Related Products" block is displayed in "Tabs Template" layout view
     Given I proceed as the Admin
@@ -284,10 +282,10 @@ Feature: Showing related products
     And I should see the following products in the "Related Products Block":
       | Title                               |
       | Product2Localization1`"'&йёщ®&reg;> |
-#    When click "In Shopping List" for "PSKU2" product
-#    Then I should see "UiDialog" with elements:
-#      | Title | Product2Localization1`"'&йёщ®&reg;> |
-#    And I close ui dialog
+    When click "In Shopping List" for "PSKU2" product
+    Then I should see "UiDialog" with elements:
+      | Title | Product2Localization1`"'&йёщ®&reg;> |
+    And I close ui dialog
 
   Scenario: "Add to Shopping List" button restrictions
     Given I proceed as the Admin

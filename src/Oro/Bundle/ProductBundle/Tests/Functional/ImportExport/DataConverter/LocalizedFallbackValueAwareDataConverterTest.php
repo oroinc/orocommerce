@@ -99,6 +99,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
         'extend.entity.test.wysiwyg_attr' => '',
         'Upcoming.value' => '',
         'Kit Items' => '',
+        'Default Variant.SKU' => '',
         'Calculate Shipping Based On' => ''
     ];
 

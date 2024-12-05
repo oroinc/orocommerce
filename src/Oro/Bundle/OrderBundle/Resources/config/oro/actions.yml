@@ -77,6 +77,7 @@ operations:
         exclude_datagrids:
             - order-line-items-grid
             - frontend-orders-grid
+            - orders-grid
 
     oro_order_update_order:
         extends: UPDATE
@@ -95,15 +96,20 @@ operations:
             - for_all_datagrids
             - for_all_entities
             - preconditions
+            - exclude_datagrids
         preconditions:
-            '@not_blank': $.data
+            '@and':
+                - '@not_blank': $.data
+                -  '@blank': $.data.parent
         datagrids:
             - customer-user-orders-grid
+            - orders-grid
 
     oro_order_shipping_trackings_change:
         label: oro.order.widgets.shipping_tracking
         routes:
             - oro_order_view
+            - oro_order_suborder_view
         acl_resource: oro_order_update
         button_options:
             icon: fa-list-alt

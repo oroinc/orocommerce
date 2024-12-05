@@ -22,6 +22,11 @@ layout:
                       blockType: block
                   __product_total:
                       blockType: container
+                      options:
+                          vars:
+                              singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                              singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                              defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
                   __form_start:
                       blockType: form_start
                   __form_errors:

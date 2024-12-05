@@ -95,9 +95,11 @@ Feature: Product frontend single unit mode
     When I click "Configure and Add to Shopping List"
     Then I should see "Product Kit Dialog" with elements:
       | Price | Total: $30.00 |
-    And I should see "set" for "Product Kit Line Item Totals Form Unit" select
-    And I should see "each" for "Product Kit Line Item Totals Form Unit" select
-    And I should not see "item" for "Product Kit Line Item Totals Form Unit" select
+    And I should see that the "Product Kit Line Item Totals Form Unit" element has a selected unit "set"
+    And I should see that the "Product Kit Line Item Totals Form Unit" element has available units:
+      | each |
+      | set  |
+    And I should see that the "Product Kit Line Item Totals Form Unit" element has a product unit selector of type "toggle"
 
   Scenario: Create new product kit with Single Unit mode
     Given I proceed as the Admin
@@ -135,9 +137,10 @@ Feature: Product frontend single unit mode
     And I click "Configure and Add to Shopping List"
     Then I should see "Product Kit Dialog" with elements:
       | Price | Total: $90.00 |
-    And I should see "item" for "Product Kit Line Item Totals Form Unit" select
-    And I should not see "set" for "Product Kit Line Item Totals Form Unit" select
-    And I should not see "each" for "Product Kit Line Item Totals Form Unit" select
+    And I should see that the "Product Kit Line Item Totals Form Unit" element has a selected unit "item"
+    And I should see that the "Product Kit Line Item Totals Form Unit" element has available units:
+      | item |
+    And I should see that the "Product Kit Line Item Totals Form Unit" element has a product unit selector of type "single"
     And I close ui dialog
 
   Scenario: As guest user verify that prices are correctly displayed in "Tabs Template" layout view

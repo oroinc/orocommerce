@@ -25,7 +25,7 @@ Feature: Checkout With Line Items Grouping
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     Then I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price  | Subtotal |
+      | SKU  | Product                             | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
       | SKU2 | iPhone 13                           | $2.00  | $20.00   |
       | SKU3 | iPhone X                            | $2.00  | $20.00   |
@@ -35,13 +35,13 @@ Feature: Checkout With Line Items Grouping
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13                | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X                 | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -50,13 +50,13 @@ Feature: Checkout With Line Items Grouping
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13                | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X                 | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -65,13 +65,13 @@ Feature: Checkout With Line Items Grouping
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -88,13 +88,13 @@ Feature: Checkout With Line Items Grouping
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
@@ -106,12 +106,12 @@ Feature: Checkout With Line Items Grouping
     Then Page title equals to "Order Review - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Item                     | Qty | Price  | Subtotal |
+      | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Item      | Qty | Price  | Subtotal |
+      | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2

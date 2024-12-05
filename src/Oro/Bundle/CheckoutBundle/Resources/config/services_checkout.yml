@@ -230,6 +230,8 @@ services:
             - '@oro_checkout.action_group.shipping_method_actions'
         tags:
             - { name: 'oro_workflow.transition_service' }
+        calls:
+            - [ setCheckoutLineItemsConverter, [ '@oro_checkout.data_provider.converter.checkout_line_items' ] ]
 
     oro_checkout.workflow.b2b_flow_checkout.transition.verify_payment:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\VerifyPayment

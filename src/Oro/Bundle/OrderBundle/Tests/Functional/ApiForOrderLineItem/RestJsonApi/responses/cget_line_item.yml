@@ -16,10 +16,11 @@ data:
             fromExternalSource: false
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@simple_order->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@simple_order->id)>'
             product:
                 data:
                     type: products
@@ -49,10 +50,11 @@ data:
             fromExternalSource: false
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@simple_order->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@simple_order->id)>'
             product:
                 data:
                     type: products
@@ -80,10 +82,11 @@ data:
             fromExternalSource: false
             comment: null
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@simple_order2->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@simple_order2->id)>'
             product:
                 data:
                     type: products
@@ -112,10 +115,11 @@ data:
             comment: null
             checksum: 'product_kit_2_line_item.1.checksum'
         relationships:
-            order:
+            orders:
                 data:
-                    type: orders
-                    id: '<toString(@simple_order3->id)>'
+                    -
+                        type: orders
+                        id: '<toString(@simple_order3->id)>'
             product:
                 data:
                     type: products

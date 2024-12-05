@@ -29,7 +29,7 @@ Feature: Promotions for multi shipping checkout with suborders
     And I signed in as AmandaRCole@example.org on the store frontend
     And I open page with shopping list List 1
     And I should see following "Multi Shipping Shopping List" grid:
-      | SKU  | Item                                | Price  | Subtotal |
+      | SKU  | Product                             | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light            | $2.00  | $10.00   |
       | SKU2 | iPhone 13                           | $2.00  | $20.00   |
       | SKU3 | iPhone X                            | $2.00  | $20.00   |
@@ -118,7 +118,7 @@ Feature: Promotions for multi shipping checkout with suborders
     And I show filter "Order Number" in grid
     And I filter Order Number as is equal to "1"
     When I click view "$54.00" in grid
-    And I click "Promotions and Discounts"
+    And I click "Discounts"
     Then I should not see a "Promotions" element
     And I see following subtotals for "Backend Order":
       | Subtotal | Amount |
@@ -130,7 +130,7 @@ Feature: Promotions for multi shipping checkout with suborders
     # Click on order number 1-1
     And I filter Order Number as is equal to "1-1"
     And I click view "$12.00" in grid
-    And I click "Promotions and Discounts"
+    And I click "Discounts"
     Then I should see following rows in "Promotions" table
       | Promotion                     | Type            | Status | Discount |
       | lineItemDiscountPromotionRule | Order Line Item | Active | -$1.00   |
@@ -144,7 +144,7 @@ Feature: Promotions for multi shipping checkout with suborders
     # Click on order number 1-2
     And I filter Order Number as is equal to "1-2"
     And I click view "$42.00" in grid
-    And I click "Promotions and Discounts"
+    And I click "Discounts"
     Then I should see following rows in "Promotions" table
       | Code                  | Promotion                               | Type        | Status | Discount |
       | multi-shipping-coupon | MultiShippingOrderDiscountPromotionRule | Order Total | Active | -$4.00   |

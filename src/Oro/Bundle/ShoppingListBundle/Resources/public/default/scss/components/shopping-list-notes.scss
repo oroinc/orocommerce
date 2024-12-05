@@ -5,6 +5,8 @@
 
     margin: $shopping-lists-notes-offset;
 
+    max-width: $shopping-lists-notes-max-width;
+
     &--no-offset {
         margin: 0;
     }
@@ -15,7 +17,12 @@
     }
 
     &__content {
-        font-size: $shopping-lists-notes-font-size;
+        display: flex;
+        align-items: center;
+        min-height: 44px;
+
+        gap: $shopping-lists-notes-gap;
+
         font-style: $shopping-lists-notes-font-s;
 
         &--limited {
@@ -27,6 +34,21 @@
         }
     }
 
+    &__edit-form {
+        display: grid;
+        gap: spacing('sm');
+        min-width: 364px;
+    }
+
+    &__textarea {
+        min-height: 44px;
+        padding: spacing('sm') spacing('md');
+    }
+
+    &__actions {
+        flex: 1 0 auto;
+    }
+
     &__icon {
         display: inline-flex;
     }
@@ -35,5 +57,9 @@
         margin-top: spacing('sm');
 
         text-align: right;
+    }
+
+    &:has(.shopping-list-notes__content.hide) {
+        margin: 0;
     }
 }

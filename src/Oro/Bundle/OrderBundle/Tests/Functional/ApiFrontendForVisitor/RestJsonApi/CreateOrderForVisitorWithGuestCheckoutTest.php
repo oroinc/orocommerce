@@ -9,12 +9,12 @@ use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
-use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi\OrderResponseTrait;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -26,7 +26,6 @@ use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCase
 {
     use RolePermissionExtension;
-    use OrderResponseTrait;
 
     private ?bool $originalGuestCheckoutOptionValue;
 
@@ -84,12 +83,12 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
 
     private function getGuestCheckoutOptionValue(): bool
     {
-        return $this->getConfigManager()->get('oro_checkout.guest_checkout');
+        return self::getConfigManager()->get('oro_checkout.guest_checkout');
     }
 
     private function setGuestCheckoutOptionValue(bool $value): void
     {
-        $configManager = $this->getConfigManager();
+        $configManager = self::getConfigManager();
         $configManager->set('oro_checkout.guest_checkout', $value);
         $configManager->flush();
     }
@@ -131,6 +130,15 @@ class CreateOrderForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTest
         ];
 
         return $data;
+    }
+
+    private function updateOrderResponseContent(array|string $expectedContent, Response $response): array
+    {
+        return $this->updateResponseContent(
+            $this->updateResponseContent($expectedContent, $response),
+            $response,
+            'identifier'
+        );
     }
 
     public function testCreate(): void

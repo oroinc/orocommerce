@@ -43,7 +43,7 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
      * @private
      */
     _afterRenderButtons() {
-        const $dropdown = this.dropdownWidget.dropdown;
+        const $dropdown = this.dropdownWidget?.dropdown;
 
         if (!$dropdown || $dropdown.find('.items-group > li[role="menuitem"]').length <= this.minimumResultsForSearch) {
             return;
@@ -52,15 +52,14 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
         this.$el.removeClass('hide');
         const dropdownSearch = new DropdownSearch({
             minimumResultsForSearch: this.minimumResultsForSearch,
-            el: this.dropdownWidget.dropdown,
+            el: this.dropdownWidget?.dropdown,
             searchContainerSelector: '[data-intention="search"]'
         });
 
         this.subview('dropdown-search', dropdownSearch);
 
         dropdownSearch.clearField(true);
-
-        this.dropdownWidget.group.on('show.bs.dropdown', e => {
+        this.dropdownWidget?.group.on('show.bs.dropdown', e => {
             if (!dropdownSearch.disposed) {
                 dropdownSearch.clearField();
             }
@@ -75,8 +74,8 @@ const ShoppingListQuickSearch = BaseView.extend(extend({}, ElementsHelper, {
             return;
         }
 
-        if (this.dropdownWidget.group !== null) {
-            this.dropdownWidget.group.off();
+        if (this.dropdownWidget?.group !== null) {
+            this.dropdownWidget?.group.off();
         }
 
         ShoppingListQuickSearch.__super__.dispose.call(this);

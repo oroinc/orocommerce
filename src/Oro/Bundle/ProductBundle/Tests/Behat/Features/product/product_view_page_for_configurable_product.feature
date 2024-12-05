@@ -120,9 +120,9 @@ Feature: Product view page for configurable product
   Scenario: Check that product links from Shopping List navigates to product view page with preselected attributes
     Given I open page with shopping list "Shopping List"
     And I should see following grid:
-      | SKU     | Qty Update All | Price     |
-      | tpc_w   | 1 item        | $1,100.00  |
-      | tpc_b_r | 1 item        | $800.00    |
+      | SKU     | Qty Update All  | Price     |
+      | tpc_w   | 1 item          | $1,100.00 |
+      | tpc_b_r | 1 ( item ) each | $800.00   |
     When I click on "tpc_b_r" configurable product in "Shopping List Line Items Table"
     Then "Configurable Product Form" must contains values:
       | Color       | Black |
@@ -201,6 +201,6 @@ Feature: Product view page for configurable product
     And click "Update Shopping List"
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I should see following grid:
-      | SKU     | Item                                    | Qty Update All | Price     |
-      | tpc_w   | Tablet PC Color: White Refurbished: No  | 1 item         | $1,100.00 |
-      | tpc_b_r | Tablet PC Color: Black Refurbished: Yes | 2 item         | $800.00   |
+      | SKU     | Product             | Qty Update All  | Price     |
+      | tpc_w   | Tablet PC White No  | 1 item          | $1,100.00 |
+      | tpc_b_r | Tablet PC Black Yes | 2 ( item ) each | $800.00   |

@@ -63,7 +63,7 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
 
     private function setGuestShoppingListFeatureStatus(bool $status = true): void
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.availability_for_guests', $status);
         $configManager->flush();
     }
@@ -216,9 +216,7 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem, 'ProductKitItemLineItem is not found');
         self::assertProductKitItemLineItem(
             $kitItemLineItem,
@@ -288,9 +286,7 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem);
         self::assertEquals(2, $kitItemLineItem->getQuantity());
     }
@@ -321,9 +317,7 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem);
         self::assertEquals(10, $kitItemLineItem->getQuantity());
 
@@ -366,9 +360,7 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNotNull($kitItemLineItem);
     }
 
@@ -389,15 +381,11 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ProductKitItemLineItem $kitItemLineItem */
-        $kitItemLineItem = $this->getEntityManager()
-            ->getRepository(ProductKitItemLineItem::class)
-            ->find($kitItemLineItemId);
+        $kitItemLineItem = $this->getEntityManager()->find(ProductKitItemLineItem::class, $kitItemLineItemId);
         self::assertNull($kitItemLineItem);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItemId);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, $lineItemId);
         self::assertNotNull($lineItem);
         self::assertCount(1, $lineItem->getKitItemLineItems());
 

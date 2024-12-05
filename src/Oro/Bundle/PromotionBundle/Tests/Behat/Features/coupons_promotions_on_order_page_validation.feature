@@ -12,7 +12,7 @@ Feature: Coupons Promotions on Order page validation
     And I login as administrator
     And go to Sales / Orders
     And click edit FirstOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     # apply coupon
     And I click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
@@ -37,7 +37,7 @@ Feature: Coupons Promotions on Order page validation
     And click "Save" in modal window
 
   Scenario: Already applied promotion is forbidden to apply again
-    Given I click "Promotions and Discounts"
+    Given I click "Discounts"
     And click "Add Coupon Code"
     And type "test-2" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -63,7 +63,7 @@ Feature: Coupons Promotions on Order page validation
       | test-8      | Jan 1, 3000, 12:00 AM | Jan 1, 5000, 12:00 AM |
     Then I go to Sales / Orders
     And click edit FirstOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And click "Coupons Selection Button"
     # expired by date test-3, filtered out and not present for selection
@@ -83,7 +83,7 @@ Feature: Coupons Promotions on Order page validation
     Given I go to Sales / Orders
     # use test-1 coupon second time
     And click edit SecondOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -96,7 +96,7 @@ Feature: Coupons Promotions on Order page validation
     # try to use test-1 third time by one user, limit for it - two times per user
     When I go to Sales / Orders
     And click edit ThirdOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And type "test-1" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -110,7 +110,7 @@ Feature: Coupons Promotions on Order page validation
     Given I go to Sales / Orders
     # use test-4 coupon first time
     And click edit FirstOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And type "test-4" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -123,7 +123,7 @@ Feature: Coupons Promotions on Order page validation
     # try to use test-4 second time , limit for it - one usage per coupon
     When I go to Sales / Orders
     And click edit SecondOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And type "test-4" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -137,7 +137,7 @@ Feature: Coupons Promotions on Order page validation
     Given I go to Sales / Orders
     # use test-7 coupon first time
     And click edit ThirdOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And type "test-7" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -150,7 +150,7 @@ Feature: Coupons Promotions on Order page validation
     # try to use test-7 second time , limit for it - one usage per coupon and one usage per person
     When I go to Sales / Orders
     And click edit SecondOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And type "test-7" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -164,7 +164,7 @@ Feature: Coupons Promotions on Order page validation
   Scenario: Forbidden applying coupon that promotion is not applicable for order
     Given I go to Sales / Orders
     And click edit FirstOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And type "test-5" in "Coupon Code"
     And should see a "Highlighted Suggestion" element
@@ -190,7 +190,7 @@ Feature: Coupons Promotions on Order page validation
       | test-8      | order Discount Promotion 3 |
     Then I go to Sales / Orders
     And click edit FirstOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Coupon Code"
     And click "Coupons Selection Button"
     # test-6, filtered out and not present for selection

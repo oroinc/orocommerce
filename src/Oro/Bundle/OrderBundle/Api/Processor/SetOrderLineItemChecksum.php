@@ -1,23 +1,21 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Api\Processor;
+namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
-use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
- * Calculates and sets the calculated value to the {@see RequestProductItem} checksum.
+ * Sets the checksum for order line item.
  */
-class SetChecksum implements ProcessorInterface
+class SetOrderLineItemChecksum implements ProcessorInterface
 {
-    private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator;
-
-    public function __construct(LineItemChecksumGeneratorInterface $lineItemChecksumGenerator)
-    {
-        $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
+    public function __construct(
+        private readonly LineItemChecksumGeneratorInterface $lineItemChecksumGenerator
+    ) {
     }
 
     #[\Override]
@@ -25,10 +23,10 @@ class SetChecksum implements ProcessorInterface
     {
         /** @var CustomizeFormDataContext $context */
 
-        /** @var RequestProductItem $lineItem */
+        /** @var OrderLineItem $lineItem */
         $lineItem = $context->getData();
         $checksum = $this->lineItemChecksumGenerator->getChecksum($lineItem);
-        if ($checksum !== null) {
+        if (null !== $checksum) {
             $lineItem->setChecksum($checksum);
         }
     }

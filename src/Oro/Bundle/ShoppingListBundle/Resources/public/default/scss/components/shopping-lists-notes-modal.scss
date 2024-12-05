@@ -3,5 +3,29 @@
 .shopping-list-notes-modal {
     &__editor {
         max-height: 120px;
+        min-height: 0;
+    }
+}
+
+@include breakpoint('mobile-big') {
+    .shopping-list-notes-modal {
+        &__form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        &__form,
+        &__editor {
+            height: 100%;
+            max-height: 100%;
+        }
+
+        .modal-content {
+            height: calc(var(--visual-viewport-height, 100vh) - var(--sticky-page-header-element-height, 0));
+            top: var(--sticky-page-header-element-height, 0);
+            bottom: auto;
+
+            transition: height 230ms ease-out;
+        }
     }
 }

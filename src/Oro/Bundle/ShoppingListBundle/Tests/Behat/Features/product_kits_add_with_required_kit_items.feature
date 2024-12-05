@@ -30,7 +30,7 @@ Feature: Product kits add with required kit items
       | Title                | Product Kit 1                    |
       | Kit Item 1 Name      | Barcode Scanner                  |
       | Kit Item 2 Name      | Base Unit                        |
-      | Price                | Total: $41.00      |
+      | Price                | Total: $41.00                    |
       | Kit Item 1 Product 1 | simpleproduct03 Product 3 $31.00 |
       | Kit Item 1 Product 2 | None                             |
       | Kit Item 2 Product 1 | simpleproduct01 Product 1 $31.00 |
@@ -59,7 +59,7 @@ Feature: Product kits add with required kit items
     Then I should see "Product Kit In Shopping List Dialog" with elements:
       | Title                         | Product Kit 1             |
       | Shopping List 1 Label         | Product Kit Shopping List |
-      | Shopping List 1 Configuration | Base Unit[x 1] Product 1  |
+      | Shopping List 1 Configuration | Base Unit(x1) Product 1  |
     And I close ui dialog
     And click on "Flash Message Close Button"
 
@@ -72,9 +72,9 @@ Feature: Product kits add with required kit items
   Scenario: Check shopping list view page
     When Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU             | Item                 |          | Qty | Unit  | Price  | Subtotal |
-      | productkit1     | Product Kit 1        | In Stock | 1   | piece | $41.00 | $41.00   |
-      | simpleproduct01 | Base Unit: Product 1 |          | 1   | piece | $31.00 |          |
+      | SKU             | Product              | Availability | Qty | Unit  | Price  | Subtotal |
+      | productkit1     | Product Kit 1        | IN STOCK     | 1   | piece | $41.00 | $41.00   |
+      | simpleproduct01 | Base Unit: Product 1 |              | 1   | piece | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $41.00"
     And I should see "Total $41.00"
@@ -83,15 +83,15 @@ Feature: Product kits add with required kit items
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU             | Item                 |          | Qty Update All | Price  | Subtotal |
-      | productkit1     | Product Kit 1        | In Stock | 1 piece        | $41.00 | $41.00   |
-      | simpleproduct01 | Base Unit: Product 1 |          | 1 piece        | $31.00 |          |
+      | SKU             | Product              | Availability | Qty Update All | Price  | Subtotal |
+      | productkit1     | Product Kit 1        | IN STOCK     | 1 piece        | $41.00 | $41.00   |
+      | simpleproduct01 | Base Unit: Product 1 |              | 1 piece        | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $41.00"
     And I should see "Total $41.00"
 
   Scenario: Remove product kit from shopping list
-    When I click "Row 1 Delete Line Item"
+    When I click "Delete" on row "productkit1" in grid
     Then I should see "Are you sure you want to delete this product?"
     When click "Yes, Delete"
     Then I should see 'The "Product Kit 1" product was successfully deleted' flash message

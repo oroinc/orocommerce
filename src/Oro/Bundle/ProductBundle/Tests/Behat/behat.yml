@@ -10,6 +10,8 @@ oro_behat_extension:
       selector: "input[name='oro_product[additionalUnitPrecisions][0][precision]']"
     ProductAdditionalSellField:
       selector: "input[name='oro_product[additionalUnitPrecisions][0][sell]']"
+    ProductAdditionalSellFieldSecondRow:
+      selector: "input[name='oro_product[additionalUnitPrecisions][1][sell]']"
     ProductUnitLabel:
       selector: "[data-role='unit-label']"
     ProductUnitSelect:
@@ -318,6 +320,7 @@ oro_behat_extension:
           Name Default Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]'
           Name First Slug: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][value]'
           Name First Slug Use Default: 'oro_product[slugPrototypesWithRedirect][slugPrototypes][values][localizations][1][use_fallback]'
+          Default Variant Select: 'oro_product[defaultVariant]'
         # for testing product attributes
           Color:
             type: 'css'
@@ -422,6 +425,9 @@ oro_behat_extension:
           Multiple Images Field:
             type: xpath
             locator: '//input[contains(@name,"multiple_images_field") and contains(@type,"file")]'
+
+    Default Variant Select:
+      selector: '[name="oro_product[defaultVariant]"]'
 
     Multiple Files DAM Attribute:
       selector:
@@ -1140,6 +1146,21 @@ oro_behat_extension:
             locator: '[name="oro_product_frontend_line_item[unit]"]'
             element: ProductUnitSelector
 
+    Product Kit Row In Shopping List:
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridRow
+      selector:
+        locator: '//*[contains(@class, "grid-row-product-kit") and not(contains(@class, "notification-row"))]'
+        type: xpath
+
+    Decrement Product Quantity In Row 1:
+      selector:
+        locator: '//button[@data-type="decrement"][1]'
+        type: 'xpath'
+
+    Increment Product Quantity In Row 1:
+      selector:
+        locator: '//button[@data-type="increment"][1]'
+        type: 'xpath'
 
     Product Shopping List Dropdown:
       selector:
@@ -1971,6 +1992,11 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//select[@name="oro_product[kitItems][0][productUnit]"]'
+
+    Expand Kit Items:
+      selector:
+        type: 'xpath'
+        locator: '//*[contains(@class, "action-holder")]//button[@data-role="expand-kits"]'
 
     Simple Product 03 Link:
       selector:

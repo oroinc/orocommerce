@@ -90,26 +90,29 @@ Oro\Bundle\OrderBundle\Entity\Order:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     order_line_item.1:
-        order: '@order1'
         product: '@product1'
         quantity: 10
         productUnit: '@item'
         value: 20
         currency: USD
+        __calls:
+            -   addOrder: [ '@order1' ]
     order_line_item.2:
-        order: '@order2'
         product: '@product1'
         quantity: 1
         productUnit: '@item'
         value: 20
         currency: USD
+        __calls:
+            -   addOrder: [ '@order2' ]
     order_line_item.3:
-        order: '@order3'
         product: '@product1'
         quantity: 1
         productUnit: '@item'
         value: 20
         currency: USD
+        __calls:
+            -   addOrder: [ '@order3' ]
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     order_discount.percent:

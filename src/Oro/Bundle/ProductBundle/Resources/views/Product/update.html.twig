@@ -221,6 +221,7 @@
                 'title' : null,
                 'useSpan': false,
                 'data' : [
+                    form_row(form.defaultVariant),
                     form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
                     dataGrid.renderGrid('product-product-variants-edit', dataGridParameters, { cssClass: 'inner-grid' })

@@ -13,7 +13,6 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     # <with different unit precision>
     order1_line_item6:
         product: '@product_kit1'
-        order: '@order1'
         price: '@order1_line_item6_price'
         quantity: 1
         productUnit: '@piece'
@@ -21,6 +20,7 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         __calls:
             -   addKitItemLineItem: [ '@order1_line_item6_kit_item1' ]
             -   addKitItemLineItem: [ '@order1_line_item6_kit_item2' ]
+            -   addOrder: [ '@order1' ]
     # </with different unit precision>
 
 Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:

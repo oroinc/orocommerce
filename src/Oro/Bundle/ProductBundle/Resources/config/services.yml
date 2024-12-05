@@ -415,6 +415,11 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product_variant_links }
 
+    oro_product.validator.default_product_variant:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\DefaultProductVariantValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_default_product_variant }
+
     oro_product.validator.unique_variant_links_simple_product:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator'
         arguments:

@@ -265,110 +265,126 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         productSku: '9OL25'
         quantity: '20'
         productUnit: '@item'
-        order: '@order1'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order1' ]
     lineitem2:
         product: '@product2'
         productSku: '9OL25'
         quantity: '15'
         productUnit: '@set'
-        order: '@order2'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order2' ]
     lineitem3:
         product: '@product2'
         productSku: '9OL25'
         quantity: '5'
         productUnit: '@item'
-        order: '@order3'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order3' ]
     lineitem4:
         product: '@product1'
         productSku: '5GN30'
         quantity: '5'
         productUnit: '@item'
-        order: '@order4'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order4' ]
     lineitem5:
         product: '@product2'
         productSku: '9OL25'
         quantity: '16'
         productUnit: '@item'
-        order: '@order5'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order5' ]
     lineitem6:
         product: '@product2'
         productSku: '9OL25'
         quantity: '41'
         productUnit: '@item'
-        order: '@order6'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order6' ]
     lineitem7:
         product: '@product2'
         productSku: '9OL25'
         quantity: '40'
         productUnit: '@set'
-        order: '@order7'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order7' ]
     lineitem8:
         product: '@product1'
         productSku: '5GN30'
         quantity: '11'
         productUnit: '@set'
-        order: '@order8'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order8' ]
     lineitem9:
         product: '@product2'
         productSku: '9OL25'
         quantity: '21'
         productUnit: '@item'
-        order: '@order9'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order9' ]
     lineitem10:
         product: '@product2'
         productSku: '9OL25'
         quantity: '17'
         productUnit: '@set'
-        order: '@order10'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order10' ]
     lineitem11:
         product: '@product2'
         productSku: '9OL25'
         quantity: '30'
         productUnit: '@item'
-        order: '@order11'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order11' ]
     lineitem12:
         product: '@product2'
         productSku: '9OL25'
         quantity: '44'
         productUnit: '@set'
-        order: '@order12'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order12' ]
     lineitem13:
         product: '@product2'
         productSku: '9OL25'
         quantity: '4'
         productUnit: '@item'
-        order: '@order13'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order13' ]
     lineitem14:
         product: '@product2'
         productSku: '9OL25'
         quantity: '56'
         productUnit: '@set'
-        order: '@order14'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order14' ]
     lineitem15:
         product: '@product2'
         productSku: '9OL25'
         quantity: '20'
         productUnit: '@item'
-        order: '@order15'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order15' ]
     lineitem16:
         product: '@product2'
         productSku: '9OL25'
         quantity: '10'
         productUnit: '@set'
-        order: '@order16'
         price: '@price1'
+        __calls:
+            -   addOrder: [ '@order16' ]

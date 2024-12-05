@@ -107,8 +107,9 @@ Oro\Bundle\CurrencyBundle\Entity\Price:
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     simpleOrderLineItem:
         product: '@simpleProduct'
-        order: '@simpleOrder'
         price: '@simplePrice'
         quantity: 1
         productUnit: '@item'
         productUnitCode: item
+        __calls:
+            -   addOrder: [ '@simpleOrder' ]

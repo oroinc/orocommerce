@@ -13,6 +13,14 @@ const ShoppingListRow = Row.extend({
      */
     cellConstructorMap: {},
 
+    _attributes() {
+        return {
+            'data-row-id': this.model.get('productUID'),
+            'aria-rowindex': this.getAriaRowIndex(),
+            ...this.model.get('row_attributes')
+        };
+    },
+
     constructor: function ShoppingListRow(options) {
         ShoppingListRow.__super__.constructor.call(this, options);
     },

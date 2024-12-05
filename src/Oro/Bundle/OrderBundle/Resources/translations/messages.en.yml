@@ -117,8 +117,8 @@ oro:
             description:                  Indicates whether an order is partially or fully shipped.
         recency.label:                    'Recency'
         parent:
-            label:                        'Parent Order'
-            description:                  Related parent order assigned to current order.
+            label:                        'Main Order'
+            description:                  Related main order assigned to current order.
         sub_orders:
             label:                        'Sub-Orders'
             description:                  Represents collection of child orders assigned to order.
@@ -200,9 +200,9 @@ oro:
                 save:             Save
             flash:
                 save_success:     Shipping Tracking Numbers have been updated
-            order:
-                label:            Order
-                description:      The relationship with the order this shipping tracking is used with.
+            orders:
+                label:            Orders
+                description:      The relationship with the orders this shipping tracking is used with.
 
         ordershippingtracking:
             entity_label: 'Shipping Tracking'
@@ -215,9 +215,10 @@ oro:
             number:
                 label: 'Number'
                 description: 'The Shipping Tracking number'
-            order:
-                label: 'Order'
-                description: 'The Order related to current shipping tracking entity'
+            order.label: Order
+            orders:
+                label: 'Orders'
+                description: 'The Orders related to current shipping tracking entity'
 
         orderdiscount:
             entity_label:         Order Discount
@@ -340,9 +341,10 @@ oro:
             product_variant_fields:
                 label:          'Product Variant Fields'
                 description:    'Contains data about fields of ordered configurable product'
-            order:
-                label:          'Order'
-                description:    A relationship with the order that contains the line item.
+            order.label:        Order
+            orders:
+                label:          'Orders'
+                description:    A relationship with the orders that contains the line item.
             order_product_items.label: 'Order Product Items'
             order_product_requests.label: 'Order Product Requests'
             request_product_item.label: 'Requested Item'
@@ -524,11 +526,10 @@ oro:
         sections:
             general: General
             additional: Additional
-            payment_history: Payment History
-            sub_orders_payment_history: Sub-Orders Payment History
+            payment_history: Payments
             order_line_items: 'Line Items'
             order_totals: Totals
-            shipping_information: Shipping Information
+            shipping_information: Shipping
             discounts: Special Discounts
             sub_orders: Sub-Orders
 

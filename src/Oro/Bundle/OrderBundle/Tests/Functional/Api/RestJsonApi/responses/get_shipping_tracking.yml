@@ -5,7 +5,8 @@ data:
         method: 'method 1'
         number: 'number 1'
     relationships:
-        order:
+        orders:
             data:
-                type: orders
-                id: '<toString(@order1->id)>'
+                -
+                    type: orders
+                    id: '<toString(@order1->id)>'

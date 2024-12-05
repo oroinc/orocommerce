@@ -34,11 +34,13 @@ Example:
       "number": "12345"
     },
     "relationships": {
-      "order": {
-        "data": {
-          "type": "orders",
-          "id": "1"
-        }
+      "orders": {
+        "data": [
+          {
+            "type": "orders",
+            "id": "1"
+          }
+        ]
       }
     }
   }
@@ -67,11 +69,13 @@ Example:
       "number": "12345"
     },
     "relationships": {
-      "order": {
-        "data": {
-          "type": "orders",
-          "id": "1"
-        }
+      "orders": {
+        "data": [
+          {
+            "type": "orders",
+            "id": "1"
+          }
+        ]
       }
     }
   }
@@ -121,7 +125,7 @@ Delete a collection of order shipping tracking records.
 
 **This field must not be empty, if it is passed.**
 
-### order
+### orders
 
 #### create
 
@@ -131,29 +135,73 @@ Delete a collection of order shipping tracking records.
 
 ## SUBRESOURCES
 
-### order
+### orders
 
 #### get_subresource
 
-Retrieve a record of shipping tracking assigned to a specific order record.
+Retrieve a record of shipping tracking assigned to a specific orders record.
 
 #### get_relationship
 
-Retrieve ID of shipping tracking records assigned to a specific order record.
+Retrieve IDs of shipping tracking records assigned to a specific orders record.
 
 #### update_relationship
 
-Replace shipping tracking assigned to a specific order record.
+Replace the list of orders assigned to a specific shipping tracking record.
 
 {@request:json_api}
 Example:
 
 ```JSON
 {
-  "data": {
-    "type": "orders",
-    "id": "1"
-  }
+  "data": [
+    {
+      "type": "orders",
+      "id": "2"
+    }
+  ]
+}
+```
+{@/request}
+
+#### add_relationship
+
+Set order records for a specific shipping tracking record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "orders",
+      "id": "2"
+    },
+    {
+      "type": "orders",
+      "id": "3"
+    }
+  ]
+}
+```
+{@/request}
+
+#### delete_relationship
+
+Remove order records from a specific shipping tracking record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": [
+    {
+      "type": "orders",
+      "id": "1"
+    }
+  ]
 }
 ```
 {@/request}

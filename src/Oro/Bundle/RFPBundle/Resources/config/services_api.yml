@@ -4,9 +4,9 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\RFPBundle\Entity\RequestProductItem }
 
-    oro_rfp.api.complete_new_line_item:
-        class: Oro\Bundle\RFPBundle\Api\Processor\SetChecksum
+    oro_rfp.api.set_request_product_item_checksum:
+        class: Oro\Bundle\RFPBundle\Api\Processor\SetRequestProductItemChecksum
         arguments:
             - '@oro_product.line_item_checksum_generator'
         tags:
-            - {name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create, class: Oro\Bundle\RFPBundle\Entity\RequestProductItem, priority: 30}
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create|update, class: Oro\Bundle\RFPBundle\Entity\RequestProductItem, priority: -100 }

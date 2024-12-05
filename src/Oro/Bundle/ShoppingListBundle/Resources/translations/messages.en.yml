@@ -51,6 +51,7 @@ oro:
             added.label: 'Product has been added to "%shoppinglist%"'
             kit:
                 add_to_shopping_list.label: Configure and Add to Shopping List
+                add_to_another_shopping_list.label: Add To Another Shopping List
                 in_shopping_lists.label: "{1} In Shopping List|]1,Inf[ In Shopping Lists"
 
         actions:
@@ -71,15 +72,15 @@ oro:
             add_to_multiple: add item to multiple lists
             copied: " (copied %copyDate%)"
             update_configurable_line_item:
-                label: Edit
+                label: Configure
             delete_line_item:
                 label: Delete
             add_notes:
-                label: Add Shopping List item Note
+                label: Add a note
             edit_notes:
-                label: Edit Shopping List item Note
+                label: Edit a note
             update_product_kit_line_item:
-                label: Edit
+                label: Configure
             delete_product_kit_line_item:
                 label: Delete
             in_shopping_list: "In Shopping List"
@@ -89,7 +90,7 @@ oro:
                 label: Delete
                 success_message: "{0} Can't delete selected items(s)|[1,Inf[%count% item(s) have been deleted successfully"
             move_line_items:
-                label: Move to another Shopping List
+                label: Move to
                 success_message: '{0} No items were moved.|{1} One entity has been moved successfully.|]1,Inf[ %count% items have been moved successfully.'
                 no_edit_permission_message: 'You do not have permission to edit the target shopping list.'
 
@@ -303,10 +304,12 @@ oro:
                 create_new_shopping_list.aria_label: 'Create New List. Opens a popup'
                 choose_assign_user.label: 'Choose a User to assign "%label%"'
                 rename.label: 'Rename Shopping List'
+                add_note.label: 'Add note'
             messages:
                 line_item_delete_confirm: 'Are you sure you want to delete this Shopping list item?'
                 set_default_success: 'Shopping list has been successfully set as default'
                 rename_success: 'Shopping list has been successfully renamed'
+                add_note_success: 'Note has been successfully added to shopping list'
                 assign_success: 'Shopping list has been successfully re-assigned'
                 line_item_deleted: 'Shopping list item has been deleted'
                 cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
@@ -355,8 +358,10 @@ oro:
                     removed.label: 'Product has been removed from "%shoppinglist%"'
                     cant_remove.label: 'No current ShoppingList or no Product in current ShoppingList'
                 sku.label: 'SKU'
-                item.label: 'Item'
+                item.label: 'Product'
+                # used in old themes
                 inventory_status.label: ''
+                inventory_status.full_label: 'Availability'
                 quantity.label: 'Qty'
                 unit.label: ''
                 price.label: 'Price'
@@ -370,9 +375,12 @@ oro:
                 textarea:
                     aria_label: 'Notes for %shoppinglist%'
                 add_entire_note: 'Add a note to entire Shopping List'
+                add_note: 'Add Note'
+                add_note_dialog_title: 'Add note to “%shoppinglist%”'
                 apply: 'Apply changes in the Note'
                 decline: 'Decline changes in the Note'
                 edit: 'Edit the Note'
+                remove: 'Remove the Note'
 
             product_kit_line_item:
                 added_to_shopping_list: 'Product kit has been added to "%shoppinglist%"'
@@ -399,9 +407,18 @@ oro:
                         columns:
                             shopping_list.label: 'Shopping List'
                             kit_configuration.label: 'Configuration'
-                            quantity.label: 'QTY #'
+                            quantity.label: 'QTY'
                     button:
                         close.label: 'Close'
+
+            configuration:
+                shopping_list:
+                    label: 'Shopping List'
+                    quantity_inputs:
+                        label: 'Quantity Inputs in Shopping List'
+                        values:
+                            plain: 'Plain'
+                            with_stepper_buttons: 'With Stepper Buttons'
 
 # Fallback for the old themes support
 oro.frontend.shoppinglist.view.add_item_note.label: 'Add a Note to This Item'

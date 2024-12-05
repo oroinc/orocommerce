@@ -19,7 +19,7 @@ class RequestProductTest extends RestJsonApiTestCase
         $this->loadFixtures([LoadRequestData::class]);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $response = $this->cget(
             ['entity' => 'rfqproducts'],
@@ -33,7 +33,7 @@ class RequestProductTest extends RestJsonApiTestCase
         $this->assertResponseCount($expectedCount, $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $entity = $this->getEntityManager()
             ->getRepository(RequestProduct::class)
@@ -43,13 +43,10 @@ class RequestProductTest extends RestJsonApiTestCase
             ['entity' => 'rfqproducts', 'id' => $entity->getId()]
         );
 
-        $this->assertResponseNotEmpty($response);
+        self::assertResponseNotEmpty($response);
     }
 
-    /**
-     * @return int
-     */
-    public function testCreateEntity()
+    public function testCreate(): int
     {
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
@@ -91,25 +88,23 @@ class RequestProductTest extends RestJsonApiTestCase
             $data
         );
 
-        $result = $this->jsonToArray($response->getContent());
+        $result = self::jsonToArray($response->getContent());
         $entityId = $result['data']['id'];
         /** @var RequestProduct $requestProduct */
         $requestProduct = $this->getEntityManager()->find(RequestProduct::class, $entityId);
         /** @var Product $product */
         $product = $this->getEntityManager()->find(Product::class, $product->getId());
 
-        $this->assertInstanceOf(RequestProduct::class, $requestProduct);
-        $this->assertEquals($product->getSku(), $requestProduct->getProductSku());
+        self::assertInstanceOf(RequestProduct::class, $requestProduct);
+        self::assertEquals($product->getSku(), $requestProduct->getProductSku());
 
         return (int)$result['data']['id'];
     }
 
     /**
-     * @depends testCreateEntity
-     *
-     * @param int $entityId
+     * @depends testCreate
      */
-    public function testUpdateEntity($entityId)
+    public function testUpdate(int $entityId): void
     {
         $data = [
             'data' => [
@@ -128,22 +123,19 @@ class RequestProductTest extends RestJsonApiTestCase
 
         /** @var RequestProduct $requestProduct */
         $requestProduct = $this->getEntityManager()->find(RequestProduct::class, $entityId);
-        $this->assertEquals('Test2', $requestProduct->getComment());
+        self::assertEquals('Test2', $requestProduct->getComment());
     }
 
     /**
-     * @depends testCreateEntity
-     *
-     * @param int $entityId
+     * @depends testCreate
      */
-    public function testDeleteEntity($entityId)
+    public function testDelete(int $entityId): void
     {
         $this->delete(
             ['entity' => 'rfqproducts', 'id' => $entityId]
         );
 
-        $this->assertNull(
-            $this->getEntityManager()->find(RequestProduct::class, $entityId)
-        );
+        $entity = $this->getEntityManager()->find(RequestProduct::class, $entityId);
+        self::assertTrue(null === $entity);
     }
 }

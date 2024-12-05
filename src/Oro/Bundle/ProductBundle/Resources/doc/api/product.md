@@ -2598,6 +2598,33 @@ Example:
 ```
 {@/request}
 
+### defaultVariant
+
+#### get_subresource
+
+Retrieve the default variant for a specific product.
+
+#### get_relationship
+
+Retrieve an ID of the default variant of the product.
+
+#### update_relationship
+
+Replace the default variant for a specific product record.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "products",
+    "id": "1"
+  }
+}
+```
+{@/request}
+
 ### kitItems
 
 #### get_subresource

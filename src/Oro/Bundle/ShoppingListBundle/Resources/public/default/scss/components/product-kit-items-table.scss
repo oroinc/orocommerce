@@ -3,7 +3,7 @@
 .product-kit-items-table {
     margin-bottom: 18px;
 
-    .show-in-mobile {
+    .show-on-mobile {
         display: none;
     }
 
@@ -116,16 +116,20 @@
     }
 }
 
+@include breakpoint('tablet') {
+    .product-kit-items-table {
+        .height-as-image-tablet {
+            min-height: $product-item-image-holder-tiny-height;
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .product-kit-items-table {
         margin-bottom: 24px;
 
-        .show-in-mobile {
+        .show-on-mobile {
             display: block;
-        }
-
-        .height-as-image-mobile {
-            min-height: $product-item-image-holder-tiny-height;
         }
 
         .shift-mobile-row {

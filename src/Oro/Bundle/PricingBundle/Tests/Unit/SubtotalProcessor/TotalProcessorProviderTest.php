@@ -323,13 +323,15 @@ class TotalProcessorProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getSupportedProviders')
             ->willReturn([$firstSubtotalProvider, $secondSubtotalProvider]);
 
-        $subtotal1 = (new Subtotal())->setSortOrder(1);
-        $subtotal2 = (new Subtotal())->setSortOrder(2);
-        $subtotal3 = (new Subtotal())->setSortOrder(3);
-        $subtotal4 = (new Subtotal())->setSortOrder(4);
-        $subtotal5 = (new Subtotal())->setSortOrder(5);
+        $subtotal1 = (new Subtotal())->setLabel('t1')->setSortOrder(1);
+        $subtotal2 = (new Subtotal())->setLabel('t2')->setSortOrder(2);
+        $subtotal3 = (new Subtotal())->setLabel('t3')->setSortOrder(3);
+        $subtotal4 = (new Subtotal())->setLabel('t4')->setSortOrder(4);
+        $subtotal5 = (new Subtotal())->setLabel('t5')->setSortOrder(5);
         $notOrderedSubtotal1 = new Subtotal();
+        $notOrderedSubtotal1->setLabel('t10');
         $notOrderedSubtotal2 = new Subtotal();
+        $notOrderedSubtotal1->setLabel('t20');
 
         $firstSubtotalProvider->expects(self::any())
             ->method('getSubtotal')
@@ -372,7 +374,7 @@ class TotalProcessorProviderTest extends \PHPUnit\Framework\TestCase
         $subtotal2->setCurrency($currency);
         $subtotal2->setAmount($subtotalAmount);
         $subtotal2->setType(LineItemSubtotalProvider::TYPE);
-        $subtotal2->setLabel('Total');
+        $subtotal2->setLabel('Total1');
         $subtotal2->setOperation($operation);
 
         $this->subtotalProviderRegistry->expects(self::exactly($runCount))
@@ -421,7 +423,7 @@ class TotalProcessorProviderTest extends \PHPUnit\Framework\TestCase
                 ],
                 [
                     'type' => 'subtotal',
-                    'label' => 'Total',
+                    'label' => 'Total1',
                     'amount' => 40.0,
                     'signedAmount' => 40.0,
                     'currency' => 'USD',

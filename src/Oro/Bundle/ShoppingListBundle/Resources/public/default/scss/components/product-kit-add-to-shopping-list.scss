@@ -6,3 +6,7 @@
     min-width: $product-item-quantity-input-width + $product-item-quantity-select-width;
     max-width: 300px;
 }
+
+.product-kit-add-to-shopping-list-btn {
+    font-weight: font-weight('semi-bold');
+}

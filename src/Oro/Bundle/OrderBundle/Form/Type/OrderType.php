@@ -76,44 +76,50 @@ class OrderType extends AbstractType
                 'label' => 'oro.order.currency.label',
                 'full_currency_name' => true,
             ])
-            ->add(
-                'lineItems',
-                OrderLineItemsCollectionType::class,
-                [
-                    'add_label' => 'oro.order.orderlineitem.add_label',
-                    'entry_options' => ['currency' => $order->getCurrency()]
-                ]
-            )
-            ->add(
-                self::DISCOUNTS_FIELD_NAME,
-                OrderDiscountCollectionTableType::class,
-                ['order' => $order]
-            )
-            ->add(
-                'discountsSum',
-                HiddenType::class,
-                [
-                    'mapped' => false,
-                    //range should be used, because this type also is implemented with JS
-                    'constraints' => [new Range([
-                        'min' => PHP_INT_MAX * (-1), //use some big negative number
-                        'max' => $order->getSubtotal(),
-                        'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
-                    ])],
-                    'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
-                ]
-            )
             ->add('sourceEntityClass', HiddenType::class)
             ->add('sourceEntityId', HiddenType::class)
             ->add('sourceEntityIdentifier', HiddenType::class);
 
-        $this->addShippingFields($builder, $order);
         $this->addAddresses($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
-        $this->addShippingAddress($builder, $order, $options);
 
         $this->addPreSubmitEventListener($builder);
         $builder->addEventSubscriber($this->subtotalSubscriber);
+
+        if (!$order->getSubOrders()->count()) {
+            $builder
+                ->add(
+                    'lineItems',
+                    OrderLineItemsCollectionType::class,
+                    [
+                        'add_label' => 'oro.order.orderlineitem.add_label',
+                        'entry_options' => ['currency' => $order->getCurrency()],
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                    ]
+                )
+                ->add(
+                    self::DISCOUNTS_FIELD_NAME,
+                    OrderDiscountCollectionTableType::class,
+                    ['order' => $order]
+                )
+                ->add(
+                    'discountsSum',
+                    HiddenType::class,
+                    [
+                        'mapped' => false,
+                        //range should be used, because this type also is implemented with JS
+                        'constraints' => [new Range([
+                            'min' => PHP_INT_MAX * (-1), //use some big negative number
+                            'max' => $order->getSubtotal(),
+                            'notInRangeMessage' => 'oro.order.discounts.sum.error.not_in_range.label'
+                        ])],
+                        'data' => $order->getTotalDiscounts() ? $order->getTotalDiscounts()->getValue() : 0
+                    ]
+                );
+            $this->addShippingFields($builder, $order);
+            $this->addShippingAddress($builder, $order, $options);
+        }
     }
 
     #[\Override]
@@ -133,7 +139,11 @@ class OrderType extends AbstractType
 
     private function addAddresses(FormBuilderInterface $builder, Order $order): void
     {
-        foreach ([AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING] as $type) {
+        $addressTypes = [AddressType::TYPE_BILLING];
+        if (!$order->getSubOrders()->count()) {
+            $addressTypes[] = AddressType::TYPE_SHIPPING;
+        }
+        foreach ($addressTypes as $type) {
             if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
                 $options = [
                     'label' => sprintf('oro.order.%s_address.label', $type),

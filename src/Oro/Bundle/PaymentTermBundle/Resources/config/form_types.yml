@@ -31,6 +31,16 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_order_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\OrderType }
 
+    oro_payment_term.form.extension.suborder_type:
+        class: Oro\Bundle\PaymentTermBundle\Form\Extension\SubOrderPaymentTermAclExtension
+        arguments:
+            - '@oro_payment_term.provider.payment_term_association'
+            - '@security.authorization_checker'
+        calls:
+            - [setAclResource, ['oro_order_payment_term_customer_can_override']]
+        tags:
+            - { name: form.type_extension, alias: oro_suborder_type, extended_type: Oro\Bundle\OrderBundle\Form\Type\SubOrderType }
+
     oro_payment_term.form.extension.quote_type:
         class: 'Oro\Bundle\PaymentTermBundle\Form\Extension\QuotePaymentTermAclExtension'
         arguments:

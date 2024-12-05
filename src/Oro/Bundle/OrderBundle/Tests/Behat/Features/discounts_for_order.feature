@@ -47,7 +47,7 @@ Feature: Discounts for Order
 
   Scenario: Add special discount from Order edit page
     Given click edit SimpleOrder in grid
-    And click "Promotions and Discounts"
+    And click "Discounts"
     And click "Add Special Discount"
     And I fill "Order Discount Form" with:
       | Type        | %       |
@@ -140,7 +140,7 @@ Feature: Discounts for Order
     And I type "Exceeding amount" in "Discount Description"
     And I click "Apply"
     Then I should see "The sum of all discounts cannot exceed the order grand total amount."
-    And I click "Promotions and Discounts"
+    And I click "Discounts"
     And I should see next rows in "Discounts" table
       | Description               | Discount |
       | <script>alert(1)</script> | -$3.00   |
