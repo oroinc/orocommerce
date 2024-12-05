@@ -1,6 +1,8 @@
 aliases:
     jquery-elevatezoom$: '@oroinc/elevatezoom/jquery.elevatezoom'
     oro/filter/inventory-switcher-filter$: oroproduct/js/app/views/frontend-inventory-switcher-filter
+app-modules:
+    - oroproduct/js/app/modules/template-macros-module
 configs:
     oroproduct/js/app/datagrid/backend-grid: {}
     oroproduct/js/app/datagrid/frontend-product-process-options-builder: {}

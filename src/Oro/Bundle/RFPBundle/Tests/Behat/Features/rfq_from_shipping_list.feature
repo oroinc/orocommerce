@@ -19,13 +19,14 @@ Feature: RFQ from Shipping List
     Given I proceed as the User
     And I signed in as MarleneSBradley@example.com on the store frontend
     And I open page with shopping list "Shopping List 4"
-    And I click "Add a note to entire Shopping List"
-    And I type "Parish so enable innate in formed missed. Hand two was eat busy fail." in "Shopping List Notes"
-    And I click on "Save Shopping List Notes"
+    When I click "Shopping List Actions"
+    And I click "Add Note"
+    And I type "Parish so enable innate in formed missed. Hand two was eat busy fail." in "Shopping List Notes in Modal"
+    And I press "Space" key on "UiWindow okButton" element
     Then I should see "Parish so enable innate in formed missed. Hand two was eat busy fail."
-    And I click "Add Shopping List item Note" on row "AA1" in grid
+    And I click "Add a note" on row "AA1" in grid
     When I fill in "Shopping List Product Note" with "This item was missed in the previous request"
-    And I click "Add"
+    And I click "Add Note" in modal window
     Then I should see "Line item note has been successfully updated" flash message
     When I click "Request Quote"
     Then the "Request Notes" field element should contain "Parish so enable innate in formed missed. Hand two was eat busy fail."

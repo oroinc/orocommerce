@@ -15,7 +15,8 @@ const ShoppingListCellPopupEditorComponent = CellPopupEditorComponent.extend({
             autoRender: true,
             model: cell.model,
             fieldName: cell.column.get('name'),
-            metadata: cell.column.get('metadata')
+            metadata: cell.column.get('metadata'),
+            themeOptions: this.options.grid.themeOptions
         });
         if (this.formState) {
             this.updateModel(cell.model, this.oldState);
@@ -30,11 +31,21 @@ const ShoppingListCellPopupEditorComponent = CellPopupEditorComponent.extend({
         viewInstance.$el.addClass('inline-editor-wrapper');
 
         const overlayOptions = $.extend(true, {}, this.OVERLAY_TOOL_DEFAULTS, {
-            insertInto: cell.$el
+            insertInto: this.getCellRootElement()
         });
 
         overlayTool.createOverlay(viewInstance.$el, overlayOptions);
         viewInstance.trigger('change:visibility');
+    },
+
+    /**
+     * @returns {jQuery.Element}
+     */
+    getCellRootElement() {
+        const {cell} = this.options;
+        return cell.$('[data-role="cell-quantity-root"]').length
+            ? cell.$('[data-role="cell-quantity-root"]')
+            : cell.$el;
     },
 
     saveCurrentCell() {

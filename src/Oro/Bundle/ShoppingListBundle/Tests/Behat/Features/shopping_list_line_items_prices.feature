@@ -15,8 +15,8 @@ Feature: Shopping List Line Items Prices
     And I hover on "Shopping Cart"
     When I click "Shopping List Amanda" on shopping list widget
     Then I should see following grid containing rows:
-      | SKU   | Item      |          | Qty Update All | Price   | Subtotal |
-      | PSKU1 | Product 1 | In Stock | 2 item         | $1.2345 | $2.47    |
+      | SKU   | Product   | Availability | Qty Update All | Price   | Subtotal |
+      | PSKU1 | Product 1 | IN STOCK     | 2 item         | $1.2345 | $2.47    |
     And I should see "Subtotal $2.47" in the "Subtotals" element
 
   Scenario: Check that line item price is default for Nancy
@@ -25,6 +25,6 @@ Feature: Shopping List Line Items Prices
     And I hover on "Shopping Cart"
     When I click "Shopping List Nancy" on shopping list widget
     Then I should see following grid containing rows:
-      | SKU   | Item      |          | Qty Update All | Price    | Subtotal |
-      | PSKU1 | Product 1 | In Stock | 2 item         | $12.3456 | $24.69   |
+      | SKU   | Product   | Availability | Qty Update All | Price    | Subtotal |
+      | PSKU1 | Product 1 | IN STOCK     | 2 item         | $12.3456 | $24.69   |
     And I should see "Subtotal $24.69" in the "Subtotals" element

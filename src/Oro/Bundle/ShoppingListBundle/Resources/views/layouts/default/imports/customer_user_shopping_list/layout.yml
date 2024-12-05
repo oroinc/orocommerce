@@ -53,13 +53,25 @@ layout:
                     options:
                         visible: '=data["oro_shopping_list_customer_user_shopping_lists"].isCurrent(data["entity"])'
                         text: 'oro.frontend.shoppinglist.view.is_default.label'
+                        vars:
+                            shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
                 __header_owner_wrapper:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents:
-                        - 'shopping-list:refresh'
-                        - 'layout-subtree:update:shopping_list_set_default'
-                        - 'layout-subtree:update:shopping_list_owner'
+                            - 'shopping-list:refresh'
+                            - 'layout-subtree:update:shopping_list_set_default'
+                            - 'layout-subtree:update:shopping_list_owner'
+                        showLoading: false
+                        onLoadingCssClass: 'loading-blur'
+                __header_owner_actions_wrapper:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents:
+                            - 'shopping-list:refresh'
+                            - 'layout-subtree:update:shopping_list_set_default'
+                            - 'layout-subtree:update:shopping_list_owner'
+                            - 'shopping-list-notes:sync'
                         showLoading: false
                         onLoadingCssClass: 'loading-blur'
                 __header_owner:
@@ -74,7 +86,7 @@ layout:
                 __collapse_container:
                     blockType: summary_collapse
                     options:
-                        alwaysShow: 'desktop-small'
+                        alwaysShow: 'desktop-big'
                 __summary_container:
                     blockType: container
                 __summary_inner:
@@ -132,6 +144,7 @@ layout:
                                         __header_status: ~
                                 __header_owner_wrapper:
                                     __header_owner: ~
+                                __header_owner_actions_wrapper: ~
                             __line_items: ~
                         __sidebar:
                             __summary_wrapper:
@@ -148,6 +161,4 @@ layout:
 
         - '@move':
             id: __header_shopping_list_actions_container
-            parentId: __header_owner_wrapper
-            siblingId: __header_owner
-            prepend: false
+            parentId: __header_owner_actions_wrapper

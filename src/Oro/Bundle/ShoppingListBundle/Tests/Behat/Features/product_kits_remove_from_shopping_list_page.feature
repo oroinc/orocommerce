@@ -20,7 +20,7 @@ Feature: Product kits remove from shopping list page
     And Buyer is on "Product Kit Shopping List" shopping list
     And I click "Shopping List Actions"
     And click "Edit"
-    When I click "Row 1 Delete Line Item"
+    When I click "Delete" on row "Product Kit 1 Line Item 1 Notes" in grid
     Then I should see "Are you sure you want to delete this product?"
     When click "Yes, Delete"
     Then I should see 'The "Product Kit 1" product was successfully deleted' flash message
@@ -29,9 +29,9 @@ Feature: Product kits remove from shopping list page
     Given I open a new browser tab and set "ProductKitShoppingList" alias for it
     And Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU               | Item                                          |          | Qty | Unit  | Price  | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock | 1   | piece | $41.00 | $41.00   |
-      | simple-product-01 | Base Unit: Product 1                          |          | 1   | piece | $31.00 |          |
+      | SKU               | Product                                       | Availability | Qty | Unit  | Price  | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1   | piece | $41.00 | $41.00   |
+      | simple-product-01 | Base Unit: Product 1                          |              | 1   | piece | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Total $41.00"
 
@@ -39,9 +39,9 @@ Feature: Product kits remove from shopping list page
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          |          | Qty Update All | Price  | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock | 1 piece        | $41.00 | $41.00   |
-      | simple-product-01 | Base Unit: Product 1                          |          | 1 piece        | $31.00 |          |
+      | SKU               | Product                                       | Availability | Qty Update All | Price  | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1 piece        | $41.00 | $41.00   |
+      | simple-product-01 | Base Unit: Product 1                          |              | 1 piece        | $31.00 |          |
     And I should see "Summary 1 Item"
     And I should see "Total $41.00"
 
@@ -49,7 +49,7 @@ Feature: Product kits remove from shopping list page
     Given Buyer is on "Product Kit Shopping List" shopping list
     And I click "Shopping List Actions"
     And click "Edit"
-    When I click "Row 1 Delete Line Item"
+    When I click "Delete" on row "Product Kit 1 Line Item 2 Notes" in grid
     Then I should see "Are you sure you want to delete this product?"
     When click "Yes, Delete"
     Then I should see 'The "Product Kit 1" product was successfully deleted' flash message

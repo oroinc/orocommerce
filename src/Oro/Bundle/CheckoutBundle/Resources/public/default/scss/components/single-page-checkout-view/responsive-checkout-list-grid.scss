@@ -1,0 +1,48 @@
+/* @theme: default; */
+
+.responsive-checkout-list-grid.responsive-shopping-list-grid-tablet {
+    .grid-header-cell,
+    .grid-header-cell-quantity {
+        display: table-cell;
+    }
+
+    .grid-header-cell-quantity {
+        .grid-header-cell__label-container {
+            display: none;
+        }
+    }
+
+    .grid-header-cell-subtotal {
+        text-align: right;
+    }
+
+    .grid-line-items__row-item {
+        align-items: flex-start;
+    }
+
+    .grid-body-cell-sku,
+    .grid-body-cell-unit,
+    .grid-body-cell-price,
+    .grid-body-cell-subtotal,
+    .grid-body-cell-quantity {
+        padding-top: 19px;
+    }
+
+    .group-row-configurable {
+        .grid-body-cell-quantity {
+            display: table-cell;
+        }
+    }
+
+    .group-row {
+        .grid-cell {
+            padding-bottom: 6px;
+        }
+    }
+
+    .sub-row {
+        .grid-cell {
+            padding-top: 6px;
+        }
+    }
+}

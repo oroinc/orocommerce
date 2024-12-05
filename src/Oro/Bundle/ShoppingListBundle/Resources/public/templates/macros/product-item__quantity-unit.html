@@ -1,0 +1,20 @@
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<% let quantity = obj.quantity ?? 0 %>
+<% let precision = obj.precision ?? 0 %>
+<% if (quantity > 0) { %>
+    <div class="grid-line-items__row show-on-tablet shift-mobile-row">
+        <div class="grid-line-items__field">
+            <span class="grid-line-items__field-label"><%- _.__('oro.frontend.shoppinglist.lineitem.sku.label') %>:</span>
+            <span class="grid-line-items__field-val"
+                <% if (!obj.unit) { %>
+                    data-blank-content="<%- _.__('oro.datagrid.cell.blank.placeholder') %>"
+                <% } %>
+            >
+                <% if (obj.unit) { %>
+                    <%- oroshoppinglist.quantityHelper.formatQuantity(quantity, precision) %>
+                    <%- oroshoppinglist.renderUnit({unit: unit, quantity: quantity}) %>
+                <% } %>
+            </span>
+        </div>
+    </div>
+<% } %>

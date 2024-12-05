@@ -1,6 +1,7 @@
 import mediator from 'oroui/js/mediator';
 import BasePlugin from 'oroui/js/app/plugins/base/plugin';
 import __ from 'orotranslation/js/translator';
+import PageableCollection from 'orodatagrid/js/pageable-collection';
 
 const ShoppingListRefreshPlugin = BasePlugin.extend({
     constructor: function ShoppingListRefreshPlugin(grid, options) {
@@ -28,13 +29,13 @@ const ShoppingListRefreshPlugin = BasePlugin.extend({
         });
 
         this.listenTo(this.main.collection, 'request', collection => {
-            if (storeCurrentPage === collection.state.currentPage) {
+            if (collection instanceof PageableCollection && storeCurrentPage === collection.state.currentPage) {
                 mediator.trigger('shopping-list:request');
             }
         });
 
         this.listenTo(this.main.collection, 'reset', collection => {
-            if (storeCurrentPage === collection.state.currentPage) {
+            if (collection instanceof PageableCollection && storeCurrentPage === collection.state.currentPage) {
                 mediator.trigger('shopping-list:refresh');
             }
         });

@@ -29,6 +29,7 @@ layout:
                     options:
                         icon: close
                         attr:
+                            class: 'btn--flat'
                             title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
                             data-role: 'clear'
                         text:

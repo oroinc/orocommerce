@@ -29,9 +29,10 @@
     {%- for button in buttons -%}
         {%- set options = oro_action_frontend_options(button) -%}
         {%- set buttonOptions = options.options -%}
+        {%- set classes = 'action mode-icon-text dropdown-item ' ~ options.data.class|default('')|trim -%}
         <button
             type="button"
-            class="action mode-icon-text dropdown-item"
+            class="{{ classes }}"
             title="{{ button.label|trans }}"
             aria-label="{{ button.ariaLabel|trans({'%name%': shoppingList.label}) }}"
             data-operation-url="{{ buttonOptions.url }}"
@@ -39,7 +40,7 @@
             data-page-component-module="oroaction/js/app/components/button-component"
             {% if not button.buttonContext.enabled %}disabled="disabled"{% endif %}
         >
-            {{ renderIcon.icon({name: button.icon, extraClass: 'theme-icon--small'}) }}
+            {{ renderIcon.icon({name: button.icon}) }}
             {{- button.label|trans -}}
         </button>
     {%- endfor -%}
@@ -58,7 +59,7 @@
             dialogTitle: 'oro.frontend.shoppinglist.view.choose_assign_user.label'|trans({'%label%': shoppingList.label}),
             shoppingListOwnerChangeUrl: path('oro_api_set_shopping_list_owner', {id : shoppingList.id})
         }|json_encode }}">
-        {{ renderIcon.icon({name: 'user', extraClass: 'theme-icon--small'}) }}
+        {{ renderIcon.icon({name: 'user'}) }}
         {%- apply spaceless -%}
             {{ 'oro.frontend.shoppinglist.btn.assign.label'|trans }}
         {%- endapply -%}

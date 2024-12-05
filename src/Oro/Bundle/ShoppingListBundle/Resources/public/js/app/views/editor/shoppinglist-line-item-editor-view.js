@@ -7,17 +7,33 @@ import NumberFormat from 'orolocale/js/formatter/number';
 const ShoppinglistLineItemEditorView = TextEditorView.extend({
     events: {
         'input input[name="quantity"]': 'onValueChange',
-        'change select[name="unitCode"]': 'onUnitValueChange'
+        'change input[name="quantity"]': 'onValueChange',
+        'change [name="unitCode"]': 'onUnitValueChange',
+        'mousedown .toggle-container': function(e) {
+            // Do not close an editor after clicking on unit element
+            this._preventCancelEditing = true;
+        }
     },
 
     template: require('tpl-loader!oroshoppinglist/templates/editor/shoppinglist-line-item-editor.html'),
+
+    /**
+     * Determines whether use stepper buttons for quantity input
+     * @property {boolean}
+     */
+    useInputStepper: true,
 
     constructor: function ShoppinglistLineItemEditorView(...args) {
         ShoppinglistLineItemEditorView.__super__.constructor.apply(this, args);
     },
 
+    preinitialize(options) {
+        this.useInputStepper = Boolean(options?.themeOptions?.useInputStepper ?? this.useInputStepper);
+    },
+
     initialize(options) {
         this.formatter = new NumberFormatter(options);
+
         this.updateUnitList(this.model.get('unit'));
         ShoppinglistLineItemEditorView.__super__.initialize.call(this, options);
         this.updateRangeValidationRule();
@@ -50,26 +66,37 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
             return;
         }
 
+        delete this._preventCancelEditing;
         this.model.isSyncedWithEditor(true);
         ShoppinglistLineItemEditorView.__super__.dispose.call(this);
     },
 
     getTemplateData() {
         return {
+            useInputStepper: this.useInputStepper,
             data: this.model.toJSON()
         };
     },
 
     focus(event) {
         const focused = event.target.getAttribute('data-focused');
+        const $input = this.$('input[name="quantity"]');
+
         if (focused) {
             if (focused === '.select2-container') {
-                this.$el.find(focused).select2('open');
+                this.$(focused).select2('open');
+            } else if (this.$(focused).is(':radio')) {
+                this.$(focused).trigger('focus').attr('checked', 'checked').trigger('change');
+            } else if (this.$(focused).is('.input-quantity-btn')) {
+                this.$(focused).trigger('focus').trigger('click');
             }
+
+            if (this.$el.data('validator')) {
+                this.$el.valid();
+            }
+
             return;
         }
-
-        const $input = this.$('input[name="quantity"]');
 
         if (typeof this.options.cursorOffset === 'number' && !Number.isNaN(this.options.cursorOffset)) {
             $input.setCursorPosition(this.options.cursorOffset);
@@ -90,12 +117,17 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
     },
 
     onFocusout(event) {
-        const select2 = this.$('select[name="unitCode"]').data('select2');
+        if (this._preventCancelEditing) {
+            delete this._preventCancelEditing;
+            return;
+        }
+
+        const select2 = this.$('[name="unitCode"]').data('select2');
 
         if (
             !this.isChanged() &&
             !$.contains(this.el, event.relatedTarget) &&
-            !select2.opened()
+            (!select2 || !select2.opened())
         ) {
             // original focusout event's call stack has preserved
             setTimeout(() => this.trigger('cancelAction'));
@@ -113,7 +145,7 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
     },
 
     updateUnitPrecision() {
-        const units = this.updateUnitList(this.$('select[name="unitCode"]').val());
+        const units = this.updateUnitList(this.getUnitCode());
         const precision = Object.values(units).find(unit => unit.selected).precision;
         this.$el.find('input[name="quantity"]')
             .data('precision', precision)
@@ -123,8 +155,18 @@ const ShoppinglistLineItemEditorView = TextEditorView.extend({
     getValue: function() {
         return {
             quantity: parseFloat(NumberFormat.unformatStrict(this.$('input[name="quantity"]').val())),
-            unitCode: this.$('select[name="unitCode"]').val()
+            unitCode: this.getUnitCode()
         };
+    },
+
+    getUnitCode() {
+        let $el = this.$('[name="unitCode"]');
+
+        if ($el.is(':radio')) {
+            $el = $el.filter(':checked');
+        }
+
+        return $el.val();
     },
 
     updateUnitList(currentUnit) {

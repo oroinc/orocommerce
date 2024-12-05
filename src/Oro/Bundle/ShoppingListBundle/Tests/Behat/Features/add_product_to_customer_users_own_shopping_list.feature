@@ -72,7 +72,7 @@ Feature: Add Product to Customer User's Own Shopping List
     And I should see 'Product has been added to "Shopping List"' flash message
     And I follow "Shopping List" link within flash message "Product has been added to \"Shopping List\""
     Then I should see following grid:
-      | SKU  | Item      |
+      | SKU  | Product   |
       | BB04 | Product 4 |
     And I click "Shopping List Actions"
     And I click "Delete"
@@ -90,7 +90,7 @@ Feature: Add Product to Customer User's Own Shopping List
     Then I should see '1 product was added (view shopping list)' flash message
     When I follow "shopping list" link within flash message "1 product was added (view shopping list)"
     Then I should see following grid:
-      | SKU  | Item      |
+      | SKU  | Product   |
       | BB04 | Product 4 |
     And I click "Shopping List Actions"
     And I click "Delete"
@@ -109,9 +109,9 @@ Feature: Add Product to Customer User's Own Shopping List
     Then I should see 'Shopping list "Shopping List" was updated successfully' flash message
     When I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     Then I should see following grid:
-      | SKU       | Item                                                             | Qty Update All |
-      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | 1 item         |
-      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | 1 item         |
+      | SKU       | Product                                | Qty Update All |
+      | PROD_B_11 | ConfigurableProductB Value 11 Value 21 | 1 item         |
+      | PROD_B_21 | ConfigurableProductB Value 12 Value 21 | 1 item         |
     And I click "Shopping List Actions"
     And I click "Delete"
     And I click "Yes, delete"
@@ -136,7 +136,7 @@ Feature: Add Product to Customer User's Own Shopping List
     Then I should see 'Product has been updated in "Shopping List 3"' flash message and I close it
     When I open page with shopping list "Shopping List 3"
     Then I should see following grid:
-      | SKU  | Item                               | Qty Update All |
+      | SKU  | Product                            | Qty Update All |
       | BB04 | Configurable Product 1 Note 4 text | 4 item         |
 
   Scenario: To add a new product to shopping list in quick order form as the buyer with "Show All Lists In Shopping List Widgets" option on
@@ -149,7 +149,7 @@ Feature: Add Product to Customer User's Own Shopping List
     Then I should see '1 product was added (view shopping list)' flash message
     When I follow "shopping list" link within flash message "1 product was added (view shopping list)"
     Then I should see following grid:
-      | SKU  | Item                               | Qty Update All |
+      | SKU  | Product                            | Qty Update All |
       | BB04 | Configurable Product 1 Note 4 text | 5 item         |
 
   Scenario: Add a set of new product to shopping list by matrix order form as the buyer with "Show All Lists In Shopping List Widgets" option on
@@ -168,6 +168,6 @@ Feature: Add Product to Customer User's Own Shopping List
     And I scroll to top
     When I filter SKU as contains "PROD_B"
     Then I should see following grid:
-      | SKU       | Item                                                             | Qty Update All |
-      | PROD_B_11 | ConfigurableProductB Attribute 1: Value 11 Attribute 2: Value 21 | 1 item         |
-      | PROD_B_21 | ConfigurableProductB Attribute 1: Value 12 Attribute 2: Value 21 | 1 item         |
+      | SKU       | Product                                | Qty Update All |
+      | PROD_B_11 | ConfigurableProductB Value 11 Value 21 | 1 item         |
+      | PROD_B_21 | ConfigurableProductB Value 12 Value 21 | 1 item         |

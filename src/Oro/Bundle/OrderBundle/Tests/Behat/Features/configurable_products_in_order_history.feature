@@ -47,7 +47,7 @@ Feature: Configurable products in order history
     Then I go to Products / Product Families
     When I click Edit "Default" in grid
     And set Attribute Groups with:
-      | Label           | Visible | Attributes |
+      | Label           | Visible | Attributes    |
       | Attribute group | true    | [Size, Color] |
     And I save form
     Then I should see "Successfully updated" flash message
@@ -95,11 +95,11 @@ Feature: Configurable products in order history
     And I click "Order History"
     And I click view "1" in "PastOrdersGrid"
     Then I should see following records in "OrderLineItemsGrid":
-      | ConfigurableProductA Item #: PROD_A_1 Size: S Color: Green |
-      | ConfigurableProductA Item #: PROD_A_2 Size: M Color: Blue  |
+      | ConfigurableProductA Item #: PROD_A_1 S Green |
+      | ConfigurableProductA Item #: PROD_A_2 M Blue  |
 
   Scenario: Check configurable is displayed with its variants after refreshing orders history grid
     Given I refresh "OrderLineItemsGrid" grid
     Then I should see following records in "OrderLineItemsGrid":
-      | ConfigurableProductA Item #: PROD_A_1 Size: S Color: Green |
-      | ConfigurableProductA Item #: PROD_A_2 Size: M Color: Blue  |
+      | ConfigurableProductA Item #: PROD_A_1 S Green |
+      | ConfigurableProductA Item #: PROD_A_2 M Blue  |

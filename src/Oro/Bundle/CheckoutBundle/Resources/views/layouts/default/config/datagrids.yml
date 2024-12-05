@@ -254,7 +254,10 @@ datagrids:
                 renderable: false
             sku:
                 label:         oro.checkout.order_summary.sku
-                frontend_type: shoppinglist-string
+                frontend_type: shoppinglist-sku
+                frontend_template:
+                    default: tpl-loader!orocheckout/templates/datagrid/cell/sku.html
+                    message: tpl-loader!orocheckout/templates/datagrid/cell/sku-message.html
             item:
                 label:         oro.checkout.order_summary.item
                 frontend_type: shoppinglist-item
@@ -265,7 +268,7 @@ datagrids:
                 image_placeholder: "@oro_product.provider.product_image_placeholder->getPath('product_small')"
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"
             inventoryStatus:
-                label:         oro.checkout.order_summary.inventory_status
+                label:         oro.checkout.order_summary.inventory_status_full
                 frontend_type: shoppinglist-html-template
                 frontend_template: tpl-loader!orocheckout/templates/datagrid/cell/inventory_status.html
                 inventory_statuses: "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses()"

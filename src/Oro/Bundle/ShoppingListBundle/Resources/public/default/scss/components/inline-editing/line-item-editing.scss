@@ -10,28 +10,43 @@
             width: $edit-mode-cell-width;
             min-width: $edit-mode-cell-width;
             background: $edit-mode-cell-background-color;
+
+            // Quantity inputs with stepper buttons
+            &:has(.form-quantity-row) {
+                width: $edit-mode-cell-stepper-width;
+                min-width: $edit-mode-cell-stepper-width;
+            }
         }
     }
 
     .view-mode {
         &.editable {
-            width: $view-mode-cell-width;
-            min-width: $view-mode-cell-width;
-            background: $view-mode-cell-background-color;
+            width: $edit-mode-cell-width;
+            min-width: $edit-mode-cell-width;
+            background: $edit-mode-cell-background-color;
+
+            // Quantity inputs with stepper buttons
+            &:has(.form-quantity-row) {
+                width: $edit-mode-cell-stepper-width;
+                min-width: $edit-mode-cell-stepper-width;
+            }
         }
     }
 }
 
 .inline-editor {
+    &__inner {
+        width: 100%;
+    }
+
     &__inner,
     &__fields {
         display: flex;
         align-items: center;
-        width: 100%;
     }
 
     &__fields {
-        width: 100%;
+        gap: spacing('sm');
     }
 
     &__actions {
@@ -69,26 +84,16 @@
 .shoppinglist-line-item-frontend-type-editor {
     .input {
         position: relative;
-        width: 80px;
-        min-width: 80px;
+        width: $edit-mode-cell-stepper-input-width;
+        min-width: $edit-mode-cell-stepper-input-width;
+        max-width: $edit-mode-cell-stepper-input-width;
 
-        text-align: right;
-
-        border-top-right-radius: 0;
-        border-bottom-right-radius: 0;
+        text-align: center;
 
         overflow: hidden;
 
-        &:hover,
-        &:focus,
-        &.error {
-            z-index: z('base') + 1;
-        }
-
         .highlight-error & {
             border-color: $input-border-color-error-state;
-
-            z-index: z('base') + 1;
         }
 
         // Mask to hide text overflow
@@ -105,22 +110,33 @@
         }
     }
 
+    .input-qty {
+        text-align: right;
+
+        width: $edit-mode-cell-qty-input-width;
+        min-width: $edit-mode-cell-qty-input-width;
+    }
+
     .select2-container,
     .select {
         position: relative;
 
-        width: 100px;
-        border-bottom-left-radius: 0;
-        border-top-left-radius: 0;
-        margin-left: -1px;
+        width: $toggler-min-width;
+
         text-align: left;
 
         @include ellipsis();
+
+        display: flex;
 
         &:hover,
         &:focus,
         &.error {
             z-index: z('base');
+        }
+
+        .select2-choice {
+            width: 100%;
         }
 
         &.select2-container-active {
@@ -132,6 +148,7 @@
 .line-item-container {
     display: flex;
     align-items: center;
+    gap: spacing('sm');
 
     &.edited {
         padding-right: 0;
@@ -142,41 +159,82 @@
     }
 }
 
+@include breakpoint('tablet') {
+    .grid-inline-editing-quantity .view-mode.editable {
+        width: initial;
+        min-width: initial;
+
+        &:has(.form-quantity-row) {
+            width: initial;
+            min-width: initial;
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
-    .responsive-shopping-list-grid .grid-body {
+    .responsive-shopping-list-grid {
         .edit-mode,
         .view-mode {
             &.editable {
-                width: auto;
-                min-width: auto;
-                padding-top: $edit-mode-cell-top-offset-mobile;
-                padding-bottom: $edit-mode-cell-bottom-offset-mobile;
-
                 background: $edit-mode-cell-background-color;
             }
         }
     }
 }
 
-@include breakpoint('mobile') {
-    .responsive-shopping-list-grid .grid-body {
-        .edit-mode,
-        .view-mode {
-            &.editable {
-                width: 100%;
-            }
+@include breakpoint('mobile-big') {
+    .responsive-shopping-list-grid {
+        .input-quantity-btn {
+            display: none;
         }
-    }
 
-    .line-item-container,
-    .shoppinglist-line-item-frontend-type-editor {
-        .select2-container,
-        .select {
+        .line-item-container {
             flex-grow: 1;
         }
 
-        .select {
-            margin-right: 64px;
+        .line-item-container,
+        .shoppinglist-line-item-frontend-type-editor {
+            .select2-container,
+            .select {
+                flex-grow: 1;
+            }
+
+            .select {
+                margin-right: 64px;
+            }
+        }
+
+        .edit-mode,
+        .view-mode {
+            .input {
+                flex-grow: 1;
+                padding-left: $input-padding-x;
+                padding-right: $input-padding-x;
+
+                text-align: right;
+            }
+
+            &.editable {
+                width: 100%;
+                min-width: 100%;
+
+                &:has(.form-quantity-row) {
+                    width: 100%;
+                    min-width: 100%;
+                }
+            }
+        }
+
+        // Quantity inputs with stepper buttons
+        .form-quantity-row {
+            flex-grow: 1;
+
+            max-width: $edit-mode-cell-stepper-input-width;
+
+            .input {
+                width: 100%;
+                min-width: 100%;
+            }
         }
     }
 }

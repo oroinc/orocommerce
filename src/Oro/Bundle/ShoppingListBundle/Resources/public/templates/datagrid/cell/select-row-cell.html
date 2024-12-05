@@ -1,7 +1,9 @@
+<% let oroshoppinglist = _.macros('oroshoppinglist') %>
+<div class="select-row-root">
 <% if (obj._isKitItemLineItem) { %>
     <span class="checkbox-label cell-checkbox no-gap" aria-hidden="true">
         <span class="checkbox-placeholder">
-            <span class="cell-line" aria-hidden="true"></span>
+            <span class="cell-line"></span>
         </span>
     </span>
 <% } else { %>
@@ -11,3 +13,12 @@
         <span class="sr-only"><%- _.__('oro.datagrid.action.select_row') %></span>
     </label>
 <% } %>
+<% if (obj.isKit) { %>
+    <span class="action-holder hide-on-mobile-big">
+        <%= oroshoppinglist.renderExpandKitsButton({
+            productName: obj.name,
+            btnClass: 'btn btn--size-small btn--simple'
+        }) %>
+    </span>
+<% } %>
+</div>

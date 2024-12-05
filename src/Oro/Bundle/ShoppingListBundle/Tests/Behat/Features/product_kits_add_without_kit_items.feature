@@ -56,7 +56,7 @@ Feature: Product kits add without kit items
       | Shopping List 1 Configuration |                           |
     When I click on "Shopping List 1 Kit Line Item Quantity"
     Then the "Shopping List 1 Kit Line Item Quantity Input" field element should contain "1"
-    And the "Shopping List 1 Kit Line Item Unit Select" field element should contain "piece"
+    And I should see "Shopping List 1 Kit Line Item Single Unit" element with text "piece" inside "Grid" element
     And I close ui dialog
     And click on "Flash Message Close Button"
 
@@ -69,8 +69,8 @@ Feature: Product kits add without kit items
   Scenario: Check shopping list view page
     When Buyer is on "Product Kit Shopping List" shopping list
     Then I should see following grid:
-      | SKU           | Item          |          | Qty | Unit  | Price  | Subtotal |
-      | product-kit-2 | Product Kit 2 | In Stock | 1   | piece | $10.00 | $10.00   |
+      | SKU           | Product       | Availability | Qty | Unit  | Price  | Subtotal |
+      | product-kit-2 | Product Kit 2 | IN STOCK     | 1   | piece | $10.00 | $10.00   |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $10.00"
     And I should see "Total $10.00"
@@ -79,14 +79,14 @@ Feature: Product kits add without kit items
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU           | Item          |          | Qty Update All | Price  | Subtotal |
-      | product-kit-2 | Product Kit 2 | In Stock | 1 piece        | $10.00 | $10.00   |
+      | SKU           | Product       | Availability | Qty Update All | Price  | Subtotal |
+      | product-kit-2 | Product Kit 2 | IN STOCK     | 1 piece        | $10.00 | $10.00   |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $10.00"
     And I should see "Total $10.00"
 
   Scenario: Remove product kit from shopping list
-    When I click "Row 1 Delete Line Item"
+    When I click "Delete" on row "product-kit-2" in grid
     Then I should see "Are you sure you want to delete this product?"
     When click "Yes, Delete"
     Then I should see 'The "Product Kit 2" product was successfully deleted' flash message

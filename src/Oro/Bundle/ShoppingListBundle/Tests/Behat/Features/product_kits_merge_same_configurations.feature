@@ -21,12 +21,12 @@ Feature: Product kits merge same configurations
     When I click "Shopping List Actions"
     And click "Edit"
     Then I should see following grid:
-      | SKU               | Item                                          |          | Qty Update All | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | In Stock | 2 piece        | $134.00 | $268.00  |
-      | simple-product-03 | Barcode Scanner: Product 3                    |          | 2 pieces       | $31.00  |          |
-      | simple-product-02 | Base Unit: Product 2                          |          | 2 pieces       | $31.00  |          |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | In Stock | 1 piece        | $41.00  | $41.00   |
-      | simple-product-01 | Base Unit: Product 1                          |          | 1 piece        | $31.00  |          |
+      | SKU               | Product                                       | Availability | Qty Update All | Price   | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes | IN STOCK     | 2 piece        | $134.00 | $268.00  |
+      | simple-product-03 | Barcode Scanner: Product 3                    |              | 2 pieces       | $31.00  |          |
+      | simple-product-02 | Base Unit: Product 2                          |              | 2 pieces       | $31.00  |          |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 2 Notes | IN STOCK     | 1 piece        | $41.00  | $41.00   |
+      | simple-product-01 | Base Unit: Product 1                          |              | 1 piece        | $31.00  |          |
     And I should see "Summary 2 Items"
     And I should see "Subtotal $309.00"
     And I should see "Total $309.00"
@@ -37,7 +37,7 @@ Feature: Product kits merge same configurations
       | Title                | Editing "Product Kit 1" in "Product Kit Shopping List" |
       | Kit Item 1 Name      | Barcode Scanner                                        |
       | Kit Item 2 Name      | Base Unit                                              |
-      | Price                | Total: $268.00                           |
+      | Price                | Total: $268.00                                         |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00                     |
       | Kit Item 1 Product 2 | None                                                   |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00                     |
@@ -66,7 +66,7 @@ Feature: Product kits merge same configurations
       | Title                | Editing "Product Kit 1" in "Product Kit Shopping List" |
       | Kit Item 1 Name      | Barcode Scanner                                        |
       | Kit Item 2 Name      | Base Unit                                              |
-      | Price                | Total: $41.00                            |
+      | Price                | Total: $41.00                                          |
       | Kit Item 1 Product 1 | simple-product-03 Product 3 $31.00                     |
       | Kit Item 1 Product 2 | None                                                   |
       | Kit Item 2 Product 1 | simple-product-01 Product 1 $31.00                     |
@@ -95,10 +95,10 @@ Feature: Product kits merge same configurations
 
   Scenario: Check shopping list edit page
     Then I should see following grid:
-      | SKU               | Item                                                                                          |          | Qty Update All | Price   | Subtotal |
-      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes Updated Product Kit 1 Line Item 2 Notes Updated | In Stock | 3 piece        | $134.00 | $402.00  |
-      | simple-product-03 | Barcode Scanner: Product 3                                                                    |          | 2 pieces       | $31.00  |          |
-      | simple-product-02 | Base Unit: Product 2                                                                          |          | 2 pieces       | $31.00  |          |
+      | SKU               | Product                                                                                       | Availability | Qty Update All | Price   | Subtotal |
+      | product-kit-1     | Product Kit 1 Product Kit 1 Line Item 1 Notes Updated Product Kit 1 Line Item 2 Notes Updated | IN STOCK     | 3 piece        | $134.00 | $402.00  |
+      | simple-product-03 | Barcode Scanner: Product 3                                                                    |              | 2 pieces       | $31.00  |          |
+      | simple-product-02 | Base Unit: Product 2                                                                          |              | 2 pieces       | $31.00  |          |
     And I should see "Summary 1 Item"
     And I should see "Subtotal $402.00"
     And I should see "Total $402.00"

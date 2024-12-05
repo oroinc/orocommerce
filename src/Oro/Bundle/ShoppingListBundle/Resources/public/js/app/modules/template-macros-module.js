@@ -92,5 +92,16 @@ macros('oroshoppinglist', {
      * @param {string} unit
      * @param {number} quantity
      */
-    renderUnit: require('tpl-loader!oroshoppinglist/templates/macros/product-item__unit.html')
+    renderUnit: require('tpl-loader!oroshoppinglist/templates/macros/product-item__unit.html'),
+
+    /**
+     * Renders button to expand or collapse product kit items
+     *
+     * @param {Object} data
+     * @param {string} data.productId
+     * @param {string} data.btnClass
+     * @param {string} data.productName
+     * @param {boolean} data.showLabel
+     */
+    renderExpandKitsButton: require('tpl-loader!oroshoppinglist/templates/macros/product-kit__expand-btn.html')
 });

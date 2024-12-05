@@ -1,32 +1,29 @@
 /* @theme: default; */
 
+$grid-line-item-link-line-height: 1.539 !default;
 $grid-line-items-row-offset-x: spacing('base') !default;
-$grid-line-items-line-height: 1.15 !default;
+$grid-line-items-line-height: $grid-line-item-link-line-height !default;
 $grid-line-items-word-break: break-word !default;
-$grid-line-items-title-font-size: $base-font-size !default;
+$grid-line-items-title-font-size: $base-font-size--s !default;
 $grid-line-items-title-font-w: font-weight('semi-bold') !default;
-$grid-line-items-field-val-offset: 2px !default;
+
 $grid-line-items-link-color: get-color('text', 'primary') !default;
-$grid-line-items-link-color-hover: get-color('text', 'primary') !default;
+$grid-line-items-link-color-hover: get-var-color('text', 'link-hover') !default;
+$grid-line-item-link-font-size: $base-font-size--s !default;
 
 $grid-line-items-errors-color: get-color('destructive', 'dark') !default;
 $grid-line-items-warnings-color: get-color('warning', 'dark') !default;
 
-$grid-line-line-height: 1.45 !default;
-
-$grid-line-clip-none-offset: spacing('sm') !default;
-
-$grid-line-separator-height: 16px !default;
+$grid-line-separator-height: 14px !default;
 $grid-line-separator-offset: 0 8px !default;
-$grid-line-separator-background: get-color('neutral', 'grey1') !default;
+$grid-line-separator-background: get-color('neutral', 'grey2') !default;
+
+$grid-line-field-label-color: get-var-color('text', 'secondary') !default;
+$grid-line-field-label-offset: spacing('xs') !default;
 
 // Tablet
-
-$grid-line-row-entry-offset-y-tablet: 2px !default;
+$grid-line-items-container-gap-tablet: 0 spacing('sm') !default;
+$grid-line-items-configuration-gap-tablet: spacing('xs') 0 !default;
 
 // Mobile
-
-$grid-line-items-container-offset-x-mobile: spacing('sm') !default;
 $grid-line-items-row-offset-x-mobile: spacing('sm') !default;
-$grid-line-items-field-val-offset-mobile: 4px !default;
-$grid-line-row-entry-offset-y-mobile: 0 !default;

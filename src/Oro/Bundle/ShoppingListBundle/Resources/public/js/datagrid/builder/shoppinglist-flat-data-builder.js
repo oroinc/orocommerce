@@ -1,13 +1,18 @@
+import _ from 'underscore';
 import FilteredProductVariantsPlugin from 'oroshoppinglist/js/datagrid/plugins/filtered-product-variants-plugin';
 import ShoppingListRefreshPlugin from 'oroshoppinglist/js/datagrid/plugins/shopping-list-refresh-plugin';
+import HighlightRelatedRowsPlugin from 'oroshoppinglist/js/datagrid/plugins/highlight-related-rows-plugin';
 import quantityHelper from 'oroproduct/js/app/quantity-helper';
 import ShoppingListRow from 'oroshoppinglist/js/datagrid/row/shopping-list-row';
 import {isHighlight, isError, messageModel} from './utils';
 
 export const flattenData = data => {
+    const errorColumn = shoppingListFlatDataBuilder.errorColumn;
     return data.reduce((flatData, rawData) => {
         const {subData, ...item} = rawData;
         const itemClassName = [];
+
+        item.productUID = _.uniqueId('');
 
         if (isHighlight(item)) {
             itemClassName.push('highlight');
@@ -32,7 +37,7 @@ export const flattenData = data => {
             item._isVariant = false;
 
             if (isError(item) || isHighlight(item)) {
-                flatData.push(messageModel(item, 'item'));
+                flatData.push(messageModel(item, errorColumn));
             }
         } else {
             let filteredOutVariants = 0;
@@ -58,6 +63,8 @@ export const flattenData = data => {
 
             const flatSubData = subData.reduce((subDataCollection, subItem, index) => {
                 const className = ['sub-row'];
+
+                subItem.productUID = _.uniqueId('');
 
                 if (subItem.units && subItem.units[item.unit]) {
                     precisions.push(subItem.units[item.unit].precision);
@@ -99,6 +106,7 @@ export const flattenData = data => {
                 subItem._groupId = item.productId;
                 subItem.row_class_name = className.join(' ');
                 subItem.row_attributes = {
+                    ...(subItem.row_attributes ?? {}),
                     'data-product-group': subItem._groupId
                 };
 
@@ -129,7 +137,7 @@ export const flattenData = data => {
 
             flatData.push(...flatSubData);
             if (isError(item) || isHighlight(item)) {
-                const itemMessageModel = messageModel(item, 'item');
+                const itemMessageModel = messageModel(item, errorColumn);
                 flatData.push(itemMessageModel);
             }
         }
@@ -139,6 +147,29 @@ export const flattenData = data => {
 };
 
 const shoppingListFlatDataBuilder = {
+    /**
+     * @property {string}
+     */
+    columnForMainError: 'sku',
+
+    /**
+     * A column to which general errors are aligned
+     */
+    errorColumn: 'item',
+
+    /**
+     * @param {Object} columns
+     */
+    setErrorColumn(columns) {
+        const column = _.find(columns, column => {
+            return column.name === this.columnForMainError;
+        });
+
+        if (column && column.renderable) {
+            this.errorColumn = column.name;
+        }
+    },
+
     processDatagridOptions(deferred, options) {
         const {
             parseResponseModels,
@@ -169,8 +200,13 @@ const shoppingListFlatDataBuilder = {
         if (!options.metadata.plugins) {
             options.metadata.plugins = [];
         }
-        options.metadata.plugins.push(FilteredProductVariantsPlugin, ShoppingListRefreshPlugin);
+        options.metadata.plugins.push(
+            FilteredProductVariantsPlugin,
+            ShoppingListRefreshPlugin,
+            HighlightRelatedRowsPlugin
+        );
 
+        this.setErrorColumn(options.metadata.columns);
         options.data.data = flattenData(options.data.data);
 
         options.themeOptions = {

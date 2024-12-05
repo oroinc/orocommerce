@@ -108,18 +108,18 @@ Feature: My Shopping List Accessibility
     When I press "PageDown" key on "Shopping List Edit Grid Select Row 1 Input" element
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
     And I should see following grid containing rows:
-      | SKU  | Item                    |          | Qty Update All | Price  | Subtotal |
-      | CC29 | Product 29 Note 29 text | In Stock | 13 piece       | $31.00 | $403.00  |
-      | CC30 | Product 30 Note 30 text | In Stock | 13 piece       | $31.00 | $403.00  |
-      | CC31 | Product 31 Note 31 text | In Stock | 13 piece       | $31.00 | $403.00  |
+      | SKU  | Product                 | Availability | Qty Update All | Price  | Subtotal |
+      | CC29 | Product 29 Note 29 text | IN STOCK     | 13 piece       | $31.00 | $403.00  |
+      | CC30 | Product 30 Note 30 text | IN STOCK     | 13 piece       | $31.00 | $403.00  |
+      | CC31 | Product 31 Note 31 text | IN STOCK     | 13 piece       | $31.00 | $403.00  |
     And I press "PageUp" key on "Shopping List Edit Grid Header Mass Action" element
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
     And I should see following grid containing rows:
-      | SKU  | Item                               |              | Qty Update All | Price  | Subtotal              |
-      | BB04 | Configurable Product 1 Note 4 text | In Stock     | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
-      | BB05 | Configurable Product 1 Note 5 text | Out of Stock | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
-      | BB06 | Configurable Product 2 Note 6 text | In Stock     | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
-      | BB07 | Configurable Product 2 Note 7 text | Out of Stock | 5 piece        | $17.00 | $85.00                |
+      | SKU  | Product                            | Availability | Qty Update All | Price  | Subtotal              |
+      | BB04 | Configurable Product 1 Note 4 text | IN STOCK     | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
+      | BB05 | Configurable Product 1 Note 5 text | OUT OF STOCK | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
+      | BB06 | Configurable Product 2 Note 6 text | IN STOCK     | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
+      | BB07 | Configurable Product 2 Note 7 text | OUT OF STOCK | 5 piece        | $17.00 | $85.00                |
 
   Scenario: Delete product by keyboard
     Given I focus on "Shopping List Edit Grid Select Row 1 Delete"
@@ -133,11 +133,12 @@ Feature: My Shopping List Accessibility
   Scenario: Edit product note by keyboard
     Given I focus on "Shopping List Edit Grid Edit Note"
     When I press "Space" key on "Shopping List Edit Grid Edit Note" element
-    And I should see focus within "UiWindow" element
-    And I fill in "Shopping List Notes in Modal" with "Update Note 5 text"
-    When I press "Space" key on "UiWindow okButton" element
+    And I should see focus within "UiPopover" element
+    And I fill in "Shopping List Notes in Popover" with "Update Note 5 text"
+    And I focus on "UiPopover Submit Button"
+    When I press "Space" key on "UiPopover Submit Button" element
     Then I should see focus within "Frontend Customer User Shopping List Edit Grid" element
     And I should see "Shopping List Edit Grid Select Row 1 Item" element focused
     Then I should see following grid containing rows:
-      | SKU  | Item                                      |              | Qty Update All | Price  | Subtotal              |
-      | BB05 | Configurable Product 1 Update Note 5 text | Out of Stock | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |
+      | SKU  | Product                                   | Availability | Qty Update All | Price  | Subtotal              |
+      | BB05 | Configurable Product 1 Update Note 5 text | OUT OF STOCK | 3 item         | $11.00 | $33.00 -$16.50 $16.50 |

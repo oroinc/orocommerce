@@ -39,7 +39,7 @@ class ProductUnitSelector extends Element
         if ($this->hasClass('select2-offscreen')) {
             return self::TYPE_SELECT;
         }
-        if ($this->hasClass('invisible')) {
+        if ($this->hasClass('invisible') || $this->hasClass('toggle-input')) {
             return self::TYPE_TOGGLE;
         }
 
@@ -48,9 +48,17 @@ class ProductUnitSelector extends Element
 
     public function getValues(): array
     {
+        if ($this->getTagName() == 'select') {
+            return array_map(
+                fn (NodeElement $element) => $element->getValue(),
+                $this->findAll('css', 'option')
+            );
+        } elseif ($this->getAttribute('type') == 'hidden') {
+            return [$this->getAttribute('value')];
+        }
         return array_map(
-            fn (NodeElement $element) => $element->getValue(),
-            $this->findAll('css', 'option')
+            fn (NodeElement $element) => $element->getAttribute('value'),
+            $this->getParent()->findAll('css', '[type="radio"]')
         );
     }
 

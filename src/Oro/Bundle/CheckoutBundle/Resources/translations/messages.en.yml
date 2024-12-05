@@ -181,9 +181,11 @@ oro:
             subtotal: Subtotal
             edit_order:
                 title: Edit items
-            item: Item
+            item: Product
             sku: SKU
+            # used in old themes
             inventory_status: ''
+            inventory_status_full: 'Availability'
             quantity: Quantity
             quantity_short: Qty
             unit: ''

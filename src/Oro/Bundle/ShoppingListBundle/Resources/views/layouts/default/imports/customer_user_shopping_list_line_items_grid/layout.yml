@@ -8,7 +8,7 @@ layout:
         - '@appendOption':
             id: __datagrid
             optionName: grid_render_parameters.cssClass
-            optionValue: 'responsive-shopping-list-grid grid-inline-editing-quantity grid-side-effects'
+            optionValue: 'responsive-shopping-list-grid grid-inline-editing-quantity grid-side-effects blank-content-text'
 
         - '@setOption':
             id: __datagrid
@@ -19,6 +19,7 @@ layout:
             id: __datagrid
             optionName: grid_render_parameters.themeOptions.disableStickedScrollbar
             optionValue: true
+
 
         - '@setOption':
             id: __datagrid
@@ -34,9 +35,10 @@ layout:
             id: __datagrid
             optionName: grid_render_parameters.themeOptions
             optionValue:
-                cellActionsHideCount: 4
+                cellActionsHideCount: 3
                 cellLauncherOptions:
                     launcherMode: 'icon-only'
+                    dropdownLauncherMode: 'icon-text'
 
         - '@appendOption':
             id: __datagrid
@@ -61,7 +63,10 @@ layout:
             optionValue:
                 className: 'datagrid-tool datagrid-tool--short datagrid-divider empty'
 
-        - '@setOption':
-            id: __datagrid
-            optionName: grid_render_parameters.toolbarOptions.hideItemsCounter
-            optionValue: true
+        - '@appendOption':
+              id: __datagrid
+              optionName: grid_render_parameters.themeOptions
+              optionValue:
+                  useInputStepper: '=data["theme_configuration"].getThemeConfigurationOption("shopping_list__quantity_inputs") === "with_stepper_buttons"'
+
+

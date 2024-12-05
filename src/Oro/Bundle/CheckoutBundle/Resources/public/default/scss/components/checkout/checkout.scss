@@ -105,6 +105,10 @@
             position: sticky;
             top: calc(var(--sticky-page-header-element-offset-top, 0) + #{spacing('xl')});
             height: max-content;
+
+            .summary-collapse-content:not(.show) .summary-widget__summary {
+                grid-template-columns: initial;
+            }
         }
     }
 }

@@ -277,7 +277,7 @@ const ShoppingListInlineEditingPlugin = InlineEditingPlugin.extend({
             const itemModel = component.view.model;
             if (saveComponent.cid !== component.cid &&
                 saveComponent.view.model.attributes.sku === itemModel.attributes.sku &&
-                saveComponent.view.$el.find('select[name="unitCode"]').val() === itemModel.attributes.unit) {
+                saveComponent.view.getUnitCode() === itemModel.attributes.unit) {
                 component.exitEditMode(true);
             }
         });

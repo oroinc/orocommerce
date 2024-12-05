@@ -1,11 +1,12 @@
 /* @theme: default; */
 
-$responsive-product-kit-shopping-lists-grid-border-color: get-color('neutral', 'grey1') !default;
+$responsive-product-kit-shopping-lists-border-color: get-color('neutral', 'grey2') !default;
 $responsive-product-kit-shopping-lists-grid-header-cell-color: get-color('text', 'secondary') !default;
-$responsive-product-kit-shopping-lists-grid-row-offset-mobile: $responsive-shopping-grid-row-offset-mobile !default;
-$responsive-product-kit-shopping-lists-grid-border-offset-mobile: $responsive-shopping-grid-row-border-mobile !default;
+$responsive-product-kit-shopping-lists-grid-row-offset-mobile: spacing('lg') !default;
+$responsive-product-kit-shopping-lists-grid-border-offset-mobile: 1px solid
+    $responsive-product-kit-shopping-lists-border-color !default;
 
-$responsive-product-kit-shopping-lists-grid-cell-offset-mobile: $responsive-shopping-body-cell-offset-y-mobile !default;
+$responsive-product-kit-shopping-lists-grid-cell-offset-mobile: 0 !default;
 
 $responsive-product-kit-shopping-lists-action-cell-width-mobile: (
     $responsive-shopping-list-edit-action-cell-width-mobile
@@ -14,3 +15,18 @@ $responsive-product-kit-shopping-lists-action-cell-width-mobile: (
 $responsive-product-kit-shopping-lists-label-font-weight: font-weight('semi-bold') !default;
 $responsive-product-kit-shopping-lists-label-color: get-color('text', 'primary') !default;
 $responsive-product-kit-shopping-lists-label-text-decoration: none !default;
+
+// Tablet Small
+$responsive-product-kit-shopping-lists-tablet-small-grid-template-areas:
+    'label configuration actions'
+    '. qty .' !default;
+$responsive-product-kit-shopping-lists-tablet-small-grid-template-columns: minmax(150px, 1fr) 2fr 88px !default;
+$responsive-product-kit-shopping-lists-tablet-small-gap: 0 spacing('xl') !default;
+
+// Tablet Landscape
+$responsive-product-kit-shopping-lists-mobile-landscape-grid-template-areas:
+    'label actions'
+    'configuration configuration'
+    'qty qty' !default;
+$responsive-product-kit-shopping-lists-mobile-landscape-grid-template-columns: 1fr auto !default;
+$responsive-product-kit-shopping-lists-mobile-landscape-gap: 0 spacing('xs') !default;

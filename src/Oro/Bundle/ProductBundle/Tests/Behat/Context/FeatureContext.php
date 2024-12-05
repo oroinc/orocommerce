@@ -708,6 +708,52 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     }
 
     /**
+     * Example: I should see that the "Product Kit Line Item Totals Form Unit" element has a selected unit "set"
+     * @Then /^(?:|I )should see that the "(?P<elementName>[^"]*)" element has a selected unit "(?P<unit>[^"]*)"$/
+     */
+    public function shouldSeeThatElementHasSelectedProductUnit($elementName, $unit)
+    {
+        $productUnit = $this->createElement($elementName);
+
+        $value = $productUnit->getAttribute('type') == 'hidden'
+            ? $productUnit->getParent()->find('css', '[data-toggle-type]')->getText()
+            : $productUnit->getValue();
+        self::assertEquals($unit, $value);
+    }
+
+    /**
+     * Example: I should see that the "Product Kit Line Item Totals Form Unit" element has available units:
+     *  |   item    |
+     *  |   set     |
+     * @Then /^(?:|I )should see that the "(?P<elementName>[^"]*)" element has available units:$/
+     */
+    public function shouldSeeThatElementContainsProductUnits($elementName, TableNode $table)
+    {
+        $productUnit = $this->createElement($elementName);
+        $actualOptions = $productUnit->getValues();
+
+        $expectedOptions = array_map(function (array $row) {
+            list($value) = $row;
+
+            return $value;
+        }, $table->getRows());
+
+        self::assertEqualsCanonicalizing($expectedOptions, $actualOptions);
+    }
+
+    /**
+     * @codingStandardsIgnoreStart
+     * Example: I should see that the "Product Kit Line Item Totals Form Unit" element has a product unit selector of type "single"
+     * @Then /^(?:|I )should see that the "(?P<elementName>[^"]*)" element has a product unit selector of type "(?P<selectorType>[^"]*)"$/
+     * @codingStandardsIgnoreEnd
+     */
+    public function shouldSeeThatElementHasProductUnitSelectorOfType($elementName, $unit)
+    {
+        $productUnit = $this->createElement($elementName);
+        self::assertEquals($unit, $productUnit->getSelectorType());
+    }
+
+    /**
      * Example: I should see "This product will be available later" for "SKU123" product on shopping list
      * @Then /^(?:|I )should see "(?P<elementNameOrText>[^"]*)" for "(?P<SKU>[^"]*)" product on shopping list$/
      */
@@ -834,27 +880,47 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      */
     public function shouldSeeNotificationForProductWithUnitInShoppingList($elementNameOrText, $SKU, $unit): void
     {
-        $selector = sprintf(
-            "//*[contains(text(), '%s')]/ancestor::tr//td[contains(@class, 'grid-body-cell-quantity')]//" .
-            "div[contains(@class, 'select') and contains(text(), '%s')]/ancestor::tr/" .
-            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
-            $SKU,
+        $selectedUnitXpath = sprintf(
+            './/*[contains(@class, "select") and contains(text(), "%1$s")]' .
+            ' or .//input[@type="radio" and @checked]/following-sibling::label[1][contains(text(), "%1$s")]' .
+            ' or .//span[contains(@class, "single-unit") and contains(text(), "%1$s")]',
             $unit
         );
 
-        $notificationRow = $this->getSession()->getPage()->find('xpath', $selector);
+        $rowSelector = sprintf(
+            '//*[contains(concat(" ", normalize-space(@class), " "), " grid-row ") and ' .
+            './/*[contains(concat(" ", normalize-space(text()), " "), " %s ")]' .
+                ' and .//*[' .
+                    'contains(concat(" ", normalize-space(@class), " "), " unit-select-root ")' .
+                    ' and (%s)' .
+                ']' .
+            ']',
+            $SKU,
+            $selectedUnitXpath
+        );
 
-        self::assertNotNull($notificationRow, sprintf('notifications for the line item with SKU "%s" not found', $SKU));
+        $productItem = $this->getSession()->getPage()->find('xpath', $rowSelector);
+        self::assertNotNull($productItem, sprintf('Product with SKU "%s" and Unit "%s" not found', $SKU, $unit));
+
+        $idNotificationRow = $productItem->getAttribute('data-related-row');
+
+        $notificationRowSelector = sprintf(
+            '//*[contains(concat(" ", normalize-space(@class), " "), " notification-row ") and @data-row-id="%s"]',
+            $idNotificationRow
+        );
+
+        $notificationRow = $this->getSession()->getPage()->find('xpath', $notificationRowSelector);
+        self::assertNotNull($notificationRow, sprintf('Notifications for the line item with SKU "%s" not found', $SKU));
 
         if ($this->isElementVisible($elementNameOrText, $notificationRow)) {
             return;
         }
 
-        self::assertNotFalse(
-            stripos($notificationRow->getText(), $elementNameOrText),
+        self::assertStringContainsStringIgnoringCase(
+            $elementNameOrText,
+            $notificationRow->getText(),
             sprintf(
-                '%s "%s" for product with SKU "%s" and Unit of Quantity "%s" is not present or not visible',
-                $this->hasElement($elementNameOrText) ? 'Element' : 'Text',
+                '"%s" for product with SKU "%s" and Unit of Quantity "%s" is not present or not visible',
                 $elementNameOrText,
                 $SKU,
                 $unit
@@ -874,9 +940,13 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
     {
         $selector = sprintf(
             "//*[contains(text(), '%s')]/ancestor::tr//td[contains(@class, 'grid-body-cell-quantity')]//" .
-            "div[contains(@class, 'select') and contains(text(), '%s')]/ancestor::tr/" .
-            "following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
+            "div[(contains(@class, 'select') and contains(text(), '%s')) or " .
+            "(input[@type='radio' and @checked]/following-sibling::label[1][contains(text(), '%s')]) or ".
+            "(span[contains(@class, 'single-unit') and contains(text(), '%s')])]" .
+            "/ancestor::tr/following-sibling::tr[contains(@class, 'notification-row') and position()=1]",
             $SKU,
+            $unit,
+            $unit,
             $unit
         );
 

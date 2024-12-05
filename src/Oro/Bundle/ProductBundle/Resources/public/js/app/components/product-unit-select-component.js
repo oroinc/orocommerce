@@ -4,7 +4,7 @@ define(function(require) {
     const _ = require('underscore');
     const BaseComponent = require('oroui/js/app/components/base/component');
     const UnitsAsRadioGroupView = require('oroproduct/js/app/views/units-as-radio-group-view').default;
-    const UnitsUtil = require('oroproduct/js/app/units-util');
+    const unitsUtil = require('oroproduct/js/app/units-util');
 
     const ProductUnitSelectComponent = BaseComponent.extend({
         /**
@@ -14,9 +14,7 @@ define(function(require) {
             unitLabel: 'oro.product.product_unit.%s.label.full',
             singleUnitMode: false,
             singleUnitModeCodeVisible: false,
-            configDefaultUnit: null,
-            UNIT_COUNT_AS_GROUP: 2,
-            UNIT_LENGTH_AS_GROUP: 5
+            configDefaultUnit: null
         },
 
         /**
@@ -39,10 +37,11 @@ define(function(require) {
                 this.unitsAsRadioGroupView = new UnitsAsRadioGroupView({
                     autoRender: true,
                     model: productModel,
-                    units: UnitsUtil.getUnitsLabel(productModel),
+                    units: unitsUtil.getUnitsLabel(productModel),
                     $select: $select
                 });
                 $select.after(this.unitsAsRadioGroupView.$el);
+                $select.inputWidget('dispose');
             } else {
                 $select.removeClass('invisible');
             }
@@ -57,12 +56,17 @@ define(function(require) {
             }
 
             const $select = this.options._sourceElement.find('select');
-            UnitsUtil.updateSelect(model, $select);
+
+            unitsUtil.markAsSelectUnit($select);
+            unitsUtil.updateSelect(model, $select);
 
             const productUnits = _.keys(model.get('product_units'));
             if (this.isProductApplySingleUnitMode(productUnits)) {
                 if (this.options.singleUnitModeCodeVisible) {
-                    $select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
+                    const $label = `<span class="unit-label">${productUnits[0]}</span>`;
+
+                    unitsUtil.markAsSingleUnit($label);
+                    $select.parent().append($label);
                 }
                 $select.inputWidget('dispose');
                 $select.addClass('no-input-widget').hide();
@@ -88,10 +92,9 @@ define(function(require) {
                 return false;
             }
 
-            const units = UnitsUtil.getUnitsLabel(productModel);
+            const units = unitsUtil.getUnitsLabel(productModel);
 
-            return Object.keys(units).length === this.options.UNIT_COUNT_AS_GROUP &&
-                _.every(units, label => label.length <= this.options.UNIT_LENGTH_AS_GROUP);
+            return unitsUtil.displayUnitsAsGroup(units);
         }
     });
 

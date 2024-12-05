@@ -1,0 +1,14 @@
+configuration:
+    sections:
+        shopping_list:
+            label: 'oro.frontend.shoppinglist.configuration.shopping_list.label'
+            options:
+                quantity_inputs:
+                    label: 'oro.frontend.shoppinglist.configuration.shopping_list.quantity_inputs.label'
+                    type: select
+                    default: with_stepper_buttons
+                    values:
+                        with_stepper_buttons: 'oro.frontend.shoppinglist.configuration.shopping_list.quantity_inputs.values.with_stepper_buttons'
+                        plain: 'oro.frontend.shoppinglist.configuration.shopping_list.quantity_inputs.values.plain'
+                    previews:
+                        _default: 'bundles/oroshoppinglist/images/previews/quantity-inputs.png'

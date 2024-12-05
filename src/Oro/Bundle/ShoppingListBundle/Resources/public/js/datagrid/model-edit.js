@@ -13,6 +13,11 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
         ShoppingListEditItemModel.__super__.initialize.call(this, attributes, options);
         if (!this.get('isConfigurable')) {
             this.set('unitCode', this.get('unit'), {silent: true});
+        } else if (this.get('isConfigurable') && !this.get('quantity')) {
+            this.set('action_configuration', {
+                ...this.get('action_configuration'),
+                update_configurable: false
+            });
         }
     },
 
@@ -77,6 +82,15 @@ const ShoppingListEditItemModel = ShoppingListModel.extend({
 
     getMaximumQuantity() {
         return this.get('maximumQuantityToOrder') || 1000000000;
+    },
+
+    deleteItemAction() {
+        const deleteAction = this.get('availableActions')
+            .find(({configuration}) => configuration.name === 'delete');
+
+        if (deleteAction) {
+            return deleteAction.execute();
+        }
     }
 });
 

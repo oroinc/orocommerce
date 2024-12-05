@@ -121,11 +121,10 @@ Feature: Guest Shopping Lists
     When I open shopping list widget
     And I click "Open List"
     Then I should see following grid:
-      | SKU    | Item         | Qty Update All                   | Price | Subtotal |
-      | 1GB83  | Slip-On Clog | Click "edit" to select variants  |       |          |
+      | SKU    | Product      | Qty Update All   | Price | Subtotal |
+      | 1GB83  | Slip-On Clog | Select Variants  |       |          |
     And I should see following actions for 1GB83 in grid:
-      | Edit   |
-      | Delete |
+      | Delete    |
     When I click Delete 1GB83 in grid
     Then I should see "Are you sure you want to delete this product?"
     When click "Delete" in modal window

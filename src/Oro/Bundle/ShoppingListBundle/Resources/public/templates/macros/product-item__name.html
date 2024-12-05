@@ -1,9 +1,9 @@
-<h3 class="grid-line-items__title<%- obj.clip ? ' grid-line-items__clip-placeholder' : '' %>">
+<h3 class="grid-line-items__title">
     <% if (obj._isKitItemLineItem && obj.errors && obj.errors.length && !obj.sku) { %>
-        <p class="grid-line-items__errors"><%- obj.errors.join(' ') %></p>
+        <span class="grid-line-items__errors"><%- obj.errors.join(' ') %></span>
     <% } else { %>
-        <% if (link && (obj.isVisible === undefined || obj.isVisible)) { %>
-        <a class="grid-line-items__title-content no-decoration <% if (obj.clip) { %> grid-line-items__ellipsis <% } %>"
+        <% if (link && (obj.isVisible === void 0 || obj.isVisible)) { %>
+        <a class="grid-line-items__title-content no-decoration"
             href="<%- link %>"
             title="<%- name %>"
             <% if (obj.popover_image_src) { %>
@@ -16,7 +16,7 @@
             }) %>"
             <% } %>><%- name %></a>
         <% } else { %>
-        <p<% if (obj.clip) { %> class="<%- 'grid-line-items__title-content grid-line-items__ellipsis' %>"<% } %>><%- name %></p>
+        <span class="grid-line-items__title-content"><%- name %></span>
         <% } %>
     <% } %>
 </h3>

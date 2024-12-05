@@ -85,3 +85,13 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block __product_kit_in_shopping_lists__button_widget %}
+    {% set buttonOptions = layout_attr_defaults(buttonOptions|default({}), {
+        btnCss: 'btn btn--outlined',
+        iconName: 'plus',
+        actionLabel: 'oro.shoppinglist.product.kit.add_to_another_shopping_list.label'|trans,
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

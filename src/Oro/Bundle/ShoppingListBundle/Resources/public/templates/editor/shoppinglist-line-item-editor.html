@@ -1,27 +1,46 @@
 <% let oroui = _.macros('oroui') %>
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
-
+<% let oroproduct = _.macros('oroproduct') %>
 <div class="inline-editor__inner">
     <div class="inline-editor__fields">
-        <input
-            name="quantity"
-            type="number"
-            inputmode="text"
-            value="<%- data.quantity %>"
-            data-precision="<%- data.precision %>"
-            class="input input-qty"
-            aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.quantity.aria_label') %>"
-            autocomplete="off"
-            data-floating-error
-            data-boundaries-element="[role='dialog']"
-        >
-        <select name="unitCode" class="select input" aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.unit.aria_label') %>" required>
-            <% _.each(data.units, function(data, value) { %>
-                <option value="<%- value %>"<% if (data.selected) { %> selected<% } %><% if (data.disabled) { %> disabled<% } %>>
-                    <%- oroshoppinglist.renderUnit({unit: value, quantity: 1}) %>
-                </option>
-            <% }) %>
-        </select>
+        <% if (obj.useInputStepper) { %>
+            <div data-increment-input>
+                <input
+                        name="quantity"
+                        type="number"
+                        inputmode="decimal"
+                        value="<%- data.quantity %>"
+                        data-precision="<%- data.precision %>"
+                        class="input"
+                        aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.quantity.aria_label') %>"
+                        autocomplete="off"
+                        data-floating-error
+                        data-boundaries-element="[role='dialog']"
+                >
+            </div>
+        <% } else { %>
+            <input
+                name="quantity"
+                type="number"
+                inputmode="decimal"
+                value="<%- data.quantity %>"
+                data-precision="<%- data.precision %>"
+                class="input input-qty"
+                aria-label="<%- _.__('oro.frontend.shoppinglist.inline_editing.quantity.aria_label') %>"
+                autocomplete="off"
+                data-floating-error
+                data-boundaries-element="[role='dialog']"
+            >
+        <% } %>
+        <%= oroproduct.renderGroupedUnits({
+            name: 'unitCode',
+            units: data.units,
+            unit: data.unit,
+            selectMode: {
+                'class': 'input',
+                'ariaLabel': 'oro.frontend.shoppinglist.inline_editing.unit.aria_label'
+            }
+        }) %>
     </div>
     <div class="inline-editor__actions">
         <button class="btn inline-editor__action-item" type="submit"
@@ -30,7 +49,7 @@
                 name: 'check'
             }) %>
         </button>
-        <button class="btn btn--destructive-light inline-editor__action-item" data-action="cancel"
+        <button class="btn btn--neutral inline-editor__action-item" data-action="cancel"
                 title="<%- _.__('oro.form.inlineEditing.action.cancel') %>">
             <%= oroui.renderIcon({
                 name: 'close'

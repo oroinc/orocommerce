@@ -3,10 +3,8 @@ import __ from 'orotranslation/js/translator';
 import routing from 'routing';
 import mediator from 'oroui/js/mediator';
 import ModelAction from 'oro/datagrid/action/model-action';
-import Modal from 'oroui/js/modal';
-import template from 'tpl-loader!oroshoppinglist/templates/actions/add-notes-action.html';
-
-const ENTER_KEY_CODE = 13;
+import viewportManager from 'oroui/js/viewport-manager';
+import ShoppinglistAddNotesModalView from '../../app/views/shoppinglist-add-notes-modal-view';
 
 /**
  * Add notes action, triggers REST PATCH request
@@ -24,14 +22,6 @@ const AddNotesAction = ModelAction.extend({
     requestType: 'PATCH',
 
     reloadData: false,
-
-    validationRules: {
-        notes: {
-            Length: {
-                max: 2048
-            }
-        }
-    },
 
     /**
      * @inheritdoc
@@ -63,42 +53,28 @@ const AddNotesAction = ModelAction.extend({
         const notes = this.model.get('notes');
         const action = notes ? 'edit' : 'add';
 
-        const modal = new Modal({
-            className: 'modal oro-modal-normal shopping-list-notes-modal',
-            title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.title`, {
-                productName: _.escape(this.model.get('name'))
-            }),
-            okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.label`),
-            cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
-            okCloses: false
-        }).on('shown', () => {
-            this.validator = modal.$('form').validate({
-                rules: this.validationRules
+        if (!notes || viewportManager.isApplicable('mobile-big')) {
+            const shoppingListAddNotesModalView = new ShoppinglistAddNotesModalView({
+                title: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}.sku_title`, {
+                    productName: _.escape(this.model.get('name')),
+                    productSku: _.escape(this.model.get('sku'))
+                }),
+                okText: __(`oro.frontend.shoppinglist.lineitem.dialog.${action}_note.label`),
+                cancelText: __('oro.frontend.shoppinglist.lineitem.dialog.cancel.label'),
+                okCloses: false,
+                notes
             });
-        });
 
-        modal.setContent(template({
-            arialLabelBy: modal.cid
-        }));
-
-        modal.on('ok', () => {
-            if (this.validator.form()) {
-                this.updateNotes(modal.$('[name="notes"]').val());
-                this._handleAjax();
-                modal.close();
-            }
-        });
-
-        modal.open();
-
-        modal.$('[name="notes"]')
-            .trigger('focus')
-            .val(notes)
-            .on('keydown', e => {
-                if (e.keyCode === ENTER_KEY_CODE && e.ctrlKey) {
-                    modal.trigger('ok');
+            shoppingListAddNotesModalView.on('ok', () => {
+                if (shoppingListAddNotesModalView.isValid()) {
+                    this.updateNotes(shoppingListAddNotesModalView.getValue());
+                    this._handleAjax();
+                    shoppingListAddNotesModalView.close();
                 }
             });
+
+            shoppingListAddNotesModalView.open();
+        }
     },
 
     updateNotes(notes) {
