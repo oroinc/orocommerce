@@ -4,7 +4,6 @@ data:
         quantity: 6
         value: 555
         currency: 'USD'
-        checksum: 'product_kit_1_line_item.1.checksum'
     relationships:
         orders:
             data:

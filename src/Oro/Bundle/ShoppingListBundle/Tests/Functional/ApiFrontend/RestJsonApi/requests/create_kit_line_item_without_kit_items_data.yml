@@ -4,7 +4,6 @@ data:
     attributes:
         quantity: 10
         notes: 'New Kit Line Item Notes'
-        checksum: 'bf38f135a3274d65ddfeb77244e250a7e9327b04'
     relationships:
         product:
             data:
