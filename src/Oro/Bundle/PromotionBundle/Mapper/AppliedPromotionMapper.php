@@ -80,20 +80,20 @@ class AppliedPromotionMapper
             return null;
         }
 
-        $appliedCouponCodes = $appliedCoupons->map(
+        $appliedCouponIds = $appliedCoupons->map(
             function (AppliedCoupon $coupon) {
-                return $coupon->getCouponCode();
+                return $coupon->getSourceCouponId();
             }
         )->toArray();
 
         $criteria = Criteria::create();
-        $criteria->where(Criteria::expr()->in('code', $appliedCouponCodes));
+        $criteria->where(Criteria::expr()->in('id', $appliedCouponIds));
 
         $coupon = $promotion->getCoupons()->matching($criteria)->first();
         if ($coupon instanceof Coupon) {
             $filteredCoupons = $appliedCoupons->filter(
                 function (AppliedCoupon $appliedCoupon) use ($coupon) {
-                    return $appliedCoupon->getCouponCode() === $coupon->getCode();
+                    return $appliedCoupon->getSourceCouponId() === $coupon->getId();
                 }
             );
 
@@ -114,10 +114,10 @@ class AppliedPromotionMapper
 
         if (!$coupon
             || !$coupon->getPromotion()
-            || $coupon->getCode() !== $appliedCoupon->getCouponCode()
             || $coupon->getPromotion()->getId() !== $appliedCoupon->getSourcePromotionId()
         ) {
             $coupon = new Coupon();
+            $coupon->setId($appliedCoupon->getSourceCouponId());
             $coupon->setCode($appliedCoupon->getCouponCode());
 
             /** @var Promotion $promotion */

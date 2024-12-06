@@ -264,6 +264,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $newCoupon = $this->getEntity(Coupon::class, [
+            'id' => self::COUPON_ID,
             'code' => self::COUPON_CODE,
             'promotion' => $promotion
         ]);
@@ -343,6 +344,7 @@ class AppliedPromotionMapperTest extends \PHPUnit\Framework\TestCase
         $promotion = $this->getEntity(Promotion::class, ['id' => self::PROMOTION_ID]);
 
         $newCoupon = $this->getEntity(Coupon::class, [
+            'id' => self::COUPON_ID,
             'code' => self::COUPON_CODE,
             'promotion' => $promotion
         ]);

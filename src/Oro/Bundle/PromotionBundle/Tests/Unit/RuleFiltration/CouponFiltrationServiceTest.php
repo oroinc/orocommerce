@@ -13,9 +13,12 @@ use Oro\Bundle\PromotionBundle\RuleFiltration\CouponFiltrationService;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
 use Oro\Component\Testing\ReflectionUtil;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 {
+    use EntityTrait;
+
     /** @var RuleFiltrationServiceInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $baseFiltrationService;
 
@@ -42,12 +45,9 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         return $promotion;
     }
 
-    private function getCoupon(string $code): Coupon
+    private function getCoupon(string $code, ?int $id = null): Coupon
     {
-        $coupon = new Coupon();
-        $coupon->setCode($code);
-
-        return $coupon;
+        return $this->getEntity(Coupon::class, ['id' => $id, 'code' => $code]);
     }
 
     private function getAppliedPromotion(Coupon $coupon): AppliedPromotionData
@@ -132,7 +132,7 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $appliedPromotionWithoutCoupon = $this->getPromotion(7, true);
         $ruleOwners = [$appliedPromotionWithCoupon, $appliedPromotionWithoutCoupon];
 
-        $appliedCoupons = [$this->getCoupon('XYZ'), $this->getCoupon('123')];
+        $appliedCoupons = [$this->getCoupon('XYZ', 1), $this->getCoupon('123', 2)];
         $context = [ContextDataConverterInterface::APPLIED_COUPONS => new ArrayCollection($appliedCoupons)];
 
         $this->baseFiltrationService->expects(self::exactly(2))
@@ -142,10 +142,10 @@ class CouponFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 
         $repository = $this->createMock(CouponRepository::class);
         $repository->expects(self::once())
-            ->method('getPromotionsWithMatchedCoupons')
+            ->method('getPromotionsWithMatchedCouponsIds')
             ->with(
                 [$appliedPromotionWithCoupon->getId(), $appliedPromotionWithoutCoupon->getId()],
-                self::identicalTo(['123', 'XYZ'])
+                self::identicalTo([1, 2])
             )
             ->willReturn([5]);
 

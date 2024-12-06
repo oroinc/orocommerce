@@ -113,6 +113,13 @@ class Coupon implements
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true], 'importexport' => ['order' => 50]])]
     protected ?\DateTimeInterface $validUntil = null;
 
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * @return int
      */

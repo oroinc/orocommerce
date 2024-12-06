@@ -29,12 +29,12 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
      */
     protected function filterRuleOwners(array $ruleOwners, array $context): array
     {
-        $filteredRuleOwners = $this->doFilterRuleOwners($ruleOwners, $this->getAppliedCouponCodes($context));
+        $filteredRuleOwners = $this->doFilterRuleOwners($ruleOwners, $this->getAppliedCouponIds($context));
 
         return $this->baseFiltrationService->getFilteredRuleOwners($filteredRuleOwners, $context);
     }
 
-    private function doFilterRuleOwners(array $ruleOwners, array $appliedCouponCodes): array
+    private function doFilterRuleOwners(array $ruleOwners, array $appliedCouponIds): array
     {
         $filteredRuleOwners = [];
         $ruleOwnersWithCoupons = [];
@@ -44,7 +44,7 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
             }
             if (!$ruleOwner->isUseCoupons()) {
                 $filteredRuleOwners[] = $ruleOwner;
-            } elseif ($appliedCouponCodes) {
+            } elseif ($appliedCouponIds) {
                 $ruleOwnersWithCoupons[] = $ruleOwner;
             }
         }
@@ -52,30 +52,30 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
         if ($ruleOwnersWithCoupons) {
             $filteredRuleOwners = array_merge(
                 $filteredRuleOwners,
-                $this->filterRuleOwnersWithCoupons($ruleOwnersWithCoupons, $appliedCouponCodes)
+                $this->filterRuleOwnersWithCoupons($ruleOwnersWithCoupons, $appliedCouponIds)
             );
         }
 
         return $filteredRuleOwners;
     }
 
-    private function getAppliedCouponCodes(array $context): array
+    private function getAppliedCouponIds(array $context): array
     {
         $appliedCoupons = $context[ContextDataConverterInterface::APPLIED_COUPONS] ?? [];
         if (\count($appliedCoupons) === 0) {
             return [];
         }
 
-        $appliedCouponCodes = [];
+        $appliedCouponIds = [];
         /** @var Coupon $appliedCoupon */
         foreach ($appliedCoupons as $appliedCoupon) {
-            $appliedCouponCodes[$appliedCoupon->getCode()] = true;
+            $appliedCouponIds[$appliedCoupon->getId()] = true;
         }
 
-        return $appliedCouponCodes;
+        return $appliedCouponIds;
     }
 
-    private function filterRuleOwnersWithCoupons(array $ruleOwnersWithCoupons, array $appliedCouponCodes): array
+    private function filterRuleOwnersWithCoupons(array $ruleOwnersWithCoupons, array $appliedCouponIds): array
     {
         $filteredRuleOwners = [];
         $promotions = [];
@@ -87,8 +87,8 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
             } else {
                 $isCouponApplied = false;
                 foreach ($ruleOwner->getCoupons() as $coupon) {
-                    if (isset($appliedCouponCodes[$coupon->getCode()])) {
-                        unset($appliedCouponCodes[$coupon->getCode()]);
+                    if (isset($appliedCouponIds[$coupon->getId()])) {
+                        unset($appliedCouponIds[$coupon->getId()]);
                         $isCouponApplied = true;
                         break;
                     }
@@ -100,9 +100,9 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
         }
 
         if ($promotions) {
-            // ensure that numeric coupon codes are passed as strings
-            $couponCodes = array_map('strval', array_keys($appliedCouponCodes));
-            $matchedPromotionIds = $this->getMatchedPromotionsIds($promotionIds, $couponCodes);
+            // ensure that numeric coupon ids are passed as strings
+            $couponIds = array_keys($appliedCouponIds);
+            $matchedPromotionIds = $this->getMatchedPromotionsIds($promotionIds, $couponIds);
             foreach ($promotions as $promotion) {
                 if (isset($matchedPromotionIds[$promotion->getId()])) {
                     $filteredRuleOwners[] = $promotion;
@@ -113,14 +113,14 @@ class CouponFiltrationService extends AbstractSkippableFiltrationService
         return $filteredRuleOwners;
     }
 
-    private function getMatchedPromotionsIds(array $promotionIds, array $couponCodes): array
+    private function getMatchedPromotionsIds(array $promotionIds, array $couponIds): array
     {
-        sort($couponCodes, SORT_STRING);
+        sort($couponIds, SORT_NUMERIC);
         sort($promotionIds, SORT_NUMERIC);
-        $cacheKey = implode(',', $couponCodes) . '|' . implode(',', $promotionIds);
+        $cacheKey = implode(',', $couponIds) . '|' . implode(',', $promotionIds);
         if (!isset($this->matchedPromotionIds[$cacheKey])) {
             $this->matchedPromotionIds[$cacheKey] = array_fill_keys(
-                $this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionIds, $couponCodes),
+                $this->getCouponRepository()->getPromotionsWithMatchedCouponsIds($promotionIds, $couponIds),
                 true
             );
         }

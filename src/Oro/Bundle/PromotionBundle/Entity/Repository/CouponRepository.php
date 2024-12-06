@@ -47,6 +47,22 @@ class CouponRepository extends EntityRepository
         return array_column($rows, 'id');
     }
 
+    public function getPromotionsWithMatchedCouponsIds(array $promotionIds, array $couponIds): array
+    {
+        $rows =  $this->createQueryBuilder('coupon')
+            ->select('DISTINCT IDENTITY(coupon.promotion) AS id')
+            ->where('coupon.promotion IN(:promotions)')
+            ->andWhere('coupon.id IN(:couponIds)')
+            ->andWhere('coupon.enabled = :enabled')
+            ->setParameter('promotions', $promotionIds)
+            ->setParameter('couponIds', $couponIds)
+            ->setParameter('enabled', true)
+            ->getQuery()
+            ->getArrayResult();
+
+        return array_column($rows, 'id');
+    }
+
     public function getSingleCouponByCode(string $couponCode, bool $caseInsensitive = false): ?Coupon
     {
         /** @var Coupon[] $coupons */
