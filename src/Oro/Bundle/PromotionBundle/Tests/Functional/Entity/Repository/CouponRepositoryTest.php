@@ -48,6 +48,11 @@ class CouponRepositoryTest extends WebTestCase
         return $this->getReference($reference);
     }
 
+    private function getCouponId(string $reference): int
+    {
+        return $this->getCoupon($reference)->getId();
+    }
+
     private function getPromotion(string $reference): Promotion
     {
         return $this->getReference($reference);
@@ -81,9 +86,9 @@ class CouponRepositoryTest extends WebTestCase
             $this->getPromotion(LoadPromotionData::ORDER_AMOUNT_PROMOTION)->getId(),
         ];
         $couponCodes = [
-            LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED,
-            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
-            LoadCouponData::COUPON_DISABLED,
+            $this->getCouponId(LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED),
+            $this->getCouponId(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL),
+            $this->getCouponId(LoadCouponData::COUPON_DISABLED),
         ];
 
         $result = $this->repository->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
