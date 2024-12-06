@@ -185,6 +185,9 @@ class ComputeProductAttributes implements ProcessorInterface
         $fields = [];
         foreach ($rows as $row) {
             $fieldName = $row['fieldName'];
+            if (!$this->configManager->hasConfig(Product::class, $fieldName)) {
+                continue;
+            }
             $extendConfig = $this->configManager->getFieldConfig('extend', Product::class, $fieldName);
             if (!$extendConfig->is('owner', ExtendScope::OWNER_CUSTOM)
                 || !ExtendHelper::isFieldAccessible($extendConfig)

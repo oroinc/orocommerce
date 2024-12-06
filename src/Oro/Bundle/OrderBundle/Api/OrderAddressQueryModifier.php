@@ -48,12 +48,10 @@ class OrderAddressQueryModifier implements QueryModifierInterface
 
     private function addOrderSubquery(QueryBuilder $qb, string $addressAlias): void
     {
-        $subquery = sprintf(
-            'SELECT 1 FROM %s ord WHERE (ord.billingAddress = %s or ord.shippingAddress = %s)',
+        $qb->andWhere($qb->expr()->exists(\sprintf(
+            'SELECT 1 FROM %1$s ord WHERE (ord.billingAddress = %2$s or ord.shippingAddress = %2$s)',
             Order::class,
-            $addressAlias,
             $addressAlias
-        );
-        $qb->andWhere($qb->expr()->exists($subquery));
+        )));
     }
 }

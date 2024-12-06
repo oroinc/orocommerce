@@ -112,7 +112,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         CustomerVisitor $currentVisitor
     ): void {
         QueryBuilderUtil::checkIdentifier($shoppingListAlias);
-        $paramName = QueryBuilderUtil::generateParameterName('customerVisitor');
+        $paramName = QueryBuilderUtil::generateParameterName('customerVisitor', $qb);
         $qb
             ->andWhere($qb->expr()->exists($this->getCustomerVisitorSubquery($qb, $shoppingListAlias, $paramName)))
             ->setParameter($paramName, $currentVisitor);

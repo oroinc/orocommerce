@@ -7,28 +7,24 @@ namespace Oro\Bundle\ProductBundle\LineItemChecksumGenerator;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
- * Line item checksum generator that delegates calls to the inner generators.
+ * The line item checksum generator that delegates calls to the inner generators.
  */
 class CompositeLineItemChecksumGenerator implements LineItemChecksumGeneratorInterface
 {
     /**
-     * @var iterable|LineItemChecksumGeneratorInterface[]
-     */
-    private iterable $checksumGenerators;
-
-    /**
      * @param iterable<LineItemChecksumGeneratorInterface> $checksumGenerators
      */
-    public function __construct(iterable $checksumGenerators)
-    {
-        $this->checksumGenerators = $checksumGenerators;
+    public function __construct(
+        private readonly iterable $checksumGenerators
+    ) {
     }
 
     #[\Override]
     public function getChecksum(ProductLineItemInterface $lineItem): ?string
     {
         foreach ($this->checksumGenerators as $checksumGenerator) {
-            if (($checksum = $checksumGenerator->getChecksum($lineItem)) !== null) {
+            $checksum = $checksumGenerator->getChecksum($lineItem);
+            if (null !== $checksum) {
                 return $checksum;
             }
         }
