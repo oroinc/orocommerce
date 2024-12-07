@@ -989,6 +989,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         $responseContent = $this->updateResponseContent('add_line_item.yml', $response);
+        $responseContent['data'][0]['relationships']['shoppingList'] = [
+            'data' => ['type' => 'shoppinglists', 'id' => (string)$shoppingListId]
+        ];
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
@@ -1024,7 +1027,11 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             'add_line_item_existing.yml'
         );
 
-        $this->assertResponseContains('add_line_item_existing.yml', $response);
+        $responseContent = $this->getResponseData('add_line_item_existing.yml', $response);
+        $responseContent['data'][0]['relationships']['shoppingList'] = [
+            'data' => ['type' => 'shoppinglists', 'id' => (string)$shoppingListId]
+        ];
+        $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
@@ -1042,6 +1049,48 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             'Updated Existing Line Item Notes'
         );
         $this->assertShoppingListTotal($shoppingList, 68.15, 'USD');
+    }
+
+    public function testAddToCartWithShoppingListInRequestData()
+    {
+        $userId = $this->getReference('user')->getId();
+        $organizationId = $this->getReference('organization')->getId();
+        $customerUserId = $this->getReference('customer_user')->getId();
+        $productId = $this->getReference('product1')->getId();
+        $productUnitCode = $this->getReference('set')->getCode();
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+
+        $data = $this->getRequestData('add_line_item.yml');
+        $data['data'][0]['relationships']['shoppingList'] = [
+            'data' => ['type' => 'shoppinglists', 'id' => '<toString(@shopping_list2->id)>']
+        ];
+        $response = $this->postSubresource(
+            ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId, 'association' => 'items'],
+            $data
+        );
+
+        $responseContent = $this->updateResponseContent('add_line_item.yml', $response);
+        $responseContent['data'][0]['relationships']['shoppingList'] = [
+            'data' => ['type' => 'shoppinglists', 'id' => (string)$shoppingListId]
+        ];
+        $this->assertResponseContains($responseContent, $response);
+
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
+        self::assertCount(4, $shoppingList->getLineItems());
+        $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
+        self::assertLineItem(
+            $lineItem,
+            $organizationId,
+            $userId,
+            $customerUserId,
+            $shoppingListId,
+            10,
+            $productUnitCode,
+            $productId,
+            'New Line Item Notes'
+        );
+        $this->assertShoppingListTotal($shoppingList, 169.05, 'USD');
     }
 
     public function testAddToCartForNewListItemForDefaultShoppingList()

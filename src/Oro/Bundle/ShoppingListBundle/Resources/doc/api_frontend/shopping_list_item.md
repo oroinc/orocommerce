@@ -108,7 +108,7 @@ Delete a collection of shopping list item records.
 
 ### product
 
-#### create
+#### create, add_shopping_list_items
 
 {@inheritdoc}
 
@@ -122,7 +122,7 @@ Delete a collection of shopping list item records.
 
 ### quantity
 
-#### create
+#### create, add_shopping_list_items
 
 {@inheritdoc}
 
@@ -136,7 +136,7 @@ Delete a collection of shopping list item records.
 
 ### unit
 
-#### create
+#### create, add_shopping_list_items
 
 {@inheritdoc}
 
@@ -150,7 +150,7 @@ Delete a collection of shopping list item records.
 
 ### kitItems
 
-#### create
+#### create, add_shopping_list_items
 
 {@inheritdoc}
 
@@ -176,11 +176,17 @@ Delete a collection of shopping list item records.
 
 **This field must not be empty, if it is passed.**
 
+#### add_shopping_list_items
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### value
 
 The product price.
 
-#### create
+#### create, add_shopping_list_items
 
 {@inheritdoc}
 
@@ -196,7 +202,7 @@ The product price.
 
 The currency for the product price.
 
-#### create
+#### create, add_shopping_list_items
 
 {@inheritdoc}
 
@@ -210,7 +216,7 @@ The currency for the product price.
 
 ### checksum
 
-#### create, update
+#### create, update, add_shopping_list_items
 
 {@inheritdoc}
 

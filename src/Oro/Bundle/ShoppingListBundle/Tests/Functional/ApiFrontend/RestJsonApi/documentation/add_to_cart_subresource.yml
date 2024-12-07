@@ -1,0 +1,14 @@
+parameters:
+    notes:
+        description: 'Additional information for the product.'
+    quantity:
+        description: '<p>The quantity of product units to be purchased.</p><p><strong>The required field.</strong></p>'
+    shoppingList:
+        description: '<p>The shopping list that contains the line item.</p><p><strong>The read-only field. A passed value will be ignored.</strong></p>'
+response:
+    notes:
+        description: 'Additional information for the product.'
+    quantity:
+        description: 'The quantity of product units to be purchased.'
+    shoppingList:
+        description: 'The shopping list that contains the line item.'

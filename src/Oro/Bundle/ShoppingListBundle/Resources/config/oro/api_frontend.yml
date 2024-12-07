@@ -48,13 +48,15 @@ api:
                     actions:
                         add_subresource:
                             description: Add or Update Items
+                            request_documentation_action: add_shopping_list_items
                             form_options:
                                 validation_groups: [[Default, create, add_product_kit_line_item], api]
                             fields:
                                 id:
                                     direction: output-only
                                 shoppingList:
-                                    exclude: true
+                                    form_options:
+                                        mapped: false
                         # changing the list of shopping list items via relationships does not make sense,
                         # because it is not possible to create a shopping list item that does not belong
                         # to any shopping list
