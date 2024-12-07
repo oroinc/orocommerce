@@ -166,8 +166,9 @@
         }
 
         &-inner {
+            position: relative;
             padding: $checkout-view-column-inner-offset;
-            
+
             .required-label {
                 margin-top: spacing('base');
             }

@@ -162,10 +162,10 @@ const ShoppingListOwnerInlineEditableView = BaseView.extend({
 
     removeNote() {
         const confirm = new DeleteConfirmation({
-            title: false,
-            content: __('oro.frontend.shoppinglist.dialog.notes.remove_title', {
+            title: __('oro.frontend.shoppinglist.dialog.notes.remove_title', {
                 shoppingList: this.options.shoppingListLabel
             }),
+            content: __('oro.frontend.shoppinglist.dialog.notes.remove'),
             okText: __('oro.frontend.shoppinglist.dialog.notes.delete_btn')
         });
         this.subview('confirm', confirm);
