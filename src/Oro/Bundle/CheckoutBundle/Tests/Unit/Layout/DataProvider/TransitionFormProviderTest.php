@@ -69,6 +69,7 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
                     'allow_extra_fields' => true,
+                    'csrf_protection' => false
                 ]
             )
             ->willReturn($form);
@@ -100,6 +101,7 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
                     'allow_extra_fields' => true,
+                    'csrf_protection' => false
                 ]
             )
             ->willReturn($form);

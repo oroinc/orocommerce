@@ -342,6 +342,12 @@ services:
         tags:
             - { name: oro_action.condition, alias: check_checkout_states }
 
+    oro_checkout.workflow.transition.check_email_confirmation:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\CheckEmailConfirmation'
+        tags:
+            - { name: oro_action.condition, alias: is_email_confirmed }
+            - { name: oro_featuretogle.feature, feature: allow_checkout_without_email_confirmation_feature }
+
     oro_checkout.workflow_state.condition.is_checkout_state_valid:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Condition\IsCheckoutStateValid'
         arguments:

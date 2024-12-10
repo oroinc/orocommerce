@@ -93,6 +93,7 @@ class TransitionFormProvider extends AbstractFormProvider
                 'workflow_item' => $workflowItem,
                 'transition_name' => $transition->getName(),
                 'allow_extra_fields' => true,
+                'csrf_protection' => false
             ]
         );
     }

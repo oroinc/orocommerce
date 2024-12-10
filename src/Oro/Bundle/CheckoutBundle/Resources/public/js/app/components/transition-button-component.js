@@ -96,13 +96,7 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            if (this.options.flashMessageOnSubmit) {
-                e.preventDefault();
-                mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
-                return false;
-            }
             this.$form.validate();
-
             if (this.$form.valid()) {
                 const eventData = {
                     stopped: false,
@@ -162,7 +156,14 @@ define(function(require) {
             this.$form.find(this.options.selectors.stateToken)
                 .prop('disabled', false)
                 .removeAttr('disabled');
-            return new FormData(this.$form[0]);
+
+            const formData = new FormData(this.$form[0]);
+            if (!this.$form.find(':input').not(':button, :disabled').length) {
+                const formName = this.$form.attr('name') || 'oro_workflow_transition';
+                formData.append(`${formName}[]`, '');
+            }
+
+            return formData;
         },
 
         onSuccess: function(response) {
