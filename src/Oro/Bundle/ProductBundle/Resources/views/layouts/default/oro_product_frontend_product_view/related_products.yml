@@ -24,6 +24,10 @@ layout:
             optionName: use_slider
             optionValue: '=data["oro_product_related_products"].isSliderEnabled()'
         - '@setOption':
+            id: related_products
+            optionName: slider_options.use_slider_on_mobile
+            optionValue: '=data["oro_product_related_products"].isSliderEnabled()'
+        - '@setOption':
             id: related_product_line_item_form
             optionName: instance_name
             optionValue: related_products
