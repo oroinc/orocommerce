@@ -212,9 +212,10 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
             ->method('getProduct')
             ->willReturn($product);
 
-        $this->validator->validate($value, new QuantityUnitPrecision());
+        $constraint = new QuantityUnitPrecision();
+        $this->validator->validate($value, $constraint);
 
-        $this->buildViolation('oro.product.productlineitem.quantity.invalid_precision')
+        $this->buildViolation($constraint->message)
             ->setParameter('{{ unit }}', $unitCode)
             ->assertRaised();
     }
@@ -328,9 +329,10 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
             ->method('getProduct')
             ->willReturn($product);
 
-        $this->validator->validate($value, new QuantityUnitPrecision());
+        $constraint = new QuantityUnitPrecision();
+        $this->validator->validate($value, $constraint);
 
-        $this->buildViolation('oro.product.productlineitem.quantity.invalid_precision')
+        $this->buildViolation($constraint->message)
             ->setParameter('{{ unit }}', $unitCode)
             ->assertRaised();
     }
@@ -381,9 +383,10 @@ class QuantityUnitPrecisionValidatorTest extends ConstraintValidatorTestCase
         $value = new QuickAddRow(1, 'SKU1', $quantity, $unitCode);
         $value->setProduct($product);
 
-        $this->validator->validate($value, new QuantityUnitPrecision());
+        $constraint = new QuantityUnitPrecision();
+        $this->validator->validate($value, $constraint);
 
-        $this->buildViolation('oro.product.productlineitem.quantity.invalid_precision')
+        $this->buildViolation($constraint->message)
             ->setParameter('{{ unit }}', $unitCode)
             ->assertRaised();
     }

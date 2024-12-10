@@ -16,13 +16,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
  */
 class QuantityUnitPrecisionValidator extends ConstraintValidator
 {
-    public const ALIAS = 'oro_product_quantity_unit_precision';
-
-    private RoundingServiceInterface $roundingService;
-
-    public function __construct(RoundingServiceInterface $roundingService)
-    {
-        $this->roundingService = $roundingService;
+    public function __construct(
+        private readonly RoundingServiceInterface $roundingService
+    ) {
     }
 
     #[\Override]
@@ -104,7 +100,7 @@ class QuantityUnitPrecisionValidator extends ConstraintValidator
         if (\is_float($quantity) || \is_int($quantity)) {
             return $quantity;
         }
-        if (null === $quantity || '' === $quantity || !\is_string($quantity)) {
+        if (!\is_string($quantity) || '' === $quantity) {
             return null;
         }
 

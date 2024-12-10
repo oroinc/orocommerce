@@ -10,6 +10,8 @@ oro_api:
             headers:
                 X-Product-ID: sku
             request_type: ['rest', 'json_api', 'frontend_sku', 'frontend']
+    error_title_overrides:
+        'product kit item line item quantity range constraint': 'range constraint'
 
 oro_frontend:
     frontend_api:

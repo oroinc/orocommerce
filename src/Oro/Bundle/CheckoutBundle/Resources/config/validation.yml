@@ -155,7 +155,7 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
             -   Expression:
-                    expression: 'value && value.isEnabled()'
+                    expression: 'null === value || value.isEnabled()'
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
@@ -216,9 +216,7 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                         - order_line_item_to_checkout_line_item_convert
                         # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
                         - quote_demand_line_item_to_checkout_line_item_convert
-            -   Range:
-                    minPropertyPath: 'kitItem.minimumQuantity'
-                    maxPropertyPath: 'kitItem.maximumQuantity'
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityRange:
                     minMessage: 'oro.checkout.checkoutproductkititemlineitem.quantity.range.min_message'
                     maxMessage: 'oro.checkout.checkoutproductkititemlineitem.quantity.range.max_message'
                     notInRangeMessage: 'oro.checkout.checkoutproductkititemlineitem.quantity.range.not_in_range_message'
@@ -308,13 +306,13 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     properties:
         product:
             -   Expression:
-                    expression: 'value && value.isEnabled()'
+                    expression: 'null === value || value.isEnabled()'
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_shoppinglist
         quantity:
             -   Expression:
-                    expression: "this.getProduct() && (this.getProduct().isConfigurable() || value > 0)"
+                    expression: "null === value || value > 0 || !this.getProduct() || this.getProduct().isConfigurable()"
                     message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
@@ -339,9 +337,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_shoppinglist
-            -   Range:
-                    minPropertyPath: 'kitItem.minimumQuantity'
-                    maxPropertyPath: 'kitItem.maximumQuantity'
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityRange:
                     minMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.min_message'
                     maxMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.max_message'
                     notInRangeMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.not_in_range_message'

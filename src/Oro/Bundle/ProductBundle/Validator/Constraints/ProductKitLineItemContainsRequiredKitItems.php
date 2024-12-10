@@ -15,8 +15,8 @@ class ProductKitLineItemContainsRequiredKitItems extends Constraint
         self::MISSING_REQUIRED_KIT_ITEM => 'MISSING_REQUIRED_KIT_ITEM',
     ];
 
-    public string $message = 'oro.product.validators.product_kit_line_item_contains_required_kit_items'
-        . '.missing_required_kit_item';
+    public string $message =
+        'oro.product.validators.product_kit_line_item_contains_required_kit_items.missing_required_kit_item';
 
     #[\Override]
     public function getTargets(): array
