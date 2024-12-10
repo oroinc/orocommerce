@@ -66,6 +66,10 @@ const postParseModel = model => {
         return model.components;
     }
 
+    if (model.type !== 'textnode') {
+        model.origin = true;
+    }
+
     return model;
 };
 

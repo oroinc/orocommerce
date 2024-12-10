@@ -110,6 +110,7 @@ export default (BaseTypeView, {editor} = {}) => {
             const newModel = collection.add({
                 type: 'text',
                 wrapping: true,
+                origin: false,
                 stateModel: model.get('stateModel'),
                 tagName
             }, {
@@ -232,7 +233,7 @@ export default (BaseTypeView, {editor} = {}) => {
                 return;
             }
 
-            if (this.isSingleLine()) {
+            if (this.isSingleLine() && !this.model.get('origin')) {
                 em.get('UndoManager').skip(() => this.removeWrapper());
             }
         },
