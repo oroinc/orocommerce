@@ -52,7 +52,7 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                <div class="grid-col-6 grid-col-mobile-landscape-12">
+                <div class="grid-col-6 grid-col-mobile-landscape-12 items-center base-min-height">
                     {{ form_row(form.remove_source, removeElementOptions) }}
                 </div>
             {% endif %}

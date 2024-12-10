@@ -158,7 +158,7 @@
                 'configs': form.shipping_address.vars.configs|default({})|merge(customerAddressSelect2)
             }) }}
         </div>
-        <div class="grid-col-12">
+        <div class="grid-col-12 items-center base-min-height">
             {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
         </div>
     {% endif %}
@@ -270,6 +270,7 @@
                 {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
                 <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
                 {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
+                        'class': 'order-review-options__notes',
                         'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
                         'data-page-component-elastic-area': ''
                     }
@@ -282,7 +283,7 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                <div class="grid-col-12">
+                <div class="grid-col-12 items-center base-min-height">
                     {{ form_row(form.remove_source, removeElementOptions) }}
                 </div>
             {% endif %}

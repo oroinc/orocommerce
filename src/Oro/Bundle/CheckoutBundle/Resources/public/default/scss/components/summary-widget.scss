@@ -88,6 +88,14 @@
     }
 }
 
+@include breakpoint('mobile-big') {
+    .summary-widget {
+        &__summary {
+            padding: 0;
+        }
+    }
+}
+
 @include breakpoint('mobile-landscape') {
     .summary-widget {
         &__combined-bottons {

@@ -244,9 +244,13 @@
     }
 }
 
+.order-review-options__notes {
+    max-height: 300px;
+}
+
 @include breakpoint('desktop-small') {
     .single-page-checkout-view {
-        gap: spacing('base') spacing('xl');
+        gap: spacing('sm') spacing('xl');
         grid-template-columns: 1fr 752px;
         grid-template-rows: auto 1fr;
 
@@ -380,6 +384,10 @@
         .checkout {
             &__content-main {
                 margin-top: spacing('sm');
+            }
+
+            &__footer {
+                z-index: z('fixed') + 2;
             }
 
             &__footer-collapse {

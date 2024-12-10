@@ -10,9 +10,9 @@
     {% import '@OroUI/macros.html.twig' as UI %}
 
     {% if is_granted('oro_order_address_' ~ attr['data-address-type'] ~ '_allow_manual') %}
-        <div class="label--flex-container">
+        <div class="label--flex-container base-min-height">
             {{ form_label(form) }}
-            <button type="button" class="btn btn--flat"
+            <button type="button" class="btn btn--size-small btn--flat"
                 {{ UI.renderPageComponentAttributes({
                     view: 'orocheckout/js/app/views/add-address-button-view',
                     options: {
