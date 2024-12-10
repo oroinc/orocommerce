@@ -2,106 +2,85 @@
 
 namespace Oro\Bundle\PromotionBundle\Handler;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Exception\LogicException;
-use Oro\Bundle\PromotionBundle\Provider\EntityCouponsProviderInterface;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
+use Oro\Bundle\PromotionBundle\Manager\FrontendAppliedCouponManager;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Handle coupon applicability and apply it by code.
+ * The handler to apply a coupon to an entity.
+ * This handler must be used only on the storefront.
  */
-class FrontendCouponHandler extends AbstractCouponHandler
+class FrontendCouponHandler
 {
-    /**
-     * @var CouponApplicabilityValidationService
-     */
-    private $couponApplicabilityValidationService;
-
-    /**
-     * @var EntityCouponsProviderInterface
-     */
-    private $entityCouponsProvider;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
-    /**
-     * @var array
-     */
-    private $skippedFilters = [];
-
-    public function setCouponApplicabilityValidationService(
-        CouponApplicabilityValidationService $couponApplicabilityValidationService
+    public function __construct(
+        private readonly ManagerRegistry $doctrine,
+        private readonly EntityRoutingHelper $routingHelper,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly FrontendAppliedCouponManager $frontendAppliedCouponManager
     ) {
-        $this->couponApplicabilityValidationService = $couponApplicabilityValidationService;
     }
 
-    public function setEntityCouponsProviderService(EntityCouponsProviderInterface $entityCouponsProvider)
-    {
-        $this->entityCouponsProvider = $entityCouponsProvider;
-    }
-
-    public function setConfigManager(ConfigManager $configManager)
-    {
-        $this->configManager = $configManager;
-    }
-
-    public function disableFilter(string $filterClass)
-    {
-        $this->skippedFilters[$filterClass] = true;
-    }
-
-    #[\Override]
-    public function handle(Request $request)
-    {
-        $coupon = $this->getCouponForValidation($request);
-        if (!$coupon) {
-            return new JsonResponse([
-                'success' => false,
-                'errors' => ['oro.promotion.coupon.violation.invalid_coupon_code']
-            ]);
-        }
-
-        $entity = $this->getActualizedEntity($request);
-        $errors = $this->couponApplicabilityValidationService->getViolations(
-            $coupon,
-            $entity,
-            $this->skippedFilters
-        );
-
-        if (empty($errors) && !$this->promotionAwareHelper->isPromotionAware($entity)) {
-            $this->saveAppliedCoupon($coupon, $entity);
-        }
-
-        return new JsonResponse(['success' => empty($errors), 'errors' => $errors]);
-    }
-
-    #[\Override]
-    protected function getCouponForValidation(Request $request)
+    public function handle(Request $request): JsonResponse
     {
         $couponCode = $request->request->get('couponCode');
         if (!$couponCode) {
-            throw new LogicException('Coupon code is not specified in request parameters');
+            throw new \LogicException('The coupon code is not specified in request parameters.');
         }
 
-        $caseInsensitive = (bool)$this->configManager->get('oro_promotion.case_insensitive_coupon_search');
+        $entity = $this->getEntity($request);
+        if (null === $entity) {
+            return new JsonResponse([
+                'success' => false,
+                'errors' => [CouponApplicabilityValidationService::MESSAGE_PROMOTION_NOT_APPLICABLE]
+            ]);
+        }
+        if (!$this->authorizationChecker->isGranted('EDIT', $entity)) {
+            throw new AccessDeniedException('Edit is not allowed for the requested entity.');
+        }
 
-        return $this->getRepository(Coupon::class)->getSingleCouponByCode($couponCode, $caseInsensitive);
+        $this->eventDispatcher->dispatch(
+            new TotalCalculateBeforeEvent($entity, $request),
+            TotalCalculateBeforeEvent::NAME
+        );
+
+        $errors = new ArrayCollection();
+        $isCouponApplied = $this->frontendAppliedCouponManager->applyCoupon($entity, $couponCode, $errors);
+
+        return new JsonResponse(['success' => $isCouponApplied, 'errors' => $errors->toArray()]);
     }
 
-    private function saveAppliedCoupon(Coupon $coupon, object $entity)
+    private function getEntity(Request $request): ?object
     {
-        $appliedCoupon = $this->entityCouponsProvider->createAppliedCouponByCoupon($coupon);
-        $entity->addAppliedCoupon($appliedCoupon);
+        $entityClass = $this->getEntityClass($request);
+        $entityId = (int)$request->request->get('entityId');
 
-        $manager = $this->registry->getManagerForClass(AppliedCoupon::class);
-        $manager->persist($appliedCoupon);
-        $manager->flush($appliedCoupon);
+        return $entityId
+            ? $this->doctrine->getManagerForClass($entityClass)->find($entityClass, $entityId)
+            : null;
+    }
+
+    private function getEntityClass(Request $request): string
+    {
+        $entityClass = $request->request->get('entityClass');
+        if (!$entityClass) {
+            throw new \LogicException('The entity class is not specified in request parameters.');
+        }
+
+        $resolvedEntityClass = $this->routingHelper->resolveEntityClass($entityClass);
+        if (!class_exists($resolvedEntityClass)) {
+            throw new EntityNotFoundException(\sprintf('Cannot resolve entity class "%s".', $entityClass));
+        }
+
+        return $resolvedEntityClass;
     }
 }

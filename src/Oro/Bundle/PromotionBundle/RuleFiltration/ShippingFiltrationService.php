@@ -58,10 +58,11 @@ class ShippingFiltrationService extends AbstractSkippableFiltrationService
         ?string $shippingMethod,
         ?string $shippingMethodType
     ): bool {
-        $opt = $discountConfiguration->getOptions();
+        $options = $discountConfiguration->getOptions();
+        $shippingOptions = $options[ShippingDiscount::SHIPPING_OPTIONS] ?? [];
 
         return
-            $shippingMethod === $opt[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD]
-            && $shippingMethodType === $opt[ShippingDiscount::SHIPPING_OPTIONS][ShippingDiscount::SHIPPING_METHOD_TYPE];
+            $shippingMethod === ($shippingOptions[ShippingDiscount::SHIPPING_METHOD] ?? null)
+            && $shippingMethodType === ($shippingOptions[ShippingDiscount::SHIPPING_METHOD_TYPE] ?? null);
     }
 }

@@ -90,14 +90,6 @@ class PromotionRepositoryTest extends WebTestCase
         self::assertSame($expectedPromotion->getId(), $actual->getId());
     }
 
-    public function testGetPromotionsWithLabelsByIds(): void
-    {
-        $expectedPromotion = $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION);
-
-        $actual = $this->repository->getPromotionsWithLabelsByIds([$expectedPromotion->getId(), 0]);
-        self::assertSame([$expectedPromotion->getId() => $expectedPromotion], $actual);
-    }
-
     public function testGetPromotionsNamesByIds(): void
     {
         $promotion1 = $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION);
