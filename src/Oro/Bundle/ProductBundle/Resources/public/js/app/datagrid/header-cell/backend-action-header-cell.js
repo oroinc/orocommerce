@@ -15,8 +15,6 @@ define(function(require, exports, module) {
     const oroui = _.macros('oroui');
     const config = require('module-config').default(module.id);
 
-    const PRODUCT_ACTION_AREA_CSS_VAR = '--product-action-area-height';
-
     const shoppingListAddAction = config.shoppingListAddAction || {
         type: 'addproducts',
         data_identifier: 'product.id',
@@ -57,10 +55,6 @@ define(function(require, exports, module) {
         events: {
             'click [data-fullscreen-trigger]': 'showFullScreen',
             'click [data-undo-selection]': 'undoSelection'
-        },
-
-        listen: {
-            'layout:reposition mediator': 'handleAreaVisibility'
         },
 
         /**
@@ -151,6 +145,7 @@ define(function(require, exports, module) {
             try {
                 this[`_doActivate${this.renderMode}`](selectState);
                 this._renderSelectedItemsView(selectState);
+                mediator.trigger('layout:reposition');
             } catch (e) {
                 throw e;
             }
@@ -279,8 +274,6 @@ define(function(require, exports, module) {
                 $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
-
-            this.handleAreaVisibility();
         },
 
         _renderAsGroup() {
@@ -323,8 +316,6 @@ define(function(require, exports, module) {
                 $('[data-action-panel]').removeClass('hidden');
                 this.subview('actionsPanel').enable();
             }
-
-            this.handleAreaVisibility();
         },
 
         _renderAsFullscreen() {
@@ -363,14 +354,6 @@ define(function(require, exports, module) {
             });
             this.defineRenderingStrategy();
             fullscreen.show();
-        },
-
-        handleAreaVisibility() {
-            if (this.$el.is(':visible')) {
-                document.body.style.setProperty(PRODUCT_ACTION_AREA_CSS_VAR, `${this.$el.height()}px`);
-            } else {
-                document.body.style.removeProperty(PRODUCT_ACTION_AREA_CSS_VAR);
-            }
         },
 
         onShowFullScreen() {

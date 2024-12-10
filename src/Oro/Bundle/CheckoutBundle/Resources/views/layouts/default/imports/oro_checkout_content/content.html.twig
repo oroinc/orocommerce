@@ -210,7 +210,8 @@
 
 {% block __oro_checkout_content__checkout_order_summary_totals_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' summary-wrapper'
+        '~class': ' summary-wrapper',
+        'data-bottom-bar': '16'
     }) %}
 
     <div {{ block('block_attributes') }}>
