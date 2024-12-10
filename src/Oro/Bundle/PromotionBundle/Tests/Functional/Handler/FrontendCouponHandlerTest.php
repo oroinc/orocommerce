@@ -238,7 +238,9 @@ class FrontendCouponHandlerTest extends WebTestCase
         try {
             /** @var Checkout $entity */
             $entity = $this->getReference(LoadCheckoutData::PROMOTION_CHECKOUT_1);
-            $code = strtoupper($this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getCode());
+            $code = strtoupper(
+                $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getCode()
+            );
             $postData = [
                 'entityClass' => Checkout::class,
                 'entityId' => $entity->getId(),
