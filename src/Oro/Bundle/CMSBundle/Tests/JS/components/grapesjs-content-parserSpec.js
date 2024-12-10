@@ -45,7 +45,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const str = '<div></div>';
             const result = [
                 {
-                    tagName: 'div'
+                    tagName: 'div',
+                    origin: true
                 }
             ];
             expect(htmlParser(str).html).toEqual(result);
@@ -55,7 +56,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const str = '<article></article>';
             const result = [
                 {
-                    tagName: 'article'
+                    tagName: 'article',
+                    origin: true
                 }
             ];
             expect(htmlParser(str).html).toEqual(result);
@@ -72,7 +74,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         'data-one': 'test4',
                         'id': 'test1',
                         'strange': 'test5'
-                    }
+                    },
+                    origin: true
                 }
             ];
             expect(htmlParser(str).html).toEqual(result);
@@ -87,6 +90,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     attributes: {
                         id: 'test1'
                     },
+                    origin: true,
                     style: {
                         color: 'black',
                         width: '100px',
@@ -105,6 +109,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     attributes: {
                         id: 'test1'
                     },
+                    origin: true,
                     classes: ['test2', 'test3', 'test4']
                 }
             ];
@@ -120,7 +125,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     attributes: {
                         id: 'test1',
                         src: './index.html'
-                    }
+                    },
+                    origin: true
                 }
             ];
 
@@ -135,6 +141,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     attributes: {
                         id: 'test1'
                     },
+                    origin: true,
                     type: 'text',
                     components: [
                         {
@@ -161,10 +168,12 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 classes: ['quote'],
                 type: 'quote',
                 textComponent: true,
+                origin: true,
                 components: [
                     {
                         tagName: 'i',
                         type: 'text',
+                        origin: true,
                         ...textBlockOptions,
                         components: [
                             {
@@ -190,9 +199,11 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         id: 'test1'
                     },
                     type: 'text',
+                    origin: true,
                     components: [
                         {
-                            tagName: 'br'
+                            tagName: 'br',
+                            origin: true
                         },
                         {
                             content: ' test2 ',
@@ -200,7 +211,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: ''
                         },
                         {
-                            tagName: 'br'
+                            tagName: 'br',
+                            origin: true
                         },
                         {
                             content: ' a b ',
@@ -217,6 +229,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             type: 'text',
                             tagName: 'b',
+                            origin: true,
                             ...textBlockOptions
                         },
                         {
@@ -234,6 +247,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
+                            origin: true,
                             ...textBlockOptions
                         },
                         {
@@ -251,6 +265,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'u',
                             type: 'text',
+                            origin: true,
                             ...textBlockOptions
                         },
                         {
@@ -271,6 +286,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const result = [
                 {
                     tagName: 'div',
+                    origin: true,
                     attributes: {
                         id: 'test1'
                     },
@@ -290,6 +306,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                 }
                             ],
                             tagName: 'b',
+                            origin: true,
                             ...textBlockOptions,
                             type: 'text'
                         },
@@ -308,6 +325,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
+                            origin: true,
                             ...textBlockOptions
                         },
                         {
@@ -318,6 +336,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         {
                             tagName: 'div',
                             type: 'text',
+                            origin: true,
                             components: [
                                 {
                                     type: 'textnode',
@@ -342,6 +361,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'i',
                             type: 'text',
+                            origin: true,
                             ...textBlockOptions
                         },
                         {
@@ -359,6 +379,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             ],
                             tagName: 'u',
                             type: 'text',
+                            origin: true,
                             ...textBlockOptions
                         },
                         {
@@ -381,10 +402,12 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const result = [{
                 tagName: 'h3',
                 type: 'text',
+                origin: true,
                 components: [{
                     tagName: 'span',
                     type: 'text',
                     ...textBlockOptions,
+                    origin: true,
                     components: [{
                         content: 'Lorem',
                         tagName: '',
@@ -395,15 +418,18 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 tagName: 'div',
                 attributes: {},
                 classes: ['frontpage-news-container'],
+                origin: true,
                 components: [{
                     tagName: 'div',
                     attributes: {},
                     classes: ['frontpage-news-left'],
+                    origin: true,
                     components: [{
                         type: 'video',
                         tagName: 'iframe',
                         provider: 'ytnc',
                         initial: true,
+                        origin: true,
                         src: 'https://www.youtube-nocookie.com/embed/test?&controls=0&showinfo=0&rel=0',
                         attributes: {
                             allowfullscreen: 'allowfullscreen',
@@ -415,14 +441,17 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     attributes: {},
                     classes: ['frontpage-news-right'],
                     type: 'text',
+                    origin: true,
                     components: [{
                         tagName: 'div',
                         type: 'text',
                         ...textBlockOptions,
+                        origin: true,
                         components: [{
                             tagName: 'h1',
                             type: 'text',
                             ...textBlockOptions,
+                            origin: true,
                             components: [{
                                 content: 'Lorem ipsum',
                                 tagName: '',
@@ -432,10 +461,12 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'div',
                             type: 'text',
                             ...textBlockOptions,
+                            origin: true,
                             components: [{
                                 tagName: 'span',
                                 type: 'text',
                                 ...textBlockOptions,
+                                origin: true,
                                 components: [{
                                     content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                                     tagName: '',
@@ -446,6 +477,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'div',
                             type: 'text',
                             ...textBlockOptions,
+                            origin: true,
                             components: [{
                                 content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
                                 tagName: '',
@@ -470,9 +502,11 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     attributes: {
                         id: 'test1'
                     },
+                    origin: true,
                     components: [
                         {
-                            tagName: 'div'
+                            tagName: 'div',
+                            origin: true
                         },
                         {
                             content: ' ',
@@ -483,7 +517,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'footer',
                             attributes: {
                                 id: 'test2'
-                            }
+                            },
+                            origin: true
                         },
                         {
                             content: '  Text mid ',
@@ -494,7 +529,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'div',
                             attributes: {
                                 id: 'last'
-                            }
+                            },
+                            origin: true
                         }
                     ]
                 }
@@ -509,6 +545,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 {
                     tagName: 'div',
                     type: 'text',
+                    origin: true,
                     components: [
                         {
                             tagName: '',
@@ -519,6 +556,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'div',
                             type: 'text',
                             ...textBlockOptions,
+                            origin: true,
                             components: [{
                                 type: 'textnode',
                                 content: 'nested',
@@ -543,6 +581,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 {
                     tagName: 'div',
                     type: 'text',
+                    origin: true,
                     components: [
                         {
                             tagName: '',
@@ -553,6 +592,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'div',
                             type: 'text',
                             ...textBlockOptions,
+                            origin: true,
                             components: [
                                 {
                                     tagName: 'span',
@@ -561,6 +601,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                         'data-type': 'text-style'
                                     },
                                     textComponent: true,
+                                    origin: true,
                                     components: [
                                         {
                                             type: 'textnode',
@@ -589,6 +630,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 {
                     tagName: 'div',
                     type: 'text',
+                    origin: true,
                     components: [
                         {
                             tagName: '',
@@ -599,11 +641,13 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'div',
                             type: 'text',
                             ...textBlockOptions,
+                            origin: true,
                             components: [
                                 {
                                     tagName: 'span',
                                     type: 'text',
                                     ...textBlockOptions,
+                                    origin: true,
                                     components: [
                                         {
                                             type: 'textnode',
@@ -630,10 +674,12 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const str = '<div></div><div></div>';
             const result = [
                 {
-                    tagName: 'div'
+                    tagName: 'div',
+                    origin: true
                 },
                 {
-                    tagName: 'div'
+                    tagName: 'div',
+                    origin: true
                 }
             ];
             expect(htmlParser(str).html).toEqual(result);
@@ -645,10 +691,12 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const resHtml = [
                 {
                     tagName: 'div',
+                    origin: true,
                     components: []
                 },
                 {
-                    tagName: 'div'
+                    tagName: 'div',
+                    origin: true
                 }
             ];
             const resCss = [
@@ -676,6 +724,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                 {
                     tagName: 'div',
                     type: 'text',
+                    origin: true,
                     components: [
                         {
                             type: 'textnode',
@@ -686,6 +735,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                             tagName: 'p',
                             ...textBlockOptions,
                             type: 'text',
+                            origin: true,
                             components: [
                                 {
                                     type: 'textnode',
@@ -721,6 +771,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         'data-test': 'test-value'
                     },
                     type: 'text',
+                    origin: true,
                     components: [
                         {
                             type: 'textnode',
@@ -748,6 +799,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         'data-test': 'test-value'
                     },
                     type: 'text',
+                    origin: true,
                     components: [{
                         type: 'textnode',
                         tagName: '',
@@ -765,6 +817,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     tagName: 'div',
                     attributes: {},
                     type: 'text',
+                    origin: true,
                     test: {
                         prop1: 'value1',
                         prop2: 10,
@@ -789,6 +842,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     attributes: {},
                     type: 'text',
                     test: ['value1', 'value2'],
+                    origin: true,
                     components: [{
                         type: 'textnode',
                         tagName: '',
@@ -809,6 +863,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const result = [
                 {
                     tagName: 'div',
+                    origin: true,
                     components: [
                         {
                             type: 'svg',
@@ -817,6 +872,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                 xmlns: 'http://www.w3.org/2000/svg',
                                 viewBox: '0 0 24 24'
                             },
+                            origin: true,
                             components: [
                                 {
                                     tagName: 'path',
@@ -824,6 +880,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                         d: 'M13 12h7v1.5h-7m0-4h7V11h-7m0 3.5h7V16h-7m8-12H3c-1.1 0-2 .9-2 2v13c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2m0 15h-9V6h9',
                                     },
                                     type: 'svg-in',
+                                    origin: true
                                 }
                             ]
                         }
@@ -839,11 +896,13 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
             const result = [{
                 tagName: 'section',
                 type: 'text',
+                origin: true,
                 components: [
                     {
                         tagName: 'h1',
                         type: 'text',
                         ...textBlockOptions,
+                        origin: true,
                         components: [{
                             tagName: '',
                             type: 'textnode',
@@ -854,6 +913,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         tagName: 'p',
                         type: 'text',
                         ...textBlockOptions,
+                        origin: true,
                         components: [{
                             tagName: '',
                             type: 'textnode',
@@ -872,18 +932,21 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     '<div><a class="btn">{{ widget_icon("icon-before") }}Link text{{ widget_icon("icon-after") }}</a></div>',
                     [{
                         tagName: 'div',
+                        origin: true,
                         components: [{
                             type: 'link-button',
                             tagName: 'a',
                             attributes: {},
                             classes: ['btn'],
+                            origin: true,
                             components: [{
                                 type: 'icon',
                                 attributes: {
                                     'data-init-icon': 'icon-before'
                                 },
                                 iconId: 'icon-before',
-                                tagName: 'svg'
+                                tagName: 'svg',
+                                origin: true
                             }, {
                                 type: 'textnode',
                                 tagName: '',
@@ -894,7 +957,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                     'data-init-icon': 'icon-after'
                                 },
                                 iconId: 'icon-after',
-                                tagName: 'svg'
+                                tagName: 'svg',
+                                origin: true
                             }]
                         }]
                     }]
@@ -906,13 +970,15 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         tagName: 'a',
                         attributes: {},
                         classes: ['btn'],
+                        origin: true,
                         components: [{
                             type: 'icon',
                             attributes: {
                                 'data-init-icon': 'icon-before'
                             },
                             iconId: 'icon-before',
-                            tagName: 'svg'
+                            tagName: 'svg',
+                            origin: true
                         }, {
                             type: 'textnode',
                             tagName: '',
@@ -923,6 +989,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         tagName: 'a',
                         attributes: {},
                         classes: ['btn'],
+                        origin: true,
                         components: [{
                                 type: 'textnode',
                                 tagName: '',
@@ -933,7 +1000,8 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                                     'data-init-icon': 'icon-after'
                                 },
                                 iconId: 'icon-after',
-                                tagName: 'svg'
+                                tagName: 'svg',
+                                origin: true
                         }]
                     }]
                 ],
@@ -944,10 +1012,12 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                         classes: ['block'],
                         attributes: {},
                         tagName: 'div',
+                        origin: true,
                         components: [{
                             type: 'icon',
                             tagName: 'svg',
                             iconId: 'icon-id',
+                            origin: true,
                             attributes: {
                                 'data-init-icon': 'icon-id',
                                 'id': 'test-id',
@@ -972,6 +1042,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     tagName: 'h1',
                     type: 'text',
                     ...textBlockOptions,
+                    origin: true,
                     components: [{
                         tagName: '',
                         type: 'textnode',
@@ -982,6 +1053,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     tagName: 'p',
                     type: 'text',
                     ...textBlockOptions,
+                    origin: true,
                     components: [{
                         tagName: '',
                         type: 'textnode',
@@ -992,6 +1064,7 @@ describe('orocms/js/app/grapesjs/plugins/grapesjs-content-parser', () => {
                     tagName: 'p',
                     type: 'text',
                     ...textBlockOptions,
+                    origin: true,
                     components: [{
                         tagName: '',
                         type: 'textnode',
