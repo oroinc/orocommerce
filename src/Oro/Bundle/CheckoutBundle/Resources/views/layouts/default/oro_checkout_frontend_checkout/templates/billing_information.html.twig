@@ -10,8 +10,13 @@
         </div>
     {% else %}
         {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
-        {% set addresses = form.billing_address.customerAddress.vars.choices %}
-        {% set hasCustomAddress = checkout.customerUser == null or checkout.customerUser.isGuest or addresses|length <= 1 %}
+        {% set addresses = form.billing_address.customerAddress.vars.choices|default([]) %}
+        {% set showAddressForm =
+                checkout.customerUser == null or
+                checkout.customerUser.isGuest or
+                addresses|length <= 1
+        %}
+        {% set hideAddressSelect = form.billing_address.customerAddress.vars.address_count == 0 %}
         <div class="grid checkout-form__container" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orocheckout/js/app/views/address-view',
@@ -29,10 +34,7 @@
                     dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
                     dropdownAutoWidth: false
                 } %}
-                {% if
-                    form.billing_address.customerAddress.vars.value|default('') is empty or
-                    form.billing_address.customerAddress.vars.value|default('') == '0'
-                %}
+                {% if hideAddressSelect %}
                     {% set customerAddressClass = ' hidden' %}
                     {% set customerAddressSelect2 = customerAddressSelect2|merge({
                          containerCssClass: 'hidden'
@@ -50,7 +52,7 @@
             </div>
 
             <div class="grid grid-columns-1 grid-col-12 checkout-form__billing-address">
-                {% if hasCustomAddress %}
+                {% if showAddressForm %}
                     {{ address.address_form(form.billing_address, form.save_billing_address, form.email) }}
                 {% endif %}
 
@@ -60,7 +62,7 @@
                     </div>
                 {% endif %}
 
-                {% if hasCustomAddress != true and is_granted('oro_order_address_billing_allow_manual') %}
+                {% if showAddressForm != true and is_granted('oro_order_address_billing_allow_manual') %}
                     <div class="grid-col">
                         {{ UI.clientBtn({
                             'id': form.billing_address.customerAddress.vars.id ~ '-btn',
