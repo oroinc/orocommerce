@@ -224,6 +224,10 @@
         }
     }
 
+    &__address-form-grid {
+        --grid-gap: #{spacing('xs')};
+    }
+
     .checkout-form__img {
         max-width: $checkout-view-payment-methods-image-max-width;
     }
@@ -377,6 +381,10 @@
 
         .checkout-order-summary__edit-link {
             margin-bottom: spacing('xs');
+        }
+
+        .summary-widget__summary {
+            padding: 0;
         }
     }
 
