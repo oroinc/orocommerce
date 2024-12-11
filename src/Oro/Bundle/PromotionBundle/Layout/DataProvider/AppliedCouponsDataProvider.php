@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Layout\DataProvider;
 
 use Oro\Bundle\PromotionBundle\Entity\AppliedCoupon;
-use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Manager\FrontendAppliedCouponManager;
 use Oro\Bundle\PromotionBundle\Model\FrontendAppliedCoupon;
 
@@ -30,7 +29,7 @@ class AppliedCouponsDataProvider
     }
 
     /**
-     * @return Promotion[] [promotion id => promotion, ...]
+     * @return array [promotion id => promotion, ...]
      */
     public function getPromotionsForAppliedCoupons(object $entity): array
     {
