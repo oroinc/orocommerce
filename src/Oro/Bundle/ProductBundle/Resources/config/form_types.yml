@@ -364,3 +364,8 @@ services:
             - '@doctrine'
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
+
+    oro_product.extension.js_validation.constraint_converter.product_kit_item_line_item_quantity_range:
+        class: Oro\Bundle\ProductBundle\Form\Extension\JsValidation\ProductKitItemLineItemQuantityRangeConstraintConverter
+        tags:
+            - { name: oro_form.extension.js_validation.constraint_converter }

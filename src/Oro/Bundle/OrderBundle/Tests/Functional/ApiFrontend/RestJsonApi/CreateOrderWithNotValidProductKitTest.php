@@ -498,12 +498,6 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
-                    'title' => 'product kit line item contains required kit items constraint',
-                    'detail' => 'Product kit "product-kit-1" is missing the required kit item '
-                        . '"PKSKU1 - Unit of Quantity Taken from Product Kit"',
-                    'source' => ['pointer' => '/included/3/relationships/kitItemLineItems/data']
-                ],
-                [
                     'title' => 'not null constraint',
                     'detail' => 'Product kit item must not be blank',
                     'source' => ['pointer' => '/included/4/relationships/kitItem/data']

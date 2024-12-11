@@ -25,11 +25,11 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
 
         $localization = $this->createMock(Localization::class);
-        $this->localizationHelper
+        $this->localizationHelper->expects(self::any())
             ->method('getCurrentLocalization')
             ->willReturn($localization);
 
-        $this->localizationHelper
+        $this->localizationHelper->expects(self::any())
             ->method('getLocalizedValue')
             ->with(self::isInstanceOf(Collection::class), $localization)
             ->willReturnCallback(static fn (Collection $value) => $value[0]);
@@ -71,13 +71,11 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
     public function testValidateWhenNotKit(): void
     {
         $lineItem = $this->createMock(ProductKitItemLineItemsAwareStub::class);
-        $lineItem
-            ->expects(self::once())
+        $lineItem->expects(self::once())
             ->method('getProduct')
             ->willReturn(new Product());
 
-        $lineItem
-            ->expects(self::never())
+        $lineItem->expects(self::never())
             ->method('getKitItemLineItems');
 
         $this->validator->validate($lineItem, new ProductKitLineItemContainsRequiredKitItems());
@@ -145,6 +143,36 @@ class ProductKitLineItemContainsRequiredKitItemsValidatorTest extends Constraint
             ->addKitItemLineItem($kitItemLineItem2);
 
         $this->validator->validate($lineItem, new ProductKitLineItemContainsRequiredKitItems());
+
+        $this->assertNoViolation();
+    }
+
+    public function testValidateWhenHasKitItemLineItemsWithoutKitItem(): void
+    {
+        $kitItem1 = (new ProductKitItem())->setOptional(false);
+        $kitItem2 = (new ProductKitItem())->setOptional(true);
+        $kitItem3 = (new ProductKitItemStub())
+            ->setOptional(false)
+            ->setDefaultLabel('sample kit item');
+
+        $kitItemLineItem1 = (new ProductKitItemLineItemStub(142))
+            ->setKitItem($kitItem1);
+        $kitItemLineItem2 = (new ProductKitItemLineItemStub(143));
+
+        $productKit = (new Product())
+            ->setSku('sample-sku')
+            ->setType(Product::TYPE_KIT)
+            ->addKitItem($kitItem1)
+            ->addKitItem($kitItem2)
+            ->addKitItem($kitItem3);
+
+        $lineItem = (new ProductKitItemLineItemsAwareStub(42))
+            ->setProduct($productKit)
+            ->addKitItemLineItem($kitItemLineItem1)
+            ->addKitItemLineItem($kitItemLineItem2);
+
+        $constraint = new ProductKitLineItemContainsRequiredKitItems();
+        $this->validator->validate($lineItem, $constraint);
 
         $this->assertNoViolation();
     }

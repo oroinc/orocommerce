@@ -37,12 +37,12 @@ Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
     properties:
         product:
             -   Expression:
-                    expression: 'value && value.isEnabled()'
+                    expression: 'null === value || value.isEnabled()'
                     groups:
                         # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
                         - product_kit_item_product_is_available_for_purchase
             -   Expression:
-                    expression: 'value && value.isSimple()'
+                    expression: 'null === value || value.isSimple()'
                     groups:
                         # Used by oro_shopping_list.product_kit.checker.product_kit_item_product_availability_checker
                         - product_kit_item_product_is_available_for_purchase
@@ -133,7 +133,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                         # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
                         - add_product
             -   Expression:
-                    expression: 'value && value.isEnabled()'
+                    expression: 'null === value || value.isEnabled()'
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
                         - create
@@ -165,7 +165,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
                         # Used by \Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType
                         - add_product
             -   Expression:
-                    expression: "this.getProduct() && (this.getProduct().isConfigurable() || value > 0)"
+                    expression: "null === value || value > 0 || !this.getProduct() || this.getProduct().isConfigurable()"
                     message: 'oro.shoppinglist.lineitem.quantity.greater_than_zero'
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Form\Type\LineItemType
@@ -275,9 +275,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
                         - add_product_kit_line_item
                         # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                         - datagrid_line_items_data
-            -   Range:
-                    minPropertyPath: 'kitItem.minimumQuantity'
-                    maxPropertyPath: 'kitItem.maximumQuantity'
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityRange:
                     notInRangeMessage: 'oro.shoppinglist.product_kit_item_line_item.quantity.range.not_in_range_message'
                     groups:
                         # Used by \Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxProductKitLineItemController

@@ -107,7 +107,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     public function testTryToUpdate()
     {
         $response = $this->patch(
-            ['entity' => 'orderaddresses', 'id' => '<toString(@order1_discount_percent->id)>'],
+            ['entity' => 'orderaddresses', 'id' => '<toString(@order1_billing_address->id)>'],
             [],
             [],
             false
@@ -118,7 +118,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     public function testTryToDelete()
     {
         $response = $this->delete(
-            ['entity' => 'orderaddresses', 'id' => '<toString(@order1_discount_percent->id)>'],
+            ['entity' => 'orderaddresses', 'id' => '<toString(@order1_billing_address->id)>'],
             [],
             [],
             false
@@ -130,7 +130,7 @@ class OrderAddressForBuyerTest extends FrontendRestJsonApiTestCase
     {
         $response = $this->cdelete(
             ['entity' => 'orderaddresses'],
-            ['filter' => ['id' => '<toString(@order1_discount_percent->id)>']],
+            ['filter' => ['id' => '<toString(@order1_billing_address->id)>']],
             [],
             false
         );

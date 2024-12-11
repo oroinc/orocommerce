@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Symfony\Component\Validator\Constraint;
@@ -13,29 +12,27 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Exception\UnexpectedValueException;
 
 /**
- * Constraint validator that checks if a product kit line item contains all required kit item line items.
+ * Validates that a product kit line item contains all required kit item line items.
  */
 class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintValidator
 {
-    private LocalizationHelper $localizationHelper;
-
-    public function __construct(LocalizationHelper $localizationHelper)
-    {
-        $this->localizationHelper = $localizationHelper;
+    public function __construct(
+        private readonly LocalizationHelper $localizationHelper
+    ) {
     }
 
     /**
-     * @param ProductKitItemLineItemsAwareInterface|null $value
-     * @param ProductKitLineItemContainsRequiredKitItems $constraint
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     #[\Override]
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
         if (!$constraint instanceof ProductKitLineItemContainsRequiredKitItems) {
             throw new UnexpectedTypeException($constraint, ProductKitLineItemContainsRequiredKitItems::class);
         }
 
-        if ($value?->getProduct()?->isKit() !== true) {
+        if (null === $value) {
             return;
         }
 
@@ -43,26 +40,33 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
             throw new UnexpectedValueException($value, ProductKitItemLineItemsAwareInterface::class);
         }
 
-        $requiredKitItemLineItems = $this->getPresentRequiredKitItems($value->getKitItemLineItems());
+        $product = $value->getProduct();
+        if (null === $product) {
+            return;
+        }
 
+        if (!$product->isKit()) {
+            return;
+        }
+
+        if ($this->hasKitItemLineItemsWithoutKitItem($value->getKitItemLineItems())) {
+            return;
+        }
+
+        $requiredKitItemLineItems = $this->getPresentRequiredKitItems($value->getKitItemLineItems());
         $localization = $this->localizationHelper->getCurrentLocalization();
-        foreach ($value->getProduct()->getKitItems() as $kitItem) {
+        foreach ($product->getKitItems() as $kitItem) {
             if ($kitItem->isOptional()) {
                 continue;
             }
-
             if (!isset($requiredKitItemLineItems[spl_object_hash($kitItem)])) {
-                $kitItemLabel = (string)$this->localizationHelper
-                    ->getLocalizedValue($kitItem->getLabels(), $localization);
-                $productSku = $value->getProduct()->getSku();
-
-                $this->context->buildViolation(
-                    $constraint->message,
-                    [
-                        '{{ product_kit_sku }}' => $this->formatValue($productSku),
-                        '{{ product_kit_item_label }}' => $this->formatValue($kitItemLabel),
-                    ]
-                )
+                $this->context
+                    ->buildViolation($constraint->message, [
+                        '{{ product_kit_sku }}' => $this->formatValue($product->getSku()),
+                        '{{ product_kit_item_label }}' => $this->formatValue(
+                            (string)$this->localizationHelper->getLocalizedValue($kitItem->getLabels(), $localization)
+                        )
+                    ])
                     ->atPath('kitItemLineItems')
                     ->setCause($value)
                     ->setCode(ProductKitLineItemContainsRequiredKitItems::MISSING_REQUIRED_KIT_ITEM)
@@ -71,21 +75,28 @@ class ProductKitLineItemContainsRequiredKitItemsValidator extends ConstraintVali
         }
     }
 
-    /**
-     * @param Collection<ProductKitItemLineItemInterface> $kitItemLineItems
-     *
-     * @return array<ProductKitItem>
-     */
+    private function hasKitItemLineItemsWithoutKitItem(Collection $kitItemLineItems): bool
+    {
+        /** @var ProductKitItemLineItemInterface $kitItemLineItem */
+        foreach ($kitItemLineItems as $kitItemLineItem) {
+            if (null === $kitItemLineItem->getKitItem()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function getPresentRequiredKitItems(Collection $kitItemLineItems): array
     {
         $requiredKitItems = [];
+        /** @var ProductKitItemLineItemInterface $kitItemLineItem */
         foreach ($kitItemLineItems as $kitItemLineItem) {
             $kitItem = $kitItemLineItem->getKitItem();
-            if ($kitItem === null || $kitItem->isOptional()) {
+            if (null === $kitItem || $kitItem->isOptional()) {
                 continue;
             }
-
-            $requiredKitItems[spl_object_hash($kitItem)] = $kitItem;
+            $requiredKitItems[spl_object_hash($kitItem)] = true;
         }
 
         return $requiredKitItems;
