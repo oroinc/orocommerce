@@ -2,52 +2,93 @@
 
 namespace Oro\Bundle\PromotionBundle\Handler;
 
+use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\EntityBundle\Exception\EntityNotFoundException;
+use Oro\Bundle\EntityBundle\Tools\EntityRoutingHelper;
+use Oro\Bundle\PricingBundle\Event\TotalCalculateBeforeEvent;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
-use Oro\Bundle\PromotionBundle\Exception\LogicException;
+use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 use Oro\Bundle\PromotionBundle\ValidationService\CouponApplicabilityValidationService;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
-class CouponValidationHandler extends AbstractCouponHandler
+/**
+ * The handler to validate coupons applied to an entity.
+ */
+class CouponValidationHandler
 {
-    /**
-     * @var CouponApplicabilityValidationService
-     */
-    private $couponApplicabilityValidationService;
-
-    public function setCouponApplicabilityValidationService(
-        CouponApplicabilityValidationService $couponApplicabilityValidationService
+    public function __construct(
+        private readonly ManagerRegistry $doctrine,
+        private readonly EntityRoutingHelper $routingHelper,
+        private readonly EventDispatcherInterface $eventDispatcher,
+        private readonly AuthorizationCheckerInterface $authorizationChecker,
+        private readonly PromotionAwareEntityHelper $promotionAwareHelper,
+        private readonly CouponApplicabilityValidationService $couponApplicabilityValidationService
     ) {
-        $this->couponApplicabilityValidationService = $couponApplicabilityValidationService;
     }
 
-    #[\Override]
-    public function handle(Request $request)
+    public function handle(Request $request): JsonResponse
     {
-        $coupon = $this->getCouponForValidation($request);
-        $entity = $this->getActualizedEntity($request);
+        $couponId = $request->request->get('couponId');
+        if (!$couponId) {
+            throw new \LogicException('The coupon ID is not specified in request parameters.');
+        }
+
+        $entity = $this->getEntity($request);
+        if (null === $entity) {
+            return new JsonResponse([
+                'success' => false,
+                'errors' => [CouponApplicabilityValidationService::MESSAGE_PROMOTION_NOT_APPLICABLE]
+            ]);
+        }
+        if (!$this->authorizationChecker->isGranted('EDIT', $entity)) {
+            throw new AccessDeniedException();
+        }
+
+        $coupon = $this->doctrine->getManagerForClass(Coupon::class)->find(Coupon::class, $couponId);
+        if (!$coupon) {
+            throw new \RuntimeException(\sprintf('Cannot find "%s" entity with ID "%s".', Coupon::class, $couponId));
+        }
+
+        $this->eventDispatcher->dispatch(
+            new TotalCalculateBeforeEvent($entity, $request),
+            TotalCalculateBeforeEvent::NAME
+        );
+
         $errors = $this->couponApplicabilityValidationService->getViolations($coupon, $entity);
 
         return new JsonResponse(['success' => empty($errors), 'errors' => $errors]);
     }
 
-    #[\Override]
-    protected function getCouponForValidation(Request $request)
+    private function getEntity(Request $request): ?object
     {
-        $couponId = $request->request->get('couponId');
-        if (!$couponId) {
-            throw new LogicException('Coupon id is not specified in request parameters');
+        $entityClass = $this->getEntityClass($request);
+        $entityId = (int)$request->request->get('entityId');
+
+        return $entityId
+            ? $this->doctrine->getManagerForClass($entityClass)->find($entityClass, $entityId)
+            : null;
+    }
+
+    private function getEntityClass(Request $request): string
+    {
+        $entityClass = $request->request->get('entityClass');
+        if (!$entityClass) {
+            throw new \LogicException('The entity class is not specified in request parameters.');
         }
 
-        $coupon = $this->getRepository(Coupon::class)->find($couponId);
-        if (!$coupon) {
-            throw new \RuntimeException(sprintf(
-                'Cannot find "%s" entity with id "%s"',
-                Coupon::class,
-                $couponId
-            ));
+        $resolvedEntityClass = $this->routingHelper->resolveEntityClass($entityClass);
+        if (!class_exists($resolvedEntityClass)) {
+            throw new EntityNotFoundException(\sprintf('Cannot resolve entity class "%s".', $entityClass));
         }
 
-        return $coupon;
+        if (!$this->promotionAwareHelper->isCouponAware($entityClass)) {
+            throw new \LogicException('The entity must be coupon aware.');
+        }
+
+        return $resolvedEntityClass;
     }
 }

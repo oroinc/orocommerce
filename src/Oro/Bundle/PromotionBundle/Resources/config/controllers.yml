@@ -20,6 +20,7 @@ services:
             - ['setContainer', ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_promotion.handler.coupon_validation_handler, key: Oro\Bundle\PromotionBundle\Handler\CouponValidationHandler }
 
     Oro\Bundle\PromotionBundle\Controller\CouponController:
         calls:
@@ -33,3 +34,5 @@ services:
         tags:
             - { name: container.service_subscriber }
             - { name: container.service_subscriber, id: oro_promotion.entity_promotion_aware_helper, key: Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper }
+            - { name: container.service_subscriber, id: oro_promotion.handler.frontend_coupon_handler, key: Oro\Bundle\PromotionBundle\Handler\FrontendCouponHandler }
+            - { name: container.service_subscriber, id: oro_promotion.handler.frontend_coupon_remove_handler, key: Oro\Bundle\PromotionBundle\Handler\FrontendCouponRemoveHandler }

@@ -40,7 +40,7 @@ class LoadPromotionData extends AbstractLoadPromotionData
             ],
             self::ORDER_AMOUNT_PROMOTION => [
                 'rule' => [
-                    'name' => 'Order percent promotion name',
+                    'name' => 'Order amount promotion name',
                     'sortOrder' => 200,
                     'enabled' => true,
                 ],

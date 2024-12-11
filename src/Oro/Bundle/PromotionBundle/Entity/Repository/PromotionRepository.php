@@ -102,30 +102,6 @@ class PromotionRepository extends ServiceEntityRepository
         return $this->findOneBy(['productsSegment' => $segment]);
     }
 
-    /**
-     * @param int[] $ids
-     *
-     * @return Promotion[] [promotion id => promotion, ...]
-     */
-    public function getPromotionsWithLabelsByIds(array $ids): array
-    {
-        /** @var Promotion[] $promotions */
-        $promotions = $this->createQueryBuilder('p')
-            ->join('p.rule', 'rule')
-            ->leftJoin('p.labels', 'labels')
-            ->where('p.id IN (:ids)')
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getResult();
-
-        $result = [];
-        foreach ($promotions as $promotion) {
-            $result[$promotion->getId()] = $promotion;
-        }
-
-        return $result;
-    }
-
     private static function getDiscountConfigParamValue(string $name, ?string $value): string
     {
         if (null === $value) {
