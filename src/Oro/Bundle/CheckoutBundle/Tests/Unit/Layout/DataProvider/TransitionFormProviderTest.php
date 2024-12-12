@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Layout\DataProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionFormProvider;
 use Oro\Bundle\CheckoutBundle\Layout\DataProvider\TransitionProvider;
+use Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider;
 use Oro\Bundle\CheckoutBundle\Model\TransitionData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Event\EventDispatcher;
@@ -21,6 +22,9 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
     /** @var TransitionProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $transitionProvider;
 
+    /** @var CheckoutThemeBCProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $checkoutThemeBCProvider;
+
     /** @var \PHPUnit\Framework\MockObject\MockObject|FormFactoryInterface */
     private $formFactory;
 
@@ -29,12 +33,14 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
+        $this->checkoutThemeBCProvider = $this->createMock(CheckoutThemeBCProvider::class);
         $this->transitionProvider = $this->createMock(TransitionProvider::class);
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
         $router = $this->createMock(UrlGeneratorInterface::class);
 
         $this->provider = new TransitionFormProvider($this->formFactory, $router);
         $this->provider->setTransitionProvider($this->transitionProvider);
+        $this->provider->setThemeBCProvider($this->checkoutThemeBCProvider);
     }
 
     public function testGetTransitionFormView(): void
@@ -70,6 +76,7 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
                     'allow_extra_fields' => true,
+                    'csrf_protection' => false
                 ]
             )
             ->willReturn($form);
@@ -101,6 +108,7 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
                     'transition_name' => 'transition3',
                     'attribute_fields' => ['test' => null],
                     'allow_extra_fields' => true,
+                    'csrf_protection' => false
                 ]
             )
             ->willReturn($form);

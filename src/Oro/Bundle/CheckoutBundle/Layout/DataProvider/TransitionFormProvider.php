@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Layout\DataProvider;
 
+use Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider;
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
@@ -20,11 +21,23 @@ class TransitionFormProvider extends AbstractFormProvider
     private $transitionProvider;
 
     /**
+     * @var CheckoutThemeBCProvider
+     */
+    private $checkoutThemeBCProvider;
+
+    /**
      * @var TransitionProviderInterface
      */
     public function setTransitionProvider(TransitionProviderInterface $transitionProvider)
     {
         $this->transitionProvider = $transitionProvider;
+    }
+
+    public function setThemeBCProvider(CheckoutThemeBCProvider $checkoutThemeBCProvider): self
+    {
+        $this->checkoutThemeBCProvider = $checkoutThemeBCProvider;
+
+        return $this;
     }
 
     /**
@@ -87,13 +100,20 @@ class TransitionFormProvider extends AbstractFormProvider
 
     private function getFormOptions(WorkflowItem $workflowItem, Transition $transition): array
     {
-        return array_merge(
-            $transition->getFormOptions(),
-            [
-                'workflow_item' => $workflowItem,
-                'transition_name' => $transition->getName(),
-                'allow_extra_fields' => true,
-            ]
-        );
+        $defaultOptions = [
+            'workflow_item' => $workflowItem,
+            'transition_name' => $transition->getName(),
+            'allow_extra_fields' => true
+        ];
+
+        /**
+         * Decide if the _token field is available on the checkout form, depending on the theme.
+         * This is the BC layer for the checkout form.
+         */
+        if (!$this->checkoutThemeBCProvider->isOldtheme()) {
+            $defaultOptions['csrf_protection'] = false;
+        }
+
+        return array_merge($transition->getFormOptions(), $defaultOptions);
     }
 }

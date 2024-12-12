@@ -1,0 +1,3 @@
+services:
+    oro_checkout.event_listener.checkout_csrf_protection_listener:
+        synthetic: true

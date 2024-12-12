@@ -44,7 +44,10 @@ workflows:
             continue_to_billing_address_definition:
                 preactions:
                     - '@assign_value': [$consents_available, true]
-
+                conditions:
+                    '@and':
+                        - '@is_email_confirmed':
+                            checkout: $checkout
                 actions:
                     - '@save_accepted_consents':
                         acceptedConsents: $customerConsents
@@ -118,6 +121,8 @@ workflows:
 
                 conditions:
                     '@and':
+                        - '@is_email_confirmed':
+                            checkout: $checkout
                         - '@is_checkout_state_valid':
                             message: oro.checkout.workflow.condition.content_of_order_was_changed.message
                             parameters:
