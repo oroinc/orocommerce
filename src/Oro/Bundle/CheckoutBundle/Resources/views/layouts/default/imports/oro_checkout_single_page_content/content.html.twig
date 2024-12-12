@@ -20,9 +20,11 @@
                 'id': form.vars.id
             }})
         }}
+    {% if form._token is defined %}
         <div class="hidden">
             {{ form_widget(form._token) }}
         </div>
+    {% endif %}
         {{ block_widget(block) }}
         </form>
         {{ oro_form_js_validation(form) }}
