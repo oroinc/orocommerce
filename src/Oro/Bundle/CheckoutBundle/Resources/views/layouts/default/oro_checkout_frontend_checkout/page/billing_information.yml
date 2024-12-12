@@ -6,7 +6,7 @@ layout:
         - '@setOption':
             id: checkout_button_continue
             optionName: visible
-            optionValue: '=context["is_logged_in"] || !data["checkout"].getRegisteredCustomerUser() || data["feature"].isFeatureEnabled("allow_checkout_without_email_confirmation_feature")'
+            optionValue: true
 
         - '@setOption':
             id: checkout_button_back
@@ -17,16 +17,5 @@ layout:
             id: checkout_outside_button_back
             optionName: visible
             optionValue: '=data["workflowItem"].getData().get("consents_available")'
-
-        - '@add':
-            id: checkout_button_cap
-            blockType: checkout_transition_continue
-            parentId: checkout_form_buttons
-            options:
-                transitionData: '=data["oro_checkout_transition"].getContinueTransition(data["workflowItem"])'
-                checkout: '=data["checkout"]'
-                componentOptions:
-                    flashMessageOnSubmit: '=data["translator"].getTrans("oro.checkout.confirm_email_flash_message")'
-                visible:  '=!context["is_logged_in"] && data["checkout"].getRegisteredCustomerUser() && !data["feature"].isFeatureEnabled("allow_checkout_without_email_confirmation_feature")'
 
     conditions: 'context["workflowStepName"]=="enter_billing_address" && !context["widget_container"]'

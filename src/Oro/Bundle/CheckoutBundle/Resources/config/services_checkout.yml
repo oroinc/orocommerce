@@ -580,3 +580,11 @@ services:
             - ['setPreloadConfig', ['%oro_checkout.preload_config.checkout%']]
         tags:
             - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest }
+
+    oro_checkout.event_listener.checkout_csrf_protection_listener:
+        class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutCsrfProtectionListener
+        arguments:
+            - '@oro_security.csrf_request_manager'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.transition_request.before, method: onTransitionBefore }

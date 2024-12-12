@@ -172,7 +172,14 @@ define(function(require) {
         getFormData: function() {
             this.$form.find(this.options.selectors.stateToken)
                 .prop('disabled', false);
-            return new FormData(this.$form[0]);
+
+            const formData = new FormData(this.$form[0]);
+            if (!this.$form.find(':input').not(':button, :disabled').length) {
+                const formName = this.$form.attr('name') || 'oro_workflow_transition';
+                formData.append(`${formName}[]`, '');
+            }
+
+            return formData;
         },
 
         onSuccess: function(response) {

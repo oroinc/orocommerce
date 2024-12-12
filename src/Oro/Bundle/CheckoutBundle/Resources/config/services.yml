@@ -119,6 +119,7 @@ services:
             - '@router'
         calls:
             - [setTransitionProvider, ['@oro_checkout.layout.data_provider.workflow_related_transition_provider']]
+            - [setThemeBCProvider, ['@oro_checkout.layout.provider.checkout_theme_provider']]
         tags:
             - { name: layout.data_provider, alias: oro_checkout_single_page_transition_form }
             - { name: layout.data_provider, alias: oro_checkout_transition_form }
@@ -398,6 +399,12 @@ services:
             - '@oro_checkout.workflow_state.manager.checkout_state_diff'
         tags:
             - { name: oro_action.condition, alias: check_checkout_states }
+
+    oro_checkout.workflow.transition.check_email_confirmation:
+        class: Oro\Bundle\CheckoutBundle\WorkflowState\Condition\CheckEmailConfirmation
+        tags:
+            - { name: oro_action.condition, alias: is_email_confirmed }
+            - { name: oro_featuretogle.feature, feature: allow_checkout_without_email_confirmation_feature }
 
     oro_checkout.workflow_state.condition.is_checkout_state_valid:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Condition\IsCheckoutStateValid'
@@ -1062,3 +1069,12 @@ services:
             - ['setFieldsToPreload', ['%oro_checkout.preload_config.shopping_list%']]
         tags:
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }
+
+    oro_checkout.layout.provider.checkout_theme_provider:
+        class: Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider
+        arguments:
+            - '@oro_layout.current_theme_provider'
+            - '@oro_layout.theme_manager'
+        calls:
+            - ['addTheme', ['default_51']]
+            - ['addTheme', ['default_50']]
