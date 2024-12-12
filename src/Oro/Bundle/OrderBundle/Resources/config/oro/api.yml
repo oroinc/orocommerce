@@ -67,10 +67,10 @@ api:
             actions:
                 create:
                     form_options:
-                        validation_groups: [ [ Default, api_order_create ], api ]
+                        validation_groups: [ Default, api, api_order_create ]
                 update:
                     form_options:
-                        validation_groups: [ [ Default, api_order_update ], api ]
+                        validation_groups: [ Default, api, api_order_update ]
                     fields:
                         currency:
                             form_options:
@@ -136,10 +136,10 @@ api:
             actions:
                 create:
                     form_options:
-                        validation_groups: [ [ Default, api_order_line_item_create ], api ]
+                        validation_groups: [ Default, api, api_order_line_item_create ]
                 update:
                     form_options:
-                        validation_groups: [ [ Default, api_order_line_item_update ], api ]
+                        validation_groups: [ Default, api, api_order_line_item_update ]
             subresources:
                 orders:
                     actions:
@@ -187,10 +187,10 @@ api:
             actions:
                 create:
                     form_options:
-                        validation_groups: [ [ Default, api_order_kit_item_line_item_create ], api ]
+                        validation_groups: [ Default, api, api_order_kit_item_line_item_create ]
                 update:
                     form_options:
-                        validation_groups: [ [ Default, api_order_kit_item_line_item_update ], api ]
+                        validation_groups: [ Default, api, api_order_kit_item_line_item_update ]
             subresources:
                 kitItem:
                     actions:

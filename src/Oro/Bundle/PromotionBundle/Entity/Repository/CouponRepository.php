@@ -27,19 +27,19 @@ class CouponRepository extends EntityRepository
 
     /**
      * @param int[]    $promotionIds
-     * @param string[] $couponCodes
+     * @param string[] $couponIds
      *
      * @return int[]
      */
-    public function getPromotionsWithMatchedCoupons(array $promotionIds, array $couponCodes): array
+    public function getPromotionsWithMatchedCoupons(array $promotionIds, array $couponIds): array
     {
         $rows =  $this->createQueryBuilder('coupon')
             ->select('DISTINCT IDENTITY(coupon.promotion) AS id')
             ->where('coupon.promotion IN(:promotions)')
-            ->andWhere('coupon.code IN(:couponCodes)')
+            ->andWhere('coupon.id IN(:couponIds)')
             ->andWhere('coupon.enabled = :enabled')
             ->setParameter('promotions', $promotionIds)
-            ->setParameter('couponCodes', $couponCodes)
+            ->setParameter('couponIds', $couponIds)
             ->setParameter('enabled', true)
             ->getQuery()
             ->getArrayResult();

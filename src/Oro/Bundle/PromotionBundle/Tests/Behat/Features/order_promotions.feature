@@ -77,6 +77,25 @@ Feature: Order promotions
     And click "Save" in modal window
     Then I should see "Order has been saved" flash message
 
+  Scenario: Change coupons codes
+    Given I go to Marketing/Promotions/Coupons
+    When I click edit OrderTotalCoupon in grid
+    And fill "Coupon Form" with:
+      | Coupon Code | OrderTotalCouponChanged |
+    And save and close form
+    Then I should see "Coupon has been saved" flash message
+    When I click edit OrderLineItemCoupon in grid
+    And fill "Coupon Form" with:
+      | Coupon Code | OrderLineItemCouponChanged |
+    And save and close form
+    Then I should see "Coupon has been saved" flash message
+
+  Scenario: Check the order saved without changes after changing the coupon codes
+    Given I go to Sales / Orders
+    And click "edit" on first row in grid
+    When I save form
+    Then I should see "Order has been saved" flash message
+
   Scenario: Remove coupon if line items not changed
     Given I click "Remove" on row "Order Total Coupon Promotion" in "Promotions"
     Then should see next rows in "Promotions" table

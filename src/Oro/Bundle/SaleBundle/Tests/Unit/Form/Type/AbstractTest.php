@@ -87,7 +87,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
         return [
             'oro_sale.validator.quote_product' => new Constraints\QuoteProductValidator(),
             'doctrine.orm.validator.unique' => $this->createMock(UniqueEntityValidator::class),
-            'oro_product_quantity_unit_precision' => new QuantityUnitPrecisionValidator($roundingService)
+            QuantityUnitPrecisionValidator::class => new QuantityUnitPrecisionValidator($roundingService),
         ];
     }
 

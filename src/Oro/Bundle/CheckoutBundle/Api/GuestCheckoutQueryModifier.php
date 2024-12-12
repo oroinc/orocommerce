@@ -96,9 +96,9 @@ class GuestCheckoutQueryModifier implements QueryModifierInterface
         CustomerUser $currentUser
     ): void {
         QueryBuilderUtil::checkIdentifier($customerUserAlias);
-        $paramName = QueryBuilderUtil::generateParameterName('customerUser');
+        $paramName = QueryBuilderUtil::generateParameterName('customerUser', $qb);
         $qb
-            ->andWhere(sprintf('%s = :%s', $customerUserAlias, $paramName))
+            ->andWhere($qb->expr()->eq($customerUserAlias, ':' . $paramName))
             ->setParameter($paramName, $currentUser);
     }
 

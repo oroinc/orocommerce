@@ -205,9 +205,7 @@ Oro\Bundle\RFPBundle\Entity\RequestProductKitItemLineItem:
                         - request_update
                         # Used in \Oro\Bundle\RFPBundle\AjaxRequestProductKitItemLineItemController::update
                         - request_product_kit_configuration
-            -   Range:
-                    minPropertyPath: 'kitItem.minimumQuantity'
-                    maxPropertyPath: 'kitItem.maximumQuantity'
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityRange:
                     minMessage: 'oro.rfp.requestproductkititemlineitem.quantity.range.min_message'
                     maxMessage: 'oro.rfp.requestproductkititemlineitem.quantity.range.max_message'
                     notInRangeMessage: 'oro.rfp.requestproductkititemlineitem.quantity.range.not_in_range_message'

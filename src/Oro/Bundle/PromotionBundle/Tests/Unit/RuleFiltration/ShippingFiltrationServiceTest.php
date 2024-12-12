@@ -56,7 +56,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
     {
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
-            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type'
         ];
 
         $this->baseFiltrationService->expects(self::once())
@@ -65,6 +65,91 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             ->willReturn([]);
 
         self::assertSame([], $this->filtrationService->getFilteredRuleOwners([new \stdClass()], $context));
+    }
+
+    public function testFilterShippingPromotionsWhenNoShippingOptions(): void
+    {
+        $discountConfiguration = new DiscountConfiguration();
+        $discountConfiguration->setType('shipping');
+
+        $promotion = $this->getPromotion($discountConfiguration);
+
+        $context = [
+            ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type'
+        ];
+
+        $filteredRuleOwners = [$promotion];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with([], $context)
+            ->willReturn($filteredRuleOwners);
+
+        self::assertSame(
+            $filteredRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners([$promotion], $context)
+        );
+    }
+
+    public function testFilterShippingPromotionsWhenNoShippingMethodInShippingOptions(): void
+    {
+        $discountConfiguration = new DiscountConfiguration();
+        $discountConfiguration->setType('shipping');
+        $discountConfiguration->setOptions([
+            ShippingDiscount::SHIPPING_OPTIONS => [
+                ShippingDiscount::SHIPPING_METHOD_TYPE => 'shipping method type'
+            ]
+        ]);
+
+        $promotion = $this->getPromotion($discountConfiguration);
+
+        $context = [
+            ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type'
+        ];
+
+        $filteredRuleOwners = [$promotion];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with([], $context)
+            ->willReturn($filteredRuleOwners);
+
+        self::assertSame(
+            $filteredRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners([$promotion], $context)
+        );
+    }
+
+    public function testFilterShippingPromotionsWhenNoShippingMethodTypeInShippingOptions(): void
+    {
+        $discountConfiguration = new DiscountConfiguration();
+        $discountConfiguration->setType('shipping');
+        $discountConfiguration->setOptions([
+            ShippingDiscount::SHIPPING_OPTIONS => [
+                ShippingDiscount::SHIPPING_METHOD => 'shipping method'
+            ]
+        ]);
+
+        $promotion = $this->getPromotion($discountConfiguration);
+
+        $context = [
+            ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type'
+        ];
+
+        $filteredRuleOwners = [$promotion];
+
+        $this->baseFiltrationService->expects(self::once())
+            ->method('getFilteredRuleOwners')
+            ->with([], $context)
+            ->willReturn($filteredRuleOwners);
+
+        self::assertSame(
+            $filteredRuleOwners,
+            $this->filtrationService->getFilteredRuleOwners([$promotion], $context)
+        );
     }
 
     /**
@@ -77,7 +162,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $discountConfiguration->setOptions([
             ShippingDiscount::SHIPPING_OPTIONS => [
                 ShippingDiscount::SHIPPING_METHOD => 'not matched shipping method',
-                ShippingDiscount::SHIPPING_METHOD_TYPE => 'not matched shipping method type',
+                ShippingDiscount::SHIPPING_METHOD_TYPE => 'not matched shipping method type'
             ]
         ]);
 
@@ -105,7 +190,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
             'filled context' => [
                 'context' => [
                     ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
-                    ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
+                    ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type'
                 ]
             ]
         ];
@@ -118,7 +203,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
         $discountConfiguration->setOptions([
             ShippingDiscount::SHIPPING_OPTIONS => [
                 ShippingDiscount::SHIPPING_METHOD => 'shipping method',
-                ShippingDiscount::SHIPPING_METHOD_TYPE => 'shipping method type',
+                ShippingDiscount::SHIPPING_METHOD_TYPE => 'shipping method type'
             ]
         ]);
 
@@ -126,7 +211,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
-            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type'
         ];
 
         $filteredRuleOwners = [$promotion];
@@ -151,7 +236,7 @@ class ShippingFiltrationServiceTest extends \PHPUnit\Framework\TestCase
 
         $context = [
             ContextDataConverterInterface::SHIPPING_METHOD => 'shipping method',
-            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type',
+            ContextDataConverterInterface::SHIPPING_METHOD_TYPE => 'shipping method type'
         ];
 
         $filteredRuleOwners = [$promotion];

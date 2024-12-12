@@ -10,6 +10,7 @@ class OroCheckoutExtensionTest extends \PHPUnit\Framework\TestCase
     public function testLoad(): void
     {
         $container = new ContainerBuilder();
+        $container->setParameter('kernel.environment', 'test');
 
         $extension = new OroCheckoutExtension();
         $extension->load([], $container);

@@ -16,18 +16,10 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     use ContainerAwareTrait;
-    const PROMOTION_CHECKOUT_1 = 'promo_checkout_1';
 
-    #[\Override]
-    public function getDependencies()
-    {
-        return [LoadCustomerUserData::class, LoadShoppingListLineItemsData::class];
-    }
+    public const PROMOTION_CHECKOUT_1 = 'promo_checkout_1';
 
-    /**
-     * @var array
-     */
-    protected $checkoutData = [
+    private array $checkoutData = [
         self::PROMOTION_CHECKOUT_1 => [
             'name' => 'checkout1',
             'customerUserReference' => LoadCustomerUserData::EMAIL,
@@ -43,7 +35,13 @@ class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterf
     ];
 
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function getDependencies(): array
+    {
+        return [LoadCustomerUserData::class, LoadShoppingListLineItemsData::class];
+    }
+
+    #[\Override]
+    public function load(ObjectManager $manager): void
     {
         foreach ($this->checkoutData as $reference => $data) {
             $entity = new Checkout();
@@ -60,8 +58,8 @@ class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterf
             $entity->setShippingCost(Price::create($data['price']['value'], $data['price']['currency']));
             $entity->setShippingMethod($data['shippingMethod']);
             $entity->setShippingMethodType($data['shippingMethodType']);
-
-            $entity = $this->addCheckoutLineItems($entity);
+            $lineItemsFactory = $this->container->get('oro_checkout.line_items.factory');
+            $entity->setLineItems($lineItemsFactory->create($entity->getSourceEntity()));
 
             $this->setReference($reference, $entity);
 
@@ -69,20 +67,5 @@ class LoadCheckoutData extends AbstractFixture implements DependentFixtureInterf
         }
 
         $manager->flush();
-    }
-
-    /**
-     * Checkout line items should be added manually to Checkout
-     *
-     * @param Checkout $checkout
-     *
-     * @return Checkout
-     */
-    protected function addCheckoutLineItems(Checkout $checkout)
-    {
-        $lineItemsFactory = $this->container->get('oro_checkout.line_items.factory');
-        $checkout->setLineItems($lineItemsFactory->create($checkout->getSourceEntity()));
-
-        return $checkout;
     }
 }

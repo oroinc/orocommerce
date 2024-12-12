@@ -217,13 +217,20 @@ define(function(require) {
          * @returns FormData
          */
         getFormData: function() {
-            return this.getAllForms().reduce((formData, form) => {
+            const formData = this.getAllForms().reduce((formData, form) => {
                 form.find(this.options.selectors.stateToken).prop('disabled', false);
                 for (const [name, value] of new FormData(form[0]).entries()) {
                     formData.append(name, value);
                 }
                 return formData;
             }, new FormData());
+
+            if (!this.$form.find(':input').not(':button, :disabled').length) {
+                const formName = this.$form.attr('name') || 'oro_workflow_transition';
+                formData.append(`${formName}[]`, '');
+            }
+
+            return formData;
         },
 
         onSuccess: function(response) {

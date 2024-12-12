@@ -3,7 +3,6 @@ api:
         Oro\Bundle\ShoppingListBundle\Entity\LineItem:
             alias: shoppinglistitem
             plural_alias: shoppinglistitems
-
         Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem:
             alias: shoppinglistkititem
             plural_alias: shoppinglistkititems
@@ -48,13 +47,15 @@ api:
                     actions:
                         add_subresource:
                             description: Add or Update Items
+                            request_documentation_action: add_shopping_list_items
                             form_options:
-                                validation_groups: [[Default, create, add_product_kit_line_item], api]
+                                validation_groups: [ Default, api, create, add_product_kit_line_item ]
                             fields:
                                 id:
                                     direction: output-only
                                 shoppingList:
-                                    exclude: true
+                                    form_options:
+                                        mapped: false
                         # changing the list of shopping list items via relationships does not make sense,
                         # because it is not possible to create a shopping list item that does not belong
                         # to any shopping list
@@ -110,11 +111,11 @@ api:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [[Default, create, add_product_kit_line_item], api]
+                        validation_groups: [ Default, api, create, add_product_kit_line_item ]
                 update:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [[Default, update, add_product_kit_line_item], api]
+                        validation_groups: [ Default, api, update, add_product_kit_line_item ]
                 get:
                     acl_resource: oro_shopping_list_frontend_view
                 get_list:
@@ -150,11 +151,11 @@ api:
                 create:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [[Default, add_product_kit_line_item], api]
+                        validation_groups: [ Default, api, add_product_kit_line_item ]
                 update:
                     acl_resource: oro_shopping_list_frontend_update
                     form_options:
-                        validation_groups: [[Default, add_product_kit_line_item], api]
+                        validation_groups: [ Default, api, add_product_kit_line_item ]
                     fields:
                         lineItem:
                             form_options:

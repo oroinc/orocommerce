@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -101,52 +100,6 @@ class PromotionRepository extends ServiceEntityRepository
     public function findPromotionByProductSegment(Segment $segment): ?Promotion
     {
         return $this->findOneBy(['productsSegment' => $segment]);
-    }
-
-    /**
-     * @param int[] $ids
-     *
-     * @return Promotion[] [promotion id => promotion, ...]
-     */
-    public function getPromotionsWithLabelsByIds(array $ids): array
-    {
-        /** @var Promotion[] $promotions */
-        $promotions = $this->createQueryBuilder('p')
-            ->join('p.rule', 'rule')
-            ->leftJoin('p.labels', 'labels')
-            ->where('p.id IN (:ids)')
-            ->setParameter('ids', $ids)
-            ->getQuery()
-            ->getResult();
-
-        $result = [];
-        foreach ($promotions as $promotion) {
-            $result[$promotion->getId()] = $promotion;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param int[] $ids
-     *
-     * @return string[] [promotion id => promotion name, ...]
-     */
-    public function getPromotionsNamesByIds(array $ids): array
-    {
-        if (!$ids) {
-            return [];
-        }
-
-        $rows = $this->createQueryBuilder('p')
-            ->select('p.id', 'rule.name')
-            ->join('p.rule', 'rule')
-            ->where('p.id IN (:ids)')
-            ->setParameter('ids', array_filter($ids), Connection::PARAM_INT_ARRAY)
-            ->getQuery()
-            ->getArrayResult();
-
-        return array_column($rows, 'name', 'id');
     }
 
     private static function getDiscountConfigParamValue(string $name, ?string $value): string

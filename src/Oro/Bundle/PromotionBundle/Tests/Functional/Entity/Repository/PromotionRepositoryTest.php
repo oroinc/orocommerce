@@ -89,39 +89,4 @@ class PromotionRepositoryTest extends WebTestCase
         self::assertInstanceOf(Promotion::class, $actual);
         self::assertSame($expectedPromotion->getId(), $actual->getId());
     }
-
-    public function testGetPromotionsWithLabelsByIds(): void
-    {
-        $expectedPromotion = $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION);
-
-        $actual = $this->repository->getPromotionsWithLabelsByIds([$expectedPromotion->getId(), 0]);
-        self::assertSame([$expectedPromotion->getId() => $expectedPromotion], $actual);
-    }
-
-    public function testGetPromotionsNamesByIds(): void
-    {
-        $promotion1 = $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION);
-        $promotion2 = $this->getPromotion(LoadPromotionData::SHIPPING_PROMOTION);
-
-        $actual = $this->repository->getPromotionsNamesByIds([$promotion1->getId(), $promotion2->getId(), 0, '', null]);
-        self::assertEquals(
-            [
-                $promotion1->getId() => $promotion1->getRule()->getName(),
-                $promotion2->getId() => $promotion2->getRule()->getName(),
-            ],
-            $actual
-        );
-    }
-
-    public function testGetPromotionsNamesByIdsWhenNoPromotions(): void
-    {
-        $actual = $this->repository->getPromotionsNamesByIds([PHP_INT_MAX]);
-        self::assertEquals([], $actual);
-    }
-
-    public function testGetPromotionsNamesByIdsWhenNoIds(): void
-    {
-        $actual = $this->repository->getPromotionsNamesByIds([]);
-        self::assertEquals([], $actual);
-    }
 }

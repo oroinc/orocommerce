@@ -84,6 +84,9 @@ Previously known as GOD Object
 * Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
 * Filtering for the `inventory status` product attribute was enabled.
 
+#### PromotionBundle
+* Moved `disableFilter` method from `oro_promotion.handler.frontend_coupon_handler` service to `oro_promotion.frontend_applied_coupon_manager` service.
+
 #### SaleBundle
 * Migrated the `oro_sale_frontend_quote_submit_to_order` operation body to the class `\Oro\Bundle\SaleBundle\Workflow\Operation\QuoteSubmitToOrder`.
 * Migrated the `oro_sale_frontend_guest_quote_submit_to_order` operation body to the class `\Oro\Bundle\SaleBundle\Workflow\Operation\GuestQuoteSubmitToOrder`.

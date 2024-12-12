@@ -728,6 +728,14 @@ Feature: Consent management via Management Console UI
     When I click "Yes, Delete"
     Then I should not see "Test Consent 2"
 
+  Scenario: Set payment term for Non-Authenticated Visitors group
+    Given go to Customers/ Customer Groups
+    And I click Edit Non-Authenticated Visitors in grid
+    And I fill form with:
+      | Payment Term | net 10 |
+    When I save form
+    Then I should see "Customer group has been saved" flash message
+
   Scenario: Guest checks email confirmation required to proceed checkout
     Given I proceed as the User
     And I am on homepage
@@ -745,7 +753,7 @@ Feature: Consent management via Management Console UI
       | Email            | Sue001@example.com |
       | Password         | Sue001@example.com |
       | Confirm Password | Sue001@example.com |
-      | Test Consent 3 | true |
+      | Test Consent 3   | true               |
     And I click "Presenting Personal Data"
     And I scroll modal window to bottom
     And click "Agree"
@@ -756,8 +764,42 @@ Feature: Consent management via Management Console UI
     Then Page title equals to "Agreements - Checkout"
     And I should not see "Back"
     And I scroll to top
+    And I click "Presenting Personal Data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    And I click "Collecting and storing personal data"
+    And I scroll modal window to bottom
+    And click "Agree"
+    And I fill form with:
+      | Test Consent 3 | true |
     When click "Continue"
-    Then I should see "Please confirm your email before continue checkout" flash message
+    Then I should see "Please confirm your email before continue checkout"
+
+  Scenario: Activate customer user
+    Given I proceed as the Admin
+    And go to Customers/ Customer Users
+    And click view "Sue001@example.com" in grid
+    And click "Confirm"
+
+  Scenario: Continue checkout after create new customer with disabled "Allow Checkout Without Email Confirmation" option
+    Given I proceed as the User
+    And I click "Continue"
+    And I fill form with:
+      | Email           | sue001@example.com |
+      | First Name      | Sue                |
+      | Last Name       | Jackson            |
+      | Organization    | Company            |
+      | Street          | Fifth avenue       |
+      | City            | Berlin             |
+      | Country         | Germany            |
+      | State           | Berlin             |
+      | Zip/Postal Code | 10115              |
+    And I click "Ship to This Address"
+    And click "Continue"
+    And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
+    And I check "Payment Terms" on the "Payment" checkout step and press Continue
+    When I click "Submit Order"
+    Then I should see "Thank You For Your Purchase!"
 
   Scenario: Disable customer user registration confirmation on management console
     Given I proceed as the Admin
@@ -768,16 +810,11 @@ Feature: Consent management via Management Console UI
       | Confirmation Required         | false |
     And click "Save settings"
 
-  Scenario: Set payment term for Non-Authenticated Visitors group
-    Given go to Customers/ Customer Groups
-    And I click Edit Non-Authenticated Visitors in grid
-    And I fill form with:
-      | Payment Term | net 10 |
-    When I save form
-    Then I should see "Customer group has been saved" flash message
-
   Scenario: Check mandatory consents on Checkout Page as unauthorized user
     Given I proceed as the User
+    And I am on the homepage
+    And click "Account Dropdown"
+    And click "Sign Out"
     And I signed in as AmandaRCole1@example.org on the store frontend
     And I click "Account Dropdown"
     And I click "Sign Out"

@@ -211,9 +211,7 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductKitItemLineItem:
                         - quote_is_valid_for_sending_to_customer
                         # Used in \Oro\Bundle\SaleBundle\AjaxQuoteController::entryPointAction
                         - quote_entry_point
-            -   Range:
-                    minPropertyPath: 'kitItem.minimumQuantity'
-                    maxPropertyPath: 'kitItem.maximumQuantity'
+            -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityRange:
                     minMessage: 'oro.sale.quoteproductkititemlineitem.quantity.range.min_message'
                     maxMessage: 'oro.sale.quoteproductkititemlineitem.quantity.range.max_message'
                     notInRangeMessage: 'oro.sale.quoteproductkititemlineitem.quantity.range.not_in_range_message'

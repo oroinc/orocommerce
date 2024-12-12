@@ -10,19 +10,10 @@ use Symfony\Component\Validator\Constraint;
  */
 class QuantityUnitPrecision extends Constraint
 {
-    /** @var string */
-    public $message = 'oro.product.productlineitem.quantity.invalid_precision';
+    public string $message = 'oro.product.productlineitem.quantity.invalid_precision';
 
-    /**
-     * The path to the quantity field.
-     */
+    /** The path to the quantity field. */
     public string $path = '';
-
-    #[\Override]
-    public function validatedBy(): string
-    {
-        return QuantityUnitPrecisionValidator::ALIAS;
-    }
 
     #[\Override]
     public function getTargets(): string|array

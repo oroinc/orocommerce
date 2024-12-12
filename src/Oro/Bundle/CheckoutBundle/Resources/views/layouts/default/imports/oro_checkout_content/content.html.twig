@@ -143,9 +143,11 @@
                 'id': form.vars.id
             }})
         }}
+        {% if form._token is defined %}
         <div class="hidden">
             {{ form_widget(form._token) }}
         </div>
+        {% endif %}
         {{ block_widget(block) }}
 
         {% if transitionData is defined and transitionData and transitionData.isAllowed == true and showRequiredLabel|default(false) == true %}
@@ -333,7 +335,8 @@
 
 {% block __oro_checkout_content__checkout_order_summary_totals_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' summary-wrapper'
+        '~class': ' summary-wrapper',
+        'data-bottom-bar': '16'
     }) %}
 
     <div {{ block('block_attributes') }}>
