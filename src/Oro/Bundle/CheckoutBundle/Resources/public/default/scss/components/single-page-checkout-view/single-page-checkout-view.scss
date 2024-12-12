@@ -44,8 +44,19 @@
             gap: spacing('base') spacing('huge');
             align-items: start;
 
+            .summary-widget__inner {
+                margin-left: initial;
+            }
+
             .summary-widget__summary {
+                padding-inline-end: initial;
+                padding-inline-start: spacing('xs');
                 padding-bottom: initial;
+            }
+
+            .coupon-trigger {
+                padding-inline-start: spacing('xs');
+                padding-inline-end: initial;
             }
 
             &:not(.show) {
