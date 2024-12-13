@@ -47,6 +47,11 @@
             inset-inline: $multistep-checkout-footer-before-inset-inline;
             z-index: $multistep-checkout-footer-before-z-index;
         }
+
+        // ui-datepicker cannot calculate proper z-index because it is inside of an element with position: sticky
+        .datepicker-box {
+            z-index: $multistep-checkout-footer-z-index;
+        }
     }
 }
 
