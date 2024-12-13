@@ -20,6 +20,7 @@
             data-shipping-price-currency="<%- type.price.currency %>"
             data-choice="<%- type.identifier %>"
             data-item-id="<%- lineItemId %>"
+            <% if (selected) { %>selected="selected"<% } %>
         >
             <%- type.label %>
         </option>
