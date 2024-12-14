@@ -54,8 +54,8 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
     And records in "Second Checkout Shipping Grid" should be 2
-    When I type "Flat Rate" in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
-    And I type "Flat Rate" in "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method" select2
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method" select2
     And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $50.00 |
@@ -122,17 +122,17 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   | Flat Rate 2 $0.00                      |
+      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   | Flat Rate $3.00                        |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product   | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
-      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
-      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate $3.00                        |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate $3.00                        |
     And records in "Second Checkout Shipping Grid" should be 2
-    When I type "Flat Rate 2" in "First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method"
-    And I type "Flat Rate" in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
-    And I type "Flat Rate" in "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
+    When I select "Flat Rate 2" value in "First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method" select2
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method" select2
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method" select2
     And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $52.00 |

@@ -8,6 +8,7 @@ const GroupedLineItemsSubtotalBuilder = {
 
             if (document.contains(container)) {
                 container.innerText = options.data.metadata.groupSubtotal;
+                container.classList.remove('empty');
             }
         }
 

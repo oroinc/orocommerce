@@ -269,7 +269,7 @@
     {% if grid_full_name is defined %}
         {% set attr = layout_attr_defaults(attr, {
             'data-role': grid_full_name ~ 'subtotal',
-            '~class': " checkout-order-summary__item bold"
+            '~class': " checkout-order-summary__item empty bold"
         }) %}
         <span {{ block('block_attributes') }}></span>
     {% endif %}

@@ -37,7 +37,8 @@
             margin-block-end: auto;
         }
 
-        &:has(> *:empty) {
+        // Using class empty to fix issue with blur artefacts on safari
+        &:has(.empty) {
             @include loading-blur();
         }
     }
