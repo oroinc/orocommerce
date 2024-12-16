@@ -103,7 +103,7 @@ class TransitionFormProvider extends AbstractFormProvider
          * Decide if the _token field is available on the checkout form, depending on the theme.
          * This is the BC layer for the checkout form.
          */
-        if (!$this->checkoutThemeBCProvider->isOldtheme())  {
+        if (!$this->checkoutThemeBCProvider->isOldtheme()) {
             $defaultOptions['csrf_protection'] = false;
         }
 
