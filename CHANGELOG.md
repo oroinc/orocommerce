@@ -34,6 +34,7 @@ The current file describes significant changes in the code that may affect the u
 * Migrated the `b2b_flow_checkout_single_page_new_billing_address` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewBillingAddress`.
 * Migrated the `b2b_flow_checkout_single_page_new_shipping_address` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewShippingAddress`.
 * Migrated the `oro_checkout_frontend_start_from_order` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\Operation\StartFromOrder`.
+* Changed logic of `\Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener` that executes restart the for guest checkout after user login.
 
 ##### Checkout start transitions
 
@@ -143,6 +144,13 @@ Previously known as GOD Object
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
 
+### ShoppingListBundle
+* Added new shopping list events:
+  * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPreMoveEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service;
+  * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPostMoveEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service;
+  * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPreMergeEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service;
+  * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPostMergeEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service.
+
 ### Removed
 
 #### SaleBundle
@@ -152,6 +160,9 @@ Previously known as GOD Object
 * Removed `oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view`
 * Removed page_template values from `\Oro\Bundle\ProductBundle\Resources\views\layouts\default\config\page_templates.yml`.
 * Removed `oro_product.product_details_display_price_tiers_as` system configuration option.
+
+### ShoppingListBundle
+* Removed `\Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListLimitListener`
 
 ## 6.0.0 (2024-03-30)
 [Show detailed list of changes](incompatibilities-6-0.md)

@@ -6,65 +6,45 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Symfony\Contracts\EventDispatcher\Event;
 
+/**
+ * CheckoutEntityEvent represents logic which was performed on checkout
+ */
 class CheckoutEntityEvent extends Event
 {
-    /**
-     * @var CheckoutInterface
-     */
-    protected $checkoutEntity;
+    protected ?CheckoutInterface $checkoutEntity = null;
 
-    /**
-     * @var CheckoutSource
-     */
-    protected $source;
+    protected ?CheckoutSource $source = null;
 
-    /**
-     * @var int
-     */
-    protected $checkoutId;
+    protected ?int $checkoutId = null;
 
-    /**
-     * @return CheckoutInterface
-     */
-    public function getCheckoutEntity()
+    public function getCheckoutEntity(): ?CheckoutInterface
     {
         return $this->checkoutEntity;
     }
 
-    public function setCheckoutEntity(CheckoutInterface $checkoutEntity = null)
+    public function setCheckoutEntity(?CheckoutInterface $checkoutEntity): self
     {
         $this->checkoutEntity = $checkoutEntity;
+        return $this;
     }
 
-    /**
-     * @return CheckoutSource
-     */
-    public function getSource()
+    public function getSource(): ?CheckoutSource
     {
         return $this->source;
     }
 
-    /**
-     * @param CheckoutSource $source
-     */
-    public function setSource($source)
+    public function setSource(?CheckoutSource $source): self
     {
         $this->source = $source;
+        return $this;
     }
 
-    /**
-     * @return int
-     */
-    public function getCheckoutId()
+    public function getCheckoutId(): ?int
     {
         return $this->checkoutId;
     }
 
-    /**
-     * @param int $checkoutId
-     * @return $this
-     */
-    public function setCheckoutId($checkoutId)
+    public function setCheckoutId(?int $checkoutId): self
     {
         $this->checkoutId = $checkoutId;
         return $this;

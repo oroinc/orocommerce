@@ -227,6 +227,27 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
         return new BufferedIdentityQueryResultIterator($qb);
     }
 
+    public function findDuplicateCheckouts(
+        CustomerUser $customerUser,
+        array $sourceCriteria,
+        string $workflowName,
+        array $excludedIds,
+        ?string $currency = null
+    ): array {
+        $qb = $this->getCheckoutBySourceCriteriaQueryBuilder(
+            $sourceCriteria,
+            $workflowName,
+            $currency
+        );
+
+        return $qb->andWhere($qb->expr()->eq('c.customerUser', ':customerUser'))
+            ->andWhere($qb->expr()->notIn('c.id', ':excludedIds'))
+            ->setParameter('customerUser', $customerUser)
+            ->setParameter('excludedIds', $excludedIds)
+            ->getQuery()
+            ->getResult();
+    }
+
     /**
      * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @param string $workflowName

@@ -10,58 +10,44 @@ use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\EventListener\ShoppingListListener;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
+final class ShoppingListListenerTest extends TestCase
 {
     use EntityTrait;
-    private const CHECKOUT_CLASS_NAME = Checkout::class;
-    private const CHECKOUT_SOURCE_CLASS_NAME = CheckoutSource::class;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $registry;
+    private const string CHECKOUT_CLASS_NAME = Checkout::class;
+    private const string CHECKOUT_SOURCE_CLASS_NAME = CheckoutSource::class;
 
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutRepository;
+    private ManagerRegistry&MockObject $registry;
+    private ObjectRepository&MockObject $checkoutRepository;
+    private ObjectRepository&MockObject $checkoutSourceRepository;
+    private ObjectManager&MockObject $checkoutEntityManager;
+    private ObjectManager&MockObject $checkoutSourceEntityManager;
 
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutEntityManager;
-
-    /** @var ObjectRepository|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutSourceRepository;
-
-    /** @var ObjectManager|\PHPUnit\Framework\MockObject\MockObject */
-    protected $checkoutSourceEntityManager;
-
-    /** @var ShoppingListListener */
-    protected $listener;
+    private ShoppingListListener $listener;
 
     #[\Override]
     protected function setUp(): void
     {
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->checkoutRepository = $this->createMock(ObjectRepository::class);
         $this->checkoutSourceRepository = $this->createMock(ObjectRepository::class);
-
         $this->checkoutEntityManager = $this->createMock(ObjectManager::class);
-        $this->checkoutEntityManager->expects($this->any())
-            ->method('getRepository')
-            ->with(self::CHECKOUT_CLASS_NAME)
-            ->willReturn($this->checkoutRepository);
-
         $this->checkoutSourceEntityManager = $this->createMock(ObjectManager::class);
-        $this->checkoutSourceEntityManager->expects($this->any())
-            ->method('getRepository')
-            ->with(self::CHECKOUT_SOURCE_CLASS_NAME)
-            ->willReturn($this->checkoutSourceRepository);
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->registry->expects($this->any())
+        $this->registry->expects(self::any())
+            ->method('getRepository')
+            ->withConsecutive([self::CHECKOUT_SOURCE_CLASS_NAME], [self::CHECKOUT_CLASS_NAME])
+            ->willReturnOnConsecutiveCalls($this->checkoutSourceRepository, $this->checkoutRepository);
+
+        $this->registry->expects(self::any())
             ->method('getManagerForClass')
-            ->willReturnMap(
-                [
-                    [self::CHECKOUT_CLASS_NAME, $this->checkoutEntityManager],
-                    [self::CHECKOUT_SOURCE_CLASS_NAME, $this->checkoutSourceEntityManager]
-                ]
-            );
+            ->willReturnMap([
+                [self::CHECKOUT_CLASS_NAME, $this->checkoutEntityManager],
+                [self::CHECKOUT_SOURCE_CLASS_NAME, $this->checkoutSourceEntityManager]
+            ]);
 
         $this->listener = new ShoppingListListener(
             $this->registry,
@@ -70,7 +56,7 @@ class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testPreRemoveWithCheckoutSourceAndCheckout()
+    public function testPreRemoveWithCheckoutSourceAndCheckout(): void
     {
         $entity = $this->getEntity(ShoppingList::class);
         $checkout1 = $this->getEntity(Checkout::class);
@@ -78,81 +64,82 @@ class ShoppingListListenerTest extends \PHPUnit\Framework\TestCase
         $checkoutSource1 = $this->getEntity(CheckoutSource::class);
         $checkoutSource2 = $this->getEntity(CheckoutSource::class);
 
-        $this->checkoutSourceRepository->expects($this->once())
+        $this->checkoutSourceRepository->expects(self::once())
             ->method('findBy')
             ->with(['shoppingList' => $entity])
             ->willReturn([$checkoutSource1, $checkoutSource2]);
 
-        $this->checkoutRepository->expects($this->once())
+        $this->checkoutRepository->expects(self::once())
             ->method('findBy')
             ->with(['source' => [$checkoutSource1, $checkoutSource2]])
             ->willReturn([$checkout1, $checkout2]);
 
-        $this->checkoutEntityManager->expects($this->exactly(2))
-            ->method('remove')->withConsecutive([$checkout1], [$checkout2]);
+        $this->checkoutEntityManager->expects(self::exactly(2))
+            ->method('remove')
+            ->withConsecutive([$checkout1], [$checkout2]);
 
-        $this->checkoutEntityManager->expects($this->once())
+        $this->checkoutEntityManager->expects(self::once())
             ->method('flush');
 
         $this->listener->preRemove($entity);
     }
 
-    public function testPreRemoveWithCheckoutSourceAndWithoutCheckout()
+    public function testPreRemoveWithCheckoutSourceAndWithoutCheckout(): void
     {
         $entity = $this->getEntity(ShoppingList::class);
         $checkoutSource = $this->getEntity(CheckoutSource::class);
 
-        $this->checkoutSourceRepository->expects($this->once())
+        $this->checkoutSourceRepository->expects(self::once())
             ->method('findBy')
             ->with(['shoppingList' => $entity])
             ->willReturn([$checkoutSource]);
 
-        $this->checkoutRepository->expects($this->once())
+        $this->checkoutRepository->expects(self::once())
             ->method('findBy')
             ->with(['source' => [$checkoutSource]])
             ->willReturn([]);
 
-        $this->checkoutEntityManager->expects($this->never())->method('remove');
-        $this->checkoutEntityManager->expects($this->never())->method('flush');
+        $this->checkoutEntityManager->expects(self::never())->method('remove');
+        $this->checkoutEntityManager->expects(self::never())->method('flush');
 
         $this->listener->preRemove($entity);
     }
 
-    public function testPreRemoveWithoutCheckoutSource()
+    public function testPreRemoveWithoutCheckoutSource(): void
     {
         $entity = $this->getEntity(ShoppingList::class);
 
-        $this->checkoutSourceRepository->expects($this->once())
+        $this->checkoutSourceRepository->expects(self::once())
             ->method('findBy')
             ->with(['shoppingList' => $entity])
             ->willReturn([]);
 
-        $this->checkoutRepository->expects($this->never())->method('findOneBy');
+        $this->checkoutRepository->expects(self::never())->method('findOneBy');
 
-        $this->checkoutEntityManager->expects($this->never())->method('remove');
-        $this->checkoutEntityManager->expects($this->never())->method('flush');
+        $this->checkoutEntityManager->expects(self::never())->method('remove');
+        $this->checkoutEntityManager->expects(self::never())->method('flush');
 
         $this->listener->preRemove($entity);
     }
 
-    public function testPreRemoveWithCheckoutSourceAndCompletedCheckout()
+    public function testPreRemoveWithCheckoutSourceAndCompletedCheckout(): void
     {
         $entity = $this->getEntity(ShoppingList::class);
         $checkout = $this->getEntity(Checkout::class, ['completed' => true]);
         $checkoutSource = $this->getEntity(CheckoutSource::class);
 
-        $this->checkoutSourceRepository->expects($this->once())
+        $this->checkoutSourceRepository->expects(self::once())
             ->method('findBy')
             ->with(['shoppingList' => $entity])
             ->willReturn([$checkoutSource]);
 
-        $this->checkoutRepository->expects($this->once())
+        $this->checkoutRepository->expects(self::once())
             ->method('findBy')
             ->with(['source' => [$checkoutSource]])
             ->willReturn([$checkout]);
 
-        $this->checkoutEntityManager->expects($this->never())->method('remove');
-        $this->checkoutEntityManager->expects($this->never())->method('flush');
+        $this->checkoutEntityManager->expects(self::never())->method('remove');
+        $this->checkoutEntityManager->expects(self::never())->method('flush');
 
         $this->listener->preRemove($entity);
     }

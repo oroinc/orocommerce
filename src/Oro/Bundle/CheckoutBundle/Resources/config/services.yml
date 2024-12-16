@@ -795,9 +795,24 @@ services:
             - '@oro_config.manager'
             - '@oro_checkout.manager'
             - '@event_dispatcher'
+            - '@router'
+            - '@doctrine'
+            - '@oro_checkout.provider.checkout_id_by_target_path_request'
+            - '@oro_checkout.action_group.start_from_shopping_list'
         lazy: true
         tags:
-            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 255 }
+            - { name: kernel.event_listener, event: oro_shopping_list.post_merge, method: onShoppingListPostMerge }
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
+            - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\LoginSuccessEvent, method: onCheckoutLogin }
+
+    oro_checkout.event_listener.remove_duplicate_checkout:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\RemoveDuplicateCheckoutOnLoginListener'
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_pricing.user_currency_manager'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.login_on_guest_checkout, method: onCheckoutLogin }
 
     oro_checkout.event_listener.customer_user_register:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener'
@@ -1069,6 +1084,21 @@ services:
             - ['setFieldsToPreload', ['%oro_checkout.preload_config.shopping_list%']]
         tags:
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }
+
+    oro_checkout.checkout.sign_in_target_path_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\SignInTargetPathProvider
+        decorates: oro_customer.provider.sign_in.target_path
+        arguments:
+            - '@.inner'
+            - '@oro_config.manager'
+            - '@oro_security.util.same_site_url_helper'
+            - '@router'
+
+    oro_checkout.provider.checkout_id_by_target_path_request:
+        class: Oro\Bundle\CheckoutBundle\Provider\CheckoutIdByTargetPathRequestProvider
+        arguments:
+            - '@oro_security.util.same_site_url_helper'
+            - '@router'
 
     oro_checkout.layout.provider.checkout_theme_provider:
         class: Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider

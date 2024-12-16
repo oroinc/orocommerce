@@ -36,6 +36,7 @@ oro:
         flash:
             success: 'Shopping list "%shoppinglist%" was created successfully'
             update_success: 'Shopping list "%shoppinglist%" was updated successfully'
+            merge: 'Upon signing in, any previously added items have been combined with the contents of your current shopping list.'
 
         create_new_form:
             input_label: Shopping List Name

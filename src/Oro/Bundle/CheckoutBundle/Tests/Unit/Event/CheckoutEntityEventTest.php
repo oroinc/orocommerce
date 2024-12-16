@@ -6,12 +6,13 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutEntityEvent;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
-class CheckoutEntityEventTest extends \PHPUnit\Framework\TestCase
+final class CheckoutEntityEventTest extends TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $properties = [
             ['checkoutEntity', new Checkout()],
@@ -20,6 +21,18 @@ class CheckoutEntityEventTest extends \PHPUnit\Framework\TestCase
         ];
 
         $event = new CheckoutEntityEvent();
-        $this->assertPropertyAccessors($event, $properties);
+        self::assertPropertyAccessors($event, $properties);
+    }
+
+    public function testAllPropertiesAreNull(): void
+    {
+        $properties = [
+            ['checkoutEntity', null],
+            ['source', null],
+            ['checkoutId', null]
+        ];
+
+        $event = new CheckoutEntityEvent();
+        self::assertPropertyAccessors($event, $properties);
     }
 }

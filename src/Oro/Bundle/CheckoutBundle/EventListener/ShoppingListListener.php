@@ -2,41 +2,24 @@
 
 namespace Oro\Bundle\CheckoutBundle\EventListener;
 
-use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 /**
  * Deletes related incomplete checkouts before shopping list is deleted.
  */
 class ShoppingListListener
 {
-    /** @var ManagerRegistry */
-    protected $registry;
-
-    /** @var string */
-    protected $checkoutClassName;
-
-    /** @var string */
-    protected $checkoutSourceClassName;
-
-    /**
-     * @param ManagerRegistry $registry
-     * @param string $checkoutClassName
-     * @param string $checkoutSourceClassName
-     */
-    public function __construct(ManagerRegistry $registry, $checkoutClassName, $checkoutSourceClassName)
-    {
-        $this->registry = $registry;
-        $this->checkoutClassName = $checkoutClassName;
-        $this->checkoutSourceClassName = $checkoutSourceClassName;
+    public function __construct(
+        private ManagerRegistry $registry,
+        private string $checkoutClassName,
+        private string $checkoutSourceClassName
+    ) {
     }
 
-    /**
-     * @param object $entity
-     */
-    public function preRemove($entity): void
+    public function preRemove(ShoppingList $entity): void
     {
         $checkoutSources = $this->getRepository($this->checkoutSourceClassName)->findBy(['shoppingList' => $entity]);
         if (!$checkoutSources) {
@@ -49,7 +32,7 @@ class ShoppingListListener
             return;
         }
 
-        $em = $this->getEntityManager($this->checkoutClassName);
+        $em = $this->registry->getManagerForClass($this->checkoutClassName);
         $flushNeeded = false;
         foreach ($checkouts as $checkout) {
             if (!$checkout->isCompleted()) {
@@ -63,21 +46,8 @@ class ShoppingListListener
         }
     }
 
-    /**
-     * @param string $className
-     * @return ObjectManager
-     */
-    protected function getEntityManager($className)
+    private function getRepository(string $className): ObjectRepository
     {
-        return $this->registry->getManagerForClass($className);
-    }
-
-    /**
-     * @param string $className
-     * @return EntityRepository
-     */
-    protected function getRepository($className)
-    {
-        return $this->getEntityManager($className)->getRepository($className);
+        return $this->registry->getRepository($className);
     }
 }
