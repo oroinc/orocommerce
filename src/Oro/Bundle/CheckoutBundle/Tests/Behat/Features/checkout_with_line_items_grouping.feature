@@ -33,11 +33,13 @@ Feature: Checkout With Line Items Grouping
     When I click "Create Order"
     Then Page title equals to "Billing Information - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
+    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
+    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13                | 10  | $2.00  | $20.00   |
@@ -46,11 +48,13 @@ Feature: Checkout With Line Items Grouping
     When I click "Continue"
     Then Page title equals to "Shipping Information - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
+    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
+    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13                | 10  | $2.00  | $20.00   |
@@ -59,36 +63,42 @@ Feature: Checkout With Line Items Grouping
     When I click "Continue"
     Then Page title equals to "Shipping Method - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
+    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
+    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $3.00  |
-    When I click on "Second Checkout Shipping Grid Flat Rate Shipping Method"
+    When I type "Flat Rate" in "Second Checkout Shipping Grid Flat Rate Shipping Method"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $6.00  |
     When I click "Continue"
     Then Page title equals to "Payment - Checkout"
     And I should see "Lighting Products" in the "First Checkout Shipping Grid Title" element
+    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see "Phones" in the "Second Checkout Shipping Grid Title" element
+    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $6.00  |

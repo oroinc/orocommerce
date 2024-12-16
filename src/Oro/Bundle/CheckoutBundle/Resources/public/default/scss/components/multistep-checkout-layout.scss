@@ -1,0 +1,13 @@
+/* @theme: default; */
+
+.multistep-checkout-layout {
+    padding-top: $multistep-checkout-layout-padding-top;
+
+    .page-main__content {
+        padding-inline: $multistep-checkout-layout-page-main-content-padding-inline;
+    }
+
+    .page-content {
+        padding-top: $multistep-checkout-layout-page-content-padding-top;
+    }
+}

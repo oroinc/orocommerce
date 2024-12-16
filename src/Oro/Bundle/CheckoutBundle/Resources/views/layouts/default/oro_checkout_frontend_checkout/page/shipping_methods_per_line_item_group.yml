@@ -14,6 +14,19 @@ layout:
               optionName: transitionData
               optionValue: '=data["oro_checkout_group_continue_transition_data"].getContinueTransition(data["workflowItem"])'
 
+        - '@appendOption':
+            id: checkout_order_summary_line_items_datagrid
+            optionName: grid_render_parameters
+            optionValue:
+                toolbarOptions:
+                    hide: true
+
+        - '@add':
+            id: shipping_methods_group_step_label
+            blockType: block
+            parentId: checkout_form
+            prepend: true
+
         - '@remove':
               id: shipping_methods
 

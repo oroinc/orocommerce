@@ -65,6 +65,7 @@ Feature: Taxes should work with more than two decimal places
     And I click "Create Order"
     Then I should not see "500 Internal Server Error"
     And I should see "Billing information"
+    And I click "Expand Checkout Footer"
     And I should see "Subtotal $10.00"
     And I should see "Tax $1.21"
     And I should see "Total: $11.21"

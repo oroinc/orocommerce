@@ -33,6 +33,7 @@ Feature: Check transition to product from checkout
     And I signed in as AmandaRCole@example.org on the store frontend
     When I open page with shopping list List 1
     And I click "Create Order"
+    And I click "Order products"
     And I click on "Checkout Line Item Product Link"
     Then I should see "All Products 400-Watt Bulb Work Light"
 

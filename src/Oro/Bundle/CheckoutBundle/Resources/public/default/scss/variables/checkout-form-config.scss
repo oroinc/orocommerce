@@ -1,5 +1,7 @@
 /* @theme: default; */
 
+$checkout-form-address-checkbox-container-gap: spacing('base') spacing('xxxl') !default;
+$checkout-form-address-checkbox-container-offset: spacing('md') !default;
 $checkout-form-select-container-display: flex !default;
 $checkout-form-select-container-flex-direction: row;
 $checkout-form-select-container-justify-content: space-between !default;
@@ -13,26 +15,27 @@ $checkout-form-submit-min-width: 200px !default;
 $checkout-form-payment-label-margin: 0 0 spacing('xs') !default;
 $checkout-form-payment-label-font-weight: font-weight('normal') !default;
 
-$checkout-form-payment-container-margin: spacing('sm') 0 spacing('base') !default;
+$checkout-form-payment-container-margin: 0 !default;
 
-$checkout-form-payment-methods-padding: 12px !default;
+$checkout-form-payment-methods-padding: spacing('sm') 0 !default;
 $checkout-form-payment-methods-background-color: get-color('neutral', 'white-100') !default;
 $checkout-form-payment-methods-border-radius: 5px !default;
 $checkout-form-payment-methods-max-width: 400px !default;
 
 $checkout-form-payment-methods-authorized-card-margin: 0 0 spacing('sm') !default;
 
-$checkout-form-payment-methods-item-float: left !default;
-$checkout-form-payment-methods-item-margin: 0 spacing('sm') 0 0 !default;
-
 $checkout-form-payment-methods-form-margin: spacing('base') 0 0 !default;
 $checkout-form-payment-methods-list-form-margin: 0 0 spacing('base') !default;
+$checkout-form-payment-methods-list-form-gap: spacing('sm') !default;
 
 $checkout-form-asterix-offset: 0 spacing('xs') !default;
 $checkout-form-asterix-color: get-color('secondary', 'c3') !default;
 
 $checkout-form-back-offset: spacing('base') 0 0 !default;
 $checkout-form-back-bottom-offset: 0 0 spacing('sm') !default;
+
+$checkout-group-shipping-method-result-label-color: get-color('text', 'secondary') !default;
+$checkout-group-shipping-method-result-label-max-width: 210px !default;
 
 // Tablet
 $checkout-form-submit-tablet-min-width: inherit !default;

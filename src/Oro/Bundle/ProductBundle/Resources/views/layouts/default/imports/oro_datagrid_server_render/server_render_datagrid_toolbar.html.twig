@@ -42,15 +42,15 @@
     {% endif %}
 {% endblock %}
 
-{% block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget %}
-        <div class="datagrid-toolbar__end" data-section="right-side">
-            {% for child in block -%}
-                {% if child.vars.visible %}
-                    {{ block_widget(child, {attr: {'data-grid-toolbar': toolbarPosition}}) }}
-                {% endif %}
-            {%- endfor %}
-        </div>
-{% endblock %}
+{%- block __datagrid_toolbar__datagrid_toolbar_rightside_container_widget -%}
+    <div class="datagrid-toolbar__end" data-section="right-side">
+        {% for child in block -%}
+            {% if child.vars.visible %}
+                {{ block_widget(child, {attr: {'data-grid-toolbar': toolbarPosition}}) }}
+            {% endif %}
+        {%- endfor %}
+    </div>
+{%- endblock -%}
 
 {% block __oro_datagrid_server_render__datagrid_toolbar_pagination_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}

@@ -159,7 +159,7 @@ Feature: Product view page for configurable product
       | Refurbished | No    |
     When I open page with shopping list "Shopping List"
     And I click "Create Order"
-    When I uncheck "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    When I uncheck "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     When I click "click here to review"
     And I click on "tpc_w" configurable product in "Order Line Items Table" with the following attributes:

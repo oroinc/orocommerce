@@ -98,7 +98,8 @@
 
     .summary-collapse-content:not(.show) {
         .summary-widget {
-            &__summary {
+            &__summary,
+            &__summary:has(.summary-widget__combined-bottons) {
                 grid-template-columns: $summary-widget-summary-shown-mobile-landscape-grid-template-columns;
             }
 

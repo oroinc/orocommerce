@@ -342,7 +342,7 @@ oro:
                 delete_aria_label: 'Delete %name%'
                 delete_item_aria_label: 'Delete this Shopping list item'
             workflow:
-                remove_source.label: Delete this shopping list after submitting order
+                remove_source.label: Delete this shopping list after ordering
             matrix_grid_order:
                 qty: 'QTY'
                 total_qty: 'Total QTY:'

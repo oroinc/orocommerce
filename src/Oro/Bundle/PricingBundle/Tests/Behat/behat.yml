@@ -240,7 +240,7 @@ oro_behat_extension:
           Rule: 'oro_pricing_price_list[productAssignmentRule]'
 
     Order Review Form:
-      selector: '[name="oro_workflow_transition"]'
+      selector: 'section.page-content'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:

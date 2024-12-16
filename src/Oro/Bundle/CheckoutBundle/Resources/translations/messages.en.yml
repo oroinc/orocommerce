@@ -19,6 +19,7 @@ oro:
         save_billing_address.label: Save address to my address book
         save_shipping_address.label: Save address to my address book
         ship_to_billing_address.label: Ship to billing address
+        add_address: Add
         quoted_shipping_amount.label: Quoted shipping amount
         preferred_shipping_method.label: Preferred shipping method
         source.label: Source
@@ -40,6 +41,7 @@ oro:
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
+        rest_of_items: Rest of items
         open_order:
             label: Checkout
             plural_label: Open Orders
@@ -48,6 +50,11 @@ oro:
         completed_data.label: Completed Data
         confirm_email_flash_message: Please confirm your email before continue checkout
         late_registration.label: Save my data and create an account
+        progress.label: Checkout Progress
+        summary_item_title: Order products
+        optional_label: (Optional)
+        multishipping:
+            label_for: 'Shipping method for %label%'
         navigation_sidebar:
             status:
                 completed: Completed
@@ -159,10 +166,12 @@ oro:
             id.label: Id
             deleted.label: Deleted
 
-        billing_information: Billing Information
-        shipping_information: Shipping Information
+        billing_information: Billing
+        shipping_information: Shipping
         shipping_method: Shipping Method
         payment: Payment
+
+        shipping_method.hint: Please select a shipping method for each group of line items below.
 
         order_review:
             label: Order Review
@@ -214,6 +223,8 @@ oro:
 
                 attribute:
                     remove_source.label: Remove Source Entity
+                    ship_to_billing_address:
+                        label: 'Ship to this address'
 
                 step:
                     enter_billing_address.label: Billing Information
@@ -274,9 +285,13 @@ oro:
                 customer: Global Address Book
                 customer_user: My address book
             address.select.billing.label: Select Billing Address
+            address.select.billing.label.short: Billing Address
             address.enter.billing.label: Enter Billing Address
+            address.enter.billing.label.short: Billing Address
             address.select.shipping.label: Select Shipping Address
+            address.select.shipping.label.short: Shipping Address
             address.enter.shipping.label: Enter Shipping Address
+            address.enter.shipping.label.short: Shipping Address
             address.enter.new_address.placeholder.label: Please select an address
 
         grid:
@@ -373,6 +388,7 @@ oro:
                     title: 'General Options'
                 multishipping_line_items_grouping_options.title: 'Line Items Grouping Options'
                 multishipping_order_history_options.title: 'Order History Options'
+                items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
 
         privilege:
             category.checkout.label: 'Checkout'
@@ -398,6 +414,8 @@ oro:
                         inventory_status.label: 'Availability'
                         quantity.label: 'Quantity'
                         unit.label: 'Unit'
+                back_action:
+                    text: 'Back'
             start_from_order: 'Re-Order'
 
         errors:

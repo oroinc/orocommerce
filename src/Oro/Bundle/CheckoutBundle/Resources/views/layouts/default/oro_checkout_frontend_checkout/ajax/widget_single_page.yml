@@ -1,11 +1,22 @@
 layout:
     imports:
         - 'oro_checkout_single_page'
+        -
+            id: oro_checkout_single_page_content
+            root: body
 
     actions:
         - '@setBlockTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/single_page.html.twig'
         - '@setFormTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/single_page_form.html.twig'
+
+        - '@move':
+            id: coupon_form_container
+            parentId: checkout_order_summary_inner
+            prepend: false
+
+        - '@remove':
+            id: coupon_summary_container
 
     conditions: 'context["workflowStepName"]=="checkout" && context["widget_container"]'

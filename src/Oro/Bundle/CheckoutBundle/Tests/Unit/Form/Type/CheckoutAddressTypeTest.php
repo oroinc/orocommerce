@@ -21,33 +21,56 @@ use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
+use Oro\Component\Layout\Extension\Theme\Model\CurrentThemeProvider;
+use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CheckoutAddressTypeTest extends FormIntegrationTestCase
 {
-    public function testGetBlockPrefix()
+    private CurrentThemeProvider&MockObject $currentThemeProvider;
+    private ThemeManager&MockObject $themeManager;
+
+    #[\Override]
+    protected function setUp(): void
     {
-        $type = new CheckoutAddressType();
-        $this->assertEquals('oro_checkout_address', $type->getBlockPrefix());
+        $this->currentThemeProvider = $this->createMock(CurrentThemeProvider::class);
+        $this->themeManager = $this->createMock(ThemeManager::class);
+
+        parent::setUp();
     }
 
-    public function testConfigureOptions()
+    public function testGetBlockPrefix(): void
+    {
+        $type = new CheckoutAddressType($this->currentThemeProvider, $this->themeManager);
+        self::assertEquals('oro_checkout_address', $type->getBlockPrefix());
+    }
+
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
-            ->method('setAllowedTypes')
-            ->with('object', Checkout::class)
+        $resolver->expects(self::once())
+            ->method('setDefault')
+            ->with('multiStepCheckout', false)
             ->willReturnSelf();
 
-        $type = new CheckoutAddressType();
+        $resolver->expects(self::exactly(2))
+            ->method('setAllowedTypes')
+            ->withConsecutive(
+                ['object', Checkout::class],
+                ['multiStepCheckout', 'bool']
+            )
+            ->willReturnSelf();
+
+        $type = new CheckoutAddressType($this->currentThemeProvider, $this->themeManager);
         $type->configureOptions($resolver);
     }
 
-    public function testBuildForm()
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(CheckoutAddressType::class, null, [
             'object' => new Checkout(),
@@ -55,51 +78,51 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
             'disabled' => null,
         ]);
 
-        $this->assertTrue($form->has('id'));
-        $this->assertTrue($form->has('label'));
-        $this->assertTrue($form->has('namePrefix'));
-        $this->assertTrue($form->has('firstName'));
-        $this->assertTrue($form->has('middleName'));
-        $this->assertTrue($form->has('lastName'));
-        $this->assertTrue($form->has('nameSuffix'));
-        $this->assertTrue($form->has('organization'));
-        $this->assertTrue($form->has('country'));
-        $this->assertTrue($form->has('street'));
-        $this->assertTrue($form->has('city'));
-        $this->assertTrue($form->has('region'));
-        $this->assertTrue($form->has('postalCode'));
-        $this->assertTrue($form->has('customerAddress'));
-        $this->assertTrue($form->has('phone'));
-        $this->assertTrue($form->getConfig()->hasOption('disabled'));
-        $this->assertFalse($form->getConfig()->getOption('disabled'));
+        self::assertTrue($form->has('id'));
+        self::assertTrue($form->has('label'));
+        self::assertTrue($form->has('namePrefix'));
+        self::assertTrue($form->has('firstName'));
+        self::assertTrue($form->has('middleName'));
+        self::assertTrue($form->has('lastName'));
+        self::assertTrue($form->has('nameSuffix'));
+        self::assertTrue($form->has('organization'));
+        self::assertTrue($form->has('country'));
+        self::assertTrue($form->has('street'));
+        self::assertTrue($form->has('city'));
+        self::assertTrue($form->has('region'));
+        self::assertTrue($form->has('postalCode'));
+        self::assertTrue($form->has('customerAddress'));
+        self::assertTrue($form->has('phone'));
+        self::assertTrue($form->getConfig()->hasOption('disabled'));
+        self::assertFalse($form->getConfig()->getOption('disabled'));
     }
 
-    public function testGetParent()
+    public function testGetParent(): void
     {
-        $type = new CheckoutAddressType();
+        $type = new CheckoutAddressType($this->currentThemeProvider, $this->themeManager);
 
-        $this->assertIsString($type->getParent());
-        $this->assertEquals(OrderAddressType::class, $type->getParent());
+        self::assertIsString($type->getParent());
+        self::assertEquals(OrderAddressType::class, $type->getParent());
     }
 
     /**
      * @dataProvider submitDataProvider
      */
-    public function testSubmit(OrderAddress $defaultData, array $submittedData, OrderAddress $expectedData)
+    public function testSubmit(OrderAddress $defaultData, array $submittedData, OrderAddress $expectedData): void
     {
         $form = $this->factory->create(CheckoutAddressType::class, $defaultData, [
             'object' => new Checkout(),
             'addressType' => 'billing'
         ]);
 
-        $this->assertEquals($defaultData, $form->getViewData());
-        $this->assertEquals($defaultData, $form->getData());
+        self::assertEquals($defaultData, $form->getViewData());
+        self::assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
 
-        $this->assertEquals($expectedData, $form->getData());
+        self::assertEquals($expectedData, $form->getData());
     }
 
     public function submitDataProvider(): array
@@ -142,7 +165,7 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
             'addressType' => 'billing'
         ]);
 
-        $this->assertEquals($expectedAddress, $form->getData());
+        self::assertEquals($expectedAddress, $form->getData());
     }
 
     public function preSetDataDataProvider(): array
@@ -169,23 +192,66 @@ class CheckoutAddressTypeTest extends FormIntegrationTestCase
         ];
     }
 
+    public function testPreSubmitOldTheme(): void
+    {
+        $this->currentThemeProvider->expects(self::once())
+            ->method('getCurrentThemeId')
+            ->willReturn('default');
+
+        $this->themeManager->expects(self::once())
+            ->method('themeHasParent')
+            ->with('default', ['default_50', 'default_51'])
+            ->willReturn(true);
+
+        $form = $this->factory->create(CheckoutAddressType::class, $this->getOrderAddress(), [
+            'object' => new Checkout(),
+            'addressType' => 'billing',
+            'multiStepCheckout' => true
+        ]);
+
+        $form->submit(['label' => 'test']);
+
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+
+        self::assertTrue($form->get('label')->getConfig()->getMapped());
+    }
+
+    public function testPreSubmit(): void
+    {
+        $form = $this->factory->create(CheckoutAddressType::class, $this->getOrderAddress(), [
+            'object' => new Checkout(),
+            'addressType' => 'billing',
+            'multiStepCheckout' => true
+        ]);
+
+        $form->submit(['label' => 'test', 'customerAddress' => '0']);
+
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+
+        foreach ($form->all() as $child) {
+            self::assertFalse($child->getConfig()->getMapped());
+        }
+    }
+
     #[\Override]
     protected function getExtensions(): array
     {
         $orderAddressSecurityProvider = $this->createMock(OrderAddressSecurityProvider::class);
-        $orderAddressSecurityProvider->expects($this->any())
+        $orderAddressSecurityProvider->expects(self::any())
             ->method('isManualEditGranted')
             ->willReturn(true);
 
         $addressManager = $this->createMock(OrderAddressManager::class);
-        $addressManager->expects($this->any())
+        $addressManager->expects(self::any())
             ->method('getGroupedAddresses')
             ->willReturn(new TypedOrderAddressCollection(null, 'billing', []));
 
         return [
             new PreloadedExtension(
                 [
-                    new CheckoutAddressType(),
+                    new CheckoutAddressType($this->currentThemeProvider, $this->themeManager),
                     new OrderAddressType(
                         $orderAddressSecurityProvider
                     ),

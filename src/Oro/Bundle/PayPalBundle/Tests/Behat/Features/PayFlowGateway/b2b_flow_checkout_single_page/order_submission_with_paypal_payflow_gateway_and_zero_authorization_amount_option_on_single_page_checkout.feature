@@ -33,6 +33,7 @@ Feature: Order submission with PayPal PayFlow Gateway and zero "authorization am
     Then I should not see "Invalid Expiration date."
     When I click "Submit Order"
     Then I should see "Invalid Expiration date."
+    And I scroll to top
     When I fill credit card form with next data:
       | Year | 2027 |
     When I click "Submit Order"

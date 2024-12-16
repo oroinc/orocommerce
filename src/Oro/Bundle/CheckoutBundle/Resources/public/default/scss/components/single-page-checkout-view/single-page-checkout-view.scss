@@ -8,7 +8,7 @@
     .checkout {
         &__sidebar {
             display: grid;
-            grid-template-rows: 1fr auto;
+            grid-template-rows: minmax(0, 1fr) auto;
 
             > :empty {
                 display: none;
@@ -42,6 +42,22 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: spacing('base') spacing('huge');
+            align-items: start;
+
+            .summary-widget__inner {
+                margin-left: initial;
+            }
+
+            .summary-widget__summary {
+                padding-inline-end: initial;
+                padding-inline-start: spacing('xs');
+                padding-bottom: initial;
+            }
+
+            .coupon-trigger {
+                padding-inline-start: spacing('xs');
+                padding-inline-end: initial;
+            }
 
             &:not(.show) {
                 display: grid;
@@ -121,6 +137,21 @@
 
     margin: $checkout-view-margin;
 
+    &__title {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        min-height: 44px;
+
+        &-icon {
+            transition: transform 230ms ease-in-out;
+        }
+
+        &:not(.collapsed) &-icon {
+            transform: rotate(180deg);
+        }
+    }
+
     &__columns {
         display: grid;
         grid-template-columns: 1fr 1fr;
@@ -134,9 +165,11 @@
         display: flex;
         flex-direction: column;
         gap: spacing('base');
+        overflow: auto;
 
         &:last-of-type {
-            padding-right: 0;
+            padding-right: spacing('xs');
+            margin-right: -#{spacing('xs')};
         }
 
         &:not(:first-of-type) {
@@ -144,11 +177,17 @@
         }
 
         &-inner {
+            position: relative;
             padding: $checkout-view-column-inner-offset;
+
+            .required-label {
+                margin-top: spacing('base');
+            }
         }
 
         &--first {
-            padding-left: 0;
+            padding-left: spacing('xs');
+            margin-left: -#{spacing('xs')};
         }
 
         &-header {
@@ -196,14 +235,8 @@
         }
     }
 
-    .checkout {
-        padding: $checkout-padding-narrow;
-    }
-
-    .checkout-form__payment-methods {
-        max-width: 300px;
-        padding: 0 0 0 (spacing('sm') + 2);
-        margin: 0 0 0 spacing('base');
+    &__address-form-grid {
+        --grid-gap: #{spacing('xs')};
     }
 
     .checkout-form__img {
@@ -211,7 +244,7 @@
     }
 
     .checkout-order-summary__edit-link {
-        align-self: flex-end;
+        margin-bottom: spacing('base');
     }
 
     .datepicker-input {
@@ -226,9 +259,13 @@
     }
 }
 
+.order-review-options__notes {
+    max-height: 300px;
+}
+
 @include breakpoint('desktop-small') {
     .single-page-checkout-view {
-        gap: spacing('base') spacing('xl');
+        gap: spacing('sm') spacing('xl');
         grid-template-columns: 1fr 752px;
         grid-template-rows: auto 1fr;
 
@@ -241,13 +278,18 @@
 
     .checkout__container--single-page {
         .checkout {
+            &__content-head {
+                grid-row: 1 / 2;
+            }
+
             &__content-main {
                 grid-row: 2 / 3;
             }
 
             &__sidebar {
                 grid-row: 1 / 3;
-                min-height: calc(calc(100vh - var(--sticky-page-header-element-offset-top, 0)) - #{spacing('xl')});
+                min-height: max(570px, $checkout-view-container-single-page-sidebar-viewportfit);
+                max-height: $checkout-view-container-single-page-sidebar-viewportfit;
             }
 
             &__footer {
@@ -311,7 +353,21 @@
 
     .single-page-checkout-view {
         &__columns {
+            margin-top: spacing('base');
             border-bottom: $checkout-view-column-border;
+        }
+
+        &__column {
+            padding: $checkout-view-column-offset-tablet;
+            gap: spacing('xs');
+
+            &--first {
+                padding-left: spacing('xs');
+            }
+        }
+
+        &__column-inner {
+            padding-bottom: spacing('base');
         }
     }
 }
@@ -319,17 +375,27 @@
 @include breakpoint('mobile-big') {
     .single-page-checkout-view {
         &__columns {
+            margin-top: spacing('sm');
             grid-template-columns: 1fr;
             border-bottom: none;
         }
 
         &__column {
+            padding: spacing('sm') spacing('xs');
+            margin: 0 -#{spacing('xs')};
+            border-bottom: $checkout-view-column-border;
+
             &:not(:first-of-type) {
                 border-left: none;
             }
+        }
 
-            padding: spacing('sm') 0;
-            border-bottom: $checkout-view-column-border;
+        .checkout-order-summary__edit-link {
+            margin-bottom: spacing('xs');
+        }
+
+        .summary-widget__summary {
+            padding: 0;
         }
     }
 
@@ -337,6 +403,10 @@
         .checkout {
             &__content-main {
                 margin-top: spacing('sm');
+            }
+
+            &__footer {
+                z-index: z('fixed') + 2;
             }
 
             &__footer-collapse {

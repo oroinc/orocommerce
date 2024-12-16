@@ -2,6 +2,12 @@
 
 .grid-shipping-methods {
     @include list-normalize();
+
+    width: 260px;
+
+    .select2-chosen {
+        width: 100%;
+    }
 }
 
 @include breakpoint('mobile-landscape') {

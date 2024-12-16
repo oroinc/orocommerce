@@ -90,7 +90,8 @@ class CheckoutAddressSelectType extends AbstractType
         $addresses = $collection->toArray();
 
         $action = count($addresses) ? 'select' : 'enter';
-        $view->vars['label'] = sprintf('%sform.address.%s.%s.label', $labelPrefix, $action, $addressType);
+        $view->vars['address_count'] = count($addresses);
+        $view->vars['label'] = sprintf('%sform.address.%s.%s.label.short', $labelPrefix, $action, $addressType);
 
         $view->vars['attr']['data-addresses-types'] = json_encode(
             $this->addressManager->getAddressTypes($addresses, $options['group_label_prefix'])

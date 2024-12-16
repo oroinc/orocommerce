@@ -47,6 +47,10 @@
     padding: spacing('sm') 0;
     margin-bottom: spacing('base');
 
+    &:empty {
+        display: none;
+    }
+
     &:not(.sticky) {
         position: relative;
     }

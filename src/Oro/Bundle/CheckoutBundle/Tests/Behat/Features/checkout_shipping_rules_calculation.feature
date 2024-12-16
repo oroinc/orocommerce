@@ -60,7 +60,7 @@ Feature: Checkout shipping rules calculation
     And I click "Create Order"
     And on the "Billing" checkout step I press Continue
     And on the "Shipping" checkout step I press Continue
-    And I should see "Flat Rate: $200"
+    And I should see "Flat Rate $200"
     And on the "Shipping Method" checkout step I press Continue
     And I click "Continue"
     Then I should see Checkout Totals with data:

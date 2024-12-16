@@ -5,6 +5,68 @@
     flex-direction: column;
     gap: spacing('base');
 
+    &:not(&--no-offset) {
+        margin-block-end: spacing('base');
+    }
+
+    &:last-of-type:not(&--no-offset) {
+        margin-block-end: spacing('xxl');
+    }
+
+    &__container {
+        grid-gap: 0 #{spacing('base')};
+    }
+
+    &__billing-address,
+    &__shipping-address {
+        grid-gap: #{spacing('xs')} #{spacing('base')};
+    }
+
+    &__ship-to-billing-container:has(.hidden) {
+        min-height: 0;
+    }
+
+    &__customer-address {
+        margin-block-end: spacing('xs');
+
+        &:has(select:disabled) {
+            display: none;
+        }
+    }
+
+    &__container:has(&__customer-address select:disabled) {
+        .checkout-form__add-address {
+            display: none;
+        }
+    }
+
+    &__address-form {
+        --grid-auto-rows: max-content;
+        --grid-gap: #{spacing('xl')} #{spacing('base')};
+
+        max-width: 850px;
+        margin-bottom: spacing('lg');
+
+        &--no-offset {
+            margin-bottom: 0;
+        }
+
+        .ui-dialog & {
+            max-width: 100%;
+        }
+    }
+
+    &__row {
+        grid-column-gap: #{spacing('xxxl')};
+    }
+
+    &__address-checkbox-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: $checkout-form-address-checkbox-container-gap;
+        margin-top: $checkout-form-address-checkbox-container-offset;
+    }
+
     &__select-container {
         display: $checkout-form-select-container-display;
         flex-direction: $checkout-form-select-container-flex-direction;
@@ -68,14 +130,11 @@
 
     &__payment-methods-list {
         @include list-normalize();
-        @include clearfix();
 
+        display: flex;
+        flex-wrap: wrap;
+        gap: $checkout-form-payment-methods-list-form-gap;
         margin: $checkout-form-payment-methods-list-form-margin;
-    }
-
-    &__payment-methods-item {
-        float: $checkout-form-payment-methods-item-float;
-        margin: $checkout-form-payment-methods-item-margin;
     }
 
     &__payment-methods-form {
@@ -93,7 +152,7 @@
     &__buttons {
         display: grid;
         grid-auto-flow: column;
-        gap: spacing('base') spacing('sm');
+        gap: spacing('base') spacing('xl');
     }
 
     & &__buttons {
@@ -111,7 +170,7 @@
     }
 
     &__radio {
-        margin-bottom: spacing('sm');
+        flex-wrap: wrap;
 
         &:last-child {
             margin-bottom: 0;
@@ -128,7 +187,43 @@
     }
 
     .checkout-group-shipping-methods {
-        margin-bottom: spacing('base');
+        min-width: 320px;
+
+        .select2-chosen {
+            width: 100%;
+        }
+    }
+
+    &__shipping-methods-list {
+        max-width: 434px;
+
+        --checkbox-group-shipping-method-color: #{get-color('primary', 'base')};
+
+        .checkbox-label {
+            width: 100%;
+        }
+    }
+}
+
+.checkout-group-shipping-method-result {
+    display: flex;
+    gap: spacing('sm');
+    align-items: center;
+    width: 100%;
+
+    &__label {
+        max-width: $checkout-group-shipping-method-result-label-max-width;
+
+        @include ellipsis();
+
+        .select2-drop &,
+        .select2-choice & {
+            color: $checkout-group-shipping-method-result-label-color;
+        }
+    }
+
+    &__price {
+        margin-inline-start: auto;
     }
 }
 
@@ -174,10 +269,32 @@
         &__payment-methods {
             max-width: 100%;
         }
+
+        &__address-form {
+            grid-gap: #{spacing('xl')} 0;
+        }
+
+        &__row {
+            grid-column-gap: #{spacing('base')};
+        }
+
+        &__buttons {
+            gap: spacing('base');
+        }
+
+        .checkout-group-shipping-methods {
+            min-width: 100%;
+        }
     }
 }
 
 @include breakpoint('mobile-landscape') {
+    .checkout-form {
+        &__row {
+            grid-column-gap: 0;
+        }
+    }
+
     .summary-collapse-content:not(.show) {
         .checkout-form {
             &__buttons {

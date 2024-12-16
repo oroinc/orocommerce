@@ -40,9 +40,6 @@ oro_behat_extension:
         locator: '//form[@id="form-login"]//button[@type="submit"]'
         type: xpath
 
-    Select Billing Address:
-      selector: '[name="oro_workflow_transition[billing_address][customerAddress]"]'
-
     Billing Address:
       selector: 'select[name="oro_workflow_transition[billing_address][customerAddress]"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
@@ -54,9 +51,6 @@ oro_behat_extension:
     Checkout Shipping Address:
       selector: 'select[name="oro_workflow_transition[shipping_address][customerAddress]"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
-
-    Select Shipping Address:
-      selector: '[name="oro_workflow_transition[shipping_address][customerAddress]"]'
 
     Select Single Page Checkout Billing Address:
       selector: '[name="oro_workflow_transition[billing_address]"]'
@@ -106,7 +100,7 @@ oro_behat_extension:
       selector: 'h1.checkout__success__title'
 
     Checkout Order Review Form:
-      selector: 'form[name="oro_workflow_transition"]'
+      selector: 'section.page-content'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -117,9 +111,11 @@ oro_behat_extension:
             locator: '//input[@name="oro_workflow_transition[ship_until]"]/../../input'
 
     Do not ship later than Datepicker:
-      selector: 'form[name="oro_workflow_transition"] input.hasDatepicker'
+      selector: 'section.page-content input.hasDatepicker'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\DateTimePicker
 
+    Expand Checkout Footer:
+      selector: '.summary-collapse__toggle'
     Checkout Totals:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutPage
       selector: '.totals-container'
@@ -215,10 +211,10 @@ oro_behat_extension:
       selector: 'div.shopping-list-notes'
 
     CheckoutGoBackButton:
-        selector: 'div.checkout__steps ol.checkout-navigation > li > h5.checkout-navigation__title > a'
+        selector: 'div.checkout__steps ol.checkout-navigation > li h5.checkout-navigation__title > a'
 
     ShippingMethodFlatRate2:
-      selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio label.checkbox-label:contains("Flat Rate 2: $2.00")'
+      selector: 'div[data-content="shipping_method_form"] div.checkout-form__radio label.checkbox-label:contains("Flat Rate 2")'
 
     PaymentMethodPaymentTerm30:
       selector: 'div[data-content="payment_method_form"] div.checkout-form__radio label.checkbox-label:contains("Payment Term 30")'
@@ -258,7 +254,7 @@ oro_behat_extension:
           Zip/Postal Code: 'oro_workflow_transition[shipping_address][postalCode]'
 
     Checkout Order Form:
-      selector: 'form[name="oro_workflow_transition"]'
+      selector: 'section.page-content'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
@@ -417,7 +413,7 @@ oro_behat_extension:
 
     First Checkout Shipping Grid Title:
       selector:
-        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]/preceding-sibling::h3[1]'
+        locator: './/div[@data-page-component-name="frontend-checkout-line-items-grid:1"]/parent::*/parent::*//*[contains(concat(" ",normalize-space(@class)," ")," collapse__toggle ")]'
         type: 'xpath'
 
     First Checkout Shipping Grid:
@@ -429,7 +425,7 @@ oro_behat_extension:
 
     Second Checkout Shipping Grid Title:
       selector:
-        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]/preceding-sibling::h3[1]'
+        locator: './/div[@data-page-component-name="frontend-checkout-line-items-grid:2"]/parent::*/parent::*//*[contains(concat(" ",normalize-space(@class)," ")," collapse__toggle ")]'
         type: 'xpath'
 
     Second Checkout Shipping Grid:
@@ -441,7 +437,7 @@ oro_behat_extension:
 
     Third Checkout Shipping Grid Title:
       selector:
-        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:3"]/preceding-sibling::h3[1]'
+        locator: './/div[@data-page-component-name="frontend-checkout-line-items-grid:3"]/parent::*/parent::*//*[contains(concat(" ",normalize-space(@class)," ")," collapse__toggle ")]'
         type: 'xpath'
 
     Third Checkout Shipping Grid:
@@ -455,44 +451,56 @@ oro_behat_extension:
       selector: 'tbody tr[aria-rowindex]'
       class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\GridRow
 
+    First Checkout Grid Collapse:
+      selector: '.checkout-order-summary-container .collapse__container:nth-child(1)'
+
+    Second Checkout Grid Collapse:
+      selector: '.checkout-order-summary-container .collapse__container:nth-child(2)'
+
+    Third Checkout Grid Collapse:
+      selector: '.checkout-order-summary-container .collapse__container:nth-child(3)'
+
+    Collapse Subtotal:
+      selector: '[data-role*="frontend-checkout-line-items-grid"]'
+
     First Checkout Shipping Grid First Line Item Flat Rate Shipping Method:
       selector:
-        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]//table//tr[@aria-rowindex="2"]//*[@data-role="select-shipping-method"]'
         type: 'xpath'
 
     First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method:
       selector:
-        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate 2:")]//input[@type="radio"]'
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:1"]//table//tr[@aria-rowindex="2"]//*[@data-role="select-shipping-method"]'
         type: 'xpath'
 
     Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method:
       selector:
-        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="2"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="2"]//*[@data-role="select-shipping-method"]'
         type: 'xpath'
 
     Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method:
       selector:
-        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="3"]//ul//label[contains(., "Flat Rate:")]//input[@type="radio"]'
+        locator: '//div[@data-page-component-name="frontend-checkout-line-items-grid:2"]//table//tr[@aria-rowindex="3"]//*[@data-role="select-shipping-method"]'
         type: 'xpath'
 
     First Checkout Shipping Grid Flat Rate Shipping Method:
       selector:
-        locator: '//div[@class="checkout-form__radio"]//label[contains(., "Flat Rate:")]//input[@type="radio" and @data-item-id="product.category:2"]'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," collapse__container ")][1]//*[@data-role="select-shipping-method"]'
         type: 'xpath'
 
     Second Checkout Shipping Grid Flat Rate Shipping Method:
       selector:
-        locator: '//div[@class="checkout-form__radio"]//label[contains(., "Flat Rate:")]//input[@type="radio" and @data-item-id="product.category:3"]'
+        locator: './/*[contains(concat(" ",normalize-space(@class)," ")," collapse__container ")][2]//*[@data-role="select-shipping-method"]'
         type: 'xpath'
 
     Lighting Products Checkout Category Name:
       selector:
-        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Lighting Products"]'
+        locator: '//div[contains(@class,"checkout-order-summary__content")]//*[contains(@class,"collapse__toggle")][text()="Lighting Products"]'
         type: 'xpath'
 
     Phones Checkout Category Name:
       selector:
-        locator: '//div[contains(@class,"checkout-order-summary__content")]//h3[text()="Phones"]'
+        locator: '//div[contains(@class,"checkout-order-summary__content")]//*[contains(@class,"collapse__toggle")][text()="Phones"]'
         type: 'xpath'
 
     SubOrders Grid:

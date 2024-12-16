@@ -1,6 +1,6 @@
 {% block __oro_checkout_content__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__container"
+        '~class': " multistep-checkout"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -19,6 +19,51 @@
             data-page-component-options="{{ {
                 view: 'orocheckout/js/app/views/checkout-inner-content-view',
             }|json_encode }}">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_steps_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " multistep-checkout__steps",
+        'tabindex': '0',
+        'data-page-component-module': 'oroui/js/app/components/viewport-component',
+        '~data-page-component-options': {
+            viewport: 'mobile-big',
+            component: 'oroui/js/app/components/view-component',
+            view: 'orofrontend/default/js/app/views/overlay-popup-view',
+            view: 'orocheckout/js/app/views/checkout-overlay-popup-view',
+            popupLabel: 'oro.checkout.progress.label'|trans,
+            disableBackDrop: true,
+            contentElement: '[data-role="checkout-sidebar"]',
+            dialogClass: 'fullscreen-mode fullscreen-popup--transition'
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_main_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " multistep-checkout__main"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_footer_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " multistep-checkout__footer",
+        'data-layout': 'separate',
+        'data-role': 'checkout-totals',
+        'data-page-component-view': 'orocheckout/js/app/views/checkout-inner-content-view'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -63,8 +108,15 @@
 
 {% block __oro_checkout_content__checkout_information_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__title hide-on-desktop-small"
+        '~class': " checkout__title"
     }) %}
+
+    {% if hideOnDesktop %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': " hide-on-desktop-small"
+        }) %}
+    {% endif %}
+
     <h3 {{ block('block_attributes') }}>
         <span class="checkout__title-text">{{ workflowStep.label|trans({},'workflows') }}</span>
         {{ block_widget(block) }}
@@ -97,6 +149,17 @@
         </div>
         {% endif %}
         {{ block_widget(block) }}
+
+        {% if transitionData is defined and transitionData and transitionData.isAllowed == true and showRequiredLabel|default(false) == true %}
+            <div class="checkout__require-label">
+                <div data-role="checkout-require"
+                     class="required-label"
+                     aria-hidden="true"
+                ><span class="required-symbol" aria-hidden="true">*</span>
+                    {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+                </div>
+            </div>
+        {% endif %}
         </form>
         {{ oro_form_js_validation(form) }}
     {% else %}
@@ -105,6 +168,33 @@
         </form>
     {% endif %}
 {%- endblock %}
+
+{% block __oro_checkout_content__checkout_form_required_label_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__require-label hide-on-mobile-big",
+        'data-role': 'require-label',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    viewport: 'mobile-big',
+                    moveTo: '.multistep-checkout__title',
+                    startPointClass: 'hide-on-mobile-big'
+                }
+            ]
+        }
+    }) %}
+
+    {% if transitionData is defined and transitionData and transitionData.isAllowed == true and showRequiredLabel|default(false) == true %}
+        <div {{ block('block_attributes') }}>
+            <div data-role="checkout-require"
+                 class="required-label"
+                 aria-hidden="true"
+            ><span class="required-symbol" aria-hidden="true">*</span>
+                {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
 
 {% block __oro_checkout_content__checkout_form_errors_widget -%}
     {% if form != null and not form.vars.valid %}
@@ -149,6 +239,39 @@
                 <span class="hide-on-tablet-small">{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
             </a>
         <% } %>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_additional_collapse_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-order-summary__additional_collapse_header"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_additional_collapse_header_items_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-order-summary__item"
+    }) %}
+
+    {% if lineItems is defined and itemsCount is not defined %}
+        {% set itemsCount = lineItems|length %}
+    {% endif %}
+
+    <div {{ block('block_attributes') }}>
+        {{ 'oro.checkout.system_configuration.groups.items.label'|trans({'%count%': itemsCount|default(0)}) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_additional_collapse_header_subtotal_widget %}
+    {% if grid_full_name is defined %}
+        {% set attr = layout_attr_defaults(attr, {
+            'data-role': grid_full_name ~ 'subtotal',
+            '~class': " checkout-order-summary__item empty bold"
+        }) %}
+        <span {{ block('block_attributes') }}></span>
     {% endif %}
 {% endblock %}
 
@@ -241,9 +364,50 @@
     </div>
 {% endblock %}
 
+{% block __oro_checkout_content__checkout_order_summary_inner_layout_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-summary-inner-layout"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_inner_base_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-summary-inner-layout__base"
+    }) %}
+
+    {% set content = block_widget(block)|trim %}
+    {% if content|length %}
+        <div{{ block('block_attributes') }}>{{ content|raw }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_order_summary_inner_total_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-summary-inner-layout__total"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block __oro_checkout_content__checkout_order_summary_summary_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " summary-widget__summary"
+        '~class': " checkout-summary-widget"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_content__checkout_combined_buttons_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-summary-widget__combined-buttons"
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -279,50 +443,18 @@
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_sidebar_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__sidebar",
-        'data-layout': 'separate',
-        'data-role': 'checkout-totals',
-        'data-page-component-view': 'orocheckout/js/app/views/checkout-inner-content-view'
-    }) %}
-    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
-{% endblock %}
-
 {% block __oro_checkout_content__checkout_button_continue_widget -%}
-    {% if transitionData is defined and transitionData %}
-        <div class="checkout__botton-container">
-            <div class="checkout__botton-action">
-                {{ block_widget(block) }}
-            </div>
-            {% if showRequiredLabel %}
-            <div class="checkout__require-label">
-                <div data-role="checkout-require"
-                     class="required-label {% if transitionData.isAllowed == false %}hidden{% endif %}"
-                     aria-hidden="true"
-                ><span class="required-symbol" aria-hidden="true">*</span>
-                    {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
-                </div>
-            </div>
-            {% endif %}
+    <div class="checkout__botton-container">
+        <div class="checkout__botton-action">
+            {{ block_widget(block) }}
         </div>
-    {% endif %}
+    </div>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_form_buttons_widget -%}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " checkout-form__buttons"
     }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block __oro_checkout_content__checkout_outside_form_buttons_widget -%}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout-form__buttons"
-    }) %}
-
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

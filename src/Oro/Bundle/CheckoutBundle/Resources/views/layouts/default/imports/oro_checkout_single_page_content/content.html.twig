@@ -1,0 +1,188 @@
+{% block __oro_checkout_single_page_content__checkout_content_main_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__content-main"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+
+{% block __oro_checkout_single_page_content__checkout_form_widget -%}
+    {% if form %}
+        {{ form_start(form, {
+            'method': 'post',
+            'action': path('oro_checkout_frontend_checkout', {'id': checkout.id}),
+            'attr' : {
+                'class': 'checkout-form',
+                'data-nohash': 'true',
+                'id': form.vars.id
+            }})
+        }}
+    {% if form._token is defined %}
+        <div class="hidden">
+            {{ form_widget(form._token) }}
+        </div>
+    {% endif %}
+        {{ block_widget(block) }}
+        </form>
+        {{ oro_form_js_validation(form) }}
+    {% else %}
+        <form method="post" class="checkout-form" action="">
+            {{ block_widget(block) }}
+        </form>
+    {% endif %}
+{%- endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_form_errors_widget -%}
+    {% if form != null and not form.vars.valid %}
+        <div class="checkout-form-errors notification--error" id="checkout-form-errors">
+            {{ form_errors(form) }}
+        </div>
+    {% endif %}
+{%- endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_edit_link_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set editLink = workflowItem.data.get('edit_order_link') %}
+    {% set attr = layout_attr_defaults(attr, {
+        'href': editLink,
+        '~class': " btn btn--flat checkout-order-summary__edit-link"
+    }) %}
+    {% if editLink %}
+        <a {{ block('block_attributes') }}>
+            {{ renderIcon.icon({name: 'arrow-left'}) }}
+            <span>{{ 'oro.checkout.order_summary.edit_order.title'|trans }}</span>
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_content_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-order-summary__content"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_notes_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-notes shopping-list-notes--no-offset'
+    }) %}
+    {% if notes is not null %}
+        <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_notes_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' shopping-list-notes__title'
+    }) %}
+    {% if notes is not null %}
+        <h5 {{ block('block_attributes') }}>
+            {{- 'oro.checkout.order_summary.notes'|trans -}}
+        </h5>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_notes_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set collapseId = 'collapse-'|uniqid %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': collapseId,
+        '~class': ' shopping-list-notes__content shopping-list-notes__content--limited collapse collapse-overflow no-transition',
+        'data-collapsed-text': 'oro.ui.collapse.more'|trans,
+        'data-expanded-text': 'oro.ui.collapse.less'|trans,
+        'data-check-overflow': 'true',
+        'data-toggle': 'false',
+        'data-trigger-icon-hide': 'chevron-down',
+        'data-trigger-icon-show': 'chevron-up'
+    }) %}
+    {% if notes is not null %}
+
+        <div {{ block('block_attributes') }}>{{- notes -}}</div>
+        <button class="btn btn--flat collapse-toggle"
+                data-toggle="collapse"
+                data-target="{{ '#' ~ collapseId }}"
+                aria-controls="{{ collapseId }}"
+        >
+            <span data-text>{{ 'oro.ui.collapse.more'|trans }}</span>
+            <span class="shopping-list-notes__icon" data-icon>
+                {{ renderIcon.icon({name: 'chevron-down'}) }}
+            </span>
+        </button>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_totals_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' summary-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_single_page_content___checkout_order_summary_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_inner_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget__inner"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_summary_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " summary-widget__summary"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_totals_widget -%}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout-order-summary__totals",
+        'data-page-component-view': 'oroshoppinglist/js/app/views/summary-wrapper-view',
+        'data-page-component-options': {
+            'showMaskEvents': ['shopping-list:request'],
+            'hideMaskEvents': ['shopping-list:refresh']
+        }|json_encode
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{%- endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_footer_col_first_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__footer-col"
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_sidebar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__sidebar",
+        'data-layout': 'separate',
+        'data-role': 'checkout-totals',
+        'data-page-component-view': 'orocheckout/js/app/views/checkout-inner-content-view'
+    }) %}
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}

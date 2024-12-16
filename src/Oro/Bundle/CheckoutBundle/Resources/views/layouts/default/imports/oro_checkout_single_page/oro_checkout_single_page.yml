@@ -170,12 +170,10 @@ layout:
                 checkout: '=data["checkout"]'
                 transitionData: '=data["oro_checkout_single_page_transition"].getContinueTransition(data["workflowItem"])'
 
-        - '@remove':
-            id: __checkout_outside_form_buttons
-
-        - '@move':
-            id: checkout_form
-            parentId: checkout_container
+        - '@add':
+            id: checkout_content_head
+            parentId: checkout_view
+            blockType: container
 
         - '@move':
             id: checkout_content_main
@@ -208,20 +206,7 @@ layout:
 
         - '@move':
             id: page_title_container
-            parentId: checkout_view
-            prepend: true
-
-        - '@remove':
-            id: checkout_content_main_top
-
-        - '@remove':
-            id: checkout_form_buttons
-
-        - '@remove':
-            id: checkout_content
-
-        - '@remove':
-            id: checkout_outside_submit_order_button
+            parentId: checkout_content_head
 
         - '@add':
             id: checkout_summary_additional_options
@@ -268,9 +253,6 @@ layout:
             id: checkout_order_summary_totals_container
             parentId: checkout_order_summary_summary
 
-        - '@remove':
-            id: checkout_order_summary_totals_main
-
         - '@move':
             id: checkout_order_summary
             parentId: checkout_summary
@@ -280,19 +262,17 @@ layout:
             parentId: checkout_order_summary_totals_wrapper
 
         - '@remove':
+            id: checkout_steps
+
+        - '@remove':
+            id: checkout_main
+
+        - '@remove':
+            id: checkout_footer
+
+        - '@remove':
             id: checkout_sidebar
 
-        - '@remove':
-            id: checkout_information_head
-
-        - '@remove':
-            id: checkout_order_summary_container
-
-        - '@remove':
-            id: checkout_button_continue
-
-        - '@remove':
-            id: checkout_button_back
 
         - '@setOption':
             id: checkout_consent_wrapper
@@ -364,3 +344,18 @@ layout:
             optionName: attr
             optionValue:
                 class: ' checkout__container--single-page'
+
+        - '@move':
+            id: checkout_order_summary_line_items_datagrid_toolbar
+            parentId: checkout_order_summary_line_items_container
+
+        - '@move':
+            id: checkout_order_summary_line_items_datagrid
+            parentId: checkout_order_summary_line_items_container
+
+        - '@move':
+            id: checkout_order_summary_line_items_datagrid_views
+            parentId: checkout_order_summary_line_items_container
+
+        - '@remove':
+            id: checkout_order_summary_line_items_collapse_container

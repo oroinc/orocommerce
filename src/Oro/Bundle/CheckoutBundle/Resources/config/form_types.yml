@@ -1,6 +1,9 @@
 services:
     oro_checkout.form.type.checkout_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType'
+        arguments:
+            - '@oro_layout.current_theme_provider'
+            - '@oro_layout.theme_manager'
         tags:
             - { name: form.type, alias: oro_checkout_address }
 
@@ -19,6 +22,8 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowStateExtension'
         arguments:
             - '@oro_checkout.workflow_state.handler.checkout_error'
+            - '@oro_layout.current_theme_provider'
+            - '@oro_layout.theme_manager'
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType }
 

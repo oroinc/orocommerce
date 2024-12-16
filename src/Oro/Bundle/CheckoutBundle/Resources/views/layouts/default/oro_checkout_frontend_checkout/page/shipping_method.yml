@@ -19,6 +19,7 @@ layout:
             id: shipping_methods_template
             parentId: shipping_methods
             blockType: container
+
         - '@add':
             id: shipping_methods_template_methods
             parentId: shipping_methods_template

@@ -1,0 +1,9 @@
+{% block _coupon_summary_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': 'coupon-summary-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

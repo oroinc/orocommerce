@@ -49,8 +49,7 @@ Feature: Guest Single Page checkout from quote with shipping address
 
   Scenario: Fill and save billing address via popup
     Given I scroll to top
-    And I click on "Billing Address Select"
-    And I click on "New Address Option"
+    And I click on "Add Address Single Page Checkout Btn" with title "Add" in element "Single Page Checkout Billing Section"
     And I should see "Address 1 My Organization 801 Scenic Hwy HAINES CITY FL US 33844"
     When I fill "New Address Popup Form" with:
       | Email           | tester@test.com |

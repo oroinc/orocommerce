@@ -56,5 +56,5 @@ Feature: Ensure that disabled shipping and payment rules are handled properly wh
     Then I should see "The selected payment method is not available. Please return to the payment method selection step and select a different one." flash message
     And on the "Order Review" checkout step I go back to "Edit Payment"
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
-    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title

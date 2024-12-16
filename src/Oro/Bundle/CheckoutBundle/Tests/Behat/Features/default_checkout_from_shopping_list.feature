@@ -77,7 +77,7 @@ Feature: Default Checkout From Shopping List
     And I should see following header in "Do not ship later than Datepicker":
       | M | D | M | D | F | S | S |
     And I select "English" localization
-    When I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    When I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
 
     When I follow "click here to review"

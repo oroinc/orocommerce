@@ -590,6 +590,7 @@ Feature: Consent management via Management Console UI
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Continue"
     Then I should see that "Required Consent" contains "This agreement is required"
+    And I scroll to top
     And I click "Presenting Personal Data"
     And I scroll modal window to bottom
     When click "Agree"
@@ -848,6 +849,7 @@ Feature: Consent management via Management Console UI
     And the "Collecting and storing personal data" checkbox should be checked
     When click "Continue"
     Then I should see that "Required Consent" contains "This agreement is required"
+    And I scroll to top
     When I click "Presenting Personal Data"
     And I scroll modal window to bottom
     When click "Agree"

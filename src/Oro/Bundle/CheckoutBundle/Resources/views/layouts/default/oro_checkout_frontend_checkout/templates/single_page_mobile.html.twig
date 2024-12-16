@@ -1,0 +1,46 @@
+{% block _checkout_billing_information_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set uniqueId = 'checkout-billing-information-'|uniqid %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <h3 class="single-page-checkout-view__title" type="button" data-toggle="collapse" data-target="#{{ uniqueId }}" aria-expanded="true" aria-controls="{{ uniqueId }}">
+            {{ 'oro.checkout.billing_information'|trans }}
+            {{ renderIcon.icon({name: 'chevron-down', extraClass: 'single-page-checkout-view__title-icon'}) }}
+        </h3>
+        <div id="{{ uniqueId }}" class="single-page-checkout-view__column-inner collapse show">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block _checkout_shipping_information_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set uniqueId = 'checkout-shipping-information-'|uniqid %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
+    <div {{ block('block_attributes') }}>
+        <h3 class="single-page-checkout-view__title" type="button" data-toggle="collapse" data-target="#{{ uniqueId }}" aria-expanded="true" aria-controls="{{ uniqueId }}">
+            {{ 'oro.checkout.shipping_information'|trans }}
+            {{ renderIcon.icon({name: 'chevron-down', extraClass: 'single-page-checkout-view__title-icon'}) }}
+        </h3>
+        <div id="{{ uniqueId }}" class="single-page-checkout-view__column-inner collapse show">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_checkout_single_page_content__checkout_order_summary_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+    {% set uniqueId = 'checkout-order-'|uniqid %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view--summary"}) %}
+    <div {{ block('block_attributes') }}>
+        <h3 class="single-page-checkout-view__title" type="button" data-toggle="collapse" data-target="#{{ uniqueId }}" aria-expanded="true" aria-controls="{{ uniqueId }}">
+            {{ 'oro.checkout.order.label'|trans }}
+            {{ renderIcon.icon({name: 'chevron-down', extraClass: 'single-page-checkout-view__title-icon'}) }}
+        </h3>
+        <div id="{{ uniqueId }}" class="collapse show">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}

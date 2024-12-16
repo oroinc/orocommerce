@@ -14,6 +14,35 @@
             }
         }
     }
+
+    .collapsing & {
+        .toolbar.sticky {
+            position: relative;
+            top: 0;
+            bottom: 0;
+        }
+    }
+
+    .collapse & {
+        .toolbar {
+            &.sticky:not(.in-sticky) {
+                z-index: z();
+            }
+
+            &:not(.in-sticky):has(.open-filter) {
+                z-index: z('dropdown') + 2;
+            }
+        }
+    }
+}
+
+@include breakpoint('desktop-small') {
+    .responsive-checkout-grid {
+        .actions-panel-container,
+        .datagrid-tool:has(.page-size .hide) {
+            display: none;
+        }
+    }
 }
 
 @include breakpoint('tablet') {

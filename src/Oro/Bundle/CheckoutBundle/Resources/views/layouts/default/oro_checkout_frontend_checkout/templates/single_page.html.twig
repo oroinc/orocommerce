@@ -1,4 +1,4 @@
-{% block __oro_checkout_content__checkout_information_widget %}
+{% block __oro_checkout_single_page_content__checkout_information_widget %}
     {{ block_widget(block) }}
 {% endblock %}
 
@@ -32,6 +32,16 @@
     </div>
 {% endblock %}
 
+{% block _checkout_content_head_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " checkout__content-head"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _top_sticky_panel_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' sticky-panel--background-less',
@@ -41,7 +51,7 @@
 
 {% block _checkout_billing_information_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first"
+        class: attr.class|default('') ~ " single-page-checkout-view__column single-page-checkout-view__column--first styled-scrollbar"
     }) %}
     <div {{ block('block_attributes') }}>
         <h3>{{ 'oro.checkout.billing_information'|trans }}</h3>
@@ -53,7 +63,7 @@
 
 {% block _shipping_address_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " grid"
+        '~class': " grid single-page-checkout-view__address-form-grid"
     }) %}
     {{ parent_block_widget(block) }}
 {% endblock %}
@@ -73,7 +83,7 @@
 {% endblock %}
 
 {% block _checkout_shipping_information_widget %}
-    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column"}) %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view__column styled-scrollbar"}) %}
     <div {{ block('block_attributes') }}>
         <h3>{{ 'oro.checkout.shipping_information'|trans }}</h3>
         <div class="single-page-checkout-view__column-inner">
@@ -90,14 +100,14 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_summary_widget %}
+{% block __oro_checkout_single_page_content__checkout_order_summary_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " single-page-checkout-view--summary"}) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_summary_header_widget %}
+{% block __oro_checkout_single_page_content__checkout_order_summary_header_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " single-page-checkout-view__column-header"
     }) %}
@@ -105,17 +115,6 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block __oro_checkout_content__checkout_order_summary_title_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': "single-page-checkout-view__title"
-    }) %}
-    <h3 {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-        {{ 'oro.checkout.order_summary.label'|trans }}
-    </h3>
-
 {% endblock %}
 
 {% block _checkout_summary_widget %}
@@ -129,16 +128,38 @@
             {{ renderAddress(checkout.shippingAddress, true) }}
         </div>
     {% else %}
+        {% set customerAddressClass = 'select-multiline' %}
+        {% set customerAddressSelect2 = {
+            dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+            containerCssClass: 'oro-select2 select-multiline',
+            dropdownAutoWidth: false
+        } %}
+        {% set hideAddressSelect = form.shipping_address.vars.address_count == 0 %}
+        {% if checkout.customerUser.isGuest|default(false) %}
+            {% set hideAddressSelect = form.shipping_address.vars.value|default('') is empty  %}
+        {% endif %}
+        {% if hideAddressSelect %}
+            {% set customerAddressClass =  customerAddressClass ~ ' hidden' %}
+            {% set customerAddressSelect2 = customerAddressSelect2|merge({
+                containerCssClass: 'hidden'
+            }) %}
+        {% endif %}
         <div class="grid-col-12">
             {% set renderedAddress = checkout.shippingAddress ? checkout.shippingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
-            {{ form_row(form.shipping_address, {'attr': {
-                'data-role': 'checkout-shipping-address',
-                'data-address-type': 'shipping',
-                'data-new-address-label': renderedAddress,
-                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-            }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
+            {{ form_row(form.shipping_address, {
+                'attr': {
+                    'class': customerAddressClass,
+                    'data-role': 'checkout-shipping-address',
+                    'data-address-type': 'shipping',
+                    'data-new-address-label': renderedAddress,
+                    'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+                },
+                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+                'entity_id': checkout.id,
+                'configs': form.shipping_address.vars.configs|default({})|merge(customerAddressSelect2)
+            }) }}
         </div>
-        <div class="grid-col-12">
+        <div class="grid-col-12 items-center base-min-height">
             {{ form_row(form.ship_to_billing_address, {'attr': {'data-role': 'checkout-ship-to'}}) }}
         </div>
     {% endif %}
@@ -147,12 +168,35 @@
 {% block _billing_address_widget -%}
     {% set renderedAddress = checkout.billingAddress ? checkout.billingAddress|oro_format_address(null, ', ') : 'N/A'|trans %}
     <div {{ block('block_attributes') }}>
-        {{ form_row(form.billing_address, {'attr': {
-            'data-role': 'checkout-billing-address',
-            'data-address-type': 'billing',
-            'data-new-address-label': renderedAddress,
-            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
-        }, 'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans}) }}
+        {% set customerAddressClass = 'select-multiline' %}
+        {% set customerAddressSelect2 = {
+            dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
+            containerCssClass: 'oro-select2 select-multiline',
+            dropdownAutoWidth: false
+        } %}
+        {% set hideAddressSelect = form.billing_address.vars.address_count == 0 %}
+        {% if checkout.customerUser.isGuest|default(false) %}
+            {% set hideAddressSelect = form.billing_address.vars.value|default('') is empty  %}
+        {% endif %}
+
+        {% if hideAddressSelect %}
+            {% set customerAddressClass =  customerAddressClass ~ ' hidden' %}
+            {% set customerAddressSelect2 = customerAddressSelect2|merge({
+                containerCssClass: 'hidden'
+            }) %}
+        {% endif %}
+        {{ form_row(form.billing_address, {
+            'attr': {
+                'class': customerAddressClass,
+                'data-role': 'checkout-billing-address',
+                'data-address-type': 'billing',
+                'data-new-address-label': renderedAddress,
+                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+            },
+            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+            'entity_id': checkout.id,
+            'configs': form.billing_address.vars.configs|default({})|merge(customerAddressSelect2)
+        }) }}
     </div>
 {%- endblock %}
 
@@ -180,6 +224,7 @@
                 {{ form_widget(form.payment_validate) }}
             </div>
         {% endif %}
+
         {% if form.additional_data is defined %}
             <div data-page-component-module="orocheckout/js/app/components/payment-additional-data-component">
                 {{ form_row(form.additional_data) }}
@@ -228,6 +273,7 @@
                 {% set noteId = 'oro_workflow_transition_customer_notes-uid-'|uniqid %}
                 <label class=" label label--full" for="{{ noteId }}">{{ "oro.checkout.order_review.note"|trans }}</label>
                 {{ form_widget(form.customer_notes, { 'id': noteId, 'attr': {
+                        'class': 'order-review-options__notes',
                         'placeholder': 'oro.checkout.order_review.note_placeholder'|trans,
                         'data-page-component-elastic-area': ''
                     }
@@ -240,24 +286,25 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                <div class="grid-col-12">
+                <div class="grid-col-12 items-center base-min-height">
                     {{ form_row(form.remove_source, removeElementOptions) }}
                 </div>
             {% endif %}
 
             {% if feature_enabled('checkout_customer_users_registration') and
-            checkout.registeredCustomerUser == null and
-            checkout.customerUser.isGuest
+                checkout.registeredCustomerUser == null and
+                checkout.customerUser.isGuest
             %}
-                <div class="grid-col-6 grid-col-mobile-landscape-12 grid"
-                          data-page-component-module="oroui/js/app/components/view-component"
-                          data-page-component-options="{{ {
-                              view: 'orocheckout/js/app/views/late-checkout-registration-view',
-                              selectors: {
-                                  switcher: '#' ~ form.late_registration.offsetGet('is_late_registration_enabled').vars.id,
-                                  fieldsContainer: '#checkout-late-registration-fields'
-                              }
-                          }|json_encode }}">
+                <div class="grid grid-col-12"
+                      data-page-component-module="oroui/js/app/components/view-component"
+                      data-page-component-options="{{ {
+                          view: 'orocheckout/js/app/views/late-checkout-registration-view',
+                          selectors: {
+                              switcher: '#' ~ form.late_registration.offsetGet('is_late_registration_enabled').vars.id,
+                              fieldsContainer: '#checkout-late-registration-fields'
+                          }
+                      }|json_encode }}"
+                >
                     <div id="checkout-late-registration-toggler" class="grid-col-12">
                         {{ form_row(form.late_registration.offsetGet('is_late_registration_enabled')) }}
                     </div>
@@ -361,7 +408,7 @@
     {% endif %}
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_order_footer_widget %}
+{% block __oro_checkout_single_page_content__checkout_order_footer_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
     {% set collapseId = 'checkout-collapse-'|uniqid %}
     {% set attr = layout_attr_defaults(attr, {
@@ -377,7 +424,14 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        <button class="btn btn--circle btn--size-small checkout__footer-toggle {{ isMobileVersion() ? 'collapsed' : '' }}" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="{{ isMobileVersion() ? 'false' : 'true' }}" aria-controls="{{ collapseId }}">
+        <button class="btn btn--circle btn--size-small checkout__footer-toggle {{ isMobileVersion() ? 'collapsed' : '' }}"
+                type="button"
+                data-toggle="collapse"
+                data-target="#{{ collapseId }}"
+                data-validation-ignore-onblur=""
+                aria-expanded="{{ isMobileVersion() ? 'false' : 'true' }}"
+                aria-controls="{{ collapseId }}"
+        >
             {{ renderIcon.icon({name: 'chevron-up'}) }}
         </button>
         <div id="{{ collapseId }}" class="checkout__footer-collapse summary-collapse-content {{ isMobileVersion() ? '' : 'show' }}">
@@ -386,17 +440,8 @@
     </div>
 {% endblock %}
 
-{% block __oro_checkout_content__checkout_content_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__content"
-    }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block __oro_checkout_content__checkout_container_widget %}
+{% block __oro_checkout_single_page_content__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' checkout__container',
         'data-layout': 'separate',
@@ -407,4 +452,13 @@
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block _checkout_billing_information_require_info_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' required-label',
+        'aria-hidden': 'true'
+    }) %}
+
+    <div {{ block('block_attributes') }}><span class="required-symbol" aria-hidden="true">*</span> {{ 'oro.customer.form.label.required'|trans }}</div>
 {% endblock %}

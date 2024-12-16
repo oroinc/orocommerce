@@ -12,10 +12,8 @@
 {% block form_actions %}
     <div class="widget-actions form-actions">
         {% block form_actions_inner %}
-            {% if isMobileVersion() %}
-                <button class="btn" type="reset">{{ 'Close'|trans }}</button>
-            {%  endif %}
-            <button class="btn btn-success btn--outlined" type="submit">{{ 'Continue'|trans }}</button>
+            <button class="btn btn--outlined" type="reset">{{ 'Cancel'|trans }}</button>
+            <button class="btn" type="submit">{{ 'Add Address'|trans }}</button>
         {% endblock %}
     </div>
 {% endblock %}

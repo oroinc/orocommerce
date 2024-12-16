@@ -694,8 +694,8 @@ Feature: Commerce smoke e2e
 
     And should see "test note Redmi"
     When click "Create Order"
-    And fill form with:
-      |SELECT BILLING ADDRESS|New address|
+    And I click "Add Address"
+    And I fill "New Address Popup Form" with:
       |Label          |Home Address  |
       |First name     |NewFname      |
       |Last name      |NewLname      |
@@ -705,6 +705,8 @@ Feature: Commerce smoke e2e
       |Country        |United States |
       |State          |California    |
       |Zip/Postal Code|90001         |
+    And click "Continue" in modal window
+    And I click "Ship to This Address"
     And click "Continue"
     And I select "Branda Sanborn, Smoke Org, Market St. 12, SAN FRANCISCO CA US 90001" on the "Shipping Information" checkout step and press Continue
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -713,7 +715,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping $120.00"
     And should see "Tax $153.90"
     And should see "TOTAL $1,893.90"
-    And I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    And I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And I click "Account Dropdown"
     And click "Sign Out"
@@ -741,7 +743,7 @@ Feature: Commerce smoke e2e
     And should see "Shipping $120.00"
     And should not see "Tax"
     And should see "TOTAL $295.20"
-    When I check "Delete this shopping list after submitting order" on the "Order Review" checkout step and press Submit Order
+    When I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order
     Then I see the "Thank You" page with "Thank You For Your Purchase!" title
     And click "click here to review"
     And should see "Billing Address Home Address NewAmanda NewCole NewOrg Stanyan St 12 SAN FRANCISCO CA US 90001"

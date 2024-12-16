@@ -6,31 +6,25 @@
     }
 %>
 <h5 class="<%- titleClasses %>"><%- _metadata.label %>:</h5>
-<ul class="grid-shipping-methods">
+<select class="grid-shipping-methods" data-role="select-shipping-method" aria-label="<%- _.__('oro.checkout.multishipping.label_for', {label: name}) %>" name="shippingMethodType[<%- lineItemId %>]">
 <% _.each(shippingMethods, method => { %>
     <% if (!method.types) { return; } %>
     <% _.each(method.types, type => { %>
         <% if (!type.price) { return; } %>
         <% var selected = currentShippingMethodType === type.identifier && currentShippingMethod === method.identifier %>
-        <li>
-            <label class="checkbox-label skip-row-click">
-                <input type="radio"
-                       name="shippingMethodType[<%- lineItemId %>]"
-                       value="<%- type.identifier %>-<%- method.identifier %>"
-                       data-shipping-type="<%- type.identifier %>"
-                       data-shipping-method="<%- method.identifier %>"
-                       data-shipping-price="<%- type.price.value %>"
-                       data-choice="<%- type.identifier %>"
-                       data-item-id="<%- lineItemId %>"
-                       <% if (selected) { %>checked<% } %>
-                >
-                <%- _.__('oro.shipping.method_type.backend.method_type_and_price.label', {
-                    'translatedMethodType': type.label,
-                    'price': formatter.formatCurrency(type.price.value, type.price.currency)
-                }) %>
-                </label>
-        </li>
+        <option
+            value="<%- type.identifier %>-<%- method.identifier %>"
+            data-shipping-type="<%- type.identifier %>"
+            data-shipping-method="<%- method.identifier %>"
+            data-shipping-price="<%- type.price.value %>"
+            data-shipping-price-currency="<%- type.price.currency %>"
+            data-choice="<%- type.identifier %>"
+            data-item-id="<%- lineItemId %>"
+            <% if (selected) { %>selected="selected"<% } %>
+        >
+            <%- type.label %>
+        </option>
     <% }); %>
 <% }); %>
-</ul>
+</select>
 <% } %>

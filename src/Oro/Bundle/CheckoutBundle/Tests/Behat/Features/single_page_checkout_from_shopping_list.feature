@@ -58,8 +58,8 @@ Feature: Single Page Checkout From Shopping List
     And I click "Check Out" on row "List 1" in grid "OpenOrdersGrid"
 
   Scenario: Process checkout
-    Given I select "Fifth avenue, 10115 Berlin, Germany" from "Select Billing Address"
-    And I select "Fifth avenue, 10115 Berlin, Germany" from "Select Shipping Address"
+    Given I select "Fifth avenue, 10115 Berlin, Germany" from "Billing Address"
+    And I select "Fifth avenue, 10115 Berlin, Germany" from "Shipping Address"
     And I check "Flat Rate" on the checkout page
     And I check "Payment Terms" on the checkout page
     And I should see following header in "Do not ship later than Datepicker":

@@ -26,18 +26,48 @@ layout:
             prepend: true
 
         - '@setOption':
+            id: checkout_information_title
+            optionName: hideOnDesktop
+            optionValue: false
+
+        - '@appendOption':
+            id: checkout_information_title
+            optionName: attr.class
+            optionValue: 'checkout__title--order-review'
+
+        - '@setOption':
+            id: checkout_form
+            optionName: vars.showRequiredLabel
+            optionValue: false
+
+        - '@setOption':
             id: checkout_button_continue
             optionName: vars.showRequiredLabel
             optionValue: false
 
         - '@setOption':
-            id: checkout_outside_button_continue
+            id: checkout_button_continue
             optionName: vars.showIcon
             optionValue: false
 
         - '@setOption':
-            id: checkout_outside_button_continue
+            id: checkout_button_continue
             optionName: vars.buttonCssStyle
             optionValue: ''
+
+        - '@setOption':
+            id: checkout_order_summary_totals_main
+            optionName: open
+            optionValue: true
+
+        - '@setOption':
+            id: checkout_button_continue
+            optionName: vars.relatedCheckoutFormIds
+            optionValue: ['order-review-checkout-form-additional']
+
+        - '@setOption':
+            id: checkout_order_summary_line_items_collapse_container
+            optionName: vars.open
+            optionValue: true
 
     conditions: 'context["workflowStepName"]=="order_review" && !context["widget_container"]'

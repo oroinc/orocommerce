@@ -1,0 +1,152 @@
+layout:
+    imports:
+        -
+            id: checkout_line_items_grid
+            root: __checkout_order_summary_line_items_container
+            namespace: checkout_order_summary_line_items
+
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCheckout/layouts/default/imports/oro_checkout_single_page_content/content.html.twig'
+        - '@add':
+            id: order_taxes_template
+            blockType: block
+            parentId: head
+            siblingId: ~
+            prepend: false
+
+        - '@add':
+            id: __checkout_order_summary_edit_link
+            blockType: checkout_order_summary_edit_link
+            prepend: true
+            parentId: checkout_content_head
+            options:
+                workflowItem: '=data["workflowItem"]'
+
+        - '@addTree':
+            items:
+                __checkout_container:
+                    blockType: container
+                    options:
+                        attr:
+                            class: ' checkout__container--steps-page'
+                __checkout_content_main:
+                    blockType: container
+                __checkout_form:
+                    blockType: checkout_form
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                __checkout_form_errors:
+                    blockType: checkout_form_errors
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+                __checkout_form_fields:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+                __checkout_additional_options:
+                    blockType: checkout_form_fields
+                    options:
+                        checkout: '=data["checkout"]'
+                        form: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                        workflowItem: '=data["workflowItem"]'
+                        visible: '=data["oro_checkout_transition_form"].getTransitionFormView(data["workflowItem"])'
+                __checkout_order_summary:
+                    blockType: checkout_order_summary
+                    options:
+                        checkout: '=data["checkout"]'
+                __checkout_order_summary_title:
+                    blockType: container
+                __checkout_order_summary_content:
+                    blockType: container
+                __checkout_order_summary_line_items_container:
+                    blockType: container
+
+                __checkout_order_summary_notes_container:
+                    blockType: container
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        vars:
+                            notes: '=data["checkout"].getCustomerNotes()'
+                __checkout_order_summary_notes_title:
+                    blockType: block
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        vars:
+                            notes: '=data["checkout"].getCustomerNotes()'
+                __checkout_order_summary_notes:
+                    blockType: order_summary_notes
+                    options:
+                        visible: '=context["workflowStepName"]!="order_review" && context["workflowName"]!="b2b_flow_checkout_single_page"'
+                        notes: '=data["checkout"].getCustomerNotes()'
+
+                __checkout_order_footer:
+                    blockType: container
+
+                __checkout_order_footer_col_first:
+                    blockType: container
+
+                __checkout_order_footer_col_second:
+                    blockType: container
+
+                __checkout_order_sidebar:
+                    blockType: container
+
+                __checkout_order_summary_wrapper:
+                    blockType: container
+                __checkout_order_summary_inner:
+                    blockType: container
+                __checkout_order_summary_summary:
+                    blockType: container
+                __checkout_order_summary_totals_container:
+                    blockType: container
+                __checkout_order_summary_totals_subtree:
+                    blockType: layout_subtree_update
+                    options:
+                        reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
+                        showLoading: false
+                        onLoadingCssClass: 'loading-blur'
+                __checkout_order_summary_totals:
+                    blockType: price_totals
+                    options:
+                        totals: '=data["oro_checkout_totals"].getData(data["checkout"])'
+                        entityClassName: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                        entityId: '=data["checkout"].getId()'
+                        events:
+                            - 'checkout:shipping-method:changed'
+                        selectors:
+                            form: '[name$="oro_workflow_transition"]'
+                        skipMaskView: true
+                        route: 'oro_checkout_frontend_totals'
+                        vars:
+                            itemsCount: '=data["oro_checkout_line_items_totals"].getData(data["checkout"]).count()'
+                            totalsConainerClassName: ''
+            tree:
+                __root:
+                    __checkout_container:
+                        __checkout_content_main: ~
+                        __checkout_form:
+                            __checkout_form_errors: ~
+                            __checkout_form_fields:
+                                __checkout_additional_options: ~
+                            __checkout_order_summary:
+                                __checkout_order_summary_content:
+                                    __checkout_order_summary_line_items_container: ~
+                            __checkout_order_footer:
+                                __checkout_order_footer_col_first:
+                                    __checkout_order_summary_notes_container:
+                                        __checkout_order_summary_notes_title: ~
+                                        __checkout_order_summary_notes: ~
+                                __checkout_order_footer_col_second: ~
+                        __checkout_order_sidebar:
+                            __checkout_order_summary_totals_container:
+                                    __checkout_order_summary_wrapper:
+                                        __checkout_order_summary_inner:
+                                            __checkout_order_summary_summary:
+                                                __checkout_order_summary_totals_subtree:
+                                                    __checkout_order_summary_totals: ~

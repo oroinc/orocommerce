@@ -65,7 +65,7 @@ Feature: Process order submission with PayPal PayFlow Gateway and Authorize & Ca
       | CVV              | 123              |
     And I click "Continue"
     And I reload the page
-    Then I should see "Select a Payment Method"
+    Then I should see "Payment Method"
 
   Scenario: Error from Backend when pay order with PayPal PayFlow Gateway
     Given I open page with shopping list List 2

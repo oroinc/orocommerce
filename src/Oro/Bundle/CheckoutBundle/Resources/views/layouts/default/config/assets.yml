@@ -2,6 +2,8 @@ styles:
     inputs:
         - 'bundles/orocheckout/default/scss/settings/global-settings.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-config.scss'
+        - 'bundles/orocheckout/default/scss/variables/multistep-checkout-layout-config.scss'
+        - 'bundles/orocheckout/default/scss/variables/multistep-checkout-config.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-form-config.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-order-summary-config.scss'
         - 'bundles/orocheckout/default/scss/variables/checkout-order-summary-container-config.scss'
@@ -15,7 +17,11 @@ styles:
         - 'bundles/orocheckout/default/scss/variables/checkout-credentials-config.scss'
         - 'bundles/orocheckout/default/scss/variables/order-loading-placeholder-config.scss'
 
+        - 'bundles/orocheckout/default/scss/components/checkout-summary-widget.scss'
+        - 'bundles/orocheckout/default/scss/components/checkout-summary-inner-layout.scss'
         - 'bundles/orocheckout/default/scss/components/customer-shopping-list.scss'
+        - 'bundles/orocheckout/default/scss/components/multistep-checkout-layout.scss'
+        - 'bundles/orocheckout/default/scss/components/multistep-checkout.scss'
         - 'bundles/orocheckout/default/scss/components/summary-collapse.scss'
         - 'bundles/orocheckout/default/scss/components/summary-widget.scss'
         - 'bundles/orocheckout/default/scss/components/summary-table.scss'

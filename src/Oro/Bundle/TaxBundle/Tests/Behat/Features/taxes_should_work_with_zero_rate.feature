@@ -39,6 +39,7 @@ Feature: Taxes should work with zero rate
     And I should see "Billing information"
     And I click "Ship to This Address"
     And I click "Continue"
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $10.00 |
       | Shipping | $3.00  |

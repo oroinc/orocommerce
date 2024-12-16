@@ -45,32 +45,36 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping         |
-      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate: $3.00 |
+      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   | Flat Rate $3.00                        |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Product   | Qty | Price  | Subtotal | Shipping                            |
-      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
-      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
+      | SKU  | Product   | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2 $0.00                      |
     And records in "Second Checkout Shipping Grid" should be 2
-    When I click on "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
-    And I click on "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method" select2
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method" select2
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $9.00  |
     When I click "Continue"
     Then Page title equals to "Payment - Checkout"
+    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
+    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $9.00  |
@@ -80,16 +84,19 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     And I open page with shopping list List 1
     And I click "Create Order"
     Then Page title equals to "Payment - Checkout"
+    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 5   | $2.00  | $10.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
+    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $50.00 |
       | Shipping | $9.00  |
@@ -114,33 +121,37 @@ Feature: Checkout With Multi Shipping And Returns To Checkout From Other Pages
     Then Page title equals to "Shipping Method - Checkout"
     And I should see an "Lighting Products Checkout Category Name" element
     And I should see following "First Checkout Shipping Grid" grid:
-      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping                            |
-      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
+      | SKU  | Product                  | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   | Flat Rate $3.00                        |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
     And I should see following "Second Checkout Shipping Grid" grid:
-      | SKU  | Product   | Qty | Price  | Subtotal | Shipping                            |
-      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
-      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate 2: $0.00 Flat Rate: $3.00 |
+      | SKU  | Product   | Qty | Price  | Subtotal | Shipping {{ "type": "visible_value" }} |
+      | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   | Flat Rate $3.00                        |
+      | SKU3 | iPhone X  | 10  | $2.00  | $20.00   | Flat Rate $3.00                        |
     And records in "Second Checkout Shipping Grid" should be 2
-    When I click on "First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method"
-    And I click on "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method"
-    And I click on "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method"
+    When I select "Flat Rate 2" value in "First Checkout Shipping Grid First Line Item Flat Rate 2 Shipping Method" select2
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid First Line Item Flat Rate Shipping Method" select2
+    And I select "Flat Rate" value in "Second Checkout Shipping Grid Second Line Item Flat Rate Shipping Method" select2
+    And I click "Expand Checkout Footer"
     Then I should see Checkout Totals with data:
       | Subtotal | $52.00 |
       | Shipping | $6.00  |
     When I click "Continue"
     Then Page title equals to "Payment - Checkout"
+    And I click "Lighting Products"
     And I should see following "First Checkout Shipping Grid" grid:
       | SKU  | Product                  | Qty | Price  | Subtotal |
       | SKU1 | 400-Watt Bulb Work Light | 6   | $2.00  | $12.00   |
     And records in "First Checkout Shipping Grid" should be 1
     And I should see an "Phones Checkout Category Name" element
+    And I click "Phones"
     And I should see following "Second Checkout Shipping Grid" grid:
       | SKU  | Product   | Qty | Price  | Subtotal |
       | SKU2 | iPhone 13 | 10  | $2.00  | $20.00   |
       | SKU3 | iPhone X  | 10  | $2.00  | $20.00   |
     And records in "Second Checkout Shipping Grid" should be 2
+    And I click "Expand Checkout Footer"
     And I should see Checkout Totals with data:
       | Subtotal | $52.00 |
       | Shipping | $6.00  |

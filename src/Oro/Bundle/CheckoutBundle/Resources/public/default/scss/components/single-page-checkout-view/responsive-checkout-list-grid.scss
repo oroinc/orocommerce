@@ -1,11 +1,6 @@
 /* @theme: default; */
 
 .responsive-checkout-list-grid.responsive-shopping-list-grid-tablet {
-    .grid-header-cell,
-    .grid-header-cell-quantity {
-        display: table-cell;
-    }
-
     .grid-header-cell-quantity {
         .grid-header-cell__label-container {
             display: none;
@@ -25,7 +20,7 @@
     .grid-body-cell-price,
     .grid-body-cell-subtotal,
     .grid-body-cell-quantity {
-        padding-top: 19px;
+        padding-top: spacing('base');
     }
 
     .group-row-configurable {
@@ -43,6 +38,15 @@
     .sub-row {
         .grid-cell {
             padding-top: 6px;
+        }
+    }
+}
+
+@include breakpoint('desktop-small') {
+    .responsive-checkout-list-grid.responsive-shopping-list-grid-tablet {
+        .grid-header-cell,
+        .grid-header-cell-quantity {
+            display: table-cell;
         }
     }
 }

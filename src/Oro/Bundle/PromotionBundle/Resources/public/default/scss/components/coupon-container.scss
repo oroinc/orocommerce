@@ -88,3 +88,11 @@
         }
     }
 }
+
+@include breakpoint('mobile-big') {
+    .coupon-container {
+        .coupon-trigger {
+            padding-inline: 0;
+        }
+    }
+}

@@ -61,7 +61,5 @@ Feature: Quote with Product Kits Validation
   Scenario: Check unit precisions in the Quantity tooltip
     When I click on "Quote Form Line Item 2 Kit Item 1 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (fractional, 1 decimal digit)" in the "Tooltip Popover Content" element
-    And I click on empty space
     When I click on "Quote Form Line Item 2 Kit Item 2 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
-    And I click on empty space
