@@ -60,7 +60,7 @@ Feature: Guest Single Page checkout from quote with shipping address
       | Country         | United States   |
       | State           | Florida         |
       | Zip/Postal Code | 33844           |
-    And I click "Continue"
+    And I click "Add Address" in modal window
     And I scroll to top
     And I wait until all blocks on one step checkout page are reloaded
     Then I should see "New address (Charlie Sheen, 800 Scenic Hwy, HAINES CITY FL US 33844)" for "Select Single Page Checkout Billing Address" select

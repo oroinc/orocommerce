@@ -13,7 +13,14 @@
     {% endif %}
 
     <div {{ block('block_attributes') }}>
-        <button class="btn btn--circle btn--size-small {{ "#{class_prefix ?: 'summary-collapse'}__toggle" }} {{ open ? '' : 'collapsed' }}" type="button" data-toggle="collapse" data-target="#{{ collapseId }}" aria-expanded="{{ open }}" aria-controls="{{ collapseId }}">
+        <button class="btn btn--circle btn--size-small {{ "#{class_prefix ?: 'summary-collapse'}__toggle" }} {{ open ? '' : 'collapsed' }}"
+                type="button"
+                data-toggle="collapse"
+                data-target="#{{ collapseId }}"
+                aria-expanded="{{ open }}"
+                aria-controls="{{ collapseId }}"
+                aria-label="{{ 'oro.frontend.shoppinglist.summary_block.aria_label'|trans }}"
+        >
             {{ renderIcon.icon({name: 'chevron-up'}) }}
         </button>
         <div id="{{ collapseId }}" class="{{ "#{class_prefix ?: 'summary-collapse'}-content" }} {{ open ? 'show' : '' }}">

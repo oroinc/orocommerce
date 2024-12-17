@@ -23,7 +23,7 @@ Feature: Default Checkout With Custom Addresses
 
   Scenario: Add a billing custom address
     Given I click "Add Address"
-    When I click "Continue" in modal window
+    When I click "Add Address" in modal window
     Then I should see "First Name and Last Name or Organization should not be blank"
     And I fill "New Address Popup Form" with:
       | Label       | Billing address |
@@ -35,17 +35,18 @@ Feature: Default Checkout With Custom Addresses
       | State       | Berlin          |
       | Postal Code | 10115           |
     And I uncheck "Ship to This Address Modal Checkbox" element
-    When I click "Continue" in modal window
+    When I click "Add Address" in modal window
     Then the "Ship to this address" checkbox should not be checked
     And I click "Add Address"
     When I check "Ship to This Address Modal Checkbox" element
-    And I click "Continue" in modal window
+    And I click "Add Address" in modal window
     Then the "Ship to this address" checkbox should be checked
     And I press "Continue"
 
   Scenario: Add a shipping custom address and finish checkout
     Given on the "Shipping Method" checkout step I go back to "Edit Shipping Information"
     And the "Use billing address" checkbox should be checked
+    And I uncheck "Ship to this address" on the checkout page
     And I click "Add Address"
     When I fill "New Address Popup Form" with:
       | Label        | Shipping address |
@@ -56,7 +57,7 @@ Feature: Default Checkout With Custom Addresses
       | Country      | Germany          |
       | State        | Berlin           |
       | Postal Code  | 10115            |
-    And I click "Continue" in modal window
+    And I click "Add Address" in modal window
     Then the "Use billing address" checkbox should not be checked
     And I should see "New address (Amanda Cole, Shipping street, 10115 Berlin, Germany)"
     And I press "Continue"

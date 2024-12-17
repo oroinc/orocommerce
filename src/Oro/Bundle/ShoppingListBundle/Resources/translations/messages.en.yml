@@ -412,6 +412,9 @@ oro:
                     button:
                         close.label: 'Close'
 
+            summary_block:
+                aria_label: 'Expand or Collapse Summary Section'
+
             configuration:
                 shopping_list:
                     label: 'Shopping List'

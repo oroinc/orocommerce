@@ -122,7 +122,7 @@ Feature: Single page checkout with consents
       | Country      | Albania          |
       | State        | Has              |
       | Postal Code  | 12345            |
-    And I click "Continue"
+    And I click "Add Address" in modal window
     And I scroll to top
     And I check "Use billing address" on the checkout page
 
