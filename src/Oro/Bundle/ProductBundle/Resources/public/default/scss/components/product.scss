@@ -2,11 +2,17 @@
 
 .product {
     &__view-details-link {
+        &--list-view {
+            margin-bottom: spacing('xl');
+        }
+
         &--gallery-view {
             display: none;
         }
 
         &--no-image-view {
+            margin-bottom: spacing('md');
+
             .product-item--compact & {
                 display: inline-block;
             }
@@ -117,6 +123,10 @@
             @include line-clamp();
 
             &--list-view {
+                &:empty {
+                    display: none;
+                }
+
                 font-size: $base-font-size;
                 line-height: $base-line-height;
 

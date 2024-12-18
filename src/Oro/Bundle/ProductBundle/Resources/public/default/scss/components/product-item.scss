@@ -520,6 +520,12 @@
             }
         }
 
+        &__qty {
+            &--no-image-view {
+                margin-top: spacing('base');
+            }
+        }
+
         &__title {
             &--no-image-view {
                 padding: 0;

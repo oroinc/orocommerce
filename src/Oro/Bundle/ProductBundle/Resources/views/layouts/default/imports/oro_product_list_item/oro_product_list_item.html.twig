@@ -258,11 +258,15 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product__description product__description--{{ class_prefix }}'
     }) %}
-
     {% if (class_prefix == 'list-view') %}
-        <div {{ block('block_attributes') }}>
-            <div class="product__description-content cms-typography">{{ product.shortDescription|oro_html_sanitize }}</div>
-        </div>
+        {% apply spaceless %}
+            <div {{ block('block_attributes') }}>
+                {% set content = product.shortDescription %}
+                {% if content|length > 0 %}
+                    <div class="product__description-content cms-typography">{{ content|oro_html_sanitize }}</div>
+                {% endif %}
+            </div>
+        {% endapply %}
     {% endif %}
 {% endblock %}
 
