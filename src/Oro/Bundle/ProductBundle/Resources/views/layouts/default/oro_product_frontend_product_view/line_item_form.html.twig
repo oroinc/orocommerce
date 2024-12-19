@@ -12,47 +12,51 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': 'product-view-line-item__quantity fields-row'
     }) %}
-    <div {{ block('block_attributes') }}>
-        {% if not isProductUnitSelectionVisible %}
-            {{ form_label(form.quantity) }}
-            {{ form_widget(form.quantity) }}
-            {# unit field is also handled in single unit mode, but set as a default one from config #}
-            {% if isUnitVisible %}
-                <span class="label">{{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}</span>
+    {% if not is_configurable_product_type(product.type) %}
+        <div {{ block('block_attributes') }}>
+            {% if not isProductUnitSelectionVisible %}
+                {{ form_label(form.quantity) }}
+                {{ form_widget(form.quantity) }}
+                {# unit field is also handled in single unit mode, but set as a default one from config #}
+                {% if isUnitVisible %}
+                    <span class="label">{{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}</span>
+                {% endif %}
+                {{ form_errors(form.quantity) }}
+            {% else %}
+                <div data-page-component-view="orofrontend/default/js/app/views/increment-input/increment-input-view">
+                    {{ form_widget(form.quantity, { 'attr': {
+                        'aria-label': 'oro.product.quantity.aria_label'|trans,
+                        'data-floating-error': true,
+                    } }) }}
+                </div>
+                <div class="fields-row-error"></div>
             {% endif %}
-            {{ form_errors(form.quantity) }}
-        {% else %}
-            <div data-page-component-view="orofrontend/default/js/app/views/increment-input/increment-input-view">
-                {{ form_widget(form.quantity, { 'attr': {
-                    'aria-label': 'oro.product.quantity.aria_label'|trans,
-                    'data-floating-error': true,
-                } }) }}
-            </div>
-            <div class="fields-row-error"></div>
-        {% endif %}
-    </div>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block _line_item_form_fields_unit_widget %}
-    {% if form.unit.vars.choices|length > 1 %}
-        <div class="product-view-line-item__choice simple-placeholder"
-             data-page-component-module="oroproduct/js/app/components/product-unit-select-component"
-             data-page-component-options="{{ {
-            'singleUnitMode': singleUnitMode,
-            'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
-            'configDefaultUnit': defaultUnitCode
-            }|json_encode }}
-        ">
-            {{ form_widget(form.unit, {attr: {
-                'form': form.vars.id,
-                'class': 'invisible'
-            }}) }}
-        </div>
-    {% else %}
-        <div class="product-view-line-item__unit">
-            <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
-            <span data-role="unit-label" data-toggle-type="single">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
-        </div>
+    {% if not is_configurable_product_type(product.type) %}
+        {% if form.unit.vars.choices|length > 1 %}
+            <div class="product-view-line-item__choice simple-placeholder"
+                 data-page-component-module="oroproduct/js/app/components/product-unit-select-component"
+                 data-page-component-options="{{ {
+                'singleUnitMode': singleUnitMode,
+                'singleUnitModeCodeVisible': singleUnitModeCodeVisible,
+                'configDefaultUnit': defaultUnitCode
+                }|json_encode }}
+            ">
+                {{ form_widget(form.unit, {attr: {
+                    'form': form.vars.id,
+                    'class': 'invisible'
+                }}) }}
+            </div>
+        {% else %}
+            <div class="product-view-line-item__unit">
+                <input form="{{ form.vars.id }}" type="hidden" name="{{ form.unit.vars.full_name }}" value="{{ product.primaryUnitPrecision.unit.code }}" data-name="{{ form.unit.vars.attr['data-name'] }}" data-unit-precisions="{{ form.unit.vars.attr['data-unit-precisions'] }}" />
+                <span data-role="unit-label" data-toggle-type="single">{{- product.primaryUnitPrecision.unit.code|oro_format_product_unit_label -}}</span>
+            </div>
+        {% endif %}
     {% endif %}
 {% endblock %}
 
