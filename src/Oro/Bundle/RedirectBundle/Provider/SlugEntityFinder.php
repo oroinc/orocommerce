@@ -28,7 +28,10 @@ class SlugEntityFinder
      */
     public function findSlugEntityByUrl(string $url): ?Slug
     {
-        return $this->getSlugRepository()->getSlugByUrlAndScopeCriteria($url, $this->getScopeCriteria());
+        return $this->getSlugRepository()->getSlugByUrlAndScopeCriteriaWithSlugLocalization(
+            $url,
+            $this->getScopeCriteria()
+        );
     }
 
     /**
@@ -36,7 +39,7 @@ class SlugEntityFinder
      */
     public function findSlugEntityBySlugPrototype(string $slugPrototype): ?Slug
     {
-        return $this->getSlugRepository()->getSlugBySlugPrototypeAndScopeCriteria(
+        return $this->getSlugRepository()->getSlugBySlugPrototypeAndScopeCriteriaWithSlugLocalization(
             $slugPrototype,
             $this->getScopeCriteria()
         );
