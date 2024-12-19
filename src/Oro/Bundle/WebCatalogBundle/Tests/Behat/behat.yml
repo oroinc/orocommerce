@@ -84,6 +84,12 @@ oro_behat_extension:
                     URL Slugs French use fallback:
                         type: 'xpath'
                         locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "French"]/following-sibling::div//input[@type="checkbox"]'
+                    URL Slugs German value:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "German_Loc"]/following-sibling::div//input[contains(@class, "fallback-item-value-input")]'
+                    URL Slugs German use fallback:
+                        type: 'xpath'
+                        locator: '//label[text() = "URL Slug"]/ancestor::div[contains(@class, "control-group")]//div[text() = "German_Loc"]/following-sibling::div//input[@type="checkbox"]'
                     Slug: 'oro_web_catalog_content_node[slugPrototypesWithRedirect][slugPrototypes][values][default]'
                     Meta Title: 'oro_web_catalog_content_node[metaTitles][values][default]'
                     Meta Description: 'oro_web_catalog_content_node[metaDescriptions][values][default]'
@@ -269,5 +275,6 @@ oro_behat_extension:
                 - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
                 - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
                 - Oro\Bundle\CheckoutBundle\Tests\Behat\Context\FeatureContext
+                - Oro\Bundle\FrontendLocalizationBundle\Tests\Behat\Context\LocalizationSwitcherContext
             paths:
                 - '@OroWebCatalogBundle/Tests/Behat/Features'
