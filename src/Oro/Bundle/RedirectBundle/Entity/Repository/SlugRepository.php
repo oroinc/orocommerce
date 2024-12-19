@@ -9,6 +9,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\LocaleBundle\Provider\LocalizationScopeCriteriaProvider;
 use Oro\Bundle\RedirectBundle\Entity\Hydrator\MatchingSlugHydrator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
@@ -73,6 +74,19 @@ class SlugRepository extends ServiceEntityRepository
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
     }
 
+    public function getSlugByUrlAndScopeCriteriaWithSlugLocalization(string $url, ScopeCriteria $scopeCriteria): ?Slug
+    {
+        $qb = $this->getSlugByUrlQueryBuilder($url);
+
+        $qb
+            ->addSelect('scopes.id as matchedScopeId')
+            ->leftJoin('slug.scopes', 'scopes', Join::WITH)
+            ->leftJoin('slug.localization', 'localization');
+
+        $this->applyLocalizationRestrictionByScopeCriteriaAndSlug($qb, $scopeCriteria);
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria, ['localization']);
+    }
+
     public function getSlugBySlugPrototypeAndScopeCriteria(string $slugPrototype, ScopeCriteria $scopeCriteria): ?Slug
     {
         $qb = $this->createQueryBuilder('slug');
@@ -84,6 +98,24 @@ class SlugRepository extends ServiceEntityRepository
         $this->slugQueryBuilderModifier->modify($qb);
 
         return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
+    }
+
+    public function getSlugBySlugPrototypeAndScopeCriteriaWithSlugLocalization(
+        string $slugPrototype,
+        ScopeCriteria $scopeCriteria
+    ): ?Slug {
+        $qb = $this->createQueryBuilder('slug');
+        $this->applyDirectUrlScopeCriteria($qb);
+        $qb
+            ->leftJoin('slug.localization', 'localization')
+            ->addSelect('scopes.id as matchedScopeId')
+            ->andWhere($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
+            ->setParameter('slugPrototype', $slugPrototype);
+
+        $this->applyLocalizationRestrictionByScopeCriteriaAndSlug($qb, $scopeCriteria);
+        $this->slugQueryBuilderModifier->modify($qb);
+
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria, ['localization']);
     }
 
     /**
@@ -338,9 +370,12 @@ class SlugRepository extends ServiceEntityRepository
         return $qb;
     }
 
-    private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria): ?Slug
-    {
-        $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
+    private function getMatchingSlugForCriteria(
+        QueryBuilder $qb,
+        ScopeCriteria $scopeCriteria,
+        array $ignoreFields = []
+    ): ?Slug {
+        $scopeCriteria->applyToJoinWithPriority($qb, 'scopes', $ignoreFields);
         $qb->addOrderBy('slug.id');
 
         $result = $qb->getQuery()->getResult(MatchingSlugHydrator::NAME);
@@ -368,5 +403,22 @@ class SlugRepository extends ServiceEntityRepository
             $qb->innerJoin('slug.scopes', 'scopes', Join::WITH);
             $scopeCriteria->applyToJoin($qb, 'scopes');
         }
+    }
+
+    private function applyLocalizationRestrictionByScopeCriteriaAndSlug(
+        QueryBuilder $qb,
+        ScopeCriteria $scopeCriteria
+    ): void {
+        $criteria = $scopeCriteria->toArray();
+        $where = $qb->expr()->orX($qb->expr()->isNull('scopes.localization'));
+        if (isset($criteria[LocalizationScopeCriteriaProvider::LOCALIZATION])) {
+            $where->add($qb->expr()->eq('scopes.localization', 'COALESCE(localization.id, :localization)'));
+            $qb->setParameter('localization', $criteria[LocalizationScopeCriteriaProvider::LOCALIZATION]);
+        } else {
+            $where->add($qb->expr()->eq('scopes.localization', 'localization.id'));
+        }
+
+        $qb->andWhere($where);
+        $qb->addOrderBy('scopes.localization', 'DESC');
     }
 }

@@ -62,7 +62,7 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $url = '/test';
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::once())
-            ->method('getSlugByUrlAndScopeCriteria')
+            ->method('getSlugByUrlAndScopeCriteriaWithSlugLocalization')
             ->with($url, self::identicalTo($scopeCriteria))
             ->willReturn($result);
 
@@ -75,7 +75,7 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $slug = $this->createMock(Slug::class);
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::exactly(2))
-            ->method('getSlugByUrlAndScopeCriteria')
+            ->method('getSlugByUrlAndScopeCriteriaWithSlugLocalization')
             ->with($url, self::identicalTo($scopeCriteria))
             ->willReturn($slug);
 
@@ -92,7 +92,7 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $slugPrototype = '/test';
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::once())
-            ->method('getSlugBySlugPrototypeAndScopeCriteria')
+            ->method('getSlugBySlugPrototypeAndScopeCriteriaWithSlugLocalization')
             ->with($slugPrototype, self::identicalTo($scopeCriteria))
             ->willReturn($result);
 
@@ -105,7 +105,7 @@ class SlugEntityFinderTest extends \PHPUnit\Framework\TestCase
         $slug = $this->createMock(Slug::class);
         $scopeCriteria = $this->expectsGetScopeCriteria();
         $this->repository->expects(self::exactly(2))
-            ->method('getSlugBySlugPrototypeAndScopeCriteria')
+            ->method('getSlugBySlugPrototypeAndScopeCriteriaWithSlugLocalization')
             ->with($slugPrototype, self::identicalTo($scopeCriteria))
             ->willReturn($slug);
 
