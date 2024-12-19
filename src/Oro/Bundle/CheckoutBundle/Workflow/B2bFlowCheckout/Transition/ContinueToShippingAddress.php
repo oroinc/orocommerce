@@ -42,6 +42,10 @@ class ContinueToShippingAddress implements TransitionServiceInterface
             return false;
         }
 
+        if (!$this->isEmailConfirmed($workflowItem, $errors)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -74,6 +78,15 @@ class ContinueToShippingAddress implements TransitionServiceInterface
         if ($data->offsetGet('ship_to_billing_address')) {
             $this->workflowManager->transit($workflowItem, static::CONTINUE_TO_SHIPPING_METHOD_TRANSITION);
         }
+    }
+
+    private function isEmailConfirmed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    {
+        return $this->actionExecutor->evaluateExpression(
+            'is_email_confirmed',
+            ['checkout' => $workflowItem->getEntity()],
+            $errors
+        );
     }
 
     private function getCheckout(WorkflowItem $workflowItem): Checkout

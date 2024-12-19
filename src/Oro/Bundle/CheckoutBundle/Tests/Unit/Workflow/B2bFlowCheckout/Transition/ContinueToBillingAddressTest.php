@@ -89,4 +89,24 @@ class ContinueToBillingAddressTest extends TestCase
         // Verify that customerConsents remains unchanged
         $this->assertEquals('some_consents', $workflowData['customerConsents']);
     }
+
+    public function testIsConditionNotAllowedIfCustomerUserNotConfirmedAndEmailConfirmationFeatureDisabled()
+    {
+        $customerUser = (new CustomerUser())->setConfirmed(false);
+        $checkout = new Checkout();
+        $checkout->setRegisteredCustomerUser($customerUser);
+
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $workflowItem->method('getEntity')->willReturn($checkout);
+
+        $this->actionExecutor
+            ->expects($this->once())
+            ->method('evaluateExpression')
+            ->with('is_email_confirmed', ['checkout' => $checkout])
+            ->willReturn(false);
+
+        $result = $this->transition->isConditionAllowed($workflowItem);
+
+        $this->assertFalse($result);
+    }
 }
