@@ -114,9 +114,9 @@
 {% endblock %}
 
 {% block _quote_choice_subtotals_widget %}
-    <div id="quote-choice-subtotal" class="summary-widget__inner">
+    <div class="summary-widget__inner">
         <div class="summary-widget__summary">
-            <table class="summary-table">
+            <table id="quote-choice-subtotal" class="summary-table">
                 {% for subtotal in subtotals %}
                     {% if subtotal.visible %}
                         <tr>
