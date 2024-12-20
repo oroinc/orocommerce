@@ -89,7 +89,7 @@ oro:
                     message: Are you sure you want to set as default this shopping list?
                 set_as_default_ok.label: Yes, set as default
                 notes:
-                    add: Add note to "{{ shoppingList }}"
+                    add: Add a note to the "{{ shoppingList }}"
                     add_btn_label: Add Note
                     success: Shopping list note has been successfully updated
                     remove_title: Delete for "{{ shoppingList }}"
@@ -106,11 +106,11 @@ oro:
             lineitem:
                 updated.label: 'Product has been updated in "<a href="{{ shoppinglistPath }}">{{ shoppinglistLabel }}</a>"'
                 dialog:
-                    add.title: 'Add note to "{{ productName }}" product'
-                    add.sku_title: 'Add note to "{{ productSku }} - {{ productName }}"'
-                    add_note.title: 'Add note to "{{ productName }}" product'
-                    edit.title: 'Edit note for "{{ productName }}" product'
-                    edit.sku_title: 'Edit note for "{{ productSku }} - {{ productName }}"'
+                    add.title: 'Add a note to "{{ productName }}" product'
+                    add.sku_title: 'Add a note to "{{ productSku }} - {{ productName }}"'
+                    add_note.title: 'Add a note to "{{ productName }}" product'
+                    edit.title: 'Edit a note for "{{ productName }}" product'
+                    edit.sku_title: 'Edit a note for "{{ productSku }} - {{ productName }}"'
                     cancel.label: Cancel
                     add.label: Add
                     add_note.label: Add Note

@@ -552,5 +552,12 @@
                 padding-bottom: 0;
             }
         }
+
+        &:has(.unit-select-root .toggle-container),
+        &:has(.unit-select-root .select) {
+            .line-item-container__unit {
+                padding-left: spacing('xs');
+            }
+        }
     }
 }

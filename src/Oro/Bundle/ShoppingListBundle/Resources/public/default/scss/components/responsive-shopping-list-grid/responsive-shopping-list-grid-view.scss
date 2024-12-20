@@ -166,11 +166,10 @@
             display: grid;
             grid-template-columns: subgrid;
             grid-column: product / subtotal;
-            grid-row: 2/3;
+            grid-row: 2 / 3;
             padding-top: 0;
             // padding-left:  $datagrid-body-cell-offset + 44 + 8;
             padding-left: 68px;
-            padding-bottom: $datagrid-body-cell-offset;
 
             &:not(:has(.btn, .input)) {
                 text-align: left;
@@ -210,6 +209,36 @@
 
 @include breakpoint('mobile-big') {
     .responsive-shopping-list-grid-view .grid-body {
+        .mobile-row {
+            grid-column: product / subtotal;
+        }
+
+        .grid-body-cell-item,
+        .grid-body-cell-price,
+        .grid-body-cell-subtotal {
+            display: grid;
+            grid-template-columns: subgrid;
+            grid-column: product / subtotal;
+        }
+
+        .grid-body-cell-price {
+            grid-row: 3 / 4;
+        }
+
+        .grid-body-cell-subtotal {
+            grid-row: 4 / 5;
+        }
+
+        .grid-body-cell-quantity {
+            padding-left: $responsive-shopping-body-cell-offset-x-mobile;
+        }
+
+        .grid-row-product-kit {
+            .grid-body-cell-price {
+                padding-bottom: 0;
+            }
+        }
+
         .sub-row {
             padding: 0 $responsive-shopping-body-cell-offset-x-mobile;
 

@@ -48,3 +48,15 @@
         font-weight: font-weight('semi-bold');
     }
 }
+
+@include breakpoint('mobile') {
+    .product-kit-dialog {
+        .product-item-quantity__input {
+            flex-grow: 1;
+        }
+
+        .product-kit-add-to-shopping-list {
+            max-width: 100%;
+        }
+    }
+}

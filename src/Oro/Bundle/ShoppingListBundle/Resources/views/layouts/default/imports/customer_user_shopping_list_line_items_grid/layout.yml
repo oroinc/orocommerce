@@ -61,7 +61,7 @@ layout:
             id: __datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
-                className: 'datagrid-tool datagrid-tool--short datagrid-divider empty'
+                className: 'datagrid-toolbar-counter datagrid-tool datagrid-tool--short datagrid-divider empty'
 
         - '@appendOption':
               id: __datagrid
