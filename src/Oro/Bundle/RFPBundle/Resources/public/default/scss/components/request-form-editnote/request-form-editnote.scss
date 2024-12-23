@@ -1,9 +1,7 @@
 /* @theme: default; */
 
 .request-form-editnote {
-    padding: 7px 10px;
-    border-radius: 4px;
-    background: $request-form-editnote-background;
+    padding: $request-form-editnote-padding;
     display: grid;
     grid-template-areas:
         'toggle label'

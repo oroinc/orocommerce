@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: oro_customer_form_top_bar
+            root: page_content
+
     actions:
         - '@setFormTheme':
             themes: 'form.html.twig'
@@ -46,11 +51,13 @@ layout:
                     options:
                         path: '=data["backToUrl"]'
                         text: oro.frontend.rfp.request.create_form.back.label
+                        icon: 'close'
                 __rfp_form_actions_create:
                     blockType: button
                     options:
                         action: submit
                         text: oro.frontend.rfp.request.create_form.send.label
+                        icon: 'check'
             tree:
                 __root:
                     __rfp_form_container:
@@ -64,6 +71,7 @@ layout:
                             __rfp_form_actions_back: ~
                             __rfp_form_actions_create: ~
                         __rfp_form_end: ~
+
         - '@appendOption':
             id: rfp_form_lineitems_container
             optionName: vars.tierPrices
@@ -78,3 +86,12 @@ layout:
             id: __rfp_form_kititemlineitem_view_js
             parentId: head
             blockType: block
+
+        - '@removeOption':
+              id: __back_button
+              optionName: route_name
+
+        - '@appendOption':
+              id: __back_button
+              optionName: path
+              optionValue: '=data["backToUrl"]'

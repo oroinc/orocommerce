@@ -572,7 +572,7 @@ class RequestControllerTest extends WebTestCase
 
         self::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
-        $backToUrl = $crawler->selectLink('Back')->attr('href');
+        $backToUrl = $crawler->selectLink('Cancel')->attr('href');
         self::assertNotEquals($referer, $backToUrl);
     }
 
