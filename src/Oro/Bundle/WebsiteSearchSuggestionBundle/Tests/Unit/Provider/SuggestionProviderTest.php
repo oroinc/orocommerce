@@ -10,17 +10,16 @@ use Oro\Bundle\WebsiteSearchSuggestionBundle\Provider\SuggestionProvider;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Splitter\PhraseSplitter;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-final class SuggestionProviderTest extends \PHPUnit\Framework\TestCase
+final class SuggestionProviderTest extends TestCase
 {
     use EntityTrait;
 
     private SuggestionProvider $suggestionProvider;
 
     private PhraseSplitter&MockObject $phraseSplitter;
-
     private ProductsProvider&MockObject $productsProvider;
-
     private LocalizationHelper&MockObject $localizationHelper;
 
     #[\Override]
@@ -33,7 +32,8 @@ final class SuggestionProviderTest extends \PHPUnit\Framework\TestCase
         $this->suggestionProvider = new SuggestionProvider(
             $this->productsProvider,
             $this->phraseSplitter,
-            $this->localizationHelper
+            $this->localizationHelper,
+            10000
         );
     }
 
@@ -71,18 +71,12 @@ final class SuggestionProviderTest extends \PHPUnit\Framework\TestCase
             ]);
 
         $result = $this->suggestionProvider->getLocalizedSuggestionPhrasesGroupedByProductId(
-            array_column($skuAndNames, 'id')
+            \array_column($skuAndNames, 'id')
         );
 
         self::assertEquals(
-            [
-                1 => [
-                    "sku_phrase" => [1],
-                    "name_phrase" => [1, 2,],
-                    "sku2_phrase" => [2]
-                ]
-            ],
-            $result
+            ['sku_phrase' => [1 => 1], 'name_phrase' => [1 => 1, 2 => 2], 'sku2_phrase' => [2 => 2]],
+            $result->current()
         );
     }
 

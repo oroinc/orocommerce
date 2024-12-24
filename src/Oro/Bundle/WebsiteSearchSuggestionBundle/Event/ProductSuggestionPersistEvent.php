@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 final class ProductSuggestionPersistEvent extends Event
 {
-    private array $persistedProductSuggestionIds;
+    private array $persistedProductSuggestionIds = [];
 
     /**
      * @return array<int>

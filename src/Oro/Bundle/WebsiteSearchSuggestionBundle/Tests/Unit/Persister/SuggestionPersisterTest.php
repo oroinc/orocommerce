@@ -6,18 +6,15 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Repository\SuggestionRepository;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionPersistEvent;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Persister\SuggestionPersister;
-use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-final class SuggestionPersisterTest extends \PHPUnit\Framework\TestCase
+final class SuggestionPersisterTest extends TestCase
 {
-    use EntityTrait;
-
     private SuggestionPersister $suggestionPersister;
 
     private SuggestionRepository&MockObject $suggestionRepository;
-
     private EventDispatcherInterface&MockObject $eventDispatcher;
 
     #[\Override]
@@ -144,10 +141,27 @@ final class SuggestionPersisterTest extends \PHPUnit\Framework\TestCase
         );
 
         self::assertEquals([
-                1 => [1, 2],
-                3 => [1, 2],
-                4 => [3, 4],
-                2 => [5, 7]
+            1 => [1, 2],
+            3 => [1, 2],
+            4 => [3, 4],
+            2 => [5, 7]
         ], $result);
+    }
+
+    public function testPersistSuggestionsWithNoInsertedIds(): void
+    {
+        $this->suggestionRepository
+            ->expects(self::once())
+            ->method('saveSuggestions')
+            ->with(1, 1, ['phrase1' => ['phrase' => 'phrase1', 'words_count' => 1]])
+            ->willReturn(['inserted' => [], 'skipped' => [['id' => 1, 'phrase' => 'phrase1']]]);
+
+        $this->eventDispatcher
+            ->expects(self::never())
+            ->method('dispatch');
+
+        $result = $this->suggestionPersister->persistSuggestions(1, [1 => ['phrase1' => [1, 2]]]);
+
+        self::assertEquals([1 => [1, 2]], $result);
     }
 }

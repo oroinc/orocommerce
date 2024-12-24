@@ -12,6 +12,10 @@ class ProductSuggestionRepository extends EntityRepository
 {
     public function clearProductSuggestionsByProductIds(array $productIds): void
     {
+        if (empty($productIds)) {
+            return;
+        }
+
         $qb = $this->createQueryBuilder('ps');
 
         $qb
@@ -39,11 +43,15 @@ class ProductSuggestionRepository extends EntityRepository
 
         foreach ($productIdsBySuggestionId as $suggestionId => $productIds) {
             foreach ($productIds as $productId) {
-                $values[] = sprintf('(%d, %d)', (int)$suggestionId, (int)$productId);
+                $values[] = \sprintf('(%d, %d)', (int)$suggestionId, (int)$productId);
             }
         }
 
-        $valuesInString = implode(', ', $values);
+        if (empty($values)) {
+            return [];
+        }
+
+        $valuesInString = \implode(', ', $values);
 
         $query = <<<SQL
             INSERT INTO 

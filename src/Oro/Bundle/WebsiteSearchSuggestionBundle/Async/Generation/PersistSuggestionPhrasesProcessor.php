@@ -33,7 +33,7 @@ class PersistSuggestionPhrasesProcessor implements MessageProcessorInterface, To
             $body[PersistSuggestionPhrasesChunkTopic::PRODUCTS_WRAPPER]
         );
 
-        foreach (array_chunk($persistedSuggestions, $this->chunkSize, true) as $persistedSuggestionsChunk) {
+        foreach (\array_chunk($persistedSuggestions, $this->chunkSize, true) as $persistedSuggestionsChunk) {
             $this->sendMessageToPersistProducts($persistedSuggestionsChunk);
         }
 

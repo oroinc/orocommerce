@@ -9,44 +9,16 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 final class ReindexationRequestEvent extends Event
 {
-    const EVENT_NAME = 'oro_website_search.reindexation_request';
-    /**
-     * @var array
-     */
-    private $classesNames;
-
-    /**
-     * @var array
-     */
-    private $websitesIds;
-
-    /**
-     * @var array
-     */
-    private $ids;
-
-    /**
-     * @var boolean
-     */
-    private $scheduled;
-
-    /**
-     * @var null|array
-     */
-    private $fieldGroups;
+    public const string EVENT_NAME = 'oro_website_search.reindexation_request';
 
     public function __construct(
-        array $classesNames = [],
-        array $websitesIds = [],
-        array $ids = [],
-        bool $scheduled = true,
-        array $fieldGroups = null
+        private array $classesNames = [],
+        private array $websitesIds = [],
+        private array $ids = [],
+        private bool $scheduled = true,
+        private ?array $fieldGroups = null,
+        private ?int $batchSize = null
     ) {
-        $this->classesNames = $classesNames;
-        $this->websitesIds  = $websitesIds;
-        $this->ids          = $ids;
-        $this->scheduled    = $scheduled;
-        $this->fieldGroups  = $fieldGroups;
     }
 
     public function getClassesNames(): array
@@ -64,9 +36,6 @@ final class ReindexationRequestEvent extends Event
         return $this->ids;
     }
 
-    /**
-     * @return boolean
-     */
     public function isScheduled(): bool
     {
         return $this->scheduled;
@@ -75,5 +44,10 @@ final class ReindexationRequestEvent extends Event
     public function getFieldGroups(): ?array
     {
         return $this->fieldGroups;
+    }
+
+    public function getBatchSize(): ?int
+    {
+        return $this->batchSize;
     }
 }

@@ -28,7 +28,7 @@ class CreateProductSuggestionListener implements OptionalListenerInterface, Feat
     public function __construct(
         private MessageProducerInterface $producer,
         private array $updateFields,
-        private int $batchSize = 1000
+        private int $batchSize
     ) {
         $this->products = new \SplObjectStorage();
     }

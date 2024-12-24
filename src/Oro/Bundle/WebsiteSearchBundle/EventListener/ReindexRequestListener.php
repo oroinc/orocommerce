@@ -9,34 +9,22 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranulari
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextFactory;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
+/**
+ * The listener is responsible for website search entity indexation.
+ */
 class ReindexRequestListener implements OptionalListenerInterface
 {
     use OptionalListenerTrait;
 
-    /**
-     * @var IndexerInterface|null
-     */
-    protected $regularIndexer;
-
-    /**
-     * @var IndexerInterface|null
-     */
-    protected $asyncIndexer;
-
-    /**
-     * @var ReindexMessageGranularizer
-     */
-    private $granularizer;
+    private ?ReindexMessageGranularizer $granularizer;
 
     public function __construct(
-        IndexerInterface $regularIndexer = null,
-        IndexerInterface $asyncIndexer = null
+        private ?IndexerInterface $regularIndexer = null,
+        private ?IndexerInterface $asyncIndexer = null
     ) {
-        $this->regularIndexer = $regularIndexer;
-        $this->asyncIndexer   = $asyncIndexer;
     }
 
-    public function setReindexMessageGranularizer(ReindexMessageGranularizer $granularizer)
+    public function setReindexMessageGranularizer(ReindexMessageGranularizer $granularizer): void
     {
         $this->granularizer = $granularizer;
     }
@@ -44,7 +32,7 @@ class ReindexRequestListener implements OptionalListenerInterface
     /**
      * @throws \LogicException
      */
-    public function process(ReindexationRequestEvent $event)
+    public function process(ReindexationRequestEvent $event): void
     {
         if (!$this->enabled) {
             return;
@@ -59,7 +47,7 @@ class ReindexRequestListener implements OptionalListenerInterface
     /**
      * @throws \LogicException
      */
-    protected function processWithIndexer(ReindexationRequestEvent $event, IndexerInterface $indexer)
+    protected function processWithIndexer(ReindexationRequestEvent $event, IndexerInterface $indexer): void
     {
         $factory = new ContextFactory();
         $context = $factory->createForReindexation($event);

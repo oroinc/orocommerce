@@ -11,21 +11,25 @@ use Oro\Bundle\SearchBundle\Provider\SearchMappingProvider;
 use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestActivity;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Bundle\WebsiteSearchBundle\Provider\ReindexationWebsiteProviderInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
+final class IndexerInputValidatorTest extends TestCase
 {
     use ContextTrait;
 
-    private const WEBSITE_ID = 1;
+    private const int WEBSITE_ID = 1;
 
     private IndexerInputValidator $indexerInputValidator;
-    private EntityManager|\PHPUnit\Framework\MockObject\MockObject $entityManager;
-    private ReindexationWebsiteProviderInterface|\PHPUnit\Framework\MockObject\MockObject $reindexationWebsiteProvider;
-    private TokenAccessorInterface|\PHPUnit\Framework\MockObject\MockObject $tokenAccessor;
+    private EntityManager&MockObject $entityManager;
+    private ReindexationWebsiteProviderInterface&MockObject $reindexationWebsiteProvider;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
 
     #[\Override]
     protected function setUp(): void
@@ -36,7 +40,7 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
 
         $mappingProvider->expects(self::any())
             ->method('isClassSupported')
-            ->willReturnCallback(fn ($class) => class_exists($class, true));
+            ->willReturnCallback(fn ($class) => class_exists($class));
         $mappingProvider->expects(self::any())
             ->method('getEntityClasses')
             ->willReturn([TestActivity::class]);
@@ -149,5 +153,30 @@ class IndexerInputValidatorTest extends \PHPUnit\Framework\TestCase
         $this->indexerInputValidator->configureContextOptions($optionResolver);
 
         self::assertEquals(['context' => ['websiteIds' => [1, 3]]], $optionResolver->resolve([]));
+    }
+
+    public function testConfigureNotValidBatchSize(): void
+    {
+        $optionResolver = new OptionsResolver();
+        $this->indexerInputValidator->configureContextOptions($optionResolver);
+
+        self::expectException(InvalidOptionsException::class);
+        self::expectExceptionMessage(
+            'The option "context[batchSize]" with value "1000" ' .
+            'is expected to be of type "int", but is of type "string".'
+        );
+
+        $optionResolver->resolve(['context' => [AbstractIndexer::CONTEXT_BATCH_SIZE => '1000']]);
+    }
+
+    public function testConfigureBatchSize(): void
+    {
+        $optionResolver = new OptionsResolver();
+        $this->indexerInputValidator->configureContextOptions($optionResolver);
+
+        self::assertEquals(
+            ['context' => ['websiteIds' => [101, 102], AbstractIndexer::CONTEXT_BATCH_SIZE => 1000]],
+            $optionResolver->resolve(['context' => [AbstractIndexer::CONTEXT_BATCH_SIZE => 1000]])
+        );
     }
 }

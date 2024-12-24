@@ -24,64 +24,32 @@ abstract class AbstractIndexer implements IndexerInterface
 {
     use ContextTrait;
 
-    const CONTEXT_ENTITY_CLASS_KEY = 'entityClass';
-    const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
-    const CONTEXT_WEBSITE_IDS = 'websiteIds';
+    public const string CONTEXT_ENTITY_CLASS_KEY = 'entityClass';
+    public const string CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
+    public const string CONTEXT_WEBSITE_IDS = 'websiteIds';
 
     // generated automatically based on list of passed websites (see CONTEXT_WEBSITE_IDS)
     // must not be passed to indexer public methods outside via the context
-    const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
+    public const string CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
 
     // list of field groups that have to be reindexed, empty value means that all fields have to be reindexed
-    const CONTEXT_FIELD_GROUPS = 'fieldGroups';
+    public const string CONTEXT_FIELD_GROUPS = 'fieldGroups';
 
-    /** @var EntityDependenciesResolverInterface */
-    protected $entityDependenciesResolver;
+    // batch size value that can be passed as a parameter of ReindexationRequestEvent
+    public const string CONTEXT_BATCH_SIZE = 'batchSize';
 
-    /** @var IndexDataProvider */
-    protected $indexDataProvider;
-
-    /** @var PlaceholderInterface */
-    protected $placeholder;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var SearchMappingProvider */
-    protected $mappingProvider;
-
-    /** @var IndexerInputValidator */
-    protected $inputValidator;
-
-    /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
-
-    /**
-     * @var PlaceholderInterface
-     */
-    protected $regexPlaceholder;
-
-    /** @var int */
-    private $batchSize = Configuration::INDEXER_BATCH_SIZE_DEFAULT;
+    private int $batchSize = Configuration::INDEXER_BATCH_SIZE_DEFAULT;
 
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        SearchMappingProvider $mappingProvider,
-        EntityDependenciesResolverInterface $entityDependenciesResolver,
-        IndexDataProvider $indexDataProvider,
-        PlaceholderInterface $placeholder,
-        IndexerInputValidator $indexerInputValidator,
-        EventDispatcherInterface $eventDispatcher,
-        PlaceholderInterface $regexPlaceholder
+        protected DoctrineHelper $doctrineHelper,
+        protected SearchMappingProvider $mappingProvider,
+        protected EntityDependenciesResolverInterface $entityDependenciesResolver,
+        protected IndexDataProvider $indexDataProvider,
+        protected PlaceholderInterface $placeholder,
+        protected IndexerInputValidator $inputValidator,
+        protected EventDispatcherInterface $eventDispatcher,
+        protected PlaceholderInterface $regexPlaceholder
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->mappingProvider = $mappingProvider;
-        $this->entityDependenciesResolver = $entityDependenciesResolver;
-        $this->indexDataProvider = $indexDataProvider;
-        $this->placeholder = $placeholder;
-        $this->inputValidator = $indexerInputValidator;
-        $this->eventDispatcher = $eventDispatcher;
-        $this->regexPlaceholder = $regexPlaceholder;
     }
 
     /**

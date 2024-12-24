@@ -42,6 +42,16 @@ final class ProductSuggestionRepositoryTest extends WebTestCase
         self::assertEquals([], $this->productSuggestionRepository->findAll());
     }
 
+    public function testClearProductSuggestionsByProductIdsWithEmptyData(): void
+    {
+        $this->productSuggestionRepository->clearProductSuggestionsByProductIds([]);
+
+        self::assertEquals(
+            [$this->getReference(LoadProductSuggestionsData::PRODUCT_SUGGESTION_1)],
+            $this->productSuggestionRepository->findAll()
+        );
+    }
+
     public function testThatProductSuggestionInserted(): void
     {
         $product1 = $this->getReference(LoadProductData::PRODUCT_1);
@@ -54,5 +64,12 @@ final class ProductSuggestionRepositoryTest extends WebTestCase
         );
 
         self::assertCount(1, $insertedIds);
+    }
+
+    public function testInsertProductSuggestionsWithEmptyData()
+    {
+        $insertedIds = $this->productSuggestionRepository->insertProductSuggestions([]);
+
+        self::assertCount(0, $insertedIds);
     }
 }

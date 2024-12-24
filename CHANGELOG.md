@@ -144,6 +144,9 @@ Previously known as GOD Object
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
 
+### WebsiteSearchBundle
+* Added a new parameter `batchSize` for `Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent`.
+
 ### ShoppingListBundle
 * Added new shopping list events:
   * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPreMoveEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service;

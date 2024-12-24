@@ -22,7 +22,10 @@ class SuggestionRepository extends EntityRepository
      */
     public function saveSuggestions(int $organizationId, int $localizationId, array $phrases): array
     {
-        $phrases = array_values($phrases);
+        $phrases = \array_values($phrases);
+        if (empty($phrases)) {
+            return [];
+        }
 
         $inserted = $this->insertSuggestions($organizationId, $localizationId, $phrases);
 
@@ -45,6 +48,10 @@ class SuggestionRepository extends EntityRepository
      */
     private function insertSuggestions(int $organizationId, int $localizationId, array $phrases): array
     {
+        if (empty($phrases)) {
+            return [];
+        }
+
         $values = [];
         $createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
 
@@ -56,7 +63,7 @@ class SuggestionRepository extends EntityRepository
         $types = [];
 
         foreach ($phrases as $index => $suggestion) {
-            $values[] = sprintf(
+            $values[] = \sprintf(
                 "(%s, %d, %s, %s, %s)",
                 ":phrase{$index}",
                 $suggestion['words_count'],
@@ -72,7 +79,7 @@ class SuggestionRepository extends EntityRepository
             $types[] = Types::DATE_IMMUTABLE;
         }
 
-        $valuesInString = implode(', ', $values);
+        $valuesInString = \implode(', ', $values);
 
         $query = <<<SQL
             INSERT INTO 
@@ -99,7 +106,10 @@ class SuggestionRepository extends EntityRepository
         array $phrases,
         array $insertedIds
     ): array {
-        $phrases = array_column($phrases, 'phrase');
+        $phrases = \array_column($phrases, 'phrase');
+        if (empty($phrases)) {
+            return [];
+        }
 
         $qb = $this->createQueryBuilder('s');
 
@@ -130,6 +140,13 @@ class SuggestionRepository extends EntityRepository
      */
     public function getSuggestionIdsWithEmptyProducts(): array
     {
+        return $this->getSuggestionIdsWithEmptyProductsQB()
+            ->getQuery()
+            ->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
+    }
+
+    public function getSuggestionIdsWithEmptyProductsQB(): QueryBuilder
+    {
         $subQueryBuilder = $this
             ->getEntityManager()
             ->getRepository(ProductSuggestion::class)
@@ -142,11 +159,9 @@ class SuggestionRepository extends EntityRepository
 
         $queryBuilder = $this->createQueryBuilder('s');
 
-        $queryBuilder
+        return $queryBuilder
             ->select(['s.id'])
             ->where($queryBuilder->expr()->notIn('s.id', $subQueryDql));
-
-        return $queryBuilder->getQuery()->getResult(AbstractQuery::HYDRATE_SCALAR_COLUMN);
     }
 
     /**

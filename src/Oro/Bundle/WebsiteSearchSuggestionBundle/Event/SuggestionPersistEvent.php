@@ -12,7 +12,7 @@ final class SuggestionPersistEvent extends Event
     /**
      * @var array<int>
      */
-    private array $persistedSuggestionIds;
+    private array $persistedSuggestionIds = [];
 
     /**
      * @return array<int>

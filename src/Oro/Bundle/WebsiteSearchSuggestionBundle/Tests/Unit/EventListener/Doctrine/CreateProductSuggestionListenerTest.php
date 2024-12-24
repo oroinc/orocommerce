@@ -12,8 +12,9 @@ use Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\Doctrine\CreateProduc
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-final class CreateProductSuggestionListenerTest extends \PHPUnit\Framework\TestCase
+final class CreateProductSuggestionListenerTest extends TestCase
 {
     use EntityTrait;
 
@@ -48,7 +49,8 @@ final class CreateProductSuggestionListenerTest extends \PHPUnit\Framework\TestC
 
         $this->createProductSuggestionListener = new CreateProductSuggestionListener(
             $this->producer,
-            ['sku', 'status', 'inventory_status']
+            ['sku', 'status', 'inventory_status'],
+            1000
         );
     }
 

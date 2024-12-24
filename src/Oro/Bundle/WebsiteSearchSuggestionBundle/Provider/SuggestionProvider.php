@@ -15,35 +15,44 @@ class SuggestionProvider
         private ProductsProvider $productsProvider,
         private PhraseSplitter   $phraseSplitter,
         private LocalizationHelper $localizationHelper,
+        private int $phraseChunkSize
     ) {
     }
 
-    public function getLocalizedSuggestionPhrasesGroupedByProductId(array $productIds): array
-    {
-        $productsByLocalizedPhrase = [];
-
+    public function getLocalizedSuggestionPhrasesGroupedByProductId(
+        array $productIds,
+        int $chunkSize = null
+    ): \Generator {
+        $chunkSize = $chunkSize ?? $this->phraseChunkSize;
         $productsSkuNames = $this->productsProvider->getProductsSkuAndNames($productIds);
-
         $localizations = $this->localizationHelper->getLocalizations();
 
-        foreach ($productsSkuNames as $productId => $textGroup) {
-            foreach ($localizations as $localization) {
+        foreach ($localizations as $localization) {
+            $result = [];
+            foreach ($productsSkuNames as $productId => $textGroup) {
                 $productName = $this->localizationHelper->getLocalizedValue(
                     new ArrayCollection($textGroup['names']),
                     $localization
                 );
 
-                $phrases = array_merge(
+                $phrases = \array_merge(
                     $this->phraseSplitter->split($textGroup['sku']),
                     $this->phraseSplitter->split($productName->getString())
                 );
 
                 foreach ($phrases as $phrase) {
-                    $productsByLocalizedPhrase[$localization->getId()][$phrase][] = $productId;
+                    $result[$phrase][$productId] = $productId;
+                }
+
+                if (\count($result) > $chunkSize) {
+                    yield $localization->getId() => $result;
+                    $result = [];
                 }
             }
-        }
 
-        return $productsByLocalizedPhrase;
+            if (!empty($result)) {
+                yield $localization->getId() => $result;
+            }
+        }
     }
 }

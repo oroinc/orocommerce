@@ -14,7 +14,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 final class SuggestionIndexationListener
 {
     public function __construct(
-        private EventDispatcherInterface $eventDispatcher
+        private EventDispatcherInterface $eventDispatcher,
+        private int $chunkSize
     ) {
     }
 
@@ -30,7 +31,11 @@ final class SuggestionIndexationListener
 
     private function dispatchReindex(array $ids): void
     {
-        $event = new ReindexationRequestEvent([Suggestion::class], [], $ids, true);
+        if (empty($ids)) {
+            return;
+        }
+
+        $event = new ReindexationRequestEvent([Suggestion::class], [], $ids, true, null, $this->chunkSize);
         $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 }

@@ -23,7 +23,6 @@ class PersistSuggestionProductRelationProcessor implements MessageProcessorInter
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();
-
         $productsBySuggestions = $body[PersistProductsSuggestionRelationChunkTopic::PRODUCTS_WRAPPER];
 
         $this->productSuggestionPersister->persistProductSuggestions($productsBySuggestions);
