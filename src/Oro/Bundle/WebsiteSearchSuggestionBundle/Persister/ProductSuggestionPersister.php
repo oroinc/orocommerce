@@ -32,12 +32,14 @@ class ProductSuggestionPersister
      */
     public function persistProductSuggestions(array $productsBySuggestions): void
     {
-        $repository = $this->getProductSuggestionRepository();
+        $insertedProductSuggestionIds = $this->getProductSuggestionRepository()
+            ->insertProductSuggestions($productsBySuggestions);
 
-        $insertedProductSuggestionIds = $repository->insertProductSuggestions($productsBySuggestions);
+        if (empty($insertedProductSuggestionIds)) {
+            return;
+        }
 
         $event = new ProductSuggestionPersistEvent();
-
         $event->setPersistedProductSuggestionIds($insertedProductSuggestionIds);
 
         $this->eventDispatcher->dispatch($event);

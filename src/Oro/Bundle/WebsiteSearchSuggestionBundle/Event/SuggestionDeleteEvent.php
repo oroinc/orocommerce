@@ -9,7 +9,7 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 final class SuggestionDeleteEvent extends Event
 {
-    private array $deletedSuggestionIds;
+    private array $deletedSuggestionIds = [];
 
     /**
      * @return array<int>

@@ -13,17 +13,13 @@ class ContextFactory
 
     /**
      * Context used in reindexation
-     *
-     * @param ReindexationRequestEvent $event
-     * @return array
      */
-    public function createForReindexation(ReindexationRequestEvent $event)
+    public function createForReindexation(ReindexationRequestEvent $event): array
     {
-        $context = [];
-        $context = $this->setContextWebsiteIds($context, $event->getWebsitesIds());
+        $context = $this->setContextWebsiteIds($context ?? [], $event->getWebsitesIds());
         $context = $this->setContextEntityIds($context, $event->getIds());
         $context = $this->setContextFieldGroups($context, $event->getFieldGroups());
 
-        return $context;
+        return $this->setContextBatchSize($context, $event->getBatchSize());
     }
 }

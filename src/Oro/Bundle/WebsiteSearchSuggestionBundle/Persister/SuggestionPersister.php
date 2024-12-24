@@ -49,11 +49,11 @@ class SuggestionPersister
         foreach ($localizedPhrasesByProductId as $localizationId => $productsByPhrase) {
             $suggestions = [];
 
-            foreach (array_keys($productsByPhrase) as $phrase) {
-                $phrase = strval($phrase);
+            foreach (\array_keys($productsByPhrase) as $phrase) {
+                $phrase = \strval($phrase);
                 $suggestions[$phrase] = [
                     'phrase' => $phrase,
-                    'words_count' => count(explode(' ', $phrase)),
+                    'words_count' => \count(\explode(' ', $phrase)),
                 ];
             }
 
@@ -66,20 +66,27 @@ class SuggestionPersister
             }
         }
 
+        $persistedSuggestions = $result['skipped'];
+        $insertedIds = \array_keys($result['inserted']);
+
+        if (!empty($insertedIds)) {
+            $event = $this->dispatchPersistEvent($insertedIds);
+
+            $inserted = \array_intersect_key($result['inserted'], \array_flip($event->getPersistedSuggestionIds()));
+            $persistedSuggestions += $inserted;
+        }
+
+        return $persistedSuggestions;
+    }
+
+    private function dispatchPersistEvent(array $insertedIds): SuggestionPersistEvent
+    {
         $event = new SuggestionPersistEvent();
-
-        $insertedIds = array_keys($result['inserted']);
-
         $event->setPersistedSuggestionIds($insertedIds);
 
         $this->eventDispatcher->dispatch($event);
 
-        $persistedSuggestions = array_intersect_key(
-            $result['inserted'],
-            array_flip($event->getPersistedSuggestionIds())
-        );
-
-        return $persistedSuggestions + $result['skipped'];
+        return $event;
     }
 
     private function getSuggestionRepository(): SuggestionRepository

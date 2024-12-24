@@ -94,6 +94,20 @@ trait ContextTrait
         return $context[AbstractIndexer::CONTEXT_FIELD_GROUPS] ?? null;
     }
 
+    private function setContextBatchSize(array $context, ?int $batchSize): array
+    {
+        if (null !== $batchSize) {
+            $context[AbstractIndexer::CONTEXT_BATCH_SIZE] = $batchSize;
+        }
+
+        return $context;
+    }
+
+    private function getContextBatchSize(array $context): ?int
+    {
+        return $context[AbstractIndexer::CONTEXT_BATCH_SIZE] ?? null;
+    }
+
     private function hasContextFieldGroup(array $context, string $groupName): bool
     {
         $groups = $this->getContextFieldGroups($context);

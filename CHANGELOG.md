@@ -109,6 +109,9 @@ The current file describes significant changes in the code that may affect the u
 #### SEOBundle
 * Added the ability to manage robots.txt template via system configuration.
 
+### WebsiteSearchBundle
+* Added a new parameter `batchSize` for `Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent`.
+
 ### Changed
 
 #### UPSBundle

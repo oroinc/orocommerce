@@ -3,11 +3,11 @@
 namespace Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Generation\GenerateSuggestionsPhrasesChunkTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Generation\GenerateSuggestionsTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Generation\PersistSuggestionPhrasesChunkTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion;
-use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Repository\ProductSuggestionRepository;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Provider\SuggestionProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -30,48 +30,48 @@ class GenerateSuggestionPhrasesProcessor implements MessageProcessorInterface, T
     ) {
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
         $body = $message->getBody();
 
         $organization = $body[GenerateSuggestionsPhrasesChunkTopic::ORGANIZATION];
-
         $productIds = $body[GenerateSuggestionsTopic::PRODUCT_IDS];
 
         $this->clearProductSuggestions($productIds);
 
-        $allProductsPhrases = $this->suggestionProvider->getLocalizedSuggestionPhrasesGroupedByProductId(
-            $productIds
-        );
+        $this->suggestionProvider->setChunkSize($this->chunkSize);
+        $allProductsPhrases = $this->suggestionProvider->getLocalizedSuggestionPhrasesGroupedByProductId($productIds);
+
+        if ($this->producer instanceof BufferedMessageProducer) {
+            $this->producer->disableBuffering();
+        }
 
         foreach ($allProductsPhrases as $localizationId => $phrases) {
-            foreach (array_chunk($phrases, $this->chunkSize, true) as $phrasesChunk) {
-                $this->sendPhrasesChunkMessage($phrasesChunk, $organization, $localizationId);
-            }
+            $this->sendPhrasesChunkMessage($phrases, $organization, $localizationId);
+        }
+
+        if ($this->producer instanceof BufferedMessageProducer) {
+            $this->producer->enableBuffering();
         }
 
         return self::ACK;
     }
 
-    private function sendPhrasesChunkMessage(array $phrasesChunk, int $organization, int $localizationId): void
+    private function sendPhrasesChunkMessage(array $phrases, int $organization, int $localizationId): void
     {
-        $phrasesAndIds = [];
-
-        foreach ($phrasesChunk as $phrase => $ids) {
-            $phrasesAndIds[$phrase] = array_unique($ids);
-        }
-
         $this->producer->send(
             PersistSuggestionPhrasesChunkTopic::getName(),
             [
                 PersistSuggestionPhrasesChunkTopic::ORGANIZATION => $organization,
                 PersistSuggestionPhrasesChunkTopic::PRODUCTS_WRAPPER => [
-                    $localizationId => $phrasesAndIds
+                    $localizationId => $phrases
                 ]
             ]
         );
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [GenerateSuggestionsPhrasesChunkTopic::getName()];
@@ -79,11 +79,7 @@ class GenerateSuggestionPhrasesProcessor implements MessageProcessorInterface, T
 
     private function clearProductSuggestions(array $productIds): void
     {
-        /**
-         * @var ProductSuggestionRepository $repository
-         */
-        $repository = $this->doctrine->getRepository(ProductSuggestion::class);
-
-        $repository->clearProductSuggestionsByProductIds($productIds);
+        $this->doctrine->getRepository(ProductSuggestion::class)
+            ->clearProductSuggestionsByProductIds($productIds);
     }
 }
