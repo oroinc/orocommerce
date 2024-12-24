@@ -525,7 +525,7 @@ oro_behat_extension:
 
     Shopping List Edit Grid Edit Note Row 2:
       selector:
-        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="3"]//a[contains(@title, "Edit") and contains(@title, "Note")]'
+        locator: '//*[@data-page-component-name="frontend-customer-user-shopping-list-edit-grid"]//*[@aria-rowindex="3"]//a[contains(@title, "note") and contains(@title, "note")]'
         type: 'xpath'
 
     Shopping List Edit Grid Delete Row 2:
