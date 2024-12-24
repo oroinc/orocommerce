@@ -1,6 +1,6 @@
 parameters:
-    oro_website_search_suggestion.delete_suggestion_chunk_size: 1000
-    oro_website_search_suggestion.generate_suggestion_chunk_size: 10000
+    oro_website_search_suggestion.delete_suggestion_chunk_size: 10000
+    oro_website_search_suggestion.generate_suggestion_chunk_size: 1000
     oro_website_search_suggestion.generate_phrases_chunk_size: 10000
     oro_website_search_suggestion.persist_suggestions_chunk_size: 100000
 

@@ -7,8 +7,11 @@ use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\Context\ContextTrait;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\EntityIdentifierRepository;
+use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
+final class ReindexMessageGranularizerTest extends TestCase
 {
     use ContextTrait;
 
@@ -16,11 +19,9 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
 
     private array $tenIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
-    /** @var EntityIdentifierRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $identifierRepository;
+    private EntityIdentifierRepository&MockObject $identifierRepository;
 
-    /** @var ReindexMessageGranularizer */
-    private $granularizer;
+    private ReindexMessageGranularizer $granularizer;
 
     protected function setUp(): void
     {
@@ -28,7 +29,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
         $this->granularizer = new ReindexMessageGranularizer($this->identifierRepository);
     }
 
-    public function testGranulationWithFieldGroup()
+    public function testGranulationWithFieldGroup(): void
     {
         $context = [];
         $context = $this->setContextEntityIds($context, self::IDS_FROM_REPOSITORY);
@@ -55,10 +56,38 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGranulationWithBatchSize(): void
+    {
+        $context = $this->setContextEntityIds($context ?? [], self::IDS_FROM_REPOSITORY);
+        $context = $this->setContextBatchSize($context, 10000);
+
+        $result = $this->granularizer->process(
+            ['Product'],
+            [1],
+            $context
+        );
+
+        self::assertEquals(
+            [
+                [
+                    'class'   => ['Product'],
+                    'context' => [
+                        AbstractIndexer::CONTEXT_WEBSITE_IDS => [1],
+                        AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => self::IDS_FROM_REPOSITORY,
+                        AbstractIndexer::CONTEXT_BATCH_SIZE => 10000
+                    ]
+                ]
+            ],
+            \iterator_to_array($result)
+        );
+
+        self::assertEquals(100, ReflectionUtil::getPropertyValue($this->granularizer, 'chunkSize'));
+    }
+
     /**
      * @dataProvider smallDataProvider
      */
-    public function testGranulationSmall(array $input, array $output)
+    public function testGranulationSmall(array $input, array $output): void
     {
         $context = [];
         $context = $this->setContextEntityIds($context, $input['ids']);
@@ -75,7 +104,7 @@ class ReindexMessageGranularizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider bigDataProvider
      */
-    public function testGranulation(array $input, array $output)
+    public function testGranulation(array $input, array $output): void
     {
         $context = [];
         $context = $this->setContextEntityIds($context, range(1, 500));

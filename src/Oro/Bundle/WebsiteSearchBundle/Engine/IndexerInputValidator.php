@@ -67,12 +67,14 @@ class IndexerInputValidator
             $resolver->setDefined(AbstractIndexer::CONTEXT_WEBSITE_IDS);
             $resolver->setDefined(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY);
             $resolver->setDefined(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY);
+            $resolver->setDefined(AbstractIndexer::CONTEXT_BATCH_SIZE);
 
             $resolver->setAllowedTypes('skip_pre_processing', ['bool']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_FIELD_GROUPS, ['string[]']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_WEBSITE_IDS, ['int[]', 'string[]']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY, ['int[]', 'string[]']);
             $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY, 'int');
+            $resolver->setAllowedTypes(AbstractIndexer::CONTEXT_BATCH_SIZE, 'int');
 
             $organization = $this->tokenAccessor->getOrganization();
             $resolver->setDefault(

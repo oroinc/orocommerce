@@ -9,7 +9,8 @@ use Symfony\Contracts\EventDispatcher\Event;
  */
 final class ReindexationRequestEvent extends Event
 {
-    const EVENT_NAME = 'oro_website_search.reindexation_request';
+    public const EVENT_NAME = 'oro_website_search.reindexation_request';
+
     /**
      * @var array
      */
@@ -34,6 +35,8 @@ final class ReindexationRequestEvent extends Event
      * @var null|array
      */
     private $fieldGroups;
+
+    private ?int $batchSize = null;
 
     public function __construct(
         array $classesNames = [],
@@ -64,9 +67,6 @@ final class ReindexationRequestEvent extends Event
         return $this->ids;
     }
 
-    /**
-     * @return boolean
-     */
     public function isScheduled(): bool
     {
         return $this->scheduled;
@@ -75,5 +75,17 @@ final class ReindexationRequestEvent extends Event
     public function getFieldGroups(): ?array
     {
         return $this->fieldGroups;
+    }
+
+    public function setBatchSize(?int $batchSize): self
+    {
+        $this->batchSize = $batchSize;
+
+        return $this;
+    }
+
+    public function getBatchSize(): ?int
+    {
+        return $this->batchSize;
     }
 }

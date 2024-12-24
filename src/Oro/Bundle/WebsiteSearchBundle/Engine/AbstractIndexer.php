@@ -24,16 +24,19 @@ abstract class AbstractIndexer implements IndexerInterface
 {
     use ContextTrait;
 
-    const CONTEXT_ENTITY_CLASS_KEY = 'entityClass';
-    const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
-    const CONTEXT_WEBSITE_IDS = 'websiteIds';
+    public const CONTEXT_ENTITY_CLASS_KEY = 'entityClass';
+    public const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
+    public const CONTEXT_WEBSITE_IDS = 'websiteIds';
 
     // generated automatically based on list of passed websites (see CONTEXT_WEBSITE_IDS)
     // must not be passed to indexer public methods outside via the context
-    const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
+    public const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
 
     // list of field groups that have to be reindexed, empty value means that all fields have to be reindexed
-    const CONTEXT_FIELD_GROUPS = 'fieldGroups';
+    public const CONTEXT_FIELD_GROUPS = 'fieldGroups';
+
+    // batch size value that can be passed as a parameter of ReindexationRequestEvent
+    public const CONTEXT_BATCH_SIZE = 'batchSize';
 
     /** @var EntityDependenciesResolverInterface */
     protected $entityDependenciesResolver;

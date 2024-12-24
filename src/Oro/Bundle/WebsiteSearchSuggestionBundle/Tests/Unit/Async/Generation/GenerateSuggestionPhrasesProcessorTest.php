@@ -3,13 +3,13 @@
 namespace Oro\Bundle\WebsiteSearchSuggestionBundle\Tests\Unit\Async\Generation;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\MessageQueueBundle\Client\BufferedMessageProducer;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Generation\GenerateSuggestionPhrasesProcessor;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Generation\GenerateSuggestionsPhrasesChunkTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Generation\GenerateSuggestionsTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Generation\PersistSuggestionPhrasesChunkTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Repository\ProductSuggestionRepository;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Provider\SuggestionProvider;
-use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\Message as TransportMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -20,17 +20,16 @@ final class GenerateSuggestionPhrasesProcessorTest extends TestCase
 {
     private GenerateSuggestionPhrasesProcessor $processor;
 
-    private MessageProducerInterface&MockObject $producer;
-
+    private BufferedMessageProducer&MockObject $producer;
     private SuggestionProvider&MockObject $suggestionProvider;
-
     private ManagerRegistry&MockObject $doctrine;
 
     private int $batchSize = 100;
 
+    #[\Override]
     protected function setUp(): void
     {
-        $this->producer = $this->createMock(MessageProducerInterface::class);
+        $this->producer = $this->createMock(BufferedMessageProducer::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->suggestionProvider = $this->createMock(SuggestionProvider::class);
 
@@ -75,13 +74,13 @@ final class GenerateSuggestionPhrasesProcessorTest extends TestCase
         $repository
             ->expects(self::once())
             ->method('clearProductSuggestionsByProductIds')
-            ->with(array_column($products, 'id'));
+            ->with(\array_column($products, 'id'));
 
         $this->suggestionProvider
             ->expects(self::once())
             ->method('getLocalizedSuggestionPhrasesGroupedByProductId')
-            ->with(array_column($products, 'id'))
-            ->willReturn([
+            ->with(\array_column($products, 'id'))
+            ->willReturn($this->generate([
                 0 => [
                     'sku_phrase' => [1],
                     'sku2_phrase' => [2],
@@ -92,7 +91,10 @@ final class GenerateSuggestionPhrasesProcessorTest extends TestCase
                     'sku_phrase' => [3],
                     'name_phrase' => [3],
                 ]
-            ]);
+            ]));
+
+        $this->producer->expects(self::once())->method('disableBuffering');
+        $this->producer->expects(self::once())->method('enableBuffering');
 
         $this->producer
             ->expects(self::exactly(2))
@@ -129,12 +131,19 @@ final class GenerateSuggestionPhrasesProcessorTest extends TestCase
         $message = new TransportMessage();
         $message->setBody([
             GenerateSuggestionsPhrasesChunkTopic::ORGANIZATION => 1,
-            GenerateSuggestionsTopic::PRODUCT_IDS => array_column($products, 'id')
+            GenerateSuggestionsTopic::PRODUCT_IDS => \array_column($products, 'id')
         ]);
 
         self::assertEquals(
             MessageProcessorInterface::ACK,
             $this->processor->process($message, $this->createMock(SessionInterface::class))
         );
+    }
+
+    private function generate(array $yield_values): \Generator
+    {
+        foreach ($yield_values as $value) {
+            yield $value;
+        }
     }
 }

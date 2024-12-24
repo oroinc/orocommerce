@@ -7,12 +7,23 @@ use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionDeleteEvent;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Event\SuggestionPersistEvent;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\SuggestionIndexationListener;
-use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-final class SuggestionIndexationListenerTest extends \PHPUnit\Framework\TestCase
+final class SuggestionIndexationListenerTest extends TestCase
 {
-    use EntityTrait;
+    private EventDispatcherInterface&MockObject $eventDispatcher;
+
+    private SuggestionIndexationListener $listener;
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->listener = new SuggestionIndexationListener($this->eventDispatcher);
+        $this->listener->setChunkSize(10000);
+    }
 
     public function testThatReindexEventDispatched(): void
     {
@@ -20,12 +31,9 @@ final class SuggestionIndexationListenerTest extends \PHPUnit\Framework\TestCase
         $deletedEvent = new SuggestionDeleteEvent();
 
         $persistEvent->setPersistedSuggestionIds([1, 2, 3]);
-
         $deletedEvent->setDeletedSuggestionIds([1, 2, 3]);
 
-        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-
-        $eventDispatcher
+        $this->eventDispatcher
             ->expects(self::exactly(2))
             ->method('dispatch')
             ->with(
@@ -39,9 +47,19 @@ final class SuggestionIndexationListenerTest extends \PHPUnit\Framework\TestCase
                 ReindexationRequestEvent::EVENT_NAME
             );
 
-        $listener = new SuggestionIndexationListener($eventDispatcher);
+        $this->listener->startWebsiteReindexForPersistedSuggestions($persistEvent);
+        $this->listener->startWebsiteReindexForDeletedSuggestions($deletedEvent);
+    }
 
-        $listener->startWebsiteReindexForPersistedSuggestions($persistEvent);
-        $listener->startWebsiteReindexForDeletedSuggestions($deletedEvent);
+    public function testDispatchReindexWithEmptyData(): void
+    {
+        $persistEvent = new SuggestionPersistEvent();
+        $deletedEvent = new SuggestionDeleteEvent();
+
+        $this->eventDispatcher->expects(self::never())
+            ->method('dispatch');
+
+        $this->listener->startWebsiteReindexForPersistedSuggestions($persistEvent);
+        $this->listener->startWebsiteReindexForDeletedSuggestions($deletedEvent);
     }
 }

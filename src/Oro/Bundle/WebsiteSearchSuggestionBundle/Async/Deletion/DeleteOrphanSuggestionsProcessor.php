@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Deletion;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Deletion\DeleteOrphanSuggestionsChunkTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Deletion\DeleteOrphanSuggestionsTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Repository\SuggestionRepository;
@@ -28,23 +29,47 @@ class DeleteOrphanSuggestionsProcessor implements MessageProcessorInterface, Top
     ) {
     }
 
+    #[\Override]
     public function process(MessageInterface $message, SessionInterface $session): string
     {
-        $suggestionIdsWithEmptyProducts = $this->getSuggestionRepository()
-            ->getSuggestionIdsWithEmptyProducts();
+        $count = 0;
+        $suggestionsIds = [];
 
-        foreach (array_chunk($suggestionIdsWithEmptyProducts, $this->bufferSize) as $idsChunk) {
+        foreach ($this->getResultIterator() as $row) {
+            $suggestionsIds[] = $row['id'];
+
+            $count++;
+            if ($count % $this->bufferSize === 0) {
+                $this->producer->send(DeleteOrphanSuggestionsChunkTopic::getName(), [
+                    DeleteOrphanSuggestionsChunkTopic::SUGGESTION_IDS => $suggestionsIds
+                ]);
+                $suggestionsIds = [];
+            }
+        }
+
+        if ($suggestionsIds) {
             $this->producer->send(DeleteOrphanSuggestionsChunkTopic::getName(), [
-                DeleteOrphanSuggestionsChunkTopic::SUGGESTION_IDS => $idsChunk
+                DeleteOrphanSuggestionsChunkTopic::SUGGESTION_IDS => $suggestionsIds
             ]);
         }
 
         return self::ACK;
     }
 
+    #[\Override]
     public static function getSubscribedTopics(): array
     {
         return [DeleteOrphanSuggestionsTopic::getName()];
+    }
+
+    private function getResultIterator(): \Iterator
+    {
+        $iterator = new BufferedIdentityQueryResultIterator(
+            $this->getSuggestionRepository()->getSuggestionIdsWithEmptyProductsQB()
+        );
+        $iterator->setBufferSize($this->bufferSize);
+
+        return $iterator;
     }
 
     private function getSuggestionRepository(): SuggestionRepository

@@ -122,6 +122,10 @@ Previously known as GOD Object
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearch\ProductSuggestionRestrictIndexListener` filter suggestions by organization and localization for every website for storefront search engine.
 * Added `\Oro\Bundle\WebsiteSearchSuggestionBundle\EventListener\WebsiteSearchSuggestionFeatureToggleListener` listen to feature status changes and send messages to MQ for suggestions generation when feature has been enabled.
 
+
+### WebsiteSearchBundle
+* Added a new parameter `batchSize` for `Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent`.
+
 #### ProductBundle
 * Added a default variant field for the Product entity. This allows to choose a default variant from the product variants for a configurable product. This variant will be selected by default on the product view page. It can be set on product create and edit pages as well as via API or product import.
 

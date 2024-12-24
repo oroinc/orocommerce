@@ -12,7 +12,9 @@ class ReindexMessageGranularizer
 {
     use ContextTrait;
 
-    private int $chunkSize = 100;
+    private const CHUNK_SIZE = 100;
+
+    private int $chunkSize = self::CHUNK_SIZE;
 
     public function __construct(private EntityIdentifierRepository $identifierRepository)
     {
@@ -24,54 +26,54 @@ class ReindexMessageGranularizer
     }
 
     /**
-     * @param array|string $entities
-     * @param array $websites
-     * @param array $context
      * $context = [
      *     'entityIds' int[] Array of entities ids to reindex
      * ]
      *
      * @return iterable<array{class: array, context: array}>
      */
-    public function process(array|string $entities, array $websites, array $context): iterable
+    public function process(array|string $entities, array $websiteIds, array $context): iterable
     {
         $entities = (array)$entities;
+        $entityIds = $this->getContextEntityIds($context);
 
-        $entityIds = (array)$this->getContextEntityIds($context);
-
-        if (empty($websites)) {
-            foreach ($entities as $entity) {
-                $chunks = $this->getChunksOfIds($entity, $entityIds);
-                foreach ($chunks as $chunk) {
-                    $itemContext = [];
-                    $itemContext = $this->setContextEntityIds($itemContext, $chunk);
-                    $itemContext = $this->setContextFieldGroups($itemContext, $this->getContextFieldGroups($context));
-                    yield [
-                        'class'   => [$entity],
-                        'context' => $itemContext,
-                    ];
-                }
-            }
-        }
+        $this->updateChunkSizeByContext($context);
 
         foreach ($entities as $entity) {
             $chunks = $this->getChunksOfIds($entity, $entityIds);
             foreach ($chunks as $chunk) {
-                foreach ($websites as $website) {
-                    $itemContext = [];
-                    $itemContext = $this->setContextEntityIds($itemContext, $chunk);
-                    $itemContext = $this->setContextWebsiteIds($itemContext, [$website]);
-                    $itemContext = $this->setContextFieldGroups($itemContext, $this->getContextFieldGroups($context));
-                    yield [
-                        'class'   => [$entity],
-                        'context' => $itemContext,
-                    ];
+                if (empty($websiteIds)) {
+                    yield $this->buildMessage($entity, $context, $chunk);
+                    continue;
+                }
+
+                foreach ($websiteIds as $websiteId) {
+                    yield $this->buildMessage($entity, $context, $chunk, $websiteId);
                 }
             }
         }
+
+        $this->resetChunkSize();
     }
 
-    private function getChunksOfIds(string $entityClass, array $ids)
+    private function buildMessage(string $entityClass, array $context, array $chunk, int $websiteId = null): array
+    {
+        $itemContext = [];
+        $itemContext = $this->setContextEntityIds($itemContext, $chunk);
+        $itemContext = $this->setContextFieldGroups($itemContext, $this->getContextFieldGroups($context));
+        $itemContext = $this->setContextBatchSize($itemContext, $this->getContextBatchSize($context));
+
+        if ($websiteId) {
+            $itemContext = $this->setContextWebsiteIds($itemContext, [$websiteId]);
+        }
+
+        return [
+            'class'   => [$entityClass],
+            'context' => $itemContext
+        ];
+    }
+
+    private function getChunksOfIds(string $entityClass, array $ids): iterable
     {
         if (empty($ids)) {
             $ids = $this->identifierRepository->getIds($entityClass);
@@ -91,5 +93,18 @@ class ReindexMessageGranularizer
         }
 
         return [];
+    }
+
+    private function updateChunkSizeByContext(array $context): void
+    {
+        $batchSize = $this->getContextBatchSize($context);
+        if ($batchSize) {
+            $this->chunkSize = $batchSize;
+        }
+    }
+
+    private function resetChunkSize(): void
+    {
+        $this->chunkSize = self::CHUNK_SIZE;
     }
 }

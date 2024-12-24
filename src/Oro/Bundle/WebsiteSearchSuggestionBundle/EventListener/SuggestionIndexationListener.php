@@ -13,9 +13,16 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 final class SuggestionIndexationListener
 {
+    private ?int $chunkSize = null;
+
     public function __construct(
         private EventDispatcherInterface $eventDispatcher
     ) {
+    }
+
+    public function setChunkSize(int $chunkSize): void
+    {
+        $this->chunkSize = $chunkSize;
     }
 
     public function startWebsiteReindexForPersistedSuggestions(SuggestionPersistEvent $event): void
@@ -30,7 +37,12 @@ final class SuggestionIndexationListener
 
     private function dispatchReindex(array $ids): void
     {
-        $event = new ReindexationRequestEvent([Suggestion::class], [], $ids, true);
+        if (empty($ids)) {
+            return;
+        }
+
+        $event = new ReindexationRequestEvent([Suggestion::class], [], $ids, true, null);
+        $event->setBatchSize($this->chunkSize);
         $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
     }
 }
