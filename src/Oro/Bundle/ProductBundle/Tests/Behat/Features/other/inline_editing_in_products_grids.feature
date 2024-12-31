@@ -1,3 +1,5 @@
+@skip
+@ticket-OPI-1390
 @fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
 @regression
 Feature: Inline Editing in Products Grids

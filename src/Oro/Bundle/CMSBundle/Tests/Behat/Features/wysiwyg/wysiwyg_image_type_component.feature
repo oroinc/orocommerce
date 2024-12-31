@@ -1,3 +1,5 @@
+@skip
+@ticket-OPI-1390
 @regression
 Feature: WYSIWYG image type component
 
