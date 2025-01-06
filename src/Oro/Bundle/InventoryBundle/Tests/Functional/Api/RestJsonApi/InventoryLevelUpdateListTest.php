@@ -40,7 +40,7 @@ class InventoryLevelUpdateListTest extends RestJsonApiUpdateListTestCase
                     'id'     => $operationId . '-1-1',
                     'status' => 405,
                     'title'  => 'action not allowed exception',
-                    'detail' => 'The action is not allowed.',
+                    'detail' => 'The "create" action is not allowed.',
                     'source' => ['pointer' => '/data/0']
                 ]
             ],
