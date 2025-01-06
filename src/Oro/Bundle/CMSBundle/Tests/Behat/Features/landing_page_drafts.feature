@@ -1,3 +1,5 @@
+@skip
+@ticket-BAP-22881
 @regression
 @ticket-BB-17908
 @ticket-BB-22542

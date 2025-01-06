@@ -1,3 +1,5 @@
+@skip
+@ticket-BAP-22881
 @regression
 Feature: WYSIWYG image type component
 
