@@ -70,14 +70,14 @@ class PayflowIPCheckListener
             return;
         }
 
-        $masterRequest = $this->requestStack->getMainRequest();
-        if (null === $masterRequest) {
+        $mainRequest = $this->requestStack->getMainRequest();
+        if (null === $mainRequest) {
             $event->markFailed();
 
             return;
         }
 
-        $requestIp = $masterRequest->getClientIp();
+        $requestIp = $mainRequest->getClientIp();
 
         if (!IpUtils::checkIp($requestIp, $this->allowedIPs)) {
             $event->markFailed();

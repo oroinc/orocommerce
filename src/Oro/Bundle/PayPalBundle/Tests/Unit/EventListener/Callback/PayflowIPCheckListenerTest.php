@@ -58,31 +58,24 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $masterRequest = $this->createMock(Request::class);
-        $masterRequest
-            ->expects($this->once())
+        $mainRequest = $this->createMock(Request::class);
+        $mainRequest->expects($this->once())
             ->method('getClientIp')
             ->willReturn($remoteAddress);
 
-        /** @var RequestStack|MockObject $requestStack */
         $requestStack = $this->createMock(RequestStack::class);
-        $requestStack
-            ->expects($this->once())
+        $requestStack->expects($this->once())
             ->method('getMainRequest')
-            ->willReturn($masterRequest);
+            ->willReturn($mainRequest);
 
-        /** @var CallbackNotifyEvent|MockObject $event */
         $event = $this->createMock(CallbackNotifyEvent::class);
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
             ->method('markFailed');
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getPaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        $this->paymentMethodProvider
-            ->expects($this->once())
+        $this->paymentMethodProvider->expects($this->once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
@@ -102,31 +95,24 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $masterRequest = $this->createMock(Request::class);
-        $masterRequest
-            ->expects($this->once())
+        $mainRequest = $this->createMock(Request::class);
+        $mainRequest->expects($this->once())
             ->method('getClientIp')
             ->willReturn($remoteAddress);
 
-        /** @var RequestStack|MockObject $requestStack */
         $requestStack = $this->createMock(RequestStack::class);
-        $requestStack
-            ->expects($this->once())
+        $requestStack->expects($this->once())
             ->method('getMainRequest')
-            ->willReturn($masterRequest);
+            ->willReturn($mainRequest);
 
-        /** @var CallbackNotifyEvent|MockObject $event */
         $event = $this->createMock(CallbackNotifyEvent::class);
-        $event
-            ->expects($this->never())
+        $event->expects($this->never())
             ->method('markFailed');
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getPaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        $this->paymentMethodProvider
-            ->expects($this->once())
+        $this->paymentMethodProvider->expects($this->once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
@@ -150,31 +136,24 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $masterRequest = $this->createMock(Request::class);
-        $masterRequest
-            ->expects($this->once())
+        $mainRequest = $this->createMock(Request::class);
+        $mainRequest->expects($this->once())
             ->method('getClientIp')
             ->willReturn($remoteAddress);
 
-        /** @var RequestStack|MockObject $requestStack */
         $requestStack = $this->createMock(RequestStack::class);
-        $requestStack
-            ->expects($this->once())
+        $requestStack->expects($this->once())
             ->method('getMainRequest')
-            ->willReturn($masterRequest);
+            ->willReturn($mainRequest);
 
-        /** @var CallbackNotifyEvent|MockObject $event */
         $event = $this->createMock(CallbackNotifyEvent::class);
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('markFailed');
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getPaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        $this->paymentMethodProvider
-            ->expects($this->once())
+        $this->paymentMethodProvider->expects($this->once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
@@ -183,7 +162,7 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
         $listener->onNotify($event);
     }
 
-    public function testOnNotifyDontAllowIfMasterRequestEmpty(): void
+    public function testOnNotifyDontAllowIfMainRequestEmpty(): void
     {
         $paymentTransaction = new PaymentTransaction();
         $paymentTransaction
@@ -191,27 +170,21 @@ class PayflowIPCheckListenerTest extends \PHPUnit\Framework\TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $masterRequest = null;
+        $mainRequest = null;
 
-        /** @var RequestStack|MockObject $requestStack */
         $requestStack = $this->createMock(RequestStack::class);
-        $requestStack
-            ->expects($this->once())
+        $requestStack->expects($this->once())
             ->method('getMainRequest')
-            ->willReturn($masterRequest);
+            ->willReturn($mainRequest);
 
-        /** @var CallbackNotifyEvent|MockObject $event */
         $event = $this->createMock(CallbackNotifyEvent::class);
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('markFailed');
-        $event
-            ->expects($this->once())
+        $event->expects($this->once())
             ->method('getPaymentTransaction')
             ->willReturn($paymentTransaction);
 
-        $this->paymentMethodProvider
-            ->expects($this->once())
+        $this->paymentMethodProvider->expects($this->once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);

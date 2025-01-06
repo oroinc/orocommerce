@@ -11,11 +11,9 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private CustomerUserResetPasswordListener $listener;
-
     private Request $request;
-
     private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
+    private CustomerUserResetPasswordListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -27,7 +25,9 @@ class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnCustomerUserEmailSendNoRequestParams(): void
     {
-        $this->mockMasterRequest();
+        $this->requestStack->expects(self::any())
+            ->method('getMainRequest')
+            ->willReturn($this->request);
         $event = new CustomerUserEmailSendEvent(new CustomerUser(), 'some_template', []);
         $this->listener->onCustomerUserEmailSend($event);
         self::assertEquals('some_template', $event->getEmailTemplate());
@@ -35,7 +35,9 @@ class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnCustomerUserEmailSendWrongTemplate(): void
     {
-        $this->mockMasterRequest();
+        $this->requestStack->expects(self::any())
+            ->method('getMainRequest')
+            ->willReturn($this->request);
         $event = new CustomerUserEmailSendEvent(new CustomerUser(), 'some_template', []);
         $this->request->request->add(['_checkout_forgot_password' => 1]);
         $this->request->request->add(['_checkout_id' => 777]);
@@ -45,7 +47,9 @@ class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testOnCustomerUserEmailSend(): void
     {
-        $this->mockMasterRequest();
+        $this->requestStack->expects(self::any())
+            ->method('getMainRequest')
+            ->willReturn($this->request);
         $event = new CustomerUserEmailSendEvent(new CustomerUser(), Processor::RESET_PASSWORD_EMAIL_TEMPLATE_NAME, []);
         $this->request->request->add(['_checkout_forgot_password' => 1]);
         $this->request->request->add(['_checkout_id' => 777]);
@@ -56,18 +60,8 @@ class CustomerUserResetPasswordListenerTest extends \PHPUnit\Framework\TestCase
         );
         $params['redirectParams'] = json_encode([
              'route' => 'oro_checkout_frontend_checkout',
-             'params' => [
-                 'id' => 777
-             ]
-         ]);
+             'params' => ['id' => 777]
+         ], JSON_THROW_ON_ERROR);
         self::assertEquals($params, $event->getEmailTemplateParams());
-    }
-
-    private function mockMasterRequest(): void
-    {
-        $this->requestStack
-            ->expects(self::any())
-            ->method('getMainRequest')
-            ->willReturn($this->request);
     }
 }

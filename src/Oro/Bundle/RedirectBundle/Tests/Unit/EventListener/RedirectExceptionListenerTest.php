@@ -42,7 +42,7 @@ class RedirectExceptionListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testOnKernelExceptionForNotMasterRequest(): void
+    public function testOnKernelExceptionForNotMainRequest(): void
     {
         $event = $this->getEvent(Request::create('/test'), false, new NotFoundHttpException());
 

@@ -3,13 +3,12 @@
 namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\Context;
-use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Disables "create" action for an {@see OrderProductKitItemLineItem} resource if it is executed as a master request.
+ * Disables "create" action for an order product kit item line item resource if it is executed as the main request.
  */
 class DisableOrderProductKitItemLineItemCreation implements ProcessorInterface
 {
@@ -18,11 +17,9 @@ class DisableOrderProductKitItemLineItemCreation implements ProcessorInterface
     {
         /** @var Context $context */
 
-        if ($context->isMainRequest()) {
-            throw new AccessDeniedException(
-                'Use API resource to create an order.'
-                . ' An order product kit item line item can be created only together with an order.'
-            );
-        }
+        throw new AccessDeniedException(
+            'Use API resource to create an order.'
+            . ' An order product kit item line item can be created only together with an order.'
+        );
     }
 }

@@ -127,17 +127,17 @@ services:
     oro_order.api.disable_order_address_creation:
         class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderAddressCreation
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, mainRequest: true, priority: 250 }
 
     oro_order.api.disable_order_line_item_creation:
         class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderLineItemCreation
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, mainRequest: true, priority: 250 }
 
     oro_order.api.disable_order_product_kit_item_line_item_creation:
         class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderProductKitItemLineItemCreation
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, mainRequest: true, priority: 250 }
 
     oro_order.api.handle_order_line_item_empty_price:
         class: Oro\Bundle\OrderBundle\Api\Processor\HandleOrderLineItemEmptyPrice

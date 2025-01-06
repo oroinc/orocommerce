@@ -8,7 +8,7 @@ use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Tries to get a current localization from "X-Localization-ID" header of the master request.
+ * Tries to get a current localization from "X-Localization-ID" header of the main request.
  */
 class RequestCurrentLocalizationExtension implements CurrentLocalizationExtensionInterface
 {

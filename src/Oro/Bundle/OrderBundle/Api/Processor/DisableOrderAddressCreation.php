@@ -8,7 +8,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Disables "create" action for an order address resource if it is executed as a master request.
+ * Disables "create" action for an order address resource if it is executed as the main request.
  */
 class DisableOrderAddressCreation implements ProcessorInterface
 {
@@ -17,10 +17,8 @@ class DisableOrderAddressCreation implements ProcessorInterface
     {
         /** @var Context $context */
 
-        if ($context->isMainRequest()) {
-            throw new AccessDeniedException(
-                'Use API resource to create an order. An order address can be created only together with an order.'
-            );
-        }
+        throw new AccessDeniedException(
+            'Use API resource to create an order. An order address can be created only together with an order.'
+        );
     }
 }

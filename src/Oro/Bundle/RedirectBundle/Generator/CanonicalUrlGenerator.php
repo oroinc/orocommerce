@@ -220,8 +220,9 @@ class CanonicalUrlGenerator
     {
         $domainUrl = rtrim($domainUrl, ' /');
         $baseUrl = '';
-        if ($masterRequest = $this->requestStack->getMainRequest()) {
-            $baseUrl = $masterRequest->getBaseUrl();
+        $mainRequest = $this->requestStack->getMainRequest();
+        if (null !== $mainRequest) {
+            $baseUrl = $mainRequest->getBaseUrl();
             $baseUrl = trim($baseUrl, '/');
         }
 
@@ -237,19 +238,16 @@ class CanonicalUrlGenerator
         return implode('/', $urlParts);
     }
 
-    /**
-     * @param string $configField
-     * @return string
-     */
-    private function getConfigKey($configField)
+    private function getConfigKey(string $configField): string
     {
         return Configuration::ROOT_NODE . '.' . $configField;
     }
 
     private function getCacheKey(string $configKey, WebsiteInterface $website = null): string
     {
-        $cacheKey  = $website ? sprintf('%s.%s', $configKey, $website->getId()) : $configKey;
-        return UniversalCacheKeyGenerator::normalizeCacheKey($cacheKey);
+        return UniversalCacheKeyGenerator::normalizeCacheKey(
+            $website ? \sprintf('%s.%s', $configKey, $website->getId()) : $configKey
+        );
     }
 
     private function isLocalizedCanonicalUrlsEnabled(): bool

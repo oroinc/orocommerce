@@ -8,7 +8,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 /**
- * Disables "create" action for a product kit item product resource if it is executed as a master request.
+ * Disables "create" action for a product kit item product resource if it is executed as the main request.
  */
 class DisableProductKitItemProductCreation implements ProcessorInterface
 {
@@ -17,11 +17,9 @@ class DisableProductKitItemProductCreation implements ProcessorInterface
     {
         /** @var Context $context */
 
-        if ($context->isMainRequest()) {
-            throw new AccessDeniedException(
-                'Use API resource to create a product kit item. A product kit item product can be created only '
-                . 'together with a product kit item.'
-            );
-        }
+        throw new AccessDeniedException(
+            'Use API resource to create a product kit item. A product kit item product can be created only '
+            . 'together with a product kit item.'
+        );
     }
 }

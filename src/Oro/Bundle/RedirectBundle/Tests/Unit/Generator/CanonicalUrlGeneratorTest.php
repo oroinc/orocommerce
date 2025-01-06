@@ -426,7 +426,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         );
     }
 
-    public function testCreateUrlWithMasterRequest()
+    public function testCreateUrlWithMainRequest()
     {
         $request = $this->createMock(Request::class);
         $request->expects($this->any())
@@ -445,7 +445,7 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
         );
     }
 
-    public function testCreateUrlWithoutMasterRequest()
+    public function testCreateUrlWithoutMainRequest()
     {
         $this->requestStack->expects($this->atMost(1))
             ->method('getMainRequest')

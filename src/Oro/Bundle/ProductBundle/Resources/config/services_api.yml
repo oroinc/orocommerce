@@ -486,12 +486,12 @@ services:
     oro_product.api.disable_product_kit_item_label_creation:
         class: Oro\Bundle\ProductBundle\Api\Processor\DisableProductKitItemLabelCreation
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, class: Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, class: Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel, mainRequest: true, priority: 250 }
 
     oro_product.api.disable_product_kit_item_product_creation:
         class: Oro\Bundle\ProductBundle\Api\Processor\DisableProductKitItemProductCreation
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, mainRequest: true, priority: 250 }
 
     oro_product.api.product_localized_fallback_value_changed:
         class: Oro\Bundle\ProductBundle\Api\Processor\ReindexProductFallbackValueChanged
