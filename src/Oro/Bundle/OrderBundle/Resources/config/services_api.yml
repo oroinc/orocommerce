@@ -125,17 +125,23 @@ services:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order }
 
     oro_order.api.disable_order_address_creation:
-        class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderAddressCreation
+        class: Oro\Bundle\ApiBundle\Processor\Shared\DisableResourceAccess
+        arguments:
+            - 'Use API resource to create an order. An order address can be created only together with an order.'
         tags:
             - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, mainRequest: true, priority: 250 }
 
     oro_order.api.disable_order_line_item_creation:
-        class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderLineItemCreation
+        class: Oro\Bundle\ApiBundle\Processor\Shared\DisableResourceAccess
+        arguments:
+            - 'Use API resource to create an order. An order line item can be created only together with an order.'
         tags:
             - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, mainRequest: true, priority: 250 }
 
     oro_order.api.disable_order_product_kit_item_line_item_creation:
-        class: Oro\Bundle\OrderBundle\Api\Processor\DisableOrderProductKitItemLineItemCreation
+        class: Oro\Bundle\ApiBundle\Processor\Shared\DisableResourceAccess
+        arguments:
+            - 'Use API resource to create an order. An order product kit item line item can be created only together with an order.'
         tags:
             - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, mainRequest: true, priority: 250 }
 
