@@ -1,5 +1,3 @@
-@skip
-@ticket-BAP-22881
 @regression
 @feature-BB-21128
 @fixture-OroOrderBundle:product-kit/order_with_product_kits_validation.yml
