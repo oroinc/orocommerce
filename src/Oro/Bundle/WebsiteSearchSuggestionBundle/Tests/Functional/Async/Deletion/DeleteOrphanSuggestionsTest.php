@@ -9,11 +9,13 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Deletion\DeleteOrphanSuggestionsTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Tests\Functional\DataFixtures\LoadProductSuggestionsData;
+use Oro\Bundle\WebsiteSearchSuggestionBundle\Tests\Functional\WebsiteSearchSuggestionsFeatureTrait;
 use Oro\Component\MessageQueue\Client\Message;
 
 final class DeleteOrphanSuggestionsTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use WebsiteSearchSuggestionsFeatureTrait;
 
     private EntityManager $entityManager;
 
@@ -21,6 +23,8 @@ final class DeleteOrphanSuggestionsTest extends WebTestCase
     protected function setUp(): void
     {
         $this->initClient();
+
+        $this->enableFeature();
 
         $this->loadFixtures([
             LoadProductData::class,

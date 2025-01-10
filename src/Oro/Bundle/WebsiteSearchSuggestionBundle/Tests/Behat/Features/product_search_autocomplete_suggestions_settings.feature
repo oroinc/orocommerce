@@ -7,13 +7,19 @@ Feature: Product Search Autocomplete Suggestions Settings
   Scenario: Feature Background
     Given sessions active:
       | Admin | first_session  |
-      | Buyer  | second_session |
-    And I proceed as the Admin
+      | Buyer | second_session |
+
+  Scenario: Enable Automatic Phrase Suggestions
+    Given I proceed as the Admin
     And I login as administrator
+    And I go to System / Configuration
+    And I follow "Commerce/Product/Product Search" on configuration sidebar
+    When uncheck "Use default" for "Enable Automatic Phrase Suggestions in Search Autocomplete" field
+    And I check "Enable Automatic Phrase Suggestions in Search Autocomplete"
+    And I click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Change the number of automatically suggested phrases to 2
-    Given I go to System / Configuration
-    And I follow "Commerce/Product/Product Search" on configuration sidebar
     And I should see "Number Of Automatically Suggested Phrases In Search Autocomplete"
     And uncheck "Use default" for "Number Of Automatically Suggested Phrases In Search Autocomplete" field
     When fill form with:

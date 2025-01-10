@@ -23,7 +23,7 @@ class Configuration implements ConfigurationInterface
 
         SettingsBuilder::append($rootNode, [
             static::SEARCH_AUTOCOMPLETE_MAX_SUGGESTS => ['type' => 'integer', 'value' => 4],
-            static::WEBSITE_SEARCH_SUGGESTION_FEATURE_ENABLED => ['type' => 'boolean', 'value' => true],
+            static::WEBSITE_SEARCH_SUGGESTION_FEATURE_ENABLED => ['type' => 'boolean', 'value' => false],
         ]);
 
         return $treeBuilder;

@@ -15,7 +15,7 @@ final class ConfigurationTest extends \PHPUnit\Framework\TestCase
         self::assertArrayHasKey('search_autocomplete_max_suggests', $settings);
         self::assertArrayHasKey('website_search_suggestion_feature_enabled', $settings);
         self::assertEquals(4, $settings['search_autocomplete_max_suggests']['value']);
-        self::assertTrue($settings['website_search_suggestion_feature_enabled']['value']);
+        self::assertFalse($settings['website_search_suggestion_feature_enabled']['value']);
     }
 
     public function testThatConfigReturnsCorrectPath(): void

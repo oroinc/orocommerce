@@ -5,11 +5,18 @@
 Feature: Product Search Autocomplete Suggestions Localizations
 
   Scenario: Feature Background
-    Given I enable the existing localizations
-    And I signed in as AmandaRCole@example.org on the store frontend
+    Given I login as administrator
+    And I enable the existing localizations
+    And I go to System / Configuration
+    And I follow "Commerce/Product/Product Search" on configuration sidebar
+    When uncheck "Use default" for "Enable Automatic Phrase Suggestions in Search Autocomplete" field
+    And I check "Enable Automatic Phrase Suggestions in Search Autocomplete"
+    And I click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Check the search suggestion autocomplete contains default localization suggestions
-    Given I go to the homepage
+    Given I signed in as AmandaRCole@example.org on the store frontend
+    And I go to the homepage
     When I type "Numeric" in "search"
     Then I should see an "Search Autocomplete" element
     And I should see 4 elements "Search Suggestion Autocomplete Item"

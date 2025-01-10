@@ -2,6 +2,8 @@ system_configuration:
     groups:
         website_search_suggestion:
             title: oro.websitesearchsuggestion.system_configuration.groups.website_search_suggestion.title
+            description: oro.websitesearchsuggestion.system_configuration.groups.website_search_suggestion.description
+            description_style: warning
     fields:
         oro_website_search_suggestion.website_search_suggestion_feature_enabled:
             data_type: boolean

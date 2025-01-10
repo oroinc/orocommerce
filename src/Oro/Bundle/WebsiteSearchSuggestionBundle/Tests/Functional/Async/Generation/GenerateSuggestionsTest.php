@@ -8,10 +8,12 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Async\Topic\Generation\GenerateSuggestionsTopic;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Repository\SuggestionRepository;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion;
+use Oro\Bundle\WebsiteSearchSuggestionBundle\Tests\Functional\WebsiteSearchSuggestionsFeatureTrait;
 
 final class GenerateSuggestionsTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use WebsiteSearchSuggestionsFeatureTrait;
 
     private SuggestionRepository $suggestionRepository;
 
@@ -23,6 +25,8 @@ final class GenerateSuggestionsTest extends WebTestCase
         $this->loadFixtures([
             LoadProductData::class
         ]);
+
+        $this->enableFeature();
 
         self::clearMessageCollector();
         self::clearProcessedMessages();

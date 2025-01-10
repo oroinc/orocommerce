@@ -34,6 +34,7 @@ oro:
             groups:
                 website_search_suggestion:
                     title: 'Automatic Phrase Suggestions'
+                    description: 'Enabling automatic phrase suggestions will initiate the creation of an additional search index using product SKUs and names. This process will not impact the functionality of regular search on the storefront. However, please note that the time required for the index to be fully created - typically several hours - depends on the size of the product catalog. Automatic phrase suggestions will only become fully functional once the indexing process is complete.'
             fields:
                 search_autocomplete_max_suggests:
                     label: 'Number Of Automatically Suggested Phrases In Search Autocomplete'

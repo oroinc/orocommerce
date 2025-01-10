@@ -4,10 +4,25 @@
 Feature: Product Search Autocomplete Suggestions
 
   Scenario: Feature Background
-    Given I signed in as AmandaRCole@example.org on the store frontend
+    Given sessions active:
+      | Admin | first_session  |
+      | Buyer  | second_session |
+    And I proceed as the Admin
+    And I login as administrator
+
+  Scenario: Enable the product search autocomplete suggestions
+    Given I go to System / Configuration
+    And I follow "Commerce/Product/Product Search" on configuration sidebar
+    And I should see "Enable Automatic Phrase Suggestions in Search Autocomplete"
+    And uncheck "Use default" for "Enable Automatic Phrase Suggestions in Search Autocomplete" field
+    And I check "Enable Automatic Phrase Suggestions in Search Autocomplete"
+    And I click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Check the search suggestion autocomplete is empty when no products are found
-    Given I go to the homepage
+    Given I proceed as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
+    And I go to the homepage
     When I type "Search string" in "search"
     And I should see an "Search Autocomplete" element
     Then I should see "No products were found to match your search" in the "Search Autocomplete No Found" element

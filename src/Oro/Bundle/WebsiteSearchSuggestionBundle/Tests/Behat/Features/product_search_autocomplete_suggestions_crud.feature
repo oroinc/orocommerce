@@ -4,7 +4,8 @@
 Feature: Product Search Autocomplete Suggestions CRUD
 
   Scenario: Feature Background
-    Given sessions active:
+    Given I set configuration property "oro_website_search_suggestion.website_search_suggestion_feature_enabled" to "1"
+    And sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
     And I proceed as the Admin

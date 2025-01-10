@@ -15,6 +15,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Repository\SuggestionRepository;
 use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion;
+use Oro\Bundle\WebsiteSearchSuggestionBundle\Tests\Functional\WebsiteSearchSuggestionsFeatureTrait;
 
 /**
  * @dbIsolationPerTest
@@ -22,6 +23,7 @@ use Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion;
 final class CreateProductSuggestionListenerTest extends WebTestCase
 {
     use MessageQueueExtension;
+    use WebsiteSearchSuggestionsFeatureTrait;
 
     private ObjectManager $manager;
     private SuggestionRepository $suggestionRepository;
@@ -35,6 +37,8 @@ final class CreateProductSuggestionListenerTest extends WebTestCase
             LoadUser::class,
             LoadProductData::class
         ]);
+
+        $this->enableFeature();
 
         $this->manager = $this->getReferenceRepository()->getManager();
 
