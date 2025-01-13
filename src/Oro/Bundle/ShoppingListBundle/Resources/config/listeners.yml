@@ -146,3 +146,8 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListBeforeAddToIndexListener'
         tags:
             - { name: kernel.event_listener, event: oro_search.before_add_index, method: checkEntityNeedIndex }
+
+    oro_shopping_list.event_listener.checkout_source_entity_clear:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListCheckoutSourceEntityClearListener
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.checkout_source_entity_clear, method: onCheckoutSourceEntityClear }
