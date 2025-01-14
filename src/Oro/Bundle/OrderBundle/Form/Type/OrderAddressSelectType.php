@@ -70,10 +70,15 @@ class OrderAddressSelectType extends AbstractType
             if ($address === self::ENTER_MANUALLY) {
                 return;
             }
-
+            $selectedAddress = $event->getForm()->getData();
             $event->setData(null);
             if ($address) {
-                $event->setData($this->addressManager->updateFromAbstract($address));
+                $event->setData(
+                    $this->addressManager->updateFromAbstract(
+                        $address,
+                        $selectedAddress instanceof AbstractAddress ? $selectedAddress : null
+                    )
+                );
             }
         });
     }
