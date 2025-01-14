@@ -34,6 +34,10 @@ Feature: Order Addresses
     And I should not see an "Order Billing Address State Text Field" element
     When fill "Order Form" with:
       | Billing Address  | ORO, 23555 Hard Road, YORK NY US 12103 |
+    And I save form
+    And click "Save on conf window"
+    Then I should see "Order has been saved" flash message
+    And click "Billing Address"
     Then "Order Form" must contains values:
       | Billing Address Organization | ORO             |
       | Billing Address Country      | United States   |
@@ -60,6 +64,19 @@ Feature: Order Addresses
       | Shipping Address State        | California    |
       | Shipping Address Postal Code  | 90002         |
     When I fill "Order Form" with:
+      | Shipping Address | ORO, 905 New Street, GAMBURG FL US 33987 |
+    And I save form
+    And click "Save on conf window"
+    Then I should see "Order has been saved" flash message
+    And click "Shipping Address"
+    And "Order Form" must contains values:
+      | Shipping Address Organization | ORO                 |
+      | Shipping Address Country      | United States       |
+      | Shipping Address Street       | 905 New Street      |
+      | Shipping Address City         | Gamburg             |
+      | Shipping Address State        | Florida             |
+      | Shipping Address Postal Code  | 33987               |
+    When I fill "Order Form" with:
       | Billing Address | ORO, EASTERN DISTRICT, PAGO PAGO AMERICAN SAMOA 96799 |
       | Billing Address | Enter other address                                   |
     Then I should not see an "Order Billing Address State Selector" element
@@ -71,7 +88,7 @@ Feature: Order Addresses
       | Shipping Address Organization | Acme                |
       | Shipping Address Country      | United States       |
       | Shipping Address Street       | Old Street          |
-      | Shipping Address City         | Moskow              |
+      | Shipping Address City         | Kyiv                |
       | Shipping Address State        | California          |
       | Shipping Address Postal Code  | 90005               |
     And I save form
@@ -84,6 +101,6 @@ Feature: Order Addresses
       | Shipping Address Organization | Acme                |
       | Shipping Address Country      | United States       |
       | Shipping Address Street       | Old Street          |
-      | Shipping Address City         | Moskow              |
+      | Shipping Address City         | Kyiv                |
       | Shipping Address State        | California          |
       | Shipping Address Postal Code  | 90005               |

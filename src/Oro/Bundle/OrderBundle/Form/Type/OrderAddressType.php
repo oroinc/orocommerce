@@ -67,7 +67,12 @@ class OrderAddressType extends AbstractType
 
             $orderAddress = $event->getData();
             $selectedAddress = $form->get('customerAddress')->getData();
-            if ($selectedAddress instanceof OrderAddress
+            if ($selectedAddress === null || $selectedAddress === OrderAddressSelectType::ENTER_MANUALLY) {
+                if ($orderAddress && $isManualEditGranted) {
+                    $orderAddress->setCustomerAddress(null);
+                    $orderAddress->setCustomerUserAddress(null);
+                }
+            } elseif ($selectedAddress instanceof OrderAddress
                 && $this->isAddressChangeRequired($selectedAddress, $orderAddress)
             ) {
                 $event->setData($selectedAddress);
