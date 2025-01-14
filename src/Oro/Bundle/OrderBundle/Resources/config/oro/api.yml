@@ -129,6 +129,18 @@ api:
                 fields:
                     createdAt: ~
                     updatedAt: ~
+                    customer:
+                        description: Filter records by customer ID
+                        data_type: integer
+                        allow_array: true
+                        operators: [ '=', '!=' ]
+                        property_path: orders.customer
+                    customerUser:
+                        description: Filter records by customerUser ID
+                        data_type: integer
+                        allow_array: true
+                        operators: [ '=', '!=' ]
+                        property_path: orders.customerUser
             sorters:
                 fields:
                     createdAt: ~

@@ -25,6 +25,7 @@ services:
         calls:
             - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Entity\Brand', ['create']]]
             - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Entity\ProductKitItem', ['create']]]
+            - [addSkippedEntity, ['Oro\Bundle\ProductBundle\Api\Model\ProductLatestPurchase', ['get_list']]]
 
     oro_product.tests.skipped_file_systems:
         class: Oro\Bundle\GaufretteBundle\Tests\Functional\Environment\SkippedGaufretteFileSystemProvider

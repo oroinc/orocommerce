@@ -1,4 +1,9 @@
 api:
+    entity_aliases:
+        Oro\Bundle\ProductBundle\Api\Model\ProductLatestPurchase:
+            alias: latestpurchase
+            plural_alias: latestpurchases
+
     entities:
         Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
             documentation_resource: '@OroProductBundle/Resources/doc/api/product_unit_precision.md'
@@ -196,3 +201,78 @@ api:
                     actions:
                         update_relationship: false
                         delete_relationship: false
+
+        Oro\Bundle\ProductBundle\Api\Model\ProductLatestPurchase:
+            documentation_resource: '@OroProductBundle/Resources/doc/api/product_latest_purchase.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                price:
+                    data_type: money
+                currency:
+                    data_type: string
+                purchasedAt:
+                    data_type: datetime
+                product:
+                    property_path: productId
+                    target_class: Oro\Bundle\ProductBundle\Entity\Product
+                    target_type: to-one
+                unit:
+                    target_class: Oro\Bundle\ProductBundle\Entity\ProductUnit
+                    target_type: to-one
+                customerUser:
+                    property_path: customerUserId
+                    target_class: Oro\Bundle\CustomerBundle\Entity\CustomerUser
+                    target_type: to-one
+                customer:
+                    property_path: customerId
+                    target_class: Oro\Bundle\CustomerBundle\Entity\Customer
+                    target_type: to-one
+                website:
+                    property_path: websiteId
+                    target_class: Oro\Bundle\WebsiteBundle\Entity\Website
+                    target_type: to-one
+            filters:
+                fields:
+                    unit:
+                        data_type: string
+                        operators: ['=']
+                        allow_array: true
+                    currency:
+                        data_type: string
+                        operators: ['=']
+                        allow_array: true
+                    product:
+                        data_type: integer
+                        operators: ['=']
+                        allow_array: true
+                    customer:
+                        data_type: integer
+                        operators: ['=']
+                        allow_array: true
+                    hierarchicalCustomer:
+                        data_type: integer
+                        operators: ['=']
+                        allow_array: true
+                        description: Filter records by 'customer' relationship (customer hierarchy aware).
+                        type: customerHierarchyAware
+                    customerUser:
+                        data_type: integer
+                        operators: ['=']
+                        allow_array: true
+                    website:
+                        data_type: integer
+                        operators: ['=']
+                        allow_array: true
+            actions:
+                get_list:
+                    disable_paging: true
+                    disable_sorting: true
+                get: false
+                create: false
+                update: false
+                delete: false
+                delete_list: false
+                get_subresource: false

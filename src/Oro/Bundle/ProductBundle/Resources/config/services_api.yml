@@ -505,3 +505,24 @@ services:
             - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, class: Oro\Bundle\ProductBundle\Entity\ProductName }
             - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, class: Oro\Bundle\ProductBundle\Entity\ProductDescription }
             - { name: oro.api.processor, action: customize_form_data, event: pre_flush_data, class: Oro\Bundle\ProductBundle\Entity\ProductShortDescription }
+
+    oro_product.api.handle_product_latest_purchases_filters:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ProductLatestPurchase\HandleProductLatestPurchasesFilters
+        tags:
+            - { name: oro.api.processor, action: get_list, group: normalize_input, class: Oro\Bundle\ProductBundle\Api\Model\ProductLatestPurchase, priority: -120 }
+
+    oro_product.api.load_product_latest_purchases:
+        class: Oro\Bundle\ProductBundle\Api\Processor\ProductLatestPurchase\LoadProductLatestPurchases
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_customer.owner.tree_provider'
+        tags:
+            - { name: oro.api.processor, action: get_list, group: load_data, class: Oro\Bundle\ProductBundle\Api\Model\ProductLatestPurchase }
+
+    oro_product.api.expand_product_latest_purchase_associated_entities:
+        class: Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\ExpandAssociatedEntities
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, collection: true, class: Oro\Bundle\ProductBundle\Api\Model\ProductLatestPurchase, priority: 100 }
