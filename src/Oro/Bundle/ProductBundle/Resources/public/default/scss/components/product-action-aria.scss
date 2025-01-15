@@ -1,8 +1,8 @@
 /* @theme: default; */
 
 .product-action-area {
-    display: flex;
-    gap: spacing('sm');
+    display: $product-action-aria-display;
+    gap: $product-action-aria-gap;
 
     &:empty {
         display: none;
@@ -17,12 +17,12 @@
     }
 
     &.in-sticky {
-        display: block;
-        z-index: $datagrid-massaction-sticky-mode-z-index;
+        display: $product-action-aria-sticky-mode-display;
+        z-index: $product-action-aria-sticky-mode-z-index;
+        background-color: $product-action-aria-sticky-mode-background-color;
 
         .product-action {
             display: block;
-            background-color: $datagrid-massaction-sticky-mode-background-color;
         }
     }
 }

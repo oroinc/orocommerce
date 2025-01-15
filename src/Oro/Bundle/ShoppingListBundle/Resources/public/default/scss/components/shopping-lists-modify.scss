@@ -1,23 +1,25 @@
 /* @theme: default; */
 
 .shopping-lists-modify {
-    display: flex;
-    align-items: center;
-    justify-content: end;
+    display: $shopping-lists-modify-display;
+    align-items: $shopping-lists-modify-align-items;
+    justify-content: $shopping-lists-modify-justify-content;
 
-    gap: spacing('sm');
+    gap: $shopping-lists-modify-gap;
 
     &__text,
     &__select {
-        display: inline-block;
+        display: $shopping-lists-modify-text-select-display;
     }
 
     &__badges {
-        float: right;
+        float: $shopping-lists-modify-badges-float;
+        display: $shopping-lists-modify-badges-display;
+        gap: $shopping-lists-modify-badges-gap;
     }
 
     &__text {
-        margin-right: spacing('xs');
+        margin-right: $shopping-lists-modify-text-margin-right;
     }
 
     &__input {
@@ -30,19 +32,15 @@
     }
 
     &__icon {
-        margin-right: 0;
-    }
-
-    &--hidden {
-        display: none;
+        margin-right: $shopping-lists-modify-icon-margin-right;
     }
 }
 
 @include breakpoint('mobile') {
     .shopping-lists-modify {
         padding-top: $shopping-lists-modify-offset-inner-top;
-        display: flex;
-        column-gap: 8px;
+        display: $shopping-lists-modify-display-mobile;
+        column-gap: $shopping-lists-modify-column-gap-mobile;
 
         &__input {
             width: $shopping-lists-modify-input-width-mobile;
@@ -51,7 +49,7 @@
         &__select {
             min-width: $shopping-lists-modify-select-min-width-mobile;
             width: $shopping-lists-modify-select-width-mobile;
-            margin-right: auto;
+            margin-right: $shopping-lists-modify-select-margin-right-mobile;
         }
 
         &__text {
@@ -59,7 +57,7 @@
         }
 
         &__badges {
-            flex-shrink: 0;
+            flex-shrink: $shopping-lists-modify-badges-flex-shrink-mobile;
         }
     }
 }

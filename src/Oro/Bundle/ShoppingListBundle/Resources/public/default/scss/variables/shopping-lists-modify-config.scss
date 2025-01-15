@@ -1,5 +1,18 @@
 /* @theme: default; */
 
+$shopping-lists-modify-display: flex !default;
+$shopping-lists-modify-align-items: center !default;
+$shopping-lists-modify-justify-content: end !default;
+$shopping-lists-modify-gap: spacing('sm') !default;
+$shopping-lists-modify-text-select-display: inline-block !default;
+$shopping-lists-modify-text-margin-right: spacing('xs') !default;
+
+$shopping-lists-modify-icon-margin-right: 0 !default;
+
+$shopping-lists-modify-badges-float: right !default;
+$shopping-lists-modify-badges-display: flex !default;
+$shopping-lists-modify-badges-gap: 4px !default;
+
 $shopping-lists-modify-select-min-width: 136px !default;
 
 $shopping-lists-modify-input-width: 70px !default;
@@ -9,6 +22,9 @@ $shopping-lists-modify-input-text-align: right !default;
 $shopping-lists-modify-offset-inner-top: 4px;
 $shopping-lists-modify-select-min-width-mobile: unset !default;
 $shopping-lists-modify-select-width-mobile: 124px !default;
-
 $shopping-lists-modify-input-width-mobile: 80px !default;
 $shopping-lists-modify-text-margin-end: 0 !default;
+$shopping-lists-modify-display-mobile: flex !default;
+$shopping-lists-modify-column-gap-mobile: 8px !default;
+$shopping-lists-modify-select-margin-right-mobile: auto !default;
+$shopping-lists-modify-badges-flex-shrink-mobile: 0 !default;

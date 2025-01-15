@@ -1,0 +1,9 @@
+/* @theme: default; */
+
+$product-action-aria-display: flex !default;
+$product-action-aria-gap: spacing('sm') !default;
+
+// In sticky mode
+$product-action-aria-sticky-mode-display: block !default;
+$product-action-aria-sticky-mode-z-index: z('fixed') !default;
+$product-action-aria-sticky-mode-background-color: get-color('neutral', 'dark') !default;

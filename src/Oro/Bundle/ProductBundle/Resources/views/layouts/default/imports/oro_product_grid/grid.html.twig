@@ -79,14 +79,16 @@
 {% block _product_mass_actions_sticky_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': 'product-action-area sticky sticky--bottom',
-        'data-mass-actions-sticky-container': '',
         'data-sticky': {
             group: 'bottom'
         }
     }) %}
 
-    <div {{ block('block_attributes') }}></div>
+    <div {{ block('block_attributes') }}>
+        <div class="page-area-container" data-mass-actions-sticky-container></div>
+    </div>
 {% endblock %}
+
 
 {% block _product_datagrid_toolbar_display_options_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
