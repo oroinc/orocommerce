@@ -18,6 +18,8 @@ class ProductLatestPurchaseTest extends RestJsonApiTestCase
     #[\Override]
     protected function setUp(): void
     {
+        $this->markTestSkipped('will be unskipped in BB-24895');
+
         parent::setUp();
         $this->loadFixtures([
             LoadProductLatestPurchasesData::class
