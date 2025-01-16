@@ -14,9 +14,7 @@ The "isApplicable" method is used to determine if "FreightClass" can be handled 
 ```php
 class FreightClassesExtension implements FreightClassesExtensionInterface
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function isApplicable(FreightClassInterface $class, ProductShippingOptionsInterface $options)
     {
         if ($class->getCode() === 'demo_class50') {

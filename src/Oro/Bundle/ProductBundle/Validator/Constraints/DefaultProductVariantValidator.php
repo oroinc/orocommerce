@@ -14,9 +14,7 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
  */
 class DefaultProductVariantValidator extends ConstraintValidator
 {
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     public function validate($value, Constraint $constraint): void
     {
         if (!$constraint instanceof DefaultProductVariant) {

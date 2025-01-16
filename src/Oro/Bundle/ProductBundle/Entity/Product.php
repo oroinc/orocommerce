@@ -477,9 +477,6 @@ class Product implements
     #[ConfigField(defaultValues: ['importexport' => ['order' => 100]])]
     protected ?string $kitShippingCalculationMethod = null;
 
-    /**
-     * {@inheritdoc}
-     */
     public function __construct()
     {
         $this->unitPrecisions = new ArrayCollection();
