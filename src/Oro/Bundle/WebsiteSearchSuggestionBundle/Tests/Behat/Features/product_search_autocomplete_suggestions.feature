@@ -18,6 +18,7 @@ Feature: Product Search Autocomplete Suggestions
     And I check "Enable Automatic Phrase Suggestions in Search Autocomplete"
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
+    And I wait for 10 seconds
 
   Scenario: Check the search suggestion autocomplete is empty when no products are found
     Given I proceed as the Buyer
