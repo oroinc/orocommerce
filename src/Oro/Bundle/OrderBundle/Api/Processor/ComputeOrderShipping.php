@@ -17,15 +17,10 @@ class ComputeOrderShipping implements ProcessorInterface
     private const SHIPPING_METHOD_FIELD_NAME = 'shippingMethod';
     private const SHIPPING_COST_FIELD_NAME = 'shippingCostAmount';
 
-    private DoctrineHelper $doctrineHelper;
-    private ShippingMethodLabelTranslator $shippingMethodLabelTranslator;
-
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        ShippingMethodLabelTranslator $shippingMethodLabelTranslator
+        private readonly DoctrineHelper $doctrineHelper,
+        private readonly ShippingMethodLabelTranslator $shippingMethodLabelTranslator
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->shippingMethodLabelTranslator = $shippingMethodLabelTranslator;
     }
 
     #[\Override]
@@ -48,7 +43,8 @@ class ComputeOrderShipping implements ProcessorInterface
             $shippingMethod = null;
             if (null !== $code) {
                 $shippingMethod = [
-                    'code'  => $code,
+                    'code' => $code,
+                    'type' => $type,
                     'label' => $this->getShippingMethodLabel(
                         $code,
                         $type,

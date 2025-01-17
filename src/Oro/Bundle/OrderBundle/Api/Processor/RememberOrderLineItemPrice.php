@@ -4,7 +4,6 @@ namespace Oro\Bundle\OrderBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
@@ -16,31 +15,19 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
  */
 class RememberOrderLineItemPrice implements ProcessorInterface
 {
-    public const SUBMITTED_PRICE = 'order_line_item_submitted_price';
-
     #[\Override]
     public function process(ContextInterface $context): void
     {
         /** @var CustomizeFormDataContext $context */
 
-        /** @var OrderLineItem|OrderProductKitItemLineItem $lineItem */
+        /** @var OrderLineItem $lineItem */
         $lineItem = $context->getData();
-        $price = $this->getPrice($lineItem);
-        if ($price) {
-            $context->set(static::SUBMITTED_PRICE, $price);
-        }
-        $lineItem->setValue(0);
-        $lineItem->setCurrency(null);
-    }
-
-    private function getPrice(OrderLineItem|OrderProductKitItemLineItem $lineItem): ?array
-    {
         $value = $lineItem->getValue();
         $currency = $lineItem->getCurrency();
-        if (null === $value && null === $currency) {
-            return null;
+        if (null !== $value || null !== $currency) {
+            FillOrderLineItemPrice::setSubmittedPrice($context, $value, $currency);
         }
-
-        return ['value' => $value, 'currency' => $currency];
+        $lineItem->setValue(0.0);
+        $lineItem->setCurrency(null);
     }
 }

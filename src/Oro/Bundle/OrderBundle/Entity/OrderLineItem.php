@@ -104,19 +104,13 @@ class OrderLineItem implements
     #[ORM\Column(name: 'product_unit_code', type: Types::STRING, length: 255, nullable: true)]
     protected ?string $productUnitCode = null;
 
-    /**
-     * @var float
-     */
     #[ORM\Column(name: 'value', type: 'money', nullable: true)]
-    protected $value;
+    protected ?float $value = null;
 
     #[ORM\Column(name: 'currency', type: Types::STRING, nullable: true)]
     protected ?string $currency = null;
 
-    /**
-     * @var Price
-     */
-    protected $price;
+    protected ?Price $price = null;
 
     /**
      * @var int
@@ -418,28 +412,16 @@ class OrderLineItem implements
         return $this->productUnitCode;
     }
 
-    /**
-     * Set price
-     *
-     * @param Price|null $price
-     * @return $this
-     */
-    public function setPrice(Price $price = null)
+    public function setPrice(Price $price = null): self
     {
         $this->price = $price;
-
         $this->updatePrice();
 
         return $this;
     }
 
-    /**
-     * Get price
-     *
-     * @return Price|null
-     */
     #[\Override]
-    public function getPrice()
+    public function getPrice(): ?Price
     {
         return $this->price;
     }
@@ -468,19 +450,12 @@ class OrderLineItem implements
         return $this->priceType;
     }
 
-    /**
-     * @return string
-     */
-    public function getCurrency()
+    public function getCurrency(): ?string
     {
         return $this->currency;
     }
 
-    /**
-     * @param string $currency
-     * @return $this
-     */
-    public function setCurrency($currency)
+    public function setCurrency(?string $currency): self
     {
         $this->currency = $currency;
         $this->createPrice();
@@ -507,19 +482,12 @@ class OrderLineItem implements
         return $this;
     }
 
-    /**
-     * @return float
-     */
-    public function getValue()
+    public function getValue(): ?float
     {
         return $this->value;
     }
 
-    /**
-     * @param float $value
-     * @return $this
-     */
-    public function setValue($value)
+    public function setValue(?float $value): self
     {
         $this->value = $value;
         $this->createPrice();
@@ -654,10 +622,21 @@ class OrderLineItem implements
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
-    public function updatePrice()
+    public function updatePrice(): void
     {
-        $this->value = $this->price ? $this->price->getValue() : null;
-        $this->currency = $this->price ? $this->price->getCurrency() : null;
+        if (null === $this->price) {
+            $this->value = null;
+            $this->currency = null;
+        } else {
+            $value = $this->price->getValue();
+            if (null !== $value) {
+                $this->value = (float)$value;
+            }
+            $currency = $this->price->getCurrency();
+            if (null !== $currency) {
+                $this->currency = (string)$currency;
+            }
+        }
     }
 
     protected function updateItemInformation()

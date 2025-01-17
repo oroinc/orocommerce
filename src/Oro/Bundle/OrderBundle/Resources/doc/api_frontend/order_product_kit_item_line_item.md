@@ -152,21 +152,21 @@ This value can be omitted if the **productSku** field is specified in the reques
 
 #### get_subresource
 
-Retrieve a kit item record assigned to a specific order product kit item line item record.
+Retrieve a record of kit item assigned to a specific order product kit item line item record.
 
 #### get_relationship
 
-Retrieve an ID of the related kit item.
+Retrieve an ID of kit item record assigned to a specific order product kit item line item record.
 
 ### lineItem
 
 #### get_subresource
 
-Retrieve a line item record assigned to a specific order product kit item line item record.
+Retrieve a record of line item assigned to a specific order product kit item line item record.
 
 #### get_relationship
 
-Retrieve an ID of the related line item.
+Retrieve an ID of line item record assigned to a specific order product kit item line item record.
 
 ### product
 

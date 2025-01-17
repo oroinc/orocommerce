@@ -118,6 +118,9 @@ class AbstractAddressManager
         try {
             $value = $this->propertyAccessor->getValue($from, $property);
             if (!$this->isEmptyValue($value)) {
+                if ($value instanceof \DateTimeInterface) {
+                    $value = clone $value;
+                }
                 $this->propertyAccessor->setValue($to, $property, $value);
             }
         } catch (NoSuchPropertyException $e) {

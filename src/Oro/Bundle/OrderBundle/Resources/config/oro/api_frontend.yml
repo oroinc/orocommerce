@@ -59,6 +59,8 @@ api:
                     fields:
                         code:
                             data_type: string
+                        type:
+                            data_type: string
                         label:
                             data_type: string
                     form_options:

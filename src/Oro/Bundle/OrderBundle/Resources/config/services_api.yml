@@ -129,21 +129,21 @@ services:
         arguments:
             - 'Use API resource to create an order. An order address can be created only together with an order.'
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, mainRequest: true, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress, mainRequest: true }
 
     oro_order.api.disable_order_line_item_creation:
         class: Oro\Bundle\ApiBundle\Processor\Shared\DisableResourceAccess
         arguments:
             - 'Use API resource to create an order. An order line item can be created only together with an order.'
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, mainRequest: true, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderLineItem, mainRequest: true }
 
     oro_order.api.disable_order_product_kit_item_line_item_creation:
         class: Oro\Bundle\ApiBundle\Processor\Shared\DisableResourceAccess
         arguments:
             - 'Use API resource to create an order. An order product kit item line item can be created only together with an order.'
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, mainRequest: true, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem, mainRequest: true }
 
     oro_order.api.handle_order_line_item_empty_price:
         class: Oro\Bundle\OrderBundle\Api\Processor\HandleOrderLineItemEmptyPrice
@@ -370,8 +370,8 @@ services:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@security.authorization_checker'
 
-    oro_order.api.handle_order_subtotal_filters:
-        class: Oro\Bundle\OrderBundle\Api\Processor\HandleOrderSubtotalFilters
+    oro_order.api.handle_order_filter:
+        class: Oro\Bundle\OrderBundle\Api\Processor\HandleOrderFilter
         tags:
             - { name: oro.api.processor, action: get_list, group: normalize_input, requestType: '!frontend', class: Oro\Bundle\OrderBundle\Api\Model\OrderSubtotal, priority: -120 }
 

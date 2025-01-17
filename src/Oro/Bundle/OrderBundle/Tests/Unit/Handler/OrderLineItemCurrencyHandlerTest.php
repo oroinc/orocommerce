@@ -11,8 +11,7 @@ use Symfony\Component\Form\FormInterface;
 
 class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 {
-    /** @var OrderLineItemCurrencyHandler */
-    private $handler;
+    private OrderLineItemCurrencyHandler $handler;
 
     #[\Override]
     protected function setUp(): void
@@ -33,7 +32,7 @@ class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler->resetLineItemsPrices($form, $order);
 
-        $this->assertEquals('USD', $orderLineItem->getCurrency());
+        self::assertEquals('USD', $orderLineItem->getCurrency());
     }
 
     public function testResetLineItemsPricesWithCurrencyNotEquals(): void
@@ -49,57 +48,51 @@ class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler->resetLineItemsPrices($form, $order);
 
-        $this->assertNull($orderLineItem->getCurrency());
+        self::assertNull($orderLineItem->getCurrency());
     }
 
     public function testResetLineItemsPricesWithCurrencyNotEqualsAndPriceChanged(): void
     {
         $priceValueForm = $this->createMock(FormInterface::class);
-        $priceValueForm
-            ->expects($this->once())
+        $priceValueForm->expects(self::once())
             ->method('getData')
             ->willReturn(true);
 
-        $priceForm = $lineItemsForm = $this->createMock(FormInterface::class);
-        $priceForm
-            ->expects($this->once())
+        $priceForm = $this->createMock(FormInterface::class);
+        $priceForm->expects(self::once())
             ->method('offsetExists')
             ->with('is_price_changed')
             ->willReturn(true);
-        $priceForm
-            ->expects($this->once())
+        $priceForm->expects(self::once())
             ->method('offsetGet')
             ->with('is_price_changed')
             ->willReturn($priceValueForm);
 
         $lineItemForm = $this->createMock(FormInterface::class);
-        $lineItemForm
-            ->expects($this->once())
+        $lineItemForm->expects(self::once())
             ->method('offsetExists')
             ->with('price')
             ->willReturn(true);
-        $lineItemForm
-            ->expects($this->once())
+        $lineItemForm->expects(self::once())
             ->method('offsetGet')
             ->with('price')
             ->willReturn($priceForm);
 
         $lineItemsForm = $this->createMock(FormInterface::class);
-        $lineItemsForm
-            ->expects($this->once())
+        $lineItemsForm->expects(self::once())
             ->method('offsetExists')
             ->willReturn(true);
-        $lineItemsForm
-            ->expects($this->once())
+        $lineItemsForm->expects(self::once())
             ->method('offsetGet')
             ->willReturn($lineItemForm);
 
         $price = new Price();
-        $price->setCurrency('EUR')->setValue(1);
+        $price->setValue(1);
+        $price->setCurrency('EUR');
 
         $orderLineItem = new OrderLineItem();
         $orderLineItem->setCurrency('EUR');
-        $orderLineItem->setPrice($price);
+        $orderLineItem->setValue(1.0);
 
         $order = new Order();
         $order->setCurrency('USD');
@@ -107,57 +100,47 @@ class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler->resetLineItemsPrices($lineItemsForm, $order);
 
-        $this->assertEquals($price, $orderLineItem->getPrice());
+        self::assertEquals($price, $orderLineItem->getPrice());
     }
 
     public function testResetLineItemsPricesWithCurrencyNotEqualsAndPriceNotChanged(): void
     {
         $priceValueForm = $this->createMock(FormInterface::class);
-        $priceValueForm
-            ->expects($this->once())
+        $priceValueForm->expects(self::once())
             ->method('getData')
             ->willReturn(false);
 
-        $priceForm = $lineItemsForm = $this->createMock(FormInterface::class);
-        $priceForm
-            ->expects($this->once())
+        $priceForm = $this->createMock(FormInterface::class);
+        $priceForm->expects(self::once())
             ->method('offsetExists')
             ->with('is_price_changed')
             ->willReturn(true);
-        $priceForm
-            ->expects($this->once())
+        $priceForm->expects(self::once())
             ->method('offsetGet')
             ->with('is_price_changed')
             ->willReturn($priceValueForm);
 
         $lineItemForm = $this->createMock(FormInterface::class);
-        $lineItemForm
-            ->expects($this->once())
+        $lineItemForm->expects(self::once())
             ->method('offsetExists')
             ->with('price')
             ->willReturn(true);
-        $lineItemForm
-            ->expects($this->once())
+        $lineItemForm->expects(self::once())
             ->method('offsetGet')
             ->with('price')
             ->willReturn($priceForm);
 
         $lineItemsForm = $this->createMock(FormInterface::class);
-        $lineItemsForm
-            ->expects($this->once())
+        $lineItemsForm->expects(self::once())
             ->method('offsetExists')
             ->willReturn(true);
-        $lineItemsForm
-            ->expects($this->once())
+        $lineItemsForm->expects(self::once())
             ->method('offsetGet')
             ->willReturn($lineItemForm);
 
-        $price = new Price();
-        $price->setCurrency('EUR')->setValue(1);
-
         $orderLineItem = new OrderLineItem();
         $orderLineItem->setCurrency('EUR');
-        $orderLineItem->setPrice($price);
+        $orderLineItem->setValue(1.0);
 
         $order = new Order();
         $order->setCurrency('USD');
@@ -165,23 +148,19 @@ class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler->resetLineItemsPrices($lineItemsForm, $order);
 
-        $this->assertNull($orderLineItem->getPrice());
+        self::assertNull($orderLineItem->getPrice());
     }
 
     public function testResetLineItemsPricesWithCurrencyNotEqualsAndLineItemNotExist(): void
     {
         $lineItemsForm = $this->createMock(FormInterface::class);
-        $lineItemsForm
-            ->expects($this->once())
+        $lineItemsForm->expects(self::once())
             ->method('offsetExists')
             ->willReturn(false);
 
-        $price = new Price();
-        $price->setCurrency('EUR')->setValue(1);
-
         $orderLineItem = new OrderLineItem();
         $orderLineItem->setCurrency('EUR');
-        $orderLineItem->setPrice($price);
+        $orderLineItem->setValue(1.0);
 
         $order = new Order();
         $order->setCurrency('USD');
@@ -189,34 +168,28 @@ class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler->resetLineItemsPrices($lineItemsForm, $order);
 
-        $this->assertNull($orderLineItem->getPrice());
+        self::assertNull($orderLineItem->getPrice());
     }
 
     public function testResetLineItemsPricesWithCurrencyNotEqualsAndLineItemPriceNotExist(): void
     {
         $lineItemForm = $this->createMock(FormInterface::class);
-        $lineItemForm
-            ->expects($this->once())
+        $lineItemForm->expects(self::once())
             ->method('offsetExists')
             ->with('price')
             ->willReturn(false);
 
         $lineItemsForm = $this->createMock(FormInterface::class);
-        $lineItemsForm
-            ->expects($this->once())
+        $lineItemsForm->expects(self::once())
             ->method('offsetExists')
             ->willReturn(true);
-        $lineItemsForm
-            ->expects($this->once())
+        $lineItemsForm->expects(self::once())
             ->method('offsetGet')
             ->willReturn($lineItemForm);
 
-        $price = new Price();
-        $price->setCurrency('EUR')->setValue(1);
-
         $orderLineItem = new OrderLineItem();
         $orderLineItem->setCurrency('EUR');
-        $orderLineItem->setPrice($price);
+        $orderLineItem->setValue(1.0);
 
         $order = new Order();
         $order->setCurrency('USD');
@@ -224,6 +197,6 @@ class OrderLineItemCurrencyHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->handler->resetLineItemsPrices($lineItemsForm, $order);
 
-        $this->assertNull($orderLineItem->getPrice());
+        self::assertNull($orderLineItem->getPrice());
     }
 }

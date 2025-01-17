@@ -98,6 +98,14 @@ is the same as in the created order.**
 **Note:**
 This value can be omitted if the **productSku** field is specified in the request.
 
+### kitItemLineItems
+
+{@inheritdoc}
+
+#### create
+
+**The field is required if base product is a kit**
+
 ### checksum
 
 #### create

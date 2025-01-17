@@ -525,8 +525,8 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
     public function testTryToCreateWithSubmittedPriceThatNotEqualsToCalculatedPrice(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][0]['attributes']['price'] = 9999;
-        $data['included'][3]['attributes']['price'] = 9999;
+        $data['included'][0]['attributes']['price'] = '9999.9';
+        $data['included'][3]['attributes']['price'] = '9999.9';
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -550,6 +550,19 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
             ],
             $response
         );
+    }
+
+    public function testCreateWithSubmittedPriceThatEqualsToCalculatedPrice(): void
+    {
+        $data = $this->getRequestData('create_order_min.yml');
+        $data['included'][0]['attributes']['price'] = '1.0100';
+        $data['included'][0]['attributes']['currency'] = 'USD';
+        $data['included'][3]['attributes']['price'] = '11.5900';
+        $data['included'][3]['attributes']['currency'] = 'USD';
+
+        $response = $this->post(['entity' => 'orders'], $data);
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
     }
 
     public function testCreateWithSubmittedNullPrice(): void

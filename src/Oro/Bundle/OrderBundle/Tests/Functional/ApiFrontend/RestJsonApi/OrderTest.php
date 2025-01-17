@@ -295,7 +295,7 @@ class OrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testGetShouldReturnCorrectShippingMethodAmountEvenIfOtherFieldsWereNotRequested(): void
+    public function testGetShouldReturnCorrectShippingMethodEvenIfOtherFieldsWereNotRequested(): void
     {
         $response = $this->get(
             ['entity' => 'orders', 'id' => '<toString(@order1->id)>'],
@@ -310,6 +310,7 @@ class OrderTest extends FrontendRestJsonApiTestCase
                     'attributes' => [
                         'shippingMethod' => [
                             'code'  => '<("flat_rate_" . @flat_rate_shipping_channel->id)>',
+                            'type' => 'primary',
                             'label' => 'Flat Rate'
                         ]
                     ]

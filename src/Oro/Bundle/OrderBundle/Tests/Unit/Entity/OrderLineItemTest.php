@@ -15,6 +15,9 @@ use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class OrderLineItemTest extends TestCase
 {
     use EntityTestCaseTrait;
@@ -225,6 +228,36 @@ class OrderLineItemTest extends TestCase
                 true,
             ],
         ];
+    }
+
+    public function testPrice(): void
+    {
+        $lineItem = new OrderLineItem();
+        self::assertNull($lineItem->getPrice());
+        self::assertNull($lineItem->getCurrency());
+        self::assertNull($lineItem->getValue());
+
+        $price = Price::create(12.3456, 'USD');
+        $lineItem->setPrice($price);
+        self::assertSame($price->getCurrency(), $lineItem->getCurrency());
+        self::assertSame((float)$price->getValue(), $lineItem->getValue());
+
+        $lineItem->setValue(34.5678);
+        self::assertEquals(Price::create(34.5678, 'USD'), $lineItem->getPrice());
+
+        $lineItem->setCurrency('EUR');
+        self::assertEquals(Price::create(34.5678, 'EUR'), $lineItem->getPrice());
+    }
+
+    public function testPriceWhenInvalid(): void
+    {
+        $lineItem = new OrderLineItem();
+
+        $price = Price::create('foobar', 'USD');
+        $lineItem->setPrice($price);
+        self::assertSame($price->getCurrency(), $lineItem->getCurrency());
+        self::assertSame(0.0, $lineItem->getValue());
+        self::assertSame($price, $lineItem->getPrice());
     }
 
     public function testShippingCost(): void

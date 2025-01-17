@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
-use Brick\Math\BigDecimal;
-use Brick\Math\Exception\MathException;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -20,7 +18,6 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitPrecisionAwareInterface;
 
 /**
  * Represents an order line item of a product kit item.
- *
  *
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
@@ -367,11 +364,18 @@ class OrderProductKitItemLineItem implements
     #[ORM\PreUpdate]
     public function updatePrice(): void
     {
-        if ($this->price !== null) {
-            $this->value = (float)$this->price->getValue();
-            $this->currency = (string)$this->price->getCurrency();
+        if (null === $this->price) {
+            $this->value = null;
+            $this->currency = null;
         } else {
-            $this->value = $this->currency = null;
+            $value = $this->price->getValue();
+            if (null !== $value) {
+                $this->value = (float)$value;
+            }
+            $currency = $this->price->getCurrency();
+            if (null !== $currency) {
+                $this->currency = (string)$currency;
+            }
         }
     }
 
@@ -477,13 +481,6 @@ class OrderProductKitItemLineItem implements
 
     public function getValue(): ?float
     {
-        if ($this->value !== null) {
-            try {
-                return BigDecimal::of($this->value)->toFloat();
-            } catch (MathException $e) {
-            }
-        }
-
         return $this->value;
     }
 

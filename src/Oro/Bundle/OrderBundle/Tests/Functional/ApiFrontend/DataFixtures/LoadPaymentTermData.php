@@ -38,7 +38,7 @@ class LoadPaymentTermData extends AbstractFixture implements
     }
 
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $channel = $this->loadIntegration($manager);
 
@@ -65,24 +65,16 @@ class LoadPaymentTermData extends AbstractFixture implements
         $manager->flush();
     }
 
-    /**
-     * @param ObjectManager $manager
-     *
-     * @return Channel
-     */
-    private function loadIntegration(ObjectManager $manager)
+    private function loadIntegration(ObjectManager $manager): Channel
     {
-        $label = new LocalizedFallbackValue();
-        $label->setString('Payment Term');
-
         $transport = new PaymentTermSettings();
-        $transport->addLabel($label);
-        $transport->addShortLabel($label);
+        $transport->addLabel($this->createLocalizedFallbackValue('Payment Term'));
+        $transport->addShortLabel($this->createLocalizedFallbackValue('Payment Term'));
 
         $channel = new Channel();
         $channel
             ->setType(PaymentTermChannelType::TYPE)
-            ->setName((string)$label)
+            ->setName('Payment Term')
             ->setEnabled(true)
             ->setOrganization($this->getReference('organization'))
             ->setDefaultUserOwner($this->getReference('user'))
@@ -94,12 +86,15 @@ class LoadPaymentTermData extends AbstractFixture implements
         return $channel;
     }
 
-    /**
-     * @param Channel $channel
-     *
-     * @return string
-     */
-    private function getPaymentTermIdentifier(Channel $channel)
+    private function createLocalizedFallbackValue(string $string): LocalizedFallbackValue
+    {
+        $label = new LocalizedFallbackValue();
+        $label->setString($string);
+
+        return $label;
+    }
+
+    private function getPaymentTermIdentifier(Channel $channel): string
     {
         return $this->container
             ->get('oro_payment_term.config.integration_method_identifier_generator')

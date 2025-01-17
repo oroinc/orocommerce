@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\OrderBundle\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Processor\CustomizeFormData\CustomizeFormDataContext;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Stores the submitted price of {@see OrderProductKitItemLineItem} ("price" and "currency" fields) to the context
@@ -10,7 +13,21 @@ use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
  * The stored price is used by {@see FillOrderProductKitItemLineItemPrice} processor to validate
  * that it equals to a calculated price.
  */
-class RememberOrderProductKitItemLineItemPrice extends RememberOrderLineItemPrice
+class RememberOrderProductKitItemLineItemPrice implements ProcessorInterface
 {
-    public const SUBMITTED_PRICE = 'order_product_kit_item_line_item_submitted_price';
+    #[\Override]
+    public function process(ContextInterface $context): void
+    {
+        /** @var CustomizeFormDataContext $context */
+
+        /** @var OrderProductKitItemLineItem $kitItemLineItem */
+        $kitItemLineItem = $context->getData();
+        $value = $kitItemLineItem->getValue();
+        $currency = $kitItemLineItem->getCurrency();
+        if (null !== $value || null !== $currency) {
+            FillOrderProductKitItemLineItemPrice::setSubmittedPrice($context, $value, $currency);
+        }
+        $kitItemLineItem->setValue(0.0);
+        $kitItemLineItem->setCurrency(null);
+    }
 }

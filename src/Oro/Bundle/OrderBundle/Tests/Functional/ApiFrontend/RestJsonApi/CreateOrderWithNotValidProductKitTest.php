@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\OrderBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadPaymentTermData;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
@@ -397,10 +398,10 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToCreateWithSubmittedPriceThatNotEqualsToCalculatedPrice(): void
+    public function testTryToCreateWithNonFloatPrice(): void
     {
         $data = $this->getRequestData('create_order_min.yml');
-        $data['included'][4]['attributes']['price'] = 9999;
+        $data['included'][4]['attributes']['price'] = 'some string';
 
         $response = $this->post(
             ['entity' => 'orders'],
@@ -409,18 +410,33 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'price match constraint',
-                    'detail' => 'The specified price must be equal to 11.59.',
-                    'source' => ['pointer' => '/included/4/attributes/price']
-                ],
-                [
-                    'title' => 'currency match constraint',
-                    'detail' => 'The specified currency must be equal to "USD".',
-                    'source' => ['pointer' => '/included/4/attributes/currency']
-                ]
+                'title' => 'form constraint',
+                'detail' => 'This value is not valid.',
+                'source' => ['pointer' => '/included/4/attributes/price']
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWithSubmittedPriceThatNotEqualsToCalculatedPrice(): void
+    {
+        $data = $this->getRequestData('create_order_min.yml');
+        $data['included'][4]['attributes']['price'] = '9999.9';
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'price match constraint',
+                'detail' => 'The specified price must be equal to 11.59.',
+                'source' => ['pointer' => '/included/4/attributes/price']
             ],
             $response
         );
@@ -438,21 +454,25 @@ class CreateOrderWithNotValidProductKitTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'price match constraint',
-                    'detail' => 'The specified price must be equal to 11.59.',
-                    'source' => ['pointer' => '/included/4/attributes/price']
-                ],
-                [
-                    'title' => 'currency match constraint',
-                    'detail' => 'The specified currency must be equal to "USD".',
-                    'source' => ['pointer' => '/included/4/attributes/currency']
-                ]
+                'title' => 'currency match constraint',
+                'detail' => 'The specified currency must be equal to "USD".',
+                'source' => ['pointer' => '/included/4/attributes/currency']
             ],
             $response
         );
+    }
+
+    public function testCreateWithSubmittedPriceThatEqualsToCalculatedPrice(): void
+    {
+        $data = $this->getRequestData('create_order_min.yml');
+        $data['included'][4]['attributes']['price'] = '11.5900';
+        $data['included'][4]['attributes']['currency'] = 'USD';
+
+        $response = $this->post(['entity' => 'orders'], $data);
+
+        self::assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
     }
 
     public function testTryToCreateWithProductWithoutPrice(): void

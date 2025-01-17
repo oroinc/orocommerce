@@ -64,7 +64,7 @@ oro:
         customer_notes:
             label:                        Customer Notes
             description:                  A message the buyer has entered in the notes section for the order or a line item.
-        customer_notes.frontend.label:    Notes
+            frontend.label:               Notes
         po_number:
             label:                        PO Number
             description:                  A purchase order number provided by the buyer, if any.
@@ -310,7 +310,7 @@ oro:
                 description:              The flag that indicates that the address was imported from an extrenal system.
             phone:
                 label:                    Phone
-                description:              A customer user phone number provided for the order.
+                description:              A customer user phone number provided for the order address.
             created:
                 label:                    Created at
                 description:              The date and time when the order address was created.
@@ -351,7 +351,6 @@ oro:
             comment:
                 label:        'Notes'
                 description:   Comments to the line item.
-            product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
             item: '{units}, {price} per {unit}'
             item_bundled: '{units}, {price} for every {units}'
@@ -360,7 +359,8 @@ oro:
                 description:    The product quantity which is ordered.
             product_unit:
                 label:          'Product Unit'
-                description:    A refernce to the product unit in which the product is ordered.
+                description:    A reference to the product unit in which the product is ordered.
+                empty: Choose Unit...
             product_unit_code:
                 label:        'Product Unit Code'
                 description:  The human-readable product unit code.
@@ -403,7 +403,7 @@ oro:
                 description:          Represents assigned shipping method type.
             shipping_estimate_amount:
                 label:                Line item shipping cost
-                description:          Shipping const value calculated according to configured shipping rules and assigned line items shipping methods.
+                description:          The shipping cost value calculated according to configured shipping rules and assigned line item shipping method.
             kit_item_line_items:
                 label: Kit Item Line Items
                 description: Stores the collection of kit item line items when the line item product is a kit.

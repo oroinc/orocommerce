@@ -269,13 +269,15 @@ Example of data: **\[{"method": "UPS", "number": "UP243566"}, {"method": "DHL", 
 
 An object represents the selected shipping method.
 
-The object has two properties, **code** and **label**.
+The object has three properties, **code**, **type** and **label**.
 
-The **code** property is a string contains the shipping method code.
+The **code** property is a string contains the shipping method.
+
+The **type** property is a string contains the shipping method type.
 
 The **label** property is a string contains the shipping method label.
 
-Example of data: **{"code": "ups_3", "label": "UPS"}**
+Example of data: **{"code": "payment_term_1", "type": "primary", "label": "Payment Term"}**
 
 #### create
 
@@ -441,7 +443,7 @@ Retrieve ID of customer user record assigned to a specific order record.
 
 #### get_subresource
 
-Retrieve a record of line item assigned to a specific order record.
+Retrieve line item records assigned to a specific order record.
 
 #### get_relationship
 
