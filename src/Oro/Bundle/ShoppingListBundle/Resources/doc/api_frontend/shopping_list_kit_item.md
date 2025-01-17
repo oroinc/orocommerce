@@ -12,9 +12,11 @@
 
 ### create
 
-Create a new shopping list kit item record.
+Create a new shopping list product kit item line item record.
 
 The created record is returned in the response.
+
+{@inheritdoc}
 
 **Note:** When an item is added to the default shopping list by using the string `default` as the shopping list ID
 and there is no a shopping list, it will be created automatically.
@@ -63,9 +65,11 @@ Example:
 
 ### update
 
-Edit a specific shopping list kit item record.
+Edit a specific shopping list product kit item line item record.
 
 The updated record is returned in the response.
+
+{@inheritdoc}
 
 {@request:json_api}
 Example:
@@ -114,11 +118,15 @@ Example:
 
 ### delete
 
-Delete a specific shopping list kit item record.
+Delete a specific shopping list product kit item line item record.
+
+{@inheritdoc}
 
 ### delete_list
 
-Delete a collection of shopping list kit item records.
+Delete a collection of shopping list product kit item line item records.
+
+{@inheritdoc}
 
 ## FIELDS
 

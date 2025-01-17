@@ -19,11 +19,9 @@ class RecalculateShoppingListTotals implements ProcessorInterface
 {
     private const PROCESSED_SHOPPING_LISTS = 'recalculated_shopping_list_totals';
 
-    private ShoppingListTotalManager $totalManager;
-
-    public function __construct(ShoppingListTotalManager $totalManager)
-    {
-        $this->totalManager = $totalManager;
+    public function __construct(
+        private readonly ShoppingListTotalManager $totalManager
+    ) {
     }
 
     #[\Override]
@@ -33,29 +31,30 @@ class RecalculateShoppingListTotals implements ProcessorInterface
 
         $entity = $context->getData();
         if ($entity instanceof ShoppingList) {
-            $this->recalculateTotals($entity, $context);
+            $this->recalculateTotals($entity, $context, false);
         } elseif ($entity instanceof LineItem) {
             $shoppingList = $entity->getShoppingList();
             if (null !== $shoppingList) {
-                $this->recalculateTotals($shoppingList, $context);
+                $this->recalculateTotals($shoppingList, $context, true);
             }
         } elseif ($entity instanceof ProductKitItemLineItem) {
             $shoppingList = $entity->getLineItem()?->getShoppingList();
             if (null !== $shoppingList) {
-                $this->recalculateTotals($shoppingList, $context);
+                $this->recalculateTotals($shoppingList, $context, true);
             }
         }
     }
 
     private function recalculateTotals(
         ShoppingList $shoppingList,
-        CustomizeFormDataContext $context
+        CustomizeFormDataContext $context,
+        bool $forceLoadLineItems
     ): void {
         $sharedData = $context->getSharedData();
         $processedShoppingLists = $sharedData->get(self::PROCESSED_SHOPPING_LISTS) ?? [];
         $shoppingListHash = spl_object_hash($shoppingList);
         if (!isset($processedShoppingLists[$shoppingListHash])) {
-            if ($this->isTotalsRecalculationRequired($shoppingList, $context)) {
+            if ($this->isTotalsRecalculationRequired($shoppingList, $context, $forceLoadLineItems)) {
                 $this->totalManager->recalculateTotals($shoppingList, false);
             }
             $processedShoppingLists[$shoppingListHash] = true;
@@ -65,36 +64,36 @@ class RecalculateShoppingListTotals implements ProcessorInterface
 
     private function isTotalsRecalculationRequired(
         ShoppingList $shoppingList,
-        CustomizeFormDataContext $context
+        CustomizeFormDataContext $context,
+        bool $forceLoadLineItems
     ): bool {
-        $form = $context->findForm($shoppingList);
-        if (null !== $form && !$form->isValid()) {
-            return false;
-        }
-
-        return $this->isLineItemsValid($shoppingList->getLineItems(), $context);
+        return
+            $this->isEntityValid($shoppingList, $context)
+            && $this->isLineItemsValid($shoppingList->getLineItems(), $context, $forceLoadLineItems);
     }
 
-    /**
-     * @param Collection<LineItem>|LineItem[] $lineItems
-     * @param CustomizeFormDataContext $context
-     *
-     * @return bool
-     */
-    private function isLineItemsValid(Collection|array $lineItems, CustomizeFormDataContext $context): bool
+    private function isEntityValid(object $entity, CustomizeFormDataContext $context): bool
     {
-        if ($lineItems instanceof PersistentCollection && !$lineItems->isInitialized()) {
+        $form = $context->findForm($entity);
+
+        return null === $form || $form->isValid();
+    }
+
+    private function isLineItemsValid(
+        Collection $lineItems,
+        CustomizeFormDataContext $context,
+        bool $forceLoadLineItems
+    ): bool {
+        if (!$forceLoadLineItems && $lineItems instanceof PersistentCollection && !$lineItems->isInitialized()) {
             return false;
         }
 
+        /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
-            $form = $context->findForm($lineItem);
-            if (null !== $form && !$form->isValid()) {
+            if (!$this->isEntityValid($lineItem, $context)) {
                 return false;
             }
-
-            $kitItemLineItems = $lineItem->getKitItemLineItems();
-            if ($this->isKitItemLineItemsValid($kitItemLineItems, $context) === false) {
+            if (!$this->isKitItemLineItemsValid($lineItem->getKitItemLineItems(), $context)) {
                 return false;
             }
         }
@@ -102,26 +101,11 @@ class RecalculateShoppingListTotals implements ProcessorInterface
         return true;
     }
 
-    /**
-     * @param Collection<ProductKitItemLineItem>|ProductKitItemLineItem[] $kitItemLineItems
-     * @param CustomizeFormDataContext $context
-     *
-     * @return bool
-     */
-    private function isKitItemLineItemsValid(
-        Collection|array $kitItemLineItems,
-        CustomizeFormDataContext $context
-    ): bool {
-        if ($kitItemLineItems->count() === 0) {
-            return true;
-        }
-        if ($kitItemLineItems instanceof PersistentCollection && !$kitItemLineItems->isInitialized()) {
-            return false;
-        }
-
+    private function isKitItemLineItemsValid(Collection $kitItemLineItems, CustomizeFormDataContext $context): bool
+    {
+        /** @var ProductKitItemLineItem $kitItemLineItem */
         foreach ($kitItemLineItems as $kitItemLineItem) {
-            $form = $context->findForm($kitItemLineItem);
-            if (null !== $form && !$form->isValid()) {
+            if (!$this->isEntityValid($kitItemLineItem, $context)) {
                 return false;
             }
         }

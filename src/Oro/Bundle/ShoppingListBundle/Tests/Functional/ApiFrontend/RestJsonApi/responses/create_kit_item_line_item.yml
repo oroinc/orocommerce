@@ -5,7 +5,7 @@ data:
         quantity: 5
         sortOrder: 1
         currency: USD
-        value: '3.21'
+        value: '3.2100'
     relationships:
         lineItem:
             data:

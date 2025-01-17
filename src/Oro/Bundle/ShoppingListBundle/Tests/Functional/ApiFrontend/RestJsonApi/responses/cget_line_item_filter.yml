@@ -6,7 +6,7 @@ data:
             quantity: 5
             notes: null
             currency: USD
-            value: '1.23'
+            value: '1.2300'
         relationships:
             product:
                 data:
@@ -31,7 +31,7 @@ data:
             quantity: 10
             notes: null
             currency: USD
-            value: '2.34'
+            value: '2.3400'
         relationships:
             product:
                 data:
@@ -57,7 +57,7 @@ data:
             quantity: 2
             notes: null
             currency: USD
-            value: '14.8'
+            value: '14.8000'
         relationships:
             product:
                 data:

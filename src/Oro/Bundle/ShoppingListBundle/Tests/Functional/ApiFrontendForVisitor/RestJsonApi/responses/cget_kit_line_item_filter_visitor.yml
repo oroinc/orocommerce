@@ -6,7 +6,7 @@ data:
             quantity: 2
             sortOrder: 0
             currency: USD
-            value: '1.23'
+            value: '1.2300'
         relationships:
             lineItem:
                 data:
@@ -31,7 +31,7 @@ data:
             quantity: 3
             sortOrder: 1
             currency: USD
-            value: '2.34'
+            value: '2.3400'
         relationships:
             lineItem:
                 data:

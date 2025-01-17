@@ -3,26 +3,83 @@
 namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
+use Oro\Bundle\ApiBundle\Request\ValueTransformer;
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductLineItemPriceProviderInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Component\ChainProcessor\ContextInterface;
+use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Computes values for "currency" and "value" fields for a shopping list item.
  */
-class ComputeShoppingListLineItemPrice extends AbstractComputeLineItemPrice
+class ComputeShoppingListLineItemPrice implements ProcessorInterface
 {
-    #[\Override]
-    protected function getShoppingListLineItem(CustomizeLoadedDataContext $context): ?LineItem
-    {
-        $config = $context->getConfig();
-        $idFieldName = $config->findFieldNameByPropertyPath('id');
+    public function __construct(
+        private readonly ProductLineItemPriceProviderInterface $productLineItemPriceProvider,
+        private readonly ProductPriceScopeCriteriaFactoryInterface $productPriceScopeCriteriaFactory,
+        private readonly ValueTransformer $valueTransformer,
+        private readonly DoctrineHelper $doctrineHelper
+    ) {
+    }
 
-        $entityManager = $this->managerRegistry->getManagerForClass(LineItem::class);
-        $lineItem = $entityManager->getReference(LineItem::class, $context->getData()[$idFieldName]);
-        if ($lineItem === null) {
+    #[\Override]
+    public function process(ContextInterface $context): void
+    {
+        /** @var CustomizeLoadedDataContext $context */
+
+        $data = $context->getData();
+        $valueFieldName = $context->getResultFieldName('value');
+        $currencyFieldName = $context->getResultFieldName('currency');
+        $isValueFieldRequested = $context->isFieldRequested($valueFieldName, $data);
+        $isCurrencyFieldRequested = $context->isFieldRequested($currencyFieldName, $data);
+        if (!$isValueFieldRequested && !$isCurrencyFieldRequested) {
+            return;
+        }
+
+        $productPrice = $this->getProductPrice($data[$context->getResultFieldName('id')]);
+        if ($isValueFieldRequested) {
+            $data[$valueFieldName] = $this->valueTransformer->transformFieldValue(
+                $productPrice?->getValue(),
+                $context->getConfig()->getField($valueFieldName)->toArray(true),
+                $context->getNormalizationContext()
+            );
+        }
+        if ($isCurrencyFieldRequested) {
+            $data[$currencyFieldName] = $productPrice?->getCurrency();
+        }
+        $context->setData($data);
+    }
+
+    private function getProductPrice(int $lineItemId): ?Price
+    {
+        $lineItem = $this->getLineItem($lineItemId);
+        if (null === $lineItem) {
             return null;
         }
 
-        $entityManager->refresh($lineItem);
+        $shoppingList = $lineItem->getShoppingList();
+        $productLineItemPrices = $this->productLineItemPriceProvider->getProductLineItemsPrices(
+            [$lineItem],
+            $this->productPriceScopeCriteriaFactory->createByContext($shoppingList),
+            $shoppingList->getCurrency()
+        );
+        if (!isset($productLineItemPrices[0])) {
+            return null;
+        }
+
+        return $productLineItemPrices[0]->getPrice();
+    }
+
+    private function getLineItem(int $lineItemId): ?LineItem
+    {
+        $em = $this->doctrineHelper->getEntityManagerForClass(LineItem::class);
+        $lineItem = $em->getReference(LineItem::class, $lineItemId);
+        if (null !== $lineItem) {
+            $em->refresh($lineItem);
+        }
 
         return $lineItem;
     }

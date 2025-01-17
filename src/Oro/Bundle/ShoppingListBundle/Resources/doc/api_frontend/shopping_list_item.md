@@ -4,19 +4,19 @@
 
 ### get
 
-Retrieve a specific shopping list item record.
+Retrieve a specific shopping list line item record.
 
 {@inheritdoc}
 
 ### get_list
 
-Retrieve a collection of shopping list item records.
+Retrieve a collection of shopping list line item records.
 
 {@inheritdoc}
 
 ### create
 
-Create a new shopping list item record.
+Create a new shopping list line item record.
 
 The created record is returned in the response.
 
@@ -62,7 +62,7 @@ Example:
 
 ### update
 
-Edit a specific shopping list item record.
+Edit a specific shopping list line item record.
 
 The updated record is returned in the response.
 
@@ -94,13 +94,13 @@ Example:
 
 ### delete
 
-Delete a specific shopping list item record.
+Delete a specific shopping list line item record.
 
 {@inheritdoc}
 
 ### delete_list
 
-Delete a collection of shopping list item records.
+Delete a collection of shopping list line item records.
 
 {@inheritdoc}
 

@@ -158,20 +158,22 @@ services:
     oro_shopping_list.api.compute_shopping_list_line_item_price:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListLineItemPrice
         arguments:
-            - '@doctrine'
             - '@oro_pricing.provider.product_line_item_price'
             - '@oro_shopping_list.model.product_price_scope_criteria_factory'
+            - '@oro_api.value_transformer'
+            - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem, requestType: frontend }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\LineItem }
 
     oro_shopping_list.api.compute_shopping_list_product_kit_item_line_item_price:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ComputeShoppingListProductKitItemLineItemPrice
         arguments:
-            - '@doctrine'
             - '@oro_pricing.provider.product_line_item_price'
             - '@oro_shopping_list.model.product_price_scope_criteria_factory'
+            - '@oro_api.value_transformer'
+            - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: customize_loaded_data, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem, requestType: frontend }
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\ShoppingListBundle\Entity\ProductKitItemLineItem }
 
     oro_shopping_list.api.validate_shopping_list_limit:
         class: Oro\Bundle\ShoppingListBundle\Api\Processor\ValidateShoppingListLimit

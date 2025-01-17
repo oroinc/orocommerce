@@ -5,7 +5,7 @@ data:
         quantity: 5
         sortOrder: 1
         currency: USD
-        value: '1.23'
+        value: '1.2300'
     relationships:
         kitItem:
             data:
@@ -27,7 +27,7 @@ included:
             quantity: 10
             notes: 'New Line Item Notes'
             currency: USD
-            value: '18.49'
+            value: '18.4900'
         relationships:
             product:
                 data:

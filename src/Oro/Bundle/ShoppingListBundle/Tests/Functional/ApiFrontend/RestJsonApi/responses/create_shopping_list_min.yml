@@ -24,7 +24,7 @@ included:
             quantity: 10
             notes: null
             currency: USD
-            value: '1.01'
+            value: '1.0100'
         relationships:
             product:
                 data:

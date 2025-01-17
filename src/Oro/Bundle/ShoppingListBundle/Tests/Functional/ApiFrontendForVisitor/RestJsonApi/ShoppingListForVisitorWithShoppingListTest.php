@@ -38,9 +38,18 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
             );
         }
 
-        $configManager = $this->getConfigManager();
+        $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.availability_for_guests', true);
         $configManager->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_shopping_list.availability_for_guests', false);
+        $configManager->flush();
+        parent::tearDown();
     }
 
     #[\Override]

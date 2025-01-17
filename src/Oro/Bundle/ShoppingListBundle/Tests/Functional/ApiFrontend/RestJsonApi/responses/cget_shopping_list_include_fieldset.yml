@@ -57,7 +57,7 @@ included:
         attributes:
             quantity: 5
             currency: USD
-            value: '1.23'
+            value: '1.2300'
         relationships:
             kitItems:
                 data: []
@@ -67,7 +67,7 @@ included:
         attributes:
             quantity: 10
             currency: USD
-            value: '2.34'
+            value: '2.3400'
         relationships:
             kitItems:
                 data: []
@@ -77,7 +77,7 @@ included:
         attributes:
             quantity: 2
             currency: USD
-            value: '14.8'
+            value: '14.8000'
         relationships:
             kitItems:
                 data:
@@ -93,7 +93,7 @@ included:
         attributes:
             quantity: 20
             currency: USD
-            value: '1.01'
+            value: '1.0100'
         relationships:
             kitItems:
                 data: []
@@ -103,7 +103,7 @@ included:
         attributes:
             quantity: 1
             currency: USD
-            value: '1.23'
+            value: '1.2300'
         relationships:
             kitItems:
                 data: []
