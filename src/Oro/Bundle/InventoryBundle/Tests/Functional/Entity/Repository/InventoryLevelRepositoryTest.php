@@ -14,10 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class InventoryLevelRepositoryTest extends WebTestCase
 {
-    /**
-     * @var InventoryLevelRepository
-     */
-    protected $inventoryLevelRepo;
+    private InventoryLevelRepository $inventoryLevelRepo;
 
     #[\Override]
     protected function setUp(): void
@@ -31,7 +28,7 @@ class InventoryLevelRepositoryTest extends WebTestCase
             ->getEntityRepository(InventoryLevel::class);
     }
 
-    public function testGetLevelByProductAndProductUnit()
+    public function testGetLevelByProductAndProductUnit(): void
     {
         /** @var Product $product */
         $product = $this->getReference('product-1');
@@ -45,9 +42,9 @@ class InventoryLevelRepositoryTest extends WebTestCase
             $inventoryLevel->getQuantity()
         );
 
-        /** @var Product $productReference */
+        /** @var Product $product */
         $product = $this->getReference('product-1');
-        /** @var ProductUnit $unitReference */
+        /** @var ProductUnit $productUnit */
         $productUnit = $this->getReference('product_unit.bottle');
         $inventoryLevel = $this->inventoryLevelRepo->getLevelByProductAndProductUnit($product, $productUnit);
         $this->assertInstanceOf(InventoryLevel::class, $inventoryLevel);

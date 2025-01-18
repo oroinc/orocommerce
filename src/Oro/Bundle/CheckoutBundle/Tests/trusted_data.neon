@@ -4,3 +4,6 @@ trusted_data:
         Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProvider:
             getUserQueryBuilder:
                 associationName: true
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
+            applyCustomerUserRestriction:
+                customerUserAlias: true

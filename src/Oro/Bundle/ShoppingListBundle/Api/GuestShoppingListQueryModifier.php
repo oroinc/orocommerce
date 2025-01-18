@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Api;
 
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ApiBundle\Util\QueryModifierEntityJoinTrait;
 use Oro\Bundle\ApiBundle\Util\QueryModifierInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
@@ -16,20 +17,20 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
- * Modifies a shopping list and shopping list item query builder to filter shopping lists and shopping list items
- * that belongs to the current customer visitor.
+ * Modifies query builders for the following entities to filter entities belongs to the current visitor
+ * when the current security context represents a visitor and the checkout feature is enabled for visitors:
+ * shopping list
+ * shopping list line item
+ * shopping list product kit item line item
  */
 class GuestShoppingListQueryModifier implements QueryModifierInterface
 {
-    private EntityClassResolver $entityClassResolver;
-    private TokenStorageInterface $tokenStorage;
+    use QueryModifierEntityJoinTrait;
 
     public function __construct(
-        EntityClassResolver $entityClassResolver,
-        TokenStorageInterface $tokenStorage
+        private readonly EntityClassResolver $entityClassResolver,
+        private readonly TokenStorageInterface $tokenStorage
     ) {
-        $this->entityClassResolver = $entityClassResolver;
-        $this->tokenStorage = $tokenStorage;
     }
 
     #[\Override]
@@ -52,7 +53,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
             } elseif (LineItem::class === $entityClass) {
                 $this->applyShoppingListItemItemRootRestriction($qb, $from->getAlias(), $currentUser);
             } elseif (ProductKitItemLineItem::class === $entityClass) {
-                $this->applyKitItemLineItemRootRestriction($qb, $from->getAlias(), $currentUser);
+                $this->applyShoppingListKitItemLineItemRootRestriction($qb, $from->getAlias(), $currentUser);
             }
         }
     }
@@ -80,7 +81,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         string $rootAlias,
         ?CustomerVisitor $visitor
     ): void {
-        QueryBuilderUtil::checkIdentifier($rootAlias);
         if (null === $visitor) {
             // deny access to shopping lists
             $qb->andWhere('1 = 0');
@@ -100,7 +100,25 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         } else {
             $this->applyCustomerVisitorRootRestriction(
                 $qb,
-                $this->ensureShoppingListJoined($qb, $rootAlias),
+                $this->ensureEntityJoined($qb, 'shoppingList', $rootAlias . '.shoppingList'),
+                $visitor
+            );
+        }
+    }
+
+    private function applyShoppingListKitItemLineItemRootRestriction(
+        QueryBuilder $qb,
+        string $rootAlias,
+        ?CustomerVisitor $visitor
+    ): void {
+        if (null === $visitor) {
+            // deny access to shopping list product kit item line items
+            $qb->andWhere('1 = 0');
+        } else {
+            $shoppingListLineItemAlias = $this->ensureEntityJoined($qb, 'lineItem', $rootAlias . '.lineItem');
+            $this->applyCustomerVisitorRootRestriction(
+                $qb,
+                $this->ensureEntityJoined($qb, 'shoppingList', $shoppingListLineItemAlias . '.shoppingList'),
                 $visitor
             );
         }
@@ -111,7 +129,6 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         string $shoppingListAlias,
         CustomerVisitor $currentVisitor
     ): void {
-        QueryBuilderUtil::checkIdentifier($shoppingListAlias);
         $paramName = QueryBuilderUtil::generateParameterName('customerVisitor', $qb);
         $qb
             ->andWhere($qb->expr()->exists($this->getCustomerVisitorSubquery($qb, $shoppingListAlias, $paramName)))
@@ -123,94 +140,14 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         string $shoppingListAlias,
         string $customerVisitorParamName
     ): string {
-        QueryBuilderUtil::checkIdentifier($customerVisitorParamName);
-        QueryBuilderUtil::checkIdentifier($shoppingListAlias);
         return $qb->getEntityManager()->createQueryBuilder()
             ->from(CustomerVisitor::class, 'customerVisitor')
             ->select('1')
-            ->where(sprintf(
+            ->where(\sprintf(
                 'customerVisitor = :%s AND %s MEMBER OF customerVisitor.shoppingLists',
                 $customerVisitorParamName,
                 $shoppingListAlias
             ))
             ->getDQL();
-    }
-
-    private function ensureShoppingListJoined(QueryBuilder $qb, string $rootAlias): string
-    {
-        $shoppingListJoin = $this->getJoin($qb, $rootAlias, 'shoppingList');
-        if (null !== $shoppingListJoin) {
-            return $shoppingListJoin->getAlias();
-        }
-
-        $shoppingListJoinAlias = 'shoppingList';
-        QueryBuilderUtil::checkIdentifier($rootAlias);
-        $qb->innerJoin($rootAlias . '.shoppingList', $shoppingListJoinAlias);
-
-        return $shoppingListJoinAlias;
-    }
-
-    private function getJoin(QueryBuilder $qb, string $rootAlias, string $fieldName): ?Expr\Join
-    {
-        $result = null;
-        /** @var Expr\Join[] $joins */
-        foreach ($qb->getDQLPart('join') as $joinGroupAlias => $joins) {
-            if ($joinGroupAlias !== $rootAlias) {
-                continue;
-            }
-            $expectedJoin = sprintf('%s.%s', $rootAlias, $fieldName);
-            foreach ($joins as $key => $join) {
-                if ($join->getJoin() === $expectedJoin) {
-                    if ($join->getJoinType() === Expr\Join::LEFT_JOIN) {
-                        $join = new Expr\Join(
-                            Expr\Join::INNER_JOIN,
-                            $join->getJoin(),
-                            $join->getAlias(),
-                            $join->getConditionType(),
-                            $join->getCondition(),
-                            $join->getIndexBy()
-                        );
-                        $joins[$key] = $join;
-                        $joinDqlPart = [$joinGroupAlias => $joins];
-                        $qb->add('join', $joinDqlPart);
-                    }
-                    $result = $join;
-                    break;
-                }
-            }
-        }
-
-        return $result;
-    }
-
-    private function applyKitItemLineItemRootRestriction(
-        QueryBuilder $qb,
-        string $rootAlias,
-        ?CustomerVisitor $visitor
-    ): void {
-        if (null === $visitor) {
-            // deny access to kit item line items
-            $qb->andWhere('1 = 0');
-        } else {
-            $this->applyCustomerVisitorRootRestriction(
-                $qb,
-                $this->ensureLineItemShoppingListJoined($qb, $rootAlias),
-                $visitor
-            );
-        }
-    }
-
-    private function ensureLineItemShoppingListJoined(QueryBuilder $qb, string $rootAlias): string
-    {
-        $kitLineItemJoin = $this->getJoin($qb, $rootAlias, 'lineItem');
-        if (null !== $kitLineItemJoin) {
-            return $this->ensureShoppingListJoined($qb, $kitLineItemJoin->getAlias());
-        }
-
-        $kitLineItemJoinAlias = 'kitlineitem';
-        QueryBuilderUtil::checkIdentifier($rootAlias);
-        $qb->innerJoin($rootAlias . '.lineItem', $kitLineItemJoinAlias);
-
-        return $this->ensureShoppingListJoined($qb, $kitLineItemJoinAlias);
     }
 }

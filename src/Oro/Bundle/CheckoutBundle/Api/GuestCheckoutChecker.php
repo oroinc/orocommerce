@@ -43,9 +43,9 @@ class GuestCheckoutChecker
     {
         $token = $this->tokenStorage->getToken();
         if (!$token instanceof AnonymousCustomerUserToken) {
-            throw new \LogicException(sprintf(
+            throw new \LogicException(\sprintf(
                 'Unexpected token type %s, expected %s.',
-                null !== $token ? \get_class($token) : 'NULL',
+                get_debug_type($token),
                 AnonymousCustomerUserToken::class
             ));
         }

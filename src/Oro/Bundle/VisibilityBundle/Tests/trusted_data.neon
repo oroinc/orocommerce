@@ -49,6 +49,9 @@ trusted_data:
         Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository:
             getCategoryIdsByVisibility:
                 terms: true
+        Oro\Bundle\VisibilityBundle\Api\CategoryVisibilityQueryModifier:
+            applyRootRestriction:
+                rootAlias: true
         Oro\Bundle\VisibilityBundle\Api\Processor\AbstractSetVisibilityScope:
             isVisibilityExists:
                 name: true

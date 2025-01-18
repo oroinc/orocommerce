@@ -8,20 +8,15 @@ trusted_data:
             isUserAssignable:
                 criteria: true
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
-            getJoin:
-                joinDqlPart: true
+            getCustomerVisitorSubquery:
+                shoppingListAlias: true
+                customerVisitorParamName: true
         Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository:
             invalidateByBasePriceList:
                 priceClass: true
                 subQuery: true
-        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
-            getCustomerUserJoin:
-                joinDqlPart: true
     safe_methods:
         Oro\Bundle\ShoppingListBundle\Api\GuestShoppingListQueryModifier:
             getCustomerVisitorSubquery: true
-            ensureShoppingListJoined: true
         Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository:
             getClassName: true
-        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
-            ensureCustomerUserJoined: true

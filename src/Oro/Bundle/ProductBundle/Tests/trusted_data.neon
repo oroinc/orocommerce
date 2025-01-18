@@ -11,6 +11,9 @@ trusted_data:
         Oro\Bundle\ProductBundle\EventListener\ProductVisibilityRestrictionList:
             applyQueryRestrictions:
                 restrictions: true
+        Oro\Bundle\ProductBundle\Api\ProductStatusQueryModifier:
+            applyRootRestriction:
+                rootAlias: true
         Oro\Bundle\ProductBundle\Api\Processor\BuildProductSearchQuery:
             buildSearchQuery:
                 selectFieldNames: true

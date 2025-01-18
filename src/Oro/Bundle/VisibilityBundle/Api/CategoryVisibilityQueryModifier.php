@@ -59,14 +59,8 @@ class CategoryVisibilityQueryModifier implements QueryModifierInterface
         }
     }
 
-    /**
-     * @param QueryBuilder $qb
-     * @param string       $rootAlias
-     * @param int[]        $hiddenCategoryIds
-     */
     private function applyRootRestriction(QueryBuilder $qb, string $rootAlias, array $hiddenCategoryIds): void
     {
-        QueryBuilderUtil::checkIdentifier($rootAlias);
         $paramName = QueryBuilderUtil::generateParameterName('hiddenCategoryIds', $qb);
         $qb
             ->andWhere($qb->expr()->notIn($rootAlias, ':' . $paramName))

@@ -40,7 +40,6 @@ class ProductStatusQueryModifier implements QueryModifierInterface
 
     private function applyRootRestriction(QueryBuilder $qb, string $rootAlias): void
     {
-        QueryBuilderUtil::checkIdentifier($rootAlias);
         $paramName = QueryBuilderUtil::generateParameterName('status', $qb);
         $qb
             ->andWhere($qb->expr()->eq($rootAlias . '.status', ':' . $paramName))

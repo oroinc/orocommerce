@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Api;
 
 use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\ApiBundle\Util\QueryModifierEntityJoinTrait;
 use Oro\Bundle\ApiBundle\Util\QueryModifierInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -11,22 +12,19 @@ use Oro\Bundle\EntityBundle\ORM\EntityClassResolver;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
- * Modifies a customer user and customer user address query builder
- * to filter customer users and customer user addresses belongs to the current visitor
- * when the current security context represents a visitor
- * and the checkout feature is enabled for visitors.
+ * Modifies query builders for the following entities to filter entities belongs to the current visitor
+ * when the current security context represents a visitor and the checkout feature is enabled for visitors:
+ * * customer user
+ * * customer user address
  */
 class GuestCheckoutQueryModifier implements QueryModifierInterface
 {
-    private GuestCheckoutChecker $guestCheckoutChecker;
-    private EntityClassResolver $entityClassResolver;
+    use QueryModifierEntityJoinTrait;
 
     public function __construct(
-        GuestCheckoutChecker $guestCheckoutChecker,
-        EntityClassResolver $entityClassResolver
+        private readonly GuestCheckoutChecker $guestCheckoutChecker,
+        private readonly EntityClassResolver $entityClassResolver
     ) {
-        $this->guestCheckoutChecker = $guestCheckoutChecker;
-        $this->entityClassResolver = $entityClassResolver;
     }
 
     #[\Override]
@@ -64,7 +62,6 @@ class GuestCheckoutQueryModifier implements QueryModifierInterface
         string $rootAlias,
         ?CustomerUser $guestCustomerUser
     ): void {
-        QueryBuilderUtil::checkIdentifier($rootAlias);
         if (null === $guestCustomerUser) {
             // deny access to customer users
             $qb->andWhere('1 = 0');
@@ -84,7 +81,7 @@ class GuestCheckoutQueryModifier implements QueryModifierInterface
         } else {
             $this->applyCustomerUserRestriction(
                 $qb,
-                $this->ensureCustomerUserJoined($qb, $rootAlias),
+                $this->ensureEntityJoined($qb, 'customerUser', $rootAlias . '.frontendOwner'),
                 $guestCustomerUser
             );
         }
@@ -95,57 +92,9 @@ class GuestCheckoutQueryModifier implements QueryModifierInterface
         string $customerUserAlias,
         CustomerUser $currentUser
     ): void {
-        QueryBuilderUtil::checkIdentifier($customerUserAlias);
         $paramName = QueryBuilderUtil::generateParameterName('customerUser', $qb);
         $qb
             ->andWhere($qb->expr()->eq($customerUserAlias, ':' . $paramName))
             ->setParameter($paramName, $currentUser);
-    }
-
-    private function ensureCustomerUserJoined(QueryBuilder $qb, string $rootAlias): string
-    {
-        $customerUserJoin = $this->getCustomerUserJoin($qb, $rootAlias);
-        if (null !== $customerUserJoin) {
-            return $customerUserJoin->getAlias();
-        }
-
-        $customerUserJoinAlias = 'customerUser';
-        QueryBuilderUtil::checkIdentifier($rootAlias);
-        $qb->innerJoin($rootAlias . '.frontendOwner', $customerUserJoinAlias);
-
-        return $customerUserJoinAlias;
-    }
-
-    private function getCustomerUserJoin(QueryBuilder $qb, string $rootAlias): ?Expr\Join
-    {
-        $result = null;
-        /** @var Expr\Join[] $joins */
-        foreach ($qb->getDQLPart('join') as $joinGroupAlias => $joins) {
-            if ($joinGroupAlias !== $rootAlias) {
-                continue;
-            }
-            $expectedJoin = sprintf('%s.frontendOwner', $rootAlias);
-            foreach ($joins as $key => $join) {
-                if ($join->getJoin() === $expectedJoin) {
-                    if ($join->getJoinType() === Expr\Join::LEFT_JOIN) {
-                        $join = new Expr\Join(
-                            Expr\Join::INNER_JOIN,
-                            $join->getJoin(),
-                            $join->getAlias(),
-                            $join->getConditionType(),
-                            $join->getCondition(),
-                            $join->getIndexBy()
-                        );
-                        $joins[$key] = $join;
-                        $joinDqlPart = [$joinGroupAlias => $joins];
-                        $qb->add('join', $joinDqlPart);
-                    }
-                    $result = $join;
-                    break;
-                }
-            }
-        }
-
-        return $result;
     }
 }
