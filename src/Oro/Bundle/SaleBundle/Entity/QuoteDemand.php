@@ -78,7 +78,7 @@ class QuoteDemand implements
     #[ORM\Column(name: 'total_currency', type: Types::STRING, length: 3, nullable: true)]
     protected ?string $totalCurrency = null;
 
-    #[ORM\ManyToOne(targetEntity: CustomerVisitor::class)]
+    #[ORM\ManyToOne(targetEntity: CustomerVisitor::class, cascade: ['persist'])]
     #[ORM\JoinColumn(name: 'visitor_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     protected ?CustomerVisitor $visitor = null;
 
