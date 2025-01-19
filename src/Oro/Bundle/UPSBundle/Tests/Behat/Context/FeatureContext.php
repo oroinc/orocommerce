@@ -9,11 +9,15 @@ use Symfony\Component\Yaml\Dumper;
 
 class FeatureContext extends OroFeatureContext
 {
-    private const BEHAT_YAML_DIR_NAME = 'behat';
-    private const BEHAT_YAML_FILE_NAME = 'ups_shipping_costs_data.yml';
-    private const HEADER_METHOD = 'Method';
-    private const HEADER_CURRENCY = 'Currency';
-    private const HEADER_COST = 'Cost';
+    private const string BEHAT_YAML_DIR_NAME = 'behat';
+    private const string BEHAT_YAML_FILE_NAME = 'ups_shipping_costs_data.yml';
+    private const string HEADER_METHOD = 'Method';
+    private const string HEADER_CURRENCY = 'Currency';
+    private const string HEADER_COST = 'Cost';
+
+    public function __construct(private readonly string $storageDirName)
+    {
+    }
 
     /**
      * Configures UPS with expected costs.
@@ -33,9 +37,9 @@ class FeatureContext extends OroFeatureContext
         $this->writeFile($yamlDumper->dump($data));
     }
 
-    public static function getBehatYamlFilename(string $cacheDir): string
+    public static function getBehatYamlFilename(string $storageDir): string
     {
-        $behatCacheDir = $cacheDir . DIRECTORY_SEPARATOR . self::BEHAT_YAML_DIR_NAME;
+        $behatCacheDir = $storageDir . DIRECTORY_SEPARATOR . self::BEHAT_YAML_DIR_NAME;
 
         if (!file_exists($behatCacheDir)) {
             mkdir($behatCacheDir);
@@ -91,11 +95,8 @@ class FeatureContext extends OroFeatureContext
         return $shippingService->getCode();
     }
 
-    private function writeFile(string $content)
+    private function writeFile(string $content): void
     {
-        $cacheDir = $this->getAppContainer()->getParameter('kernel.cache_dir');
-        $yamlFile = fopen(self::getBehatYamlFilename($cacheDir), 'wt');
-        fwrite($yamlFile, $content);
-        fclose($yamlFile);
+        file_put_contents(self::getBehatYamlFilename($this->storageDirName), $content);
     }
 }

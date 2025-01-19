@@ -12,11 +12,11 @@ use Symfony\Component\Yaml\Parser;
 
 class UPSTransportMock extends UPSTransport
 {
-    private string $cacheDir;
+    protected string $storageDir;
 
-    public function setCacheDir(string $cacheDir): void
+    public function setStorageDir(string $storageDir): void
     {
-        $this->cacheDir = $cacheDir;
+        $this->storageDir = $storageDir;
     }
 
     /**
@@ -29,9 +29,8 @@ class UPSTransportMock extends UPSTransport
     #[\Override]
     public function getPriceResponse(PriceRequest $priceRequest, Transport $transportEntity): ?PriceResponse
     {
-        $fileName = FeatureContext::getBehatYamlFilename($this->cacheDir);
         $yamlParser = new Parser();
-        $yamlContent = file_get_contents($fileName);
+        $yamlContent = file_get_contents(FeatureContext::getBehatYamlFilename($this->storageDir));
 
         $data = [
             'RateResponse' => [
