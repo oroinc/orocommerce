@@ -19,7 +19,7 @@ use Oro\Bundle\PromotionBundle\Manager\AppliedPromotionManager;
 class SplitOrderActions implements SplitOrderActionsInterface
 {
     public function __construct(
-        private OrderActions $orderActions,
+        private OrderActionsInterface $orderActions,
         private TotalHelper $totalHelper,
         private CheckoutSplitter $checkoutSplitter,
         private GroupedCheckoutLineItemsProvider $groupedLineItemsProvider,
