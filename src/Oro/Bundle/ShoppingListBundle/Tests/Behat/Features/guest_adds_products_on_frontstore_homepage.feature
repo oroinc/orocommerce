@@ -16,7 +16,6 @@ Feature: Guest adds products on frontstore homepage
     And I enable configuration options:
       | oro_shopping_list.availability_for_guests |
       | oro_checkout.guest_checkout               |
-      | oro_shopping_list.create_shopping_list_for_new_guest |
     And I add Featured Products widget after content for "Homepage" page
     And I update settings for "featured-products" content widget:
       | minimum_items | 1 |

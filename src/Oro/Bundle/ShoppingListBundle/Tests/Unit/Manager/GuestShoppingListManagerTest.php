@@ -152,38 +152,6 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    public function testGetShoppingListsForCustomerVisitorAndCreateShoppingListForGuest()
-    {
-        $token = new AnonymousCustomerUserToken(new CustomerVisitorStub(), []);
-
-        $website = $this->getEntity(Website::class, [
-            'id' => 1,
-            'organization' => new Organization()
-        ]);
-
-        $this->websiteManager->expects($this->exactly(2))
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->tokenStorage->expects($this->exactly(2))
-            ->method('getToken')
-            ->willReturn($token);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_shopping_list.create_shopping_list_for_new_guest')
-            ->willReturn(true);
-
-        $em = $this->createMock(EntityManager::class);
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($em);
-
-        $result = $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
-        $this->assertIsArray($result);
-        $this->assertInstanceOf(ShoppingList::class, $result[0]);
-    }
-
     public function testGetShoppingListForCustomerVisitorInValidToken()
     {
         $this->tokenStorage->expects($this->once())

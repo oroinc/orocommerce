@@ -225,9 +225,6 @@ oro:
                 mass_adding_on_product_listing_enabled:
                     label: 'Enable Mass Adding on Product Listing'
                     tooltip: 'Select the option to enable customers to select multiple products on the product listing page and add them to a shopping list in the storefront.'
-                create_shopping_list_for_new_guest:
-                    label: 'Create Guest Shopping Lists Immediately'
-                    tooltip: 'Enable this option to automatically create shopping lists for all guest users once they access the storefront. By default, this option is disabled, and shopping lists are created only when guest users add at least one item to their shopping list.'
                 shopping_lists_max_line_items_per_page:
                     label: 'Maximum Line Items Per Page'
                     tooltip: 'Set the maximum number of shopping list line items to be displayed per page. If the number of shopping list line items exceeds this value, then the “All” value, in the list of pagination dropdown values, is changed to the one specified in the option.'

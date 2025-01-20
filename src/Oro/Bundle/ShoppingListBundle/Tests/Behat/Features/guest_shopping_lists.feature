@@ -102,13 +102,6 @@ Feature: Guest Shopping Lists
     And I am on homepage
     And I should see "0" in the "Shopping List Widget" element
 
-  Scenario: Enable "Create Guest Shopping Lists Immediately"
-    Given I proceed as the Admin
-    And uncheck "Use default" for "Create Guest Shopping Lists Immediately" field
-    And I check "Create Guest Shopping Lists Immediately"
-    And I save setting
-    Then I should see "Configuration saved" flash message
-
   Scenario: Configurable product variants and matrix button should be available on front store
     Given I proceed as the User
     When I open product with sku "1GB83" on the store frontend

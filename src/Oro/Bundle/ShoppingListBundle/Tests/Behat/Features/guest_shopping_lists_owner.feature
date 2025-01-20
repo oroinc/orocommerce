@@ -18,8 +18,6 @@ Feature: Guest shopping lists owner
     And I follow "Commerce/Sales/Shopping List" on configuration sidebar
     And uncheck "Use default" for "Enable Guest Shopping List" field
     And I check "Enable Guest Shopping List"
-    And uncheck "Use default" for "Create Guest Shopping Lists Immediately" field
-    And I check "Create Guest Shopping Lists Immediately"
     And uncheck "Use default" for "Default Guest Shopping List Owner" field
     And I fill in "Default Guest Shopping List Owner" with "newadmin"
     And I should see "Admin User"

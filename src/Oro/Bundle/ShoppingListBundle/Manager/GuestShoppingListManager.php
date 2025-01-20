@@ -110,15 +110,7 @@ class GuestShoppingListManager
      */
     public function getShoppingListForCustomerVisitor()
     {
-        $shoppingList = $this->findExistingShoppingListForCustomerVisitor();
-
-        if (null === $shoppingList
-            && $this->configManager->get('oro_shopping_list.create_shopping_list_for_new_guest')
-        ) {
-            $shoppingList = $this->createShoppingListForCustomerVisitor();
-        }
-
-        return $shoppingList;
+        return $this->findExistingShoppingListForCustomerVisitor();
     }
 
     /**
