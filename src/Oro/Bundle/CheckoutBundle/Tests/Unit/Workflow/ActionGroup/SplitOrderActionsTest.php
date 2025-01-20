@@ -11,7 +11,7 @@ use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProvide
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProviderInterface;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutSubOrderShippingPriceProvider;
 use Oro\Bundle\CheckoutBundle\Splitter\MultiShipping\CheckoutSplitter;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActions;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActions;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 
 class SplitOrderActionsTest extends TestCase
 {
-    private OrderActions|MockObject $orderActions;
+    private OrderActionsInterface|MockObject $orderActions;
     private TotalHelper|MockObject $totalHelper;
     private CheckoutSplitter|MockObject $checkoutSplitter;
     private GroupedCheckoutLineItemsProvider|MockObject $groupedLineItemsProvider;
@@ -38,7 +38,7 @@ class SplitOrderActionsTest extends TestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->orderActions = $this->createMock(OrderActions::class);
+        $this->orderActions = $this->createMock(OrderActionsInterface::class);
         $this->totalHelper = $this->createMock(TotalHelper::class);
         $this->checkoutSplitter = $this->createMock(CheckoutSplitter::class);
         $this->groupedLineItemsProvider = $this->createMock(GroupedCheckoutLineItemsProvider::class);
