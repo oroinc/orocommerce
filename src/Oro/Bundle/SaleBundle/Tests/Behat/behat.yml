@@ -344,3 +344,6 @@ oro_behat_extension:
       selector:
         locator: '//input[@name="oro_sale_quote_demand[demandProducts][1][quoteProductOffer]" and @value="1"]'
         type: xpath
+
+    Customer TopBar Action Dropdown:
+      selector: '.toggle-container--dropdown-btn'
