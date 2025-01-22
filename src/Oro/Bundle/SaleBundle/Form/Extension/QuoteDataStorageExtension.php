@@ -73,13 +73,19 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
 
         $prices = $this->quoteProductPricesProvider->getProductLineItemsTierPrices($entity);
         foreach ($entity->getQuoteProducts() as $quoteProduct) {
-            if ($quoteProduct->getProduct()->isKit()) {
+            if ($quoteProduct->getProduct()?->isKit()) {
                 foreach ($quoteProduct->getQuoteProductOffers() as $productOffer) {
-                    if (!isset($prices[$productOffer->getProduct()->getId()])) {
+                    $productId = $productOffer->getProduct()?->getId();
+                    if (!$productId || !isset($prices[$productId])) {
                         $productOffer->setPrice(null);
                         continue;
                     }
-                    $pricesByOffer = $prices[$productOffer->getProduct()->getId()][$productOffer->getChecksum()] ?? [];
+
+                    $pricesByOffer = $prices[$productId][$productOffer->getChecksum()] ?? [];
+
+                    if (!$productOffer->getPrice()) {
+                        continue;
+                    }
 
                     $priceDto = $this->getPricesByScopeCriteria(
                         $pricesByOffer,
