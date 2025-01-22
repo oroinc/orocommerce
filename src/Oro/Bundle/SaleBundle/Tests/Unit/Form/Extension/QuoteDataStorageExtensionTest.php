@@ -198,8 +198,6 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $productSku = 'TEST SKU';
         $customerId = 3;
         $customerUserId = 4;
-        $price = Price::create(5, 'USD');
-        $priceActual = Price::create(7, 'USD');
         $quantity = 6;
         $commentCustomer = 'comment 7';
 
@@ -280,7 +278,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                     'commentCustomer' => $commentCustomer,
                     'requestProductItems' => [
                         [
-                            'price' => $price,
+                            'price' => $expectedPrice,
                             'quantity' => $quantity,
                             'productUnit' => $productUnit->getCode(),
                             'productUnitCode' => $productUnit->getCode(),
@@ -320,7 +318,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         self::assertEquals($productUnit->getCode(), $quoteProductRequest->getProductUnitCode());
 
         self::assertEquals($quantity, $quoteProductRequest->getQuantity());
-        self::assertEquals($price, $quoteProductRequest->getPrice());
+        self::assertEquals($expectedPrice, $quoteProductRequest->getPrice());
 
         self::assertEquals('123|item|6', $quoteProductRequest->getChecksum());
 
