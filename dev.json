@@ -111,7 +111,6 @@
             "Oro\\Bundle\\WebsiteSearchTermBundle\\": "src/Oro/Bundle/WebsiteSearchTermBundle",
             "Oro\\Bundle\\WebCatalogBundle\\": "src/Oro/Bundle/WebCatalogBundle",
             "Oro\\Bundle\\WebsiteSearchBundle\\": "src/Oro/Bundle/WebsiteSearchBundle",
-            "Oro\\Bundle\\WebsiteSearchSuggestionBundle\\": "src/Oro/Bundle/WebsiteSearchSuggestionBundle",
             "Oro\\Component\\Checkout\\": "src/Oro/Component/Checkout",
             "Oro\\Component\\Expression\\": "src/Oro/Component/Expression",
             "Oro\\Component\\SEO\\": "src/Oro/Component/SEO",

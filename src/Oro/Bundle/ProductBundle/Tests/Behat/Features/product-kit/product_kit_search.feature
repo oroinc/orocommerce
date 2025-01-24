@@ -15,7 +15,6 @@ Feature: Product Kit search
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-    And I set configuration property "oro_website_search_suggestion.search_autocomplete_max_suggests" to "0"
 
   Scenario: Check the search of product kits in the back-office
     Given I proceed as the Admin

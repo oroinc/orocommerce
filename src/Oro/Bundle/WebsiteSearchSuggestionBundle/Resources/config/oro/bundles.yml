@@ -1,2 +1,0 @@
-bundles:
-  - { name: Oro\Bundle\WebsiteSearchSuggestionBundle\OroWebsiteSearchSuggestionBundle, priority: 60 }

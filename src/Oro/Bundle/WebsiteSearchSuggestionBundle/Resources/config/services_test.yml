@@ -1,7 +1,0 @@
-services:
-    oro_website_search_suggestion.products_provider:
-        class: Oro\Bundle\WebsiteSearchSuggestionBundle\Provider\ProductsProvider
-        arguments:
-            - '@doctrine'
-            - '@oro_config.manager'
-        public: true
