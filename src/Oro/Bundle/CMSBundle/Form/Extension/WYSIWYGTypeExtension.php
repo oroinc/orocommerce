@@ -54,27 +54,37 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
      */
     private function getThemes(): array
     {
-        $themes = $this->themeManager->getEnabledThemes(self::COMMERCE_GROUP);
-        $layoutThemeName = $this->getThemeName();
+        $enabledThemes = $this->themeManager->getEnabledThemes(self::COMMERCE_GROUP);
+        $currentThemeName = $this->getThemeName();
 
-        $themesData = [];
-        foreach ($themes as $theme) {
-            $themeName = $theme->getName();
-            $styleOutput = $this->themeProvider->getStylesOutput($themeName);
-            $themeData = [
-                'name' => $themeName,
-                'label' => $theme->getLabel(),
-                'stylesheet' => $styleOutput ? $this->packages->getUrl($styleOutput) : '',
-                'svgIconsSupport' => $this->svgIconsSupportProvider->isSvgIconsSupported($themeName),
-            ];
-            if ($layoutThemeName === $themeName) {
-                $themeData['active'] = true;
-            }
+        return array_map(
+            fn ($theme) => $this->buildThemeData($theme, $currentThemeName),
+            $enabledThemes
+        );
+    }
+    private function buildThemeData(object $theme, string $currentThemeName): array
+    {
+        $themeName = $theme->getName();
+        $styles = $this->collectThemeStyles($themeName);
 
-            $themesData[] = $themeData;
-        }
+        return [
+            'name' => $themeName,
+            'label' => $theme->getLabel(),
+            'stylesheet' => $styles ?: [],
+            'svgIconsSupport' => $this->svgIconsSupportProvider->isSvgIconsSupported($themeName),
+            'active' => $themeName === $currentThemeName,
+        ];
+    }
 
-        return $themesData;
+    private function collectThemeStyles(string $themeName): array
+    {
+        $styleOutput = $this->themeProvider->getStylesOutput($themeName);
+        $styleCritical = $this->themeProvider->getStylesOutput($themeName, 'critical_css');
+
+        return array_values(array_filter([
+            $styleCritical ? $this->packages->getUrl($styleCritical) : null,
+            $styleOutput ? $this->packages->getUrl($styleOutput) : null,
+        ]));
     }
 
     private function getThemeName(): ?string

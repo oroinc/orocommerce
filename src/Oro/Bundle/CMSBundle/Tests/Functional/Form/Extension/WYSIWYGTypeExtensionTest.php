@@ -51,12 +51,13 @@ class WYSIWYGTypeExtensionTest extends WebTestCase
         $defaultTheme = [
             'name' => 'default',
             'label' => 'Refreshing Teal',
-            'stylesheet' => '/build/default/css/styles.css',
+            'stylesheet' => [
+                '/build/default/css/critical.css',
+                '/build/default/css/styles.css'
+            ],
             'svgIconsSupport' => true,
+            'active' => $layoutThemeName === 'default',
         ];
-        if ($layoutThemeName === 'default') {
-            $defaultTheme['active'] = true;
-        }
         $this->assertThemeOptions($defaultTheme, $actualOptions['themes']);
     }
 
@@ -66,16 +67,32 @@ class WYSIWYGTypeExtensionTest extends WebTestCase
         foreach ($actualThemesOptions as $actualThemeOptions) {
             if (($actualThemeOptions['name'] ?? null) === $themeOptions['name']) {
                 $hasThemeOptions = true;
+
+                foreach ($themeOptions['stylesheet'] as $expectedStyle) {
+                    $matched = false;
+                    foreach ($actualThemeOptions['stylesheet'] as $actualStyle) {
+                        if (preg_match('/^' . preg_quote($expectedStyle, '/') . '(\?|$)/', $actualStyle)) {
+                            $matched = true;
+                            break;
+                        }
+                    }
+                    self::assertTrue(
+                        $matched,
+                        sprintf(
+                            "Stylesheet '%s' not found in actual stylesheets: %s",
+                            $expectedStyle,
+                            json_encode($actualThemeOptions['stylesheet'])
+                        )
+                    );
+                }
+
+                self::assertEquals($themeOptions['label'], $actualThemeOptions['label'] ?? null);
+                self::assertEquals($themeOptions['active'] ?? null, $actualThemeOptions['active'] ?? null);
+                self::assertEquals($themeOptions['svgIconsSupport'], $actualThemeOptions['svgIconsSupport'] ?? null);
+
                 break;
             }
         }
         self::assertTrue($hasThemeOptions, sprintf("Theme's '%s' options are missing", $themeOptions['name']));
-        self::assertEquals($themeOptions['label'], $actualThemeOptions['label'] ?? null);
-        self::assertMatchesRegularExpression(
-            '/^' . preg_quote($themeOptions['stylesheet'], '/') . '(\?|$)/',
-            $actualThemeOptions['stylesheet'] ?? ''
-        );
-        self::assertEquals($themeOptions['active'] ?? null, $actualThemeOptions['active'] ?? null);
-        self::assertEquals($themeOptions['svgIconsSupport'], $actualThemeOptions['svgIconsSupport'] ?? null);
     }
 }

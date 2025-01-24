@@ -953,7 +953,7 @@ const GrapesjsEditorView = BaseView.extend({
      * @private
      */
     _updateTheme(selected) {
-        const prevHref = this.activeTheme.stylesheet;
+        const prevStylesHref = this.activeTheme.stylesheet;
 
         if (!_.isUndefined(this.activeTheme) && this.activeTheme.name === selected) {
             this.setActiveTheme(selected);
@@ -969,17 +969,27 @@ const GrapesjsEditorView = BaseView.extend({
 
         const activeTheme = this.activeTheme;
         const head = this.builder.Canvas.getFrameEl().contentDocument.head;
-        const style = head.querySelector(`link[href="${prevHref}"]`);
-        const styleClone = style.cloneNode();
-        style.removeAttribute('href');
 
-        styleClone.setAttribute('href', this.activeTheme.stylesheet);
-        styleClone.onload = function() {
-            style.remove();
+        const styles = this.activeTheme.stylesheet.map(newStyleHref => {
+            return new Promise((resolve, reject) => {
+                const link = document.createElement('link');
+                link.rel = 'stylesheet';
+                link.href = newStyleHref;
+                link.onload = () => resolve();
+                link.onerror = () => reject(new Error(`Failed to load: ${newStyleHref}`));
+                head.appendChild(link);
+            });
+        });
+        Promise.all(styles).then(() => {
+            prevStylesHref.forEach(href => {
+                const styleEl = head.querySelector(`link[href="${href}"]`);
+
+                if (styleEl) {
+                    styleEl.remove();
+                }
+            });
             mediator.trigger('grapesjs:theme:change', activeTheme);
-        };
-
-        head.appendChild(styleClone);
+        });
     },
 
     /**
@@ -1106,9 +1116,10 @@ const GrapesjsEditorView = BaseView.extend({
     _getCanvasConfig() {
         const theme = this.getCurrentTheme();
         const canvasStylesheets = this.getCanvasStylesheets();
+
         return _.extend({}, this.canvasConfig, {
             canvas: {
-                styles: theme ? [theme.stylesheet, ...canvasStylesheets] : canvasStylesheets
+                styles: theme ? [...theme.stylesheet, ...canvasStylesheets] : canvasStylesheets
             },
             protectedCss: []
         });
