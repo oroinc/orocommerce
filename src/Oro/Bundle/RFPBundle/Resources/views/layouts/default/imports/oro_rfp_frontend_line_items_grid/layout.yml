@@ -1,0 +1,36 @@
+layout:
+    imports:
+        -
+            id: datagrid
+            root: __grid_container_body
+            namespace: grid_container
+
+    actions:
+        - '@addTree':
+            items:
+                __grid_container:
+                    blockType: container
+                __grid_container_body:
+                    blockType: container
+                    options:
+                        additional_block_prefixes: ['rfp_items_block_container']
+            tree:
+                __root:
+                    __grid_container:
+                        __grid_container_body: ~
+
+        - '@setOption':
+            id: __grid_container_datagrid
+            optionName: grid_name
+            optionValue: '=data["grid_name"]'
+
+        - '@setOption':
+            id: __grid_container_datagrid
+            optionName: grid_parameters
+            optionValue:
+                request_id: '=data["entity"].getId()'
+
+        - '@setOption':
+            id: __grid_container_datagrid
+            optionName: grid_render_parameters.swipeActionsGrid.enable
+            optionValue: false

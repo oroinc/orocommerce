@@ -45,16 +45,6 @@
     </div>
 {% endblock %}
 
-{% block _quote_view_data_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " customer-info-grid__data"
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _quote_view_information_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " customer-info-grid"
@@ -116,116 +106,27 @@
     </div>
 {% endblock %}
 
-{% block _quote_view_line_items_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
+{% block _quote_view_line_items_grid_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " customer-line-items"
+        '~class': " customer-line-items customer-line-items--rfq"
     }) %}
 
     <div {{ block('block_attributes') }}>
         <h2 class="customer-line-items__title">
             {{- 'oro.frontend.sale.quote.sections.quote_products.label'|trans -}}
         </h2>
-        <table class="oro-grid-table customer-line-items__table">
-            <thead class="grid-header hide-on-mobile-landscape">
-                <tr class="grid-header-row">
-                    <th class="grid-cell" colspan="2">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.item'|trans }}</th>
-                    <th class="grid-cell">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}</th>
-                    <th class="grid-cell">{{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}</th>
-                </tr>
-            </thead>
-
             {{ block_widget(block) }}
-
-        </table>
     </div>
 {% endblock %}
 
-{% block _quote_view_line_items_rows_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
+{% block quote_items_block_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid grid-columns-2"
+    }) %}
 
-    {% for quoteProduct in quoteProducts %}
-        <tbody class="grid-body">
-        {% for productOffer in quoteProduct.quoteProductOffers %}
-            <tr class="grid-row">
-                {% if loop.first %}
-                    <td class="grid-cell grid-cell--offset-none-mobile primary-cell" colspan="2" rowspan="{{ quoteProduct.quoteProductOffers|length }}">
-                        {%- for child in block -%}
-                            {{ block_widget(child, {quoteProduct: quoteProduct}) }}
-                        {% endfor %}
-
-                        <div class="grid-row hide-on-desktop hide-on-strict-tablet">
-                            <div class="grid-head grid-cell--offset-l-none-mobile" aria-hidden="true">
-                                {{ 'oro.frontend.sale.quote.sections.quote_products.columns.quantity'|trans }}
-                            </div>
-                            <div class="grid-head" aria-hidden="true">
-                                {{ 'oro.frontend.sale.quote.sections.quote_products.columns.unit_price'|trans }}
-                            </div>
-                        </div>
-                    </td>
-                {% endif %}
-                <td class="grid-cell grid-cell--offset-l-none-mobile">
-                    {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
-                        {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
-                    {% else %}
-                        {{ productOffer.quantity|oro_format_decimal }}
-                    {% endif %}
-                    {% if productOffer.allowIncrements %}
-                        {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
-                    {% endif %}
-                </td>
-                <td class="grid-cell">{{ productOffer.price|oro_format_price }}</td>
-            </tr>
-        {% endfor %}
-
-        {% if (quoteProduct.commentCustomer is not empty) %}
-            <tr class="grid-row">
-                <td class="grid-cell notes-cell" colspan="4">
-                    <div class="customer-line-items__notes">
-                        {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
-                    </div>
-                </td>
-            </tr>
-        {% endif %}
-
-        {% if (quoteProduct.comment is not empty) %}
-            <tr class="grid-row">
-                <td class="grid-cell notes-cell" colspan="4">
-                    <div class="customer-line-items__notes">
-                        {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
-                    </div>
-                </td>
-            </tr>
-        {% endif %}
-        </tbody>
-    {% endfor %}
-{% endblock %}
-
-{% block _quote_view_line_items_row_title_widget %}
-    {% import '@OroUI/macros.html.twig' as UI %}
-    <h3 class="oro-grid-table__title">
-        {% if (quoteProduct.product.id is defined) %}
-            {{ UI.link({
-                path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
-                label : quoteProduct.product.names|localized_value,
-                class: 'no-decoration'
-            }) }}
-        {% else %}
-            {{ quoteProduct.productName }}
-        {% endif %}
-    </h3>
-{% endblock %}
-
-{% block _quote_view_line_items_row_item_widget %}
-    <div class="customer-line-items__row">
-        {%- for child in block -%}
-            {{ block_widget(child, {quoteProduct: quoteProduct}) }}
-        {% endfor %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block _quote_view_line_items_row_item_sku_widget %}
-    {{ 'oro.frontend.sale.quoteproduct.product_sku.label'|trans }} <span class="customer-line-items__sku-value">{{ quoteProduct.productSku }}</span>
 {% endblock %}
 
 {% block _quote_view_accept_container_widget %}

@@ -9,8 +9,9 @@ layout:
             namespace: rfp_request_view_top_bar
 
         -
-            id: oro_rfp_frontend_request_view_product_kit_configuration
-            root: rfp_request_view_line_item_product_item_attributes
+            id: oro_rfp_frontend_line_items_grid
+            root: rfp_request_view_line_items_grid
+            namespace: rfp_request_line_items
 
     actions:
         - '@setBlockTheme':
@@ -29,29 +30,7 @@ layout:
                     options:
                         visible: '=data["entity"].getRequestAdditionalNotes().count()>0'
                         requestAdditionalNotes: '=data["entity"].getRequestAdditionalNotes()'
-                rfp_request_view_line_items:
-                    blockType: rfp_request_line_items
-                    options:
-                        requestProducts: '=data["entity"].getRequestProducts()'
-                rfp_request_view_line_item_products:
-                    blockType: container
-                rfp_request_view_line_item_product_item:
-                    blockType: container
-                rfp_request_view_line_item_product_item_title:
-                    blockType: block
-                rfp_request_view_line_item_product_item_attributes:
-                    blockType: container
-                rfp_request_view_line_item_product_item_attributes_sku:
-                    blockType: block
-                rfp_request_view_line_item_product_item_attributes_mobile:
-                    blockType: block
-                rfp_request_view_line_item_product_quantity:
-                    blockType: block
-                rfp_request_view_line_item_product_price:
-                    blockType: block
-                rfp_request_view_line_item_comment:
-                    blockType: block
-                rfp_request_view_bottom:
+                rfp_request_view_line_items_grid:
                     blockType: container
 
             tree:
@@ -59,16 +38,7 @@ layout:
                     rfp_request_view_page:
                         rfp_request_view_information: ~
                         rfp_request_view_additional_notes: ~
-                        rfp_request_view_line_items:
-                            rfp_request_view_line_item_products:
-                                rfp_request_view_line_item_product_item:
-                                    rfp_request_view_line_item_product_item_title: ~
-                                    rfp_request_view_line_item_product_item_attributes:
-                                        rfp_request_view_line_item_product_item_attributes_sku: ~
-                                        rfp_request_view_line_item_product_item_attributes_mobile: ~
-                                rfp_request_view_line_item_product_quantity: ~
-                                rfp_request_view_line_item_product_price: ~
-                            rfp_request_view_line_item_comment: ~
+                        rfp_request_view_line_items_grid: ~
 
         - '@setOption':
               id: title

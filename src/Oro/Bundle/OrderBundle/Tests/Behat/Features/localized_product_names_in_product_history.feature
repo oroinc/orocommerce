@@ -22,14 +22,14 @@ Feature: Localized product names in Product History
   Scenario: Check localized product names
     Given I should be on Order Frontend View page
     And I should see following "OrderLineItemsGrid" grid:
-      | Product              |
-      | Product1 Item #: AA1 |
-      | Product2 Item #: AA2 |
+      | Product           |
+      | Product1 SKU: AA1 |
+      | Product2 SKU: AA2 |
     When I select "Zulu" localization
     Then I should see following "OrderLineItemsGrid" grid:
-      | Product                   |
-      | Product1 Zulu Item #: AA1 |
-      | Product2 Zulu Item #: AA2 |
+      | Product                |
+      | Product1 Zulu SKU: AA1 |
+      | Product2 Zulu SKU: AA2 |
 
   Scenario: Remove product
     Given I proceed as the Admin
@@ -40,6 +40,6 @@ Feature: Localized product names in Product History
     Given I proceed as the User
     When I reload the page
     Then I should see following "OrderLineItemsGrid" grid:
-      | Product                   |
-      | Product1 Zulu Item #: AA1 |
-      | Product2 Item #: AA2      |
+      | Product                |
+      | Product1 Zulu SKU: AA1 |
+      | Product2 SKU: AA2      |

@@ -279,11 +279,15 @@ datagrids:
                     - order_item.shippingMethod
                     - order_item.shippingMethodType
                     - order_item.shippingEstimateAmount
+                    - CASE WHEN parentProduct.type = 'configurable' THEN true ELSE false END as productIsConfigurable
+                    - product.id as productId
+                    - parentProduct.id as parentProductId
                 from:
                     - { table: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem', alias: order_item }
                 join:
                     left:
                         - { join: order_item.product, alias: product }
+                        - { join: order_item.parentProduct, alias: parentProduct }
                 where:
                     and:
                         - :order_id MEMBER OF order_item.orders
@@ -334,22 +338,25 @@ datagrids:
 
     order-line-items-grid-frontend:
         extends: base-order-line-items-grid
+        source:
+            query:
+                orderBy: ~
         columns:
             product:
                 label:         oro.product.entity_label
                 type:          twig
                 frontend_type: html
-                template:      '@OroOrder/Order/Datagrid/frontendProduct.html.twig'
+                template:      '@OroOrder/layouts/default/twig/Datagrid/frontendProduct.html.twig'
             quantity:
                 label:         oro.order.orderlineitem.quantity.label
                 type:          twig
                 frontend_type: html
-                template:      '@OroOrder/Order/Datagrid/frontendQuantity.html.twig'
+                template:      '@OroOrder/layouts/default/twig/Datagrid/frontendQuantity.html.twig'
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
                 frontend_type: html
-                template:      '@OroOrder/Order/Datagrid/price.html.twig'
+                template:      '@OroOrder/layouts/default/twig/Datagrid/price.html.twig'
             shipBy:
                 label:         oro.order.orderlineitem.ship_by.label
                 frontend_type: date
@@ -360,6 +367,47 @@ datagrids:
                 placement:
                     bottom: true
             frontend: true
+        sorters:
+            columns:
+                product:
+                    data_name: order_item.productName
+                quantity:
+                    data_name: order_item.quantity
+                price:
+                    data_name: order_item.value
+                shipBy:
+                    data_name: order_item.shipBy
+        filters:
+            columns:
+                productSku:
+                    type:      string
+                    data_name: order_item.productSku
+                    label: oro.product.sku.label
+                productName:
+                    type: string
+                    data_name: order_item.productName
+                    label: oro.order.orderlineitem.product_name.label
+                quantity:
+                    type: number
+                    data_name: order_item.quantity
+                    label: oro.order.orderlineitem.quantity.label
+                product_unit:
+                    type: choice
+                    data_name: order_item.productUnitCode
+                    label: oro.order.orderlineitem.product_unit.label
+                    options:
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+                        field_options:
+                            translatable_options: false
+                            multiple: true
+                price:
+                    type: currency
+                    data_name: order_item.value
+                    label: oro.order.orderlineitem.price.label
+                shipBy:
+                    type: date
+                    data_name: order_item.shipBy
+                    label: oro.order.orderlineitem.ship_by.label
 
     # This grid is used only for printed products on the order page of the storefront.
     order-line-items-grid-frontend-print:

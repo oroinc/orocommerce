@@ -28,11 +28,11 @@ Feature: Existing RFQ with Product Kits view - with Missing Product
       | Contact Person | Amanda Cole             |
       | Email Address  | AmandaRCole@example.org |
       | PO Number      | PO013                   |
-    And I should see next rows in "Storefront Request Line Items Table" table
-      | Item                                                                                                                                | Requested Quantity | Target Price |
-      | Simple Product 01 Item #: simple-product-01                                                                                         | 1 pc               | $2.00        |
-      | Product Kit 01 Item #: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 3 pieces Simple Product 05 - Deleted  | 1 pc               | $104.69      |
-      | Product Kit 01 Item #: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 3 pieces Simple Product 04 - Disabled | 1 pc               | $100.00      |
+    And I should see following grid:
+      | Item                                                                                                                             | Requested Quantity | Target Price |
+      | Simple Product 01 SKU: simple-product-01                                                                                         | 1 pc               | $2.00        |
+      | Product Kit 01 SKU: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 3 pieces Simple Product 05 - Deleted  | 1 pc               | $104.69      |
+      | Product Kit 01 SKU: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 3 pieces Simple Product 04 - Disabled | 1 pc               | $100.00      |
     And I should see a "Simple Product 03 Link" element
     And I should not see a "Simple Product 05 - Deleted Link" element
     And I should not see a "Simple Product 04 - Disabled Link" element

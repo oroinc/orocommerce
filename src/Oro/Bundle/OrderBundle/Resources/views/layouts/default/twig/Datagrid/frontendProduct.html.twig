@@ -1,0 +1,38 @@
+{% set isFreeFormProduct = record.getValue('productName') is empty and record.getValue('freeFormProduct') is not empty %}
+
+<h3 class="oro-grid-table__title">
+    {% if isFreeFormProduct %}
+        {{ record.getValue('freeFormProduct') }}
+    {% elseif record.getValue('productId') %}
+        {% if record.getValue('productIsConfigurable') %}
+            {% set routeOptions = {'id': record.getValue('parentProductId'), 'variantProductId': record.getValue('productId')} %}
+            <a class="no-decoration" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ record.getValue('parentProductNames')|localized_value|e }}</a>
+        {% else %}
+            {% set routeOptions = {'id': record.getValue('productId')} %}
+            <a class="no-decoration" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ record.getValue('productNames')|localized_value|e }}</a>
+        {% endif %}
+    {% else %}
+        {{ record.getValue('productName') }}
+    {% endif %}
+</h3>
+
+{% if not isFreeFormProduct %}
+    <div class="customer-line-items__row">
+        {{ 'oro.product.frontend.index.sku'|trans }} <span class="customer-line-items__sku-value">{{ record.getValue('productSku') }}</span>
+    </div>
+
+    {% for label, value in record.getValue('productAdditionalAttributes') %}
+    <div class="customer-line-items__row">
+        {{ label|trans }} <span class="customer-line-items__attr-value">{{ value }}</span>
+    </div>
+    {% endfor %}
+
+    {% for field in record.getValue('productVariantFields') %}
+        <div  class="customer-line-items__row">
+            {{ field.label|trans }}:
+            <span class="customer-line-items__value">{{ field.value }}</span>
+        </div>
+    {% endfor %}
+{% endif %}
+
+{% include '@OroOrder/layouts/default/twig/Datagrid/frontendKitConfiguration.html.twig' %}

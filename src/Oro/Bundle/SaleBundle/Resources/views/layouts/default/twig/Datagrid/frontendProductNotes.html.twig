@@ -1,0 +1,5 @@
+{% if (record.getValue('comment') is not empty) %}
+<div class="customer-line-items__row customer-line-items__note">
+    {{- 'oro.frontend.sale.quoteproduct.comment.label'|trans -}}: {{ record.getValue('comment') -}}
+</div>
+{% endif %}

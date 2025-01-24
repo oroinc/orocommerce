@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\AbstractQuery;
@@ -13,6 +14,7 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
+use Oro\Bundle\ProductBundle\Entity\ProductName;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
@@ -532,6 +534,29 @@ class ProductRepository extends ServiceEntityRepository
     {
         return $this->createQueryBuilder('product')
             ->select('COUNT(product.id)');
+    }
+
+    /**
+     * @return array<int,ArrayCollection<ProductName>>
+     */
+    public function getProductNamesByProductIds(array $productIds): array
+    {
+        $queryBuilder = $this->_em->createQueryBuilder();
+        $queryBuilder->select('names')
+            ->from(ProductName::class, 'names')
+            ->where($queryBuilder->expr()->in('names.product', ':productIds'))
+            ->setParameter('productIds', $productIds, Connection::PARAM_INT_ARRAY);
+
+        $result = [];
+        foreach ($queryBuilder->getQuery()->toIterable() as $item) {
+            $productId = $item->getProduct()->getId();
+            if (!array_key_exists($productId, $result)) {
+                $result[$productId] = new ArrayCollection();
+            }
+            $result[$productId]->add($item);
+        }
+
+        return $result;
     }
 
     /**

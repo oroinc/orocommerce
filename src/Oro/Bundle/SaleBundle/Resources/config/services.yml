@@ -447,3 +447,35 @@ services:
             - '@translator'
         tags:
             - { name: oro_email.emailtemplate.variable_provider, scope: system }
+
+    oro_sale.frontend-quotes-line-items-grid.product_names_loader.listener:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\DatagridProductNameLoaderListener'
+        arguments:
+            - '@doctrine'
+            - 'productId'
+            - 'productNames'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.base-frontend-quotes-line-items-grid, method: onResultAfter }
+
+    oro_sale.listener.datagrid_product_offers_loader:
+        class: 'Oro\Bundle\SaleBundle\EventListener\Datagrid\DatagridProductOffersLoaderListener'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.base-frontend-quotes-line-items-grid, method: onResultAfter }
+
+    oro_sale.listener.datagrid_quote_item_user_access:
+        class: 'Oro\Bundle\SaleBundle\EventListener\Datagrid\QuoteItemDatagridUserAccessListener'
+        arguments:
+            - '@security.token_storage'
+            - '@doctrine'
+            - '@oro_sale.provider.guest_quote_access'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.guest-frontend-quotes-line-items-grid, method: onResultBeforeQuery }
+
+    oro_sale.listener.datagrid_frontend_guest_grid_views:
+        class: 'Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendGuestGridViewsListener'
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.guest-frontend-quotes-line-items-grid, method: onPreBuild }

@@ -29,6 +29,7 @@ oro_behat_extension:
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
         - Oro\Bundle\QueryDesignerBundle\Tests\Behat\Context\QueryDesignerContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
       paths:
         - '@OroSaleBundle/Tests/Behat/Features'
 
@@ -345,5 +346,16 @@ oro_behat_extension:
         locator: '//input[@name="oro_sale_quote_demand[demandProducts][1][quoteProductOffer]" and @value="1"]'
         type: xpath
 
+    Frontend Guest Quote Grid:
+      selector: 'div[data-page-component-name="guest-frontend-quotes-line-items-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Quote Grid:
+      selector: 'div[data-page-component-name="frontend-quotes-line-items-grid"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Frontend Quote Grid Filters:
+      selector: 'div[data-page-component-name="frontend-quotes-line-items-grid"] div.filter-box'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
     Customer TopBar Action Dropdown:
       selector: '.toggle-container--dropdown-btn'

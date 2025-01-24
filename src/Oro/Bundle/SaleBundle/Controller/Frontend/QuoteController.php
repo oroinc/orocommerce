@@ -50,7 +50,10 @@ class QuoteController extends AbstractController
         }
 
         return [
-            'data' => ['entity' => $quote]
+            'data' => [
+                'entity' => $quote,
+                'grid_name' => 'frontend-quotes-line-items-grid'
+            ],
         ];
     }
 
@@ -85,7 +88,10 @@ class QuoteController extends AbstractController
         }
 
         return [
-            'data' => ['entity' => $quote]
+            'data' => [
+                'entity' => $quote,
+                'grid_name' => 'guest-frontend-quotes-line-items-grid'
+            ],
         ];
     }
 

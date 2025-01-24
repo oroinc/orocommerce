@@ -311,12 +311,6 @@ oro_behat_extension:
                 locator: '//div[@data-content="oro_rfp_frontend_request[requestProducts][4]"]//a[@data-role="request-product-kit-configuration-edit"]'
                 type: xpath
 
-        Storefront Request Line Items Table:
-            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
-            selector:
-                type: 'xpath'
-                locator: '//table[contains(@class,"customer-line-items__table")]'
-
         Simple Product 01 Link:
             selector:
                 locator: '//a[text()[contains(.,"Simple Product 01")]]'

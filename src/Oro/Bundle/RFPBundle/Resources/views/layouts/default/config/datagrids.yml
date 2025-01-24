@@ -120,3 +120,60 @@ datagrids:
                 icon: pencil-square-o
                 rowAction: true
                 acl_resource: oro_rfp_frontend_request_update
+
+    frontend-request-line-items-grid:
+        acl_resource: oro_rfp_frontend_request_view
+        options:
+            entityHint: oro.rfp.requestproduct.entity_plural_label
+            frontend: true
+            toolbarOptions:
+                placement:
+                    bottom: true
+        source:
+            type: orm
+            query:
+                select:
+                    - partial request_product.{ id }
+                    - request_product.id
+                    - request_product.comment
+                    - COALESCE(product.sku, request_product.productSku) as productSku
+                    - product.id as productId
+                from:
+                    - { table: 'Oro\Bundle\RFPBundle\Entity\RequestProduct', alias: request_product }
+                join:
+                    left:
+                        - { join: request_product.product, alias: product }
+                where:
+                    and:
+                        - request_product.request = :request_id
+            bind_parameters:
+                - request_id
+        columns:
+            product:
+                label:         oro.frontend.rfp.request.sections.request_products.columns.item.label
+                type:          twig
+                frontend_type: html
+                template:      '@OroRFP/layouts/default/twig/Datagrid/frontendProduct.html.twig'
+            qty:
+                label: oro.frontend.rfp.request.sections.request_products.columns.quantity.label
+                type: twig
+                frontend_type: html
+                template: '@OroRFP/layouts/default/twig/Datagrid/frontendProductQty.html.twig'
+            price:
+                label: oro.frontend.rfp.request.sections.request_products.columns.price.label
+                type: twig
+                frontend_type: html
+                template: '@OroRFP/layouts/default/twig/Datagrid/frontendProductPrice.html.twig'
+            notes:
+                label: oro.frontend.rfp.request.sections.request_products.columns.notes.label
+                type: twig
+                frontend_type: html
+                template: '@OroRFP/layouts/default/twig/Datagrid/frontendProductNotes.html.twig'
+        filters:
+            columns:
+                productSku:
+                    type:      string
+                    data_name: product.skuUppercase
+                    case_insensitive: false
+                    value_conversion: mb_strtoupper
+                    label: oro.frontend.rfp.requestproduct.sku.label

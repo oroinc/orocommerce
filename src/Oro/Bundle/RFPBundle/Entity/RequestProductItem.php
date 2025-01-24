@@ -14,11 +14,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemsAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemChecksumAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
+use Oro\Bundle\RFPBundle\Entity\Repository\RequestProductItemRepository;
 
 /**
  * RFP Request Product Item entity.
  */
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: RequestProductItemRepository::class)]
 #[ORM\Table(name: 'oro_rfp_request_prod_item')]
 #[ORM\HasLifecycleCallbacks]
 #[Config(

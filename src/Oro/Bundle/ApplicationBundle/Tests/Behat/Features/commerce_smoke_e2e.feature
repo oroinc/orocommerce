@@ -908,8 +908,8 @@ Feature: Commerce smoke e2e
     And should see "Email Address AmandaRCole1@example.org"
     And should see "PO Number PO00001"
     And should see "Owner Amanda Cole"
-    And should see "Xiaomi Redmi 3S Item #: Xiaomi_Redmi_3S_sku 12 items $112.00"
-    And should see "Lenovo Vibe Item #: Lenovo_Vibe_sku 30 items $75.00"
+    And should see "Xiaomi Redmi 3S SKU: Xiaomi_Redmi_3S_sku 12 items $112.00"
+    And should see "Lenovo Vibe SKU: Lenovo_Vibe_sku 30 items $75.00"
     And I click "Account Dropdown"
     When click "Quotes"
     Then should see following grid:

@@ -6,6 +6,9 @@ Oro\Bundle\CurrencyBundle\Entity\Price :
     price1:
         value: 5
         currency: USD
+    price2:
+        value: 25
+        currency: USD
 
 Oro\Bundle\ProductBundle\Entity\ProductName:
     product1NameDefault:
@@ -66,13 +69,15 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         quantity: 10
         productUnit: '@item'
         productUnitCode: item
+        shipBy: '<(new \DateTime("2010-01-01", new \DateTimeZone("UTC")))>'
         __calls:
             - addOrder: [ '@order' ]
     orderLineItem2:
         product: '@product2'
-        price: '@price1'
-        quantity: 10
-        productUnit: '@item'
-        productUnitCode: item
+        price: '@price2'
+        quantity: 15
+        productUnit: '@set'
+        productUnitCode: set
+        shipBy: '<(new \DateTime("2024-01-01", new \DateTimeZone("UTC")))>'
         __calls:
             - addOrder: [ '@order' ]

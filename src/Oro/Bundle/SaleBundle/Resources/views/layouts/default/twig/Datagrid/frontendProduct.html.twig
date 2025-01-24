@@ -1,0 +1,38 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+<h3 class="oro-grid-table__title">
+    {% if (record.getValue('productId') is not empty) %}
+        {{ UI.link({
+            path: path('oro_product_frontend_product_view', {'id': record.getValue('productId')}),
+            label: record.getValue('productNames')|localized_value|trim,
+            class: 'no-decoration'
+        }) }}
+    {% else %}
+        {{ record.getValue('freeFormProduct') }}
+    {% endif %}
+</h3>
+
+<div class="customer-line-items__row customer-line-items__sku">
+    {{ 'oro.product.frontend.index.sku'|trans }}
+    <span class="customer-line-items__sku-value">{{ record.getValue('productSku') }}</span>
+</div>
+
+{% for label, value in record.getValue('productAdditionalAttributes') %}
+    <div class="customer-line-items__row">
+        {{ label|trans }} <span class="customer-line-items__attr-value">{{ value }}</span>
+    </div>
+{% endfor %}
+
+{% include '@OroSale/layouts/default/twig/Datagrid/frontendKitConfiguration.html.twig' %}
+
+{% if (record.getValue('commentCustomer') is not empty) %}
+    <div class="customer-line-items__row">
+        {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ record.getValue('commentCustomer') }}
+    </div>
+{% endif %}
+
+{% if (record.getValue('comment') is not empty) %}
+    <div class="customer-line-items__row customer-line-items__note">
+        {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ record.getValue('comment') }}
+    </div>
+{% endif %}

@@ -5,12 +5,13 @@ namespace Oro\Bundle\SaleBundle\Entity;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
+use Oro\Bundle\SaleBundle\Entity\Repository\QuoteProductOfferRepository;
 use Oro\Bundle\SaleBundle\Model\BaseQuoteProductItem;
 
 /**
  * Represents a quote product line item offer.
  */
-#[ORM\Entity]
+#[ORM\Entity(repositoryClass: QuoteProductOfferRepository::class)]
 #[ORM\Table(name: 'oro_sale_quote_prod_offer')]
 #[ORM\HasLifecycleCallbacks]
 #[Config(defaultValues: ['entity' => ['icon' => 'fa-list-alt'], 'security' => ['type' => 'ACL', 'group_name' => '']])]

@@ -79,7 +79,7 @@ oro_behat_extension:
       selector: 'table.grid-main-container'
 
     OrderLineItemProductSku:
-      selector: 'div:contains("Item #:") > span'
+      selector: 'div:contains("SKU:") > span'
 
     OrderTitle:
       selector: 'h1.page-title .page-title__text'
@@ -451,6 +451,10 @@ oro_behat_extension:
       selector: 'div[data-page-component-name="customer-orders-grid"] div.filter-box'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
 
+    Frontend Order Grid Filters:
+      selector: 'div[data-page-component-name="order-line-items-grid-frontend"] div.filter-box'
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
     Customer Sales Orders GridToolbarActions:
       selector: 'div[data-page-component-name="customer-orders-grid"] div.toolbar div.actions-panel'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
@@ -564,5 +568,6 @@ oro_behat_extension:
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
         - Oro\Bundle\DashboardBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

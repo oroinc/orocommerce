@@ -241,5 +241,5 @@ Feature: Create Order from Checkout with product kits and taxes
     And I should see "Tax $41.48"
     And I should see "Total $417.83"
     And I should see following "Order Line Items Grid" grid:
-      | Product                                                                                                                                 | Quantity | Price     |
-      | Product Kit 01 Item #: product-kit-01 Optional Item 2 pieces $3.7035 Simple Product 03 Mandatory Item 3 pieces $2.469 Simple Product 02 | 3 pieces | $138.2767 |
+      | Product                                                                                                                              | Quantity | Price     |
+      | Product Kit 01 SKU: product-kit-01 Optional Item 2 pieces $3.7035 Simple Product 03 Mandatory Item 3 pieces $2.469 Simple Product 02 | 3 pieces | $138.2767 |

@@ -379,6 +379,7 @@ oro:
                             item.label: 'Item'
                             quantity.label: 'Requested Quantity'
                             price.label: 'Target Price'
+                            notes.label: 'Notes'
                 resubmitted.message: 'Your <a href="%viewLink%">Request For Quote</a> has been successfully resubmitted.'
                 success:
                     thank_you.label: 'Thank You For Your Request!'
@@ -388,6 +389,7 @@ oro:
                     done.label: 'Done'
             requestproduct:
                 product_sku.label: 'Item #:'
+                sku.label: 'SKU'
                 comment.label: 'Notes'
                 action:
                     edit: 'Edit'

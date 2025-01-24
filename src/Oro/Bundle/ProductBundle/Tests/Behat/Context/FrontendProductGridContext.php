@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Behat\Context;
 
+use Behat\Behat\Hook\Scope\BeforeScenarioScope;
 use Behat\Gherkin\Node\TableNode;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGrid;
 use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters;
@@ -9,11 +10,24 @@ use Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridRow;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
+use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 class FrontendProductGridContext extends OroFeatureContext implements OroPageObjectAware
 {
     use PageObjectDictionary;
+    private ?OroMainContext $oroMainContext = null;
+
+    /**
+     * @BeforeScenario
+     */
+    public function gatherContexts(BeforeScenarioScope $scope): void
+    {
+        $environment = $scope->getEnvironment();
+        if ($environment->hasContextClass(OroMainContext::class)) {
+            $this->oroMainContext = $environment->getContext(OroMainContext::class);
+        }
+    }
 
     /**
      * Updates line item form for a given row in frontend product grid.
@@ -63,7 +77,7 @@ class FrontendProductGridContext extends OroFeatureContext implements OroPageObj
     ) {
         /** @var FrontendProductGridFilters $gridFilters */
         $gridFilters = $this->createElement($filterPosition);
-
+        $this->oroMainContext->scrollToXpath($gridFilters->getXpath());
         $gridFilters->resetFilter($filterName, $filterHint);
     }
 

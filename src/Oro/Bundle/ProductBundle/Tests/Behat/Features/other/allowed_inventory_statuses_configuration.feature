@@ -195,17 +195,17 @@ Feature: Allowed inventory statuses configuration
     When I proceed as the Manager
     And I go through the order completion, and should be on order view page
     Then I should see following "Order Line Items Grid" grid:
-      | Product               |
-      | Product1 Item #: SKU1 |
-      | Product2 Item #: SKU2 |
+      | Product            |
+      | Product1 SKU: SKU1 |
+      | Product2 SKU: SKU2 |
 
   Scenario: Check that it is possible to ReOrder order with Discontinued product
     Given click "Re-Order"
     Then I go through the order completion, and should be on order view page
     And I should see following "Order Line Items Grid" grid:
-      | Product               |
-      | Product1 Item #: SKU1 |
-      | Product2 Item #: SKU2 |
+      | Product            |
+      | Product1 SKU: SKU1 |
+      | Product2 SKU: SKU2 |
 
   Scenario: Check that discontinue product is not accessible through link
     Given go to "/product/view/1"

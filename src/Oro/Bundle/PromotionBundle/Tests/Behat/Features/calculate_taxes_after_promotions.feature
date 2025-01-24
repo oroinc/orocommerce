@@ -99,9 +99,9 @@ Feature: Calculate taxes after promotions
     And I click on empty space
     And I hide column "Taxes" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
-      | Product                | UPIT  | UPET  | UPTA  |  RTIT | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
-      | Product 1 Item #: SKU1 | $0.51 | $0.47 | $0.05 | $2.59 | $2.35 | $0.24 | $0.00 | $2.59  | $2.35  |
-      | Product 2 Item #: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
+      | Product             | UPIT  | UPET  | UPTA  | RTIT  | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
+      | Product 1 SKU: SKU1 | $0.51 | $0.47 | $0.05 | $2.59 | $2.35 | $0.24 | $0.00 | $2.59  | $2.35  |
+      | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
 
   Scenario: Enable Product Prices Include Tax option
     Given I proceed as the Admin
@@ -174,9 +174,9 @@ Feature: Calculate taxes after promotions
     And I click on empty space
     And I hide column "Taxes" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
-      | Product                | UPIT  | UPET  | UPTA  |  RTIT | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
-      | Product 1 Item #: SKU1 | $0.47 | $0.42 | $0.04 | $2.35 | $2.14 | $0.21 | $0.00 | $2.35  | $2.14  |
-      | Product 2 Item #: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
+      | Product             | UPIT  | UPET  | UPTA  | RTIT  | RTET  | RTTA  | RTDA  | RTADIT | RTADET |
+      | Product 1 SKU: SKU1 | $0.47 | $0.42 | $0.04 | $2.35 | $2.14 | $0.21 | $0.00 | $2.35  | $2.14  |
+      | Product 2 SKU: SKU2 | $0.23 | $0.23 | $0.00 | $1.15 | $1.15 | $0.00 | $5.00 | $0.00  | $0.00  |
 
   Scenario: Check Orders grid
     Given I proceed as the Admin

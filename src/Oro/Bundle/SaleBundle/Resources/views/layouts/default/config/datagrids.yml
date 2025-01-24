@@ -106,3 +106,107 @@ datagrids:
                 link:          view_link
                 icon:          eye
                 rowAction:     true
+
+    base-frontend-quotes-line-items-grid:
+        acl_resource: oro_sale_quote_frontend_view
+        extended_entity_name: 'Oro\Bundle\SaleBundle\Entity\QuoteProduct'
+        options:
+            entityHint: oro.sale.quoteproduct.entity_plural_label
+            frontend: true
+            toolbarOptions:
+                placement:
+                    bottom: true
+        source:
+            type: orm
+            query:
+                select:
+                    - partial quote_product.{ id }
+                    - quote_product.id
+                    - quote_product.productSku
+                    - quote_product.freeFormProduct
+                    - quote_product.commentCustomer
+                    - quote_product.comment
+                    - product.id as productId
+                    - quoteProductOffers.productUnitCode
+                    - quoteProductOffers.quantity
+                    - quoteProductOffers.value
+                from:
+                    - { table: 'Oro\Bundle\SaleBundle\Entity\QuoteProduct', alias: quote_product }
+                join:
+                    left:
+                        - { join: quote_product.product, alias: product }
+                        - { join: quote_product.quoteProductOffers, alias: quoteProductOffers }
+        columns:
+            product:
+                label:         oro.frontend.sale.quote.sections.quote_products.columns.item
+                type:          twig
+                frontend_type: html
+                template:      '@OroSale/layouts/default/twig/Datagrid/frontendProduct.html.twig'
+            qty:
+                label:         oro.frontend.sale.quote.sections.quote_products.columns.quantity
+                type:          twig
+                frontend_type: html
+                template:      '@OroSale/layouts/default/twig/Datagrid/frontendProductQty.html.twig'
+            price:
+                label:          oro.frontend.sale.quote.sections.quote_products.columns.unit_price
+                type:           twig
+                frontend_type:  html
+                template:       '@OroSale/layouts/default/twig/Datagrid/frontendProductPrice.html.twig'
+            notes:
+                label:          oro.frontend.sale.quote.sections.quote_products.columns.notes
+                type:           twig
+                frontend_type:  html
+                template:       '@OroSale/layouts/default/twig/Datagrid/frontendProductNotes.html.twig'
+        filters:
+            columns:
+                productSku:
+                    type:      string
+                    data_name: quote_product.productSku
+                    label: oro.product.sku.label
+                quantity:
+                    type: number
+                    data_name: quoteProductOffers.quantity
+                    label: oro.frontend.sale.quoteproductoffer.quantity.label
+                product_unit:
+                    type: choice
+                    data_name: quoteProductOffers.productUnitCode
+                    label: oro.sale.quoteproductoffer.product_unit.label
+                    options:
+                        field_type: Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType
+                        field_options:
+                            translatable_options: false
+                            multiple: true
+                price:
+                    type: currency
+                    data_name: quoteProductOffers.value
+                    label: oro.frontend.sale.quoteproductoffer.unit_price.label
+        sorters:
+            columns:
+                qty:
+                    data_name: quoteProductOffers.quantity
+                price:
+                    data_name: quoteProductOffers.value
+
+    frontend-quotes-line-items-grid:
+        extends: base-frontend-quotes-line-items-grid
+        source:
+            query:
+                where:
+                    and:
+                        - quote_product.quote = :quote_id
+            bind_parameters:
+                - quote_id
+
+    guest-frontend-quotes-line-items-grid:
+        extends: base-frontend-quotes-line-items-grid
+        acl_resource: ~
+        source:
+            query:
+                join:
+                    left:
+                        - { join: quote_product.quote, alias: quote }
+                where:
+                    and:
+                        - quote.guestAccessId = :guest_access_id
+            bind_parameters:
+                - guest_access_id

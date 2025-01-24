@@ -43,7 +43,8 @@ class RequestController extends AbstractController
 
         return [
             'data' => [
-                'entity' => $request
+                'entity' => $request,
+                'grid_name' => 'frontend-request-line-items-grid'
             ]
         ];
     }

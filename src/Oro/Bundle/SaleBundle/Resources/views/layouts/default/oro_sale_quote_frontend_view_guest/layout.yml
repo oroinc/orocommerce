@@ -19,3 +19,9 @@ layout:
               id: page_title_container
               optionName: class_prefix
               optionValue: 'customer'
+
+        - '@setOption':
+              id:  quote_products_container_grid_container_datagrid
+              optionName: grid_parameters
+              optionValue:
+                  guest_access_id: '=data["entity"].getGuestAccessId()'

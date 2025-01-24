@@ -1,0 +1,6 @@
+{% if (record.getValue('comment') is not empty) %}
+<div class="customer-line-items__row customer-line-items__note">
+        {{ 'oro.frontend.rfp.requestproduct.comment.label'|trans }}:
+    <span class="customer-line-items__row">{{ record.getValue('comment') }}</span>
+</div>
+{% endif %}

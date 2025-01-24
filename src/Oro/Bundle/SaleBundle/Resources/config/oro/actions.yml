@@ -142,6 +142,16 @@ operations:
                 icon: shopping-cart
         service: oro_sale.operation.frontend_guest_quote_submit_to_order
 
+    UPDATE:
+        exclude_datagrids:
+            - frontend-quotes-line-items-grid
+            - guest-frontend-quotes-line-items-grid
+
+    DELETE:
+        exclude_datagrids:
+            - frontend-quotes-line-items-grid
+            - guest-frontend-quotes-line-items-grid
+
 action_groups:
     oro_sale_quote_duplicate:
         parameters:

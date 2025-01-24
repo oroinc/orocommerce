@@ -1,12 +1,14 @@
 layout:
     imports:
         -
-            id: oro_sale_quote_product_kit_configuration
-            root: quote_view_line_items_row_item
-        -
             id: oro_customer_top_bar
             root: quote_view_page
             namespace: quote_view_top_bar
+        -
+            id: oro_sale_quote_frontend_line_items_grid
+            root: quote_view_line_items_grid
+            namespace: quote_products_container
+
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
@@ -55,6 +57,12 @@ layout:
             optionName: visible
             optionValue: '=data["acl"].isGranted("oro_sale_quote_frontend_view")'
 
+        - '@setOption':
+            id: quote_products_container_grid_container_datagrid
+            optionName: grid_parameters
+            optionValue:
+                quote_id: '=data["entity"].getId()'
+
         - '@addTree':
             items:
                 quote_view_page:
@@ -63,7 +71,7 @@ layout:
                 quote_view_container:
                     blockType: container
 
-                quote_view_data:
+                quote_view_line_items_grid:
                     blockType: container
 
                 quote_view_information:
@@ -72,25 +80,6 @@ layout:
                         quote: '=data["entity"]'
                         vars:
                             paymentTerm: '=data["oro_payment_term_provider"].getObjectPaymentTerm(data["entity"])'
-
-                quote_view_line_items:
-                    blockType: quote_products_container
-                    options:
-                        quoteProducts: '=data["entity"].getQuoteProducts()'
-
-                quote_view_line_items_rows:
-                    blockType: quote_products_container
-                    options:
-                        quoteProducts: '=data["entity"].getQuoteProducts()'
-
-                quote_view_line_items_row_title:
-                    blockType: block
-
-                quote_view_line_items_row_item:
-                    blockType: container
-
-                quote_view_line_items_row_item_sku:
-                    blockType: block
 
                 quote_view_back_link:
                     blockType: link
@@ -115,9 +104,4 @@ layout:
                         quote_view_container:
                             quote_view_information:
                                 quote_shipping_address: ~
-                        quote_view_data:
-                            quote_view_line_items:
-                                quote_view_line_items_rows:
-                                    quote_view_line_items_row_title: ~
-                                    quote_view_line_items_row_item:
-                                        quote_view_line_items_row_item_sku: ~
+                    quote_view_line_items_grid: ~

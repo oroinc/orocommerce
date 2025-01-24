@@ -95,11 +95,11 @@ Feature: Configurable products in order history
     And I click "Order History"
     And I click view "1" in "PastOrdersGrid"
     Then I should see following records in "OrderLineItemsGrid":
-      | ConfigurableProductA Item #: PROD_A_1 S Green |
-      | ConfigurableProductA Item #: PROD_A_2 M Blue  |
+      | ConfigurableProductA SKU: PROD_A_1 S Green |
+      | ConfigurableProductA SKU: PROD_A_2 M Blue  |
 
   Scenario: Check configurable is displayed with its variants after refreshing orders history grid
     Given I refresh "OrderLineItemsGrid" grid
     Then I should see following records in "OrderLineItemsGrid":
-      | ConfigurableProductA Item #: PROD_A_1 S Green |
-      | ConfigurableProductA Item #: PROD_A_2 M Blue  |
+      | ConfigurableProductA SKU: PROD_A_1 S Green |
+      | ConfigurableProductA SKU: PROD_A_2 M Blue  |

@@ -465,6 +465,7 @@ oro:
                             item: 'Item'
                             quantity: 'Quantity'
                             unit_price: 'Unit Price'
+                            notes: 'Notes'
                 widgets:
                     quote_information: 'Quote Information'
                 submit_to_order:

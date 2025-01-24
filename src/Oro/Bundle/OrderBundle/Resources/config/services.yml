@@ -793,3 +793,21 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: onBeforeFlush }
+
+    oro_order.frontend_order_line_items_grid.product_names_loader.listener:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\DatagridProductNameLoaderListener'
+        arguments:
+            - '@doctrine'
+            - 'productId'
+            - 'productNames'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }
+
+    oro_order.frontend_order_line_items_grid.parent_product_names_loader.listener:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\DatagridProductNameLoaderListener'
+        arguments:
+            - '@doctrine'
+            - 'parentProductId'
+            - 'parentProductNames'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }

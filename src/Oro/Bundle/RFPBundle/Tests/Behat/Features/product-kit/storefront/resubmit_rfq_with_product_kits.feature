@@ -27,10 +27,10 @@ Feature: Resubmit RFQ with Product Kits
       | Email Address  | AmandaRCole@example.org |
       | PO Number      | PO013                   |
     And I should see RFQ status is "Cancelled"
-    And I should see next rows in "Storefront Request Line Items Table" table
-      | Item                                                                                                                     | Requested Quantity | Target Price |
-      | Product Kit 01 Item #: product-kit-01 Mandatory Item 1 piece Simple Product 01                                           | 1 pc               | $124.00      |
-      | Product Kit 01 Item #: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 2 pieces Simple Product 02 | 1 pc               | $130.00      |
+    And I should see following grid:
+      | Item                                                                                                                  | Requested Quantity | Target Price |
+      | Product Kit 01 SKU: product-kit-01 Mandatory Item 1 piece Simple Product 01                                           | 1 pc               | $124.00      |
+      | Product Kit 01 SKU: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 2 pieces Simple Product 02 | 1 pc               | $130.00      |
 
   Scenario: Check RFQs grid
     When I click "BackToListBtn"
@@ -46,10 +46,10 @@ Feature: Resubmit RFQ with Product Kits
       | Email Address  | AmandaRCole@example.org |
       | PO Number      | PO013                   |
     And I should see RFQ status is "Submitted"
-    And I should see next rows in "Storefront Request Line Items Table" table
-      | Item                                                                                                                     | Requested Quantity | Target Price |
-      | Product Kit 01 Item #: product-kit-01 Mandatory Item 1 piece Simple Product 01                                           | 1 pc               | $124.00      |
-      | Product Kit 01 Item #: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 2 pieces Simple Product 02 | 1 pc               | $130.00      |
+    And I should see following grid:
+      | Item                                                                                                                  | Requested Quantity | Target Price |
+      | Product Kit 01 SKU: product-kit-01 Mandatory Item 1 piece Simple Product 01                                           | 1 pc               | $124.00      |
+      | Product Kit 01 SKU: product-kit-01 Optional Item 2 pieces Simple Product 03 Mandatory Item 2 pieces Simple Product 02 | 1 pc               | $130.00      |
 
   Scenario: Check RFQ with Product Kits in the admin area
     Given I proceed as the Admin

@@ -54,17 +54,17 @@ Feature: Removed products in order history
     And I click "Order History"
     And I click view "SimpleOrder" in grid
     Then I should see AA1 in grid with following data:
-      | Product   | Product1 Item #: AA1 |
-      | Quantity  | 10 items             |
-      | Price     | $5.00                |
+      | Product  | Product1 SKU: AA1 |
+      | Quantity | 10 items          |
+      | Price    | $5.00             |
     And I click "Account Dropdown"
     And I click "Order History"
     And I click view "configurableOrder" in grid
     Then I should see 1GB81 in grid with following data:
-      | Product   | Slip-On Clog Item #: 1GB81 |
-      | Quantity  | 10 items                   |
-      | Price     | $5.00                      |
+      | Product  | Slip-On Clog SKU: 1GB81 |
+      | Quantity | 10 items                |
+      | Price    | $5.00                   |
     And I should see 1GB82 in grid with following data:
-      | Product   | Slip-On Clog Item #: 1GB82 |
-      | Quantity  | 10 items                   |
-      | Price     | $5.00                      |
+      | Product  | Slip-On Clog SKU: 1GB82 |
+      | Quantity | 10 items                |
+      | Price    | $5.00                   |

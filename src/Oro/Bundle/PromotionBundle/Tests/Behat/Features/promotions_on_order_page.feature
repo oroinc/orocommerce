@@ -51,9 +51,9 @@ Feature: Promotions on Order page
     And I click "view" on first row in "Past Orders Grid"
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
-      | Product                | RTDA  |
-      | Product 1 Item #: SKU1 | $0.00 |
-      | Product 2 Item #: SKU2 | $5.00 |
+      | Product             | RTDA  |
+      | Product 1 SKU: SKU1 | $0.00 |
+      | Product 2 SKU: SKU2 | $5.00 |
     And I see next subtotals for "Order":
       | Subtotal          | Amount  |
       | Subtotal          | $20.00  |

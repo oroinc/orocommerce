@@ -17,9 +17,9 @@ Feature: Changes of Promotion not affect Order
     And I click "Select All"
     And I click on empty space
     Then I should see following "Order Line Items Grid" grid:
-      | Product                | RTDA  | RTADIT | RTADET |
-      | Product 1 Item #: SKU1 | $0.00 | $10.00 | $10.00 |
-      | Product 2 Item #: SKU2 | $5.00 | $5.00  | $5.00  |
+      | Product             | RTDA  | RTADIT | RTADET |
+      | Product 1 SKU: SKU1 | $0.00 | $10.00 | $10.00 |
+      | Product 2 SKU: SKU2 | $5.00 | $5.00  | $5.00  |
 
   Scenario: Check that promotion change not affect past orders
     Given I operate as the Admin
@@ -43,6 +43,6 @@ Feature: Changes of Promotion not affect Order
     And I click "view" on first row in "Past Orders Grid"
     And I show column "Row Total (Discount Amount)" in "Order Line Items Grid" frontend grid
     Then I should see following "Order Line Items Grid" grid:
-      | Product                | RTDA  |
-      | Product 1 Item #: SKU1 | $0.00 |
-      | Product 2 Item #: SKU2 | $5.00 |
+      | Product             | RTDA  |
+      | Product 1 SKU: SKU1 | $0.00 |
+      | Product 2 SKU: SKU2 | $5.00 |

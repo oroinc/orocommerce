@@ -85,10 +85,10 @@ Feature: Quote creation with empty prices (Default Quote Management Flow)
     And I click "Account Dropdown"
     When click "Quotes"
     And click view "PO1" in grid
-    And should see following "Quote View Grid" grid:
-      | Item                  | Quantity       | Unit Price |
-      | Product1 SKU #: psku1 | 1 item or more | $1.00      |
-      | Product1 SKU #: psku1 | 1 item or more | $0.00      |
+    And should see following "Frontend Quote Grid" grid:
+      | Item                | Quantity       | Unit Price |
+      | Product1 SKU: psku1 | 1 item or more | $1.00      |
+      | Product1 SKU: psku1 | 1 item or more | $0.00      |
     When click "Accept and Submit to Order"
     And click "Checkout"
     Then Page title equals to "Billing Information - Checkout"

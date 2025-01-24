@@ -147,12 +147,16 @@ operations:
                     route: oro_rfp_frontend_request_update
                     route_parameters:
                         id: $id
+    UPDATE:
+        exclude_datagrids:
+            - frontend-request-line-items-grid
 
     DELETE:
         exclude_entities:
             - Oro\Bundle\RFPBundle\Entity\Request
         exclude_datagrids:
             - rfp-requests-grid
+            - frontend-request-line-items-grid
 
 action_groups:
     oro_rfp_create_request_additional_note:

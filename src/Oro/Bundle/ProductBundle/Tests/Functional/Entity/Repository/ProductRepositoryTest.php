@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Tests\Functional\DataFixtures\LoadAttributeFamilyData;
@@ -560,5 +561,26 @@ class ProductRepositoryTest extends WebTestCase
         $product9->addVariantLink($variantLink93);
 
         $em->flush();
+    }
+
+    public function testGetProductNamesByProductIds(): void
+    {
+        $expected = [
+            $this->getReference(LoadProductData::PRODUCT_1)->getId() => new ArrayCollection([
+                $this->getReference('product-1.names.default'),
+                $this->getReference('product-1.names.en_CA'),
+            ]),
+            $this->getReference(LoadProductData::PRODUCT_2)->getId() => new ArrayCollection([
+                $this->getReference('product-2.names.default')
+            ])
+        ];
+
+        $productIds = [
+            $this->getReference(LoadProductData::PRODUCT_1)->getId(),
+            $this->getReference(LoadProductData::PRODUCT_2)->getId(),
+        ];
+
+        $result = $this->getRepository()->getProductNamesByProductIds($productIds);
+        $this->assertEquals($expected, $result);
     }
 }

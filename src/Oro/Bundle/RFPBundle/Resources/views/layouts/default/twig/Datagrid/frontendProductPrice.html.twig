@@ -1,0 +1,11 @@
+{% import '@OroDataGrid/macros.html.twig' as dataGrid %}
+
+ {% for requestProductItem in record.getValue('requestProductItems') %}
+    <div>
+        {%- if requestProductItem.price -%}
+            {{ requestProductItem.price|oro_format_price }}
+        {%- else -%}
+            {{ dataGrid.renderBlankCellValue() }}
+        {%- endif -%}
+    </div>
+ {% endfor %}

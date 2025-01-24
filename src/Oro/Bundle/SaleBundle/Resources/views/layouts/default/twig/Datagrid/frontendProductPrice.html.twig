@@ -1,0 +1,6 @@
+{% for quoteProductOffer in record.getValue('quoteProductOffers') %}
+    {% if quoteProductOffer.price %}
+        {{ quoteProductOffer.price|oro_format_price }}
+    {% endif %}
+    <br>
+{% endfor %}

@@ -163,6 +163,22 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.rfp-requests-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-requests-grid, method: onBuildBefore }
 
+    oro_rfp.datagrid.listener.datagrid_product_name_loader.frontend_request_line_items_grid:
+        class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\DatagridProductNameLoaderListener'
+        arguments:
+            - '@doctrine'
+            - 'productId'
+            - 'productNames'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-request-line-items-grid, method: onResultAfter }
+
+    oro_rfp.listener.datagrid_request_product_items_loader:
+        class: 'Oro\Bundle\RFPBundle\EventListener\DatagridRequestProductItemsLoaderListener'
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-request-line-items-grid, method: onResultAfter }
+
     oro_rfp.event_listener.navigation:
         class: 'Oro\Bundle\RFPBundle\EventListener\NavigationListener'
         arguments:
