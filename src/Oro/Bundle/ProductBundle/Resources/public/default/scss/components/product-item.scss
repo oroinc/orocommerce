@@ -212,6 +212,10 @@
         }
     }
 
+    &__primary-content &__primary-half--no-image-view {
+        padding: 0;
+    }
+
     &__secondary-half {
         &--last-gallery-view {
             margin-top: auto;
@@ -348,7 +352,7 @@
                     'title'
                     'specification'
                     'primary';
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
             }
         }
 
@@ -455,7 +459,7 @@
             }
 
             &--no-image-view#{&}--has-matrixform {
-                grid-template-columns: 1fr;
+                grid-template-columns: minmax(0, 1fr);
                 grid-template-rows: auto;
                 grid-template-areas:
                     'title'

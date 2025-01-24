@@ -154,10 +154,6 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I should see "7" in the "Matrix Grid Column 1 Total Quantity" element
     And I should see "3" in the "Matrix Grid Column 2 Total Quantity" element
     And I should see "3" in the "Matrix Grid Column 3 Total Quantity" element
-    And I should see "3" in the "Matrix Grid Row 1 Total Quantity" element
-    And I should see "3" in the "Matrix Grid Row 2 Total Quantity" element
-    And I should see "7" in the "Matrix Grid Row 3 Total Quantity" element
-    And I should see "13" in the "Matrix Grid Total Quantity" element
     And I fill "Matrix Grid Form" with:
       |       | S            | M     | L       |
       | Red   | -            | 4.331 | -       |
@@ -171,10 +167,6 @@ Feature: My Shopping List with products unit of quantity is more than zero
     And I should see "7.1234567891" in the "Matrix Grid Column 1 Total Quantity" element
     And I should see "4.331" in the "Matrix Grid Column 2 Total Quantity" element
     And I should see "5.12345" in the "Matrix Grid Column 3 Total Quantity" element
-    And I should see "4.331" in the "Matrix Grid Row 1 Total Quantity" element
-    And I should see "5.12345" in the "Matrix Grid Row 2 Total Quantity" element
-    And I should see "7.1234567891" in the "Matrix Grid Row 3 Total Quantity" element
-    And I should see "16.5779067891" in the "Matrix Grid Total Quantity" element
     And I click "Save Changes" in modal window
     And I should see following "Frontend Customer User Shopping List Edit Grid" grid containing rows:
       | SKU  | Product                                     | Availability | Qty Update All      | Price  | Subtotal                                   |

@@ -1,0 +1,20 @@
+/* @theme: default; */
+
+.matrix-order-widget-field {
+    min-width: $matrix-order-widget-field-min-width;
+    line-height: $matrix-order-widget-field-line-height;
+
+    &__inner {
+        padding-block: $matrix-order-widget-field-inner-padding-block;
+        padding-inline: $matrix-order-widget-field-inner-padding-inline;
+        border-radius: $matrix-order-widget-field-inner-border-radius;
+
+        &--dark {
+            background-color: $matrix-order-widget-field-inner-dark-background-color;
+        }
+
+        &.valid {
+            font-weight: $matrix-order-widget-field-inner-valid-font-weight;
+        }
+    }
+}

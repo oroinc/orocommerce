@@ -1,0 +1,125 @@
+/* @theme: default; */
+
+.matrix-order-widget-table {
+    width: $matrix-order-widget-table-width;
+    border-collapse: $matrix-order-widget-table-border-collapse;
+
+    &__head {
+        &-cell {
+            background: $matrix-order-widget-table-head-cell-background;
+            font-weight: $matrix-order-widget-table-head-cell-font-weight;
+            text-align: $matrix-order-widget-table-head-cell-text-align;
+            color: $matrix-order-widget-table-head-cell-color;
+            padding-block: $matrix-order-widget-table-head-cell-padding-block;
+            padding-inline: $matrix-order-widget-table-head-cell-padding-inline;
+            position: $matrix-order-widget-table-head-cell-position;
+            inset-block-start: $matrix-order-widget-table-head-cell-inset-block-start;
+            z-index: $matrix-order-widget-table-head-cell-z-index;
+
+            &:first-child {
+                border-inline-end: $matrix-order-widget-table-head-cell-first-child-border-inline-end;
+                padding-inline: $matrix-order-widget-table-head-cell-first-child-padding-inline;
+                inset-inline-start: $matrix-order-widget-table-head-cell-first-child-inset-inline-start;
+                z-index: $matrix-order-widget-table-head-cell-first-child-z-index;
+            }
+
+            &:last-child {
+                padding-inline-end: $matrix-order-widget-table-head-cell-last-child-padding-inline-end;
+            }
+
+            &--subtotal {
+                width: $matrix-order-widget-table-head-cell-subtotal-width;
+                text-align: $matrix-order-widget-table-head-cell-subtotal-text-align;
+
+                &:last-child {
+                    padding-inline-end: $matrix-order-widget-table-head-cell-subtotal-last-child-padding-inline-end;
+                }
+            }
+        }
+    }
+
+    &__body {
+        &-head {
+            background: $matrix-order-widget-table-body-head-background;
+            min-width: $matrix-order-widget-table-body-head-min-width;
+            font-weight: $matrix-order-widget-table-body-head-font-weight;
+            text-align: $matrix-order-widget-table-body-head-text-align;
+            color: $matrix-order-widget-table-body-head-color;
+            border-inline-end: $matrix-order-widget-table-body-head-border-inline-end;
+            padding-block-end: $matrix-order-widget-table-body-head-padding-block-end;
+            padding-inline: $matrix-order-widget-table-body-head-padding-inline;
+            position: $matrix-order-widget-table-body-head-position;
+            inset-inline-start: $matrix-order-widget-table-body-head-inset-inline-start;
+            z-index: $matrix-order-widget-table-body-head-z-index;
+        }
+
+        &-cell {
+            color: $matrix-order-widget-table-body-cell-color;
+            padding-block-end: $matrix-order-widget-table-body-cell-padding-block-end;
+            padding-inline-start: $matrix-order-widget-table-body-cell-padding-inline-start;
+
+            &:last-child {
+                padding-inline-end: $matrix-order-widget-table-body-cell-last-child-padding-inline-end;
+            }
+
+            &--subtotal {
+                width: $matrix-order-widget-table-body-cell-subtotal-width;
+                text-align: $matrix-order-widget-table-body-cell-subtotal-text-align;
+            }
+        }
+
+        &-row:first-child & {
+            &-head,
+            &-cell {
+                padding-block-start: $matrix-order-widget-table-body-head-cell-padding-block-start;
+            }
+        }
+    }
+
+    &__footer {
+        &-head {
+            background: $matrix-order-widget-table-footer-head-background;
+            font-weight: $matrix-order-widget-table-footer-head-font-weight;
+            text-align: $matrix-order-widget-table-footer-head-text-align;
+            color: $matrix-order-widget-table-footer-head-color;
+            border-inline-end: $matrix-order-widget-table-footer-head-border-inline-end;
+            padding-block: $matrix-order-widget-table-footer-head-padding-block;
+            padding-inline: $matrix-order-widget-table-footer-head-padding-inline;
+            position: $matrix-order-widget-table-footer-head-position;
+            inset-inline-start: $matrix-order-widget-table-footer-head-inset-inline-start;
+            inset-block-end: $matrix-order-widget-table-footer-head-inset-block-end;
+            z-index: $matrix-order-widget-table-footer-head-z-index;
+        }
+
+        &-cell {
+            background: $matrix-order-widget-table-footer-cell-background;
+            padding-block: $matrix-order-widget-table-footer-cell-padding-block;
+            padding-inline: $matrix-order-widget-table-footer-cell-padding-inline;
+            position: $matrix-order-widget-table-footer-cell-position;
+            inset-block-end: $matrix-order-widget-table-footer-cell-inset-block-end;
+            z-index: $matrix-order-widget-table-footer-cell-z-index;
+
+            &:last-child {
+                padding-inline-end: $matrix-order-widget-table-footer-cell-last-child-padding-inline-end;
+            }
+
+            &--subtotal {
+                width: $matrix-order-widget-table-footer-cell-subtotal-width;
+                text-align: $matrix-order-widget-table-footer-cell-subtotal-text-align;
+
+                &:last-child {
+                    padding-inline-end: $matrix-order-widget-table-footer-cell-subtotal-last-child-padding-inline-end;
+                }
+            }
+        }
+
+        &-total {
+            color: $matrix-order-widget-table-footer-total-color;
+
+            &.valid {
+                font-weight: $matrix-order-widget-table-footer-total-valid-font-weight;
+                color: $matrix-order-widget-table-footer-total-valid-color;
+            }
+        }
+    }
+}

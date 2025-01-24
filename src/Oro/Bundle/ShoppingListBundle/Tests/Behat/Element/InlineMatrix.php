@@ -40,7 +40,10 @@ class InlineMatrix extends Table
     {
         return array_map(function (NodeElement $element) use ($elementName) {
             return $this->elementFactory->wrapElement($elementName, $element);
-        }, $this->findAll('css', '.matrix-order-widget__grid-body > .matrix-order-widget__form__row'));
+        }, $this->findAll('css', '
+            .matrix-order-widget__grid-body > .matrix-order-widget__form__row,
+            .matrix-order-widget-table__body > .matrix-order-widget-table__body-row
+        '));
     }
 
     /**
@@ -52,7 +55,7 @@ class InlineMatrix extends Table
     {
         return $this->elementFactory->wrapElement(
             $elementName,
-            $this->find('css', '.matrix-order-widget__grid-head-wrapper')
+            $this->find('css', '.matrix-order-widget__grid-head-wrapper,.matrix-order-widget-table__head-row')
         );
     }
 
@@ -86,7 +89,7 @@ class InlineMatrix extends Table
     {
         return $this->elementFactory->wrapElement(
             $elementName,
-            $this->find('css', '.matrix-order-widget__grid-side-wrapper')
+            $this->find('css', '.matrix-order-widget__grid-side-wrapper,.matrix-order-widget-table__body')
         );
     }
 

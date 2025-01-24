@@ -22,7 +22,7 @@ class InlineMatrixHeader extends TableHeader
         $headers = [];
 
         /** @var \DOMElement $th */
-        foreach ($crawler->filter('.matrix-order-widget__form__col') as $th) {
+        foreach ($crawler->filter('.matrix-order-widget__form__col,.matrix-order-widget-table__head-cell') as $th) {
             $currentHeader = trim($th->textContent);
             if (strtolower($currentHeader) === strtolower($headerText)) {
                 return $i;

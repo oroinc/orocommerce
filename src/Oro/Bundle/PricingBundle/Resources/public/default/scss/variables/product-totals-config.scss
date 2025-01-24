@@ -12,7 +12,8 @@ $product-totals-text-align: right !default;
 $product-totals-gap: spacing('md') spacing('lg') !default;
 $product-totals-btn-offset-inner: 3px 15px 2px 15px !default;
 
-$product-totals-nested-offset-inner: 0 16px !default;
+$product-totals-nested-offset-inner: 0 0 0 16px !default;
+$product-totals-nested-justify-content: space-between !default;
 
 $product-totals-wrapper-display: inline-flex !default;
 $product-totals-wrapper-background: get-color('neutral', 'grey1') !default;

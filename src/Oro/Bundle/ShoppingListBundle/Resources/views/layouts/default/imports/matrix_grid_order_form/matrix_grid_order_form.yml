@@ -1,0 +1,20 @@
+layout:
+    actions:
+        - '@setFormTheme':
+            themes: '@OroShoppingList/layouts/default/imports/matrix_grid_order_form/matrix_grid_order_form.html.twig'
+
+        - '@addTree':
+            items:
+                __form_start:
+                    blockType: form_start
+                __form_fields:
+                    blockType: form_fields
+                    options:
+                        render_rest: false
+                __form_end:
+                    blockType: form_end
+            tree:
+                __root:
+                    __form_start: ~
+                    __form_fields: ~
+                    __form_end: ~

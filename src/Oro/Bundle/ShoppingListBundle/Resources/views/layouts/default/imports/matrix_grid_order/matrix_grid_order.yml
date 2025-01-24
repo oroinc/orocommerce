@@ -1,25 +1,14 @@
 layout:
     imports:
         -
+            id: matrix_grid_order_form
+            root: __wrapper
+        -
             id: oro_product_totals
             root: __form_summary
     actions:
         - '@setBlockTheme':
             themes: '@OroShoppingList/layouts/default/imports/matrix_grid_order/matrix_grid_order.html.twig'
-        - '@setFormTheme':
-            themes: '@OroShoppingList/layouts/default/imports/matrix_grid_order/matrix_grid_order_form.html.twig'
-        - '@add':
-            id: __matrix_form_clear_button
-            blockType: button
-            parentId: __form_summary
-            prepend: true
-            options:
-                icon: close
-                attr:
-                    title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
-                    data-role: 'clear'
-                text:
-                    label: oro.frontend.shoppinglist.matrix_grid_order.clear.text
         - '@addTree':
             items:
                 __wrapper:
@@ -47,16 +36,20 @@ layout:
                     blockType: block
                 __header_product_sku:
                     blockType: block
-                __form_start:
-                    blockType: form_start
-                __form_fields:
-                    blockType: form_fields
-                    options:
-                        render_rest: false
-                __form_end:
-                    blockType: form_end
                 __form_summary:
                     blockType: container
+                    siblingId: __form_fields
+                    prepend: false
+                __matrix_form_clear_button:
+                    blockType: button
+                    prepend: true
+                    options:
+                        icon: close
+                        attr:
+                            title: oro.frontend.shoppinglist.matrix_grid_order.clear.tooltip
+                            data-role: 'clear'
+                        text:
+                            label: oro.frontend.shoppinglist.matrix_grid_order.clear.text
             tree:
                 __root:
                     __wrapper:
@@ -65,7 +58,5 @@ layout:
                             __header_product_attributes:
                                 __header_product_name: ~
                                 __header_product_sku: ~
-                        __form_start: ~
-                        __form_fields: ~
-                        __form_summary: ~
-                        __form_end: ~
+                        __form_summary:
+                            __matrix_form_clear_button: ~

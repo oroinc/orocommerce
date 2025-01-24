@@ -1,0 +1,20 @@
+/* @theme: default; */
+
+.matrix-order-widget-oneflow {
+    display: $matrix-order-widget-oneflow-display;
+    grid-template-columns: $matrix-order-widget-oneflow-grid-template-columns;
+    gap: $matrix-order-widget-oneflow-gap;
+
+    &__item {
+        display: $matrix-order-widget-oneflow-item-display;
+        grid-template-columns: $matrix-order-widget-oneflow-item-grid-template-columns;
+        gap: $matrix-order-widget-oneflow-item-gap;
+        align-items: $matrix-order-widget-oneflow-item-align-items;
+    }
+
+    &__label {
+        text-align: $matrix-order-widget-oneflow-label-text-align;
+        margin: $matrix-order-widget-oneflow-label-margin;
+        word-break: $matrix-order-widget-oneflow-label-word-break;
+    }
+}

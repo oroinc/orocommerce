@@ -1,0 +1,85 @@
+/* @theme: default; */
+
+$matrix-order-widget-table-width: min-content !default;
+$matrix-order-widget-table-border-collapse: separate !default;
+
+$matrix-order-widget-table-head-cell-background: get-color('neutral', 'grey1') !default;
+$matrix-order-widget-table-head-cell-font-weight: font-weight('semi-bold') !default;
+$matrix-order-widget-table-head-cell-text-align: start !default;
+$matrix-order-widget-table-head-cell-color: get-color('text', 'secondary') !default;
+$matrix-order-widget-table-head-cell-padding-block: spacing('md') !default;
+$matrix-order-widget-table-head-cell-padding-inline: #{spacing('lg') + 1px} 0 !default;
+$matrix-order-widget-table-head-cell-position: sticky !default;
+$matrix-order-widget-table-head-cell-inset-block-start: 0 !default;
+$matrix-order-widget-table-head-cell-z-index: z() !default;
+
+$matrix-order-widget-table-head-cell-first-child-border-inline-end: 1px solid get-color('neutral', 'grey2') !default;
+$matrix-order-widget-table-head-cell-first-child-padding-inline: spacing('base') !default;
+$matrix-order-widget-table-head-cell-first-child-inset-inline-start: 0 !default;
+$matrix-order-widget-table-head-cell-first-child-z-index: z() + 2 !default;
+
+$matrix-order-widget-table-head-cell-last-child-padding-inline-end: spacing('base') !default;
+
+$matrix-order-widget-table-head-cell-subtotal-width: 100% !default;
+$matrix-order-widget-table-head-cell-subtotal-text-align: end !default;
+
+$matrix-order-widget-table-head-cell-subtotal-last-child-padding-inline-end:
+    #{
+        $matrix-order-widget-table-head-cell-last-child-padding-inline-end + 13px
+    } !default;
+
+$matrix-order-widget-table-body-head-background: get-color('neutral', 'white-100') !default;
+$matrix-order-widget-table-body-head-min-width: 120px !default;
+$matrix-order-widget-table-body-head-font-weight: font-weight('semi-bold') !default;
+$matrix-order-widget-table-body-head-text-align: start !default;
+$matrix-order-widget-table-body-head-color: get-color('text', 'secondary') !default;
+$matrix-order-widget-table-body-head-border-inline-end: 1px solid get-color('neutral', 'grey2') !default;
+$matrix-order-widget-table-body-head-padding-block-end: spacing('md') !default;
+$matrix-order-widget-table-body-head-padding-inline: spacing('base') !default;
+$matrix-order-widget-table-body-head-position: sticky !default;
+$matrix-order-widget-table-body-head-inset-inline-start: 0 !default;
+$matrix-order-widget-table-body-head-z-index: z() + 1 !default;
+
+$matrix-order-widget-table-body-cell-color: get-color('text', 'secondary') !default;
+$matrix-order-widget-table-body-cell-padding-block-end: spacing('md') !default;
+$matrix-order-widget-table-body-cell-padding-inline-start: spacing('md') !default;
+
+$matrix-order-widget-table-body-cell-last-child-padding-inline-end: spacing('base') !default;
+
+$matrix-order-widget-table-body-cell-subtotal-width: 100% !default;
+$matrix-order-widget-table-body-cell-subtotal-text-align: end !default;
+
+$matrix-order-widget-table-body-head-cell-padding-block-start: spacing('md') !default;
+
+$matrix-order-widget-table-footer-head-background: get-color('neutral', 'grey1') !default;
+$matrix-order-widget-table-footer-head-font-weight: font-weight('semi-bold') !default;
+$matrix-order-widget-table-footer-head-text-align: start !default;
+$matrix-order-widget-table-footer-head-color: get-color('text', 'secondary') !default;
+$matrix-order-widget-table-footer-head-border-inline-end: 1px solid get-color('neutral', 'grey2') !default;
+$matrix-order-widget-table-footer-head-padding-block: spacing('md') !default;
+$matrix-order-widget-table-footer-head-padding-inline: spacing('base') !default;
+$matrix-order-widget-table-footer-head-position: sticky !default;
+$matrix-order-widget-table-footer-head-inset-inline-start: 0 !default;
+$matrix-order-widget-table-footer-head-inset-block-end: 0 !default;
+$matrix-order-widget-table-footer-head-z-index: z() + 2 !default;
+
+$matrix-order-widget-table-footer-cell-background: get-color('neutral', 'grey1') !default;
+$matrix-order-widget-table-footer-cell-padding-block: spacing('md') !default;
+$matrix-order-widget-table-footer-cell-padding-inline: #{spacing('lg') + 1px} 0 !default;
+$matrix-order-widget-table-footer-cell-position: sticky !default;
+$matrix-order-widget-table-footer-cell-inset-block-end: 0 !default;
+$matrix-order-widget-table-footer-cell-z-index: z() + 1 !default;
+
+$matrix-order-widget-table-footer-cell-last-child-padding-inline-end: spacing('base') !default;
+
+$matrix-order-widget-table-footer-cell-subtotal-width: 100% !default;
+$matrix-order-widget-table-footer-cell-subtotal-text-align: end !default;
+
+$matrix-order-widget-table-footer-cell-subtotal-last-child-padding-inline-end:
+    #{
+        $matrix-order-widget-table-footer-cell-last-child-padding-inline-end + 13px
+    } !default;
+
+$matrix-order-widget-table-footer-total-color: get-color('text', 'disabled') !default;
+$matrix-order-widget-table-footer-total-valid-font-weight: font-weight('semi-bold') !default;
+$matrix-order-widget-table-footer-total-valid-color: get-color('text', 'secondary') !default;

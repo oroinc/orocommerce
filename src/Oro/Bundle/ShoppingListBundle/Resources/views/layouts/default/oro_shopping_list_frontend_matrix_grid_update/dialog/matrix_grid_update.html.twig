@@ -6,10 +6,11 @@
             prices: prices,
             autoRender: true
         },
-        'data-columns-count': form.rows[0].columns|length
+        'data-columns-count': form.vars.columns|length
     }) %}
 
     {% do block|merge_context({
+        form: form,
         prices: prices
     }) %}
 
@@ -18,11 +19,7 @@
     </div>
 {% endblock %}
 
-{% block _matrix_grid_update_form_fields_widget %}
-    {{ form_widget(form) }}
-{% endblock %}
-
 {% block _matrix_grid_update_form_end_widget %}
     {{ form_widget(form._token) }}
-    {{ form_end(form,  {'render_rest': false}) }}
+    {{ form_end(form, {'render_rest': false}) }}
 {% endblock %}

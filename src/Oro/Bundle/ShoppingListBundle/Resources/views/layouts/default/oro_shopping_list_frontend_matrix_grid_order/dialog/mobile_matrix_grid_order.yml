@@ -2,8 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroShoppingList/layouts/default/oro_shopping_list_frontend_matrix_grid_order/dialog/mobile_matrix_grid_order.html.twig'
-        - '@setFormTheme':
-            themes: '@OroShoppingList/layouts/default/oro_shopping_list_frontend_matrix_grid_order/dialog/mobile_matrix_grid_order_form.html.twig'
         - '@move':
             id: matrix_grid_order_form_actions_submit
             parentId: widget_actions
@@ -32,14 +30,6 @@ layout:
                 text:
                     label: 'oro.frontend.shoppinglist.matrix_grid_order.close'
                 attr:
-                    class: 'btn--outlined btn--size-small '
+                    class: 'btn--outlined'
             prepend: true
-        - '@setOption':
-            id: matrix_grid_order_form_actions_submit
-            optionName: attr.class
-            optionValue: 'btn--size-small'
-        - '@appendOption':
-            id: matrix_grid_order_matrix_form_clear_button
-            optionName: attr.class
-            optionValue: 'btn--size-small clear-button--mobile'
     conditions: 'context["is_mobile"]'

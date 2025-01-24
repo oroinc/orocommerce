@@ -3,6 +3,9 @@ styles:
         - 'bundles/oroshoppinglist/default/scss/settings/global-settings.scss'
 
         - 'bundles/oroshoppinglist/default/scss/variables/matrix-order-widget-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/matrix-order-widget-field-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/matrix-order-widget-table-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/matrix-order-widget-oneflow-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/product-kit-dialog-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/product-kit-items-grid-config.scss'
         - 'bundles/oroshoppinglist/default/scss/variables/product-kit-items-table-config.scss'
@@ -45,6 +48,10 @@ styles:
         - 'bundles/oroshoppinglist/default/scss/components/inline-editing/line-item-editing.scss'
         - 'bundles/oroshoppinglist/default/scss/components/shopping-list-move-action.scss'
         - 'bundles/oroshoppinglist/default/scss/components/matrix-order-widget.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/matrix-grid-update-container.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/matrix-order-widget-field.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/matrix-order-widget-table.scss'
+        - 'bundles/oroshoppinglist/default/scss/components/matrix-order-widget-oneflow.scss'
 
         - 'bundles/oroshoppinglist/default/scss/components/product-kit-dialog.scss'
         - 'bundles/oroshoppinglist/default/scss/components/product-kit-items.scss'

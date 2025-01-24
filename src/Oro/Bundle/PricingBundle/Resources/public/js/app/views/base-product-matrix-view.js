@@ -4,8 +4,6 @@ define(function(require) {
     const BaseView = require('oroui/js/app/views/base/view');
     const NumberFormatter = require('orolocale/js/formatter/number');
     const PricesHelper = require('oropricing/js/app/prices-helper');
-    const ScrollView = require('orofrontend/js/app/views/scroll-view');
-    const FitMatrixView = require('orofrontend/js/app/views/fit-matrix-view');
     const quantityHelper = require('oroproduct/js/app/quantity-helper');
     const numeral = require('numeral');
     const $ = require('jquery');
@@ -13,10 +11,6 @@ define(function(require) {
 
     const BaseProductMatrixView = BaseView.extend({
         autoRender: false,
-
-        optionNames: BaseView.prototype.optionNames.concat([
-            'dimension'
-        ]),
 
         events: {
             'input [data-name="field__quantity"]:enabled': '_onQuantityChange',
@@ -29,8 +23,6 @@ define(function(require) {
         prices: null,
 
         minValue: 1,
-
-        dimension: null,
 
         /**
          * @inheritdoc
@@ -46,19 +38,6 @@ define(function(require) {
             BaseProductMatrixView.__super__.initialize.call(this, options);
             this.initModel(options);
             this.setPrices(options);
-            if (_.isDesktop()) {
-                if (this.dimension === 1) {
-                    this.subview('fitMatrixView', new FitMatrixView({
-                        el: this.el
-                    }));
-                }
-            }
-
-            if (this.dimension !== 1 && this.$el.find('[data-scroll-view]').length) {
-                this.subview('scrollView', new ScrollView({
-                    el: this.el
-                }));
-            }
 
             this.setDefaultTotals();
             this.updateTotals();

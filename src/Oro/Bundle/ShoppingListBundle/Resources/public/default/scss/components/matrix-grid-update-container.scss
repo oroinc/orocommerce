@@ -1,0 +1,18 @@
+/* @theme: default; */
+
+.ui-dialog.fullscreen {
+    .matrix-grid-update-container {
+        height: 100%;
+        display: grid;
+        grid-template-rows: minmax(0, 1fr) auto;
+        grid-template-columns: minmax(0, 1fr);
+        justify-items: start;
+
+        form,
+        .matrix-order-widget-container,
+        .scroll-shadow {
+            width: 100%;
+            height: 100%;
+        }
+    }
+}

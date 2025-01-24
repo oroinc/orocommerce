@@ -19,11 +19,10 @@
     }) %}
 
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' {{ class_prefix }}',
+        '~class': class_prefix,
         '~data-page-component-view': {
             view: 'oropricing/js/app/views/base-product-matrix-view',
             prices: prices,
-            dimension: form.vars.dimensions,
             autoRender: true
         }
     }) %}
@@ -97,7 +96,7 @@
         shoppingListId: shoppingList is not empty ? shoppingList.id : null
     }) %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__form fields-row',
+        '~class': " #{class_prefix}__form",
         'novalidate': 'novalidate'
     }) %}
     {{ parent_block_widget(block) }}
@@ -105,7 +104,7 @@
 
 {% block __matrix_grid_order__form_summary_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': class_prefix ~ '__totals ',
+        '~class': " #{class_prefix}__totals",
         'data-role': 'totals'
     }) %}
 
@@ -130,7 +129,7 @@
 
 {% block __matrix_grid_order__matrix_form_clear_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' btn--flex'
+        '~class': ' btn--flat'
     }) %}
 
     {% if totals.quantity|default(0) == 0 %}

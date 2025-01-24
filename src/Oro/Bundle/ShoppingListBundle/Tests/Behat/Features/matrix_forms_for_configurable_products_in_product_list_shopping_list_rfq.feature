@@ -113,14 +113,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I click "Configure" on row "ConfigurableProductB" in grid
     Then I should see an "Matrix Grid Form" element
     And I should see next rows in "Matrix Grid Form" table
-      | Value 21 | Value 22 | Value 23 | Qty | Subtotal |
-      | 1        | 1        | N/A      | 2   | $24.00   |
-      | 1        | N/A      | 1        | 2   | $24.00   |
-      |          |          | N/A      | 0   | $0.00    |
-      | N/A      | N/A      | 1        | 1   | $12.00   |
+      | Value 21 | Value 22 | Value 23 |
+      | 1        | 1        | N/A      |
+      | 1        | N/A      | 1        |
+      |          |          | N/A      |
+      | N/A      | N/A      | 1        |
     And I should see an "Clear All Button" element
-    And I should see "5" in the "Matrix Grid Total Quantity" element
-    And I should see "$60.00" in the "Matrix Grid Total Price" element
     And I click "Clear All Product Variants"
     Then I should see next rows in "Matrix Grid Form" table
       | Value 21 | Value 22 | Value 23 |
@@ -128,8 +126,6 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
-    And I should see "0" in the "Matrix Grid Total Quantity" element
-    And I should see "$0.00" in the "Matrix Grid Total Price" element
     And I click "Save Changes" in modal window
     And I should see "ConfigurableProductB" in grid
     And I click "Select Variants" on row "ConfigurableProductB" in grid
@@ -275,16 +271,12 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
       |          | N/A      |          |
       |          |          | N/A      |
       | N/A      | N/A      |          |
-    And I should see "0" in the "Dialog Matrix Grid Total Quantity" element
-    And I should see "$0.00" in the "Dialog Matrix Grid Total Price" element
     When I fill "Matrix Grid Form" with:
       |          | Value 21 | Value 22 | Value 23 |
       | Value 11 | 1        | 1        | -        |
       | Value 12 | 1        | -        | 1        |
       | Value 13 |          |          | -        |
       | Value 14 | -        | -        | 1        |
-    Then I should see "5" in the "Dialog Matrix Grid Total Quantity" element
-    And I should see "$60.00" in the "Dialog Matrix Grid Total Price" element
     And I should see an "Clear All Button" element
     When I click "Clear All Product Variants"
     And I click "Save Changes" in modal window
@@ -450,19 +442,13 @@ Feature: Matrix forms for configurable products in product list, shopping list, 
     And I follow "Shopping List" link within flash message "Shopping list \"Shopping List\" was updated successfully"
     And I click "Group Product Variants"
     And I click "Configure" on row "ConfigurableProductA" in grid
-    Then I should see an "Matrix Grid Form" element
-    And I should see next rows in "Matrix Grid Form" table
-      | QTY |
-      | 1   |
-      |     |
-      | N/A |
-      | 1   |
-    And I fill "Matrix Grid Form" with:
-      |          | QTY |
-      | Value 11 | -   |
-      | Value 12 | 2   |
-      | Value 13 | -   |
-      | Value 14 |     |
+    Then I should see an "One Dimensional Matrix Grid Form" element
+    And I should see next rows in "One Dimensional Matrix Grid Form" table
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | 1        |          | N/A      | 1        |
+    And I fill "One Dimensional Matrix Grid Form" with:
+      | Value 11 | Value 12 | Value 13 | Value 14 |
+      | -        | 2        | -        |          |
     And I click "Save Changes"
     And I click "ConfigurableProductA"
     Then I should see an "One Dimensional Matrix Grid Form" element

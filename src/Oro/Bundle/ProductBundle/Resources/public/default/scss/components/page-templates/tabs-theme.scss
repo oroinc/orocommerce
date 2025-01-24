@@ -7,6 +7,7 @@
             margin-top: $product-view-additional-tabs-theme-top-offset;
             display: grid;
             gap: 48px;
+            grid-template-columns: minmax(0, 1fr);
         }
     }
 }

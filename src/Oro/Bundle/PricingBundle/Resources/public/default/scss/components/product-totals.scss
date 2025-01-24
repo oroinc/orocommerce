@@ -4,7 +4,6 @@
     display: $product-totals-display;
     align-items: $product-totals-align-items;
     flex-wrap: $product-totals-flex-wrap;
-    justify-content: $product-totals-justify-content;
     gap: $product-totals-gap;
 
     min-width: $product-totals-min-width;
@@ -15,6 +14,7 @@
 
     &--nested {
         padding: $product-totals-nested-offset-inner;
+        justify-content: $product-totals-nested-justify-content;
     }
 
     &__controls {

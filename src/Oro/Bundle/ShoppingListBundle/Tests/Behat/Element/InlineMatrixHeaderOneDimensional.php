@@ -22,7 +22,7 @@ class InlineMatrixHeaderOneDimensional extends TableHeader
         $headers = [];
 
         /** @var \DOMElement $th */
-        foreach ($crawler->filter('.matrix-order-widget__one-line > p') as $th) {
+        foreach ($crawler->filter('.matrix-order-widget__one-line > p,.matrix-order-widget-oneflow__label') as $th) {
             $currentHeader = trim($th->textContent);
             if (strtolower($currentHeader) === strtolower($headerText)) {
                 return $i;

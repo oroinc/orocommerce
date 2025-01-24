@@ -34,7 +34,10 @@ class InlineMatrixOneDimensional extends Table
     {
         return array_map(function (NodeElement $element) use ($elementName) {
             return $this->elementFactory->wrapElement($elementName, $element);
-        }, $this->findAll('css', '.matrix-order-widget__grid-body > .matrix-order-widget__form__row'));
+        }, $this->findAll('css', '
+            .matrix-order-widget__grid-body > .matrix-order-widget__form__row,
+            .matrix-order-widget-oneflow
+        '));
     }
 
     /**
@@ -46,7 +49,10 @@ class InlineMatrixOneDimensional extends Table
     {
         return $this->elementFactory->wrapElement(
             $elementName,
-            $this->find('css', '.matrix-order-widget__grid-body > .matrix-order-widget__form__row')
+            $this->find('css', '
+                .matrix-order-widget__grid-body > .matrix-order-widget__form__row,
+                .matrix-order-widget-oneflow__item
+            ')
         );
     }
 

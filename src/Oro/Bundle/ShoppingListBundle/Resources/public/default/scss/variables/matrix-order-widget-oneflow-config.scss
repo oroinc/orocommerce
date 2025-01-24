@@ -1,0 +1,14 @@
+/* @theme: default; */
+
+$matrix-order-widget-oneflow-display: grid !default;
+$matrix-order-widget-oneflow-grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !default;
+$matrix-order-widget-oneflow-gap: spacing('lg') !default;
+
+$matrix-order-widget-oneflow-item-display: grid !default;
+$matrix-order-widget-oneflow-item-grid-template-columns: minmax(0, 60px) minmax(90px, 1fr) !default;
+$matrix-order-widget-oneflow-item-gap: spacing('sm') spacing('base') !default;
+$matrix-order-widget-oneflow-item-align-items: center !default;
+
+$matrix-order-widget-oneflow-label-text-align: end !default;
+$matrix-order-widget-oneflow-label-margin: 0 !default;
+$matrix-order-widget-oneflow-label-word-break: break-all !default;

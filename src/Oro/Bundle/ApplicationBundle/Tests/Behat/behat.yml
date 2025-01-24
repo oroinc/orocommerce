@@ -286,7 +286,7 @@ oro_behat_extension:
     Matrix Grid Form:
       selector:
         type: xpath
-        locator: '//*[@data-matrix-grid-container and contains(@class, "matrix-order-widget__grid--multi-rows")]/ancestor::form[@name="matrix_collection"]'
+        locator: '//*[@data-matrix-grid-container]/ancestor::form[@name="matrix_collection"]'
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrix
 
     Matrix Grid Form Totals:
@@ -308,22 +308,22 @@ oro_behat_extension:
       selector: '.ui-dialog div[data-role="total-quantity"]'
 
     Matrix Grid Column 1 Total Quantity:
-      selector: 'div[data-columns-quantity="1"]'
+      selector: 'div[data-columns-quantity="0"]'
 
     Matrix Grid Column 2 Total Quantity:
-      selector: 'div[data-columns-quantity="2"]'
+      selector: 'div[data-columns-quantity="1"]'
 
     Matrix Grid Column 3 Total Quantity:
-      selector: 'div[data-columns-quantity="3"]'
+      selector: 'div[data-columns-quantity="2"]'
 
     Matrix Grid Row 1 Total Quantity:
-      selector: 'div[data-rows-quantity="1"]'
+      selector: 'div[data-rows-quantity="0"]'
 
     Matrix Grid Row 2 Total Quantity:
-      selector: 'div[data-rows-quantity="2"]'
+      selector: 'div[data-rows-quantity="1"]'
 
     Matrix Grid Row 3 Total Quantity:
-      selector: 'div[data-rows-quantity="3"]'
+      selector: 'div[data-rows-quantity="2"]'
 
     Clear All Button:
       selector:
@@ -333,27 +333,27 @@ oro_behat_extension:
     One Dimensional Matrix Grid Form:
       selector:
         type: xpath
-        locator: '//*[@data-matrix-grid-container and not(contains(@class, "matrix-order-widget__grid--multi-rows"))]/ancestor::form[@name="matrix_collection"]'
+        locator: '//*[@data-matrix-grid-container]/ancestor::form[@name="matrix_collection"]'
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixOneDimensional
 
     InlineMatrixHeader:
-      selector: '.matrix-order-widget__grid-head-wrapper'
+      selector: '.matrix-order-widget-table__head,.matrix-order-widget__grid-head-wrapper'
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixHeader
 
     InlineMatrixHeaderOneDimensional:
-      selector: '.matrix-order-widget__form__row'
+      selector: '.matrix-order-widget-oneflow,.matrix-order-widget__form__row'
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixHeaderOneDimensional
 
     InlineMatrixRowHeader:
-      selector: '.matrix-order-widget__grid-side-wrapper'
+      selector: '.matrix-order-widget-table__body,.matrix-order-widget__grid-side-wrapper'
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRowHeader
 
     InlineMatrixRow:
-      selector: '.matrix-order-widget__form__col'
+      selector: '.matrix-order-widget-table__body-row,.matrix-order-widget__form__col'
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRow
 
     InlineMatrixRowOneDimensional:
-      selector: '.matrix-order-widget__form__row'
+      selector: '.matrix-order-widget-oneflow,.matrix-order-widget__form__row'
       class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\InlineMatrixRowOneDimensional
 
     Configurable Product Shopping List Form:

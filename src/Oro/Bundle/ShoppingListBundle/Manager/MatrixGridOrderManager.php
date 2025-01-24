@@ -83,18 +83,20 @@ class MatrixGridOrderManager
                 }
                 $row->columns = [$column];
             } else {
-                foreach ($variantFields[1]['values'] as $i => $secondValue) {
+                foreach ($variantFields[1]['values'] as $secondValue) {
+                    $column = new MatrixCollectionColumn();
+                    $column->label = $secondValue['label'];
+
                     if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
-                        $column = new MatrixCollectionColumn();
-                        $column->label = $secondValue['label'];
                         $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
                         $column->quantity = $this->getQuantity(
                             $product->getPrimaryUnitPrecision()->getUnit(),
                             $column->product,
                             $shoppingList
                         );
-                        $row->columns[$i] = $column;
                     }
+
+                    $row->columns[] = $column;
                 }
             }
 
@@ -129,11 +131,14 @@ class MatrixGridOrderManager
             return $collection;
         }
 
+        $collection->columns = $variantFields[1]['values'] ?? $variantFields[0]['values'] ;
+        $collection->dimensions = \count($variantFields);
+
         foreach ($variantFields[0]['values'] as $firstValue) {
             $row = new MatrixCollectionRow();
             $row->label = $firstValue['label'];
 
-            if (count($variantFields) == 1) {
+            if ($collection->dimensions == 1) {
                 $column = new MatrixCollectionColumn();
                 if (isset($availableVariants[$firstValue['value']]['_product'])) {
                     $column->product = $availableVariants[$firstValue['value']]['_product'];

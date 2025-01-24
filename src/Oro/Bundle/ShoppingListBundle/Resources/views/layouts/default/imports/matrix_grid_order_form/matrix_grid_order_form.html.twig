@@ -1,0 +1,211 @@
+{% block _matrix_collection_widget %}
+    {% set class_prefix = 'matrix-order-widget' %}
+    {% set enableAdditionalColumns = enableAdditionalColumns|default(false) %}
+    {% set enableOneflowMode = enableOneflowMode|default(true) %}
+
+    <div class="{{ class_prefix }}-container" data-matrix-grid-container>
+        {% if form.vars.dimensions == 1 and enableOneflowMode %}
+            {{ block('_matrix_collection_widget_oneflow') }}
+        {% elseif form.vars.dimensions > 1 or enableOneflowMode == false %}
+            {{ block('_matrix_collection_widget_table') }}
+        {% endif %}
+        {{ block('_matrix_collection_widget_errors') }}
+    </div>
+{% endblock %}
+
+{#=== Matrix Mode ===#}
+{% block _matrix_collection_widget_table %}
+    <div class="scroll-shadow horizontal-scrolling"
+            data-page-component-view="orofrontend/js/app/views/scroll-shadow-view"
+            data-page-component-options="{{ {
+                scrollOffsets: {
+                    'left': 'th:first'
+                }
+            }|json_encode }}"
+            data-scroll-target=""
+    >
+        <table class="{{ class_prefix }}-table">
+            {{ block('_matrix_collection_widget_table_thead') }}
+            {{ block('_matrix_collection_widget_table_tbody') }}
+            {{ block('_matrix_collection_widget_table_tfoot') }}
+        </table>
+    </div>
+{% endblock %}
+
+{# Matrix thead #}
+{% block _matrix_collection_widget_table_thead %}
+    <thead class="{{ class_prefix }}-table__head">
+        <tr class="{{ class_prefix }}-table__head-row">
+            <th class="{{ class_prefix }}-table__head-cell"></th>
+
+            {% if form.vars.dimensions > 1 %}
+                {% for column in form.vars.columns %}
+                <th class="{{ class_prefix }}-table__head-cell">
+                    {{- column.label|default(column.vars.label|default('')) -}}
+                </th>
+                {% endfor %}
+            {% endif %}
+
+            {% if enableAdditionalColumns %}
+                <th class="{{ class_prefix }}-table__head-cell">
+                    {{- 'oro.frontend.shoppinglist.matrix_grid_order.qty'|trans -}}
+                </th>
+
+                <th class="{{ class_prefix }}-table__head-cell {{ class_prefix }}-table__head-cell--subtotal">
+                    {{- 'oro.frontend.shoppinglist.matrix_grid_order.subtotal'|trans -}}
+                </th>
+            {% endif %}
+        </tr>
+    </thead>
+{% endblock %}
+
+{# Matrix tbody #}
+{% block _matrix_collection_widget_table_tbody %}
+    <tbody class="{{ class_prefix }}-table__body">
+        {% for row in form.rows %}
+            {% set rowIndex = loop.index0 %}
+            <tr class="{{ class_prefix }}-table__body-row">
+                <th class="{{ class_prefix }}-table__body-head">
+                    {{- row.vars.label -}}
+                </th>
+
+                {% for cell in row.columns %}
+                    {% set cellIndex = loop.index0 %}
+                    <td class="{{ class_prefix }}-table__body-cell">
+                        {{- block('_matrix_collection_widget_table_tbody_body_cell_content') -}}
+                    </td>
+                {% endfor %}
+
+                {% if enableAdditionalColumns %}
+                    {% if form.vars.columns|length > 1 and form.vars.dimensions > 1 %}
+                    <td class="{{ class_prefix }}-table__body-cell">
+                        <div class="{{ class_prefix }}-field">
+                            <div class="{{ class_prefix }}-field__inner" data-rows-quantity="{{ rowIndex }}">
+                                {{- form.vars.rowsQty[rowIndex] -}}
+                            </div>
+                        </div>
+                    </td>
+                    {% endif %}
+
+                    <td class="{{ class_prefix }}-table__body-cell {{ class_prefix }}-table__body-cell--subtotal">
+                        <div class="{{ class_prefix }}-field">
+                            <div class="{{ class_prefix }}-field__inner" data-rows-price="{{ rowIndex }}">0</div>
+                        </div>
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+    </tbody>
+{% endblock %}
+
+{% block _matrix_collection_widget_table_tbody_body_cell_content %}
+    <div class="{{ class_prefix }}-field">
+        {% if cell.vars.productId == null %}
+            <div class="{{ class_prefix }}-field__inner">
+                {{- 'oro.frontend.shoppinglist.matrix_grid_order.not_available'|trans -}}
+            </div>
+        {% else %}
+            {{ form_widget(cell, {
+                'attr': {
+                    'data-product-id': cell.vars.productId,
+                    'data-index': {
+                        'row': rowIndex,
+                        'column': cellIndex
+                    }|json_encode
+                }
+            }) }}
+        {% endif %}
+    </div>
+{% endblock %}
+
+{# Matrix tfoot #}
+{% block _matrix_collection_widget_table_tfoot %}
+    <tfoot class="{{ class_prefix }}-table__footer">
+        <tr class="{{ class_prefix }}-table__footer-row">
+            <th class="{{ class_prefix }}-table__footer-head">
+                {{- 'oro.frontend.shoppinglist.matrix_grid_order.qty'|trans -}}
+            </th>
+
+            {% for qty in form.vars.columnsQty %}
+                <td class="{{ class_prefix }}-table__footer-cell">
+                    {{ block('_matrix_collection_widget_table_tfoot_body_cell_content') }}
+                </td>
+            {% endfor %}
+
+            {% if enableAdditionalColumns %}
+                {% if form.vars.columns|length  > 1 and form.vars.dimensions > 1 %}
+                    <td class="{{ class_prefix }}-table__footer-cell">
+                        <div class="{{ class_prefix }}-table__footer-total" data-role="total-quantity">
+                            {{- form.vars.rowsQty|reduce((sum, item) => sum + item, 0) -}}
+                        </div>
+                    </td>
+                {% endif %}
+
+                <td class="{{ class_prefix }}-table__footer-cell {{ class_prefix }}-table__footer-cell--subtotal">
+                    <div class="{{ class_prefix }}-table__footer-total" data-role="total-price"></div>
+                </td>
+            {% endif %}
+        </tr>
+    </tfoot>
+{% endblock %}
+
+{% block _matrix_collection_widget_table_tfoot_body_cell_content %}
+    <div class="{{ class_prefix }}-table__footer-total{{ qty|default(0) > 0 ? ' valid' }}"
+         data-columns-quantity="{{ loop.index0 }}">
+        {{- qty|default(0)|oro_format_decimal -}}
+    </div>
+{% endblock %}
+
+{#=== OneFlow Mode ===#}
+{% block _matrix_collection_widget_oneflow %}
+    <div class="{{ class_prefix }}-oneflow">
+        {% for row in form.rows %}
+            {% set rowIndex = loop.index0 %}
+            {% for cell in row.columns %}
+                {% set cellIndex = loop.index0 %}
+                {{ block('_matrix_collection_widget_oneflow_item') }}
+            {% endfor %}
+        {% endfor %}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_oneflow_item %}
+    <div class="{{ class_prefix }}-oneflow__item">
+        {{ block('_matrix_collection_widget_oneflow_label') }}
+        {{ block('_matrix_collection_widget_oneflow_cell') }}
+    </div>
+{% endblock %}
+
+{% block _matrix_collection_widget_oneflow_label %}
+    <label {% if cell.vars.productId != null %}for="{{- cell['quantity'].vars.id -}}"{% endif %}
+           class="{{ class_prefix }}-oneflow__label label">
+        {{- row.vars.label -}}
+    </label>
+{% endblock %}
+
+{% block _matrix_collection_widget_oneflow_cell %}
+    <div class="{{ class_prefix }}-oneflow__cell">
+        <div class="{{ class_prefix }}-field">
+            {% if cell.vars.productId == null %}
+                <div class="{{ class_prefix }}-field__inner {{ class_prefix }}-field__inner--dark">
+                    {{- 'oro.frontend.shoppinglist.matrix_grid_order.not_available'|trans -}}
+                </div>
+            {% else %}
+                {{ form_widget(cell, {
+                    'attr': {
+                        'data-product-id': cell.vars.productId,
+                        'data-index': {
+                            'row': rowIndex,
+                            'column': cellIndex
+                        }|json_encode
+                    }
+                }) }}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}
+
+{#=== Errors ===#}
+{% block _matrix_collection_widget_errors %}
+    <div class="fields-row-error"></div>
+{% endblock %}

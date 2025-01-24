@@ -17,7 +17,13 @@ class InlineMatrixRow extends TableRow
     public function getCellByNumber($number)
     {
         $number = (int) $number;
-        $columns = $this->findAll('css', '.matrix-order-widget__form__col');
+        $selector = '
+            .matrix-order-widget__form__col,
+            .matrix-order-widget-table__body-head,
+            .matrix-order-widget-table__body-cell,
+            .matrix-order-widget-oneflow__cell
+        ';
+        $columns = $this->findAll('css', $selector);
         self::assertArrayHasKey($number, $columns);
 
         return $columns[$number];
