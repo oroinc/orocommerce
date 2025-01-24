@@ -4,29 +4,43 @@ define(function(require) {
     const $ = require('jquery');
     const _ = require('underscore');
     const mediator = require('oroui/js/mediator');
+    const viewportManager = require('oroui/js/viewport-manager').default;
+    const moduleConfig = require('module-config').default(module.id);
+    const tools = require('oroui/js/tools');
     require('jquery-elevatezoom');
     require('jquery-ui/widget');
 
+    const config = {
+        scrollZoom: true,
+        zoomType: 'window',
+        tint: false,
+        ...Object.fromEntries(Object.entries(moduleConfig).filter(([key, value]) => value !== null))
+    };
+
     $.widget('oroproduct.zoomWidget', {
         options: {
-            scrollZoom: true,
             zoomWindowPosition: 'zoom-container',
             minZoomWindowWidth: 376,
             maxZoomWindowWidth: 700,
             zoomWindowWidth: 376,
             zoomWindowHeight: 520,
             zoomWindowFadeIn: 400,
-            zoomLevel: 1,
-            maxZoomLevel: 0.8,
             borderSize: 1,
-            borderColour: '#ebebeb',
-            lensBorderColour: '#7d7d7d',
-            lensColour: '#000',
-            lensOpacity: 0.22,
-            zIndex: 90
+            zoomLevel: 1,
+            maxZoomLevel: 1,
+            borderColour: 'var(--zoom-container-border-color)',
+            lensBorderColour: 'var(--zoom-lens-border-color, #7d7d7d)',
+            lensColour: 'var(--zoom-lens-color, #000)',
+            lensOpacity: 'var(--zoom-lens-opacity, .22)',
+            tintColour: 'var(--zoom-tint-color, #333)',
+            tintOpacity: 'var(--zoom-tint-opacity, .4)',
+            zIndex: 90,
+            ...config
         },
 
         _zoomedImageLoadedState: false,
+
+        imageLoadingClass: 'loading',
 
         /**
          * Queue for tasks that should be done after elevatezoom loaded
@@ -36,8 +50,16 @@ define(function(require) {
         _zoomedImageLoadedQueue: [],
 
         _init: function() {
+            if (tools.isTouchDevice()) {
+                return;
+            }
+
             this.options.onZoomedImageLoaded = this._onZoomedImageLoaded.bind(this);
 
+            if (this.options.zoomType === 'inner') {
+                this.options.zoomWindowPosition = 1;
+                this.options.tint = false;
+            }
             // Bind activeImage event of slick gallery
             this.element.on('slider:activeImage', (e, activeImage) => {
                 if (!this.element.is(activeImage)) {
@@ -48,6 +70,7 @@ define(function(require) {
             const initImage = this.element.data('slider:activeImage') || this.element.get(0);
 
             mediator.on('widget:doRefresh', this._reset, this);
+            mediator.on('viewport:desktop-small', this.onChangeViewport, this);
 
             this._ensureLoadedZoomInit(initImage);
         },
@@ -75,7 +98,57 @@ define(function(require) {
         _zoomInit: function(activeImage) {
             this.element = $(activeImage);
             this._setZoomWindowSize(activeImage);
-            this.element.elevateZoom(this.options);
+            this.adjustOriginalImage(activeImage).finally(() => this.element.elevateZoom(this.options));
+            this.element.addClass(`image-zoom-${this.options.zoomType}`);
+        },
+
+        adjustOriginalImage(activeImage) {
+            return new Promise(resolve => {
+                const $activeImage = $(activeImage);
+                const zoomImageUrl = $activeImage.data('zoom-image');
+
+                if ($activeImage.data('image-adjusted')) {
+                    return resolve();
+                }
+
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                const image = new Image();
+
+                image.onload = () => {
+                    const {naturalHeight: previewNaturalHeight, naturalWidth: previewNaturalWidth} = activeImage;
+                    const originAspectRatio = previewNaturalWidth / previewNaturalHeight;
+                    const aspectRatio = image.naturalWidth / image.naturalHeight;
+
+                    if (aspectRatio - originAspectRatio > 0) {
+                        ctx.canvas.width = image.naturalWidth;
+                        ctx.canvas.height = image.naturalWidth / originAspectRatio;
+                    } else {
+                        ctx.canvas.width = image.naturalHeight * originAspectRatio;
+                        ctx.canvas.height = image.naturalHeight;
+                    }
+
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    ctx.fillStyle = '#fff';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(image,
+                        (ctx.canvas.width - image.naturalWidth) / 2,
+                        (ctx.canvas.height - image.naturalHeight) / 2,
+                        image.naturalWidth,
+                        image.naturalHeight
+                    );
+
+                    $activeImage.attr('original-zoom-image', $activeImage.data('zoom-image'));
+                    $activeImage.data('zoom-image', canvas.toDataURL('image/webp'));
+                    $activeImage.data('image-adjusted', true);
+
+                    resolve();
+
+                    canvas.remove();
+                };
+
+                image.src = zoomImageUrl;
+            });
         },
 
         /**
@@ -84,6 +157,8 @@ define(function(require) {
          * @private
          */
         _updateZoomContainer: function(initImage) {
+            initImage.classList.add(this.imageLoadingClass);
+
             if (this._zoomedImageLoadedState) {
                 this._reInitZoomContainer(initImage);
             } else {
@@ -99,12 +174,22 @@ define(function(require) {
          * @private
          */
         _reInitZoomContainer: function(initImage) {
-            this._removeZoomContainer();
-            this._zoomInit(initImage);
+            if (viewportManager.isApplicable('desktop-small')) {
+                this._removeZoomContainer();
+                this._zoomInit(initImage);
+            }
         },
 
         _reset: function() {
             this._updateZoomContainer(this.element.get(0));
+        },
+
+        onChangeViewport(viewport) {
+            if (!viewportManager.isApplicable('desktop-small')) {
+                this._destroy();
+            } else {
+                this._reInitZoomContainer(this.element.get(0));
+            }
         },
 
         /**
@@ -147,24 +232,25 @@ define(function(require) {
 
             // Check if image has small size
             if (imageLargeWidth <= zoomWindowWidth || imageLargeHeight <= zoomWindowHeight) {
-                // Increase large size of small image
-                const newImageZoomWidth = imageLargeWidth * 3;
-                const newImageZoomHeight = imageLargeHeight * 3;
+                this.deleteZoomContainer();
+            } else if (
+                imageZoomData.options.zoomType === 'window' && imageZoomData.options.scrollZoom &&
+                (imageLargeWidth <= zoomWindowWidth * 2 && imageLargeHeight <= zoomWindowHeight * 2)
+            ) {
+                imageZoomData.options.maxZoomLevel = 0.6;
+                imageZoomData.options.minZoomLevel = 0.2;
+                imageZoomData.options.zoomLevel = 0.6;
 
-                imageZoomData.largeWidth = newImageZoomWidth;
-                imageZoomData.largeHeight = newImageZoomHeight;
+                this.deleteZoomContainer();
 
-                // Should remove old zoom containers from DOM
-                $('.zoomWindowContainer').remove();
-                $('.zoomContainer').remove();
-
-                // Call to internal method of elevatezoom for reinit zoom containers
                 imageZoomData.startZoom();
             }
 
             if (imageZoomData.zoomWindow) {
                 imageZoomData.zoomWindow.css('z-index', this.options.zIndex);
             }
+
+            this.element.removeClass(this.imageLoadingClass);
         },
 
         /**
@@ -174,27 +260,35 @@ define(function(require) {
          * @private
          */
         _setZoomWindowSize: function(activeImage) {
-            $(activeImage).on('load', () => {
-                const imageWidth = $(activeImage).width();
-                const imageHeight = $(activeImage).height();
-                const zoomWindowHeight = this.options.zoomWindowHeight;
+            const imageWidth = $(activeImage).width();
+            const imageHeight = $(activeImage).height();
+            const zoomWindowHeight = this.options.zoomWindowHeight;
 
-                const maxZoomWindowWidth = this.options.maxZoomWindowWidth;
-                const minZoomWindowWidth = this.options.minZoomWindowWidth;
-                // Calculate proportional size of zoom window
-                let proportionalWidth = zoomWindowHeight * imageWidth / imageHeight;
-                // Check max zoom window width
-                proportionalWidth = proportionalWidth > maxZoomWindowWidth ? maxZoomWindowWidth : proportionalWidth;
-                // Check min zoom window width
-                proportionalWidth = proportionalWidth < minZoomWindowWidth ? minZoomWindowWidth : proportionalWidth;
+            const maxZoomWindowWidth = this.options.maxZoomWindowWidth;
+            const minZoomWindowWidth = this.options.minZoomWindowWidth;
+            // Calculate proportional size of zoom window
+            let proportionalWidth = zoomWindowHeight * imageWidth / imageHeight;
+            // Check max zoom window width
+            proportionalWidth = proportionalWidth > maxZoomWindowWidth ? maxZoomWindowWidth : proportionalWidth;
+            // Check min zoom window width
+            proportionalWidth = proportionalWidth < minZoomWindowWidth ? minZoomWindowWidth : proportionalWidth;
 
-                // Set proportionalWidth for zoom window
-                this.options.zoomWindowWidth = proportionalWidth;
+            // Set proportionalWidth for zoom window
+            this.options.zoomWindowWidth = proportionalWidth;
 
-                if (_.isRTL()) {
-                    this.options.zoomWindowOffetx = -proportionalWidth;
-                }
-            });
+            if (_.isRTL()) {
+                this.options.zoomWindowOffetx = -proportionalWidth;
+            }
+        },
+
+        deleteZoomContainer() {
+            // Should remove old zoom containers from DOM
+            const elevateZoom = this.element.data('elevateZoom');
+
+            if (elevateZoom && elevateZoom.zoomContainer) {
+                $('.zoomContainer').remove();
+                $('.zoomWindowContainer').remove();
+            }
         },
 
         /**
@@ -203,15 +297,10 @@ define(function(require) {
          * @private
          */
         _removeZoomContainer: function() {
-            const elevateZoom = this.element.data('elevateZoom');
-
-            if (elevateZoom && elevateZoom.zoomContainer) {
-                elevateZoom.zoomContainer.remove();
-                elevateZoom.zoomWindow.parent().remove();
-            }
+            this.deleteZoomContainer();
 
             this.element.removeData('elevateZoom');
-            this.element.removeData('zoomImage');
+            this.element.removeClass(`image-zoom-${this.options.zoomType}`);
             this._unBindZoomEvents();
         },
 

@@ -13,6 +13,12 @@
         '~class': ' product-view-media-wrapper'
     }) %}
 
+    {% if vertical|default(false) %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' vertical-mode'
+        }) %}
+    {% endif %}
+
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -112,7 +118,6 @@
         ],
     } %}
 
-
     {% set slideImageAttr = productImages|length > 1 ? {
         'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
         'data-page-component-options': imageListOptions|json_encode
@@ -148,6 +153,9 @@
             'itemprop': 'productID',
             'content': product.id
         } %}
+
+        {% set enabledZoom = oro_theme_configuration_value('product_details__image_zoom_type') != 'disabled' %}
+
         <div {{ UI.attributes(popupGalleryAttr) }}>
             <div class="product-view-media-gallery" {{ UI.attributes(slideImageAttr) }}>
                 {% for productImage in productImages %}
@@ -159,17 +167,27 @@
                         {% set img_attrs = {
                             class: 'product-view-media-gallery__image',
                             alt: product.names|localized_value,
-                            'data-zoom-image': product_filtered_image(productImage.image, 'product_original'),
                             width: 700,
                             height: 520
                         } %}
 
+                        {% if enabledZoom %}
+                            {% set img_attrs = img_attrs|merge({
+                                'data-zoom-image': product_filtered_image(productImage.image, 'product_original')
+                            }) %}
+                        {% endif %}
+
                         {% if loop.first %}
                             {% set img_attrs = img_attrs|merge({
-                                'data-page-component-module': 'oroui/js/app/components/viewport-component',
-                                'data-page-component-options': zoomOptions|json_encode,
                                 itemprop: 'image'
                             }) %}
+
+                            {% if enabledZoom %}
+                                {% set img_attrs = img_attrs|merge({
+                                    'data-page-component-module': 'oroui/js/app/components/viewport-component',
+                                    'data-page-component-options': zoomOptions|json_encode
+                                }) %}
+                            {% endif %}
                         {% else %}
                             {% set img_attrs = img_attrs|merge({
                                 'data-lazy': product_filtered_image(productImage.image, 'product_gallery_main')
@@ -184,7 +202,9 @@
                     </div>
                 {% endfor %}
             </div>
-            <div id="zoom-container"></div>
+            {% if enabledZoom %}
+                <div id="zoom-container"></div>
+            {% endif %}
         </div>
     {% else %}
         <div class="product-view-media-gallery product-view-media-gallery--no-image" itemprop="productID" content="{{ product.id}}">

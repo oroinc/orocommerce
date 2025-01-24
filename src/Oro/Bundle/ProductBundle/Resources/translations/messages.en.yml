@@ -1134,6 +1134,25 @@ oro:
                             choice:
                                 multi-unit-table.label: Multi-unit table
                                 single-unit-table.label: Single-unit table
+                        image_zoom_type:
+                            label: Product image zoom type
+                            tooltip: 'Choose the zoom effect for product images on the product details page. Select between different zoom styles, such as Window, Inner, or Lens.'
+                            choice:
+                                window.label: Window
+                                inner.label: Inner
+                                lens.label: Lens
+                                lens.disabled: Disabled
+                        image_zoom_scroll:
+                            label: Scale zoom on mouse wheel
+                            tooltip: 'Enable or disable zoom scale on mousewheel'
+                        image_zoom_tint:
+                            label: Product image zoom overlay
+                            tooltip: 'Enable or disable an overlay above the product image when zoom is activated. This option works only with the Window or Lens zoom types.'
+                        display_image_group_position:
+                            label: Product View Images Display Mode
+                            choice:
+                                horizontal: 'Horizontal'
+                                vertical: 'Vertical'
                     product_listing:
                         label: Product Listing Page
                         filters_position:

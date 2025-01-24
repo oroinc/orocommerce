@@ -1,3 +1,5 @@
 /* @theme: default; */
 
 $zoom-window-container-box-shadow: 2px 2px 7px 2px rgba(0 0 0 / 20%) !default;
+$zoom-window-container-background-color: get-color('neutral', 'white-100') !default;
+$zoom-lens-border-color: get-color('neutral', 'grey2') !default;

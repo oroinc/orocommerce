@@ -26,6 +26,40 @@ configuration:
                     previews:
                         multi-unit-table: 'bundles/oroproduct/images/previews/price-tiers-multi-unit.png'
                         single-unit-table: 'bundles/oroproduct/images/previews/price-tiers-single-unit.png'
+                image_zoom_type:
+                    label: 'oro.product.theme.default.configuration.product_details.image_zoom_type.label'
+                    type: select
+                    default: window
+                    options:
+                        tooltip: 'oro.product.theme.default.configuration.product_details.image_zoom_type.tooltip'
+                    values:
+                        window: oro.product.theme.default.configuration.product_details.image_zoom_type.choice.window.label
+                        inner: oro.product.theme.default.configuration.product_details.image_zoom_type.choice.inner.label
+                        lens: oro.product.theme.default.configuration.product_details.image_zoom_type.choice.lens.label
+                        disabled: oro.product.theme.default.configuration.product_details.image_zoom_type.choice.lens.disabled
+                image_zoom_tint:
+                    label: 'oro.product.theme.default.configuration.product_details.image_zoom_tint.label'
+                    type: checkbox
+                    default: unchecked
+                    options:
+                        tooltip: 'oro.product.theme.default.configuration.product_details.image_zoom_tint.tooltip'
+                image_zoom_scroll:
+                    label: 'oro.product.theme.default.configuration.product_details.image_zoom_scroll.label'
+                    type: checkbox
+                    default: checked
+                    options:
+                        tooltip: 'oro.product.theme.default.configuration.product_details.image_zoom_scroll.tooltip'
+
+                images_display_mode:
+                    label: 'oro.product.theme.default.configuration.product_details.display_image_group_position.label'
+                    type: select
+                    default: horizontal
+                    values:
+                        horizontal: oro.product.theme.default.configuration.product_details.display_image_group_position.choice.horizontal
+                        vertical: oro.product.theme.default.configuration.product_details.display_image_group_position.choice.vertical
+                    previews:
+                        horizontal: 'bundles/oroproduct/images/previews/images-display-mode-horizontal.png'
+                        vertical: 'bundles/oroproduct/images/previews/images-display-mode-vertical.png'
         product_listing:
             label: 'oro.product.theme.default.configuration.product_listing.label'
             options:

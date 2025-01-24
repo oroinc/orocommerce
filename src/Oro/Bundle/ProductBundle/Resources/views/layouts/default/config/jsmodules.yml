@@ -9,6 +9,7 @@ configs:
     oroproduct/js/app/datagrid/header-cell/backend-action-header-cell: {}
     oroproduct/js/app/views/sidebar-filters/filter-items-hint-view: {}
     oroproduct/js/app/views/sidebar-filters/sidebar-toggle-filters-view: {}
+    oroproduct/js/widget/zoom-widget: {}
 dynamic-imports:
     commons:
         - oroproduct/js/app/components/product-unit-select-component

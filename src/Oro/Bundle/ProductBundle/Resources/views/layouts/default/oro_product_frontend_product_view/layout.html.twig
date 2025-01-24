@@ -380,6 +380,11 @@
         'oroui/js/app/views/tab-item-view': {
             className: 'product-attributes-tabs__item',
             templateClassName: 'product-attributes-tabs__link'
+        },
+        'oroproduct/js/widget/zoom-widget': {
+            zoomType: oro_theme_configuration_value('product_details__image_zoom_type'),
+            tint: oro_theme_configuration_value('product_details__image_zoom_tint'),
+            scrollZoom: oro_theme_configuration_value('product_details__image_zoom_scroll')
         }
     }) }}
 {% endblock %}

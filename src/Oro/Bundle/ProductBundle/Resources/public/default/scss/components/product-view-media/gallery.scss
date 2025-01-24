@@ -46,6 +46,14 @@
     }
 
     &__image {
+        height: auto;
+        display: block;
+        object-fit: contain;
+
+        &.loading {
+            cursor: wait;
+        }
+
         &[data-lazy] {
             display: none;
         }
@@ -56,8 +64,6 @@
         justify-content: center;
         flex-direction: column;
         align-items: center;
-
-        height: $product-view-media-gallery-max-height;
     }
 
     &.slick-initialized {

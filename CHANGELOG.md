@@ -84,6 +84,7 @@ Previously known as GOD Object
 #### ProductBundle
 * Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
 * Filtering for the `inventory status` product attribute was enabled.
+* Add theme options for product image zoom. Ability to change zoom type `window`, `lens`, `inner`. Select `disabled` zoom type for disable zoom on product images.
 
 #### PromotionBundle
 * Moved `disableFilter` method from `oro_promotion.handler.frontend_coupon_handler` service to `oro_promotion.frontend_applied_coupon_manager` service.

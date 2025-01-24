@@ -1,7 +1,5 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/page_template/wide/layout.html.twig'
         - '@remove':
             id: attribute_group_rest
         - '@move':
@@ -40,10 +38,6 @@ layout:
             id: upsell_products
             optionName: use_slider
             optionValue: false
-        - '@setOption':
-            id: product_view_attribute_group_images_attribute_product_images_images
-            optionName: vars.vertical
-            optionValue: true
         - '@move':
             id: matrix_grid_order_inline
             parentId: product_view_additional_container

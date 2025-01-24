@@ -37,6 +37,12 @@
         &:not(.slick-slide):not(.tiles-item) {
             min-width: math.div(100%, $embedded-products-item-count);
         }
+
+        .product-item__preview-image {
+            width: 100%;
+            max-width: initial;
+            height: 100%;
+        }
     }
 
     .slick-track {

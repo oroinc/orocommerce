@@ -33,7 +33,54 @@ Feature: Zoom for Product image attributes
     When I click "View Details" for "SKU123" product
     And I set window size to 1440x1080
     And I hover on "Product Main Image"
-    Then I check element "Zoom Container" has width "376"
+    Then I check element "Zoom Container" has width "700"
     And I set window size to 1920x1080
     And I hover on "Product Main Image"
-    Then I check element "Zoom Container" has width "376"
+    Then I check element "Zoom Container" has width "700"
+
+  Scenario: Check product inner zoom
+    Given I proceed as the Admin
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Product image zoom type | Inner |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+    Then I proceed as the Buyer
+    And I reload the page
+    And I hover on "Product Main Image"
+    Then I check element "Zoom Container" has width "700"
+    And I hover on "Product Main Image"
+    And I should see an "Zoom Window In Zoom Container" element
+
+  Scenario: Check product lens zoom
+    Given I proceed as the Admin
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Product image zoom type | Lens |
+      | Product image zoom overlay | true |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+    Then I proceed as the Buyer
+    And I reload the page
+    And I hover on "Product Main Image"
+    Then I check element "Zoom Container" has width "700"
+    And I hover on "Product Main Image"
+    And I should see an "Zoom Tint" element
+    And I hover on "Product Main Image"
+    And I should see an "Zoom Lens" element
+
+  Scenario: Check product lens zoom is disabled
+    Given I proceed as the Admin
+    When I go to System / Theme Configurations
+    And I click "Edit" on row "Refreshing Teal" in grid
+    And I fill "Theme Configuration Form" with:
+      | Product image zoom type | Disabled |
+    And I save and close form
+    Then I should see "Theme Configuration" flash message
+    Then I proceed as the Buyer
+    And I reload the page
+    And I hover on "Product Main Image"
+    And I should not see an "Zoom Container" element
+    And I should not see an "Zoom Lens" element

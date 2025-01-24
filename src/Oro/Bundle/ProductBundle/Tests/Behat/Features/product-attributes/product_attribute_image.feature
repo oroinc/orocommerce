@@ -82,7 +82,7 @@ Feature: Product attribute image
     Then I should see "ImageField"
     When I click "Copyright"
     And I hover on "Product Main Image In Tab"
-    Then I check element "Zoom Container" has width "376"
+    Then I check element "Zoom Container" has width "700"
 
   Scenario: Remove commerce from product attribute file applications
     Given I proceed as the Admin

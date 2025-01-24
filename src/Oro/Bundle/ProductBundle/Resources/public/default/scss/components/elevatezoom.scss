@@ -20,13 +20,28 @@
 }
 
 .zoomLens {
+    --zoom-container-border-color: #{$zoom-lens-border-color};
+
     max-height: 100%;
     pointer-events: none;
+    background-color: $zoom-window-container-background-color;
+    z-index: z();
+}
+
+body:has(.image-zoom-lens) {
+    .tintContainer .zoomLens {
+        > img {
+            display: none;
+        }
+    }
 }
 
 .zoomWindowContainer {
     .zoomWindow {
+        --zoom-container-border-color: #{get-color('neutral', 'grey2')};
+
         box-shadow: $zoom-window-container-box-shadow;
+        background-color: $zoom-window-container-background-color;
     }
 }
 

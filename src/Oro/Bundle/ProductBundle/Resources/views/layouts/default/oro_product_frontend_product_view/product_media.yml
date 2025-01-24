@@ -2,12 +2,21 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroProduct/layouts/default/oro_product_frontend_product_view/product_media.html.twig'
+
+        - '@setOption':
+            id: product_view_attribute_group_images_attribute_product_images_images
+            optionName: vars.vertical
+            optionValue: '=data["theme_configuration"].getThemeConfigurationOption("product_details__images_display_mode") === "vertical"'
+
         - '@addTree':
             items:
                 product_view_media_container:
                     blockType: container
                 product_view_media_wrapper:
                     blockType: container
+                    options:
+                        vars:
+                            vertical: '=data["theme_configuration"].getThemeConfigurationOption("product_details__images_display_mode") === "vertical"'
                 product_view_sticker_wrapper:
                     blockType: container
                 product_sticker_new:
