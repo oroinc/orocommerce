@@ -55,6 +55,8 @@ class ExtendEntityCacheWarmer implements CacheWarmerInterface
             'ACME\Bundle\WysiwygBundle\Entity\BlogPost',
             'ACME\Bundle\CollectOnDeliveryBundle\Entity\CollectOnDeliverySettings',
             'ACME\Bundle\FastShippingBundle\Entity\FastShippingSettings',
+            'Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion',
+            'Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion'
         ];
     }
 

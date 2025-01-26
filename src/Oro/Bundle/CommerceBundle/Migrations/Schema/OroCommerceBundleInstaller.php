@@ -19,7 +19,7 @@ class OroCommerceBundleInstaller implements Installation, ContainerAwareInterfac
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v4_1_0_1';
+        return 'v6_1_0_1';
     }
 
     #[\Override]
@@ -37,7 +37,9 @@ class OroCommerceBundleInstaller implements Installation, ContainerAwareInterfac
             'Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem',
             'ACME\Bundle\WysiwygBundle\Entity\BlogPost',
             'ACME\Bundle\CollectOnDeliveryBundle\Entity\CollectOnDeliverySettings',
-            'ACME\Bundle\FastShippingBundle\Entity\FastShippingSettings'
+            'ACME\Bundle\FastShippingBundle\Entity\FastShippingSettings',
+            'Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\Suggestion',
+            'Oro\Bundle\WebsiteSearchSuggestionBundle\Entity\ProductSuggestion'
         ];
         foreach ($classNames as $className) {
             if (!class_exists($className, false)) {
