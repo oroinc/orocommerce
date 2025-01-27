@@ -23,6 +23,8 @@ services:
             - '@oro_entity.virtual_field_provider'
             - '@oro_entity.virtual_relation_provider'
             - '@oro_entity.doctrine_helper'
+        calls:
+            - [setEnumVirtualFieldProvider, ['@oro_entity.virtual_field_provider.enum']]
 
     oro_product.expression.expression_language_converter:
         class: 'Oro\Component\Expression\ExpressionLanguageConverter'

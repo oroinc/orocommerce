@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\Expression;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Component\Expression\FieldsProviderInterface;
 
 /**
@@ -113,7 +115,9 @@ class FieldsProvider implements FieldsProviderInterface
             $withRelations = true;
             $fields = $this->getDetailedFieldsInformation($className, $numericOnly, $withRelations);
             if (\array_key_exists($fieldName, $fields)) {
-                $className = $fields[$fieldName]['related_entity_name'];
+                $className = !ExtendHelper::isEnumerableType($fields[$fieldName]['type'])
+                    ? $fields[$fieldName]['related_entity_name']
+                    : EnumOption::class;
             } else {
                 throw new \InvalidArgumentException(
                     sprintf('Field "%s" is not found in class %s', $fieldName, $className)
