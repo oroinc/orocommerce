@@ -21,6 +21,10 @@ class Configuration implements ConfigurationInterface
     public const CONFIG_KEY_NEW_ORDER_INTERNAL_STATUS = 'order_creation_new_internal_order_status';
     public const CONFIG_KEY_PREVIOUSLY_PURCHASED_PERIOD = 'order_previously_purchased_period';
     public const CONFIG_KEY_ENABLE_PURCHASE_HISTORY = 'enable_purchase_history';
+    public const string VALIDATE_SHIPPING_ADDRESSES_ON_BACKOFFICE_ORDER_PAGE =
+        'validate_shipping_addresses__backoffice_order_page';
+    public const string VALIDATE_BILLING_ADDRESSES_ON_BACKOFFICE_ORDER_PAGE =
+        'validate_billing_addresses__backoffice_order_page';
 
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
@@ -86,6 +90,14 @@ class Configuration implements ConfigurationInterface
                     'value' => 90,
                 ],
                 self::CONFIG_KEY_ENABLE_PURCHASE_HISTORY => [
+                    'value' => false,
+                ],
+                static::VALIDATE_SHIPPING_ADDRESSES_ON_BACKOFFICE_ORDER_PAGE => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                static::VALIDATE_BILLING_ADDRESSES_ON_BACKOFFICE_ORDER_PAGE => [
+                    'type' => 'boolean',
                     'value' => false,
                 ],
             ]

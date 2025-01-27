@@ -1,65 +1,66 @@
 @regression
-Feature: UPS shipping integration
+@behat-test-env
 
+Feature: UPS shipping integration
   Scenario: Create UPS integration
     Given I login as administrator
     And go to System/ Integrations/ Manage Integrations
     And click "Create Integration"
     When I fill "Integration Form" with:
-      | Type   | UPS          |
-      | Country| United States|
+      | Type    | UPS           |
+      | Country | United States |
     Then should see the following options for "Shipping Service" select:
-      |UPS 2nd Day Air                     |
-      |UPS 2nd Day Air A.M.                |
-      |UPS 3 Day Select                    |
-      |UPS Ground                          |
-      |UPS Next Day Air                    |
-      |UPS Next Day Air Early              |
-      |UPS Next Day Air Saver              |
-      |UPS Standard                        |
-      |UPS Worldwide Economy DDP           |
-      |UPS Worldwide Economy DDU           |
-      |UPS Worldwide Expedited             |
-      |UPS Worldwide Express Freight       |
-      |UPS Worldwide Express Freight Midday|
-      |UPS Worldwide Express Plus          |
-      |UPS Worldwide Saver                 |
+      | UPS 2nd Day Air                      |
+      | UPS 2nd Day Air A.M.                 |
+      | UPS 3 Day Select                     |
+      | UPS Ground                           |
+      | UPS Next Day Air                     |
+      | UPS Next Day Air Early               |
+      | UPS Next Day Air Saver               |
+      | UPS Standard                         |
+      | UPS Worldwide Economy DDP            |
+      | UPS Worldwide Economy DDU            |
+      | UPS Worldwide Expedited              |
+      | UPS Worldwide Express Freight        |
+      | UPS Worldwide Express Freight Midday |
+      | UPS Worldwide Express Plus           |
+      | UPS Worldwide Saver                  |
     And should not see the following options for "Shipping Service" select:
-      |UPS Access Point|
-      |UPS Expedited   |
-      |UPS Express     |
+      | UPS Access Point |
+      | UPS Expedited    |
+      | UPS Express      |
     When I fill "Integration Form" with:
-      | Country| United Kingdom|
+      | Country | United Kingdom |
     Then should see the following options for "Shipping Service" select:
-      |UPS Access Point Economy            |
-      |UPS Expedited                       |
-      |UPS Express                         |
-      |UPS Standard                        |
-      |UPS Worldwide Economy DDP           |
-      |UPS Worldwide Economy DDU           |
-      |UPS Worldwide Express Freight       |
-      |UPS Worldwide Express Freight Midday|
-      |UPS Worldwide Express Plus          |
-      |UPS Worldwide Saver                 |
+      | UPS Access Point Economy             |
+      | UPS Expedited                        |
+      | UPS Express                          |
+      | UPS Standard                         |
+      | UPS Worldwide Economy DDP            |
+      | UPS Worldwide Economy DDU            |
+      | UPS Worldwide Express Freight        |
+      | UPS Worldwide Express Freight Midday |
+      | UPS Worldwide Express Plus           |
+      | UPS Worldwide Saver                  |
     And should not see the following options for "Shipping Service" select:
-      |UPS 2nd Day Air              |
-      |UPS 2nd Day Air A.M.         |
-      |UPS 3 Day Select             |
-      |UPS Ground                   |
-      |UPS Next Day Air             |
-      |UPS Next Day Air Early       |
-      |UPS Next Day Air Saver       |
-      |UPS Worldwide Expedited      |
+      | UPS 2nd Day Air         |
+      | UPS 2nd Day Air A.M.    |
+      | UPS 3 Day Select        |
+      | UPS Ground              |
+      | UPS Next Day Air        |
+      | UPS Next Day Air Early  |
+      | UPS Next Day Air Saver  |
+      | UPS Worldwide Expedited |
     When I fill "Integration Form" with:
-      | Name                    | UPS                       |
-      | Label                   | UPS                       |
-      | Test Mode               | true                      |
-      | OAuth Client Id         | client_id                 |
-      | OAuth Client Secret     | client_secret             |
-      | Shipping Account Name   | Oro Inc.                  |
-      | Shipping Account Number | 123                       |
-      | Country                 | United States             |
-      | Shipping Services       | UPS Ground                |
+      | Name                    | UPS           |
+      | Label                   | UPS           |
+      | Test Mode               | true          |
+      | OAuth Client Id         | client_id     |
+      | OAuth Client Secret     | client_secret |
+      | Shipping Account Name   | Oro Inc.      |
+      | Shipping Account Number | 123           |
+      | Country                 | United States |
+      | Shipping Services       | UPS Ground    |
     And save and close form
     Then I should see "Integration saved" flash message
     And I go to System/ Shipping Rules

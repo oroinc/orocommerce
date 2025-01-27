@@ -73,12 +73,20 @@ services:
     oro_sale.form.type.quote_address:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType'
         arguments:
-            - '@oro_locale.formatter.address'
             - '@oro_sale.manager.quote_address'
+            - '@oro_sale.provider.quote_address_security'
+        tags:
+            - { name: form.type, alias: oro_quote_address_type }
+
+    oro_sale.form.type.quote_address_select:
+        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteAddressSelectType'
+        arguments:
+            - '@oro_sale.manager.quote_address'
+            - '@oro_locale.formatter.address'
             - '@oro_sale.provider.quote_address_security'
             - '@oro_importexport.serializer'
         tags:
-            - { name: form.type, alias: oro_quote_address_type }
+            - { name: form.type }
 
     oro_sale.form.type.quote_demand:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType'

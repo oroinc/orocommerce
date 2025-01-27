@@ -9,8 +9,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Oro\Component\Testing\ReflectionUtil;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,15 +18,11 @@ abstract class AbstractAddressManagerTest extends \PHPUnit\Framework\TestCase
     /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
     protected $doctrine;
 
-    /** @var PropertyAccessorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $propertyAccessor;
-
     #[\Override]
     protected function setUp(): void
     {
         $this->addressProvider = $this->createMock(AddressProviderInterface::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
     }
 
     abstract protected function getAddressManager(): AbstractAddressManager;

@@ -1,0 +1,14 @@
+services:
+    oro_sale.form.factory.address_validation.address_form.quote_page.shipping_address:
+        class: Oro\Bundle\SaleBundle\Form\Factory\AddressValidation\QuotePageShippingAddressFormFactory
+        arguments:
+            - '@form.factory'
+            - '@oro_sale.service.quote_request_handler'
+
+    oro_sale.address_validation.result_handler.address_book_aware.shipping:
+        class: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressBookAwareAddressValidationResultHandler
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_customer.utils.address_copier'
+            - !php/const \Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING

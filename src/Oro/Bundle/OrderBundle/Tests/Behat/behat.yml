@@ -244,6 +244,11 @@ oro_behat_extension:
             type: 'css'
             locator: 'input[name^="oro_order_type_shipUntil"]'
 
+    Order Form Shipping Address Select:
+      selector:
+        locator: '//*[contains(@id, "shippingAddress_customerAddress-uid-")]/a'
+        type: xpath
+
     Order Form Line Item 1 Remove:
       selector:
         locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//td[contains(@class, "order-line-item-remove")]/button'
@@ -529,6 +534,16 @@ oro_behat_extension:
     Wait For Approval Order Status Badge:
       selector: '.badge.status-info:contains("Wait For Approval") i.fa-circle'
 
+    Address Validation Configuration Order Form:
+      selector: 'form[name="address_validation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Validate Shipping Addresses on Back-Office Order Page: 'address_validation[oro_order___validate_shipping_addresses__backoffice_order_page][value]'
+          Validate Shipping Addresses on Back-Office Order Page Use Default: 'address_validation[oro_order___validate_shipping_addresses__backoffice_order_page][use_parent_scope_value]'
+          Validate Billing Addresses on Back-Office Order Page: 'address_validation[oro_order___validate_billing_addresses__backoffice_order_page][value]'
+          Validate Billing Addresses on Back-Office Order Page Use Default: 'address_validation[oro_order___validate_billing_addresses__backoffice_order_page][use_parent_scope_value]'
+
   pages:
     OrderFrontendView:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
@@ -537,6 +552,14 @@ oro_behat_extension:
     Order History:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderHistoryPage
       route: oro_order_frontend_index
+
+    Order Create:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderCreate
+      route: oro_order_create
+
+    Order Update:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderUpdate
+      route: oro_order_update
 
   suites:
     OroOrderBundle:

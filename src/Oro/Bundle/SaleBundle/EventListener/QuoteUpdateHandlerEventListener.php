@@ -4,35 +4,18 @@ namespace Oro\Bundle\SaleBundle\EventListener;
 
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
+use Oro\Bundle\SaleBundle\Form\Handler\QuoteCustomerDataRequestHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * Listens form process event to populate Quote entity with data from Request
+ */
 class QuoteUpdateHandlerEventListener
 {
-    /**
-     * @var WebsiteManager
-     */
-    private $websiteManager;
-
-    /**
-     * @var QuoteRequestHandler
-     */
-    private $quoteRequestHandler;
-
-    /**
-     * @var RequestStack
-     */
-    private $requestStack;
-
     public function __construct(
-        WebsiteManager $websiteManager,
-        QuoteRequestHandler $quoteRequestHandler,
-        RequestStack $requestStack
+        private readonly WebsiteManager $websiteManager,
+        private readonly QuoteCustomerDataRequestHandler $quoteCustomerDataRequestHandler,
     ) {
-        $this->websiteManager = $websiteManager;
-        $this->quoteRequestHandler = $quoteRequestHandler;
-        $this->requestStack = $requestStack;
     }
 
     public function ensureWebsite(FormProcessEvent $event)
@@ -49,9 +32,6 @@ class QuoteUpdateHandlerEventListener
     {
         $quote = $event->getData();
 
-        if (in_array($this->requestStack->getCurrentRequest()->getMethod(), ['POST', 'PUT'], true)) {
-            $quote->setCustomer($this->quoteRequestHandler->getCustomer());
-            $quote->setCustomerUser($this->quoteRequestHandler->getCustomerUser());
-        }
+        $this->quoteCustomerDataRequestHandler->handle($quote);
     }
 }

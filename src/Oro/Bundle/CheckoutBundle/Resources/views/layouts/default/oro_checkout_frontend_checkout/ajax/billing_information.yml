@@ -3,6 +3,9 @@ layout:
         - '@setBlockTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/billing_information.html.twig'
 
+        - '@setFormTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address_validation/address_validation_fields.html.twig'
+
         - '@setOption':
             id: checkout_button_back
             optionName: visible

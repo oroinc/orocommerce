@@ -13,6 +13,7 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\SecurityBundle\Attribute\CsrfProtection;
+use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormView;
@@ -85,7 +86,14 @@ class AjaxQuoteController extends AbstractController
     {
         if (!$quote) {
             $quote = new Quote();
+            $quote->setWebsite($this->container->get(WebsiteManager::class)->getDefaultWebsite());
         }
+
+        $customerUser = $this->getQuoteRequestHandler()->getCustomerUser();
+        $customer = $this->getCustomer($customerUser);
+
+        $quote->setCustomer($customer);
+        $quote->setCustomerUser($customerUser);
 
         $form = $this->createForm(
             $this->getQuoteFormTypeName(),
@@ -175,6 +183,7 @@ class AjaxQuoteController extends AbstractController
                 EventDispatcherInterface::class,
                 PaymentTermProvider::class,
                 QuoteRequestHandler::class,
+                WebsiteManager::class,
             ]
         );
     }

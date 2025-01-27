@@ -3,11 +3,10 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Form\Extension;
 
 use Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowStateExtension;
+use Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
 use Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
-use Oro\Component\Layout\Extension\Theme\Model\CurrentThemeProvider;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormConfigInterface;
@@ -20,8 +19,7 @@ use Symfony\Component\Form\FormView;
 final class CheckoutWorkflowStateExtensionTest extends TestCase
 {
     private CheckoutErrorHandler&MockObject $checkoutErrorHandler;
-    private CurrentThemeProvider&MockObject $currentThemeProvider;
-    private ThemeManager&MockObject $themeManager;
+    private CheckoutThemeBCProvider&MockObject $checkoutThemeBCProvider;
 
     private CheckoutWorkflowStateExtension $checkoutWorkflowExtension;
 
@@ -29,25 +27,18 @@ final class CheckoutWorkflowStateExtensionTest extends TestCase
     protected function setUp(): void
     {
         $this->checkoutErrorHandler = $this->createMock(CheckoutErrorHandler::class);
-        $this->currentThemeProvider = $this->createMock(CurrentThemeProvider::class);
-        $this->themeManager = $this->createMock(ThemeManager::class);
+        $this->checkoutThemeBCProvider = $this->createMock(CheckoutThemeBCProvider::class);
 
         $this->checkoutWorkflowExtension = new CheckoutWorkflowStateExtension(
             $this->checkoutErrorHandler,
-            $this->currentThemeProvider,
-            $this->themeManager
+            $this->checkoutThemeBCProvider,
         );
     }
 
     public function testPreSubmitIsOldTheme(): void
     {
-        $this->currentThemeProvider->expects(self::once())
-            ->method('getCurrentThemeId')
-            ->willReturn('default');
-
-        $this->themeManager->expects(self::once())
-            ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+        $this->checkoutThemeBCProvider->expects(self::once())
+            ->method('isOldTheme')
             ->willReturn(true);
 
         $form = $this->createMock(FormInterface::class);
@@ -59,13 +50,8 @@ final class CheckoutWorkflowStateExtensionTest extends TestCase
 
     public function testPreSubmitNoWorkflowData(): void
     {
-        $this->currentThemeProvider->expects(self::once())
-            ->method('getCurrentThemeId')
-            ->willReturn('default');
-
-        $this->themeManager->expects(self::once())
-            ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+        $this->checkoutThemeBCProvider->expects(self::once())
+            ->method('isOldTheme')
             ->willReturn(false);
 
         $form = $this->createMock(FormInterface::class);
@@ -81,13 +67,8 @@ final class CheckoutWorkflowStateExtensionTest extends TestCase
 
     public function testPreSubmitNoMatchedTransition(): void
     {
-        $this->currentThemeProvider->expects(self::once())
-            ->method('getCurrentThemeId')
-            ->willReturn('default');
-
-        $this->themeManager->expects(self::once())
-            ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+        $this->checkoutThemeBCProvider->expects(self::once())
+            ->method('isOldTheme')
             ->willReturn(false);
 
         $form = $this->createMock(FormInterface::class);
@@ -113,13 +94,8 @@ final class CheckoutWorkflowStateExtensionTest extends TestCase
 
     public function testPreSubmitNoEnterManuallyAddress(): void
     {
-        $this->currentThemeProvider->expects(self::once())
-            ->method('getCurrentThemeId')
-            ->willReturn('default');
-
-        $this->themeManager->expects(self::once())
-            ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+        $this->checkoutThemeBCProvider->expects(self::once())
+            ->method('isOldTheme')
             ->willReturn(false);
 
         $form = $this->createMock(FormInterface::class);
@@ -145,13 +121,8 @@ final class CheckoutWorkflowStateExtensionTest extends TestCase
 
     public function testPreSubmit(): void
     {
-        $this->currentThemeProvider->expects(self::once())
-            ->method('getCurrentThemeId')
-            ->willReturn('default');
-
-        $this->themeManager->expects(self::once())
-            ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+        $this->checkoutThemeBCProvider->expects(self::once())
+            ->method('isOldTheme')
             ->willReturn(false);
 
         $form = $this->createMock(FormInterface::class);
@@ -211,7 +182,7 @@ final class CheckoutWorkflowStateExtensionTest extends TestCase
 
         $this->checkoutErrorHandler->expects(self::once())
             ->method('filterWorkflowStateError')
-            ->with($this->isInstanceOf(FormErrorIterator::class))
+            ->with(self::isInstanceOf(FormErrorIterator::class))
             ->willReturnCallback(function (FormErrorIterator $errors) use ($form) {
                 $this->assertEquals($form, $errors->getForm());
                 $this->assertEquals(0, $errors->count());

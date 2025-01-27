@@ -14,11 +14,12 @@ use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\UserBundle\Entity\User;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
+use Symfony\Contracts\Service\ResetInterface;
 
 /**
  * Provides customer and customer user addresses for an order.
  */
-class OrderAddressProvider implements AddressProviderInterface
+class OrderAddressProvider implements AddressProviderInterface, ResetInterface
 {
     const ADDRESS_TYPE_SHIPPING = 'shipping';
     const ADDRESS_TYPE_BILLING = 'billing';
@@ -217,5 +218,10 @@ class OrderAddressProvider implements AddressProviderInterface
     protected function getCacheKey($object, $type)
     {
         return sprintf('%s_%s_%s', ClassUtils::getClass($object), $object->getId(), $type);
+    }
+
+    public function reset(): void
+    {
+        $this->cache = [];
     }
 }

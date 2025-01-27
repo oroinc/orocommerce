@@ -30,6 +30,7 @@ services:
     oro_order.form.type.order_address:
         class: 'Oro\Bundle\OrderBundle\Form\Type\OrderAddressType'
         arguments:
+            - '@oro_order.manager.order_address'
             - '@oro_order.order.provider.order_address_security'
         tags:
             - { name: form.type, alias: oro_order_address_type }

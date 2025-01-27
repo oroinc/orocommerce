@@ -116,6 +116,12 @@ system_configuration:
             options:
                 label: oro.sale.system_configuration.fields.quote_frontend_feature_enabled.label
 
+        oro_sale.validate_shipping_addresses__backoffice_quote_page:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.address_validation.system_configuration.fields.validate_shipping_addresses.backoffice.quote_page.label
+
     tree:
         system_configuration:
             commerce:
@@ -146,6 +152,13 @@ system_configuration:
                                     guest_quote:
                                         children:
                                             - oro_sale.enable_guest_quote
+                    shipping:
+                        children:
+                            address_validation:
+                                children:
+                                    address_validation_backoffice:
+                                        children:
+                                            - oro_sale.validate_shipping_addresses__backoffice_quote_page
         user_configuration:
             commerce:
                 children:

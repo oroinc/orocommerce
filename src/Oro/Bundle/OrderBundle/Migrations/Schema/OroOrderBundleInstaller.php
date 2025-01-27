@@ -204,6 +204,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('name_suffix', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('phone', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('from_external_source', 'boolean', ['notnull' => true, 'default' => false]);
+        $table->addColumn('validated_at', 'datetime', ['notnull' => false]);
         $table->addColumn('created', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);

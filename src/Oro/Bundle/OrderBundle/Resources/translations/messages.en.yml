@@ -321,6 +321,9 @@ oro:
             country_iso2_code.label:      Country ISO2 code
             country_iso3_code.label:      Country ISO3 code
             region_name.label:            State name
+            validated_at:
+                label: Validated At
+                description: The date and time when address was validated.
 
         orderlineitem:
             entity_label: 'Order Line Item'
@@ -733,3 +736,12 @@ oro:
                 kitConfiguration.label: Configuration
             created_by_seller:
                 label: This order was created on your behalf by a member of our staff.
+
+oro.address_validation.system_configuration:
+    fields:
+        validate_shipping_addresses:
+            checkout:
+                label: Validate Shipping Addresses During Checkout
+        validate_billing_addresses:
+            checkout:
+                label: Validate Billing Addresses During Checkout

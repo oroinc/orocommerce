@@ -17,13 +17,13 @@ class FedexRateServiceRestClient implements FedexRateServiceBySettingsClientInte
     public const PRODUCTION_URL = 'https://apis.fedex.com';
     public const TEST_URL = 'https://apis-sandbox.fedex.com';
 
-    private AccessTokenProvider $accessTokenProvider;
+    private AccessTokenProviderInterface $accessTokenProvider;
     private RestClientFactoryInterface $restClientFactory;
     private FedexRateServiceResponseFactoryInterface $responseFactory;
     private LoggerInterface $logger;
 
     public function __construct(
-        AccessTokenProvider $accessTokenProvider,
+        AccessTokenProviderInterface $accessTokenProvider,
         RestClientFactoryInterface $restClientFactory,
         FedexRateServiceResponseFactoryInterface $responseFactory,
         LoggerInterface $logger

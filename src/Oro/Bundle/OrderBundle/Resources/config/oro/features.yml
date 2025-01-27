@@ -57,3 +57,11 @@ features:
         navigation_items:
             - oro_customer_menu.oro_order_products_frontend_previously_purchased
             - oro_customer_menu_refreshing_teal.oro_order_products_frontend_previously_purchased
+
+    oro_address_validation:
+        routes:
+            - oro_order_address_validation_billing_address
+            - oro_order_address_validation_shipping_address
+        configuration:
+            - oro_order.validate_shipping_addresses__backoffice_order_page
+            - oro_order.validate_billing_addresses__backoffice_order_page

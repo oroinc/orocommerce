@@ -1,0 +1,37 @@
+{% block _oro_workflow_transition_billing_address_validatedAt_widget %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') %}
+            {% set attr = {
+                'data-page-component-view': {
+                    view: 'orocheckout/js/app/views/checkout-multi-step-address-validated-at-view',
+                    dialogUrl: path('oro_checkout_address_validation_multi_step_billing_address', { 'id': form.vars.checkoutId }),
+                    enableBillingValidation: oro_config_value('oro_checkout.validate_billing_addresses__checkout'),
+                    enableShippingValidation: oro_config_value('oro_checkout.validate_shipping_addresses__checkout'),
+                    step: 'enter_billing_address',
+                    isBillingAddressValid: form.vars.isBillingAddressValid
+                }|json_encode
+            }|merge(attr|default({})) %}
+        {% endif %}
+
+        {{ form_widget(form, { attr: attr }) }}
+    {% endapply %}
+{% endblock %}
+
+{% block _oro_workflow_transition_shipping_address_validatedAt_widget %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') %}
+            {% set attr = {
+                'data-page-component-view': {
+                    view: 'orocheckout/js/app/views/checkout-multi-step-address-validated-at-view',
+                    dialogUrl: path('oro_checkout_address_validation_multi_step_shipping_address', { 'id': form.vars.checkoutId }),
+                    enableBillingValidation: oro_config_value('oro_checkout.validate_billing_addresses__checkout'),
+                    enableShippingValidation: oro_config_value('oro_checkout.validate_shipping_addresses__checkout'),
+                    step: 'enter_shipping_address',
+                    isBillingAddressValid: form.vars.isBillingAddressValid
+                }|json_encode
+            }|merge(attr|default({})) %}
+        {% endif %}
+
+        {{ form_widget(form, { attr: attr }) }}
+    {% endapply %}
+{% endblock %}

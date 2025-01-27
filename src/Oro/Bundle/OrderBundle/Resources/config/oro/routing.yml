@@ -26,3 +26,13 @@ oro_order_dashboard:
     resource:     "@OroOrderBundle/Controller/DashboardController.php"
     type:         annotation
     prefix:       /order/dashboard
+
+oro_order_address_validation_billing_address:
+    controller: 'oro_order.controller.address_validation.billing_address::addressValidationAction'
+    path: /order/address-validation/{id<\d+>}/billing
+    methods: [POST]
+
+oro_order_address_validation_shipping_address:
+    controller: 'oro_order.controller.address_validation.shipping_address::addressValidationAction'
+    path: /order/address-validation/{id<\d+>}/shipping
+    methods: [POST]

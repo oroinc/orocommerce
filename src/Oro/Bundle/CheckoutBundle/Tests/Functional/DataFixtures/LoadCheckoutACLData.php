@@ -32,6 +32,8 @@ class LoadCheckoutACLData extends AbstractFixture implements
 
     const CHECKOUT_ACC_2_USER_LOCAL = 'checkout_customer2_user_local';
 
+    const SINGLE_STEP_CHECKOUT_ACC_1_USER_LOCAL = 'single_step_checkout_customer1_user_local';
+
     /**
      * @var array
      */
@@ -50,6 +52,10 @@ class LoadCheckoutACLData extends AbstractFixture implements
         ],
         self::CHECKOUT_ACC_2_USER_LOCAL => [
             'customerUser' => LoadCustomerUserACLData::USER_ACCOUNT_2_ROLE_LOCAL
+        ],
+        self::SINGLE_STEP_CHECKOUT_ACC_1_USER_LOCAL => [
+            'customerUser' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+            'workflow' => 'b2b_flow_checkout_single_page'
         ],
     ];
 
@@ -73,9 +79,10 @@ class LoadCheckoutACLData extends AbstractFixture implements
         $workflowManager = $this->container->get('oro_workflow.manager');
 
         foreach (self::$checkouts as $name => $checkout) {
+            $workflow = $checkout['workflow'] ?? 'b2b_flow_checkout';
             $checkout = $this->createOrder($manager, $name, $checkout);
 
-            $workflowManager->startWorkflow('b2b_flow_checkout', $checkout);
+            $workflowManager->startWorkflow($workflow, $checkout);
         }
     }
 

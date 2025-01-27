@@ -4,8 +4,9 @@
 @fixture-OroCheckoutBundle:Shipping.yml
 @fixture-OroFlatRateShippingBundle:FlatRate2Integration.yml
 @fixture-OroCheckoutBundle:ShippingRuleForFlatRate2.yml
-@fixture-OroCustomerBundle:CustomerUserFixture.yml
-@fixture-OroSaleBundle:QuoteProductFixture.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroCheckoutBundle:Payment.yml
+@fixture-OroSaleBundle:shipping_selector_quote.yml
 Feature: Shipping Rule With Customer Expression
   In order to select the most suitable shipping method for a quote
   As administrator
@@ -24,10 +25,11 @@ Feature: Shipping Rule With Customer Expression
     And I go to Sales/ Quotes
     And I click "Create Quote"
     And I fill "Quote Form" with:
-      | Customer        | first customer |
-      | Customer User   | Amanda Cole    |
-      | LineItemProduct | psku1          |
-    And I fill in "Shipping Address" with "ORO, 801 Scenic Hwy, HAINES CITY FL US 33844"
+      | Customer         | Company A                               |
+      | Customer User    | Amanda Cole                                  |
+      | LineItemProduct  | SKU123                                       |
+      | Shipping Address | ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
+    And click "Shipping Information"
     And I click on "Calculate Shipping"
     And I should see "Flat Rate $3.00"
     And I should see "Flat Rate 2 $2.00"

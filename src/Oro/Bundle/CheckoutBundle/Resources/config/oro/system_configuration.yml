@@ -187,6 +187,18 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.maximum_order_amount.label
                 tooltip: oro.checkout.system_configuration.fields.maximum_order_amount.tooltip
 
+        oro_checkout.validate_shipping_addresses__checkout:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.address_validation.system_configuration.fields.validate_shipping_addresses.checkout.label
+
+        oro_checkout.validate_billing_addresses__checkout:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.address_validation.system_configuration.fields.validate_billing_addresses.checkout.label
+
     tree:
         system_configuration:
             commerce:
@@ -232,3 +244,11 @@ system_configuration:
                                         children:
                                             - oro_checkout.show_suborders_in_order_history
                                             - oro_checkout.show_main_orders_in_order_history
+                    shipping:
+                        children:
+                            address_validation:
+                                children:
+                                    address_validation_storefront:
+                                        children:
+                                            - oro_checkout.validate_shipping_addresses__checkout
+                                            - oro_checkout.validate_billing_addresses__checkout

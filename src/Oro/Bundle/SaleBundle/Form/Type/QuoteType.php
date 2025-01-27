@@ -128,7 +128,7 @@ class QuoteType extends AbstractType
                         'label' => 'oro.sale.quote.shipping_address.label',
                         'quote' => $options['data'],
                         'required' => false,
-                        'addressType' => AddressType::TYPE_SHIPPING,
+                        'address_type' => AddressType::TYPE_SHIPPING,
                     ]
                 );
         }

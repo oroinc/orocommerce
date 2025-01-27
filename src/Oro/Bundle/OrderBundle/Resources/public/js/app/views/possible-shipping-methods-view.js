@@ -43,8 +43,7 @@ define(function(require) {
         elementsEvents: {
             toggleBtn: ['click', 'onToggleBtnClick'],
             overriddenShippingCostAmount: ['change', 'onOverriddenShippingCostChange'],
-            possibleShippingMethodForm: ['change', 'onShippingMethodTypeChange'],
-            $form: ['submit', 'onSaveForm']
+            possibleShippingMethodForm: ['change', 'onShippingMethodTypeChange']
         },
 
         /**
@@ -108,6 +107,7 @@ define(function(require) {
 
             this.subview('confirmation')
                 .off('ok').on('ok', () => {
+                    this._stopListeningToSubmit();
                     this.orderHasChanged = false;
                     this.getElement('$form').trigger('submit');
                 })
@@ -115,7 +115,12 @@ define(function(require) {
         },
 
         showLoadingMask: function() {
-            this.orderHasChanged = true;
+            if (!this.orderHasChanged) {
+                this._startListeningToSubmit();
+
+                this.orderHasChanged = true;
+            }
+
             if (this.getElement('calculateShipping').val()) {
                 this.removeSubview('loadingMask');
                 this.subview('loadingMask', new LoadingMaskView({
@@ -139,15 +144,32 @@ define(function(require) {
                 this.getElement('toggleBtn').parent('div').hide();
                 this.updatePossibleShippingMethods(e.possibleShippingMethods);
                 this.getElement('possibleShippingMethodForm').show();
+                this._stopListeningToSubmit();
+
                 this.orderHasChanged = false;
             } else if (this.recalculationIsNotRequired === true) {
+                this._stopListeningToSubmit();
+
                 this.orderHasChanged = false;
                 this.recalculationIsNotRequired = false;
             } else {
                 this.getElement('possibleShippingMethodForm').hide();
                 this.getElement('toggleBtn').parent('div').show();
-                this.orderHasChanged = true;
+
+                if (!this.orderHasChanged) {
+                    this._startListeningToSubmit();
+
+                    this.orderHasChanged = true;
+                }
             }
+        },
+
+        _startListeningToSubmit: function() {
+            this.listenTo(this.getElement('$form'), {submit: this.onSaveForm.bind(this)});
+        },
+
+        _stopListeningToSubmit: function() {
+            this.stopListening(this.getElement('$form'), 'submit', this.onSaveForm.bind(this));
         },
 
         onOverriddenShippingCostChange: function() {

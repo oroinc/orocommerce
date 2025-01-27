@@ -18,3 +18,59 @@ oro_open_orders:
     prefix:       customer/open-orders
     options:
         frontend: true
+
+oro_checkout_address_validation_multi_step_billing_address:
+    controller: 'oro_checkout.controller.address_validation.multi_step_billing_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/multi-step-billing
+    methods: [POST]
+    options:
+        frontend: true
+
+oro_checkout_address_validation_multi_step_shipping_address:
+    controller: 'oro_checkout.controller.address_validation.multi_step_shipping_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/multi-step-shipping
+    methods: [POST]
+    options:
+        frontend: true
+
+oro_checkout_address_validation_single_page_billing_address:
+    controller: 'oro_checkout.controller.address_validation.single_page_billing_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/single-page-billing
+    methods: [POST]
+    options:
+        frontend: true
+
+oro_checkout_address_validation_single_page_shipping_address:
+    controller: 'oro_checkout.controller.address_validation.single_page_shipping_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/single-page-shipping
+    methods: [POST]
+    options:
+        frontend: true
+
+oro_checkout_address_validation_single_page_new_billing_address:
+    controller: 'oro_checkout.controller.address_validation.single_page_new_billing_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/single-page-new-billing
+    methods: [POST]
+    options:
+        frontend: true
+
+oro_checkout_address_validation_single_page_new_shipping_address:
+    controller: 'oro_checkout.controller.address_validation.single_page_new_shipping_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/single-page-new-shipping
+    methods: [POST]
+    options:
+        frontend: true
+
+oro_checkout_address_validation_multi_step_new_billing_address:
+    controller: 'oro_checkout.controller.address_validation.multi_step_new_billing_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/multi-step-new-billing
+    methods: [POST]
+    options:
+        frontend: true
+
+oro_checkout_address_validation_multi_step_new_shipping_address:
+    controller: 'oro_checkout.controller.address_validation.multi_step_new_shipping_address::addressValidationAction'
+    path: /customer/checkout/address-validation/{id}/multi-step-new-shipping
+    methods: [POST]
+    options:
+        frontend: true

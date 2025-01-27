@@ -1,0 +1,51 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    amandaAddress_scenic_805:
+        region: '@florida'
+        frontendOwner: '@amanda'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 3'
+        street: '805 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: 'ORO'
+        validatedAt: '<dateTime()>'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress_4444_hard_road:
+        region: '@new_york'
+        frontendOwner: '@customer'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        label: 'Address 3'
+        street: '4444 Hard Road'
+        city: 'York'
+        postalCode: '12103'
+        organization: 'ORO'
+        validatedAt: '<dateTime()>'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddress_4444_hard_road_Shipping:
+        address: '@customerAddress_4444_hard_road'
+        type: '@shippingType'
+        default: false
+
+    customerAddress_4444_hard_road_Billing:
+        address: '@customerAddress_4444_hard_road'
+        type: '@billingType'
+        default: false
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    amandaAddress_scenic_805_Shipping:
+        address: '@amandaAddress_scenic_805'
+        type: '@shippingType'
+        default: false
+
+    amandaAddress_scenic_805_Billing:
+        address: '@amandaAddress_scenic_805'
+        type: '@billingType'
+        default: false

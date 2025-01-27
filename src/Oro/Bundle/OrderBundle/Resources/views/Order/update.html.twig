@@ -158,6 +158,7 @@
     {% if isBillingAddressGranted %}
         {% set billingAddress %}
             <div
+                data-content="address-form"
                 data-layout="separate"
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {
@@ -194,6 +195,7 @@
                 {% set idAddressBlock = null %}
             {% endif %}
             <div
+                data-content="address-form"
                 data-layout="separate"
                 data-page-component-module="oroui/js/app/components/view-component"
                 data-page-component-options="{{ {

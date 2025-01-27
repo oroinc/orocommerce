@@ -1,0 +1,30 @@
+{% block _oro_workflow_transition_billing_address_row %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') and oro_config_value('oro_checkout.validate_billing_addresses__checkout') %}
+            {% set row_attr = {
+                'data-page-component-view': {
+                    view: 'orocheckout/js/app/views/checkout-single-page-address-validation-view',
+                    dialogUrl: path('oro_checkout_address_validation_single_page_billing_address', { 'id': form.vars.checkoutId }),
+                    addressType: 'billing_address'
+                }|json_encode
+            }|merge(row_attr|default({})) %}
+        {% endif %}
+        {{ form_row(form, { row_attr: row_attr }) }}
+    {% endapply %}
+{% endblock %}
+
+{% block _oro_workflow_transition_shipping_address_row %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') and oro_config_value('oro_checkout.validate_shipping_addresses__checkout') %}
+            {% set row_attr = {
+                'data-page-component-view': {
+                    view: 'orocheckout/js/app/views/checkout-single-page-address-validation-view',
+                    dialogUrl: path('oro_checkout_address_validation_single_page_shipping_address', { 'id': form.vars.checkoutId }),
+                    addressType: 'shipping_address',
+                    isBillingAddressValid: (checkout.billingAddress.validatedAt|default(null) is not empty)
+                }|json_encode
+            }|merge(row_attr|default({})) %}
+        {% endif %}
+        {{ form_row(form, { row_attr: row_attr }) }}
+    {% endapply %}
+{% endblock %}

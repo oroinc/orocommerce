@@ -10,15 +10,11 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
@@ -29,55 +25,18 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class OrderAddressSelectType extends AbstractType
 {
-    const NAME = 'oro_order_address_select';
-    const ENTER_MANUALLY = 0;
-    const FORMAT_ADDRESS_SEPARATOR = ', ';
-    const DEFAULT_GROUP_LABEL_PREFIX = 'oro.order.';
-
-    /** @var OrderAddressManager */
-    private $addressManager;
-
-    /** @var AddressFormatter */
-    private $addressFormatter;
-
-    /** @var OrderAddressSecurityProvider */
-    private $addressSecurityProvider;
-
-    /** @var Serializer */
-    private $serializer;
+    public const int ENTER_MANUALLY = 0;
 
     public function __construct(
-        OrderAddressManager $addressManager,
-        AddressFormatter $addressFormatter,
-        OrderAddressSecurityProvider $addressSecurityProvider,
-        Serializer $serializer
+        private OrderAddressManager $orderAddressManager,
+        private AddressFormatter $addressFormatter,
+        private OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        private Serializer $serializer
     ) {
-        $this->addressManager = $addressManager;
-        $this->addressFormatter = $addressFormatter;
-        $this->addressSecurityProvider = $addressSecurityProvider;
-        $this->serializer = $serializer;
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
-    {
-        /** @var CustomerOwnerAwareInterface $object */
-        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
-            $address = $event->getData();
-
-            if ($address === self::ENTER_MANUALLY) {
-                return;
-            }
-
-            $event->setData(null);
-            if ($address) {
-                $event->setData($this->addressManager->updateFromAbstract($address));
-            }
-        });
-    }
-
-    #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         /** @var TypedOrderAddressCollection $collection */
         $collection = $options['address_collection'];
@@ -85,51 +44,31 @@ class OrderAddressSelectType extends AbstractType
 
         $view->vars['attr']['data-addresses'] = json_encode($addresses);
         $view->vars['attr']['data-default'] = $collection->getDefaultAddressKey();
-
-        // Keep value chosen in address selector
-        $address = $form->getData();
-        $value = $view->vars['value'] ?? null;
-        if (($value === null || $value === '') && $address instanceof OrderAddress) {
-            if ($address->getCustomerUserAddress()) {
-                $value = $this->addressManager->getIdentifier($address->getCustomerUserAddress());
-            } elseif ($address->getCustomerAddress()) {
-                $value = $this->addressManager->getIdentifier($address->getCustomerAddress());
-            }
-
-            if (array_key_exists($value, $addresses)) {
-                $view->vars['value'] = $value;
-            }
-        }
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setRequired(['object', 'address_type'])
+            ->setRequired(['order', 'address_type'])
             ->setDefaults([
-                'data_class' => OrderAddress::class,
+                'data_class' => null,
                 'label' => false,
-                'configs' => function (Options $options) {
-                    return [
-                        'placeholder' => $options['group_label_prefix'] . 'form.address.choose',
-                    ];
-                },
+                'configs' => [
+                    'placeholder' => 'oro.order.form.address.choose',
+                ],
                 'address_collection' => function (Options $options) {
-                    return $this->addressManager->getGroupedAddresses(
-                        $options['object'],
-                        $options['address_type'],
-                        $options['group_label_prefix']
-                    );
+                    return $this->orderAddressManager
+                        ->getGroupedAddresses($options['order'], $options['address_type'], 'oro.order.');
                 },
                 'choice_loader' => function (Options $options) {
                     return new CallbackChoiceLoader(function () use ($options) {
                         $collection = $options['address_collection'];
                         $choices = $collection->toArray();
 
-                        $isGranted = $this->addressSecurityProvider->isManualEditGranted($options['address_type']);
+                        $isGranted = $this->orderAddressSecurityProvider->isManualEditGranted($options['address_type']);
                         if ($isGranted) {
-                            $choices[$options['group_label_prefix'] . 'form.address.manual'] = self::ENTER_MANUALLY;
+                            $choices['oro.order.form.address.manual'] = self::ENTER_MANUALLY;
                         }
 
                         return $choices;
@@ -141,33 +80,27 @@ class OrderAddressSelectType extends AbstractType
                     }
 
                     if ($choice instanceof CustomerAddress || $choice instanceof CustomerUserAddress) {
-                        return $this->addressManager->getIdentifier($choice);
+                        return $this->orderAddressManager->getIdentifier($choice);
                     }
 
                     return null;
                 },
                 'choice_label' => function ($choice, $key) {
                     if ($choice instanceof AbstractAddress) {
-                        return $this->addressFormatter->format($choice, null, self::FORMAT_ADDRESS_SEPARATOR);
+                        return $this->addressFormatter->format($choice, null, ', ');
                     }
 
                     return $key;
                 },
-                'group_label_prefix' => self::DEFAULT_GROUP_LABEL_PREFIX
             ])
             ->setAllowedValues('address_type', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
-            ->setAllowedTypes('object', CustomerOwnerAwareInterface::class);
-    }
-
-    public function getName()
-    {
-        return $this->getBlockPrefix();
+            ->setAllowedTypes('order', CustomerOwnerAwareInterface::class);
     }
 
     #[\Override]
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_order_address_select';
     }
 
     #[\Override]
@@ -176,12 +109,7 @@ class OrderAddressSelectType extends AbstractType
         return Select2ChoiceType::class;
     }
 
-    /**
-     * @param array $addresses
-     *
-     * @return array
-     */
-    private function getPlainData(array $addresses = [])
+    private function getPlainData(array $addresses = []): array
     {
         $data = [];
 

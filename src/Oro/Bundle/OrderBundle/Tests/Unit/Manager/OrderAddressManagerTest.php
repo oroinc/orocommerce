@@ -16,10 +16,12 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType;
+use Oro\Bundle\CustomerBundle\Utils\AddressCopier;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class OrderAddressManagerTest extends AbstractAddressManagerTest
 {
@@ -30,10 +32,12 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
     {
         parent::setUp();
 
+        $addressCopier = new AddressCopier($this->doctrine, new PropertyAccessor());
+
         $this->manager = new OrderAddressManager(
-            $this->addressProvider,
             $this->doctrine,
-            $this->propertyAccessor
+            $this->addressProvider,
+            $addressCopier
         );
     }
 
@@ -107,14 +111,14 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 $customerAddress = new CustomerAddress(),
                 (new OrderAddress())
                     ->setCustomerAddress($customerAddress),
-                $customerAddress
+                $customerAddress,
             ],
             'empty customer user address' => [
                 $customerUserAddress = new CustomerUserAddress(),
                 (new OrderAddress())
                     ->setCustomerUserAddress($customerUserAddress),
                 null,
-                $customerUserAddress
+                $customerUserAddress,
             ],
             'from customer address' => [
                 $customerAddress = (new CustomerAddress())
@@ -128,7 +132,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
-                $customerAddress
+                $customerAddress,
             ],
             'from customer user address' => [
                 $customerUserAddress = (new CustomerUserAddress())
@@ -143,9 +147,9 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                     ->setStreet('Street')
                     ->setCity('City'),
                 null,
-                $customerUserAddress
+                $customerUserAddress,
             ],
-            'do not override value from existing with empty one' => [
+            'overrides value from existing with empty one' => [
                 $customerUserAddress = (new CustomerUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
@@ -153,7 +157,6 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                     ->setCity('City'),
                 (new OrderAddress())
                     ->setCustomerUserAddress($customerUserAddress)
-                    ->setLabel('ExistingLabel')
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
@@ -161,7 +164,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 null,
                 $customerUserAddress,
                 (new OrderAddress())
-                    ->setLabel('ExistingLabel')
+                    ->setLabel('ExistingLabel'),
             ],
         ];
     }
@@ -201,7 +204,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 [
                     'oro.order.form.address.group_label.customer_user' => [
                         'au_1' => $this->getCustomerUserAddress(1),
-                        'au_2' => $this->getCustomerUserAddress(2)
+                        'au_2' => $this->getCustomerUserAddress(2),
                     ],
                 ],
             ],
@@ -212,7 +215,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 [
                     'oro.order.form.address.group_label.customer' => [
                         'a_1' => $this->getCustomerAddress(1),
-                        'a_2' => $this->getCustomerAddress(2)
+                        'a_2' => $this->getCustomerAddress(2),
                     ],
                 ],
             ],
@@ -223,11 +226,11 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
                 [
                     'oro.order.form.address.group_label.customer' => [
                         'a_1' => $this->getCustomerAddress(1),
-                        'a_2' => $this->getCustomerAddress(2)
+                        'a_2' => $this->getCustomerAddress(2),
                     ],
                     'oro.order.form.address.group_label.customer_user' => [
                         'au_1' => $this->getCustomerUserAddress(1),
-                        'au_2' => $this->getCustomerUserAddress(2)
+                        'au_2' => $this->getCustomerUserAddress(2),
                     ],
                 ],
             ],
@@ -249,7 +252,7 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
             ->method('getRepository')
             ->willReturnMap([
                 [CustomerAddressToAddressType::class, null, $repoCustomerAddressToAddressType],
-                [CustomerUserAddressToAddressType::class, null, $repoCustomerUserAddressToAddressType]
+                [CustomerUserAddressToAddressType::class, null, $repoCustomerUserAddressToAddressType],
             ]);
         $repoCustomerAddressToAddressType->expects($this->any())
             ->method('findBy')

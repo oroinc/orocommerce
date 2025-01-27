@@ -9,16 +9,11 @@
         </fieldset>
     {% else %}
         {% import '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address.html.twig' as address %}
-        {% set addresses = form.shipping_address.customerAddress.vars.choices|default([]) %}
         {% set showAddressForm =
                 checkout.customerUser == null or
                 checkout.customerUser.isGuest or
-                addresses|length <= 1
+                form.shipping_address.customerAddress.vars.address_count == 0
         %}
-        {% set hideAddressSelect = form.shipping_address.customerAddress.vars.address_count == 0 %}
-        {% if checkout.customerUser.isGuest|default(false) %}
-            {% set hideAddressSelect = form.shipping_address.customerAddress.vars.value|default('') is empty  %}
-        {% endif %}
         <div class="grid checkout-form__container" data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orocheckout/js/app/views/address-view',
@@ -38,19 +33,32 @@
                     dropdownCssClass: 'oro-select2__dropdown select-multiline__dropdown',
                     dropdownAutoWidth: false
                 } %}
-                {% if hideAddressSelect %}
+                {% if showAddressForm %}
                     {% set customerAddressClass = ' hidden' %}
                     {% set customerAddressSelect2 = customerAddressSelect2|merge({
                         containerCssClass: 'hidden'
                     }) %}
                 {% endif %}
+                {% if not showAddressForm and feature_enabled('oro_address_validation') and oro_config_value('oro_checkout.validate_shipping_addresses__checkout') %}
+                    {% set row_attr = {
+                        'data-page-component-view': {
+                            view: 'orocheckout/js/app/views/checkout-multi-step-address-validation-view',
+                            dialogUrl: path('oro_checkout_address_validation_multi_step_shipping_address', { 'id': checkout.id }),
+                            enableBillingValidation: oro_config_value('oro_checkout.validate_billing_addresses__checkout'),
+                            enableShippingValidation: oro_config_value('oro_checkout.validate_shipping_addresses__checkout'),
+                            step: 'enter_shipping_address',
+                            isBillingAddressValid: (checkout.billingAddress.validatedAt|default(null) is not empty)
+                        }|json_encode
+                    }|merge(row_attr|default({})) %}
+                {% endif %}
                 {{ form_row(form.shipping_address.customerAddress, {
-                    parentClass: 'checkout-form__customer-address',
-                    attr: {
+                    'parentClass': 'checkout-form__customer-address',
+                    'attr': {
                         'class': customerAddressClass,
                         'data-new-address-label': renderedAddress,
                         'data-address-type': 'shipping'
                     },
+                    'row_attr': row_attr|default({}),
                     'configs': form.shipping_address.customerAddress.vars.configs|default({})|merge(customerAddressSelect2)
                 }) }}
             </div>
@@ -77,7 +85,7 @@
                         {{ UI.clientBtn({
                             'id': form.shipping_address.customerAddress.vars.id ~ '-btn',
                             'btnCss': 'btn btn--flat btn--size-small checkout-form__add-address',
-                            'label' : 'Add Address'|trans,
+                            'label' : 'oro.checkout.form.add_address.label'|trans,
                             'icon': 'plus',
                             'iconExtraClass': 'theme-icon--small',
                             'pageComponent': {

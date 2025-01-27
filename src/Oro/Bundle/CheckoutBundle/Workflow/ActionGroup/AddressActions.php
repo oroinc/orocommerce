@@ -4,10 +4,10 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
-use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Utils\AddressCopier;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -32,7 +32,8 @@ class AddressActions implements AddressActionsInterface
     public function __construct(
         private ManagerRegistry $registry,
         private DuplicatorFactory $duplicatorFactory,
-        private ActionExecutor $actionExecutor
+        private ActionExecutor $actionExecutor,
+        private AddressCopier $addressCopier
     ) {
     }
 
@@ -138,6 +139,7 @@ class AddressActions implements AddressActionsInterface
             $checkout->getBillingAddress()->setCustomerUserAddress($customerUserBillingAddress);
             $needFlush = true;
         }
+
         if ($customerUserShippingAddress) {
             $checkout->getShippingAddress()->setCustomerUserAddress($customerUserShippingAddress);
             $needFlush = true;
@@ -165,7 +167,7 @@ class AddressActions implements AddressActionsInterface
         /** @var AddressType $addressType */
         $addressType = $em->getReference(AddressType::class, $addressTypeName);
         $customerUserAddress = new CustomerUserAddress();
-        $this->fillAddressFieldsByAddress($orderAddress, $customerUserAddress);
+        $this->addressCopier->copyToAddress($orderAddress, $customerUserAddress);
         $customerUserAddress->setFrontendOwner($checkout->getCustomerUser())
             ->setOwner($checkout->getOwner())
             ->setSystemOrganization($checkout->getOrganization())
@@ -176,28 +178,6 @@ class AddressActions implements AddressActionsInterface
         $orderAddress->setCustomerUserAddress($customerUserAddress);
 
         return $customerUserAddress;
-    }
-
-    private function fillAddressFieldsByAddress(
-        AbstractAddress $sourceAddress,
-        AbstractAddress $destinationAddress
-    ): void {
-        $destinationAddress
-            ->setLabel($sourceAddress->getLabel())
-            ->setOrganization($sourceAddress->getOrganization())
-            ->setStreet($sourceAddress->getStreet())
-            ->setStreet2($sourceAddress->getStreet2())
-            ->setCity($sourceAddress->getCity())
-            ->setPostalCode($sourceAddress->getPostalCode())
-            ->setCountry($sourceAddress->getCountry())
-            ->setRegion($sourceAddress->getRegion())
-            ->setRegionText($sourceAddress->getRegionText())
-            ->setNamePrefix($sourceAddress->getNamePrefix())
-            ->setFirstName($sourceAddress->getFirstName())
-            ->setMiddleName($sourceAddress->getMiddleName())
-            ->setLastName($sourceAddress->getLastName())
-            ->setNameSuffix($sourceAddress->getNameSuffix())
-            ->setPhone($sourceAddress->getPhone());
     }
 
     private function isGranted(string $attribute): bool

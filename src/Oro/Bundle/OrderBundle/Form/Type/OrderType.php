@@ -147,9 +147,9 @@ class OrderType extends AbstractType
             if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
                 $options = [
                     'label' => sprintf('oro.order.%s_address.label', $type),
-                    'object' => $order,
+                    'order' => $order,
                     'required' => false,
-                    'addressType' => $type,
+                    'address_type' => $type,
                 ];
                 $builder->add(sprintf('%sAddress', $type), OrderAddressType::class, $options);
             }
@@ -165,9 +165,9 @@ class OrderType extends AbstractType
                     OrderAddressType::class,
                     [
                         'label' => 'oro.order.billing_address.label',
-                        'object' => $options['data'],
+                        'order' => $options['data'],
                         'required' => false,
-                        'addressType' => AddressType::TYPE_BILLING,
+                        'address_type' => AddressType::TYPE_BILLING,
                     ]
                 );
         }
@@ -182,9 +182,9 @@ class OrderType extends AbstractType
                     OrderAddressType::class,
                     [
                         'label' => 'oro.order.shipping_address.label',
-                        'object' => $options['data'],
+                        'order' => $options['data'],
                         'required' => false,
-                        'addressType' => AddressType::TYPE_SHIPPING,
+                        'address_type' => AddressType::TYPE_SHIPPING,
                     ]
                 );
         }

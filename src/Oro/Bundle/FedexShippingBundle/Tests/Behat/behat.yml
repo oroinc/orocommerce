@@ -1,0 +1,10 @@
+oro_behat_extension:
+    suites:
+        OroFedexShippingBundle:
+            contexts:
+                - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+                - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+                - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+                - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+            paths:
+                - '@OroFedexShippingBundle/Tests/Behat/Features'

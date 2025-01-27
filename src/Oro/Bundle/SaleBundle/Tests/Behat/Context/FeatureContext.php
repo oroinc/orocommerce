@@ -88,8 +88,9 @@ class FeatureContext extends OroFeatureContext implements
 
         // Click on "Save" button in the confirmation dialog.
         $saveLink = $this->getPage()->find('css', '.oro-modal-normal .ok.btn-primary');
-        self::assertNotNull($saveLink, "Can't find modal window or 'Save' button");
-        $saveLink->click();
+        if ($saveLink !== null) {
+            $saveLink->click();
+        }
     }
 
     /**

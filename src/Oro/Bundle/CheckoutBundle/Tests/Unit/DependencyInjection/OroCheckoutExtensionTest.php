@@ -37,6 +37,8 @@ class OroCheckoutExtensionTest extends \PHPUnit\Framework\TestCase
                         'show_main_orders_in_order_history' => ['value' => true, 'scope' => 'app'],
                         'minimum_order_amount' => ['value' => [], 'scope' => 'app'],
                         'maximum_order_amount' => ['value' => [], 'scope' => 'app'],
+                        'validate_shipping_addresses__checkout' => ['value' => true, 'scope' => 'app'],
+                        'validate_billing_addresses__checkout' => ['value' => false, 'scope' => 'app'],
                     ]
                 ]
             ],

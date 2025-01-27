@@ -108,6 +108,18 @@ system_configuration:
                     - Type:
                         type: integer
 
+        oro_order.validate_shipping_addresses__backoffice_order_page:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.address_validation.system_configuration.fields.validate_shipping_addresses.backoffice.order_page.label
+
+        oro_order.validate_billing_addresses__backoffice_order_page:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.address_validation.system_configuration.fields.validate_billing_addresses.backoffice.order_page.label
+
     tree:
         system_configuration:
             commerce:
@@ -147,4 +159,11 @@ system_configuration:
                                     order_status_management:
                                         children:
                                             - oro_order.order_enable_external_status_management
-
+                    shipping:
+                        children:
+                            address_validation:
+                                children:
+                                    address_validation_backoffice:
+                                        children:
+                                            - oro_order.validate_shipping_addresses__backoffice_order_page
+                                            - oro_order.validate_billing_addresses__backoffice_order_page

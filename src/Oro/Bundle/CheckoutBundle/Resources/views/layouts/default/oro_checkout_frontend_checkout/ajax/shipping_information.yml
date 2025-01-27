@@ -2,6 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/shipping_information.html.twig'
+        - '@setFormTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address_validation/address_validation_fields.html.twig'
 
         - '@appendOption':
             id: checkout_combined_buttons_container

@@ -172,9 +172,13 @@ define(function(require) {
             this.subview('checkoutShippingAddress').setElement(this.$el.find(this.options.shippingAddressSelector));
             this.subview('checkoutShippingAddress').onEnableState();
 
+            this._disableShippingAddress();
+
             // Resets submit button element
             this.subview('checkoutSubmitButton').setElement(this.$el.find(this.options.submitButtonSelector));
             this.subview('checkoutSubmitButton').onEnableState();
+
+            mediator.trigger('single-page-checkout:after-save-data');
         },
 
         /**

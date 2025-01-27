@@ -58,7 +58,9 @@ define(function(require) {
         listen: {
             'customer-customer-user:change mediator': 'handleCustomerChange',
             'order:load:related-data mediator': 'loadingStart',
-            'order:loaded:related-data mediator': 'loadedRelatedData'
+            'order:loaded:related-data mediator': 'loadedRelatedData',
+            'entry-point:order:load:before mediator': '_onEntryPointOrderLoadBefore',
+            'entry-point:order:load:after mediator': '_onEntryPointOrderLoadAfter'
         },
 
         /**
@@ -122,9 +124,9 @@ define(function(require) {
                         $field.data('selected-data', $field.select2('val'));
                     }
                 });
-                this.customerAddressChange();
+                this.customerAddressChange(undefined, true);
             } else {
-                this._setReadOnlyMode(true);
+                this._toggleEditable(false);
             }
         },
 
@@ -164,23 +166,27 @@ define(function(require) {
                 }
                 self.customerAddressChange(e);
             });
+
+            self.customerAddressChange(null, true);
         },
 
         /**
          * Implement customer address change logic
          */
-        customerAddressChange: function(e) {
+        customerAddressChange: function(e, isInit) {
             if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
-                this._setReadOnlyMode(true);
+                this._toggleEditable(false);
 
-                const address = this.$address.data('addresses')[this.$address.val()] || null;
-                if (address) {
-                    this._fillAddressFields(address, e !== undefined);
+                if (isInit !== true) {
+                    const address = this.$address.data('addresses')[this.$address.val()] || null;
+                    if (address) {
+                        this._fillAddressFields(address, e !== undefined);
+                    }
                 }
             } else {
-                this._setReadOnlyMode(false);
+                this._toggleEditable(true);
                 const $country = this.fieldsByName.country;
-                if ($country) {
+                if (isInit !== true && $country) {
                     $country.trigger('redraw');
                 }
             }
@@ -192,7 +198,7 @@ define(function(require) {
          */
         _fillAddressFields: function(address, triggerChange = true) {
             const self = this;
-            _.each(address, function(value, name) {
+            _.each(_.omit(address, ['id']), function(value, name) {
                 if (_.isObject(value)) {
                     value = _.first(_.values(value));
                 }
@@ -210,9 +216,9 @@ define(function(require) {
             });
         },
 
-        _setReadOnlyMode: function(mode) {
-            this.$fields.each(function() {
-                $(this).prop('readonly', mode).inputWidget('refresh');
+        _toggleEditable: function(mode) {
+            this.$fields.each(function(index, element) {
+                $(this).prop('disabled', !mode).inputWidget('refresh');
             });
         },
 
@@ -250,11 +256,22 @@ define(function(require) {
                 .empty()
                 .append(this.$address);
 
-            if (this.useDefaultAddress && this.$address.data('default')) {
-                this.$address.val(this.$address.data('default')).trigger('change');
+            const defaultAddress = this.$address.data('default');
+            if (this.useDefaultAddress && defaultAddress && defaultAddress !== this.$address.val()) {
+                this.$address.val(defaultAddress).trigger('change');
             }
 
             this.initLayout().done(this.loadingEnd.bind(this));
+        },
+
+        _onEntryPointOrderLoadBefore: function() {
+            if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
+                this.loadingStart();
+            }
+        },
+
+        _onEntryPointOrderLoadAfter: function() {
+            this.loadingEnd();
         }
     });
 

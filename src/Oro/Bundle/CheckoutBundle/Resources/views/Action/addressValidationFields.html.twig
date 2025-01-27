@@ -1,0 +1,67 @@
+{% block b2b_flow_checkout_single_page_new_billing_address__oro_checkout_address_validated_at_widget %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') %}
+            <span data-page-component-view="orocheckout/js/app/views/checkout-single-page-new-address-validated-at-view"
+                  data-page-component-options="{{ {
+                      dialogUrl: path('oro_checkout_address_validation_single_page_new_billing_address', { 'id': form.vars.checkoutId|default(0) }),
+                      enableBillingValidation: oro_config_value('oro_checkout.validate_billing_addresses__checkout'),
+                      enableShippingValidation: oro_config_value('oro_checkout.validate_shipping_addresses__checkout'),
+                      addressType: 'billing_address'
+                  }|json_encode }}"
+            ></span>
+        {% endif %}
+
+        {{ form_widget(form, { attr: attr }) }}
+    {% endapply %}
+{% endblock %}
+
+{% block b2b_flow_checkout_single_page_new_shipping_address__oro_checkout_address_validated_at_widget %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') %}
+            <span data-page-component-view="orocheckout/js/app/views/checkout-single-page-new-address-validated-at-view"
+                  data-page-component-options="{{ {
+                      dialogUrl: path('oro_checkout_address_validation_single_page_new_shipping_address', { 'id': form.vars.checkoutId|default(0) }),
+                      enableBillingValidation: oro_config_value('oro_checkout.validate_billing_addresses__checkout'),
+                      enableShippingValidation: oro_config_value('oro_checkout.validate_shipping_addresses__checkout'),
+                      addressType: 'shipping_address'
+                  }|json_encode }}"
+            ></span>
+        {% endif %}
+
+        {{ form_widget(form, { attr: attr }) }}
+    {% endapply %}
+{% endblock %}
+
+{% block b2b_flow_checkout_new_billing_address__oro_checkout_address_validated_at_widget %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') %}
+            <span data-page-component-view="orocheckout/js/app/views/checkout-multi-step-new-address-validated-at-view"
+                  data-page-component-options="{{ {
+                      dialogUrl: path('oro_checkout_address_validation_multi_step_new_billing_address', { 'id': form.vars.checkoutId|default(0) }),
+                      enableBillingValidation: oro_config_value('oro_checkout.validate_billing_addresses__checkout'),
+                      enableShippingValidation: oro_config_value('oro_checkout.validate_shipping_addresses__checkout'),
+                      addressType: 'billing_address'
+                  }|json_encode }}"
+            ></span>
+        {% endif %}
+
+        {{ form_widget(form, { attr: attr }) }}
+    {% endapply %}
+{% endblock %}
+
+{% block b2b_flow_checkout_new_shipping_address__oro_checkout_address_validated_at_widget %}
+    {% apply spaceless %}
+        {% if feature_enabled('oro_address_validation') %}
+            <span data-page-component-view="orocheckout/js/app/views/checkout-multi-step-new-address-validated-at-view"
+                  data-page-component-options="{{ {
+                      dialogUrl: path('oro_checkout_address_validation_multi_step_new_shipping_address', { 'id': form.vars.checkoutId|default(0) }),
+                      enableBillingValidation: oro_config_value('oro_checkout.validate_billing_addresses__checkout'),
+                      enableShippingValidation: oro_config_value('oro_checkout.validate_shipping_addresses__checkout'),
+                      addressType: 'shipping_address'
+                  }|json_encode }}"
+            ></span>
+        {% endif %}
+
+        {{ form_widget(form, { attr: attr }) }}
+    {% endapply %}
+{% endblock %}

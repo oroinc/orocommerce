@@ -2,29 +2,32 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
+use Oro\Bundle\AddressBundle\Form\Type\AddressType;
+use Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider;
+use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\FrontendBundle\Form\Type\CountryType;
 use Oro\Bundle\FrontendBundle\Form\Type\RegionType;
-use Oro\Bundle\OrderBundle\Form\Type\OrderAddressType;
-use Oro\Component\Layout\Extension\Theme\Model\CurrentThemeProvider;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Represents checkout address form type
+ * Represents an address in a checkout form.
  */
 class CheckoutAddressType extends AbstractType
 {
-    public const string ENTER_MANUALLY = '0';
-
     public function __construct(
-        private CurrentThemeProvider $currentThemeProvider,
-        private ThemeManager $themeManager
+        private OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        private CheckoutThemeBCProvider $checkoutThemeBCProvider
     ) {
     }
 
@@ -38,6 +41,11 @@ class CheckoutAddressType extends AbstractType
             'mapped' => false,
         ]);
 
+        $builder->add('phone', TextType::class, [
+            'required' => false,
+            StripTagsExtension::OPTION_NAME => true,
+        ]);
+
         $builder->add('country', CountryType::class, [
             'required' => true,
             'label' => 'oro.address.country.label',
@@ -48,19 +56,66 @@ class CheckoutAddressType extends AbstractType
             'label' => 'oro.address.region.label',
         ]);
 
+        $builder->add('validatedAt', CheckoutAddressValidatedAtType::class, [
+            'checkout' => $options['object'],
+            'address_type' => $options['addressType'],
+        ]);
         $builder->get('city')->setRequired(true);
         $builder->get('postalCode')->setRequired(true);
         $builder->get('street')->setRequired(true);
         $builder->get('customerAddress')->setRequired(true);
 
-        $builder
-            ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData'], 100)
-            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit'], 100);
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
+            $orderAddress = $event->getData();
+
+            // Render previously saved address in address selector
+            FormUtils::replaceFieldOptionsRecursive(
+                $event->getForm(),
+                'customerAddress',
+                ['data' => $orderAddress]
+            );
+
+            // The check for ENTER_MANUALLY on customerAddress field is not made here because it does not work for
+            // single page checkout. Instead, we check for customer / customer user address relation.
+            if ($orderAddress && ($orderAddress->getCustomerAddress() || $orderAddress->getCustomerUserAddress())) {
+                // Clears the address fields because if user chooses to enter address manually, these fields should be
+                // shown empty.
+                $event->setData(null);
+            }
+        }, 100);
+
+        $builder->addEventListener(FormEvents::SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $addressType = $form->getConfig()->getOption('addressType');
+            $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($addressType);
+            if (!$isManualEditGranted) {
+                $event->setData(null);
+            }
+
+            if ($form->get('customerAddress')->getViewData() === CheckoutAddressSelectType::ENTER_MANUALLY) {
+                return;
+            }
+
+            $selectedAddress = $form->get('customerAddress')->getData();
+            if ($selectedAddress instanceof OrderAddress) {
+                $event->setData($selectedAddress);
+            }
+        }, -10);
+
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, $this->onPreSubmit(...));
     }
 
     public function onPreSetData(FormEvent $event): void
     {
         $orderAddress = $event->getData();
+
+        // Render previously saved address in address selector
+        FormUtils::replaceFieldOptionsRecursive(
+            $event->getForm(),
+            'customerAddress',
+            ['data' => $orderAddress]
+        );
+
         // The check for ENTER_MANUALLY on customerAddress field is not made here because it does not work for
         // single page checkout. Instead, we check for customer / customer user address relation.
         if ($orderAddress && ($orderAddress->getCustomerAddress() || $orderAddress->getCustomerUserAddress())) {
@@ -70,33 +125,24 @@ class CheckoutAddressType extends AbstractType
         }
     }
 
-    public function onPreSubmit(FormEvent $event): void
-    {
-        if ($this->isOldTheme()) {
-            return;
-        }
-
-        $address = $event->getData()['customerAddress'] ?? null;
-        if ($address === self::ENTER_MANUALLY && $event->getForm()->getConfig()->getOption('multiStepCheckout')) {
-            foreach ($event->getForm()->all() as $child) {
-                FormUtils::replaceFieldOptionsRecursive($event->getForm(), $child->getName(), ['mapped' => false]);
-            }
-        }
-    }
-
     #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
-            ->setDefault('multiStepCheckout', false)
-            ->setAllowedTypes('object', Checkout::class)
-            ->setAllowedTypes('multiStepCheckout', 'bool')
-            ->addNormalizer('disabled', function ($options, $value) {
-                if (null === $value) {
-                    return false;
-                }
+            ->setDefined(['disableManualFields', 'disabled'])
+            ->setRequired(['object', 'addressType'])
+            ->setDefaults([
+                'data_class' => OrderAddress::class,
+                'constraints' => [new NameOrOrganization()],
+                'disableManualFields' => false,
+            ])
+            ->setAllowedValues('addressType', [AddressTypeEntity::TYPE_BILLING, AddressTypeEntity::TYPE_SHIPPING])
+            ->setAllowedTypes('disableManualFields', 'bool')
+            ->setAllowedTypes('object', Checkout::class);
 
-                return $value;
+        $resolver
+            ->addNormalizer('disabled', function ($options, $value) {
+                return $value ?? false;
             });
     }
 
@@ -109,14 +155,37 @@ class CheckoutAddressType extends AbstractType
     #[\Override]
     public function getParent(): ?string
     {
-        return OrderAddressType::class;
+        return AddressType::class;
     }
 
-    private function isOldTheme(): bool
+    public function onPreSubmit(FormEvent $event): void
     {
-        return $this->themeManager->themeHasParent(
-            $this->currentThemeProvider->getCurrentThemeId() ?? '',
-            ['default_50', 'default_51']
-        );
+        if ($this->checkoutThemeBCProvider->isOldTheme()) {
+            return;
+        }
+
+        $form = $event->getForm();
+        $customerAddressData = $event->getData()['customerAddress'] ?? null;
+        $isNewAddress = !$customerAddressData ||
+            $customerAddressData === CheckoutAddressSelectType::ENTER_MANUALLY;
+
+        foreach ($form as $child) {
+            if ($child->getName() === 'customerAddress') {
+                continue;
+            }
+
+            if (!$isNewAddress || (
+                $customerAddressData === CheckoutAddressSelectType::ENTER_MANUALLY &&
+                    $form->getConfig()->getOption('disableManualFields')
+            )) {
+                FormUtils::replaceFieldOptionsRecursive(
+                    $event->getForm(),
+                    $child->getName(),
+                    [
+                        'disabled' => true,
+                    ]
+                );
+            }
+        }
     }
 }

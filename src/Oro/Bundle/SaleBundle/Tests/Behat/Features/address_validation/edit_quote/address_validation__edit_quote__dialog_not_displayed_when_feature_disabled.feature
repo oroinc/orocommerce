@@ -1,0 +1,27 @@
+@fixture-OroUPSBundle:AddressValidationUpsClient.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
+@fixture-OroSaleBundle:GuestQuoteWithAddressFixture.yml
+@feature-BB-24101
+@regression
+@behat-test-env
+
+Feature: Address Validation - Edit Quote - Dialog Not Displayed When Feature Disabled
+  As an Administrator
+  I should not see address validation when feature disabled
+
+  Scenario: Feature Background
+    Given I login as administrator
+    And I go to System/ Configuration
+    And follow "Commerce/Shipping/Address Validation" on configuration sidebar
+    When I fill "Address Validation Configuration Form" with:
+      | Address Validation Service Use Default | false |
+      | Address Validation Service             | false |
+    And I submit form
+    Then I should see "Configuration saved" flash message
+
+  Scenario: Address Validation dialog not displayed
+    Given I go to Sales/ Quotes
+    And I click edit PO123 in grid
+    When I click "Submit"
+    Then I should see "Quote #Quote_1 successfully updated" flash message

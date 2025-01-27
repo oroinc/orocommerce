@@ -344,7 +344,9 @@ oro:
             country_iso2_code.label: Country ISO2 code
             country_iso3_code.label: Country ISO3 code
             region_name.label: State name
-
+            validated_at:
+                label: Validated At
+                description: The date and time when address was validated.
             no_exist: No shipping address found
 
         quotedemand:
@@ -511,3 +513,11 @@ oro:
                 quote.create_order.success: 'Your sales order was submitted successfully'
                 quote.create_order.error: 'Can not create new Order'
                 quote.not_available: 'Quote #%qid% is no longer available'
+
+oro.address_validation.system_configuration:
+    fields:
+        validate_shipping_addresses:
+            backoffice:
+                quote_page:
+                    label: Validate Shipping Addresses on Back-Office Quote Page
+

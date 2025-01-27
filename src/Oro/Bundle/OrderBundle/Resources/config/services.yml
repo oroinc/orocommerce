@@ -62,7 +62,6 @@ services:
 
     oro_order.order.provider.order_address:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressProvider'
-        public: false
         arguments:
             - '@security.authorization_checker'
             - '@oro_security.token_accessor'
@@ -70,6 +69,19 @@ services:
             - '@oro_security.acl_helper'
             - 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
             - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
+
+    oro_order.event_listener.reset_order_address_provider:
+        class: Oro\Bundle\CacheBundle\EventListener\ResetOnEntityChangeListener
+        arguments:
+            - '@oro_order.order.provider.order_address'
+            - [
+                Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress,
+                Oro\Bundle\CustomerBundle\Entity\CustomerAddress
+            ]
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_order.order.provider.order_address_security:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
@@ -88,9 +100,9 @@ services:
         # This service marked as public (origin private) for compatibility with Symfony 4. All dependencies must be refactored after BAP-17037
         public: true
         arguments:
-            - '@oro_order.order.provider.order_address'
             - '@doctrine'
-            - '@property_accessor'
+            - '@oro_order.order.provider.order_address'
+            - '@oro_customer.utils.address_copier'
         calls:
             - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
             - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]
@@ -224,13 +236,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
 
-# TODO: Uncomment and apply in BB-4834
-#    oro_order.event_listener.payment_discount_surcharge:
-#        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener'
-#        arguments:
-#            - '@oro_order.provider.discount_subtotal'
-#        tags:
-#            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
+    # TODO: Uncomment and apply in BB-4834
+    #    oro_order.event_listener.payment_discount_surcharge:
+    #        class: 'Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener'
+    #        arguments:
+    #            - '@oro_order.provider.discount_subtotal'
+    #        tags:
+    #            - { name: kernel.event_listener, event: oro_payment.event.collect_surcharge, method: onCollectSurcharge }
 
     oro_order.event_listener.system_config.order_creation_new_order_owner:
         class: Oro\Bundle\ConfigBundle\EventListener\EntitySystemConfigListener

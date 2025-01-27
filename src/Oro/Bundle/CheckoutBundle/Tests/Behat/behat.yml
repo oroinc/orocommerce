@@ -40,6 +40,16 @@ oro_behat_extension:
         locator: '//form[@id="form-login"]//button[@type="submit"]'
         type: xpath
 
+    Single Checkout Page Add New Billing Address:
+      selector:
+        locator: '//div[@class="checkout-billing-address"]//button[text()[contains(.,"Add")]]'
+        type: xpath
+
+    Single Checkout Page Add New Shipping Address:
+      selector:
+        locator: '//div//h3[text()[contains(., "Shipping")]]/..//button[text()[contains(.,"Add")]]'
+        type: xpath
+
     Billing Address:
       selector: 'select[name="oro_workflow_transition[billing_address][customerAddress]"]'
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
@@ -354,6 +364,16 @@ oro_behat_extension:
     Permissions Dropdown Items:
       selector: '.dropdown-menu__permissions-item a'
 
+    Multistep Billing Address Select:
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_billing_address_customerAddress-uid-")]/a'
+
+    Multistep Shipping Address Select:
+      selector:
+        type: xpath
+        locator: '//*[contains(@id, "s2id_oro_workflow_transition_shipping_address_customerAddress-uid-")]/a'
+
     Billing Address Select:
       selector:
         type: xpath
@@ -390,6 +410,7 @@ oro_behat_extension:
           State: 'oro_action_operation[address][region]'
           Postal Code: 'oro_action_operation[address][postalCode]'
           Save Address: 'oro_action_operation[save_address]'
+          Ship to this Address: 'oro_action_operation[ship_to_billing_address]'
 
     Checkout Address Fields:
       selector: '#checkout-address-fields-container'
@@ -532,6 +553,16 @@ oro_behat_extension:
       selector:
         type: xpath
         locator: '//button[contains(concat(" ",@class," ")," disabled ")][contains(text(),"Checkout")]'
+
+    Address Validation Configuration Checkout Form:
+      selector: 'form[name="address_validation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Validate Shipping Addresses During Checkout: 'address_validation[oro_checkout___validate_shipping_addresses__checkout][value]'
+          Validate Shipping Addresses During Checkout Use Default: 'address_validation[oro_checkout___validate_shipping_addresses__checkout][use_parent_scope_value]'
+          Validate Billing Addresses During Checkout: 'address_validation[oro_checkout___validate_billing_addresses__checkout][value]'
+          Validate Billing Addresses During Checkout Use Default: 'address_validation[oro_checkout___validate_billing_addresses__checkout][use_parent_scope_value]'
 
   pages:
     Checkout:

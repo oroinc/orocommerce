@@ -1,2 +1,3 @@
 bundles:
     - '@OroCheckout/Form/fields.html.twig'
+    - '@OroCheckout/Action/addressValidationFields.html.twig'

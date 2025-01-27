@@ -198,6 +198,29 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//input[@name="oro_customer_type[group]"]'
             element: Select2Entity
+          First Primary: 'oro_customer_type[addresses][0][primary]'
+          First Street: 'oro_customer_type[addresses][0][street]'
+          First City: 'oro_customer_type[addresses][0][city]'
+          First Postal Code: 'oro_customer_type[addresses][0][postalCode]'
+          First Organization: 'oro_customer_type[addresses][0][organization]'
+          First Country:
+            locator: '//div[contains(@id,"s2id_oro_customer_type_addresses_0_country-uid")]/input'
+            type: xpath
+          First State:
+            locator: '//div[contains(@id,"s2id_oro_customer_type_addresses_0_region-uid")]/input'
+            type: xpath
+
+          Second Primary: 'oro_customer_type[addresses][1][primary]'
+          Second Street: 'oro_customer_type[addresses][1][street]'
+          Second City: 'oro_customer_type[addresses][1][city]'
+          Second Postal Code: 'oro_customer_type[addresses][1][postalCode]'
+          Second Organization: 'oro_customer_type[addresses][1][organization]'
+          Second Country:
+            locator: '//div[contains(@id,"s2id_oro_customer_type_addresses_1_country-uid")]/input'
+            type: xpath
+          Second State:
+            locator: '//div[contains(@id,"s2id_oro_customer_type_addresses_1_region-uid")]/input'
+            type: xpath
 
     Customer Group Form:
       selector: 'form[name="oro_customer_group_type"]'

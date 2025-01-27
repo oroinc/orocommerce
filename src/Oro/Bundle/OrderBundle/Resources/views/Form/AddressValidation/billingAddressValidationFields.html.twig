@@ -1,0 +1,19 @@
+
+{% block _oro_order_type_billingAddress_validatedAt_row %}
+    {% apply spaceless %}
+        {% if not disabled and feature_enabled('oro_address_validation') and oro_config_value('oro_order.validate_billing_addresses__backoffice_order_page') %}
+            {% set attr = {
+                'class': 'hide',
+                'data-page-component-view': {
+                    view: 'oroorder/js/app/views/order-address-validated-at-view',
+                    dialogUrl: path('oro_order_address_validation_billing_address', { id: order.id|default(0) }),
+                    addressType: 'billing'
+                }|json_encode
+            }|merge(attr|default({})) %}
+        {% endif %}
+
+        <div {{ block('attributes') }}>
+            {{ form_widget(form) }}
+        </div>
+    {% endapply %}
+{% endblock %}

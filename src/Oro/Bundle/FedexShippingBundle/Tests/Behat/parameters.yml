@@ -1,0 +1,18 @@
+services:
+    oro_fedex_shipping.address_validation.fedex_rest_client_factory_mock:
+        class: Oro\Bundle\FedexShippingBundle\Tests\Behat\Mock\AddressValidation\AddressValidationFedexRestClientFactoryMock
+        arguments:
+            - !service
+                class: Oro\Bundle\IntegrationBundle\Test\FakeRestClientFactory
+
+    oro_fedex_shipping.token_provider.mock:
+        class: Oro\Bundle\FedexShippingBundle\Tests\Behat\Mock\Client\AccessTokenProviderMock
+        decorates: oro_fedex_oauth.token_provider
+
+    oro_fedex_shipping.address_validation.fedex_address_validation_client:
+        class: Oro\Bundle\FedexShippingBundle\AddressValidation\Client\FedexAddressValidationClient
+        arguments:
+            - '@oro_fedex_shipping.token_provider.mock'
+            - '@oro_fedex_shipping.address_validation.fedex_rest_client_factory_mock'
+            - '@oro_fedex_shipping.address_validation.client.fedex_address_validation_response_factory'
+            - '@logger'

@@ -5,6 +5,7 @@ services:
             - '@doctrine'
             - '@oro_action.factory.duplicator_factory'
             - '@oro_action.action_executor'
+            - '@oro_customer.utils.address_copier'
         tags:
             - { name: 'oro_action_group_service' }
 
@@ -336,6 +337,27 @@ services:
     oro_checkout.workflow.b2b_flow_checkout_single_page.new_shipping_address:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewShippingAddress
         arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.update_shipping_price'
+            - '@oro_checkout.action.default_shipping_method_setter'
+        tags:
+            - { name: 'oro_operation_service' }
+
+    oro_checkout.workflow.b2b_flow_checkout.new_billing_address:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Operation\NewBillingAddress
+        arguments:
+            - '@oro_workflow.manager'
+            - '@oro_action.action_executor'
+            - '@oro_checkout.action_group.address_actions'
+            - '@oro_checkout.action_group.update_shipping_price'
+            - '@oro_checkout.action.default_shipping_method_setter'
+        tags:
+            - { name: 'oro_operation_service' }
+
+    oro_checkout.workflow.b2b_flow_checkout.new_shipping_address:
+        class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Operation\NewShippingAddress
+        arguments:
+            - '@oro_workflow.manager'
             - '@oro_action.action_executor'
             - '@oro_checkout.action_group.update_shipping_price'
             - '@oro_checkout.action.default_shipping_method_setter'

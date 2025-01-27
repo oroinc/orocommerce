@@ -5,11 +5,13 @@ namespace Oro\Bundle\SaleBundle\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType as AddressTypeEntity;
 use Oro\Bundle\AddressBundle\Form\Type\AddressType;
+use Oro\Bundle\AddressValidationBundle\Form\Type\AddressValidatedAtType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\FormBundle\Form\Extension\StripTagsExtension;
-use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
-use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
-use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\FormBundle\Utils\FormUtils;
+use Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
@@ -18,8 +20,6 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -27,131 +27,56 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class QuoteAddressType extends AbstractType
 {
-    private AddressFormatter $addressFormatter;
-    private QuoteAddressManager $quoteAddressManager;
-    private QuoteAddressSecurityProvider $quoteAddressSecurityProvider;
-    private Serializer $serializer;
-
     public function __construct(
-        AddressFormatter $addressFormatter,
-        QuoteAddressManager $quoteAddressManager,
-        QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
-        Serializer $serializer
+        private QuoteAddressManager $quoteAddressManager,
+        private QuoteAddressSecurityProvider $quoteAddressSecurityProvider,
     ) {
-        $this->addressFormatter = $addressFormatter;
-        $this->quoteAddressManager = $quoteAddressManager;
-        $this->quoteAddressSecurityProvider = $quoteAddressSecurityProvider;
-        $this->serializer = $serializer;
     }
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $type = $options['addressType'];
-        $quote = $options['quote'];
-
-        $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($type);
-
-        $builder->addEventListener(
-            FormEvents::PRE_SET_DATA,
-            function (FormEvent $event) use ($quote, $type, $isManualEditGranted) {
-                $form = $event->getForm();
-
-                $addressCollection = $this->quoteAddressManager->getGroupedAddresses($quote, $type, 'oro.sale.quote.');
-                $addresses = $addressCollection->toArray();
-
-                $customerAddressOptions = [
-                    'label' => false,
+        $builder
+            ->add(
+                'customerAddress',
+                QuoteAddressSelectType::class,
+                [
+                    'quote' => $options['quote'],
+                    'address_type' => $options['address_type'],
                     'required' => false,
                     'mapped' => false,
-                    'choices' => $this->getChoices($addresses),
-                    'configs' => ['placeholder' => 'oro.sale.quote.form.address.choose'],
-                    'attr' => [
-                        'data-addresses' => json_encode($this->getPlainData($addresses)),
-                        'data-default' => $addressCollection->getDefaultAddressKey(),
-                    ],
-                ];
+                ]
+            )
+            ->add(
+                'phone',
+                TextType::class,
+                [
+                    'required' => false,
+                    StripTagsExtension::OPTION_NAME => true,
+                ]
+            )
+            ->add('validatedAt', AddressValidatedAtType::class);
 
-                if ($isManualEditGranted) {
-                    $customerAddressOptions['choices'] = array_merge(
-                        $customerAddressOptions['choices'],
-                        ['oro.sale.quote.form.address.manual' => 0]
-                    );
-                    $customerAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
-                }
-
-                $form->add('customerAddress', Select2ChoiceType::class, $customerAddressOptions);
-            }
-        );
-
-        $builder->add('phone', TextType::class, [StripTagsExtension::OPTION_NAME => true]);
-
-        $builder->addEventListener(
-            FormEvents::SUBMIT,
-            function (FormEvent $event) use ($isManualEditGranted) {
-                if (!$isManualEditGranted) {
-                    $event->setData(null);
-                }
-
-                $form = $event->getForm();
-                if (!$form->has('customerAddress')) {
-                    return;
-                }
-
-                $identifier = $form->get('customerAddress')->getData();
-                if ($identifier === null) {
-                    return;
-                }
-
-                //Enter manually or Customer/CustomerUser address
-                $quoteAddress = $event->getData();
-
-                $address = null;
-                if ($identifier) {
-                    $address = $this->quoteAddressManager->getEntityByIdentifier($identifier);
-                }
-
-                if ($quoteAddress || $address) {
-                    $event->setData($this->quoteAddressManager->updateFromAbstract($address, $quoteAddress));
-                }
-            },
-            -10
-        );
-    }
-
-    #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options): void
-    {
-        $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($options['addressType']);
-        $exceptKey = 'phone';
-
-        foreach ($view->children as $key => $child) {
-            if ($key === $exceptKey) {
-                continue;
-            }
-
-            $child->vars['disabled'] = !$isManualEditGranted;
-            $child->vars['required'] = false;
-            unset(
-                $child->vars['attr']['data-validation'],
-                $child->vars['attr']['data-required'],
-                $child->vars['label_attr']['data-required']
-            );
-        }
-
-        if ($view->offsetExists('customerAddress')) {
-            $view->offsetGet('customerAddress')->vars['disabled'] = false;
-        }
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, $this->getOnPreSetDataClosure());
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, $this->getDisableFieldsOnPreSetDataClosure());
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, $this->getDisableFieldsOnPreSubmitClosure());
+        $builder->addEventListener(FormEvents::SUBMIT, $this->getOnSubmitClosure(), -10);
     }
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver): void
     {
+        $resolver->setDefaults(['data_class' => QuoteAddress::class]);
+
         $resolver
-            ->setRequired(['quote', 'addressType'])
-            ->setDefaults(['data_class' => QuoteAddress::class])
-            ->setAllowedValues('addressType', [AddressTypeEntity::TYPE_SHIPPING])
-            ->setAllowedTypes('quote', Quote::class);
+            ->define('quote')
+            ->required()
+            ->allowedTypes(CustomerOwnerAwareInterface::class);
+
+        $resolver
+            ->define('address_type')
+            ->required()
+            ->allowedValues(AddressTypeEntity::TYPE_SHIPPING);
     }
 
     #[\Override]
@@ -166,36 +91,117 @@ class QuoteAddressType extends AbstractType
         return 'oro_quote_address_type';
     }
 
-    private function getChoices(array $addresses = []): array
+    private function getOnPreSetDataClosure(): \Closure
     {
-        foreach ($addresses as $group => $groupAddresses) {
-            array_walk(
-                $groupAddresses,
-                function (&$item) {
-                    if ($item instanceof AbstractAddress) {
-                        $item = $this->addressFormatter->format($item, null, ', ');
-                    }
-                }
-            );
-            $addresses[$group] = array_flip($groupAddresses);
-        }
+        return static function (FormEvent $event) {
+            // Sets the previously selected address in the customer address drop-down.
+            $quoteAddress = $event->getData();
+            if ($quoteAddress === null) {
+                $data = null;
+            } elseif ($quoteAddress->getCustomerAddress()) {
+                $data = $quoteAddress->getCustomerAddress();
+            } elseif ($quoteAddress->getCustomerUserAddress()) {
+                $data = $quoteAddress->getCustomerUserAddress();
+            } else {
+                $data = OrderAddressSelectType::ENTER_MANUALLY;
+            }
 
-        return $addresses;
+            FormUtils::replaceFieldOptionsRecursive(
+                $event->getForm(),
+                'customerAddress',
+                [
+                    'data' => $data,
+                ]
+            );
+        };
     }
 
-    private function getPlainData(array $addresses = []): array
+    private function getDisableFieldsOnPreSetDataClosure(): \Closure
     {
-        $data = [];
+        return function (FormEvent $event) {
+            $customerAddressData = $event->getForm()->get('customerAddress')->getData();
 
-        array_walk_recursive(
-            $addresses,
-            function ($item, $key) use (&$data) {
-                if ($item instanceof AbstractAddress) {
-                    $data[$key] = $this->serializer->normalize($item);
-                }
+            $this->doDisableFields($event, $customerAddressData);
+        };
+    }
+
+    private function getDisableFieldsOnPreSubmitClosure(): \Closure
+    {
+        return function (FormEvent $event) {
+            $customerAddressData = $event->getData()['customerAddress'] ?? null;
+
+            $this->doDisableFields($event, (string) $customerAddressData);
+        };
+    }
+
+    private function doDisableFields(FormEvent $event, AbstractAddress|string|int|null $customerAddressData): void
+    {
+        $form = $event->getForm();
+        $isNewAddress = !$customerAddressData || $customerAddressData === QuoteAddressSelectType::ENTER_MANUALLY;
+        $addressType = $form->getConfig()->getOption('address_type');
+        $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($addressType);
+
+        foreach ($form as $child) {
+            if (in_array($child->getName(), ['customerAddress', 'validatedAt'], true)) {
+                continue;
             }
-        );
 
-        return $data;
+            if (!$isManualEditGranted || !$isNewAddress) {
+                FormUtils::replaceFieldOptionsRecursive(
+                    $event->getForm(),
+                    $child->getName(),
+                    ['disabled' => true]
+                );
+            }
+        }
+    }
+
+    private function getOnSubmitClosure(): \Closure
+    {
+        return function (FormEvent $event) {
+            $form = $event->getForm();
+            $addressType = $form->getConfig()->getOption('address_type');
+            $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($addressType);
+            if (!$isManualEditGranted) {
+                $event->setData(null);
+            }
+
+            /** @var QuoteAddress|null $quoteAddress */
+            $quoteAddress = $event->getData();
+            $selectedAddress = $form->get('customerAddress')->getData();
+            if ($selectedAddress === null || $selectedAddress === QuoteAddressSelectType::ENTER_MANUALLY) {
+                if ($quoteAddress && $isManualEditGranted) {
+                    $quoteAddress->setCustomerAddress(null);
+                    $quoteAddress->setCustomerUserAddress(null);
+                }
+            } elseif ($selectedAddress instanceof AbstractAddress
+                && $this->isAddressChangeRequired($selectedAddress, $quoteAddress)
+            ) {
+                $event->setData($this->quoteAddressManager->updateFromAbstract($selectedAddress, $quoteAddress));
+            }
+        };
+    }
+
+    private function isAddressChangeRequired(AbstractAddress $selectedAddress, ?QuoteAddress $quoteAddress): bool
+    {
+        if (!$quoteAddress instanceof QuoteAddress) {
+            return true;
+        }
+
+        if (!$quoteAddress->getCustomerAddress() && !$quoteAddress->getCustomerUserAddress()) {
+            return true;
+        }
+
+        if ($selectedAddress instanceof CustomerAddress &&
+            $selectedAddress->getId() !== $quoteAddress->getCustomerAddress()?->getId()) {
+            return true;
+        }
+
+        if ($selectedAddress instanceof CustomerUserAddress &&
+            $selectedAddress->getId() !== $quoteAddress->getCustomerUserAddress()?->getId()) {
+            return true;
+        }
+
+        return false;
     }
 }

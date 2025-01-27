@@ -31,3 +31,21 @@ services:
         arguments:
             - '@oro_order.provider.dashboard.sales_orders_chart_widget_provider.volume'
             - '@oro_order.provider.dashboard.sales_orders_chart_widget_provider.number'
+
+    oro_order.controller.address_validation.billing_address:
+        class: Oro\Bundle\OrderBundle\Controller\AddressValidation\OrderAddressValidationController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_order.form.factory.address_validation.address_form.order_page.billing_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_order.address_validation.result_handler.address_book_aware.billing, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+
+    oro_order.controller.address_validation.shipping_address:
+        class: Oro\Bundle\OrderBundle\Controller\AddressValidation\OrderAddressValidationController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_order.form.factory.address_validation.address_form.order_page.shipping_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_order.address_validation.result_handler.address_book_aware.shipping, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }

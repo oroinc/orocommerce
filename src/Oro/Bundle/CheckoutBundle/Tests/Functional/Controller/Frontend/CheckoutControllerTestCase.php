@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
@@ -129,7 +130,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     protected function setFormData(array $values, string $type): array
     {
         $address = [
-            'customerAddress' => static::MANUAL_ADDRESS,
+            'customerAddress' => CheckoutAddressSelectType::ENTER_MANUALLY,
             'firstName' => static::FIRST_NAME,
             'lastName' => static::LAST_NAME,
             'street' => static::STREET,

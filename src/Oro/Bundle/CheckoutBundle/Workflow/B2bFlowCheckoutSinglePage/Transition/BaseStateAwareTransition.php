@@ -42,6 +42,14 @@ class BaseStateAwareTransition extends TransitionServiceAbstract
             $checkout->setBillingAddress($billingAddress);
         }
 
+        $data->offsetSet(
+            'billing_address_has_shipping',
+            $this->addressActions->updateBillingAddress(
+                $checkout,
+                (bool)$data->offsetGet('disallow_shipping_address_edit')
+            )
+        );
+
         if (!$checkout->getShippingAddress()) {
             $customerUserAddresses = $this->orderAddressManager->getGroupedAddresses($checkout, 'shipping');
 
@@ -51,15 +59,6 @@ class BaseStateAwareTransition extends TransitionServiceAbstract
             $checkout->setShippingAddress($shippingAddress);
         }
 
-        $data->offsetSet(
-            'billing_address_has_shipping',
-            $this->addressActions->updateBillingAddress(
-                $checkout,
-                (bool)$data->offsetGet('disallow_shipping_address_edit')
-            )
-        );
-
-        $this->addressActions->updateShippingAddress($checkout);
         $this->updateShippingPrice->execute($checkout);
     }
 }

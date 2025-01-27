@@ -12,6 +12,7 @@ oro_behat_extension:
         - Oro\Bundle\UPSBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\WorkflowBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroUPSBundle/Tests/Behat/Features'
 

@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Model;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Utils\AddressCopier;
 use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
+use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 
 /**
@@ -13,24 +14,29 @@ use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
  */
 class QuoteAddressManager extends AbstractAddressManager
 {
-    public function updateFromAbstract(
-        AbstractAddress $address = null,
-        QuoteAddress $quoteAddress = null
-    ): QuoteAddress {
+    private AddressCopier $addressCopier;
+
+    public function __construct(
+        ManagerRegistry $doctrine,
+        AddressProviderInterface $quoteAddressProvider,
+        AddressCopier $addressCopier
+    ) {
+        parent::__construct($doctrine, $quoteAddressProvider);
+
+        $this->addressCopier = $addressCopier;
+    }
+
+    public function updateFromAbstract(AbstractAddress $address = null, QuoteAddress $quoteAddress = null): QuoteAddress
+    {
         if (!$quoteAddress) {
             $quoteAddress = new QuoteAddress();
         }
 
-        if (null !== $address) {
-            $this->copyAddress($address, $quoteAddress);
+        if (!$address) {
+            $address = new QuoteAddress();
         }
-        $quoteAddress->setCustomerAddress(null);
-        $quoteAddress->setCustomerUserAddress(null);
-        if ($address instanceof CustomerAddress) {
-            $quoteAddress->setCustomerAddress($address);
-        } elseif ($address instanceof CustomerUserAddress) {
-            $quoteAddress->setCustomerUserAddress($address);
-        }
+
+        $this->addressCopier->copyToAddress($address, $quoteAddress);
 
         return $quoteAddress;
     }

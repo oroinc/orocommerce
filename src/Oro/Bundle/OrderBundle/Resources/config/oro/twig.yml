@@ -1,2 +1,4 @@
 bundles:
     - '@OroOrder/Form/fields.html.twig'
+    - '@OroOrder/Form/AddressValidation/billingAddressValidationFields.html.twig'
+    - '@OroOrder/Form/AddressValidation/shippingAddressValidationFields.html.twig'

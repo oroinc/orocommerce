@@ -2,52 +2,39 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\EventListener\QuoteUpdateHandlerEventListener;
-use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
+use Oro\Bundle\SaleBundle\Form\Handler\QuoteCustomerDataRequestHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
-class QuoteUpdateHandlerEventListenerTest extends \PHPUnit\Framework\TestCase
+class QuoteUpdateHandlerEventListenerTest extends TestCase
 {
-    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteManager;
+    private WebsiteManager&MockObject $websiteManager;
 
-    /** @var QuoteRequestHandler|\PHPUnit\Framework\MockObject\MockObject */
-    private $quoteRequestHandler;
+    private QuoteCustomerDataRequestHandler&MockObject $quoteCustomerDataRequestHandler;
 
-    /** @var QuoteUpdateHandlerEventListener */
-    private $listener;
+    private QuoteUpdateHandlerEventListener $listener;
 
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
-    private $requestStack;
+    private FormProcessEvent $event;
 
-    /** @var FormProcessEvent */
-    private $event;
-
-    /** @var Quote */
-    private $quote;
+    private Quote $quote;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->websiteManager = $this->createMock(WebsiteManager::class);
-        $this->quoteRequestHandler = $this->createMock(QuoteRequestHandler::class);
-        $this->requestStack = $this->createMock(RequestStack::class);
+        $this->quoteCustomerDataRequestHandler = $this->createMock(QuoteCustomerDataRequestHandler::class);
 
         $this->listener = new QuoteUpdateHandlerEventListener(
             $this->websiteManager,
-            $this->quoteRequestHandler,
-            $this->requestStack
+            $this->quoteCustomerDataRequestHandler
         );
 
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
 
         $this->quote = new Quote();
@@ -58,7 +45,7 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit\Framework\TestCase
     {
         $website = new Website();
 
-        $this->websiteManager->expects($this->once())->method('getDefaultWebsite')->willReturn($website);
+        $this->websiteManager->expects(self::once())->method('getDefaultWebsite')->willReturn($website);
 
         $this->listener->ensureWebsite($this->event);
 
@@ -71,7 +58,7 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit\Framework\TestCase
 
         $this->quote->setWebsite($website);
 
-        $this->websiteManager->expects($this->never())->method('getDefaultWebsite');
+        $this->websiteManager->expects(self::never())->method('getDefaultWebsite');
 
         $this->listener->ensureWebsite($this->event);
 
@@ -80,32 +67,10 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit\Framework\TestCase
 
     public function testEnsureCustomer()
     {
-        $customer = new Customer();
-        $customerUser = new CustomerUser();
-
-        $request = $this->createMock(Request::class);
-        $request->expects($this->once())->method('getMethod')->willReturn('POST');
-
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $this->quoteRequestHandler->expects($this->once())->method('getCustomer')->willReturn($customer);
-        $this->quoteRequestHandler->expects($this->once())->method('getCustomerUser')->willReturn($customerUser);
-
-        $this->listener->ensureCustomer($this->event);
-
-        $this->assertSame($customer, $this->quote->getCustomer());
-        $this->assertSame($customerUser, $this->quote->getCustomerUser());
-    }
-
-    public function testEnsureCustomerOtherRequests()
-    {
-        $request = $this->createMock(Request::class);
-        $request->expects($this->once())->method('getMethod')->willReturn('GET'); //not our case
-
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
-
-        $this->quoteRequestHandler->expects($this->never())->method('getCustomer');
-        $this->quoteRequestHandler->expects($this->never())->method('getCustomerUser');
+        $this->quoteCustomerDataRequestHandler
+            ->expects(self::once())
+            ->method('handle')
+            ->with($this->quote);
 
         $this->listener->ensureCustomer($this->event);
     }

@@ -89,11 +89,10 @@ services:
 
     oro_sale.manager.quote_address:
         class: 'Oro\Bundle\SaleBundle\Model\QuoteAddressManager'
-        public: false
         arguments:
-            - '@oro_sale.provider.quote_address'
             - '@doctrine'
-            - '@property_accessor'
+            - '@oro_sale.provider.quote_address'
+            - '@oro_customer.utils.address_copier'
         calls:
             - [addEntity, ['a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress']]
             - [addEntity, ['au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress']]
@@ -122,7 +121,6 @@ services:
 
     oro_sale.provider.quote_address:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider'
-        public: false
         arguments:
             - "@security.authorization_checker"
             - "@oro_security.token_accessor"
@@ -130,6 +128,19 @@ services:
             - "@oro_security.acl_helper"
             - 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
             - 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress'
+
+    oro_sale.event_listener.reset_order_address_provider:
+        class: Oro\Bundle\CacheBundle\EventListener\ResetOnEntityChangeListener
+        arguments:
+            - '@oro_sale.provider.quote_address'
+            - [
+                Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress,
+                Oro\Bundle\CustomerBundle\Entity\CustomerAddress
+            ]
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: doctrine.event_listener, event: postFlush }
+            - { name: doctrine.event_listener, event: onClear }
 
     oro_sale.provider.quote_address_security:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider'
@@ -164,8 +175,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\EventListener\QuoteUpdateHandlerEventListener'
         arguments:
             - '@oro_website.manager'
-            - '@oro_sale.service.quote_request_handler'
-            - '@request_stack'
+            - '@oro_sale.quote_customer_data_request_handler'
         tags:
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: ensureWebsite }
             - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: ensureCustomer }
@@ -450,6 +460,13 @@ services:
         tags:
             - { name: oro_email.emailtemplate.variable_provider, scope: system }
 
+    oro_sale.quote_customer_data_request_handler:
+        public: true
+        class: Oro\Bundle\SaleBundle\Form\Handler\QuoteCustomerDataRequestHandler
+        arguments:
+            - '@request_stack'
+            - '@oro_sale.service.quote_request_handler'
+    
     oro_sale.frontend-quotes-line-items-grid.product_names_loader.listener:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\DatagridProductNameLoaderListener'
         arguments:

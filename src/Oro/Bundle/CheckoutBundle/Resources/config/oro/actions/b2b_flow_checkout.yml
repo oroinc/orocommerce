@@ -41,6 +41,7 @@ operations:
                 ship_to_billing_address:
                     form_type: Oro\Bundle\CheckoutBundle\Form\Type\ShipToBillingAddressType
         form_init:
+            - '@assign_value': [$.oldAddress, $.data.billingAddress]
             - '@call_service_method':
                 service: oro_workflow.manager
                 method: getFirstWorkflowItemByEntity
@@ -62,22 +63,7 @@ operations:
                         - '@acl_granted': 'CREATE;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
                 actions:
                     - '@assign_value': [$.save_address, $.data.saveBillingAddress]
-        actions:
-            - '@assign_value': [$.workflowItem.data.email, $.visitor_email]
-            - '@call_method':
-                object: $.workflowItem
-                method: setUpdated
-            - '@flush_entity': $.workflowItem
-            - '@assign_value': [$.data.saveBillingAddress, $.save_address]
-            - '@assign_value': [$.data.shipToBillingAddress, $.ship_to_billing_address]
-            - '@flush_entity': [$.address]
-            - '@flush_entity': [$.data]
-            - '@run_action_group':
-                action_group: update_checkout_state
-                parameters_mapping:
-                    checkout: $.data
-                    state_token: $.workflowItem.data.state_token
-                    update_checkout_state: true
+        service: oro_checkout.workflow.b2b_flow_checkout.new_billing_address
 
     b2b_flow_checkout_new_shipping_address:
         extends: b2b_flow_checkout_new_address
@@ -102,7 +88,7 @@ operations:
                 save_address:
                     form_type: Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType
         form_init:
-            - '@assign_value': [$.address, $.data.shippingAddress]
+            - '@assign_value': [$.oldAddress, $.data.shippingAddress]
             - '@tree':
                 conditions:
                     '@and':
@@ -110,26 +96,7 @@ operations:
                         - '@acl_granted': 'CREATE;entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress'
                 actions:
                     - '@assign_value': [$.save_address, $.data.saveShippingAddress]
-        actions:
-            - '@call_service_method':
-                service: oro_workflow.manager
-                method: getFirstWorkflowItemByEntity
-                method_parameters: [$.data]
-                attribute: $.workflowItem
-            - '@call_method':
-                object: $.workflowItem
-                method: setUpdated
-            - '@flush_entity': $.workflowItem
-            - '@assign_value': [$.data.saveShippingAddress, $.save_address]
-            - '@assign_value': [$.data.shipToBillingAddress, false]
-            - '@flush_entity': [$.address]
-            - '@flush_entity': [$.data]
-            - '@run_action_group':
-                action_group: update_checkout_state
-                parameters_mapping:
-                    checkout: $.data
-                    state_token: $.workflowItem.data.state_token
-                    update_checkout_state: true
+        service: oro_checkout.workflow.b2b_flow_checkout.new_shipping_address
 
 action_groups:
     b2b_flow_checkout_duplicate_address:

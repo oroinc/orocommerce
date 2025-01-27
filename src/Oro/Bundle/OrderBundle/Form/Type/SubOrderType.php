@@ -156,9 +156,9 @@ class SubOrderType extends AbstractType
             if ($this->orderAddressSecurityProvider->isAddressGranted($order, $type)) {
                 $options = [
                     'label' => sprintf('oro.order.%s_address.label', $type),
-                    'object' => $order,
+                    'order' => $order,
                     'required' => false,
-                    'addressType' => $type,
+                    'address_type' => $type,
                 ];
 
                 $form->add(sprintf('%sAddress', $type), OrderAddressType::class, $options);
@@ -175,9 +175,9 @@ class SubOrderType extends AbstractType
                     OrderAddressType::class,
                     [
                         'label' => 'oro.order.shipping_address.label',
-                        'object' => $options['data'],
+                        'order' => $options['data'],
                         'required' => false,
-                        'addressType' => AddressType::TYPE_SHIPPING,
+                        'address_type' => AddressType::TYPE_SHIPPING,
                     ]
                 );
         }

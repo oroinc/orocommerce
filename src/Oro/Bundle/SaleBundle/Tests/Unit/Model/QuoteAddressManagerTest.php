@@ -12,25 +12,32 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Utils\AddressCopier;
 use Oro\Bundle\OrderBundle\Manager\AbstractAddressManager;
 use Oro\Bundle\OrderBundle\Tests\Unit\Manager\AbstractAddressManagerTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
+use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class QuoteAddressManagerTest extends AbstractAddressManagerTest
 {
     private QuoteAddressManager $manager;
+
+    private AddressCopier|MockObject $addressCopier;
 
     #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
 
+        $this->addressCopier = new AddressCopier($this->doctrine, new PropertyAccessor());
+
         $this->manager = new QuoteAddressManager(
-            $this->addressProvider,
             $this->doctrine,
-            $this->propertyAccessor
+            $this->addressProvider,
+            $this->addressCopier
         );
     }
 
@@ -84,14 +91,14 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 $customerAddress = new CustomerAddress(),
                 (new QuoteAddress())
                     ->setCustomerAddress($customerAddress),
-                $customerAddress
+                $customerAddress,
             ],
             'empty customer user address' => [
                 $customerUserAddress = new CustomerUserAddress(),
                 (new QuoteAddress())
                     ->setCustomerUserAddress($customerUserAddress),
                 null,
-                $customerUserAddress
+                $customerUserAddress,
             ],
             'from customer address' => [
                 $customerAddress = (new CustomerAddress())
@@ -105,7 +112,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
-                $customerAddress
+                $customerAddress,
             ],
             'from customer user address' => [
                 $customerUserAddress = (new CustomerUserAddress())
@@ -120,9 +127,9 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                     ->setStreet('Street')
                     ->setCity('City'),
                 null,
-                $customerUserAddress
+                $customerUserAddress,
             ],
-            'do not override value from existing with empty one' => [
+            'overrides value from existing with empty one' => [
                 $customerUserAddress = (new CustomerUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
@@ -130,7 +137,6 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                     ->setCity('City'),
                 (new QuoteAddress())
                     ->setCustomerUserAddress($customerUserAddress)
-                    ->setLabel('ExistingLabel')
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
@@ -138,7 +144,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 null,
                 $customerUserAddress,
                 (new QuoteAddress())
-                    ->setLabel('ExistingLabel')
+                    ->setLabel('ExistingLabel'),
             ],
         ];
     }
@@ -178,7 +184,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 [
                     'oro.sale.quote.form.address.group_label.customer_user' => [
                         'au_1' => $this->getCustomerUserAddress(1),
-                        'au_2' => $this->getCustomerUserAddress(2)
+                        'au_2' => $this->getCustomerUserAddress(2),
                     ],
                 ],
             ],
@@ -189,7 +195,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 [
                     'oro.sale.quote.form.address.group_label.customer' => [
                         'a_1' => $this->getCustomerAddress(1),
-                        'a_2' => $this->getCustomerAddress(2)
+                        'a_2' => $this->getCustomerAddress(2),
                     ],
                 ],
             ],
@@ -200,11 +206,11 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 [
                     'oro.sale.quote.form.address.group_label.customer' => [
                         'a_1' => $this->getCustomerAddress(1),
-                        'a_2' => $this->getCustomerAddress(2)
+                        'a_2' => $this->getCustomerAddress(2),
                     ],
                     'oro.sale.quote.form.address.group_label.customer_user' => [
                         'au_1' => $this->getCustomerUserAddress(1),
-                        'au_2' => $this->getCustomerUserAddress(2)
+                        'au_2' => $this->getCustomerUserAddress(2),
                     ],
                 ],
             ],

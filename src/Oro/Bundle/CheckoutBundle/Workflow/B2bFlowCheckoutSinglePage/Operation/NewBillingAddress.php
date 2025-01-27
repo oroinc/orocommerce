@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
+use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
@@ -42,6 +43,14 @@ class NewBillingAddress extends AbstractOperationService
         if ($checkout->getShippingCost() === null) {
             $checkout->setShippingMethod(null);
             $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
+        }
+
+        if ($data->offsetGet('oldAddress') instanceof OrderAddress &&
+            $checkout->getBillingAddress()?->getId() !== $data->offsetGet('oldAddress')->getId()) {
+            $this->actionExecutor->executeAction(
+                'remove_entity',
+                [$data->offsetGet('oldAddress')]
+            );
         }
 
         $this->actionExecutor->executeAction(

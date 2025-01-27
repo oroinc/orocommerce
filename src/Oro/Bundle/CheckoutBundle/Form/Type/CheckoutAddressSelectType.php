@@ -2,19 +2,29 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
+use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer;
+use Oro\Bundle\CustomerBundle\Entity\AddressBookAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Utils\AddressBookAddressUtils;
+use Oro\Bundle\FormBundle\Form\Type\Select2ChoiceType;
+use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
+use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Manager\TypedOrderAddressCollection;
+use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\Loader\CallbackChoiceLoader;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
@@ -22,16 +32,15 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class CheckoutAddressSelectType extends AbstractType
 {
-    private OrderAddressManager $addressManager;
-
-    private OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer;
+    public const string ENTER_MANUALLY = '0';
 
     public function __construct(
-        OrderAddressManager $addressManager,
-        OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransforLmer
+        private OrderAddressManager $orderAddressManager,
+        private AddressFormatter $addressFormatter,
+        private OrderAddressSecurityProvider $orderAddressSecurityProvider,
+        private Serializer $serializer,
+        private OrderAddressToAddressIdentifierViewTransformer $orderAddressToAddressIdentifierViewTransformer
     ) {
-        $this->addressManager = $addressManager;
-        $this->orderAddressToAddressIdentifierViewTransforLmer = $orderAddressToAddressIdentifierViewTransforLmer;
     }
 
     #[\Override]
@@ -53,7 +62,7 @@ class CheckoutAddressSelectType extends AbstractType
         }
 
         // Transformer must be executed before ChoiceToValueTransformer so it can transform OrderAddress to a key.
-        $builder->addViewTransformer($this->orderAddressToAddressIdentifierViewTransforLmer, true);
+        $builder->addViewTransformer($this->orderAddressToAddressIdentifierViewTransformer, true);
 
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
     }
@@ -61,20 +70,21 @@ class CheckoutAddressSelectType extends AbstractType
     public function onSubmit(FormEvent $event): void
     {
         $options = $event->getForm()->getConfig()->getOptions();
-        /** @var Checkout $object */
-        $object = $options['object'];
-        $addressType = $options['address_type'];
-        $address = $event->getData();
-        if ($address === null || $address === OrderAddressSelectType::ENTER_MANUALLY) {
-            if ($addressType === AddressType::TYPE_BILLING) {
-                $orderAddress = $object->getBillingAddress();
-            } elseif ($addressType === AddressType::TYPE_SHIPPING) {
-                $orderAddress = $object->getShippingAddress();
-            }
+        $orderAddress = $this->getSelectedAddress($options['object'], $options['address_type']);
 
-            if (isset($orderAddress) && !$orderAddress->getCustomerAddress()
-                && !$orderAddress->getCustomerUserAddress()) {
+        /** @var CustomerAddress|CustomerUserAddress|string|null $selectedAddress */
+        $selectedAddress = $event->getData();
+
+        if ($selectedAddress === null || $selectedAddress === self::ENTER_MANUALLY) {
+            if ($orderAddress &&
+                !$orderAddress->getCustomerAddress() &&
+                !$orderAddress->getCustomerUserAddress()) {
                 $event->setData($orderAddress);
+            }
+        } else {
+            $event->setData(null);
+            if ($selectedAddress) {
+                $event->setData($this->orderAddressManager->updateFromAbstract($selectedAddress, $orderAddress));
             }
         }
     }
@@ -82,19 +92,31 @@ class CheckoutAddressSelectType extends AbstractType
     #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
-        $labelPrefix = $options['group_label_prefix'];
         /** @var TypedOrderAddressCollection $collection */
         $collection = $options['address_collection'];
-        $addressType = $options['address_type'];
-
         $addresses = $collection->toArray();
 
         $action = count($addresses) ? 'select' : 'enter';
         $view->vars['address_count'] = count($addresses);
-        $view->vars['label'] = sprintf('%sform.address.%s.%s.label.short', $labelPrefix, $action, $addressType);
+        $view->vars['label'] = sprintf(
+            'oro.checkout.form.address.%s.%s.label.short',
+            $action,
+            $options['address_type']
+        );
+        $view->vars['checkout'] = $options['object'];
+        $view->vars['checkoutId'] = $options['object']->getId();
 
+        $currentAddress = $form->getData();
+        if ($currentAddress instanceof AddressBookAwareInterface &&
+            !AddressBookAddressUtils::getAddressBookAddress($currentAddress)) {
+            $addresses[self::ENTER_MANUALLY] = $currentAddress;
+        }
+
+        $plainAddresses = $this->getPlainData($addresses);
+
+        $view->vars['attr']['data-addresses'] = json_encode($plainAddresses);
         $view->vars['attr']['data-addresses-types'] = json_encode(
-            $this->addressManager->getAddressTypes($addresses, $options['group_label_prefix'])
+            $this->orderAddressManager->getAddressTypes($addresses, 'oro.checkout.')
         );
     }
 
@@ -102,18 +124,57 @@ class CheckoutAddressSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver
+            ->setRequired(['object', 'address_type'])
             ->setDefaults([
-                'data' => null,
                 'data_class' => null,
-                'group_label_prefix' => 'oro.checkout.'
+                'label' => false,
+                'configs' => [
+                    'placeholder' => 'oro.checkout.form.address.choose',
+                ],
+                'address_collection' => function (Options $options) {
+                    return $this->orderAddressManager->getGroupedAddresses(
+                        $options['object'],
+                        $options['address_type'],
+                        'oro.checkout.'
+                    );
+                },
+                'choice_loader' => function (Options $options) {
+                    return new CallbackChoiceLoader(function () use ($options) {
+                        $collection = $options['address_collection'];
+                        $choices = $collection->toArray();
+
+                        $isGranted = $this->orderAddressSecurityProvider->isManualEditGranted($options['address_type']);
+                        if ($isGranted) {
+                            $choices['oro.checkout.form.address.manual'] = self::ENTER_MANUALLY;
+                        }
+
+                        return $choices;
+                    });
+                },
+                'choice_value' => function ($choice) {
+                    if (is_scalar($choice)) {
+                        return $choice;
+                    }
+
+                    if ($choice instanceof CustomerAddress || $choice instanceof CustomerUserAddress) {
+                        return $this->orderAddressManager->getIdentifier($choice);
+                    }
+
+                    return null;
+                },
+                'choice_label' => function ($choice, $key) {
+                    if ($choice instanceof AbstractAddress) {
+                        return $this->addressFormatter->format($choice, null, ', ');
+                    }
+
+                    return $key;
+                },
             ])
+            ->setAllowedValues('address_type', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
+            ->setAllowedTypes('address_collection', TypedOrderAddressCollection::class)
             ->setAllowedTypes('object', Checkout::class)
             ->addNormalizer('disabled', function ($options, $value) {
-                if (null === $value) {
-                    return false;
-                }
-
-                return $value;
+                return $value ?? false;
             });
     }
 
@@ -126,16 +187,10 @@ class CheckoutAddressSelectType extends AbstractType
     #[\Override]
     public function getParent(): string
     {
-        return OrderAddressSelectType::class;
+        return Select2ChoiceType::class;
     }
 
-    /**
-     * @param Checkout $entity
-     * @param string $type
-     *
-     * @return null|OrderAddress
-     */
-    private function getSelectedAddress(Checkout $entity, $type): ?OrderAddress
+    private function getSelectedAddress(Checkout $entity, string $type): ?OrderAddress
     {
         $address = null;
         if ($type === AddressType::TYPE_BILLING) {
@@ -145,5 +200,18 @@ class CheckoutAddressSelectType extends AbstractType
         }
 
         return $address;
+    }
+
+    private function getPlainData(array $addresses = []): array
+    {
+        $data = [];
+
+        array_walk_recursive($addresses, function ($item, $key) use (&$data) {
+            if ($item instanceof AbstractAddress) {
+                $data[$key] = $this->serializer->normalize($item);
+            }
+        });
+
+        return $data;
     }
 }

@@ -109,23 +109,30 @@ define(function(require) {
             }
         },
 
-        onSubmit: function(e) {
-            if (e.originalEvent && !e.originalEvent.submitter.isEqualNode(this.$el[0])) {
+        /**
+         * @param {jQuery.Event} event
+         * @param {object} extraData
+         *
+         * @returns {boolean}
+         */
+        onSubmit: function(event, extraData) {
+            if (event.originalEvent && !event.originalEvent.submitter.isEqualNode(this.$el[0])) {
                 return false;
             }
 
             if (this.options.flashMessageOnSubmit) {
-                e.preventDefault();
+                event.preventDefault();
                 mediator.execute('showFlashMessage', 'error', this.options.flashMessageOnSubmit);
                 return false;
             }
 
-            e.preventDefault();
+            event.preventDefault();
 
             if (this.formsValidate()) {
                 const eventData = {
                     stopped: false,
-                    event: e
+                    event: event,
+                    extraData: (extraData || {})
                 };
 
                 mediator.trigger('checkout:before-submit', eventData);
@@ -133,7 +140,7 @@ define(function(require) {
                     return;
                 }
 
-                this.transit(e, {method: 'POST'});
+                this.transit(event, {method: 'POST'});
             }
         },
 

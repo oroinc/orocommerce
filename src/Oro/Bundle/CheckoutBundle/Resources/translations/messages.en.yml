@@ -371,6 +371,8 @@ oro:
                         region: 'State'
         form:
             address.manual: New address
+            add_address.label: Add Address
+            cancel_add_address.label: Cancel
             address.group_label:
                 customer: Global Address Book
                 customer_user: My address book
@@ -538,9 +540,21 @@ oro:
 
         errors:
             payment:
-                  error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
-                  error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'
+                error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
+                error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'
         line_items_grouping:
             other_items_group:
                 title: Other Items
 
+oro.address_validation.system_configuration:
+    fields:
+        validate_shipping_addresses:
+            backoffice:
+                label: Validate Shipping Addresses in Back-Office
+                order_page:
+                    label: Validate Shipping Addresses on Back-Office Order Page
+        validate_billing_addresses:
+            backoffice:
+                label: Validate Billing Addresses in Back-Office
+                order_page:
+                    label: Validate Billing Addresses on Back-Office Order Page

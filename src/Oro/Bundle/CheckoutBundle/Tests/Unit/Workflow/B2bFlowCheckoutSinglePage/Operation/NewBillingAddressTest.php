@@ -14,6 +14,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -22,11 +23,11 @@ class NewBillingAddressTest extends TestCase
 {
     use EntityTrait;
 
-    private WorkflowManager|MockObject $workflowManager;
-    private ActionExecutor|MockObject $actionExecutor;
-    private AddressActionsInterface|MockObject $addressActions;
-    private UpdateShippingPriceInterface|MockObject $updateShippingPrice;
-    private DefaultShippingMethodSetterInterface|MockObject $defaultShippingMethodSetter;
+    private WorkflowManager&MockObject $workflowManager;
+    private ActionExecutor&MockObject $actionExecutor;
+    private AddressActionsInterface&MockObject $addressActions;
+    private UpdateShippingPriceInterface&MockObject $updateShippingPrice;
+    private DefaultShippingMethodSetterInterface&MockObject $defaultShippingMethodSetter;
     private NewBillingAddress $operation;
 
     protected function setUp(): void
@@ -72,12 +73,12 @@ class NewBillingAddressTest extends TestCase
 
         $workflowItem = new WorkflowItem();
 
-        $this->workflowManager->expects($this->once())
+        $this->workflowManager->expects(self::once())
             ->method('getFirstWorkflowItemByEntity')
             ->with($checkout)
             ->willReturn($workflowItem);
 
-        $this->actionExecutor->expects($this->exactly(3))
+        $this->actionExecutor->expects(self::exactly(3))
             ->method('executeAction')
             ->withConsecutive(
                 ['flush_entity', [$workflowItem]],
@@ -85,23 +86,23 @@ class NewBillingAddressTest extends TestCase
                 ['flush_entity', [$checkout]]
             );
 
-        $this->addressActions->expects($this->once())
+        $this->addressActions->expects(self::once())
             ->method('updateShippingAddress')
             ->with($checkout);
 
-        $this->updateShippingPrice->expects($this->once())
+        $this->updateShippingPrice->expects(self::once())
             ->method('execute')
             ->with($checkout);
 
-        $this->defaultShippingMethodSetter->expects($this->once())
+        $this->defaultShippingMethodSetter->expects(self::once())
             ->method('setDefaultShippingMethod')
             ->with($checkout);
 
         $this->operation->execute($data);
 
-        $this->assertTrue($checkout->isSaveBillingAddress());
-        $this->assertNull($checkout->getShippingMethod());
-        $this->assertNotNull($workflowItem->getUpdated());
+        self::assertTrue($checkout->isSaveBillingAddress());
+        self::assertNull($checkout->getShippingMethod());
+        self::assertNotNull($workflowItem->getUpdated());
     }
 
     public function testExecuteWithNullShippingCost(): void
@@ -121,12 +122,12 @@ class NewBillingAddressTest extends TestCase
 
         $workflowItem = new WorkflowItem();
 
-        $this->workflowManager->expects($this->once())
+        $this->workflowManager->expects(self::once())
             ->method('getFirstWorkflowItemByEntity')
             ->with($checkout)
             ->willReturn($workflowItem);
 
-        $this->actionExecutor->expects($this->exactly(3))
+        $this->actionExecutor->expects(self::exactly(3))
             ->method('executeAction')
             ->withConsecutive(
                 ['flush_entity', [$workflowItem]],
@@ -134,21 +135,72 @@ class NewBillingAddressTest extends TestCase
                 ['flush_entity', [$checkout]]
             );
 
-        $this->addressActions->expects($this->once())
+        $this->addressActions->expects(self::once())
             ->method('updateShippingAddress')
             ->with($checkout);
 
-        $this->updateShippingPrice->expects($this->once())
+        $this->updateShippingPrice->expects(self::once())
             ->method('execute')
             ->with($checkout);
 
-        $this->defaultShippingMethodSetter->expects($this->never())
+        $this->defaultShippingMethodSetter->expects(self::never())
             ->method('setDefaultShippingMethod');
 
         $this->operation->execute($data);
 
-        $this->assertTrue($checkout->isSaveBillingAddress());
-        $this->assertEquals('test_method', $checkout->getShippingMethod());
-        $this->assertNotNull($workflowItem->getUpdated());
+        self::assertTrue($checkout->isSaveBillingAddress());
+        self::assertEquals('test_method', $checkout->getShippingMethod());
+        self::assertNotNull($workflowItem->getUpdated());
+    }
+
+    public function testExecuteWithOldAddress(): void
+    {
+        $data = new ActionData();
+        $address = new OrderAddress();
+        $oldAddress = new OrderAddress();
+        ReflectionUtil::setId($oldAddress, 42);
+
+        $checkout = $this->getEntity(Checkout::class);
+        $checkout->setShippingMethod('test_method');
+        $checkout->setShippingCost(Price::create(10, 'USD'));
+        $checkout->setBillingAddress($address);
+
+        $data->offsetSet('data', $checkout);
+        $data->offsetSet('visitor_email', 'test@example.com');
+        $data->offsetSet('save_address', true);
+        $data->offsetSet('oldAddress', $oldAddress);
+
+        $workflowItem = new WorkflowItem();
+
+        $this->workflowManager->expects(self::once())
+            ->method('getFirstWorkflowItemByEntity')
+            ->with($checkout)
+            ->willReturn($workflowItem);
+
+        $this->actionExecutor->expects(self::exactly(4))
+            ->method('executeAction')
+            ->withConsecutive(
+                ['flush_entity', [$workflowItem]],
+                ['remove_entity', [$oldAddress]],
+                ['flush_entity', [$address]],
+                ['flush_entity', [$checkout]]
+            );
+
+        $this->addressActions->expects(self::once())
+            ->method('updateShippingAddress')
+            ->with($checkout);
+
+        $this->updateShippingPrice->expects(self::once())
+            ->method('execute')
+            ->with($checkout);
+
+        $this->defaultShippingMethodSetter->expects(self::never())
+            ->method('setDefaultShippingMethod');
+
+        $this->operation->execute($data);
+
+        self::assertTrue($checkout->isSaveBillingAddress());
+        self::assertEquals('test_method', $checkout->getShippingMethod());
+        self::assertNotNull($workflowItem->getUpdated());
     }
 }

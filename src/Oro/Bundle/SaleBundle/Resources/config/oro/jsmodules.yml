@@ -16,4 +16,5 @@ dynamic-imports:
         - orosale/js/app/views/kit-item-line-item-view
         - orosale/js/app/views/product-add-to-rfq-view
         - orosale/js/app/views/quote-possible-shipping-methods-view
+        - orosale/js/app/views/quote-address-validated-at-view
         - oro/select2-dependent-component

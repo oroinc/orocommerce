@@ -1,0 +1,41 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
+    amandaAddress3:
+        region: '@florida'
+        frontendOwner: '@amanda'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: false
+        label: 'Address 3'
+        street: '805 Scenic Hwy'
+        city: 'Haines City'
+        postalCode: '33844'
+        organization: 'ORO'
+        validatedAt: '<dateTime()>'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    customerAddress3:
+        region: '@new_york'
+        frontendOwner: '@customer1'
+        country: '@united_states'
+        owner: '@admin'
+        systemOrganization: '@organization'
+        primary: true
+        label: 'Address 3'
+        street: '4444 Hard Road'
+        city: 'York'
+        postalCode: '12103'
+        organization: 'ORO'
+        validatedAt: '<dateTime()>'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType:
+    customerAddress3Shipping:
+        address: '@customerAddress3'
+        type: '@shippingType'
+        default: false
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
+    amandaAddress3Shipping:
+        address: '@amandaAddress3'
+        type: '@shippingType'
+        default: false

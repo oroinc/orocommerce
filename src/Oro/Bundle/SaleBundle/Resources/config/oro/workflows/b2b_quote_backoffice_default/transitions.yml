@@ -14,6 +14,13 @@ workflows:
                         template: '@OroSale/Quote/update.html.twig'
                         data_provider: quote_update
                         data_attribute: quote
+                    form_init:
+                        -   '@tree':
+                                actions:
+                                    -   '@call_service_method':
+                                            service: oro_sale.quote_customer_data_request_handler
+                                            method: handle
+                                            method_parameters: [$.data.quote]
                 destination_page: view
 
             verify_transition:

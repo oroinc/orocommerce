@@ -13,7 +13,7 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 /**
  * OAuth access token provider.
  */
-class AccessTokenProvider
+class AccessTokenProvider implements AccessTokenProviderInterface
 {
     private const REQUEST_URI = '/oauth/token';
     private const MAX_RETRY_ATTEMPTS = 3;

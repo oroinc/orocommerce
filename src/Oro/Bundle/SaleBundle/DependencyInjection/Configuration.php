@@ -22,6 +22,8 @@ class Configuration implements ConfigurationInterface
     const GUEST_CONTACT_INFO_TEXT = 'guest_contact_info_text';
     const ENABLE_GUEST_QUOTE = 'enable_guest_quote';
     const QUOTE_FRONTEND_FEATURE_ENABLED = 'quote_frontend_feature_enabled';
+    public const string VALIDATE_SHIPPING_ADDRESSES_ON_BACKOFFICE_QUOTE_PAGE =
+        'validate_shipping_addresses__backoffice_quote_page';
 
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
@@ -54,6 +56,10 @@ class Configuration implements ConfigurationInterface
                 self::GUEST_CONTACT_INFO_TEXT => ['value' => ''],
                 self::ENABLE_GUEST_QUOTE => ['value' => false, 'type' => 'boolean'],
                 self::QUOTE_FRONTEND_FEATURE_ENABLED => ['value' => true, 'type' => 'boolean'],
+                static::VALIDATE_SHIPPING_ADDRESSES_ON_BACKOFFICE_QUOTE_PAGE => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
             ]
         );
 

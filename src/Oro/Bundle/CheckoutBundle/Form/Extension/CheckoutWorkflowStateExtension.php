@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Extension;
 
-use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType;
+use Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType;
+use Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Handler\CheckoutErrorHandler;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
-use Oro\Component\Layout\Extension\Theme\Model\CurrentThemeProvider;
-use Oro\Component\Layout\Extension\Theme\Model\ThemeManager;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormErrorIterator;
@@ -34,8 +33,7 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
 
     public function __construct(
         private CheckoutErrorHandler $checkoutErrorHandler,
-        private CurrentThemeProvider $currentThemeProvider,
-        private ThemeManager $themeManager
+        private CheckoutThemeBCProvider $checkoutThemeBCProvider,
     ) {
     }
 
@@ -47,7 +45,7 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
 
     public function onPreSubmit(FormEvent $event): void
     {
-        if ($this->isOldTheme()) {
+        if ($this->checkoutThemeBCProvider->isOldTheme()) {
             return;
         }
 
@@ -62,7 +60,7 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
         }
 
         $addressValue = $this->getCustomerAddressValue($event->getData(), $transition);
-        if ($addressValue !== CheckoutAddressType::ENTER_MANUALLY) {
+        if ($addressValue !== CheckoutAddressSelectType::ENTER_MANUALLY) {
             return;
         }
 
@@ -94,13 +92,5 @@ class CheckoutWorkflowStateExtension extends AbstractTypeExtension
         $addressField = $transition === self::CONTINUE_TO_SHIPPING_ADDRESS ? 'billing_address' : 'shipping_address';
 
         return $data[$addressField]['customerAddress'] ?? null;
-    }
-
-    private function isOldTheme(): bool
-    {
-        return $this->themeManager->themeHasParent(
-            $this->currentThemeProvider->getCurrentThemeId() ?? '',
-            ['default_50', 'default_51']
-        );
     }
 }

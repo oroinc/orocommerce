@@ -16,7 +16,7 @@ layout:
                 billing_address_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: []
+                        reloadEvents: ['checkout:refresh']
 
                 billing_address:
                     blockType: checkout_form_fields
@@ -30,7 +30,7 @@ layout:
                 payment_methods_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: []
+                        reloadEvents: ['checkout:refresh']
                         restoreFormState: true
 
                 payment_methods_hidden:
@@ -63,7 +63,7 @@ layout:
                 shipping_address_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: []
+                        reloadEvents: ['checkout:refresh']
 
                 shipping_address:
                     blockType: checkout_form_fields
@@ -77,7 +77,7 @@ layout:
                 shipping_methods_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: []
+                        reloadEvents: ['checkout:refresh']
                         restoreFormState: true
 
                 shipping_methods_hidden:
@@ -136,13 +136,13 @@ layout:
                 checkout_order_summary_totals_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: []
+                        reloadEvents: ['checkout:refresh']
                         showLoading: false
 
                 checkout_button_continue_right_wrapper:
                     blockType: layout_subtree_update
                     options:
-                        reloadEvents: []
+                        reloadEvents: ['checkout:refresh']
                         showLoading: false
                         attr:
                             class: 'order-checkout-widget__wrapper'

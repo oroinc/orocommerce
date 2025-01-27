@@ -1,0 +1,19 @@
+
+{% block oro_sale_quote__oro_address_validation_validated_at_row %}
+    {% apply spaceless %}
+        {% if not disabled and feature_enabled('oro_address_validation') and oro_config_value('oro_sale.validate_shipping_addresses__backoffice_quote_page') %}
+            {% set quote = form.parent.parent.vars.data %}
+            {% set row_attr = {
+                'class': 'hide',
+                'data-page-component-view': {
+                    view: 'orosale/js/app/views/quote-address-validated-at-view',
+                    dialogUrl: path('oro_sale_quote_address_validation_shipping_address', { id: quote.id|default(0) })
+                }|json_encode
+            }|merge(row_attr|default({})) %}
+        {% endif %}
+
+        <div {% with { attr: row_attr } %}{{ block('attributes') }}{% endwith %}>
+            {{ form_widget(form) }}
+        </div>
+    {% endapply %}
+{% endblock %}

@@ -15,6 +15,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Utils\AddressCopier;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -27,29 +28,31 @@ use PHPUnit\Framework\TestCase;
 
 class AddressActionsTest extends TestCase
 {
-    private ManagerRegistry|MockObject $registry;
     private DuplicatorFactory|MockObject $duplicatorFactory;
     private ActionExecutor|MockObject $actionExecutor;
     private EntityManagerInterface|MockObject $entityManager;
+    private AddressCopier|MockObject $addressCopier;
 
     private AddressActions $addressActions;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $registry = $this->createMock(ManagerRegistry::class);
         $this->duplicatorFactory = $this->createMock(DuplicatorFactory::class);
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
+        $this->addressCopier = $this->createMock(AddressCopier::class);
 
-        $this->registry->expects($this->any())
+        $registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($this->entityManager);
 
         $this->addressActions = new AddressActions(
-            $this->registry,
+            $registry,
             $this->duplicatorFactory,
-            $this->actionExecutor
+            $this->actionExecutor,
+            $this->addressCopier
         );
     }
 
@@ -273,6 +276,14 @@ class AddressActionsTest extends TestCase
             ->method('getReference')
             ->willReturnOnConsecutiveCalls($billingAddressType, $shippingAddressType);
 
+        $this->addressCopier
+            ->expects(self::exactly(2))
+            ->method('copyToAddress')
+            ->withConsecutive(
+                [$billingAddress, self::isInstanceOf(CustomerUserAddress::class)],
+                [$shippingAddress, self::isInstanceOf(CustomerUserAddress::class)],
+            );
+
         $this->entityManager->expects($this->exactly(2))
             ->method('persist')
             ->with($this->isInstanceOf(CustomerUserAddress::class));
@@ -283,8 +294,8 @@ class AddressActionsTest extends TestCase
         $this->addressActions->actualizeAddresses($checkout, $order);
 
         // Assert that addresses have been saved and fields copied correctly
-        $actualBillingAddress = $order->getBillingAddress()->getCustomerUserAddress();
-        $actualShippingAddress = $order->getShippingAddress()->getCustomerUserAddress();
+        $actualBillingAddress = $checkout->getBillingAddress()->getCustomerUserAddress();
+        $actualShippingAddress = $checkout->getShippingAddress()->getCustomerUserAddress();
 
         $this->assertInstanceOf(CustomerUserAddress::class, $actualBillingAddress);
         $this->assertInstanceOf(CustomerUserAddress::class, $actualShippingAddress);
@@ -293,36 +304,16 @@ class AddressActionsTest extends TestCase
         $this->assertSame($actualShippingAddress, $checkoutShippingAddress->getCustomerUserAddress());
 
         // Assert billing address fields
-        $this->assertEquals('Billing Address Label', $actualBillingAddress->getLabel());
-        $this->assertEquals('TestOrg1', $actualBillingAddress->getOrganization());
-        $this->assertEquals('123 Billing St', $actualBillingAddress->getStreet());
-        $this->assertEquals('Billing City', $actualBillingAddress->getCity());
-        $this->assertEquals('Mr.', $actualBillingAddress->getNamePrefix());
-        $this->assertEquals('John', $actualBillingAddress->getFirstName());
-        $this->assertEquals('A.', $actualBillingAddress->getMiddleName());
-        $this->assertEquals('Doe', $actualBillingAddress->getLastName());
-        $this->assertEquals('Sr.', $actualBillingAddress->getNameSuffix());
-        $this->assertEquals('555-1234', $actualBillingAddress->getPhone());
-        $this->assertEquals('90210', $actualBillingAddress->getPostalCode());
-        $this->assertSame($billingAddress->getCountry(), $actualBillingAddress->getCountry());
-        $this->assertSame($billingAddress->getRegion(), $actualBillingAddress->getRegion());
+        $this->assertSame($checkout->getCustomerUser(), $actualBillingAddress->getFrontendOwner());
+        $this->assertSame($checkout->getOwner(), $actualBillingAddress->getOwner());
+        $this->assertSame($checkout->getOrganization(), $actualBillingAddress->getSystemOrganization());
         $this->assertTrue($actualBillingAddress->hasTypeWithName(AddressType::TYPE_BILLING));
         $this->assertFalse($actualBillingAddress->hasTypeWithName(AddressType::TYPE_SHIPPING));
 
         // Assert shipping address fields
-        $this->assertEquals('Shipping Address Label', $actualShippingAddress->getLabel());
-        $this->assertEquals('TestOrg2', $actualShippingAddress->getOrganization());
-        $this->assertEquals('456 Shipping Ave', $actualShippingAddress->getStreet());
-        $this->assertEquals('Shipping City', $actualShippingAddress->getCity());
-        $this->assertEquals('Ms.', $actualShippingAddress->getNamePrefix());
-        $this->assertEquals('Jane', $actualShippingAddress->getFirstName());
-        $this->assertEquals('B.', $actualShippingAddress->getMiddleName());
-        $this->assertEquals('Smith', $actualShippingAddress->getLastName());
-        $this->assertEquals('Jr.', $actualShippingAddress->getNameSuffix());
-        $this->assertEquals('555-5678', $actualShippingAddress->getPhone());
-        $this->assertEquals('10001', $actualShippingAddress->getPostalCode());
-        $this->assertSame($shippingAddress->getCountry(), $actualShippingAddress->getCountry());
-        $this->assertSame($shippingAddress->getRegion(), $actualShippingAddress->getRegion());
+        $this->assertSame($checkout->getCustomerUser(), $actualShippingAddress->getFrontendOwner());
+        $this->assertSame($checkout->getOwner(), $actualShippingAddress->getOwner());
+        $this->assertEquals($checkout->getOrganization(), $actualShippingAddress->getSystemOrganization());
         $this->assertFalse($actualShippingAddress->hasTypeWithName(AddressType::TYPE_BILLING));
         $this->assertTrue($actualShippingAddress->hasTypeWithName(AddressType::TYPE_SHIPPING));
     }
@@ -381,6 +372,11 @@ class AddressActionsTest extends TestCase
             ->method('getReference')
             ->willReturnOnConsecutiveCalls($billingAddressType, $shippingAddressType);
 
+        $this->addressCopier
+            ->expects(self::once())
+            ->method('copyToAddress')
+            ->with($billingAddress, self::isInstanceOf(CustomerUserAddress::class));
+
         $this->entityManager->expects($this->once())
             ->method('persist')
             ->with($this->isInstanceOf(CustomerUserAddress::class));
@@ -392,23 +388,13 @@ class AddressActionsTest extends TestCase
         $this->addressActions->actualizeAddresses($checkout, $order);
 
         // Assert that addresses have been saved and fields copied correctly
-        $actualBillingAddress = $order->getBillingAddress()->getCustomerUserAddress();
+        $actualBillingAddress = $checkout->getBillingAddress()->getCustomerUserAddress();
         $this->assertInstanceOf(CustomerUserAddress::class, $actualBillingAddress);
 
         // Assert billing address fields
-        $this->assertEquals('Billing Address Label', $actualBillingAddress->getLabel());
-        $this->assertEquals('TestOrg1', $actualBillingAddress->getOrganization());
-        $this->assertEquals('123 Billing St', $actualBillingAddress->getStreet());
-        $this->assertEquals('Billing City', $actualBillingAddress->getCity());
-        $this->assertEquals('Mr.', $actualBillingAddress->getNamePrefix());
-        $this->assertEquals('John', $actualBillingAddress->getFirstName());
-        $this->assertEquals('A.', $actualBillingAddress->getMiddleName());
-        $this->assertEquals('Doe', $actualBillingAddress->getLastName());
-        $this->assertEquals('Sr.', $actualBillingAddress->getNameSuffix());
-        $this->assertEquals('555-1234', $actualBillingAddress->getPhone());
-        $this->assertEquals('90210', $actualBillingAddress->getPostalCode());
-        $this->assertSame($billingAddress->getCountry(), $actualBillingAddress->getCountry());
-        $this->assertSame($billingAddress->getRegion(), $actualBillingAddress->getRegion());
+        $this->assertSame($checkout->getCustomerUser(), $actualBillingAddress->getFrontendOwner());
+        $this->assertSame($checkout->getOwner(), $actualBillingAddress->getOwner());
+        $this->assertSame($checkout->getOrganization(), $actualBillingAddress->getSystemOrganization());
         $this->assertTrue($actualBillingAddress->hasTypeWithName(AddressType::TYPE_BILLING));
         $this->assertTrue($actualBillingAddress->hasTypeWithName(AddressType::TYPE_SHIPPING));
     }
@@ -425,6 +411,10 @@ class AddressActionsTest extends TestCase
 
         $checkout->setSaveBillingAddress(false);
         $checkout->setSaveShippingAddress(false);
+
+        $this->addressCopier
+            ->expects(self::never())
+            ->method('copyToAddress');
 
         $this->entityManager
             ->expects($this->never())

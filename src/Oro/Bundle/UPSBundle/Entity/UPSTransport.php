@@ -464,4 +464,11 @@ class UPSTransport extends Transport
     {
         $this->upsAccessTokenExpiresAt = $upsAccessTokenExpiresAt;
     }
+
+    public function isOAuthConfigured(): bool
+    {
+        return
+            !empty($this->getUpsClientId())
+            && !empty($this->getUpsClientSecret());
+    }
 }

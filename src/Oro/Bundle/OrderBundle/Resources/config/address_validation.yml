@@ -1,0 +1,32 @@
+services:
+    oro_order.form.factory.address_validation.address_form.order_page.billing_address:
+        class: Oro\Bundle\OrderBundle\Form\Factory\AddressValidation\OrderPageAddressFormFactory
+        arguments:
+            - '@form.factory'
+            - '@oro_order.request_handler.order_request_handler'
+            - '@property_accessor'
+            - 'billingAddress'
+
+    oro_order.form.factory.address_validation.address_form.order_page.shipping_address:
+        class: Oro\Bundle\OrderBundle\Form\Factory\AddressValidation\OrderPageAddressFormFactory
+        arguments:
+            - '@form.factory'
+            - '@oro_order.request_handler.order_request_handler'
+            - '@property_accessor'
+            - 'shippingAddress'
+
+    oro_order.address_validation.result_handler.address_book_aware.shipping:
+        class: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressBookAwareAddressValidationResultHandler
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_customer.utils.address_copier'
+            - !php/const \Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING
+
+    oro_order.address_validation.result_handler.address_book_aware.billing:
+        class: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressBookAwareAddressValidationResultHandler
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_customer.utils.address_copier'
+            - !php/const \Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING

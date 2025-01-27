@@ -9,6 +9,7 @@ services:
         public: false
         tags:
             - { name: oro_integration.channel, type: '%oro_fedex_shipping.integration.channel.type%' }
+            - { name: oro_address_validation.channel, type: '%oro_fedex_shipping.integration.channel.type%' }
 
     oro_fedex_shipping.integration.transport:
         class: 'Oro\Bundle\FedexShippingBundle\Integration\FedexTransport'

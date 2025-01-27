@@ -2,37 +2,43 @@
 
 namespace Oro\Bundle\OrderBundle\Manager;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType;
+use Oro\Bundle\CustomerBundle\Utils\AddressCopier;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
 
 /**
  * Contains get and update methods for order addresses.
  */
 class OrderAddressManager extends AbstractAddressManager
 {
-    public function updateFromAbstract(
-        AbstractAddress $address = null,
-        OrderAddress $orderAddress = null
-    ): OrderAddress {
+    private AddressCopier $addressCopier;
+
+    public function __construct(
+        ManagerRegistry $doctrine,
+        AddressProviderInterface $addressProvider,
+        AddressCopier $addressCopier
+    ) {
+        parent::__construct($doctrine, $addressProvider);
+
+        $this->addressCopier = $addressCopier;
+    }
+
+    public function updateFromAbstract(AbstractAddress $address = null, OrderAddress $orderAddress = null): OrderAddress
+    {
         if (!$orderAddress) {
             $orderAddress = new OrderAddress();
         }
 
-        if (null !== $address) {
-            $this->copyAddress($address, $orderAddress);
+        if (!$address) {
+            $address = new OrderAddress();
         }
-        $orderAddress->setCustomerAddress(null);
-        $orderAddress->setCustomerUserAddress(null);
-        if ($address instanceof CustomerAddress) {
-            $orderAddress->setCustomerAddress($address);
-        } elseif ($address instanceof CustomerUserAddress) {
-            $orderAddress->setCustomerUserAddress($address);
-        }
+
+        $this->addressCopier->copyToAddress($address, $orderAddress);
 
         return $orderAddress;
     }

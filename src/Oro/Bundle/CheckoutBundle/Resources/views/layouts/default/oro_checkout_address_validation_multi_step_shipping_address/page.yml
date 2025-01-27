@@ -1,0 +1,4 @@
+layout:
+    imports:
+        - oro_address_validation_dialog
+    actions: []

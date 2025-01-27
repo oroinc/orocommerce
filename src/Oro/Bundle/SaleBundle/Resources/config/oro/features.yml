@@ -69,3 +69,9 @@ features:
         configuration:
             - oro_sale.contact_info_user_option
             - oro_sale.contact_info_manual_text
+
+    oro_address_validation:
+        routes:
+            - oro_sale_quote_address_validation_shipping_address
+        configuration:
+            - oro_sale.validate_shipping_addresses__backoffice_quote_page

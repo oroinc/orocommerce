@@ -10,6 +10,8 @@ layout:
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/single_page.html.twig'
         - '@setFormTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/single_page_form.html.twig'
+        - '@setFormTheme':
+            themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address_validation/single_page_address_validation_fields.html.twig'
 
         - '@move':
             id: coupon_form_container

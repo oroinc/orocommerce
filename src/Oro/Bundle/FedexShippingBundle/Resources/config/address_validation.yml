@@ -1,0 +1,40 @@
+services:
+    oro_fedex_shipping.address_validation.client.address_validation_request_factory:
+        class: Oro\Bundle\FedexShippingBundle\AddressValidation\Client\Request\Factory\FedexAddressValidationRequestFactory
+
+    oro_fedex_shipping.address_validation.client.address_validation_response_factory:
+        class: Oro\Bundle\FedexShippingBundle\AddressValidation\Client\Response\Factory\FedexAddressValidationResponseFactory
+
+    oro_fedex_shipping.address_validation.client.cache.fedex_response:
+        class: Oro\Bundle\FedexShippingBundle\AddressValidation\Cache\FedexAddressValidationResponseCache
+        arguments:
+            - '@oro_fedex_shipping.cache'
+
+    oro_fedex_shipping.address_validation.address_validation_client:
+        class: Oro\Bundle\FedexShippingBundle\AddressValidation\Client\FedexAddressValidationClient
+        arguments:
+            - '@oro_fedex_oauth.token_provider'
+            - '@oro_integration.transport.rest.client_factory'
+            - '@oro_fedex_shipping.address_validation.client.address_validation_response_factory'
+            - '@logger'
+
+    oro_fedex_shipping.address_validation.address_validation_cached_client:
+        class: Oro\Bundle\AddressValidationBundle\Client\AddressValidationCachedClient
+        arguments:
+            - '@oro_fedex_shipping.address_validation.address_validation_client'
+            - '@oro_fedex_shipping.address_validation.client.cache.fedex_response'
+
+    oro_fedex_shipping.address_validation.resolved_address_factory:
+        class: Oro\Bundle\FedexShippingBundle\AddressValidation\FedexResolvedAddressFactory
+        arguments:
+            - '@doctrine'
+
+    oro_fedex_shipping.address_validation.resolver.factory:
+        class: Oro\Bundle\AddressValidationBundle\Resolver\Factory\AddressValidationResolverBasicFactory
+        arguments:
+            - '@oro_fedex_shipping.address_validation.client.address_validation_request_factory'
+            - '@oro_fedex_shipping.address_validation.address_validation_cached_client'
+            - '@oro_fedex_shipping.address_validation.resolved_address_factory'
+            - 'Oro\Bundle\FedexShippingBundle\Entity\FedexIntegrationSettings'
+        tags:
+            - { name: oro_address_validation.resolver_factory }

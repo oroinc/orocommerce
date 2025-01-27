@@ -106,9 +106,8 @@ class BaseStateAwareTransitionTest extends TestCase
             ->with($checkout, false)
             ->willReturn(true);
 
-        $this->addressActions->expects($this->once())
-            ->method('updateShippingAddress')
-            ->with($checkout);
+        $this->addressActions->expects($this->never())
+            ->method('updateShippingAddress');
 
         $this->updateShippingPrice->expects($this->once())
             ->method('execute')

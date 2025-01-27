@@ -47,7 +47,8 @@
 
 {% block __oro_checkout_content__checkout_main_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " multistep-checkout__main"
+        '~class': " multistep-checkout__main",
+        'data-role': 'checkout-content-main'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -80,12 +81,11 @@
 
 {% block __oro_checkout_content__checkout_content_main_top_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__content-main-top"
+        '~class': " checkout__content-main-top",
+        'data-role': 'checkout-content-main-top'
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {{ parent_block_widget(block) }}
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_information_widget %}

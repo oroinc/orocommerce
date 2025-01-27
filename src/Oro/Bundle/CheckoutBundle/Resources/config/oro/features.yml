@@ -31,3 +31,17 @@ features:
         configuration:
             - guest_checkout_owner_section
         strategy: affirmative
+
+    oro_address_validation:
+        routes:
+            - oro_checkout_address_validation_multi_step_billing_address
+            - oro_checkout_address_validation_multi_step_shipping_address
+            - oro_checkout_address_validation_multi_step_new_billing_address
+            - oro_checkout_address_validation_multi_step_new_shipping_address
+            - oro_checkout_address_validation_single_page_billing_address
+            - oro_checkout_address_validation_single_page_shipping_address
+            - oro_checkout_address_validation_single_page_new_billing_address
+            - oro_checkout_address_validation_single_page_new_shipping_address
+        configuration:
+            - oro_checkout.validate_shipping_addresses__checkout
+            - oro_checkout.validate_billing_addresses__checkout

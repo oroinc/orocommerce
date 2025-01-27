@@ -46,6 +46,8 @@ class OroOrderExtensionTest extends \PHPUnit\Framework\TestCase
                         'order_creation_new_order_owner' => ['value' => null, 'scope' => 'app'],
                         'order_previously_purchased_period' => ['value' => 90, 'scope' => 'app'],
                         'enable_purchase_history' => ['value' => false, 'scope' => 'app'],
+                        'validate_shipping_addresses__backoffice_order_page' => ['value' => true, 'scope' => 'app'],
+                        'validate_billing_addresses__backoffice_order_page' => ['value' => false, 'scope' => 'app'],
                     ]
                 ]
             ],

@@ -655,6 +655,7 @@ Feature: Consent management via Management Console UI
       | Country         | Germany         |
       | State           | Berlin          |
       | Zip/Postal Code | 10115           |
+    And I scroll to bottom
     And I click "Ship to This Address"
     And I click "Continue"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue

@@ -12,6 +12,7 @@ use Oro\Bundle\FormBundle\Provider\SaveAndReturnActionFormTemplateDataProvider;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
+use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
 use Oro\Bundle\SecurityBundle\Attribute\Acl;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
@@ -200,6 +201,12 @@ class QuoteController extends AbstractController
         Request $request,
         FormTemplateDataProviderInterface|null $resultProvider = null
     ) {
+        if (\in_array($request->getMethod(), ['POST', 'PUT'], true)) {
+            $quoteRequestHandler = $this->container->get(QuoteRequestHandler::class);
+            $quote->setCustomer($quoteRequestHandler->getCustomer());
+            $quote->setCustomerUser($quoteRequestHandler->getCustomerUser());
+        }
+
         $formTemplateDataProviderComposite = $this->container->get(FormTemplateDataProviderComposite::class)
             ->addFormTemplateDataProviders('quote_update')
             ->addFormTemplateDataProviders($resultProvider);
@@ -314,6 +321,7 @@ class QuoteController extends AbstractController
         return array_merge(
             parent::getSubscribedServices(),
             [
+                QuoteRequestHandler::class,
                 WebsiteManager::class,
                 TranslatorInterface::class,
                 UpdateHandlerFacade::class,

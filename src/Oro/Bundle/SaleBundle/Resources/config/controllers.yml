@@ -25,3 +25,12 @@ services:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: 'container.service_subscriber' }
+
+    oro_sale.controller.address_validation.shipping_address:
+        class: Oro\Bundle\SaleBundle\Controller\AddressValidation\QuoteAddressValidationController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_sale.form.factory.address_validation.address_form.quote_page.shipping_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_sale.address_validation.result_handler.address_book_aware.shipping, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }

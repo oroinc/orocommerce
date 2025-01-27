@@ -3,12 +3,16 @@
 namespace Oro\Bundle\CheckoutBundle\DependencyInjection;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\ConfigBundle\Utils\TreeUtils;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
 class Configuration implements ConfigurationInterface
 {
     public const ROOT_NODE = 'oro_checkout';
+
+    public const string VALIDATE_SHIPPING_ADDRESSES_DURING_CHECKOUT = 'validate_shipping_addresses__checkout';
+    public const string VALIDATE_BILLING_ADDRESSES_DURING_CHECKOUT = 'validate_billing_addresses__checkout';
 
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
@@ -35,9 +39,22 @@ class Configuration implements ConfigurationInterface
                 'show_main_orders_in_order_history' => ['type' => 'boolean', 'value' => true],
                 'minimum_order_amount' => ['type' => 'array', 'value' => []],
                 'maximum_order_amount' => ['type' => 'array', 'value' => []],
+                static::VALIDATE_SHIPPING_ADDRESSES_DURING_CHECKOUT => [
+                    'type' => 'boolean',
+                    'value' => true,
+                ],
+                static::VALIDATE_BILLING_ADDRESSES_DURING_CHECKOUT => [
+                    'type' => 'boolean',
+                    'value' => false,
+                ],
             ]
         );
 
         return $treeBuilder;
+    }
+
+    public static function getConfigKeyByName(string $name): string
+    {
+        return TreeUtils::getConfigKey(static::ROOT_NODE, $name);
     }
 }

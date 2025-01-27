@@ -92,6 +92,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_DEEP,
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_LOCAL,
+                    LoadCheckoutACLData::SINGLE_STEP_CHECKOUT_ACC_1_USER_LOCAL
                 ],
             ],
             'DEEP: all orders on customer level and child customers' => [
@@ -102,6 +103,7 @@ class CheckoutControllerAclTest extends FrontendWebTestCase
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_DEEP,
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_LOCAL,
+                    LoadCheckoutACLData::SINGLE_STEP_CHECKOUT_ACC_1_USER_LOCAL,
                     LoadCheckoutACLData::CHECKOUT_ACC_1_1_USER_LOCAL,
                 ],
             ],

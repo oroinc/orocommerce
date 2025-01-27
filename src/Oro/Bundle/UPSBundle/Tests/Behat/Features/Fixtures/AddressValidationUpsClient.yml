@@ -1,0 +1,18 @@
+Oro\Bundle\UPSBundle\Entity\UPSTransport:
+    upsAddressValidationTransport:
+        channel: '@upsAddressValidationChannel'
+        upsClientId: ups
+        upsClientSecret: ups
+        upsShippingAccountName: ups
+        upsShippingAccountNumber: ups
+        upsCountry: '@united_states'
+        upsUnitOfWeight: 'LBS'
+        upsPickupType: '01'
+
+Oro\Bundle\IntegrationBundle\Entity\Channel:
+    upsAddressValidationChannel:
+        type: 'ups'
+        name: 'UPS'
+        enabled: true
+        organization: '@organization'
+        transport: '@upsAddressValidationTransport'

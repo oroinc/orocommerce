@@ -72,6 +72,19 @@ oro_behat_extension:
           Shipping Address:
             locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_sale_quote")]/input'
             type: xpath
+          Shipping Address Country:
+            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_sale_quote_shippingAddress_country-uid")]/input'
+            type: xpath
+          Shipping Address State:
+            locator: '//h4[text()="Shipping Address"]/..//div[contains(@id,"s2id_oro_sale_quote_shippingAddress_region-uid")]/input'
+            type: xpath
+          Shipping Address First name: 'oro_sale_quote[shippingAddress][firstName]'
+          Shipping Address Label: 'oro_sale_quote[shippingAddress][label]'
+          Shipping Address Last name: 'oro_sale_quote[shippingAddress][lastName]'
+          Shipping Address Organization: 'oro_sale_quote[shippingAddress][organization]'
+          Shipping Address Street: 'oro_sale_quote[shippingAddress][street]'
+          Shipping Address City: 'oro_sale_quote[shippingAddress][city]'
+          Shipping Address Postal Code: 'oro_sale_quote[shippingAddress][postalCode]'
           Do Not Ship Later Than:
               type: 'css'
               locator: 'input[name^="oro_sale_quote_shipUntil"]'
@@ -144,6 +157,11 @@ oro_behat_extension:
           Line Item 3 Item 2 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//input[@data-name="field__quantity"]'
             type: xpath
+
+    Quote Form Shipping Address Select:
+      selector:
+        locator: '//*[contains(@id, "shippingAddress_customerAddress-uid-")]/a'
+        type: xpath
 
     Quote Shipping Address State Selector:
       selector:
@@ -359,3 +377,16 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
     Customer TopBar Action Dropdown:
       selector: '.toggle-container--dropdown-btn'
+
+    Address Validation Configuration Quote Form:
+      selector: 'form[name="address_validation"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Validate Shipping Addresses on Back-Office Quote Page: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][value]'
+          Validate Shipping Addresses on Back-Office Quote Page Use Default: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][use_parent_scope_value]'
+
+  pages:
+    Quote Create:
+      class: Oro\Bundle\SaleBundle\Tests\Behat\Page\QuoteCreate
+      route: oro_sale_quote_create

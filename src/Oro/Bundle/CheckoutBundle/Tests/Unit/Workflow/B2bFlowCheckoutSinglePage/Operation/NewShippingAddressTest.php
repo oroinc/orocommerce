@@ -11,6 +11,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewSh
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -19,9 +20,9 @@ class NewShippingAddressTest extends TestCase
 {
     use EntityTrait;
 
-    private ActionExecutor|MockObject $actionExecutor;
-    private UpdateShippingPriceInterface|MockObject $updateShippingPrice;
-    private DefaultShippingMethodSetterInterface|MockObject $defaultShippingMethodSetter;
+    private ActionExecutor&MockObject $actionExecutor;
+    private UpdateShippingPriceInterface&MockObject $updateShippingPrice;
+    private DefaultShippingMethodSetterInterface&MockObject $defaultShippingMethodSetter;
 
     private NewShippingAddress $operation;
 
@@ -61,25 +62,25 @@ class NewShippingAddressTest extends TestCase
         $data->offsetSet('data', $checkout);
         $data->offsetSet('save_address', true);
 
-        $this->actionExecutor->expects($this->exactly(2))
+        $this->actionExecutor->expects(self::exactly(2))
             ->method('executeAction')
             ->withConsecutive(
                 ['flush_entity', [$address]],
                 ['flush_entity', [$checkout]]
             );
 
-        $this->updateShippingPrice->expects($this->once())
+        $this->updateShippingPrice->expects(self::once())
             ->method('execute')
             ->with($checkout);
 
-        $this->defaultShippingMethodSetter->expects($this->once())
+        $this->defaultShippingMethodSetter->expects(self::once())
             ->method('setDefaultShippingMethod')
             ->with($checkout);
 
         $this->operation->execute($data);
 
-        $this->assertTrue($checkout->isSaveShippingAddress());
-        $this->assertNull($checkout->getShippingMethod());
+        self::assertTrue($checkout->isSaveShippingAddress());
+        self::assertNull($checkout->getShippingMethod());
     }
 
     public function testExecuteWithNullShippingCost(): void
@@ -95,22 +96,58 @@ class NewShippingAddressTest extends TestCase
         $data->offsetSet('data', $checkout);
         $data->offsetSet('save_address', true);
 
-        $this->actionExecutor->expects($this->exactly(2))
+        $this->actionExecutor->expects(self::exactly(2))
             ->method('executeAction')
             ->withConsecutive(
                 ['flush_entity', [$address]],
                 ['flush_entity', [$checkout]]
             );
 
-        $this->updateShippingPrice->expects($this->once())
+        $this->updateShippingPrice->expects(self::once())
             ->method('execute')
             ->with($checkout);
 
-        $this->defaultShippingMethodSetter->expects($this->never())
+        $this->defaultShippingMethodSetter->expects(self::never())
             ->method('setDefaultShippingMethod');
 
         $this->operation->execute($data);
 
-        $this->assertTrue($checkout->isSaveShippingAddress());
+        self::assertTrue($checkout->isSaveShippingAddress());
+    }
+
+    public function testExecuteWithOldAddress(): void
+    {
+        $data = new ActionData();
+        $address = new OrderAddress();
+        $oldAddress = new OrderAddress();
+        ReflectionUtil::setId($oldAddress, 42);
+
+        $checkout = $this->getEntity(Checkout::class);
+        $checkout->setShippingMethod('test_method');
+        $checkout->setShippingCost(Price::create(10, 'USD'));
+        $checkout->setShippingAddress($address);
+
+        $data->offsetSet('data', $checkout);
+        $data->offsetSet('save_address', true);
+        $data->offsetSet('oldAddress', $oldAddress);
+
+        $this->actionExecutor->expects(self::exactly(3))
+            ->method('executeAction')
+            ->withConsecutive(
+                ['remove_entity', [$oldAddress]],
+                ['flush_entity', [$address]],
+                ['flush_entity', [$checkout]]
+            );
+
+        $this->updateShippingPrice->expects(self::once())
+            ->method('execute')
+            ->with($checkout);
+
+        $this->defaultShippingMethodSetter->expects(self::never())
+            ->method('setDefaultShippingMethod');
+
+        $this->operation->execute($data);
+
+        self::assertTrue($checkout->isSaveShippingAddress());
     }
 }

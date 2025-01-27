@@ -21,3 +21,8 @@ oro_sale_frontend_quote_product_ajax:
     prefix: /customer/quoteproduct
     options:
         frontend: true
+
+oro_sale_quote_address_validation_shipping_address:
+    controller: 'oro_sale.controller.address_validation.shipping_address::addressValidationAction'
+    path: /sale/quote/address-validation/{id<\d+>}/shipping
+    methods: [POST]

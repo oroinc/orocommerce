@@ -82,7 +82,6 @@ Feature: Search Term - empty search result page
   Scenario: Unauthorized user will be forwarded to Empty Search Result Content Node when search term is not found
     When I type "noresults" in "search"
     And I click "Search Button"
-    And I wait for action
     Then Page title equals to "Clearance"
     And I should see "Default Web Catalog Clearance"
     And the url should match "/product/search"

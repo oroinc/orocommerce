@@ -21,3 +21,87 @@ services:
             - [setContainer, ['@Psr\Container\ContainerInterface']]
         tags:
             - { name: container.service_subscriber }
+
+    oro_checkout.controller.address_validation.multi_step_billing_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.address_form.billing_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.provider.address_validation.multi_step_address_form_billing_address, key: Oro\Bundle\CheckoutBundle\Provider\AddressValidation\CheckoutAddressFormAddressProviderInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.billing_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }
+
+    oro_checkout.controller.address_validation.multi_step_shipping_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.address_form.shipping_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.provider.address_validation.multi_step_address_form_shipping_address, key: Oro\Bundle\CheckoutBundle\Provider\AddressValidation\CheckoutAddressFormAddressProviderInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.shipping_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }
+
+    oro_checkout.controller.address_validation.single_page_billing_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.address_form.billing_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.provider.address_validation.single_page_address_form_billing_address, key: Oro\Bundle\CheckoutBundle\Provider\AddressValidation\CheckoutAddressFormAddressProviderInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.billing_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }
+
+    oro_checkout.controller.address_validation.single_page_shipping_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.address_form.shipping_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.provider.address_validation.single_page_address_form_shipping_address, key: Oro\Bundle\CheckoutBundle\Provider\AddressValidation\CheckoutAddressFormAddressProviderInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.shipping_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }
+
+    oro_checkout.controller.address_validation.single_page_new_billing_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationNewAddressController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.single_page_address_form.new_billing_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.billing_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }
+
+    oro_checkout.controller.address_validation.single_page_new_shipping_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationNewAddressController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.single_page_address_form.new_shipping_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.shipping_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }
+
+    oro_checkout.controller.address_validation.multi_step_new_billing_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationNewAddressController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.multi_step_address_form.new_billing_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.billing_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }
+
+    oro_checkout.controller.address_validation.multi_step_new_shipping_address:
+        class: Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutAddressValidationNewAddressController
+        calls:
+            - [ 'setContainer', [ '@Psr\Container\ContainerInterface' ] ]
+        tags:
+            - { name: container.service_subscriber }
+            - { name: container.service_subscriber, id: oro_checkout.form.factory.address_validation.multi_step_address_form.new_shipping_address, key: Oro\Bundle\AddressValidationBundle\Form\Factory\AddressValidationAddressFormFactoryInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.result_handler, key: Oro\Bundle\AddressValidationBundle\AddressValidationResultHandler\AddressValidationResultHandlerInterface }
+            - { name: container.service_subscriber, id: oro_checkout.address_validation.checkout_handler.shipping_address, key: Oro\Bundle\CheckoutBundle\AddressValidation\CheckoutHandler\AddressValidationCheckoutHandlerInterface }

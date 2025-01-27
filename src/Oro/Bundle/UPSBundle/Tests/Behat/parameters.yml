@@ -23,3 +23,33 @@ services:
     oro_ups.token_provider.mock:
         class: 'Oro\Bundle\UPSBundle\Tests\Behat\Mock\Client\AccessTokenProviderMock'
         decorates: oro_ups.token_provider
+
+    oro_ups.address_validation.ups_client_factory_mock:
+        class: Oro\Bundle\UPSBundle\Tests\Behat\Mock\Client\Factory\AddressValidation\AddressValidationUpsClientFactoryMock
+        arguments:
+            - !service
+                class: Oro\Bundle\IntegrationBundle\Test\FakeRestClientFactory
+            - '@oro_ups.client.url_provider_basic'
+
+    oro_ups.address_validation.address_validation_client:
+        class: Oro\Bundle\UPSBundle\AddressValidation\Client\UPSAddressValidationClient
+        arguments:
+            - '@oro_ups.token_provider'
+            - '@oro_ups.address_validation.ups_client_factory_mock'
+            - '@oro_ups.address_validation.client.address_validation_response_factory'
+            - '@logger'
+
+    oro_ups.address_validation.request_factory_mock:
+        class: Oro\Bundle\AddressValidationBundle\Tests\Behat\Mock\AddressValidationRequestFactoryMock
+        arguments:
+            - '@oro_ups.address_validation.client.address_validation_request_factory'
+
+    oro_ups.address_validation.resolver.factory:
+        class: Oro\Bundle\AddressValidationBundle\Resolver\Factory\AddressValidationResolverBasicFactory
+        arguments:
+            - '@oro_ups.address_validation.request_factory_mock'
+            - '@oro_ups.address_validation.address_validation_cached_client'
+            - '@oro_ups.address_validation.resolved_address_factory'
+            - 'Oro\Bundle\UPSBundle\Entity\UPSTransport'
+        tags:
+            - { name: oro_address_validation.resolver_factory }

@@ -2,8 +2,8 @@ services:
     oro_checkout.form.type.checkout_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType'
         arguments:
-            - '@oro_layout.current_theme_provider'
-            - '@oro_layout.theme_manager'
+            - '@oro_order.order.provider.order_address_security'
+            - '@oro_checkout.layout.provider.checkout_theme_provider'
         tags:
             - { name: form.type, alias: oro_checkout_address }
 
@@ -22,8 +22,7 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowStateExtension'
         arguments:
             - '@oro_checkout.workflow_state.handler.checkout_error'
-            - '@oro_layout.current_theme_provider'
-            - '@oro_layout.theme_manager'
+            - '@oro_checkout.layout.provider.checkout_theme_provider'
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType }
 
@@ -43,6 +42,9 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType'
         arguments:
             - '@oro_order.manager.order_address'
+            - '@oro_locale.formatter.address'
+            - '@oro_order.order.provider.order_address_security'
+            - '@oro_importexport.serializer'
             - '@oro_checkout.form.data_transformer.order_address_to_address_identifier'
         tags:
             - { name: form.type }
@@ -68,5 +70,10 @@ services:
 
     oro_checkout.form.order_limit_collection:
         class: Oro\Bundle\CheckoutBundle\Form\Type\OrderLimitCollectionType
+        tags:
+            - { name: form.type }
+
+    oro_checkout.form.type.checkout_address_validated_at:
+        class: Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressValidatedAtType
         tags:
             - { name: form.type }

@@ -6,6 +6,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Form\Type\SubOrderType;
+use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -34,6 +35,10 @@ class AjaxOrderController extends AbstractController
             $order = new Order();
             $order->setWebsite($this->container->get(WebsiteManager::class)->getDefaultWebsite());
         }
+
+        $orderRequestHandler = $this->container->get(OrderRequestHandler::class);
+        $order->setCustomer($orderRequestHandler->getCustomer());
+        $order->setCustomerUser($orderRequestHandler->getCustomerUser());
 
         $form = $this->getType($order);
 
@@ -85,6 +90,7 @@ class AjaxOrderController extends AbstractController
             [
                 WebsiteManager::class,
                 EventDispatcherInterface::class,
+                OrderRequestHandler::class,
             ]
         );
     }

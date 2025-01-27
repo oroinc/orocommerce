@@ -25,10 +25,6 @@ define(function(require) {
             }
         },
 
-        events: {
-            'click [name="oro_sale_quote[shippingAddress][customerAddress]"]': 'addressFormChange'
-        },
-
         /**
          * @property {String}
          */
@@ -56,7 +52,9 @@ define(function(require) {
 
         listen: {
             'quote:load:related-data mediator': 'loadingStart',
-            'quote:loaded:related-data mediator': 'loadedRelatedData'
+            'quote:loaded:related-data mediator': 'loadedRelatedData',
+            'entry-point:quote:load:before mediator': '_onEntryPointQuoteLoadBefore',
+            'entry-point:quote:load:after mediator': '_onEntryPointQuoteLoadAfter'
         },
 
         /**
@@ -89,9 +87,6 @@ define(function(require) {
             this.fieldsByName = {};
             this.$fields.each(function() {
                 const $field = $(this);
-                if ($field.val().length > 0) {
-                    self.useDefaultAddress = false;
-                }
                 const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
                 self.fieldsByName[name] = $field;
             });
@@ -113,20 +108,10 @@ define(function(require) {
                         $field.data('selected-data', $field.select2('val'));
                     }
                 });
-                this.customerAddressChange();
+                this.customerAddressChange(undefined, true);
+            } else {
+                this._toggleEditable(false);
             }
-        },
-
-        /**
-         * Loading form after on select address click
-         */
-        addressFormChange: function() {
-            const self = this;
-            this.$fields.each(function() {
-                const $field = $(this);
-                const name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
-                self.fieldsByName[name] = $field;
-            });
         },
 
         /**
@@ -139,7 +124,9 @@ define(function(require) {
         normalizeName: function(name) {
             name = name.split('_');
             for (let i = 1, iMax = name.length; i < iMax; i++) {
-                name[i] = name[i][0].toUpperCase() + name[i].substr(1);
+                if (name[i]) {
+                    name[i] = name[i][0].toUpperCase() + name[i].substr(1);
+                }
             }
             return name.join('');
         },
@@ -156,48 +143,60 @@ define(function(require) {
             this.$address.on('change', function(e) {
                 self.customerAddressChange(e);
             });
+
+            self.customerAddressChange(null, true);
         },
 
         /**
          * Implement customer address change logic
          */
-        customerAddressChange: function() {
+        customerAddressChange: function(e, isInit) {
             if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
-                this.$fields.each(function() {
-                    const $field = $(this);
+                this._toggleEditable(false);
 
-                    $field.prop('readonly', true).inputWidget('refresh');
-                });
-
-                const address = this.$address.data('addresses')[this.$address.val()] || null;
-                if (address) {
-                    const self = this;
-
-                    _.each(address, function(value, name) {
-                        if (_.isObject(value)) {
-                            value = _.first(_.values(value));
-                        }
-                        const $field = self.fieldsByName[self.normalizeName(name)] || null;
-                        // set new value only in case if it is different from exising (`null` is transformed to `''`)
-                        if ($field && $field.val() !== (value || '')) {
-                            $field.val(value);
-                            if ($field.data('select2')) {
-                                $field.data('selected-data', value).trigger('change');
-                            }
-                        }
-                    });
+                if (isInit !== true) {
+                    const address = this.$address.data('addresses')[this.$address.val()] || null;
+                    if (address) {
+                        this._fillAddressFields(address, e !== undefined);
+                    }
                 }
             } else {
-                this.$fields.each(function() {
-                    const $field = $(this);
-
-                    $field.prop('readonly', false).inputWidget('refresh');
-                });
+                this._toggleEditable(true);
                 const $country = this.fieldsByName.country;
-                if ($country) {
+                if (isInit !== true && $country) {
                     $country.trigger('redraw');
                 }
             }
+        },
+
+        /**
+         * @param {Object} address
+         * @param {Boolean} triggerChange
+         */
+        _fillAddressFields: function(address, triggerChange = true) {
+            const self = this;
+            _.each(_.omit(address, ['id']), function(value, name) {
+                if (_.isObject(value)) {
+                    value = _.first(_.values(value));
+                }
+                const $field = self.fieldsByName[self.normalizeName(name)] || null;
+                // set new value only in case if it is different from exising (`null` is transformed to `''`)
+                if ($field && $field.val() !== (value || '')) {
+                    $field.val(value);
+                    if ($field.data('select2')) {
+                        $field.data('selected-data', value);
+                        if (triggerChange) {
+                            $field.trigger('change');
+                        }
+                    }
+                }
+            });
+        },
+
+        _toggleEditable: function(mode) {
+            this.$fields.each(function(index, element) {
+                $(this).prop('disabled', !mode).inputWidget('refresh');
+            });
         },
 
         /**
@@ -218,10 +217,10 @@ define(function(require) {
          * Reset address form state
          */
         resetAddressForm: function() {
-            this.$fields.each(function() {
-                const $field = $(this);
+            this.$fields.each((index, field) => {
+                const $field = $(field);
                 $field.val('');
-                $field.prop('readonly', true).inputWidget('refresh');
+                this._toggleEditable(false);
                 if ($field.data('select2')) {
                     $field.data('selected-data', '').trigger('change');
                 }
@@ -240,7 +239,7 @@ define(function(require) {
         },
 
         /**
-         * Set customer address choices from order related data
+         * Set customer address choices from quote related data
          *
          * @param {Object} response
          */
@@ -262,6 +261,16 @@ define(function(require) {
                 .append(this.$address);
 
             this.initLayout().done(this.loadingEnd.bind(this));
+        },
+
+        _onEntryPointQuoteLoadBefore: function() {
+            if (this.$address.val() && this.$address.val() !== this.options.enterManuallyValue) {
+                this.loadingStart();
+            }
+        },
+
+        _onEntryPointQuoteLoadAfter: function() {
+            this.loadingEnd();
         }
     });
 

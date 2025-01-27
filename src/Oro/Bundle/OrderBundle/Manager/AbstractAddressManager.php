@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\OrderBundle\Manager;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\OrderBundle\Provider\AddressProviderInterface;
-use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
 
 /**
  * The base class for address managers.
@@ -24,9 +21,8 @@ class AbstractAddressManager
     private array $map = [];
 
     public function __construct(
-        protected readonly AddressProviderInterface $addressProvider,
         protected readonly ManagerRegistry $doctrine,
-        private readonly PropertyAccessorInterface $propertyAccessor
+        protected readonly AddressProviderInterface $addressProvider
     ) {
     }
 
@@ -98,37 +94,5 @@ class AbstractAddressManager
         $className = $this->map[$alias];
 
         return $this->doctrine->getManagerForClass($className)->find($className, (int)$id);
-    }
-
-    protected function copyAddress(AbstractAddress $from, AbstractAddress $to): void
-    {
-        $addressClassName = ClassUtils::getClass($from);
-        $addressMetadata = $this->doctrine->getManagerForClass($addressClassName)
-            ->getClassMetadata($addressClassName);
-        foreach ($addressMetadata->getFieldNames() as $fieldName) {
-            $this->setValue($from, $to, $fieldName);
-        }
-        foreach ($addressMetadata->getAssociationNames() as $associationName) {
-            $this->setValue($from, $to, $associationName);
-        }
-    }
-
-    protected function setValue(AbstractAddress $from, AbstractAddress $to, string $property): void
-    {
-        try {
-            $value = $this->propertyAccessor->getValue($from, $property);
-            if (!$this->isEmptyValue($value)) {
-                if ($value instanceof \DateTimeInterface) {
-                    $value = clone $value;
-                }
-                $this->propertyAccessor->setValue($to, $property, $value);
-            }
-        } catch (NoSuchPropertyException $e) {
-        }
-    }
-
-    private function isEmptyValue(mixed $value): bool
-    {
-        return !$value || ($value instanceof Collection && $value->isEmpty());
     }
 }

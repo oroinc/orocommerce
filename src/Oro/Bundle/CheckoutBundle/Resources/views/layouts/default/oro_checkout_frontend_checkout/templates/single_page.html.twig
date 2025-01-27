@@ -152,9 +152,9 @@
                     'data-role': 'checkout-shipping-address',
                     'data-address-type': 'shipping',
                     'data-new-address-label': renderedAddress,
-                    'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans
+                    'placeholder': false
                 },
-                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+                'placeholder': false,
                 'entity_id': checkout.id,
                 'configs': form.shipping_address.vars.configs|default({})|merge(customerAddressSelect2)
             }) }}
@@ -191,9 +191,9 @@
                 'data-role': 'checkout-billing-address',
                 'data-address-type': 'billing',
                 'data-new-address-label': renderedAddress,
-                'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+                'placeholder': false,
             },
-            'placeholder': 'oro.checkout.form.address.enter.new_address.placeholder.label'|trans,
+            'placeholder': false,
             'entity_id': checkout.id,
             'configs': form.billing_address.vars.configs|default({})|merge(customerAddressSelect2)
         }) }}
