@@ -91,7 +91,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
             ->with();
 
         $this->guestShoppingListMigrationManager->expects(self::never())
-            ->method('migrateGuestShoppingList');
+            ->method('migrateGuestShoppingListWithOperationCode');
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->getToken()));
     }
@@ -119,7 +119,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
             ->withConsecutive([false], []);
 
         $this->guestShoppingListMigrationManager->expects(self::never())
-            ->method('migrateGuestShoppingList');
+            ->method('migrateGuestShoppingListWithOperationCode');
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->getToken()));
     }
@@ -152,8 +152,8 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
             ->withConsecutive([false], []);
 
         $this->guestShoppingListMigrationManager->expects(self::once())
-            ->method('migrateGuestShoppingList')
-            ->with($visitor, $customerUser, $shoppingList);
+            ->method('migrateGuestShoppingListWithOperationCode')
+            ->with($visitor, $shoppingList);
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $token));
     }
@@ -181,8 +181,8 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
         $customerUser = new CustomerUser();
         $token = $this->getToken($customerUser);
         $this->guestShoppingListMigrationManager->expects(self::once())
-            ->method('migrateGuestShoppingList')
-            ->with($visitor, $customerUser, $shoppingList)
+            ->method('migrateGuestShoppingListWithOperationCode')
+            ->with($visitor, $shoppingList)
             ->willThrowException(new \Exception());
 
         $this->logger->expects(self::once())

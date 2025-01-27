@@ -26,7 +26,7 @@ class CheckoutSourceStub extends CheckoutSource
         return $this->shoppingList;
     }
 
-    public function setShoppingList(ShoppingList $shoppingList): CheckoutSourceStub
+    public function setShoppingList(?ShoppingList $shoppingList): CheckoutSourceStub
     {
         $this->shoppingList = $shoppingList;
 

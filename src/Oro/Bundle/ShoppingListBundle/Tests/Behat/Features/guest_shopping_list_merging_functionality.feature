@@ -55,7 +55,7 @@ Feature: Guest shopping list merging functionality
 
   Scenario: Create other shopping List as a guest
     Given I am on homepage
-    And I should see "Shopping List"
+    And should see "No Shopping Lists"
     And type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"

@@ -30,6 +30,7 @@ oro_behat_extension:
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
         - Oro\Bundle\SaleBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
       paths:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 

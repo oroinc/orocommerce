@@ -8,11 +8,13 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Event\ShoppingListEventPostTransfer;
 use Oro\Bundle\ShoppingListBundle\Manager\CurrentShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\CustomerVisitorStub;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * unit test for guest shopping list migration manager
@@ -31,6 +33,9 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
     /** @var CurrentShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
     private $currentShoppingListManager;
 
+    /** @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject */
+    private $eventDispatcher;
+
     /** @var GuestShoppingListMigrationManager */
     private $migrationManager;
 
@@ -40,6 +45,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
         $this->shoppingListManager = $this->createMock(ShoppingListManager::class);
         $this->currentShoppingListManager = $this->createMock(CurrentShoppingListManager::class);
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcher::class);
 
         $this->migrationManager = new GuestShoppingListMigrationManager(
             $this->doctrineHelper,
@@ -47,6 +53,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             $this->shoppingListManager,
             $this->currentShoppingListManager
         );
+        $this->migrationManager->setEventDispatcher($this->eventDispatcher);
     }
 
     public function testMigrateGuestShoppingListWithCreateEnabled()
@@ -80,6 +87,7 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             ->with($customerUser, $shoppingList)
             ->willReturn(true);
 
+        $this->assertEventDispatcher();
         $this->migrationManager->migrateGuestShoppingList($visitor, $customerUser, $shoppingList);
     }
 
@@ -91,16 +99,6 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
         $shoppingList = new ShoppingList();
         $shoppingListItem = new LineItem();
         $shoppingList->addLineItem($shoppingListItem);
-        $shoppingListEntityManager = $this->createMock(EntityManager::class);
-        $shoppingListEntityManager->expects($this->once())
-            ->method('remove')
-            ->with($shoppingList);
-        $shoppingListEntityManager->expects($this->never())
-            ->method('flush');
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityManagerForClass')
-            ->with(ShoppingList::class)
-            ->willReturn($shoppingListEntityManager);
         $customerUserShoppingList = new ShoppingList();
         $this->currentShoppingListManager->expects($this->once())
             ->method('getCurrent')
@@ -109,7 +107,8 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('bulkAddLineItems')
             ->with([$shoppingListItem], $customerUserShoppingList, GuestShoppingListMigrationManager::FLUSH_BATCH_SIZE);
 
-        $this->migrationManager->migrateGuestShoppingList(new CustomerVisitor(), new CustomerUser(), $shoppingList);
+        $this->assertEventDispatcher();
+        $this->migrationManager->migrateGuestShoppingList(new CustomerVisitorStub(), new CustomerUser(), $shoppingList);
     }
 
     public function testMoveShoppingListToCustomerUser()
@@ -122,5 +121,18 @@ class GuestShoppingListMigrationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('bulkAddLineItems');
 
         $this->migrationManager->moveShoppingListToCustomerUser(new CustomerVisitor(), $customerUser, $shoppingList);
+    }
+
+    private function assertEventDispatcher(): void
+    {
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('hasListeners')
+            ->with(ShoppingListEventPostTransfer::NAME)
+            ->willReturn(true);
+
+        $this->eventDispatcher
+            ->expects($this->once())
+            ->method('dispatch');
     }
 }

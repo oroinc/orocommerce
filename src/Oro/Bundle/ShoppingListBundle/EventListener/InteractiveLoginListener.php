@@ -13,6 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\GuestShoppingListMigrationManager;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Listener to migrate guest shopping list during interactive login.
@@ -42,6 +43,8 @@ class InteractiveLoginListener
     /** @var SendChangedEntitiesToMessageQueueListener */
     private $sendChangedEntitiesToMessageQueueListener;
 
+    private ?TranslatorInterface $translator = null;
+
     public function __construct(
         CustomerVisitorManager $visitorManager,
         GuestShoppingListMigrationManager $guestShoppingListMigrationManager,
@@ -49,11 +52,18 @@ class InteractiveLoginListener
         ConfigManager $configManager,
         SendChangedEntitiesToMessageQueueListener $sendChangedEntitiesToMessageQueueListener
     ) {
-        $this->visitorManager                            = $visitorManager;
-        $this->guestShoppingListMigrationManager         = $guestShoppingListMigrationManager;
-        $this->logger                                    = $logger;
-        $this->configManager                             = $configManager;
+        $this->visitorManager = $visitorManager;
+        $this->guestShoppingListMigrationManager = $guestShoppingListMigrationManager;
+        $this->logger = $logger;
+        $this->configManager = $configManager;
         $this->sendChangedEntitiesToMessageQueueListener = $sendChangedEntitiesToMessageQueueListener;
+    }
+
+    public function setTranslator(TranslatorInterface $translator): self
+    {
+        $this->translator = $translator;
+
+        return $this;
     }
 
     public function onInteractiveLogin(InteractiveLoginEvent $event)
@@ -77,8 +87,12 @@ class InteractiveLoginListener
                     /** @var ShoppingList $visitorShoppingList */
                     $visitorShoppingList = $shoppingLists->first();
                     if ($visitorShoppingList) {
-                        $this->guestShoppingListMigrationManager
-                            ->migrateGuestShoppingList($visitor, $user, $visitorShoppingList);
+                        $operationCode = $this->guestShoppingListMigrationManager
+                            ->migrateGuestShoppingListWithOperationCode($visitor, $visitorShoppingList);
+
+                        if ($operationCode === GuestShoppingListMigrationManager::OPERATION_MERGE) {
+                            $this->addFlashMessage($event, 'notice', 'oro.shoppinglist.flash.merge');
+                        }
                     }
                 }
             }
@@ -100,11 +114,16 @@ class InteractiveLoginListener
         if (!$value) {
             return null;
         }
-        list($visitorId, $sessionId) = json_decode(base64_decode($value));
+        [$visitorId, $sessionId] = json_decode(base64_decode($value));
 
         return [
             'visitor_id' => $visitorId,
             'session_id' => $sessionId,
         ];
+    }
+
+    private function addFlashMessage(InteractiveLoginEvent $event, string $type, string $message): void
+    {
+        $event->getRequest()->getSession()->getFlashBag()->add($type, $this->translator->trans($message));
     }
 }
