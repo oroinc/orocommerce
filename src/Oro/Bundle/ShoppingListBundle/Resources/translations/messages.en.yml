@@ -256,6 +256,7 @@ oro:
         edit:
             action.label: Edit
         visitors.label: 'Visitors'
+        flash.merge: 'Upon signing in, any previously added items have been combined with the contents of your current shopping list.'
 
     customer:
         customervisitor:

@@ -423,7 +423,7 @@ class ShoppingListManagerTest extends TestCase
 
         /** @var LineItem $resultingItem */
         $resultingItem = $shoppingList->getLineItems()->first();
-        self::assertSame('Notes Duplicated Notes', $resultingItem->getNotes());
+        self::assertSame(sprintf('%s%s%s', 'Notes', ' ', 'Duplicated Notes'), $resultingItem->getNotes());
     }
 
     public function testGetLineItemExistingItem(): void

@@ -269,7 +269,7 @@ class ShoppingListManager
             $this
                 ->prepareLineItem($lineItem, $shoppingList)
                 ->handleLineItem($lineItem, $shoppingList, function (LineItem $duplicate) use ($lineItem) {
-                    $this->mergeLineItems($lineItem, $duplicate, false);
+                    $this->mergeLineItems($lineItem, $duplicate, true);
                 });
 
             if ($lineItemsCount === $iteration) {

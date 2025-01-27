@@ -6,6 +6,8 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Event\ShoppingListEventPostTransfer;
+use Psr\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Handles logic related to migrating shopping lists from customer visitors to customer users.
@@ -13,6 +15,10 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 class GuestShoppingListMigrationManager
 {
     const FLUSH_BATCH_SIZE = 100;
+
+    public const OPERATION_NONE = 0;
+    public const OPERATION_MOVE = 1;
+    public const OPERATION_MERGE = 2;
 
     /** @var DoctrineHelper */
     private $doctrineHelper;
@@ -26,6 +32,8 @@ class GuestShoppingListMigrationManager
     /** @var CurrentShoppingListManager */
     private $currentShoppingListManager;
 
+    private ?EventDispatcherInterface $eventDispatcher = null;
+
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ShoppingListLimitManager $shoppingListLimitManager,
@@ -38,8 +46,15 @@ class GuestShoppingListMigrationManager
         $this->currentShoppingListManager = $currentShoppingListManager;
     }
 
+    public function setEventDispatcher(EventDispatcherInterface $eventDispatcher): self
+    {
+        $this->eventDispatcher = $eventDispatcher;
+
+        return $this;
+    }
+
     /**
-     * Migrate guest-created shopping list to customer user
+     * Migrate a guest-created shopping list to customer user
      */
     public function migrateGuestShoppingList(
         CustomerVisitor $visitor,
@@ -53,48 +68,93 @@ class GuestShoppingListMigrationManager
         }
     }
 
+    public function migrateGuestShoppingListWithOperationCode(ShoppingList $shoppingList)
+    {
+        return $this->shoppingListLimitManager->isCreateEnabled()
+            ? $this->mergeShoppingListWithNewShoppingList($shoppingList)
+            : $this->mergeShoppingListWithCurrent($shoppingList);
+    }
+
     /**
-     * Move shopping list from customer visitor to customer user and make new list current
+     * Move a shopping list from customer visitor to customer user and make new list current
      */
     public function moveShoppingListToCustomerUser(
         CustomerVisitor $visitor,
         CustomerUser $customerUser,
         ShoppingList $shoppingList
     ) {
-        if ($customerUser == $shoppingList->getCustomerUser()) {
-            return;
+        if ($customerUser === $shoppingList->getCustomerUser()) {
+            return self::OPERATION_NONE;
         }
+
         $visitor->removeShoppingList($shoppingList);
         $this->doctrineHelper->getEntityManagerForClass(CustomerVisitor::class)->flush();
         $lineItems = clone $shoppingList->getLineItems();
+        $shoppingList->setCustomerUser($customerUser);
         foreach ($lineItems as $lineItem) {
             $lineItem->setCustomerUser($customerUser);
         }
-        $shoppingList->setCustomerUser($customerUser);
         $this->currentShoppingListManager->setCurrent($customerUser, $shoppingList);
         $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class)->flush();
+
+        $this->dispatchShoppingListPostTransfer($shoppingList, $shoppingList);
+
+        return self::OPERATION_MOVE;
     }
 
     /**
-     * Merge visitor shopping list with default customer user shopping list
+     * Merge a visitor shopping list with a default customer user shopping list
      */
     public function mergeShoppingListWithCurrent(ShoppingList $shoppingList)
     {
-        $customerUserShoppingList = $this->currentShoppingListManager->getCurrent();
+        $currentShoppingList = $this->currentShoppingListManager->getCurrent();
+
+        return $this->mergeShoppingListWithShoppingList($shoppingList, $currentShoppingList);
+    }
+
+    /**
+     * Merge a visitor shopping list with a new default customer user shopping list.
+     */
+    public function mergeShoppingListWithNewShoppingList(ShoppingList $shoppingList): int
+    {
+        $currentShoppingList = $this->shoppingListManager->create(true, $shoppingList->getLabel());
+
+        return $this->mergeShoppingListWithShoppingList($shoppingList, $currentShoppingList)
+            ? self::OPERATION_MOVE
+            : self::OPERATION_NONE;
+    }
+
+    private function mergeShoppingListWithShoppingList(
+        ShoppingList $shoppingList,
+        ShoppingList $currentShoppingList
+    ): int {
+        $notes = trim(implode(' ', [$currentShoppingList->getNotes(), $shoppingList->getNotes()]));
+        $currentShoppingList->setNotes($notes);
         $lineItems = clone $shoppingList->getLineItems();
-
-        $em = $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class);
-        $em->remove($shoppingList);
         if (count($lineItems) === 0) {
-            $em->flush();
-
-            return;
+            return self::OPERATION_NONE;
         }
 
         $this->shoppingListManager->bulkAddLineItems(
             $lineItems->toArray(),
-            $customerUserShoppingList,
+            $currentShoppingList,
             self::FLUSH_BATCH_SIZE
         );
+
+        $this->dispatchShoppingListPostTransfer($shoppingList, $currentShoppingList);
+
+        return self::OPERATION_MERGE;
+    }
+
+    private function dispatchShoppingListPostTransfer(
+        ShoppingList $shoppingList,
+        ShoppingList $currentShoppingList
+    ): void {
+        if (!$this->eventDispatcher->hasListeners(ShoppingListEventPostTransfer::NAME)) {
+            return;
+        }
+
+        $event = new ShoppingListEventPostTransfer($shoppingList, $currentShoppingList);
+        $this->eventDispatcher->dispatch($event, ShoppingListEventPostTransfer::NAME);
     }
 }

@@ -57,7 +57,8 @@ Feature: Guest shopping list merging functionality
 
   Scenario: Create other shopping List as a guest
     Given I am on homepage
-    And I should see "0" in the "Shopping List Widget" element
+    When I hover on "Shopping List Widget"
+    And I should see "Your Shopping List is empty" in the "Shopping List Widget" element
     And type "CONTROL1" in "search"
     And I click "Search Button"
     And I should see "Control Product"

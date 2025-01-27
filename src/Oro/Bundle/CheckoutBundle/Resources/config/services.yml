@@ -792,14 +792,39 @@ services:
 
     oro_checkout.event_listener.login_on_checkout:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener'
+        lazy: true
         arguments:
             - '@logger'
             - '@oro_config.manager'
             - '@oro_checkout.manager'
             - '@event_dispatcher'
-        lazy: true
         tags:
-            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 255 }
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 30 }
+
+    oro_checkout.event_listener.reset_checkout_on_source_change:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ResetCheckoutOnSourceChange
+        lazy: true
+        arguments:
+            - '@oro_checkout.provider.shopping_list_checkout_provider'
+            - '@oro_checkout.action_group.actualize_checkout'
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 25 }
+            - { name: kernel.event_listener, event: oro_shopping_list.post_transfer, method: onShoppingListPostTransfer }
+            - { name: oro_featuretogle.feature, feature: oro_checkout.guest_checkout }
+            - { name: monolog.logger, channel: oro_checkout }
+
+    oro_checkout.event_listener.process_checkout_on_source_change:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ProcessCheckoutOnSourceChange
+        lazy: true
+        arguments:
+            - '@oro_checkout.provider.shopping_list_checkout_provider'
+            - '@oro_checkout.action_group.actualize_checkout'
+            - '@doctrine'
+        tags:
+            - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 20 }
+            - { name: kernel.event_listener, event: oro_shopping_list.post_transfer, method: onShoppingListPostTransfer }
+            - { name: oro_featuretogle.feature, feature: oro_checkout.guest_checkout }
+            - { name: monolog.logger, channel: oro_checkout }
 
     oro_checkout.event_listener.customer_user_register:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\CustomerUserListener'
@@ -988,6 +1013,13 @@ services:
         tags:
             - { name: kernel.event_subscriber }
 
+    oro_checkout.listener.checkout_transition_source_configuration:
+        class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionSourceConfiguration
+        arguments:
+            - '@oro_shopping_list.manager.shopping_list_limit'
+        tags:
+            - { name: kernel.event_subscriber }
+
     oro_checkout.form.data_transformer.order_address_to_address_identifier:
         class: 'Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer'
         shared: false
@@ -1119,3 +1151,12 @@ services:
         calls:
             - ['addTheme', ['default_51']]
             - ['addTheme', ['default_50']]
+
+    oro_checkout.provider.shopping_list_checkout_provider:
+        class: Oro\Bundle\CheckoutBundle\Provider\ShoppingListCheckoutProvider
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_customer.provider.current_user'
+            - '@oro_workflow.manager'

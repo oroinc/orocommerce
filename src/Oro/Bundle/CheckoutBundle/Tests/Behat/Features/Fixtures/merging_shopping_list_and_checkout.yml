@@ -1,0 +1,63 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision{1..2}:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\OrganizationBundle\Entity\BusinessUnit:
+    businessUnit:
+        name: Common Business Unit
+        organization: '@organization'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    oro_product{1..2}:
+        string: 'ORO_PRODUCT_<current()>'
+
+Oro\Bundle\CatalogBundle\Entity\CategoryTitle:
+    category:
+        string: 'category'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    price_product{1..2}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: '10'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    price_relation_default_price_list_to_product{1..2}:
+        product: '@product<current()>'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList:
+    price_attribute_price_list:
+        name: 'Shipping Cost'
+        fieldName: 'shippingCost'
+        organization: '@organization'
+        __calls:
+            - setCurrencies: [ [ 'USD' ] ]
+
+Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice:
+    priceAttributeProductPrice{1..2}:
+        product: '@product<current()>'
+        priceList: '@price_attribute_price_list'
+        currency: 'USD'
+        quantity: 1
+        unit: '@item'
+        value: '<current()>'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product{1..2}:
+        sku: 'PSKU_<current()>'
+        type: 'simple'
+        organization: '@organization'
+        owner: '@businessUnit'
+        attributeFamily: '@defaultProductFamily'
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+        featured: true
+        __calls:
+            - addName: ['@oro_product<current()>']
+            - addUnitPrecision: ['@precision<current()>']
+            - setPrimaryUnitPrecision: ['@precision<current()>']
