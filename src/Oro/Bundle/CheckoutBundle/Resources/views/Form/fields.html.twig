@@ -1,0 +1,20 @@
+{% block oro_checkout_order_limit_widget %}
+    <div class="float-holder">
+        <div class="collection-element-primary collection-element-primary--flex">
+            {{ form_widget(form.value) }}<span class="add-on" title="{{ 'oro.checkout.currency.label'|trans }}">
+                {% if form.vars.value is not null and form.vars.value.currency %}
+                    {{ form.vars.value.currency }}
+                {% endif %}
+                {{ form_widget(form.currency) }}
+            </span>
+        </div>
+        {% for child in form.children %}
+            {% if child.vars.extra_field is defined and child.vars.extra_field %}
+                <div class="collection-element-other clearfix">
+                    {{ form_widget(child, {'attr': {'title': child.vars.label}}) }}
+                </div>
+                {{ form_errors(child) }}
+            {% endif %}
+        {% endfor %}
+    </div>
+{%  endblock %}

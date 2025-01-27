@@ -30,6 +30,8 @@ system_configuration:
             title: oro.checkout.system_configuration.groups.multishipping_line_items_grouping_options.title
         multishipping_order_history_options:
             title: oro.checkout.system_configuration.groups.multishipping_order_history_options.title
+        order_limits:
+            title: oro.checkout.system_configuration.groups.order_limits.title
 
     fields:
         oro_checkout.frontend_show_open_orders:
@@ -169,6 +171,22 @@ system_configuration:
                 label: oro.checkout.system_configuration.fields.enable_shipping_method_selection_per_line_item.label
                 tooltip: oro.checkout.system_configuration.fields.enable_shipping_method_selection_per_line_item.tooltip
 
+        oro_checkout.minimum_order_amount:
+            data_type: array
+            type: Oro\Bundle\CheckoutBundle\Form\Type\OrderLimitCollectionType
+            options:
+                required: false
+                label: oro.checkout.system_configuration.fields.minimum_order_amount.label
+                tooltip: oro.checkout.system_configuration.fields.minimum_order_amount.tooltip
+
+        oro_checkout.maximum_order_amount:
+            data_type: array
+            type: Oro\Bundle\CheckoutBundle\Form\Type\OrderLimitCollectionType
+            options:
+                required: false
+                label: oro.checkout.system_configuration.fields.maximum_order_amount.label
+                tooltip: oro.checkout.system_configuration.fields.maximum_order_amount.tooltip
+
     tree:
         system_configuration:
             commerce:
@@ -190,6 +208,10 @@ system_configuration:
                                     checkout_options:
                                         children:
                                             - oro_checkout.checkout_max_line_items_per_page
+                                    order_limits:
+                                        children:
+                                            - oro_checkout.minimum_order_amount
+                                            - oro_checkout.maximum_order_amount
                             orders_history:
                                 children:
                                     orders_history_open_orders:

@@ -35,6 +35,8 @@ class OroCheckoutExtensionTest extends \PHPUnit\Framework\TestCase
                         'enable_shipping_method_selection_per_line_item' => ['value' => false, 'scope' => 'app'],
                         'show_suborders_in_order_history' => ['value' => true, 'scope' => 'app'],
                         'show_main_orders_in_order_history' => ['value' => true, 'scope' => 'app'],
+                        'minimum_order_amount' => ['value' => [], 'scope' => 'app'],
+                        'maximum_order_amount' => ['value' => [], 'scope' => 'app'],
                     ]
                 ]
             ],

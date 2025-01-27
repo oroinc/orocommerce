@@ -1145,6 +1145,29 @@ services:
         tags:
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }
 
+    oro_checkout.event_listener.config_setting_form.minimum_order_amount:
+        class: Oro\Bundle\CheckoutBundle\EventListener\OrderLimitConfigListener
+        arguments:
+            - '@oro_currency.config.currency'
+            - 'oro_checkout.minimum_order_amount'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+
+    oro_checkout.event_listener.config_setting_form.maximum_order_amount:
+        class: Oro\Bundle\CheckoutBundle\EventListener\OrderLimitConfigListener
+        arguments:
+            - '@oro_currency.config.currency'
+            - 'oro_checkout.maximum_order_amount'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+
+    oro_checkout.provider.minimum_order_amount:
+        class: Oro\Bundle\CheckoutBundle\Provider\OrderLimitConfigProvider
+        public: true
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_currency.config.currency'
+
     oro_checkout.checkout.sign_in_target_path_provider:
         class: Oro\Bundle\CheckoutBundle\Provider\SignInTargetPathProvider
         decorates: oro_customer.provider.sign_in.target_path

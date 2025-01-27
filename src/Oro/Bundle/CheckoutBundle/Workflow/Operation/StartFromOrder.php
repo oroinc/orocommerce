@@ -9,6 +9,8 @@ use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitFormattedProviderInterface;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitProviderInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartCheckoutInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Exception\WorkflowException;
@@ -24,7 +26,9 @@ class StartFromOrder extends AbstractOperationService
         private CheckoutLineItemsFactory $lineItemsFactory,
         private StartCheckoutInterface $startCheckout,
         private CheckoutLineItemsProvider $checkoutLineItemsProvider,
-        private ActionExecutor $actionExecutor
+        private ActionExecutor $actionExecutor,
+        private OrderLimitProviderInterface $orderLimitProvider,
+        private OrderLimitFormattedProviderInterface $orderLimitFormattedProvider
     ) {
     }
 
@@ -43,7 +47,7 @@ class StartFromOrder extends AbstractOperationService
             throw new WorkflowException('Only Order entity is supported');
         }
 
-        if (!$this->assertOrderLineItems($order)) {
+        if (!$this->assertOrderLineItems($order) || !$this->assertOrderLimits($order)) {
             return;
         }
 
@@ -61,6 +65,45 @@ class StartFromOrder extends AbstractOperationService
                 [
                     'message' => 'oro.checkout.frontend.checkout.cannot_create_reorder_no_line_items',
                     'type' => 'warning'
+                ]
+            );
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function assertOrderLimits(Order $order): bool
+    {
+        if (!$this->orderLimitProvider->isMinimumOrderAmountMet($order)) {
+            $this->actionExecutor->executeAction(
+                'flash_message',
+                [
+                    'message' => 'oro.checkout.frontend.checkout.order_limits.minimum_order_amount_flash',
+                    'message_parameters' => [
+                        'amount' => $this->orderLimitFormattedProvider->getMinimumOrderAmountFormatted(),
+                        'difference' =>
+                            $this->orderLimitFormattedProvider->getMinimumOrderAmountDifferenceFormatted($order),
+                    ],
+                    'type' => 'error'
+                ]
+            );
+
+            return false;
+        }
+
+        if (!$this->orderLimitProvider->isMaximumOrderAmountMet($order)) {
+            $this->actionExecutor->executeAction(
+                'flash_message',
+                [
+                    'message' => 'oro.checkout.frontend.checkout.order_limits.maximum_order_amount_flash',
+                    'message_parameters' => [
+                        'amount' => $this->orderLimitFormattedProvider->getMaximumOrderAmountFormatted(),
+                        'difference' =>
+                            $this->orderLimitFormattedProvider->getMaximumOrderAmountDifferenceFormatted($order),
+                    ],
+                    'type' => 'error'
                 ]
             );
 

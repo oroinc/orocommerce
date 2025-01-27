@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitProviderInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridInterface;
@@ -26,10 +27,15 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
         private IsWorkflowStartFromShoppingListAllowed $isWorkflowStartFromShoppingListAllowed,
         private StartShoppingListCheckoutInterface $startShoppingListCheckout,
         private ContextAccessorInterface $contextAccessor,
-        private EmptyMatrixGridInterface $editableMatrixGrid
+        private EmptyMatrixGridInterface $editableMatrixGrid,
+        private OrderLimitProviderInterface $orderLimitProvider
     ) {
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
@@ -51,6 +57,12 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
         }
 
         if (!$this->isAclAllowed($workflowItem, $errors)) {
+            return false;
+        }
+
+        if (!$this->orderLimitProvider->isMinimumOrderAmountMet($shoppingList)
+            || !$this->orderLimitProvider->isMaximumOrderAmountMet($shoppingList)
+        ) {
             return false;
         }
 

@@ -8,6 +8,7 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitProviderInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartFromShoppingListTransition;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -29,6 +30,7 @@ class StartFromShoppingListTransitionTest extends TestCase
     private StartShoppingListCheckoutInterface|MockObject $startShoppingListCheckout;
     private ContextAccessor $contextAccessor;
     private EmptyMatrixGridInterface|MockObject $editableMatrixGrid;
+    private OrderLimitProviderInterface|MockObject $orderLimitProvider;
 
     private StartFromShoppingListTransition $transition;
 
@@ -43,6 +45,7 @@ class StartFromShoppingListTransitionTest extends TestCase
         $this->startShoppingListCheckout = $this->createMock(StartShoppingListCheckoutInterface::class);
         $this->contextAccessor = new ContextAccessor();
         $this->editableMatrixGrid = $this->createMock(EmptyMatrixGridInterface::class);
+        $this->orderLimitProvider = $this->createMock(OrderLimitProviderInterface::class);
 
         $this->transition = new StartFromShoppingListTransition(
             $this->actionExecutor,
@@ -50,7 +53,8 @@ class StartFromShoppingListTransitionTest extends TestCase
             $this->isWorkflowStartFromShoppingListAllowed,
             $this->startShoppingListCheckout,
             $this->contextAccessor,
-            $this->editableMatrixGrid
+            $this->editableMatrixGrid,
+            $this->orderLimitProvider
         );
     }
 
@@ -62,6 +66,8 @@ class StartFromShoppingListTransitionTest extends TestCase
         bool $isStartAllowedByListeners,
         bool $isAllowedForAny,
         bool $isAclAllowed,
+        bool $isMinimumOrderAmountMet,
+        bool $isMaximumOrderAmountMet,
         bool $expected
     ): void {
         $workflowItem = $this->createMock(WorkflowItem::class);
@@ -121,6 +127,16 @@ class StartFromShoppingListTransitionTest extends TestCase
             ->method('isAllowedForAny')
             ->willReturn($isAllowedForAny);
 
+        $this->orderLimitProvider->expects($this->any())
+            ->method('isMinimumOrderAmountMet')
+            ->with($shoppingList)
+            ->willReturn($isMinimumOrderAmountMet);
+
+        $this->orderLimitProvider->expects($this->any())
+            ->method('isMaximumOrderAmountMet')
+            ->with($shoppingList)
+            ->willReturn($isMaximumOrderAmountMet);
+
         $this->assertSame($expected, $this->transition->isPreConditionAllowed($workflowItem));
     }
 
@@ -132,6 +148,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isStartAllowedByListeners' => true,
                 'isAllowedForAny' => true,
                 'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
                 'expected' => false
             ],
             'not allowed by listeners' => [
@@ -139,6 +157,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isStartAllowedByListeners' => false,
                 'isAllowedForAny' => true,
                 'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
                 'expected' => false
             ],
             'not allowed by isWorkflowStartFromShoppingListAllowed' => [
@@ -146,6 +166,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isStartAllowedByListeners' => true,
                 'isAllowedForAny' => false,
                 'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
                 'expected' => false
             ],
             'not allowed by ACL' => [
@@ -153,6 +175,35 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isStartAllowedByListeners' => true,
                 'isAllowedForAny' => true,
                 'isAclAllowed' => false,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
+                'expected' => false
+            ],
+            'not allowed by minimum order amount' => [
+                'lineItemsArray' => [$this->createMock(LineItem::class)],
+                'isStartAllowedByListeners' => true,
+                'isAllowedForAny' => true,
+                'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => false,
+                'isMaximumOrderAmountMet' => true,
+                'expected' => false
+            ],
+            'not allowed by maximum order amount' => [
+                'lineItemsArray' => [$this->createMock(LineItem::class)],
+                'isStartAllowedByListeners' => true,
+                'isAllowedForAny' => true,
+                'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => false,
+                'expected' => false
+            ],
+            'not allowed by minimum and maximum order amount' => [
+                'lineItemsArray' => [$this->createMock(LineItem::class)],
+                'isStartAllowedByListeners' => true,
+                'isAllowedForAny' => true,
+                'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => false,
+                'isMaximumOrderAmountMet' => false,
                 'expected' => false
             ],
             'allowed' => [
@@ -160,6 +211,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isStartAllowedByListeners' => true,
                 'isAllowedForAny' => true,
                 'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
                 'expected' => true
             ],
         ];

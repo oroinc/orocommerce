@@ -33,6 +33,8 @@ class Configuration implements ConfigurationInterface
                 'enable_shipping_method_selection_per_line_item' => ['type' => 'boolean', 'value' => false],
                 'show_suborders_in_order_history' => ['type' => 'boolean', 'value' => true],
                 'show_main_orders_in_order_history' => ['type' => 'boolean', 'value' => true],
+                'minimum_order_amount' => ['type' => 'array', 'value' => []],
+                'maximum_order_amount' => ['type' => 'array', 'value' => []],
             ]
         );
 

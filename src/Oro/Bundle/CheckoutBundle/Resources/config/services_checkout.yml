@@ -129,6 +129,7 @@ services:
             - '@oro_checkout.action_group.start_from_shopping_list'
             - '@oro_action.expression.context_accessor'
             - '@oro_shopping_list.manager.empty_matrix_grid'
+            - '@oro_shopping_list.provider.order_limit'
         tags:
             - { name: 'oro_workflow.transition_service' }
 
@@ -350,6 +351,8 @@ services:
             - '@oro_checkout.action_group.start_checkout'
             - '@oro_checkout.provider.checkout_line_items'
             - '@oro_action.action_executor'
+            - '@oro_order.provider.order_limit'
+            - '@oro_order.provider.order_limit_formatted'
         tags:
             - { name: 'oro_operation_service' }
 
@@ -463,6 +466,9 @@ services:
             - '@doctrine'
             - '@oro_checkout.action_group.start_from_shopping_list'
             - '@oro_workflow.manager'
+            - '@oro_shopping_list.provider.order_limit'
+            - '@oro_shopping_list.provider.order_limit_formatted'
+            - '@translator'
         tags:
             - { name: 'oro_action_group_service' }
 

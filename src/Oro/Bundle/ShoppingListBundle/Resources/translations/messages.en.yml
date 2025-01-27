@@ -33,6 +33,7 @@ oro:
         contact_information.label: Contact Information
         btn:
             create_order: 'Create Order'
+            or_separator: or
         flash:
             success: 'Shopping list "%shoppinglist%" was created successfully'
             update_success: 'Shopping list "%shoppinglist%" was updated successfully'
@@ -338,6 +339,7 @@ oro:
                 delete: 'Delete'
                 delete_aria_label: 'Delete %name%'
                 delete_item_aria_label: 'Delete this Shopping list item'
+                or: 'or'
             workflow:
                 remove_source.label: Delete this shopping list after ordering
             matrix_grid_order:

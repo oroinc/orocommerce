@@ -113,6 +113,7 @@ layout:
                         vars:
                             itemsCount: '=data["entity"].getLineItems().count()'
                             totalsConainerClassName: ''
+                            errors: '=data["oro_shopping_list_order_limit"].getErrors(data["entity"])'
                 __totals_placeholder:
                     blockType: block
                     options:
@@ -120,10 +121,16 @@ layout:
                 __combined_button_wrapper:
                     blockType: layout_subtree_update
                     options:
+                        attr:
+                            class: 'summary-widget__combined-bottons-wrapper'
                         reloadEvents: ['datagrid_create_before', 'shopping-list:refresh']
                         showLoading: false
                         disableControls: true
                         onLoadingCssClass: 'loading-blur'
+                __order_limit_disabled_checkout_button:
+                    blockType: block
+                    options:
+                        visible: '=context["is_xml_http_request"] && !data["oro_shopping_list_order_limit"].isOrderLimitsMet(data["entity"])'
                 __combined_button:
                     blockType: combined_buttons
                     options:
@@ -156,6 +163,7 @@ layout:
                                                     __totals: ~
                                                     __totals_placeholder: ~
                                                 __combined_button_wrapper:
+                                                    __order_limit_disabled_checkout_button: ~
                                                     __combined_button: ~
                                                     __combined_button_placeholder: ~
 

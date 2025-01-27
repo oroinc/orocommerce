@@ -6,11 +6,14 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitFormattedProviderInterface;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Start checkout from quick order form.
@@ -23,7 +26,10 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
         private CheckoutRepository $checkoutRepository,
         private ManagerRegistry $registry,
         private StartShoppingListCheckoutInterface $startShoppingListCheckout,
-        private WorkflowManager $workflowManager
+        private WorkflowManager $workflowManager,
+        private OrderLimitProviderInterface $shoppingListLimitProvider,
+        private OrderLimitFormattedProviderInterface $shoppingListLimitFormattedProvider,
+        private TranslatorInterface $translator
     ) {
     }
 
@@ -39,6 +45,12 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
             // the DB started by the same visitor. At first run customer user is null,
             // and it is created when first checkout step is passed
             $this->removeExistingCheckout($currentUser, $shoppingList);
+        }
+
+        if (!empty($errors = $this->assertOrderLimits($shoppingList))) {
+            return [
+                'errors' => $errors
+            ];
         }
 
         $startResult = $this->startShoppingListCheckout->execute(
@@ -105,5 +117,42 @@ class StartQuickOrderCheckout implements StartQuickOrderCheckoutInterface
         $em = $this->registry->getManagerForClass(Checkout::class);
         $em->remove($checkout);
         $em->flush($checkout);
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @return array<int,string>
+     */
+    private function assertOrderLimits(ShoppingList $shoppingList): array
+    {
+        $errors = [];
+
+        if (!$this->shoppingListLimitProvider->isMinimumOrderAmountMet($shoppingList)) {
+            $errors[] = $this->translator->trans(
+                'oro.checkout.frontend.checkout.order_limits.minimum_order_amount_flash',
+                [
+                    '%amount%' => $this->shoppingListLimitFormattedProvider->getMinimumOrderAmountFormatted(),
+                    '%difference%' =>
+                        $this->shoppingListLimitFormattedProvider->getMinimumOrderAmountDifferenceFormatted(
+                            $shoppingList
+                        ),
+                ]
+            );
+        }
+
+        if (!$this->shoppingListLimitProvider->isMaximumOrderAmountMet($shoppingList)) {
+            $errors[] = $this->translator->trans(
+                'oro.checkout.frontend.checkout.order_limits.maximum_order_amount_flash',
+                [
+                    '%amount%' => $this->shoppingListLimitFormattedProvider->getMaximumOrderAmountFormatted(),
+                    '%difference%' =>
+                        $this->shoppingListLimitFormattedProvider->getMaximumOrderAmountDifferenceFormatted(
+                            $shoppingList
+                        ),
+                ]
+            );
+        }
+
+        return $errors;
     }
 }

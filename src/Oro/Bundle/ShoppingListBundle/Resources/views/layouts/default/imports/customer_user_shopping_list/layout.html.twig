@@ -227,7 +227,7 @@
             }) %}
 
             {% if buttonsCount > 1 %}
-                <div class="divider summary-widget-divider">or</div>
+                <div class="divider summary-widget-divider">{{ 'oro.frontend.shoppinglist.btn.or'|trans }}</div>
                 {% for button in buttons|slice(1) %}
                     {% include button.template with button.templateData|merge({
                         onlyLink: true,
@@ -255,4 +255,20 @@
     }) %}
 
     <div {{ block('block_attributes') }}></div>
+{% endblock %}
+
+{% block __customer_user_shopping_list__order_limit_disabled_checkout_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' summary-widget__order-limit-disabled-checkout-button',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <button class="btn btn--full disabled"
+                type="button"
+        >
+            {{ 'oro.workflow.b2b_flow_checkout.transition.start_from_shoppinglist.button_label'|trans({},'workflows') }}
+        </button>
+
+        <div class="checkout-button-separator divider">{{ 'oro.frontend.shoppinglist.btn.or'|trans }}</div>
+    </div>
 {% endblock %}
