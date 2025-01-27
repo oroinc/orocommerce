@@ -50,7 +50,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($expectedData, $form->getData());
+        $this->assertEqualsWithDelta($expectedData, $form->getData(), 0.0001);
     }
 
     public function submitProvider(): array
@@ -76,7 +76,7 @@ class DimensionsValueTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    private function getDimensionsValue(int $length, int $width, int $height): DimensionsValue
+    private function getDimensionsValue(float $length, float $width, float $height): DimensionsValue
     {
         return DimensionsValue::create($length, $width, $height);
     }

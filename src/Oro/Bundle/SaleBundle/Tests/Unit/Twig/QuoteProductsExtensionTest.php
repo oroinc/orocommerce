@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\RFPBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\SaleBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;

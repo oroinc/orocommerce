@@ -96,7 +96,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
 
         $this->roundingService->method('round')
             ->willReturnCallback(function ($value, $precision = null, $roundType = null) {
-                return \round($value, $precision ?? 0, $roundType ?? 0);
+                return \round($value, $precision ?? 0, $roundType ?? PHP_ROUND_HALF_UP);
             });
 
         $this->handler->process([], $this->form, $this->request);
@@ -205,7 +205,7 @@ class InventoryLevelHandlerTest extends \PHPUnit\Framework\TestCase
         $this->roundingService
             ->method('round')
             ->willReturnCallback(function ($value, $precision = null, $roundType = null) {
-                return \round($value, $precision ?? 0, $roundType ?? 0);
+                return \round($value, $precision ?? 0, $roundType ?? PHP_ROUND_HALF_UP);
             });
 
         $this->handler->process([], $this->form, $this->request);

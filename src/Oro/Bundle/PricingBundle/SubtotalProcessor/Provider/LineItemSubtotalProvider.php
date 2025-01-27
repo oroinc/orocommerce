@@ -119,11 +119,15 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
         $rowCurrency = $lineItem->getPrice()->getCurrency();
 
         if ($lineItem instanceof QuantityAwareInterface) {
-            $rowTotal *= $lineItem->getQuantity();
+            $rowTotal = BigDecimal::of($rowTotal)
+                ->multipliedBy((float)$lineItem->getQuantity())
+                ->toFloat();
         }
 
         if ($baseCurrency !== $rowCurrency) {
-            $rowTotal *= $this->getExchangeRate($rowCurrency, $baseCurrency);
+            $rowTotal = BigDecimal::of($rowTotal)
+                ->multipliedBy($this->getExchangeRate($rowCurrency, $baseCurrency))
+                ->toFloat();
         }
 
         return $this->rounding->round($rowTotal);

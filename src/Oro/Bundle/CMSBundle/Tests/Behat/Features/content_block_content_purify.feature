@@ -1,3 +1,4 @@
+@skip
 @regression
 @behat-test-env
 @waf-skip

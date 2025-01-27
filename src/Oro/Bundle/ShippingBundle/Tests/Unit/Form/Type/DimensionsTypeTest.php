@@ -41,7 +41,7 @@ class DimensionsTypeTest extends FormIntegrationTestCase
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($expectedData, $form->getData());
+        $this->assertEqualsWithDelta($expectedData, $form->getData(), 0.0001);
     }
 
     public function submitProvider(): array

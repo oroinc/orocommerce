@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\PricingBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PricingBundle\Twig\ProductPriceExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
