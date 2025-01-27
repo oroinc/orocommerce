@@ -127,7 +127,6 @@ services:
         arguments:
             - '@oro_checkout.provider.multi_shipping.default_shipping_method'
             - '@oro_checkout.shipping_method.provider_main'
-            - '@doctrine'
             - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
 
     oro_checkout.action.multi_shipping.groups_default_shipping_method_setter:
@@ -136,7 +135,6 @@ services:
         arguments:
             - '@oro_checkout.provider.multi_shipping.default_shipping_method'
             - '@oro_checkout.shipping_method.provider_main'
-            - '@doctrine'
             - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
 
     oro_checkout.provider.multi_shipping.sub_order_owner:

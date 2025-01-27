@@ -72,7 +72,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();
         if (!$checkout->getPaymentMethod()) {
-            $errors?->add(['message' => 'oro.checkout.workflow.condition.payment_method_was_not_selected.message']);
+            $errors?->add(['message' => 'oro.checkout.validator.payment_method_is_applicable.message']);
 
             return false;
         }
@@ -129,7 +129,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
             'has_applicable_payment_methods',
             [$paymentContext],
             $errors,
-            'oro.checkout.workflow.condition.payment_method_is_not_applicable.message'
+            'oro.checkout.validator.payment_method_is_applicable.message'
         );
     }
 
@@ -142,7 +142,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
                 'payment_method' => $checkout->getPaymentMethod()
             ],
             $errors,
-            'oro.checkout.workflow.condition.payment_method_was_not_selected.message'
+            'oro.checkout.validator.payment_method_is_not_selected.message'
         );
     }
 

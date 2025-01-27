@@ -46,7 +46,8 @@ class CheckoutProductKitItemLineItem implements
     protected ?Product $product = null;
 
     #[ORM\Column(name: 'quantity', type: Types::FLOAT, nullable: false)]
-    protected float $quantity = 1;
+    protected ?float $quantity = 1;
+
     #[ORM\ManyToOne(targetEntity: ProductUnit::class)]
     #[ORM\JoinColumn(name: 'product_unit_id', referencedColumnName: 'code', nullable: false, onDelete: 'CASCADE')]
     protected ?ProductUnit $productUnit = null;
@@ -136,7 +137,7 @@ class CheckoutProductKitItemLineItem implements
         return $this;
     }
 
-    public function setQuantity(float $quantity): self
+    public function setQuantity(?float $quantity): self
     {
         $this->quantity = $quantity;
 
@@ -144,7 +145,7 @@ class CheckoutProductKitItemLineItem implements
     }
 
     #[\Override]
-    public function getQuantity(): float
+    public function getQuantity(): ?float
     {
         return $this->quantity;
     }

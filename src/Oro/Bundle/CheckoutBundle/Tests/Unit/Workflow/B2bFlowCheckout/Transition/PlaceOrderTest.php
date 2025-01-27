@@ -4,76 +4,64 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\Transiti
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
-use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\PlaceOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Action\ExtendableAction;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PlaceOrderTest extends TestCase
 {
-    use EntityTrait;
-
     private ActionExecutor|MockObject $actionExecutor;
-    private CheckoutPaymentContextProvider|MockObject $paymentContextProvider;
-    private OrderActionsInterface|MockObject $orderActions;
-    private CheckoutActionsInterface|MockObject $checkoutActions;
     private TransitionServiceInterface|MockObject $baseContinueTransition;
-    private ConfigProvider|MockObject $configProvider;
+    private CheckoutActionsInterface|MockObject $checkoutActions;
     private SplitOrderActionsInterface|MockObject $splitOrderActions;
     private ShippingMethodActionsInterface|MockObject $shippingMethodActions;
-    private CheckoutLineItemsConverter|MockObject $checkoutLineItemsConverter;
+    private ValidatorInterface|MockObject $validator;
+
     private PlaceOrder $placeOrder;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
-        $this->paymentContextProvider = $this->createMock(CheckoutPaymentContextProvider::class);
-        $this->orderActions = $this->createMock(OrderActionsInterface::class);
-        $this->checkoutActions = $this->createMock(CheckoutActionsInterface::class);
         $this->baseContinueTransition = $this->createMock(TransitionServiceInterface::class);
-        $this->configProvider = $this->createMock(ConfigProvider::class);
+        $this->checkoutActions = $this->createMock(CheckoutActionsInterface::class);
         $this->splitOrderActions = $this->createMock(SplitOrderActionsInterface::class);
         $this->shippingMethodActions = $this->createMock(ShippingMethodActionsInterface::class);
-        $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
 
         $this->placeOrder = new PlaceOrder(
             $this->actionExecutor,
-            $this->paymentContextProvider,
-            $this->orderActions,
-            $this->checkoutActions,
             $this->baseContinueTransition,
-            $this->configProvider,
+            $this->checkoutActions,
             $this->splitOrderActions,
             $this->shippingMethodActions
         );
-        $this->placeOrder->setCheckoutLineItemsConverter($this->checkoutLineItemsConverter);
+        $this->placeOrder->setValidator($this->validator);
     }
 
     /**
      * @dataProvider preConditionDataProvider
      */
     public function testIsPreConditionAllowed(
-        bool $hasApplicableShippingRules,
-        bool $isPaymentMethodApplicable,
-        bool $expected,
-        array $expectedErrors
+        bool $isValidationPassed,
+        bool $isBaseValidationPassed,
+        bool $expected
     ): void {
-        $workflowItem = $this->getEntity(WorkflowItem::class, ['id' => 1]);
+        $workflowItem = new WorkflowItem();
+        ReflectionUtil::setId($workflowItem, 1);
         $workflowItem->getResult()->offsetSet('extendableConditionPreOrderCreate', true);
         $checkout = new Checkout();
         $checkout->setPaymentMethod('payment_term');
@@ -94,52 +82,31 @@ class PlaceOrderTest extends TestCase
                 ['group1' => ['method2']]
             );
 
-        $this->shippingMethodActions->expects(self::any())
-            ->method('hasApplicableShippingRules')
-            ->with($checkout, $errors)
-            ->willReturn($hasApplicableShippingRules);
-
-        $paymentContext = $this->createMock(PaymentContextInterface::class);
-        $this->paymentContextProvider->expects(self::any())
-            ->method('getContext')
-            ->with($checkout)
-            ->willReturn($paymentContext);
-
-        $this->actionExecutor->expects(self::any())
-            ->method('evaluateExpression')
-            ->willReturnMap([
-                [
-                    'payment_method_applicable',
-                    [
-                        'context' => $paymentContext,
-                        'payment_method' => 'payment_term'
-                    ],
-                    null,
-                    null,
-                    $isPaymentMethodApplicable
-                ]
-            ]);
+        $violationsArray = [];
+        if (!$isValidationPassed) {
+            $violationsArray[] = $this->createMock(ConstraintViolationInterface::class);
+        }
+        $violations = new ConstraintViolationList($violationsArray);
+        $this->validator->expects(self::any())
+            ->method('validate')
+            ->with($checkout, null, 'checkout_order_create_pre_checks')
+            ->willReturn($violations);
 
         $this->baseContinueTransition->expects(self::any())
             ->method('isPreConditionAllowed')
             ->with($workflowItem, $errors)
-            ->willReturn(true);
+            ->willReturn($isBaseValidationPassed);
 
-        $this->assertSame($expected, $this->placeOrder->isPreConditionAllowed($workflowItem, $errors));
-        $this->assertEqualsCanonicalizing($expectedErrors, $errors->toArray());
+        self::assertSame($expected, $this->placeOrder->isPreConditionAllowed($workflowItem, $errors));
     }
 
     public static function preConditionDataProvider(): array
     {
         return [
-            [true, true, true, []],
-            [false, true, false, []],
-            [
-                true,
-                false,
-                false,
-                [['message' => 'oro.checkout.workflow.condition.payment_method_is_not_applicable.message']]
-            ],
+            [true, true, true],
+            [true, false, false],
+            [false, true, false],
+            [false, false, false],
         ];
     }
 
@@ -155,18 +122,10 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects(self::once())
-            ->method('placeOrder')
-            ->with($checkout)
-            ->willReturn($order);
-
-        $this->configProvider->expects(self::exactly(2))
-            ->method('isCreateSubOrdersForEachGroupEnabled')
-            ->willReturn(true);
-
         $this->splitOrderActions->expects(self::once())
-            ->method('createChildOrders')
-            ->with($checkout, $order, $groupedLineItems);
+            ->method('placeOrder')
+            ->with($checkout, $groupedLineItems)
+            ->willReturn($order);
 
         $this->checkoutActions->expects(self::any())
             ->method('getCheckoutUrl')
@@ -203,14 +162,9 @@ class PlaceOrderTest extends TestCase
                 ]
             );
 
-        $this->checkoutLineItemsConverter->expects(self::exactly(2))
-            ->method('setReuseLineItems')
-            ->withConsecutive([true], [false]);
-
         $this->placeOrder->execute($workflowItem);
 
-        $this->assertTrue($data->offsetGet('payment_in_progress'));
-        $this->assertSame($order, $data->offsetGet('order'));
+        self::assertTrue($data->offsetGet('payment_in_progress'));
     }
 
     public function testExecutePaymentMethodSupportsValidation(): void
@@ -225,24 +179,15 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects(self::once())
+        $this->splitOrderActions->expects(self::once())
             ->method('placeOrder')
-            ->with($checkout)
+            ->with($checkout, $groupedLineItems)
             ->willReturn($order);
 
-        $this->configProvider->expects(self::any())
-            ->method('isCreateSubOrdersForEachGroupEnabled')
-            ->willReturn(false);
-
-        $this->splitOrderActions->expects($this->never())
-            ->method('createChildOrders');
-
-        $this->checkoutActions->expects(self::any())
+        $this->checkoutActions->expects(self::once())
             ->method('getCheckoutUrl')
-            ->willReturnMap([
-                [$checkout, 'back_to_shipping_address_on_fail_address', 'back_to_shipping_address_on_fail_address_url'],
-                [$checkout, 'paid_partially', 'paid_partially_url']
-            ]);
+            ->with($checkout, 'back_to_shipping_address_on_fail_address')
+            ->willReturn('back_to_shipping_address_on_fail_address_url');
 
         $purchaseResult = [
             'successUrl' => 'url1',
@@ -279,9 +224,8 @@ class PlaceOrderTest extends TestCase
 
         $this->placeOrder->execute($workflowItem);
 
-        $this->assertTrue($data->offsetGet('payment_in_progress'));
-        $this->assertSame($order, $data->offsetGet('order'));
-        $this->assertEquals('url1', $workflowItem->getResult()->offsetGet('redirectUrl'));
+        self::assertTrue($data->offsetGet('payment_in_progress'));
+        self::assertEquals('url1', $workflowItem->getResult()->offsetGet('redirectUrl'));
     }
 
     public function testExecutePaymentMethodDoesNotSupportsValidation(): void
@@ -296,24 +240,15 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects(self::once())
+        $this->splitOrderActions->expects(self::once())
             ->method('placeOrder')
-            ->with($checkout)
+            ->with($checkout, $groupedLineItems)
             ->willReturn($order);
 
-        $this->configProvider->expects(self::any())
-            ->method('isCreateSubOrdersForEachGroupEnabled')
-            ->willReturn(false);
-
-        $this->splitOrderActions->expects($this->never())
-            ->method('createChildOrders');
-
-        $this->checkoutActions->expects(self::any())
+        $this->checkoutActions->expects(self::once())
             ->method('getCheckoutUrl')
-            ->willReturnMap([
-                [$checkout, 'back_to_shipping_address_on_fail_address', 'back_to_shipping_address_on_fail_address_url'],
-                [$checkout, 'paid_partially', 'paid_partially_url']
-            ]);
+            ->with($checkout, 'back_to_shipping_address_on_fail_address')
+            ->willReturn('back_to_shipping_address_on_fail_address_url');
 
         $purchaseResult = [
             'successUrl' => 'url1',
@@ -350,9 +285,8 @@ class PlaceOrderTest extends TestCase
 
         $this->placeOrder->execute($workflowItem);
 
-        $this->assertTrue($data->offsetGet('payment_in_progress'));
-        $this->assertSame($order, $data->offsetGet('order'));
-        $this->assertNull($workflowItem->getResult()->offsetGet('redirectUrl'));
+        self::assertTrue($data->offsetGet('payment_in_progress'));
+        self::assertNull($workflowItem->getResult()->offsetGet('redirectUrl'));
     }
 
     public function testExecutePurchasePartial(): void
@@ -367,17 +301,10 @@ class PlaceOrderTest extends TestCase
         $workflowItem->setData($data);
         $workflowItem->setEntity($checkout);
 
-        $this->orderActions->expects(self::once())
+        $this->splitOrderActions->expects(self::once())
             ->method('placeOrder')
-            ->with($checkout)
+            ->with($checkout, $groupedLineItems)
             ->willReturn($order);
-
-        $this->configProvider->expects(self::any())
-            ->method('isCreateSubOrdersForEachGroupEnabled')
-            ->willReturn(false);
-
-        $this->splitOrderActions->expects($this->never())
-            ->method('createChildOrders');
 
         $purchaseResult = [
             'successUrl' => 'url1',
@@ -386,7 +313,7 @@ class PlaceOrderTest extends TestCase
             'purchasePartial' => true
         ];
 
-        $this->checkoutActions->expects(self::any())
+        $this->checkoutActions->expects(self::exactly(2))
             ->method('getCheckoutUrl')
             ->willReturnMap([
                 [$checkout, 'back_to_shipping_address_on_fail_address', 'back_to_shipping_address_on_fail_address_url'],
@@ -423,8 +350,7 @@ class PlaceOrderTest extends TestCase
 
         $this->placeOrder->execute($workflowItem);
 
-        $this->assertTrue($data->offsetGet('payment_in_progress'));
-        $this->assertSame($order, $data->offsetGet('order'));
-        $this->assertNull($workflowItem->getResult()->offsetGet('redirectUrl'));
+        self::assertTrue($data->offsetGet('payment_in_progress'));
+        self::assertNull($workflowItem->getResult()->offsetGet('redirectUrl'));
     }
 }

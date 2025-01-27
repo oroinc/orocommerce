@@ -4,24 +4,20 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\BaseTransition;
 
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PlaceOrder;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
-use Oro\Component\Action\Condition\ExtendableCondition;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PlaceOrderTest extends TestCase
 {
     private ActionExecutor|MockObject $actionExecutor;
-    private CheckoutPaymentContextProvider|MockObject $paymentContextProvider;
-    private OrderActionsInterface|MockObject $orderActions;
-    private CheckoutActionsInterface|MockObject $checkoutActions;
     private TransitionServiceInterface|MockObject $baseContinueTransition;
+    private ValidatorInterface|MockObject $validator;
 
     private PlaceOrder $placeOrder;
 
@@ -29,140 +25,91 @@ class PlaceOrderTest extends TestCase
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
-        $this->paymentContextProvider = $this->createMock(CheckoutPaymentContextProvider::class);
-        $this->orderActions = $this->createMock(OrderActionsInterface::class);
-        $this->checkoutActions = $this->createMock(CheckoutActionsInterface::class);
         $this->baseContinueTransition = $this->createMock(TransitionServiceInterface::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
 
         $this->placeOrder = $this->getMockBuilder(PlaceOrder::class)
-            ->setConstructorArgs([
-                $this->actionExecutor,
-                $this->paymentContextProvider,
-                $this->orderActions,
-                $this->checkoutActions,
-                $this->baseContinueTransition
-            ])
+            ->setConstructorArgs([$this->actionExecutor, $this->baseContinueTransition])
             ->getMockForAbstractClass();
+        $this->placeOrder->setValidator($this->validator);
     }
 
     public function testIsPreConditionAllowedReturnsFalseIfNoWorkflowItemId(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
 
-        $workflowItem->expects($this->once())
+        $workflowItem->expects(self::once())
             ->method('getId')
             ->willReturn(null);
 
-        $this->assertFalse($this->placeOrder->isPreConditionAllowed($workflowItem));
+        self::assertFalse($this->placeOrder->isPreConditionAllowed($workflowItem));
     }
 
     public function testIsPreConditionAllowedReturnsFalseIfBaseContinueTransitionDisallows(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->expects($this->once())
+        $workflowItem->expects(self::once())
             ->method('getId')
             ->willReturn(1);
 
-        $this->baseContinueTransition->expects($this->once())
+        $this->baseContinueTransition->expects(self::once())
             ->method('isPreConditionAllowed')
             ->with($workflowItem)
             ->willReturn(false);
 
-        $this->assertFalse($this->placeOrder->isPreConditionAllowed($workflowItem));
+        self::assertFalse($this->placeOrder->isPreConditionAllowed($workflowItem));
     }
 
-    public function testIsPreConditionAllowedReturnsFalseIfPreOrderCreateNotAllowedInResult(): void
+    public function testIsPreConditionAllowedReturnsFalseIfValidationNotPassed(): void
     {
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
-
-        $this->baseContinueTransition->expects($this->once())
-            ->method('isPreConditionAllowed')
-            ->with($workflowItem)
-            ->willReturn(true);
-
-        $result = new WorkflowResult([
-            'extendableConditionPreOrderCreate' => false
-        ]);
-        $workflowItem->expects($this->once())
-            ->method('getResult')
-            ->willReturn($result);
-
-        $this->assertFalse($this->placeOrder->isPreConditionAllowed($workflowItem));
-    }
-
-    public function testIsPreConditionAllowedReturnsFalseIfPreOrderCreateNotAllowed(): void
-    {
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->expects($this->once())
-            ->method('getId')
-            ->willReturn(1);
         $checkout = new Checkout();
-        $workflowItem->expects($this->any())
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $workflowItem->expects(self::once())
+            ->method('getId')
+            ->willReturn(1);
+        $workflowItem->expects(self::once())
             ->method('getEntity')
             ->willReturn($checkout);
 
-        $this->baseContinueTransition->expects($this->once())
+        $this->baseContinueTransition->expects(self::once())
             ->method('isPreConditionAllowed')
             ->with($workflowItem)
             ->willReturn(true);
 
-        $result = new WorkflowResult([]);
-        $workflowItem->expects($this->once())
-            ->method('getResult')
-            ->willReturn($result);
+        $violations = new ConstraintViolationList([
+            $this->createMock(ConstraintViolationInterface::class)
+        ]);
+        $this->validator->expects(self::once())
+            ->method('validate')
+            ->with($checkout, null, 'checkout_order_create_pre_checks')
+            ->willReturn($violations);
 
-        $this->actionExecutor->expects($this->once())
-            ->method('evaluateExpression')
-            ->with(
-                ExtendableCondition::NAME,
-                [
-                    'events' => ['extendable_condition.pre_order_create'],
-                    'eventData' => ['checkout' => $checkout]
-                ]
-            )
-            ->willReturn(false);
-
-        $this->assertFalse($this->placeOrder->isPreConditionAllowed($workflowItem));
-        $this->assertFalse($result->offsetGet('extendableConditionPreOrderCreate'));
+        self::assertFalse($this->placeOrder->isPreConditionAllowed($workflowItem));
     }
 
     public function testIsPreConditionAllowedReturnsTrue(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->expects($this->once())
+        $workflowItem->expects(self::once())
             ->method('getId')
             ->willReturn(1);
         $checkout = new Checkout();
-        $workflowItem->expects($this->any())
+        $workflowItem->expects(self::once())
             ->method('getEntity')
             ->willReturn($checkout);
 
-        $this->baseContinueTransition->expects($this->once())
+        $this->baseContinueTransition->expects(self::once())
             ->method('isPreConditionAllowed')
             ->with($workflowItem)
             ->willReturn(true);
 
-        $result = new WorkflowResult([]);
-        $workflowItem->expects($this->once())
-            ->method('getResult')
-            ->willReturn($result);
+        $violations = new ConstraintViolationList([]);
+        $this->validator->expects(self::once())
+            ->method('validate')
+            ->with($checkout, null, 'checkout_order_create_pre_checks')
+            ->willReturn($violations);
 
-        $this->actionExecutor->expects($this->once())
-            ->method('evaluateExpression')
-            ->with(
-                ExtendableCondition::NAME,
-                [
-                    'events' => ['extendable_condition.pre_order_create'],
-                    'eventData' => ['checkout' => $checkout]
-                ]
-            )
-            ->willReturn(true);
-
-        $this->assertTrue($this->placeOrder->isPreConditionAllowed($workflowItem));
-        $this->assertTrue($result->offsetGet('extendableConditionPreOrderCreate'));
+        self::assertTrue($this->placeOrder->isPreConditionAllowed($workflowItem));
     }
 
     /**
@@ -172,24 +119,21 @@ class PlaceOrderTest extends TestCase
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
         $checkout = $this->createMock(Checkout::class);
-        $workflowItem->expects($this->once())
+        $workflowItem->expects(self::once())
             ->method('getEntity')
             ->willReturn($checkout);
 
-        $this->actionExecutor->expects($this->once())
-            ->method('evaluateExpression')
-            ->with(
-                ExtendableCondition::NAME,
-                [
-                    'events' => ['extendable_condition.before_order_create'],
-                    'eventData' => ['checkout' => $checkout]
-                ],
-                null,
-                'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
-            )
-            ->willReturn($isAllowed);
+        $violationsArray = [];
+        if (!$isAllowed) {
+            $violationsArray[] = $this->createMock(ConstraintViolationInterface::class);
+        }
+        $violations = new ConstraintViolationList($violationsArray);
+        $this->validator->expects(self::once())
+            ->method('validate')
+            ->with($checkout, null, 'checkout_order_create_checks')
+            ->willReturn($violations);
 
-        $this->assertSame($isAllowed, $this->placeOrder->isConditionAllowed($workflowItem));
+        self::assertSame($isAllowed, $this->placeOrder->isConditionAllowed($workflowItem));
     }
 
     public static function trueFalseDataProvider(): array

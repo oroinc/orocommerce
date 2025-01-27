@@ -563,6 +563,11 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ProductBundle\Entity\Product', event: preUpdate }
 
+    oro_shopping_list.event_listener.actualize_checkout_listener:
+        class: Oro\Bundle\ShoppingListBundle\EventListener\ActualizeCheckoutListener
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.actualize, method: onActualize }
+
     oro_shopping_list.event_listener.configuration_listener:
         class: Oro\Bundle\ShoppingListBundle\EventListener\ConfigurationListener
         arguments:

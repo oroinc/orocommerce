@@ -23,12 +23,7 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
     use WorkflowQueryTrait;
     use ResetCustomerUserTrait;
 
-    /**
-     * @param int $checkoutId
-     *
-     * @return Checkout|null
-     */
-    public function getCheckoutWithRelations($checkoutId)
+    public function getCheckoutWithRelations(int $checkoutId): ?Checkout
     {
         $qb = $this->createQueryBuilder('c');
         $qb->select('c', 'cli', 'p', 'kitItemLineItem', 'kitItemLineItemProduct')
@@ -43,98 +38,83 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
     }
 
     /**
-     * Return the count of line items per Checkout.
+     * Gets the count of line items per Checkout.
      *
-     * @param array $checkoutIds
+     * @param int[] $checkoutIds
      *
-     * @return array
+     * @return array [checkout id => item count, ...]
      */
-    public function countItemsPerCheckout(array $checkoutIds)
+    public function countItemsPerCheckout(array $checkoutIds): array
     {
-        if (0 === count($checkoutIds)) {
+        if (!$checkoutIds) {
             return [];
         }
 
-        $databaseResults = $this->createQueryBuilder('c')
-            ->select('c.id as id')
-            ->addSelect('count(cli.id) as itemsCount')
+        $rows = $this->createQueryBuilder('c')
+            ->select('c.id AS id, COUNT(cli.id) AS itemsCount')
             ->leftJoin('c.lineItems', 'cli')
             ->groupBy('c.id')
-            ->where('c.id in (:ids)')
+            ->where('c.id IN (:ids)')
             ->setParameter('ids', $checkoutIds)
             ->getQuery()
             ->getScalarResult();
 
-        return $this->extractCheckoutItemsCounts($databaseResults);
+        if (!$rows) {
+            return [];
+        }
+
+        $result = [];
+        foreach ($rows as $row) {
+            $result[$row['id']] = $row['itemsCount'];
+        }
+
+        return $result;
     }
 
     /**
-     * Return the list of checkouts by ids.
+     * Gets the list of checkouts by IDs.
      *
-     * @param array $checkoutIds
+     * @param int[] $checkoutIds
      *
-     * @return array|Checkout[] ['<id>' => '<Checkout>', ...]
+     * @return Checkout[] [checkout id => checkout, ...]
      */
-    public function getCheckoutsByIds(array $checkoutIds)
+    public function getCheckoutsByIds(array $checkoutIds): array
     {
-        /* @var $checkouts Checkout[] */
+        if (!$checkoutIds) {
+            return [];
+        }
+
+        /* @var Checkout[] $checkouts */
         $checkouts = $this->createQueryBuilder('c')
             ->select('c, s')
             ->leftJoin('c.source', 's')
-            ->where('c.id in (:ids)')
+            ->where('c.id IN (:ids)')
             ->setParameter('ids', $checkoutIds)
             ->getQuery()
             ->getResult();
 
-        $sources = [];
-        foreach ($checkouts as $checkout) {
-            $sources[$checkout->getId()] = $checkout;
-        }
-
-        return $sources;
-    }
-
-    /**
-     * Cutting out ID and ITEMSCOUNT columns from the query
-     * and making an associative array out of it.
-     *
-     * @param $results
-     *
-     * @return array
-     */
-    private function extractCheckoutItemsCounts($results)
-    {
         $result = [];
-
-        if (!count($results)) {
-            return $result;
+        foreach ($checkouts as $checkout) {
+            $result[$checkout->getId()] = $checkout;
         }
-
-        $ids = array_column($results, 'id');
-        $itemCounts = array_column($results, 'itemsCount');
-
-        $result = array_combine(
-            $ids,
-            $itemCounts
-        );
 
         return $result;
     }
 
     /**
      * @param CustomerUser $customerUser
-     * @param array        $sourceCriteria [shoppingList => ShoppingList, deleted => false]
-     * @param string       $workflowName
-     * @param string|null  $currency
+     * @param array $sourceCriteria [field name => value, ...]
+     * @param string|null $workflowName
+     * @param string|null $currency
      *
      * @return Checkout|null
      */
     public function findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
         CustomerUser $customerUser,
         array $sourceCriteria,
-        string $workflowName,
+        ?string $workflowName,
         ?string $currency = null
-    ) {
+    ): ?Checkout {
         $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
         $qb
             ->select('c.id')
@@ -148,7 +128,7 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
         return $checkoutId ? $this->getCheckoutWithRelations($checkoutId) : null;
     }
 
-    public function deleteWithoutWorkflowItem()
+    public function deleteWithoutWorkflowItem(): void
     {
         $qb = $this->joinWorkflowItem($this->createQueryBuilder('checkout'), 'wi');
         $checkouts = $qb->select('checkout.id AS checkoutId, checkoutSource.id AS checkoutSourceId')
@@ -157,7 +137,6 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
             ->setParameter('deleted', false)
             ->getQuery()
             ->getResult();
-
         if (!$checkouts) {
             return;
         }
@@ -182,29 +161,27 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
     }
 
     /**
-     * @param $paymentMethod
+     * @param string $paymentMethod
      *
      * @return Checkout[]
      */
-    public function findByPaymentMethod($paymentMethod)
+    public function findByPaymentMethod(string $paymentMethod): array
     {
-        return $this->findBy([
-            'paymentMethod' => $paymentMethod
-        ]);
+        return $this->findBy(['paymentMethod' => $paymentMethod]);
     }
 
     /**
-     * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
-     * @param string $workflowName
+     * @param array $sourceCriteria [field name => value, ...]
+     * @param string|null $workflowName
      * @param string|null $currency
      *
      * @return Checkout|null
      */
     public function findCheckoutBySourceCriteriaWithCurrency(
         array $sourceCriteria,
-        string $workflowName,
+        ?string $workflowName,
         ?string $currency = null
-    ) {
+    ): ?Checkout {
         $qb = $this->getCheckoutBySourceCriteriaQueryBuilder($sourceCriteria, $workflowName, $currency);
         $qb->select('c.id');
 
@@ -214,9 +191,9 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
     }
 
     /**
-     * @return \Iterator|Checkout[]
+     * @return \Iterator<int, Checkout>
      */
-    public function findWithInvalidSubtotals()
+    public function findWithInvalidSubtotals(): \Iterator
     {
         $qb = $this->createQueryBuilder('c')
             ->select('c, cs')
@@ -248,30 +225,29 @@ class CheckoutRepository extends ServiceEntityRepository implements ResettableCu
             ->getResult();
     }
 
-    /**
-     * @param array  $sourceCriteria [shoppingList => ShoppingList, deleted => false]
-     * @param string $workflowName
-     * @param string|null $currency
-     *
-     * @return QueryBuilder
-     */
     private function getCheckoutBySourceCriteriaQueryBuilder(
         array $sourceCriteria,
-        string $workflowName,
+        ?string $workflowName = null,
         ?string $currency = null
-    ) {
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('c');
         $this->joinWorkflowItem($qb)
             ->innerJoin('c.source', 's')
             ->where(
                 $qb->expr()->eq('c.deleted', ':deleted'),
                 $qb->expr()->eq('s.deleted', ':deleted'),
-                $qb->expr()->eq('c.completed', ':completed'),
-                $qb->expr()->eq('workflowItem.workflowName', ':workflowName')
+                $qb->expr()->eq('c.completed', ':completed')
             )
             ->setParameter('deleted', false, Types::BOOLEAN)
-            ->setParameter('completed', false, Types::BOOLEAN)
-            ->setParameter('workflowName', $workflowName);
+            ->setParameter('completed', false, Types::BOOLEAN);
+
+        if ($workflowName) {
+            $qb
+                ->andWhere($qb->expr()->eq('workflowItem.workflowName', ':workflowName'))
+                ->setParameter('workflowName', $workflowName);
+        } else {
+            $qb->andWhere($qb->expr()->isNull('workflowItem.id'));
+        }
 
         if ($currency) {
             $qb->andWhere($qb->expr()->eq('c.currency', ':currency'))

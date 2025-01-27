@@ -5,32 +5,30 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckoutSinglePag
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\PaymentMethodActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Transition\Purchase;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 use Oro\Component\Action\Action\ExtendableAction;
-use Oro\Component\Action\Condition\ExtendableCondition;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class PurchaseTest extends TestCase
 {
     private ActionExecutor|MockObject $actionExecutor;
     private CheckoutActionsInterface|MockObject $checkoutActions;
-    private ShippingMethodActionsInterface|MockObject $shippingMethodActions;
     private PaymentMethodActionsInterface|MockObject $paymentMethodActions;
-    private CheckoutPaymentContextProvider|MockObject $paymentContextProvider;
     private PaymentTransactionProvider|MockObject $paymentTransactionProvider;
     private TransitionServiceInterface|MockObject $baseContinueTransition;
+    private ValidatorInterface|MockObject $validator;
 
     private Purchase $purchase;
 
@@ -39,21 +37,19 @@ class PurchaseTest extends TestCase
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
         $this->checkoutActions = $this->createMock(CheckoutActionsInterface::class);
-        $this->shippingMethodActions = $this->createMock(ShippingMethodActionsInterface::class);
         $this->paymentMethodActions = $this->createMock(PaymentMethodActionsInterface::class);
-        $this->paymentContextProvider = $this->createMock(CheckoutPaymentContextProvider::class);
         $this->paymentTransactionProvider = $this->createMock(PaymentTransactionProvider::class);
         $this->baseContinueTransition = $this->createMock(TransitionServiceInterface::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
 
         $this->purchase = new Purchase(
             $this->actionExecutor,
             $this->checkoutActions,
-            $this->shippingMethodActions,
             $this->paymentMethodActions,
-            $this->paymentContextProvider,
             $this->paymentTransactionProvider,
             $this->baseContinueTransition
         );
+        $this->purchase->setValidator($this->validator);
     }
 
     public function testIsConditionAllowedReturnsFalseWhenCheckoutIsCompleted(): void
@@ -62,11 +58,11 @@ class PurchaseTest extends TestCase
         $checkout->setCompleted(true);
 
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->expects($this->once())
+        $workflowItem->expects(self::once())
             ->method('getEntity')
             ->willReturn($checkout);
 
-        $this->assertFalse($this->purchase->isConditionAllowed($workflowItem));
+        self::assertFalse($this->purchase->isConditionAllowed($workflowItem));
     }
 
     public function testIsConditionAllowedReturnsFalseWhenPaymentMethodDoesNotSupportValidate(): void
@@ -82,17 +78,17 @@ class PurchaseTest extends TestCase
 
         $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
 
-        $this->paymentMethodActions->expects($this->once())
+        $this->paymentMethodActions->expects(self::once())
             ->method('isPaymentMethodSupportsValidate')
             ->with($checkout)
             ->willReturn(true);
 
-        $this->paymentTransactionProvider->expects($this->once())
+        $this->paymentTransactionProvider->expects(self::once())
             ->method('getActiveValidatePaymentTransaction')
             ->with('payment_method')
             ->willReturn(null);
 
-        $this->assertFalse($this->purchase->isConditionAllowed($workflowItem));
+        self::assertFalse($this->purchase->isConditionAllowed($workflowItem));
     }
 
     public function testIsConditionAllowedReturnsFalseWhenPurchaseViaDirectUrlIsNotAllowed(): void
@@ -108,22 +104,22 @@ class PurchaseTest extends TestCase
 
         $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
 
-        $this->paymentMethodActions->expects($this->once())
+        $this->paymentMethodActions->expects(self::once())
             ->method('isPaymentMethodSupportsValidate')
             ->with($checkout)
             ->willReturn(false);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('evaluateExpression')
             ->with('check_request', ['expected_key' => 'transition', 'expected_value' => 'purchase'])
             ->willReturn(true);
 
-        $this->baseContinueTransition->expects($this->once())
+        $this->baseContinueTransition->expects(self::once())
             ->method('isPreConditionAllowed')
             ->with($workflowItem)
             ->willReturn(false);
 
-        $this->assertFalse($this->purchase->isConditionAllowed($workflowItem));
+        self::assertFalse($this->purchase->isConditionAllowed($workflowItem));
     }
 
     /**
@@ -131,9 +127,7 @@ class PurchaseTest extends TestCase
      */
     public function testIsConditionAllowed(
         bool $isBasePreconditionAllowed,
-        bool $hasApplicableShippingRules,
-        bool $hasPaymentMethods,
-        bool $isAllowedByEventListeners,
+        bool $isAllowedByValidators,
         bool $expected
     ): void {
         $errors = new ArrayCollection();
@@ -148,60 +142,41 @@ class PurchaseTest extends TestCase
 
         $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
 
-        $this->paymentMethodActions->expects($this->once())
+        $this->paymentMethodActions->expects(self::once())
             ->method('isPaymentMethodSupportsValidate')
             ->with($checkout)
             ->willReturn(false);
 
-        $this->baseContinueTransition->expects($this->any())
+        $this->baseContinueTransition->expects(self::once())
             ->method('isPreConditionAllowed')
             ->with($workflowItem)
             ->willReturn($isBasePreconditionAllowed);
 
-        $this->shippingMethodActions->expects($this->any())
-            ->method('hasApplicableShippingRules')
-            ->with($checkout)
-            ->willReturn($hasApplicableShippingRules);
+        $violationsArray = [];
+        if (!$isAllowedByValidators) {
+            $violationsArray[] = $this->createMock(ConstraintViolationInterface::class);
+        }
+        $violations = new ConstraintViolationList($violationsArray);
+        $this->validator->expects(self::any())
+            ->method('validate')
+            ->with($checkout, null, 'checkout_order_create_pre_checks')
+            ->willReturn($violations);
 
-        $paymentContext = $this->createMock(PaymentContext::class);
-        $this->paymentContextProvider->expects($this->any())
-            ->method('getContext')
-            ->with($checkout)
-            ->willReturn($paymentContext);
-        $this->actionExecutor->expects($this->any())
+        $this->actionExecutor->expects(self::any())
             ->method('evaluateExpression')
             ->willReturnMap([
-                [
-                    'has_applicable_payment_methods',
-                    [$paymentContext],
-                    $errors,
-                    'oro.checkout.workflow.condition.payment_method_is_not_applicable.message',
-                    $hasPaymentMethods
-                ],
-                [
-                    ExtendableCondition::NAME,
-                    [
-                        'events' => ['extendable_condition.before_order_create'],
-                        'eventData' => ['checkout' => $checkout, 'order' => $order]
-                    ],
-                    $errors,
-                    'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message',
-                    $isAllowedByEventListeners
-                ],
                 ['check_request', ['expected_key' => 'transition', 'expected_value' => 'purchase'], null, null, true]
             ]);
 
-        $this->assertSame($expected, $this->purchase->isConditionAllowed($workflowItem, $errors));
+        self::assertSame($expected, $this->purchase->isConditionAllowed($workflowItem, $errors));
     }
 
     public static function conditionDataProvider(): array
     {
         return [
-            'base precondition not allowed' => [false, true, true, true, false],
-            'no applicable shipping rules' => [true, false, true, true, false],
-            'no payment methods' => [true, true, false, true, false],
-            'not allowed by event listeners' => [true, true, true, false, false],
-            'allowed' => [true, true, true, true, true],
+            'base precondition not allowed' => [false, true, false],
+            'not allowed by validators' => [true, false, false],
+            'allowed' => [true, true, true],
         ];
     }
 
@@ -223,7 +198,7 @@ class PurchaseTest extends TestCase
 
         $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
 
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('purchase')
             ->with(
                 $checkout,
@@ -235,7 +210,7 @@ class PurchaseTest extends TestCase
             )
             ->willReturn(['responseData' => ['purchaseSuccessful' => true]]);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('executeAction')
             ->with(
                 ExtendableAction::NAME,
@@ -250,12 +225,12 @@ class PurchaseTest extends TestCase
                 ]
             );
 
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('getCheckoutUrl')
             ->with($checkout, 'finish_checkout')
             ->willReturn('checkout_url');
 
-        $workflowItem->expects($this->once())
+        $workflowItem->expects(self::once())
             ->method('setRedirectUrl')
             ->with('checkout_url');
 
@@ -280,7 +255,7 @@ class PurchaseTest extends TestCase
 
         $this->prepareWorkflowItem($workflowItem, $checkout, $workflowData, $workflowResult);
 
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('purchase')
             ->with(
                 $checkout,
@@ -292,7 +267,7 @@ class PurchaseTest extends TestCase
             )
             ->willReturn(['responseData' => ['purchaseSuccessful' => false]]);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('executeAction')
             ->with(
                 ExtendableAction::NAME,
@@ -307,12 +282,12 @@ class PurchaseTest extends TestCase
                 ]
             );
 
-        $this->checkoutActions->expects($this->once())
+        $this->checkoutActions->expects(self::once())
             ->method('getCheckoutUrl')
             ->with($checkout, 'payment_error')
             ->willReturn('payment_error_url');
 
-        $workflowItem->expects($this->once())
+        $workflowItem->expects(self::once())
             ->method('setRedirectUrl')
             ->with('payment_error_url');
 
@@ -326,18 +301,16 @@ class PurchaseTest extends TestCase
         WorkflowResult $workflowResult,
         ?int $workflowItemId = 1
     ): void {
-        $workflowItem->expects($this->any())
+        $workflowItem->expects(self::any())
             ->method('getId')
             ->willReturn($workflowItemId);
-        $workflowItem->expects($this->any())
+        $workflowItem->expects(self::any())
             ->method('getEntity')
             ->willReturn($checkout);
-
-        $workflowItem->expects($this->any())
+        $workflowItem->expects(self::any())
             ->method('getData')
             ->willReturn($workflowData);
-
-        $workflowItem->expects($this->any())
+        $workflowItem->expects(self::any())
             ->method('getResult')
             ->willReturn($workflowResult);
     }

@@ -5,3 +5,18 @@ api:
             # but it should be defined to correct work of "paymentTerm" property
             # of the order API resource
             actions: false
+
+        Oro\Bundle\CheckoutBundle\Entity\Checkout:
+            documentation_resource: '@OroPaymentTermBundle/Resources/doc/api_frontend/checkout.md'
+            subresources:
+                paymentPaymentTerm:
+                    target_class: Oro\Bundle\OrderBundle\Entity\Order
+                    actions:
+                        add_subresource:
+                            description: Execute checkout payment with payment term payment method
+                            request_target_class: Oro\Bundle\PaymentTermBundle\Api\Model\PaymentTermPaymentRequest
+                        get_subresource: false
+
+        Oro\Bundle\PaymentTermBundle\Api\Model\PaymentTermPaymentRequest:
+            # this entity does not have own API resource
+            actions: false

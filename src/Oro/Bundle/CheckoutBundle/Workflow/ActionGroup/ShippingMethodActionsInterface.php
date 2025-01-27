@@ -21,13 +21,15 @@ interface ShippingMethodActionsInterface
      *       Example ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
      * @param null|array<LineItemIdentifier, LineItemGroupsShippingMethod> $lineItemGroupsShippingMethods
      *       Example ['2BV:item' => ['method' => 'flat_rate_1', 'type' => 'primary'], ... ]
+     * @param bool $useDefaults
      *
      * @return void
      */
     public function updateDefaultShippingMethods(
         Checkout $checkout,
         ?array $lineItemsShippingMethods,
-        ?array $lineItemGroupsShippingMethods
+        ?array $lineItemGroupsShippingMethods,
+        bool $useDefaults = true
     ): void;
 
     /**

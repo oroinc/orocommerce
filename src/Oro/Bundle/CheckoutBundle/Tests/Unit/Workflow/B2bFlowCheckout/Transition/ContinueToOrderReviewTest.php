@@ -98,7 +98,7 @@ class ContinueToOrderReviewTest extends TestCase
                 'has_applicable_payment_methods',
                 [$paymentContext],
                 $errors,
-                'oro.checkout.workflow.condition.payment_method_is_not_applicable.message'
+                'oro.checkout.validator.payment_method_is_applicable.message'
             )
             ->willReturn($hasApplicablePaymentMethods);
 
@@ -191,7 +191,7 @@ class ContinueToOrderReviewTest extends TestCase
                         'payment_method' => $paymentMethod
                     ],
                     $errors,
-                    'oro.checkout.workflow.condition.payment_method_was_not_selected.message',
+                    'oro.checkout.validator.payment_method_is_not_selected.message',
                     $isPaymentMethodApplicable
                 ]
             ]);

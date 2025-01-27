@@ -21,6 +21,9 @@ class InvalidateCheckoutLineItemsGrouping
     {
         $checkout = $event->getCheckout();
         $workflowItem = $this->checkoutWorkflowHelper->getWorkflowItem($checkout);
+        if (!$workflowItem) {
+            return;
+        }
 
         if ($this->checkoutLineItemGroupingInvalidationHelper->shouldInvalidateLineItemGrouping($workflowItem)) {
             $this->checkoutLineItemGroupingInvalidationHelper->invalidateLineItemGrouping($checkout, $workflowItem);

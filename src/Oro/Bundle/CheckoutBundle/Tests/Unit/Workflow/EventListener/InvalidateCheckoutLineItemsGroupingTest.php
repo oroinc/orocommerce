@@ -29,6 +29,28 @@ class InvalidateCheckoutLineItemsGroupingTest extends TestCase
         );
     }
 
+    public function testOnCheckoutRequestWithNotStartedWorkflow(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $this->checkoutWorkflowHelper->expects($this->once())
+            ->method('getWorkflowItem')
+            ->with($checkout)
+            ->willReturn(null);
+
+        $this->helper->expects($this->never())
+            ->method('shouldInvalidateLineItemGrouping');
+
+        $this->helper->expects($this->never())
+            ->method('invalidateLineItemGrouping');
+
+        $event = $this->createMock(CheckoutRequestEvent::class);
+        $event->expects($this->once())
+            ->method('getCheckout')
+            ->willReturn($checkout);
+
+        $this->listener->onCheckoutRequest($event);
+    }
+
     public function testOnCheckoutRequestWithInvalidation(): void
     {
         $checkout = $this->createMock(Checkout::class);

@@ -4,9 +4,13 @@ namespace Oro\Bundle\MoneyOrderBundle\Method\View;
 
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewFrontendApiOptionsInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
-class MoneyOrderView implements PaymentMethodViewInterface
+/**
+ * Money Order payment method view.
+ */
+class MoneyOrderView implements PaymentMethodViewInterface, PaymentMethodViewFrontendApiOptionsInterface
 {
     /**
      * @var MoneyOrderConfigInterface
@@ -16,6 +20,15 @@ class MoneyOrderView implements PaymentMethodViewInterface
     public function __construct(MoneyOrderConfigInterface $config)
     {
         $this->config = $config;
+    }
+
+    #[\Override]
+    public function getFrontendApiOptions(PaymentContextInterface $context): array
+    {
+        return [
+            'payTo' => $this->config->getPayTo(),
+            'sendTo' => $this->config->getSendTo()
+        ];
     }
 
     #[\Override]

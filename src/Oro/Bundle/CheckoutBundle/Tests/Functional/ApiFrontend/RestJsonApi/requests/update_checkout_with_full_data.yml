@@ -1,0 +1,103 @@
+data:
+    type: checkouts
+    id: '<toString(@checkout.empty->id)>'
+    attributes:
+        poNumber: 'PO001'
+        shippingType: checkout
+        shippingMethod: '@checkout.completed->shippingMethod'
+        shippingMethodType: primary
+        shippingEstimateAmount: '10.0000'
+        paymentMethod: '@checkout.completed->paymentMethod'
+        shipUntil: '2050-01-11'
+        shipToBillingAddress: false
+        customerNotes: 'Customer notes'
+        currency: USD
+        completed: false
+    relationships:
+        lineItems:
+            data:
+                -
+                    type: checkoutlineitems
+                    id: 'lineitem1'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+        billingAddress:
+            data:
+                type: checkoutaddresses
+                id: 'billing_address'
+        shippingAddress:
+            data:
+                type: checkoutaddresses
+                id: 'shipping_address'
+included:
+    -
+        type: checkoutaddresses
+        id: billing_address
+        attributes:
+            label: Address
+            street: Street
+            city: Los Angeles
+            postalCode: '90001'
+            organization: Acme
+            firstName: John
+            lastName: Doe
+            phone: 123-456
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: checkoutaddresses
+        id: shipping_address
+        attributes:
+            label: Address
+            street: Street
+            city: Los Angeles
+            postalCode: '90001'
+            organization: Acme
+            firstName: John
+            lastName: Doe
+            phone: 123-456
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: checkoutlineitems
+        id: 'lineitem1'
+        attributes:
+            productSku: 'product-1'
+            freeFormProduct: null
+            quantity: 1
+            priceFixed: false
+            price: '100.5000'
+            currency: USD
+            comment: null
+            shippingEstimateAmount: null
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

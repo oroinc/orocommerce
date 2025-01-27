@@ -57,7 +57,20 @@ parameters:
             productUnit: []
 
 services:
-    # Data Providers
+    oro_checkout.access_rule.frontend_checkout_line_item:
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'checkout'
+        tags:
+            - { name: oro_security.access_rule, entityClass: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, frontend: true }
+
+    oro_checkout.access_rule.frontend_checkout_product_kit_item_line_item:
+        class: Oro\Bundle\SecurityBundle\AccessRule\AssociationAwareAccessRule
+        arguments:
+            - 'lineItem'
+        tags:
+            - {name: oro_security.access_rule, entityClass: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, frontend: true}
+
     oro_checkout.data_provider.converter.checkout_line_items:
         class: 'Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter'
 
@@ -548,6 +561,13 @@ services:
         tags:
             - { name: security.voter }
 
+    oro_checkout.acl.voter.checkout_line_item:
+        class: Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutLineItemVoter
+        arguments:
+            - '@security.authorization_checker'
+        tags:
+            - { name: security.voter }
+
     oro_checkout.shipping_method.price_provider:
         class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\PriceCheckoutShippingMethodsProvider'
         arguments:
@@ -696,7 +716,6 @@ services:
            - '@security.token_storage'
         lazy: true
 
-    #Checkout Line Items Services
     oro_checkout.line_item.converter_registry:
         class: 'Oro\Bundle\CheckoutBundle\Model\CheckoutLineItemConverterRegistry'
         arguments:
@@ -766,6 +785,16 @@ services:
             - '@doctrine'
             - '@oro_checkout.provider.subtotal'
             - '@oro_pricing.user_currency_manager'
+
+    oro_checkout.checkout_by_source_criteria_manipulator:
+        class: Oro\Bundle\CheckoutBundle\Model\CheckoutBySourceCriteriaManipulator
+        arguments:
+            - '@oro_action.action_executor'
+            - '@oro_checkout.repository.checkout'
+            - '@oro_checkout.line_items.factory'
+            - '@oro_checkout.shipping_method.provider_main'
+            - '@oro_checkout.model.checkout_subtotal_updater'
+            - '@event_dispatcher'
 
     oro_checkout.async.message_filter.recalculate_checkout_subtotals:
         class: 'Oro\Bundle\CheckoutBundle\Async\RecalculateCheckoutSubtotalsMessageFilter'
@@ -1026,23 +1055,6 @@ services:
             - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData }
             - { name: kernel.event_listener, event: oro_product.datagrid_kit_item_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData }
 
-    oro_checkout.event_listener.validate_checkout_pre_order_create:
-        class: Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-        arguments:
-            - '@oro_checkout.provider.checkout_line_items'
-            - '@validator'
-            - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
-        tags:
-            - { name: kernel.event_listener, event: extendable_condition.pre_order_create, method: onPreOrderCreate, priority: 128 }
-
-    oro_checkout.event_listener.validate_checkout_before_order_create:
-        class: Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener
-        arguments:
-            - '@validator'
-            - '@oro_checkout.provider.checkout_validation_groups_by_source_entity'
-        tags:
-            - { name: kernel.event_listener, event: extendable_condition.before_order_create, method: onBeforeOrderCreate, priority: 128 }
-
     oro_checkout.event_listener.validate_checkout_on_start:
         class: Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
         arguments:
@@ -1062,6 +1074,43 @@ services:
         arguments:
             - '@event_dispatcher'
         public: true
+
+    oro_checkout.constraint.validator.order_line_items_not_empty:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\OrderLineItemsNotEmptyValidator
+        arguments:
+            - '@oro_checkout.action_group.order_line_items_not_empty'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_checkout.constraint.validator.has_applicable_payment_methods:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\HasApplicablePaymentMethodsValidator
+        arguments:
+            - '@oro_checkout.provider.payment_context'
+            - '@oro_action.action_executor'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_checkout.constraint.validator.payment_method_is_applicable:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\PaymentMethodIsApplicableValidator
+        arguments:
+            - '@oro_checkout.provider.payment_context'
+            - '@oro_action.action_executor'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_checkout.constraint.validator.shipping_method_is_valid:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\ShippingMethodIsValidValidator
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+        tags:
+            - { name: validator.constraint_validator }
+
+    oro_checkout.constraint.validator.has_applicable_shipping_rules:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\HasApplicableShippingRulesValidator
+        arguments:
+            - '@oro_checkout.action_group.shipping_method_actions'
+        tags:
+            - { name: validator.constraint_validator }
 
     oro_checkout.event_listener.datagrid_line_items_data.preload:
         class: Oro\Bundle\CheckoutBundle\EventListener\DatagridLineItemsDataPreloadListener

@@ -509,6 +509,30 @@ Retrieve shipping status record assigned to a specific order record.
 
 Retrieve the ID of the shipping status record assigned to a specific order record.
 
+### checkout
+
+#### add_subresource
+
+Create a checkout record based on a specific order.
+
+The created record is returned in the response.
+
+In case a checkout record already exists for the order, it will be returned instead of creating a new one.
+
+Use the **actualize** option when you need to update already existing checkout record according to the latest changes in the order.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "meta": {
+    "actualize": true
+  }
+}
+```
+{@/request}
+
 
 # Extend\Entity\EV_Order_Status
 
@@ -540,3 +564,12 @@ Retrieve a specific order shipping status record.
 ### get_list
 
 Retrieve a collection of order shipping status records.
+
+
+# Oro\Bundle\CheckoutBundle\Api\Model\CheckoutStartOptions
+
+## FIELDS
+
+### actualize
+
+Update the existing checkout according to the latest changes in the order.

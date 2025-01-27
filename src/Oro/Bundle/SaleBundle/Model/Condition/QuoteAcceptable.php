@@ -4,11 +4,13 @@ namespace Oro\Bundle\SaleBundle\Model\Condition;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\SaleBundle\Validator\Constraints\QuoteAcceptable as QuoteAcceptableConstraint;
 use Oro\Component\Action\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
 use Symfony\Component\PropertyAccess\PropertyPathInterface;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * Check that quote is acceptable
@@ -22,33 +24,33 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
 {
     use ContextAccessorAwareTrait;
 
-    const NAME = 'quote_acceptable';
-
     /** @var Quote */
     protected $quote;
 
     /** @var bool */
     protected $default = false;
 
+    public function __construct(
+        private ValidatorInterface $validator
+    ) {
+    }
+
     #[\Override]
     public function getName()
     {
-        return self::NAME;
+        return 'quote_acceptable';
     }
 
     #[\Override]
     public function initialize(array $options)
     {
         $quote = array_shift($options);
-
         if (!$quote instanceof PropertyPathInterface) {
             throw new InvalidArgumentException('First option should be valid property definition.');
         }
-
         $this->quote = $quote;
 
         $default = array_shift($options);
-
         if (is_bool($default) || $default instanceof PropertyPathInterface) {
             $this->default = $default;
         }
@@ -59,10 +61,15 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
     #[\Override]
     protected function isConditionAllowed($context)
     {
-        $quote = $this->getQuote($context);
-        $default = $this->contextAccessor->getValue($context, $this->default);
+        $constraint = new QuoteAcceptableConstraint();
+        $constraint->default = $this->contextAccessor->getValue($context, $this->default);
 
-        return $quote ? $quote->isAcceptable() : $default;
+        $violationList = $this->validator->validate(
+            $this->resolveValue($context, $this->quote, null),
+            $constraint
+        );
+
+        return $violationList->count() === 0;
     }
 
     #[\Override]
@@ -79,14 +86,9 @@ class QuoteAcceptable extends AbstractCondition implements ContextAccessorAwareI
         return ['%qid%' => $quote ? $quote->getQid() : 0];
     }
 
-    /**
-     * @param mixed $context
-     * @return null|Quote
-     */
-    protected function getQuote($context)
+    protected function getQuote(mixed $context): ?Quote
     {
         $quote = $this->resolveValue($context, $this->quote, false);
-
         if ($quote instanceof QuoteDemand) {
             $quote = $quote->getQuote();
         }

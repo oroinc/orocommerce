@@ -34,11 +34,11 @@ class FinishCheckoutTest extends TestCase
     public function testIsConditionAllowedReturnsFalseIfNoOrder(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $data = new WorkflowData(['order' => null]);
+        $checkout = new Checkout();
 
         $workflowItem->expects($this->once())
-            ->method('getData')
-            ->willReturn($data);
+            ->method('getEntity')
+            ->willReturn($checkout);
 
         $this->assertFalse($this->finishCheckout->isConditionAllowed($workflowItem));
     }
@@ -46,14 +46,13 @@ class FinishCheckoutTest extends TestCase
     public function testIsConditionAllowedReturnsFalseIfNoPaymentInProgress(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $data = new WorkflowData([
-            'order' => new Order(),
-            'payment_in_progress' => null,
-        ]);
+        $order = new Order();
+        $checkout = new Checkout();
+        $checkout->setOrder($order);
 
         $workflowItem->expects($this->once())
-            ->method('getData')
-            ->willReturn($data);
+            ->method('getEntity')
+            ->willReturn($checkout);
 
         $this->assertFalse($this->finishCheckout->isConditionAllowed($workflowItem));
     }
@@ -61,14 +60,14 @@ class FinishCheckoutTest extends TestCase
     public function testIsConditionAllowedReturnsTrue(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $data = new WorkflowData([
-            'order' => new Order(),
-            'payment_in_progress' => true,
-        ]);
+        $order = new Order();
+        $checkout = new Checkout();
+        $checkout->setOrder($order);
+        $checkout->setPaymentInProgress(true);
 
         $workflowItem->expects($this->once())
-            ->method('getData')
-            ->willReturn($data);
+            ->method('getEntity')
+            ->willReturn($checkout);
 
         $this->assertTrue($this->finishCheckout->isConditionAllowed($workflowItem));
     }
@@ -76,10 +75,11 @@ class FinishCheckoutTest extends TestCase
     public function testExecute(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $checkout = $this->createMock(Checkout::class);
-        $order = $this->createMock(Order::class);
+        $checkout = new Checkout();
+        $checkout->setPaymentInProgress(true);
+        $order = new Order();
+        $checkout->setOrder($order);
         $data = new WorkflowData([
-            'order' => $order,
             'late_registration' => ['email' => 'test@test.com'],
             'auto_remove_source' => true,
             'allow_manual_source_remove' => false,
@@ -115,5 +115,7 @@ class FinishCheckoutTest extends TestCase
             );
 
         $this->finishCheckout->execute($workflowItem);
+
+        $this->assertFalse($checkout->isPaymentInProgress());
     }
 }

@@ -195,3 +195,36 @@ Retrieve a record of customer user assigned to a specific shopping list record.
 #### get_relationship
 
 Retrieve ID of customer user record assigned to a shopping list record.
+
+### checkout
+
+#### add_subresource
+
+Create a checkout record based on a specific shopping list.
+
+The created record is returned in the response.
+
+In case a checkout record already exists for the shopping list, it will be returned instead of creating a new one.
+
+Use the **actualize** option when you need to update already existing checkout record according to the latest changes in the shopping list.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "meta": {
+    "actualize": true
+  }
+}
+```
+{@/request}
+
+
+# Oro\Bundle\CheckoutBundle\Api\Model\CheckoutStartOptions
+
+## FIELDS
+
+### actualize
+
+Update the existing checkout according to the latest changes in the shopping list.

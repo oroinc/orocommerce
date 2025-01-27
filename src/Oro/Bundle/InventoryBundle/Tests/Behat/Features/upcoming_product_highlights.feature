@@ -107,7 +107,7 @@ Feature: Upcoming product highlights
       | Do not ship later than | 7/1/2018 |
     And I click on empty space
     And I click "Submit Order"
-    Then I should see "There was an error while processing the order"
+    Then I should see "This order cannot be shipped in time, as it contains products that will not be available yet. Please adjust Do Not Ship Later Than date, or remove upcoming products"
     When I fill "Checkout Order Review Form" with:
       | Do not ship later than | 12/1/2040 |
     And I click on empty space

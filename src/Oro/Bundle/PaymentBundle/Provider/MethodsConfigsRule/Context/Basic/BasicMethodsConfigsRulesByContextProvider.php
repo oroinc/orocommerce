@@ -14,29 +14,29 @@ use Oro\Bundle\PaymentBundle\RuleFiltration\MethodsConfigsRulesFiltrationService
  */
 class BasicMethodsConfigsRulesByContextProvider implements MethodsConfigsRulesByContextProviderInterface
 {
-    private MethodsConfigsRulesFiltrationServiceInterface $filtrationService;
-    private ManagerRegistry $doctrine;
-
     public function __construct(
-        MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
-        ManagerRegistry $doctrine
+        private readonly MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
+        private readonly ManagerRegistry $doctrine
     ) {
-        $this->filtrationService = $filtrationService;
-        $this->doctrine = $doctrine;
     }
 
     #[\Override]
     public function getPaymentMethodsConfigsRules(PaymentContextInterface $context): array
     {
+        $currency = $context->getCurrency();
+        if (!$currency) {
+            return [];
+        }
+
         if ($context->getBillingAddress()) {
             $methodsConfigsRules = $this->getRepository()->getByDestinationAndCurrencyAndWebsite(
                 $context->getBillingAddress(),
-                $context->getCurrency(),
+                $currency,
                 $context->getWebsite()
             );
         } else {
             $methodsConfigsRules = $this->getRepository()->getByCurrencyAndWebsiteWithoutDestination(
-                $context->getCurrency(),
+                $currency,
                 $context->getWebsite()
             );
         }

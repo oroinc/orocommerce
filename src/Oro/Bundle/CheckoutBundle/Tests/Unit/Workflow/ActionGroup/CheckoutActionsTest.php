@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -223,5 +224,63 @@ class CheckoutActionsTest extends TestCase
             ->with('remove_checkout_source_entity', [$checkout]);
 
         $this->checkoutActions->finalizeSourceEntity($checkout, false, true, true, false);
+    }
+
+    public function testFillCheckoutCompletedData(): void
+    {
+        $order = $this->createOrder();
+        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
+        $checkout = new Checkout();
+
+        $source = $this->createMock(CheckoutSource::class);
+        $source->expects($this->any())
+            ->method('getEntity')
+            ->willReturn($shoppingList);
+        $checkout->setSource($source);
+
+        $this->entityAliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(Order::class)
+            ->willReturn('order');
+
+        $this->entityNameResolver->expects($this->once())
+            ->method('getName')
+            ->willReturn('Shipping List 1');
+
+        $this->checkoutActions->fillCheckoutCompletedData($checkout, $order);
+
+        $this->assertTrue($checkout->isCompleted());
+        $completedData = $checkout->getCompletedData();
+
+        $this->assertEquals(2, $completedData->offsetGet('itemsCount'));
+        $this->assertEquals(
+            [
+                [
+                    'entityAlias' => 'order',
+                    'entityId' => ['id' => $order->getId()]
+                ]
+            ],
+            $completedData->offsetGet('orders')
+        );
+        $this->assertEquals($order->getCurrency(), $completedData->offsetGet('currency'));
+        $this->assertEquals($order->getSubtotalObject()->getValue(), $completedData->offsetGet('subtotal'));
+        $this->assertEquals($order->getTotalObject()->getValue(), $completedData->offsetGet('total'));
+        $this->assertEquals('Shipping List 1', $completedData->offsetGet('startedFrom'));
+    }
+
+    private function createOrder(): Order
+    {
+        $lineItems = [
+            $this->getEntity(OrderLineItem::class, ['id' => 1]),
+            $this->getEntity(OrderLineItem::class, ['id' => 2])
+        ];
+
+        $order = $this->getEntity(Order::class, ['id' => 42]);
+        $order->setCurrency('USD');
+        $order->setSubtotalObject(MultiCurrency::create(100.0, 'USD'));
+        $order->setTotalObject(MultiCurrency::create(100.0, 'USD'));
+        $order->setLineItems(new ArrayCollection($lineItems));
+
+        return $order;
     }
 }

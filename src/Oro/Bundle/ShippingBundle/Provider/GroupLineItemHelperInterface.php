@@ -23,4 +23,6 @@ interface GroupLineItemHelperInterface
     public function getGroupingFieldPath(): string;
 
     public function getGroupingFieldValue(object $lineItem, string $groupingFieldPath): mixed;
+
+    public function getLineItemGroupKey(object $lineItem, string $groupingFieldPath): string;
 }

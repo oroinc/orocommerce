@@ -7,7 +7,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\ProductKit\ProductLineItemPrice;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitItemLineItemPrice;
 use Oro\Bundle\PricingBundle\ProductKit\ProductLineItemPrice\ProductKitLineItemPrice;
-use Oro\Bundle\ProductBundle\Model\ProductKitItemLineItemInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemsAwareStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductKitItemLineItemStub;
@@ -87,17 +86,21 @@ class ProductKitLineItemPriceTest extends TestCase
 
         $kitLineItemPrice->addKitItemLineItemPrice($kitItemLineItem1Price);
 
-        $this->expectExceptionObject(
-            new \LogicException(
-                sprintf(
-                    'Product kit item line item price for the %s #%d is already added and cannot be changed',
-                    ProductKitItemLineItemInterface::class,
-                    $kitItem1->getId()
-                )
-            )
+        $kitItemLineItem2Price = Price::create(2.2345, 'USD');
+        $kitItemLineItem1Subtotal = 3.3456;
+        $kitItemLineItem2Price = new ProductKitItemLineItemPrice(
+            $kitItemLineItem1,
+            $kitItemLineItem2Price,
+            $kitItemLineItem1Subtotal
         );
+        $kitLineItemPrice->addKitItemLineItemPrice($kitItemLineItem2Price);
 
-        $kitLineItemPrice->addKitItemLineItemPrice($kitItemLineItem1Price);
+        self::assertSame(
+            [
+                $kitItem1->getId() => $kitItemLineItem2Price,
+            ],
+            $kitLineItemPrice->getKitItemLineItemPrices()
+        );
     }
 
     public function testGetKitItemLineItemPrice(): void

@@ -39,6 +39,9 @@ class VerifyCustomerConsentsListener implements FeatureCheckerAwareInterface
         }
 
         $workflowItem = $this->checkoutWorkflowHelper->getWorkflowItem($event->getCheckout());
+        if (!$workflowItem) {
+            return;
+        }
         if (!$this->isApplicable($workflowItem)) {
             return;
         }

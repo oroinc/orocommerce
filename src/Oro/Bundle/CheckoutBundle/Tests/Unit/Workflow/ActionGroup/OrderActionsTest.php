@@ -92,6 +92,7 @@ class OrderActionsTest extends TestCase
         $this->assertInstanceOf(Order::class, $result);
         $this->assertSame($customerUser, $order->getCustomerUser());
         $this->assertSame($customer, $order->getCustomer());
+        $this->assertSame($order, $checkout->getOrder());
     }
 
     public function testFlushOrder(): void

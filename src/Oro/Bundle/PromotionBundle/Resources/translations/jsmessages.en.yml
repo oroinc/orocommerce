@@ -12,6 +12,8 @@ oro:
                 coupon_promotion_already_applied: This coupon's discount has been already applied
                 coupon_promotion_not_applicable: This coupon's discount is not applicable
                 invalid_coupon_code: Invalid coupon code, please try another
+                remove_coupon:
+                    not_found: The coupon hasn't been applied, so it cannot be deleted.
             messages:
                 coupon_code_applied_successfully: Coupon code has been applied successfully, please review discounts
                 removed: Coupon code has been removed

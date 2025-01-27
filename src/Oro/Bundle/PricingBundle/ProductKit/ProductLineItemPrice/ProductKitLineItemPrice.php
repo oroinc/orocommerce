@@ -20,16 +20,6 @@ class ProductKitLineItemPrice extends ProductLineItemPrice
     public function addKitItemLineItemPrice(ProductKitItemLineItemPrice $productKitItemLineItemPrice): self
     {
         $kitItemId = $productKitItemLineItemPrice->getKitItemLineItem()->getKitItem()?->getId();
-        if (isset($this->kitItemLineItemPrices[$kitItemId])) {
-            throw new \LogicException(
-                sprintf(
-                    'Product kit item line item price for the %s #%d is already added and cannot be changed',
-                    ProductKitItemLineItemInterface::class,
-                    $kitItemId
-                )
-            );
-        }
-
         $this->kitItemLineItemPrices[$kitItemId] = $productKitItemLineItemPrice;
 
         return $this;

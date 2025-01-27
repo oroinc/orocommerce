@@ -23,6 +23,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\ConfigField;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityInterface;
 use Oro\Bundle\EntityExtendBundle\Entity\ExtendEntityTrait;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
@@ -32,9 +33,11 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 
 /**
- * Checkout entity
+ * Represents a checkout entity.
  *
  * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @mixin OroCheckoutBundle_Entity_Checkout
  */
 #[ORM\Entity(repositoryClass: CheckoutRepository::class)]
@@ -125,11 +128,23 @@ class Checkout implements
     #[ORM\JoinColumn(name: 'source_id', referencedColumnName: 'id', nullable: false)]
     protected ?CheckoutSource $source = null;
 
+    #[ORM\OneToOne(targetEntity: Order::class)]
+    #[ORM\JoinColumn(
+        name: 'order_id',
+        referencedColumnName: 'id',
+        nullable: true,
+        onDelete: 'SET NULL'
+    )]
+    protected ?Order $order = null;
+
     #[ORM\Column(name: 'deleted', type: Types::BOOLEAN, options: ['default' => false])]
-    protected ?bool $deleted = false;
+    protected bool $deleted = false;
 
     #[ORM\Column(name: 'completed', type: Types::BOOLEAN, options: ['default' => false])]
-    protected ?bool $completed = false;
+    protected bool $completed = false;
+
+    #[ORM\Column(name: 'payment_in_progress', type: Types::BOOLEAN, options: ['default' => false])]
+    protected bool $paymentInProgress = false;
 
     /**
      * @var array|CompletedCheckoutData
@@ -172,6 +187,9 @@ class Checkout implements
         onDelete: 'SET NULL'
     )]
     protected ?CustomerUser $registeredCustomerUser = null;
+
+    #[ORM\Column(name: 'additional_data', type: 'text', nullable: true)]
+    protected ?string $additionalData = null;
 
     public function __construct()
     {
@@ -368,44 +386,40 @@ class Checkout implements
         return $this;
     }
 
-    /**
-     * @param bool $deleted
-     *
-     * @return $this
-     */
-    public function setDeleted($deleted)
+    public function setDeleted(bool $deleted): self
     {
-        $this->deleted = (bool)$deleted;
+        $this->deleted = $deleted;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDeleted()
+    public function isDeleted(): bool
     {
         return $this->deleted;
     }
 
-    /**
-     * @param bool $completed
-     *
-     * @return $this
-     */
-    public function setCompleted($completed)
+    public function setCompleted(bool $completed): self
     {
-        $this->completed = (bool)$completed;
+        $this->completed = $completed;
 
         return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isCompleted()
+    public function isCompleted(): bool
     {
         return $this->completed;
+    }
+
+    public function isPaymentInProgress(): bool
+    {
+        return $this->paymentInProgress;
+    }
+
+    public function setPaymentInProgress(bool $paymentInProgress): self
+    {
+        $this->paymentInProgress = $paymentInProgress;
+
+        return $this;
     }
 
     /**
@@ -440,10 +454,18 @@ class Checkout implements
 
     #[ORM\PrePersist]
     #[ORM\PreUpdate]
-    public function updateShippingEstimate()
+    public function preSave(): void
     {
-        $this->shippingEstimateAmount = $this->shippingCost ? $this->shippingCost->getValue() : null;
-        $this->shippingEstimateCurrency = $this->shippingCost ? $this->shippingCost->getCurrency() : null;
+        $this->updateShippingEstimate();
+        if ($this->completedData instanceof CompletedCheckoutData) {
+            $this->completedData = $this->completedData->jsonSerialize();
+        }
+    }
+
+    private function updateShippingEstimate(): void
+    {
+        $this->shippingEstimateAmount = $this->shippingCost?->getValue();
+        $this->shippingEstimateCurrency = $this->shippingCost?->getCurrency();
     }
 
     /**
@@ -536,6 +558,30 @@ class Checkout implements
     public function setRegisteredCustomerUser($customerUser)
     {
         $this->registeredCustomerUser = $customerUser;
+
+        return $this;
+    }
+
+    public function getAdditionalData(): ?string
+    {
+        return $this->additionalData;
+    }
+
+    public function setAdditionalData(?string $additionalData): self
+    {
+        $this->additionalData = $additionalData;
+
+        return $this;
+    }
+
+    public function getOrder(): ?Order
+    {
+        return $this->order;
+    }
+
+    public function setOrder(?Order $order): self
+    {
+        $this->order = $order;
 
         return $this;
     }

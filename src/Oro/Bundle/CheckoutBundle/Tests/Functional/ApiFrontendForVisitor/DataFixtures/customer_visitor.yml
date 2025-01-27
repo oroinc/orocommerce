@@ -1,0 +1,27 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadWebsiteData
+    - Oro\Bundle\CustomerBundle\Tests\Functional\Api\DataFixtures\LoadCustomerUserRoles
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    customer:
+        name: 'Customer'
+        owner: '@user'
+        organization: '@organization'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+    customer_user:
+        email: 'AmandaRCole@example.org'
+        username: 'user@example.com'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        firstName: 'Amanda'
+        lastName: 'Cole'
+        enabled: true
+        confirmed: true
+        customer: '@customer'
+        userRoles: ['@buyer']
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'

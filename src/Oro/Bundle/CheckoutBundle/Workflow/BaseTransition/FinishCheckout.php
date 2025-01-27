@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 
@@ -24,13 +23,14 @@ class FinishCheckout extends TransitionServiceAbstract
     #[\Override]
     public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
-        $data = $workflowItem->getData();
+        /** @var Checkout $checkout */
+        $checkout = $workflowItem->getEntity();
 
-        if (!$data->offsetGet('order')) {
+        if (!$checkout->getOrder()) {
             return false;
         }
 
-        if (!$data->offsetGet('payment_in_progress')) {
+        if (!$checkout->isPaymentInProgress()) {
             return false;
         }
 
@@ -42,9 +42,9 @@ class FinishCheckout extends TransitionServiceAbstract
     {
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();
+        $checkout->setPaymentInProgress(false);
         $data = $workflowItem->getData();
-        /** @var Order $order */
-        $order = $data->offsetGet('order');
+        $order = $checkout->getOrder();
 
         $this->customerUserActions->handleLateRegistration($checkout, $order, $data->offsetGet('late_registration'));
         $this->checkoutActions->finishCheckout(

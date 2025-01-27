@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingGroupMethodSetterInterface;
@@ -16,6 +17,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActions;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -30,6 +32,7 @@ class ShippingMethodActionsTest extends TestCase
     private CheckoutLineItemsShippingManagerInterface|MockObject $checkoutLineItemsShipping;
     private CheckoutLineItemGroupsShippingManagerInterface|MockObject $checkoutLineItemGroupsShipping;
     private UpdateShippingPriceInterface|MockObject $updateShippingPrice;
+    private ManagerRegistry|MockObject $doctrine;
     private ShippingMethodActions $shippingMethodActions;
 
     #[\Override]
@@ -47,6 +50,7 @@ class ShippingMethodActionsTest extends TestCase
             CheckoutLineItemGroupsShippingManagerInterface::class
         );
         $this->updateShippingPrice = $this->createMock(UpdateShippingPriceInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
         $this->shippingMethodActions = new ShippingMethodActions(
             $this->actionExecutor,
@@ -56,8 +60,20 @@ class ShippingMethodActionsTest extends TestCase
             $this->defaultMultiShippingGroupMethodSetter,
             $this->checkoutLineItemsShipping,
             $this->checkoutLineItemGroupsShipping,
-            $this->updateShippingPrice
+            $this->updateShippingPrice,
+            $this->doctrine
         );
+    }
+
+    private function expectFlushData(): void
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrine->expects(self::once())
+            ->method('getManagerForClass')
+            ->with(Checkout::class)
+            ->willReturn($em);
+        $em->expects(self::once())
+            ->method('flush');
     }
 
     public function testHasApplicableShippingRulesHasEnabledShippingRules(): void
@@ -66,23 +82,21 @@ class ShippingMethodActionsTest extends TestCase
         $checkout = new Checkout();
         $checkout->setShippingMethod('flat_rate');
 
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::once())
             ->method('isMultiShippingEnabled')
             ->willReturn(false);
 
-        $this->actionExecutor->expects($this->any())
+        $this->actionExecutor->expects(self::once())
             ->method('evaluateExpression')
             ->with(
                 'shipping_method_has_enabled_shipping_rules',
                 ['method_identifier' => 'flat_rate'],
                 $errors,
-                'oro.checkout.workflow.condition.shipping_method_is_not_available.message'
+                'oro.checkout.validator.has_applicable_shipping_rules.message'
             )
             ->willReturn(true);
 
-        $result = $this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors);
-
-        $this->assertTrue($result);
+        self::assertTrue($this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors));
     }
 
     public function testHasApplicableShippingRulesHasEnabledShippingRulesForMultiShippingPerLineItem(): void
@@ -91,26 +105,24 @@ class ShippingMethodActionsTest extends TestCase
         $checkout = new Checkout();
         $checkout->setShippingMethod('flat_rate');
 
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::once())
             ->method('isMultiShippingEnabled')
             ->willReturn(true);
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(true);
 
-        $this->actionExecutor->expects($this->any())
+        $this->actionExecutor->expects(self::once())
             ->method('evaluateExpression')
             ->with(
                 'line_items_shipping_methods_has_enabled_shipping_rules',
                 ['entity' => $checkout],
                 $errors,
-                'oro.checkout.workflow.condition.shipping_method_is_not_available.message'
+                'oro.checkout.validator.has_applicable_shipping_rules.message'
             )
             ->willReturn(true);
 
-        $result = $this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors);
-
-        $this->assertTrue($result);
+        self::assertTrue($this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors));
     }
 
     public function testHasApplicableShippingRulesHasEnabledShippingRulesForMultiShippingPerLineItemGroup(): void
@@ -119,52 +131,47 @@ class ShippingMethodActionsTest extends TestCase
         $checkout = new Checkout();
         $checkout->setShippingMethod('flat_rate');
 
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::once())
             ->method('isMultiShippingEnabled')
             ->willReturn(true);
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::exactly(2))
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
-        $this->configProvider->expects($this->any())
+        $this->configProvider->expects(self::once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(true);
 
-        $this->actionExecutor->expects($this->any())
+        $this->actionExecutor->expects(self::once())
             ->method('evaluateExpression')
             ->with(
                 'line_item_groups_shipping_methods_has_enabled_shipping_rules',
                 ['entity' => $checkout],
                 $errors,
-                'oro.checkout.workflow.condition.shipping_method_is_not_available.message'
+                'oro.checkout.validator.has_applicable_shipping_rules.message'
             )
             ->willReturn(true);
 
-        $result = $this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors);
-
-        $this->assertTrue($result);
+        self::assertTrue($this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors));
     }
 
     public function testUpdateDefaultShippingMethodsWithoutMultiShipping(): void
     {
         $checkout = $this->createMock(Checkout::class);
 
-        $this->configProvider->expects($this->once())
-            ->method('isMultiShippingEnabled')
-            ->willReturn(false);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(false);
 
-        $this->defaultShippingMethodSetter->expects($this->once())
+        $this->defaultMultiShippingMethodSetter->expects(self::never())
+            ->method('setDefaultShippingMethods');
+        $this->defaultMultiShippingGroupMethodSetter->expects(self::never())
+            ->method('setDefaultShippingMethods');
+        $this->defaultShippingMethodSetter->expects(self::once())
             ->method('setDefaultShippingMethod')
             ->with($checkout);
-        $this->defaultMultiShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
 
         $this->shippingMethodActions->updateDefaultShippingMethods($checkout, [], []);
     }
@@ -175,24 +182,21 @@ class ShippingMethodActionsTest extends TestCase
         $lineItemsShippingMethods = ['flat_rate_1'];
         $lineItemGroupsShippingMethods = ['flat_rate_2'];
 
-        $this->configProvider->expects($this->once())
-            ->method('isMultiShippingEnabled')
-            ->willReturn(true);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(true);
-        $this->configProvider->expects($this->once())
-            ->method('isLineItemsGroupingEnabled')
-            ->willReturn(false);
+        $this->configProvider->expects(self::never())
+            ->method('isLineItemsGroupingEnabled');
 
-        $this->defaultShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethod');
-
-        $this->defaultMultiShippingMethodSetter->expects($this->once())
+        $this->defaultMultiShippingMethodSetter->expects(self::once())
             ->method('setDefaultShippingMethods')
             ->with($checkout, $lineItemsShippingMethods, true);
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->never())
+        $this->defaultMultiShippingGroupMethodSetter->expects(self::never())
             ->method('setDefaultShippingMethods');
+        $this->defaultShippingMethodSetter->expects(self::never())
+            ->method('setDefaultShippingMethod');
+
+        $this->expectFlushData();
 
         $this->shippingMethodActions->updateDefaultShippingMethods(
             $checkout,
@@ -207,24 +211,22 @@ class ShippingMethodActionsTest extends TestCase
         $lineItemsShippingMethods = ['flat_rate_1'];
         $lineItemGroupsShippingMethods = ['flat_rate_2'];
 
-        $this->configProvider->expects($this->once())
-            ->method('isMultiShippingEnabled')
-            ->willReturn(true);
-        $this->configProvider->expects($this->exactly(2))
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(true);
 
-        $this->defaultShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethod');
-
-        $this->defaultMultiShippingMethodSetter->expects($this->never())
+        $this->defaultMultiShippingMethodSetter->expects(self::never())
             ->method('setDefaultShippingMethods');
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->once())
+        $this->defaultMultiShippingGroupMethodSetter->expects(self::once())
             ->method('setDefaultShippingMethods')
             ->with($checkout, $lineItemGroupsShippingMethods, true);
+        $this->defaultShippingMethodSetter->expects(self::never())
+            ->method('setDefaultShippingMethod');
+
+        $this->expectFlushData();
 
         $this->shippingMethodActions->updateDefaultShippingMethods(
             $checkout,
@@ -237,19 +239,19 @@ class ShippingMethodActionsTest extends TestCase
     {
         $checkout = $this->createMock(Checkout::class);
 
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(false);
 
-        $this->checkoutLineItemsShipping->expects($this->never())
+        $this->checkoutLineItemsShipping->expects(self::never())
             ->method('updateLineItemsShippingPrices');
-        $this->checkoutLineItemGroupsShipping->expects($this->never())
+        $this->checkoutLineItemGroupsShipping->expects(self::never())
             ->method('updateLineItemGroupsShippingPrices');
 
-        $this->updateShippingPrice->expects($this->once())
+        $this->updateShippingPrice->expects(self::once())
             ->method('execute')
             ->with($checkout);
 
@@ -260,20 +262,20 @@ class ShippingMethodActionsTest extends TestCase
     {
         $checkout = $this->createMock(Checkout::class);
 
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(true);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::never())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(false);
 
-        $this->checkoutLineItemsShipping->expects($this->once())
+        $this->checkoutLineItemsShipping->expects(self::once())
             ->method('updateLineItemsShippingPrices')
             ->with($checkout);
-        $this->checkoutLineItemGroupsShipping->expects($this->never())
+        $this->checkoutLineItemGroupsShipping->expects(self::never())
             ->method('updateLineItemGroupsShippingPrices');
 
-        $this->updateShippingPrice->expects($this->once())
+        $this->updateShippingPrice->expects(self::once())
             ->method('execute')
             ->with($checkout);
 
@@ -284,21 +286,21 @@ class ShippingMethodActionsTest extends TestCase
     {
         $checkout = $this->createMock(Checkout::class);
 
-        $this->configProvider->expects($this->exactly(2))
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(true);
 
-        $this->checkoutLineItemsShipping->expects($this->never())
+        $this->checkoutLineItemsShipping->expects(self::never())
             ->method('updateLineItemsShippingPrices');
 
-        $this->checkoutLineItemGroupsShipping->expects($this->once())
+        $this->checkoutLineItemGroupsShipping->expects(self::once())
             ->method('updateLineItemGroupsShippingPrices')
             ->with($checkout);
 
-        $this->updateShippingPrice->expects($this->once())
+        $this->updateShippingPrice->expects(self::once())
             ->method('execute')
             ->with($checkout);
 
@@ -309,21 +311,21 @@ class ShippingMethodActionsTest extends TestCase
     {
         $lineItems = new ArrayCollection([$this->createMock(CheckoutLineItem::class)]);
         $checkout = $this->createMock(Checkout::class);
-        $checkout->expects($this->any())
+        $checkout->expects(self::once())
             ->method('getLineItems')
             ->willReturn($lineItems);
 
         $lineItemsShippingMethods = ['flat_rate_1'];
         $lineItemGroupsShippingMethods = ['flat_rate_2'];
 
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(true);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(false);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('evaluateExpression')
             ->with(
                 'is_line_items_shipping_methods_update_required',
@@ -331,11 +333,13 @@ class ShippingMethodActionsTest extends TestCase
             )
             ->willReturn(true);
 
-        $this->defaultMultiShippingMethodSetter->expects($this->once())
+        $this->defaultMultiShippingMethodSetter->expects(self::once())
             ->method('setDefaultShippingMethods')
             ->with($checkout, $lineItemsShippingMethods);
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->never())
+        $this->defaultMultiShippingGroupMethodSetter->expects(self::never())
             ->method('setDefaultShippingMethods');
+
+        $this->expectFlushData();
 
         $this->shippingMethodActions->actualizeShippingMethods(
             $checkout,
@@ -348,21 +352,21 @@ class ShippingMethodActionsTest extends TestCase
     {
         $lineItems = new ArrayCollection([$this->createMock(CheckoutLineItem::class)]);
         $checkout = $this->createMock(Checkout::class);
-        $checkout->expects($this->any())
+        $checkout->expects(self::once())
             ->method('getLineItems')
             ->willReturn($lineItems);
 
         $lineItemsShippingMethods = ['flat_rate_1'];
         $lineItemGroupsShippingMethods = ['flat_rate_2'];
 
-        $this->configProvider->expects($this->exactly(2))
+        $this->configProvider->expects(self::exactly(2))
             ->method('isShippingSelectionByLineItemEnabled')
             ->willReturn(false);
-        $this->configProvider->expects($this->once())
+        $this->configProvider->expects(self::once())
             ->method('isLineItemsGroupingEnabled')
             ->willReturn(true);
 
-        $this->actionExecutor->expects($this->once())
+        $this->actionExecutor->expects(self::once())
             ->method('evaluateExpression')
             ->with(
                 'is_line_item_groups_shipping_methods_update_required',
@@ -370,11 +374,13 @@ class ShippingMethodActionsTest extends TestCase
             )
             ->willReturn(true);
 
-        $this->defaultMultiShippingMethodSetter->expects($this->never())
+        $this->defaultMultiShippingMethodSetter->expects(self::never())
             ->method('setDefaultShippingMethods');
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->once())
+        $this->defaultMultiShippingGroupMethodSetter->expects(self::once())
             ->method('setDefaultShippingMethods')
             ->with($checkout, $lineItemGroupsShippingMethods);
+
+        $this->expectFlushData();
 
         $this->shippingMethodActions->actualizeShippingMethods(
             $checkout,

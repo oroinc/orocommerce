@@ -1,0 +1,243 @@
+data:
+    type: checkouts
+    id: 'new'
+    attributes:
+        poNumber: PO001
+        shippingMethod: '@checkout.completed->shippingMethod'
+        shippingMethodType: primary
+        paymentMethod: '@checkout.completed->paymentMethod'
+        shipUntil: '2050-01-11'
+        customerNotes: 'Customer notes'
+        currency: USD
+        completed: false
+        shipToBillingAddress: false
+        totalValue: '143.5800'
+        totals:
+            -
+                subtotalType: subtotal
+                description: Subtotal
+                amount: '143.5800'
+            -
+                subtotalType: discount
+                description: Discount
+                amount: '-10.0000'
+            -
+                subtotalType: shipping_cost
+                description: Shipping
+                amount: '10.0000'
+        coupons: {  }
+    relationships:
+        order:
+            data: null
+        lineItems:
+            data:
+                -
+                    type: checkoutlineitems
+                    id: 'new'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+        billingAddress:
+            data:
+                type: checkoutaddresses
+                id: 'new'
+        shippingAddress:
+            data:
+                type: checkoutaddresses
+                id: 'new'
+        source:
+            data: null
+included:
+    -
+        type: checkoutaddresses
+        id: 'new'
+        meta:
+            includeId: billing_address
+        attributes:
+            phone: '123-456'
+            label: Address
+            street: Street
+            street2: null
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: null
+            firstName: John
+            middleName: null
+            lastName: Doe
+            nameSuffix: null
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: checkoutaddresses
+        id: 'new'
+        meta:
+            includeId: shipping_address
+        attributes:
+            phone: '123-456'
+            label: Address
+            street: Street
+            street2: null
+            city: 'Los Angeles'
+            postalCode: '90001'
+            organization: Acme
+            customRegion: null
+            namePrefix: null
+            firstName: John
+            middleName: null
+            lastName: Doe
+            nameSuffix: null
+        relationships:
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: checkoutlineitems
+        id: 'new'
+        meta:
+            includeId: lineitem1
+        attributes:
+            productSku: product-kit-3
+            freeFormProduct: null
+            quantity: 1
+            price: '143.5800'
+            currency: USD
+            comment: null
+            priceFixed: false
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: 'new'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-3->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: 'new'
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: 'new'
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: 'new'
+    -
+        type: checkoutproductkititemlineitems
+        id: 'new'
+        meta:
+            includeId: checkoutproductkititemlineitem1
+        attributes:
+            quantity: 1
+            sortOrder: 1
+            price: '115.9000'
+            currency: USD
+            priceFixed: false
+        relationships:
+            lineItem:
+                data:
+                    type: checkoutlineitems
+                    id: 'new'
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: checkoutproductkititemlineitems
+        id: 'new'
+        meta:
+            includeId: checkoutproductkititemlineitem2
+        attributes:
+            quantity: 2
+            sortOrder: 2
+            price: '12.5900'
+            currency: USD
+            priceFixed: false
+        relationships:
+            lineItem:
+                data:
+                    type: checkoutlineitems
+                    id: 'new'
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: checkoutproductkititemlineitems
+        id: 'new'
+        meta:
+            includeId: checkoutproductkititemlineitem3
+        attributes:
+            quantity: 1
+            sortOrder: 3
+            price: '2.5000'
+            currency: USD
+            priceFixed: false
+        relationships:
+            lineItem:
+                data:
+                    type: checkoutlineitems
+                    id: 'new'
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

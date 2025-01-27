@@ -45,4 +45,6 @@ interface CheckoutActionsInterface
         bool $removeSource = false,
         bool $clearSource = false
     ): void;
+
+    public function fillCheckoutCompletedData(Checkout $checkout, Order $order): void;
 }

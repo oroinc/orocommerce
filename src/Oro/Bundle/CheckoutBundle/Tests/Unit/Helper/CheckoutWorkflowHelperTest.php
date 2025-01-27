@@ -11,7 +11,6 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class CheckoutWorkflowHelperTest extends TestCase
 {
@@ -61,30 +60,24 @@ class CheckoutWorkflowHelperTest extends TestCase
 
     public function testGetWorkflowItemWhenSeveralWorkflowItemsFound()
     {
-        $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage('Unable to find correct WorkflowItem for current checkout');
-
         $checkout = $this->getCheckout();
         $this->workflowManager->expects(self::once())
             ->method('getWorkflowItemsByEntity')
             ->with($checkout)
             ->willReturn([$this->getWorkflowItem(1), $this->getWorkflowItem(2)]);
 
-        $this->helper->getWorkflowItem($checkout);
+        self::assertNull($this->helper->getWorkflowItem($checkout));
     }
 
     public function testGetWorkflowItemWhenNoWorkflowItemsFound()
     {
-        $this->expectException(NotFoundHttpException::class);
-        $this->expectExceptionMessage('Unable to find correct WorkflowItem for current checkout');
-
         $checkout = $this->getCheckout();
         $this->workflowManager->expects(self::once())
             ->method('getWorkflowItemsByEntity')
             ->with($checkout)
             ->willReturn([]);
 
-        $this->helper->getWorkflowItem($checkout);
+        self::assertNull($this->helper->getWorkflowItem($checkout));
     }
 
     public function testFindWorkflowItems()
@@ -101,6 +94,32 @@ class CheckoutWorkflowHelperTest extends TestCase
 
         self::assertSame($workflowItems, $this->helper->findWorkflowItems($checkout));
         self::assertSame($anotherWorkflowItems, $this->helper->findWorkflowItems($anotherCheckout));
+        // test memory cache
+        self::assertSame($workflowItems, $this->helper->findWorkflowItems($checkout));
+        self::assertSame($anotherWorkflowItems, $this->helper->findWorkflowItems($anotherCheckout));
+    }
+
+    public function testFindWorkflowItemWithClearCaches()
+    {
+        $workflowItems = [$this->getWorkflowItem(1), $this->getWorkflowItem(2)];
+        $anotherWorkflowItems = [$this->getWorkflowItem(3)];
+
+        $checkout = $this->getCheckout(10);
+        $anotherCheckout = $this->getCheckout(20);
+        $this->workflowManager->expects(self::exactly(3))
+            ->method('getWorkflowItemsByEntity')
+            ->withConsecutive([$checkout], [$anotherCheckout], [$checkout])
+            ->willReturnOnConsecutiveCalls(
+                $workflowItems,
+                $anotherWorkflowItems,
+                $workflowItems
+            );
+
+        self::assertSame($workflowItems, $this->helper->findWorkflowItems($checkout));
+        self::assertSame($anotherWorkflowItems, $this->helper->findWorkflowItems($anotherCheckout));
+
+        $this->helper->clearCaches($checkout);
+
         // test memory cache
         self::assertSame($workflowItems, $this->helper->findWorkflowItems($checkout));
         self::assertSame($anotherWorkflowItems, $this->helper->findWorkflowItems($anotherCheckout));

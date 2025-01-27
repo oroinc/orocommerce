@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
 
 class CheckoutLineItemsConverterTest extends TestCase
@@ -29,73 +30,7 @@ class CheckoutLineItemsConverterTest extends TestCase
      */
     public function testConvert(array $data, ArrayCollection $expected): void
     {
-        $result = $this->checkoutLineItemsConverter->convert($data);
-
-        self::assertEquals($expected, $result);
-    }
-
-    public function testReflectionClassInConvertCalled(): void
-    {
-        $reflectionClassMock = $this->createMock(EntityReflectionClass::class);
-        $reflectionMethodMock = $this->createMock(\ReflectionMethod::class);
-
-        $reflectionMethodMock
-            ->expects(self::once())
-            ->method('invoke');
-
-        $reflectionClassMock
-            ->expects(self::once())
-            ->method('hasProperty')
-            ->with('product')
-            ->willReturn(true);
-
-        $reflectionClassMock
-            ->expects(self::once())
-            ->method('getMethod')
-            ->with('setProduct')
-            ->willReturn($reflectionMethodMock);
-
-        (new \ReflectionObject($this->checkoutLineItemsConverter))
-            ->getProperty('reflectionClass')
-            ->setValue($this->checkoutLineItemsConverter, [OrderLineItem::class => $reflectionClassMock]);
-
-        $data = [
-            ['product' => (new Product())->setSku('product1')]
-        ];
-
-        $this->checkoutLineItemsConverter->convert($data);
-    }
-
-    public function testReflectionClassInConvertNotCalled(): void
-    {
-        $reflectionClassMock = $this->createMock(EntityReflectionClass::class);
-        $reflectionMethodMock = $this->createMock(\ReflectionMethod::class);
-
-        $reflectionMethodMock
-            ->expects(self::never())
-            ->method('invoke');
-
-        $reflectionClassMock
-            ->expects(self::never())
-            ->method('hasProperty')
-            ->with('product')
-            ->willReturn(true);
-
-        $reflectionClassMock
-            ->expects(self::never())
-            ->method('getMethod')
-            ->with('setProduct')
-            ->willReturn($reflectionMethodMock);
-
-        (new \ReflectionObject($this->checkoutLineItemsConverter))
-            ->getProperty('reflectionClass')
-            ->setValue($this->checkoutLineItemsConverter, [OrderLineItem::class => $reflectionClassMock]);
-
-        $data = [
-            ['product' => null]
-        ];
-
-        $this->checkoutLineItemsConverter->convert($data);
+        self::assertEquals($expected, $this->checkoutLineItemsConverter->convert($data));
     }
 
     /**
@@ -118,13 +53,11 @@ class CheckoutLineItemsConverterTest extends TestCase
         return [
             'empty data' => [
                 'data' => [],
-                'expected' => new ArrayCollection([]),
+                'expected' => new ArrayCollection([])
             ],
             'data with empty item' => [
                 'data' => [[]],
-                'expected' => new ArrayCollection([
-                    (new OrderLineItem()),
-                ]),
+                'expected' => new ArrayCollection([new OrderLineItem()])
             ],
             'data with not exists field' => [
                 'data' => [
@@ -153,7 +86,7 @@ class CheckoutLineItemsConverterTest extends TestCase
                         'freeFormProduct' => 'test1',
                         'productUnit' => $unitItem,
                         'productUnitCode' => $unitItem->getCode(),
-                        'price' => $price,
+                        'price' => $price
                     ],
                     [
                         'product' => $product2,
@@ -166,8 +99,8 @@ class CheckoutLineItemsConverterTest extends TestCase
                         'priceType' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
                         'shipBy' => $now,
                         'fromExternalSource' => true,
-                        'comment' => 'Comment',
-                    ],
+                        'comment' => 'Comment'
+                    ]
 
                 ],
                 'expected' => new ArrayCollection([
@@ -188,8 +121,8 @@ class CheckoutLineItemsConverterTest extends TestCase
                         ->setPriceType(PriceTypeAwareInterface::PRICE_TYPE_BUNDLED)
                         ->setShipBy($now)
                         ->setFromExternalSource(true)
-                        ->setComment('Comment'),
-                ]),
+                        ->setComment('Comment')
+                ])
             ],
             'kit line item data' => [
                 'data' => [
@@ -210,9 +143,9 @@ class CheckoutLineItemsConverterTest extends TestCase
                                 'productUnit' => $unitEach,
                                 'productUnitCode' => $unitEach->getCode(),
                                 'price' => $kitItemLineItemPrice,
-                                'nonExistentProperty' => 'sample data',
-                            ],
-                        ],
+                                'nonExistentProperty' => 'sample data'
+                            ]
+                        ]
                     ],
                     [
                         'product' => $product2,
@@ -225,8 +158,8 @@ class CheckoutLineItemsConverterTest extends TestCase
                         'priceType' => PriceTypeAwareInterface::PRICE_TYPE_BUNDLED,
                         'shipBy' => $now,
                         'fromExternalSource' => true,
-                        'comment' => 'Comment',
-                    ],
+                        'comment' => 'Comment'
+                    ]
                 ],
                 'expected' => new ArrayCollection([
                     (new OrderLineItem())->setProduct($product1)
@@ -254,43 +187,77 @@ class CheckoutLineItemsConverterTest extends TestCase
                         ->setPriceType(PriceTypeAwareInterface::PRICE_TYPE_BUNDLED)
                         ->setShipBy($now)
                         ->setFromExternalSource(true)
-                        ->setComment('Comment'),
-                ]),
+                        ->setComment('Comment')
+                ])
             ],
             'data with non-existent property' => [
                 'data' => [
                     [
                         'nonExistentProperty' => 'sampleValue',
-                        'comment' => 'Comment',
-                    ],
+                        'comment' => 'Comment'
+                    ]
                 ],
-                'expected' => new ArrayCollection([
-                    (new OrderLineItem())->setComment('Comment'),
-                ]),
+                'expected' => new ArrayCollection([(new OrderLineItem())->setComment('Comment')])
             ],
             'data with null property' => [
                 'data' => [
                     [
                         'shipBy' => $now,
-                        'comment' => null,
-                    ],
+                        'comment' => null
+                    ]
                 ],
-                'expected' => new ArrayCollection([
-                    (new OrderLineItem())->setShipBy($now),
-                ]),
-            ],
+                'expected' => new ArrayCollection([(new OrderLineItem())->setShipBy($now)])
+            ]
         ];
+    }
+
+    public function testReflectionClassInConvertCalled(): void
+    {
+        $reflectionMethod = $this->createMock(\ReflectionMethod::class);
+        $reflectionMethod->expects(self::once())
+            ->method('invoke');
+
+        $reflectionClass = $this->createMock(EntityReflectionClass::class);
+        $reflectionClass->expects(self::once())
+            ->method('hasProperty')
+            ->with('product')
+            ->willReturn(true);
+        $reflectionClass->expects(self::once())
+            ->method('getMethod')
+            ->with('setProduct')
+            ->willReturn($reflectionMethod);
+
+        ReflectionUtil::setPropertyValue(
+            $this->checkoutLineItemsConverter,
+            'reflectionClass',
+            [OrderLineItem::class => $reflectionClass]
+        );
+
+        $this->checkoutLineItemsConverter->convert([['product' => (new Product())->setSku('product1')]]);
+    }
+
+    public function testReflectionClassInConvertNotCalled(): void
+    {
+        $reflectionClass = $this->createMock(EntityReflectionClass::class);
+        $reflectionClass->expects(self::never())
+            ->method('hasProperty');
+        $reflectionClass->expects(self::never())
+            ->method('getMethod');
+
+        ReflectionUtil::setPropertyValue(
+            $this->checkoutLineItemsConverter,
+            'reflectionClass',
+            [OrderLineItem::class => $reflectionClass]
+        );
+
+        $this->checkoutLineItemsConverter->convert([['product' => null]]);
     }
 
     public function testConvertWithDisabledReuse(): void
     {
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $data = [
-            [
-                'shipBy' => $now,
-                'comment' => null,
-                'checksum' => 123
-            ],
+            ['shipBy' => $now, 'comment' => null, 'checksum' => '123']
         ];
         $result1 = $this->checkoutLineItemsConverter->convert($data);
         $result2 = $this->checkoutLineItemsConverter->convert($data);
@@ -303,11 +270,7 @@ class CheckoutLineItemsConverterTest extends TestCase
         $this->checkoutLineItemsConverter->setReuseLineItems(true);
         $now = new \DateTime('now', new \DateTimeZone('UTC'));
         $data = [
-            [
-                'shipBy' => $now,
-                'comment' => null,
-                'checksum' => 123
-            ],
+            ['shipBy' => $now, 'comment' => null, 'checksum' => '123']
         ];
         $result1 = $this->checkoutLineItemsConverter->convert($data);
         $result2 = $this->checkoutLineItemsConverter->convert($data);

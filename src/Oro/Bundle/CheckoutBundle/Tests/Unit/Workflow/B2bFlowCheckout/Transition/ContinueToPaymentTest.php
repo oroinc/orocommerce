@@ -127,7 +127,7 @@ class ContinueToPaymentTest extends TestCase
 
         $this->assertFalse($result);
         $this->assertEqualsCanonicalizing(
-            [['message' => 'oro.checkout.workflow.condition.shipping_method_is_not_available.message']],
+            [['message' => 'oro.checkout.validator.has_applicable_shipping_rules.message']],
             $errors->toArray()
         );
     }
@@ -170,7 +170,7 @@ class ContinueToPaymentTest extends TestCase
         $this->assertFalse($result);
         $this->assertNotEmpty($errors);
         $this->assertEqualsCanonicalizing(
-            [['message' => 'oro.checkout.workflow.condition.shipping_method_is_not_available.message']],
+            [['message' => 'oro.checkout.validator.has_applicable_shipping_rules.message']],
             $errors->toArray()
         );
     }

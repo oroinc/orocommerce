@@ -1,4 +1,495 @@
 api:
+    entity_aliases:
+        Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress:
+            alias: checkoutaddress
+            plural_alias: checkoutaddresses
+        Oro\Bundle\CheckoutBundle\Api\Model\AvailableAddress:
+            alias: checkoutavailableaddress
+            plural_alias: checkoutavailableaddresses
+        Oro\Bundle\CheckoutBundle\Api\Model\AvailableShippingMethod:
+            alias: checkoutavailableshippingmethod
+            plural_alias: checkoutavailableshippingmethods
+        Oro\Bundle\CheckoutBundle\Api\Model\AvailablePaymentMethod:
+            alias: checkoutavailablepaymentmethod
+            plural_alias: checkoutavailablepaymentmethods
+        Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup:
+            alias: checkoutlineitemgroup
+            plural_alias: checkoutlineitemgroups
+        Oro\Bundle\CheckoutBundle\Api\Model\CheckoutStartOptions:
+            alias: checkoutstartoption
+            plural_alias: checkoutstartoptions
+
     entities:
         Oro\Bundle\CustomerBundle\Entity\CustomerUser:
             documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/customer_user.md'
+
+        Oro\Bundle\CheckoutBundle\Entity\Checkout:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout.md'
+            disable_meta_properties: [ title ]
+            exclusion_policy: none
+            fields:
+                createdAt:
+                    form_options:
+                        mapped: false
+                updatedAt:
+                    form_options:
+                        mapped: false
+                deleted:
+                    exclude: true
+                saveBillingAddress:
+                    exclude: true
+                saveShippingAddress:
+                    exclude: true
+                lineItemGroupShippingData:
+                    exclude: true
+                registeredCustomerUser:
+                    exclude: true
+                shippingEstimateCurrency:
+                    exclude: true
+                additionalData:
+                    exclude: true
+                completedData:
+                    exclude: true
+                shippingType:
+                    data_type: string
+                    property_path: _
+                    form_options:
+                        mapped: false
+                lineItems:
+                    max_results: -1
+                lineItemGroups:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup
+                    target_type: to-many
+                    property_path: _
+                # the full configuration of this association is performed by
+                # Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureCheckoutSourceAssociation
+                source:
+                    target_class: Oro\Bundle\ApiBundle\Model\EntityIdentifier
+                    property_path: _
+                    depends_on: [ source.deleted ]
+                    form_options:
+                        mapped: false
+                # declare excluded field for "source" entity property
+                # to be able to use "source" property in "depends_on" option
+                _source:
+                    property_path: source
+                    exclude: true
+                totalValue:
+                    data_type: money
+                    property_path: _
+                    form_options:
+                        mapped: false
+                totals:
+                    data_type: objects
+                    property_path: _
+                    form_options:
+                        mapped: false
+                    fields:
+                        subtotalType:
+                            data_type: string
+                            property_path: type
+                        description:
+                            data_type: string
+                            property_path: label
+                        amount:
+                            data_type: money
+                            property_path: signedAmount
+                completed:
+                    form_options:
+                        mapped: false
+                paymentInProgress:
+                    form_options:
+                        mapped: false
+                order:
+                    form_options:
+                        mapped: false
+                billingAddress:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress
+                shippingAddress:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress
+                shippingEstimateAmount:
+                    form_options:
+                        mapped: false
+                coupons:
+                    data_type: objects
+                    property_path: appliedCoupons
+                    max_results: -1
+                    exclusion_policy: all
+                    fields:
+                        couponCode: ~
+                        description:
+                            data_type: string
+                            property_path: _
+            filters:
+                fields:
+                    poNumber:
+                        allow_array: true
+                        options:
+                            case_insensitive: true
+                    createdAt: ~
+                    updatedAt: ~
+            sorters:
+                fields:
+                    createdAt: ~
+                    updatedAt: ~
+            actions:
+                create:
+                    form_options:
+                        validation_groups: [ Default, api, checkout_validity ]
+                    fields:
+                        coupons:
+                            property_path: _
+                            form_options:
+                                mapped: false
+                update:
+                    form_options:
+                        validation_groups: [ Default, api, checkout_validity ]
+                    fields:
+                        coupons:
+                            property_path: _
+                            form_options:
+                                mapped: false
+            subresources:
+                availableBillingAddresses:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\AvailableAddress
+                    target_type: to-many
+                    actions:
+                        get_subresource:
+                            disable_paging: true
+                            disable_sorting: true
+                availableShippingAddresses:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\AvailableAddress
+                    target_type: to-many
+                    actions:
+                        get_subresource:
+                            disable_paging: true
+                            disable_sorting: true
+                availableShippingMethods:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\AvailableShippingMethod
+                    target_type: to-many
+                    actions:
+                        get_subresource:
+                            disable_paging: true
+                            disable_sorting: true
+                availablePaymentMethods:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\AvailablePaymentMethod
+                    target_type: to-many
+                    actions:
+                        get_subresource:
+                            disable_paging: true
+                            disable_sorting: true
+                lineItems:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
+                lineItemGroups:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
+                source:
+                    actions:
+                        update_relationship: false
+                order:
+                    actions:
+                        update_relationship: false
+                billingAddress:
+                    actions:
+                        update_relationship: false
+                shippingAddress:
+                    actions:
+                        update_relationship: false
+                coupons:
+                    target_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+                    actions:
+                        add_subresource:
+                            description: Apply coupon to checkout
+                            request_target_class: Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest
+                        delete_subresource:
+                            description: Remove applied coupon from checkout
+                            request_target_class: Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest
+                        get_subresource: false
+                customer:
+                    actions:
+                        update_relationship: false
+                customerUser:
+                    actions:
+                        update_relationship: false
+                payment:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutPaymentResponse
+                    actions:
+                        get_subresource:
+                            description: Validate whether checkout is ready for payment
+                            disable_meta_properties: true
+                            disable_fieldset: true
+                            disable_inclusion: true
+
+        Oro\Bundle\CheckoutBundle\Entity\CheckoutSource:
+            # change the exclusion policy from "custom_fields" to "none" to load configuration of all custom associations
+            exclusion_policy: none
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout.md'
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout_line_item.md'
+            disable_meta_properties: [ title ]
+            fields:
+                fromExternalSource:
+                    exclude: true
+                priceType:
+                    exclude: true
+                price:
+                    property_path: value
+                    form_options:
+                        mapped: false
+                currency:
+                    form_options:
+                        mapped: false
+                productUnitCode:
+                    exclude: true
+                checksum:
+                    form_options:
+                        mapped: false
+                shippingEstimateAmount:
+                    form_options:
+                        mapped: false
+                group:
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup
+                    property_path: _
+                    depends_on: [ checkout.id ]
+            actions:
+                create:
+                    form_options:
+                        validation_groups: [ Default, api, checkout_validity ]
+                update:
+                    form_options:
+                        validation_groups: [ Default, api, checkout_validity ]
+            subresources:
+                checkout:
+                    actions:
+                        update_relationship: false
+                kitItemLineItems:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
+                product:
+                    actions:
+                        update_relationship: false
+                parentProduct:
+                    actions:
+                        update_relationship: false
+                productUnit:
+                    actions:
+                        update_relationship: false
+                group:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout_product_kit_item_line_item.md'
+            disable_meta_properties: [ title ]
+            fields:
+                price:
+                    property_path: value
+                    form_options:
+                        mapped: false
+                currency:
+                    form_options:
+                        mapped: false
+            actions:
+                create:
+                    form_options:
+                        validation_groups: [ Default, api, checkout_validity ]
+                update:
+                    form_options:
+                        validation_groups: [ Default, api, checkout_validity ]
+            subresources:
+                lineItem:
+                    actions:
+                        update_relationship: false
+                kitItem:
+                    actions:
+                        update_relationship: false
+                product:
+                    actions:
+                        update_relationship: false
+                productUnit:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout_line_item_group.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                name:
+                    data_type: string
+                itemCount:
+                    data_type: integer
+                totalValue:
+                    data_type: money
+                currency:
+                    data_type: string
+                shippingMethod:
+                    data_type: string
+                shippingMethodType:
+                    data_type: string
+                shippingEstimateAmount:
+                    data_type: money
+            actions:
+                get_list: false
+                create: false
+                update:
+                    form_options:
+                        validation_groups: [ Default, api, checkout_validity ]
+                        constraints:
+                            - Oro\Bundle\CheckoutBundle\Validator\Constraints\ShippingMethodIsValid:
+                                  groups: [ checkout_validity ]
+                    fields:
+                        name:
+                            form_options:
+                                mapped: false
+                        totalValue:
+                            form_options:
+                                mapped: false
+                        itemCount:
+                            form_options:
+                                mapped: false
+                        shippingMethod:
+                            form_options:
+                                constraints:
+                                    - NotBlank: { allowNull: true }
+                        shippingMethodType:
+                            form_options:
+                                constraints:
+                                    - NotBlank: { allowNull: true }
+                        shippingEstimateAmount:
+                            form_options:
+                                mapped: false
+                delete: false
+                delete_list: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout_address.md'
+            actions:
+                get:
+                    description: Get Checkout Address
+                    acl_resource: ~
+                create:
+                    description: Create Checkout Address
+                    acl_resource: ~
+                update:
+                    description: Update Checkout Address
+                    # enable the "update" action manually because this action is disabled for OrderAddress
+                    # that is the parent entity for CheckoutAddress
+                    exclude: false
+                    acl_resource: ~
+                get_subresource:
+                    acl_resource: ~
+                get_relationship:
+                    acl_resource: ~
+            subresources:
+                country:
+                    actions:
+                        update_relationship: false
+                region:
+                    actions:
+                        update_relationship: false
+                customerAddress:
+                    actions:
+                        update_relationship: false
+                customerUserAddress:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\AvailableAddress:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                address:
+                    target_class: Oro\Bundle\ApiBundle\Model\EntityIdentifier
+                group:
+                    data_type: string
+                title:
+                    data_type: string
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\AvailableShippingMethod:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                label:
+                    data_type: string
+                types:
+                    data_type: objects
+                    target_class: Oro\Bundle\CheckoutBundle\Api\Model\AvailableShippingMethodType
+                    target_type: to-many
+                    fields:
+                        id:
+                            data_type: string
+                        label:
+                            data_type: string
+                        shippingCost:
+                            data_type: money
+                        currency:
+                            data_type: string
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\AvailablePaymentMethod:
+            documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout.md'
+            disable_meta_properties: true
+            identifier_field_names: [id]
+            fields:
+                id:
+                    data_type: string
+                label:
+                    data_type: string
+                options:
+                    data_type: object
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\ChangeCouponRequest:
+            fields:
+                couponCode:
+                    data_type: string
+                    form_options:
+                        constraints:
+                            - NotBlank: ~
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\CheckoutStartOptions:
+            fields:
+                actualize:
+                    data_type: boolean
+            # this entity does not have own API resource
+            actions: false
+
+        Oro\Bundle\CheckoutBundle\Api\Model\CheckoutPaymentResponse:
+            fields:
+                message:
+                    data_type: string
+                paymentUrl:
+                    data_type: string
+                errors:
+                    data_type: objects
+            # this entity does not have own API resource
+            actions: false

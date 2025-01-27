@@ -3,12 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\Transition;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
-use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingGroupMethodSetterInterface;
-use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingMethod;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
@@ -21,193 +18,97 @@ use PHPUnit\Framework\TestCase;
 class ContinueToShippingMethodTest extends TestCase
 {
     private AddressActionsInterface|MockObject $addressActions;
-    private ConfigProvider|MockObject $configProvider;
-    private DefaultShippingMethodSetterInterface|MockObject $defaultShippingMethodSetter;
-    private DefaultMultiShippingMethodSetterInterface|MockObject $defaultMultiShippingMethodSetter;
-    private DefaultMultiShippingGroupMethodSetterInterface|MockObject $defaultMultiShippingGroupMethodSetter;
+    private ShippingMethodActionsInterface|MockObject $shippingMethodActions;
     private TransitionServiceInterface|MockObject $baseContinueTransition;
-
     private ContinueToShippingMethod $transition;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->addressActions = $this->createMock(AddressActionsInterface::class);
-        $this->configProvider = $this->createMock(ConfigProvider::class);
-        $this->defaultShippingMethodSetter = $this->createMock(DefaultShippingMethodSetterInterface::class);
-        $this->defaultMultiShippingMethodSetter = $this->createMock(DefaultMultiShippingMethodSetterInterface::class);
-        $this->defaultMultiShippingGroupMethodSetter = $this->createMock(
-            DefaultMultiShippingGroupMethodSetterInterface::class
-        );
+        $this->shippingMethodActions = $this->createMock(ShippingMethodActionsInterface::class);
         $this->baseContinueTransition = $this->createMock(TransitionServiceInterface::class);
 
         $this->transition = new ContinueToShippingMethod(
             $this->addressActions,
-            $this->configProvider,
-            $this->defaultShippingMethodSetter,
-            $this->defaultMultiShippingMethodSetter,
-            $this->defaultMultiShippingGroupMethodSetter,
+            $this->shippingMethodActions,
             $this->baseContinueTransition
         );
     }
 
+    private function getWorkflowItem(Checkout $checkout): WorkflowItem
+    {
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $workflowItem->expects(self::any())
+            ->method('getEntity')
+            ->willReturn($checkout);
+
+        return $workflowItem;
+    }
+
     public function testIsPreConditionAllowedWithValidConditions(): void
     {
-        $errors = new ArrayCollection();
         $workflowItem = $this->createMock(WorkflowItem::class);
+        $errors = new ArrayCollection();
 
-        $this->baseContinueTransition->expects($this->once())
+        $this->baseContinueTransition->expects(self::once())
             ->method('isPreConditionAllowed')
             ->with($workflowItem, $errors)
             ->willReturn(true);
 
-        $result = $this->transition->isPreConditionAllowed($workflowItem, $errors);
-
-        $this->assertTrue($result);
+        self::assertTrue($this->transition->isPreConditionAllowed($workflowItem, $errors));
     }
 
     public function testIsPreConditionAllowedWithInvalidConditions(): void
     {
         $workflowItem = $this->createMock(WorkflowItem::class);
 
-        $this->baseContinueTransition->expects($this->once())
+        $this->baseContinueTransition->expects(self::once())
             ->method('isPreConditionAllowed')
             ->with($workflowItem, null)
             ->willReturn(false);
 
-        $result = $this->transition->isPreConditionAllowed($workflowItem);
-
-        $this->assertFalse($result);
+        self::assertFalse($this->transition->isPreConditionAllowed($workflowItem));
     }
 
     public function testIsConditionAllowedWithShipToBillingAddress(): void
     {
         $checkout = new Checkout();
         $checkout->setShipToBillingAddress(true);
+        $workflowItem = $this->getWorkflowItem($checkout);
 
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getEntity')->willReturn($checkout);
-
-        $result = $this->transition->isConditionAllowed($workflowItem);
-
-        $this->assertTrue($result);
+        self::assertTrue($this->transition->isConditionAllowed($workflowItem));
     }
 
     public function testIsConditionAllowedWithShippingAddress(): void
     {
         $checkout = new Checkout();
-        $shippingAddress = new OrderAddress();
-        $checkout->setShippingAddress($shippingAddress);
+        $checkout->setShippingAddress(new OrderAddress());
+        $workflowItem = $this->getWorkflowItem($checkout);
 
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getEntity')->willReturn($checkout);
-
-        $result = $this->transition->isConditionAllowed($workflowItem);
-
-        $this->assertTrue($result);
+        self::assertTrue($this->transition->isConditionAllowed($workflowItem));
     }
 
     public function testIsConditionAllowedWithoutShippingAddress(): void
     {
         $checkout = new Checkout(); // No Shipping Address set
+        $workflowItem = $this->getWorkflowItem($checkout);
 
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getEntity')->willReturn($checkout);
-
-        $result = $this->transition->isConditionAllowed($workflowItem);
-
-        $this->assertFalse($result);
+        self::assertFalse($this->transition->isConditionAllowed($workflowItem));
     }
 
-    public function testExecuteWithMultiShippingDisabled(): void
+    public function testExecute(): void
     {
         $checkout = new Checkout();
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getEntity')->willReturn($checkout);
+        $workflowItem = $this->getWorkflowItem($checkout);
 
-        $this->addressActions->expects($this->once())
+        $this->addressActions->expects(self::once())
             ->method('updateShippingAddress')
             ->with($checkout);
 
-        $this->configProvider->expects($this->once())
-            ->method('isMultiShippingEnabled')
-            ->willReturn(false);
-
-        $this->defaultShippingMethodSetter->expects($this->once())
-            ->method('setDefaultShippingMethod')
-            ->with($checkout);
-
-        $this->defaultMultiShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
-
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
-
-        $this->transition->execute($workflowItem);
-    }
-
-    public function testExecuteWithShippingSelectionByLineItemEnabled(): void
-    {
-        $checkout = new Checkout();
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getEntity')->willReturn($checkout);
-
-        $this->addressActions->expects($this->once())
-            ->method('updateShippingAddress')
-            ->with($checkout);
-
-        $this->configProvider->expects($this->once())
-            ->method('isMultiShippingEnabled')
-            ->willReturn(true);
-
-        $this->configProvider->expects($this->once())
-            ->method('isShippingSelectionByLineItemEnabled')
-            ->willReturn(true);
-
-        $this->defaultShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethod');
-
-        $this->defaultMultiShippingMethodSetter->expects($this->once())
-            ->method('setDefaultShippingMethods')
-            ->with($checkout);
-
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
-
-        $this->transition->execute($workflowItem);
-    }
-
-    public function testExecuteWithLineItemsGroupingEnabled(): void
-    {
-        $checkout = new Checkout();
-        $workflowItem = $this->createMock(WorkflowItem::class);
-        $workflowItem->method('getEntity')->willReturn($checkout);
-
-        $this->addressActions->expects($this->once())
-            ->method('updateShippingAddress')
-            ->with($checkout);
-
-        $this->configProvider->expects($this->once())
-            ->method('isMultiShippingEnabled')
-            ->willReturn(true);
-
-        $this->configProvider->expects($this->exactly(2))
-            ->method('isShippingSelectionByLineItemEnabled')
-            ->willReturn(false);
-
-        $this->configProvider->expects($this->once())
-            ->method('isLineItemsGroupingEnabled')
-            ->willReturn(true);
-
-        $this->defaultShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethod');
-
-        $this->defaultMultiShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
-
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->once())
-            ->method('setDefaultShippingMethods')
-            ->with($checkout);
+        $this->shippingMethodActions->expects(self::once())
+            ->method('updateDefaultShippingMethods')
+            ->with($checkout, null, null, false);
 
         $this->transition->execute($workflowItem);
     }
@@ -219,27 +120,16 @@ class ContinueToShippingMethodTest extends TestCase
         $checkout = new Checkout();
         $checkout->setBillingAddress($address);
         $checkout->setCustomerUser((new CustomerUser())->setEmail('test@test.com'));
-
         $workflowItem = new WorkflowItem();
         $workflowItem->setEntity($checkout);
 
-        $this->addressActions->expects($this->once())
+        $this->addressActions->expects(self::once())
             ->method('updateShippingAddress')
             ->with($checkout);
 
-        $this->configProvider->expects($this->once())
-            ->method('isMultiShippingEnabled')
-            ->willReturn(false);
-
-        $this->defaultShippingMethodSetter->expects($this->once())
-            ->method('setDefaultShippingMethod')
-            ->with($checkout);
-
-        $this->defaultMultiShippingMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
-
-        $this->defaultMultiShippingGroupMethodSetter->expects($this->never())
-            ->method('setDefaultShippingMethods');
+        $this->shippingMethodActions->expects(self::once())
+            ->method('updateDefaultShippingMethods')
+            ->with($checkout, null, null, false);
 
         $this->transition->execute($workflowItem);
 

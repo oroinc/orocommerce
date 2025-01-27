@@ -4,80 +4,81 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\BaseTransition;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PaymentError;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class PaymentErrorTest extends TestCase
 {
-    private ManagerRegistry|MockObject $registry;
     private TransitionServiceInterface|MockObject $baseTransition;
-
+    private ManagerRegistry|MockObject $doctrine;
     private PaymentError $paymentError;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->baseTransition = $this->createMock(TransitionServiceInterface::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->paymentError = new PaymentError(
-            $this->registry,
-            $this->baseTransition
-        );
+        $this->paymentError = new PaymentError($this->baseTransition, $this->doctrine);
     }
 
     public function testExecuteRemovesOrder(): void
     {
-        $workflowItem = $this->createMock(WorkflowItem::class);
         $order = $this->createMock(Order::class);
-        $data = new WorkflowData(['order' => $order]);
 
-        $workflowItem->expects($this->any())
-            ->method('getData')
-            ->willReturn($data);
+        $checkout = new Checkout();
+        $checkout->setPaymentInProgress(true);
+        $checkout->setOrder($order);
 
-        $this->baseTransition->expects($this->once())
+        $workflowItem = $this->createMock(WorkflowItem::class);
+        $workflowItem->expects(self::once())
+            ->method('getEntity')
+            ->willReturn($checkout);
+
+        $this->baseTransition->expects(self::once())
             ->method('execute')
             ->with($workflowItem);
 
         $entityManager = $this->createMock(EntityManagerInterface::class);
-        $this->registry->expects($this->once())
+        $this->doctrine->expects(self::once())
             ->method('getManagerForClass')
             ->with(Order::class)
             ->willReturn($entityManager);
-
-        $entityManager->expects($this->once())
+        $entityManager->expects(self::once())
             ->method('remove')
             ->with($order);
 
         $this->paymentError->execute($workflowItem);
 
-        $this->assertNull($data->offsetGet('order'));
+        self::assertFalse($checkout->isPaymentInProgress());
+        self::assertNull($checkout->getOrder());
     }
 
     public function testExecuteDoesNotRemoveOrderIfNotPresent(): void
     {
+        $checkout = new Checkout();
+        $checkout->setPaymentInProgress(true);
+
         $workflowItem = $this->createMock(WorkflowItem::class);
-        $data = new WorkflowData(['order' => null]);
+        $workflowItem->expects(self::once())
+            ->method('getEntity')
+            ->willReturn($checkout);
 
-        $workflowItem->expects($this->any())
-            ->method('getData')
-            ->willReturn($data);
-
-        $this->baseTransition->expects($this->once())
+        $this->baseTransition->expects(self::once())
             ->method('execute')
             ->with($workflowItem);
 
-        $this->registry->expects($this->never())
+        $this->doctrine->expects(self::never())
             ->method('getManagerForClass');
 
         $this->paymentError->execute($workflowItem);
 
-        $this->assertNull($data->offsetGet('order'));
+        self::assertFalse($checkout->isPaymentInProgress());
+        self::assertNull($checkout->getOrder());
     }
 }

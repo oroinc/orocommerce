@@ -8,26 +8,59 @@ use Oro\Bundle\SaleBundle\Model\Condition\QuoteAcceptable;
 use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Oro\Component\ConfigExpression\Exception\InvalidArgumentException;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\PropertyAccess\PropertyPath;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
+class QuoteAcceptableTest extends TestCase
 {
-    /** @var QuoteAcceptable */
-    private $condition;
+    private ValidatorInterface|MockObject $validator;
+    private QuoteAcceptable $condition;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->condition = new QuoteAcceptable();
+        $this->validator = $this->createMock(ValidatorInterface::class);
+
+        $this->condition = new QuoteAcceptable($this->validator);
         $this->condition->setContextAccessor(new ContextAccessor());
     }
 
-    public function testGetName()
+    private function getQuote(bool $isAcceptable = false): Quote
     {
-        $this->assertEquals(QuoteAcceptable::NAME, $this->condition->getName());
+        $quote = $this->createMock(Quote::class);
+        $quote->expects(self::any())
+            ->method('isAcceptable')
+            ->willReturn($isAcceptable);
+        $quote->expects(self::any())
+            ->method('getQid')
+            ->willReturn(42);
+        $quote->expects(self::any())
+            ->method('getQuoteProducts')
+            ->willReturn([]);
+
+        return $quote;
     }
 
-    public function testInitializeException()
+    private function getQuoteDemand(bool $isAcceptable, bool $withQuote = true): QuoteDemand
+    {
+        $quoteDemand = new QuoteDemand();
+        if ($withQuote) {
+            $quoteDemand->setQuote($this->getQuote($isAcceptable));
+        }
+
+        return $quoteDemand;
+    }
+
+    public function testGetName(): void
+    {
+        self::assertEquals('quote_acceptable', $this->condition->getName());
+    }
+
+    public function testInitializeException(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('First option should be valid property definition.');
@@ -38,20 +71,29 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider evaluateDataProvider
      */
-    public function testEvaluate(array $options, ?object $quote, bool $expected)
+    public function testEvaluate(array $options, ?object $quote, bool $expected): void
     {
         $errors = new ArrayCollection();
 
-        $this->assertSame($this->condition, $this->condition->initialize($options));
-        $this->assertEquals($expected, $this->condition->evaluate(['quote' => $quote], $errors));
+        $violationsArray = [];
+        if (!$expected) {
+            $violationsArray[] = $this->createMock(ConstraintViolationInterface::class);
+        }
+        $violations = new ConstraintViolationList($violationsArray);
+        $this->validator->expects(self::once())
+            ->method('validate')
+            ->willReturn($violations);
 
-        $this->assertCount((int)!$expected, $errors->toArray());
+        self::assertSame($this->condition, $this->condition->initialize($options));
+        self::assertEquals($expected, $this->condition->evaluate(['quote' => $quote], $errors));
+
+        self::assertCount((int)!$expected, $errors->toArray());
 
         if (!$expected) {
             $quote = $quote instanceof QuoteDemand ? $quote->getQuote() : $quote;
             $id = $quote instanceof Quote ? $quote->getQid() : null;
 
-            $this->assertEquals(
+            self::assertEquals(
                 [
                     'message' => 'oro.frontend.sale.message.quote.not_available',
                     'parameters' => ['%qid%' => (int)$id]
@@ -127,40 +169,14 @@ class QuoteAcceptableTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testEvaluateWithDefaultPropertyPath()
+    public function testEvaluateWithDefaultPropertyPath(): void
     {
         $errors = new ArrayCollection();
         $options = [new PropertyPath('quote'), true];
 
-        $this->assertSame($this->condition, $this->condition->initialize($options));
-        $this->assertTrue($this->condition->evaluate(['quote' => null], $errors));
+        self::assertSame($this->condition, $this->condition->initialize($options));
+        self::assertTrue($this->condition->evaluate(['quote' => null], $errors));
 
-        $this->assertCount(0, $errors->toArray());
-    }
-
-    private function getQuote(bool $isAcceptable = false): Quote
-    {
-        $quote = $this->createMock(Quote::class);
-        $quote->expects($this->any())
-            ->method('isAcceptable')
-            ->willReturn($isAcceptable);
-        $quote->expects($this->any())
-            ->method('getQid')
-            ->willReturn(42);
-        $quote->expects($this->any())
-            ->method('getQuoteProducts')
-            ->willReturn([]);
-
-        return $quote;
-    }
-
-    private function getQuoteDemand(bool $isAcceptable, bool $withQuote = true): QuoteDemand
-    {
-        $quoteDemand = new QuoteDemand();
-        if ($withQuote) {
-            $quoteDemand->setQuote($this->getQuote($isAcceptable));
-        }
-
-        return $quoteDemand;
+        self::assertCount(0, $errors->toArray());
     }
 }

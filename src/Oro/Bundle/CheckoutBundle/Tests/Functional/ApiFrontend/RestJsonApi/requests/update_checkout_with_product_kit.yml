@@ -1,0 +1,173 @@
+data:
+    type: checkouts
+    id: '<toString(@checkout.empty->id)>'
+    attributes:
+        poNumber: 'PO001'
+        shippingMethod: '@checkout.completed->shippingMethod'
+        shippingMethodType: primary
+        paymentMethod: '@checkout.completed->paymentMethod'
+        shipUntil: '2050-01-11'
+        shipToBillingAddress: false
+        customerNotes: 'Customer notes'
+        currency: USD
+        completed: false
+    relationships:
+        lineItems:
+            data:
+                -
+                    type: checkoutlineitems
+                    id: 'lineitem1'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+        billingAddress:
+            data:
+                type: checkoutaddresses
+                id: 'billing_address'
+        shippingAddress:
+            data:
+                type: checkoutaddresses
+                id: 'shipping_address'
+included:
+    -
+        type: checkoutaddresses
+        id: billing_address
+        attributes:
+            label: Address
+            street: Street
+            city: Los Angeles
+            postalCode: 90001
+            organization: Acme
+            firstName: John
+            lastName: Doe
+            phone: 123-456
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: checkoutaddresses
+        id: shipping_address
+        attributes:
+            label: Address
+            street: Street
+            city: Los Angeles
+            postalCode: 90001
+            organization: Acme
+            firstName: John
+            lastName: Doe
+            phone: 123-456
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country_usa->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region_usa_california->combinedCode)>'
+    -
+        type: checkoutlineitems
+        id: lineitem1
+        attributes:
+            productSku: 'product-kit-3'
+            freeFormProduct: null
+            quantity: 1
+            priceFixed: false
+            price: '143.5800'
+            currency: USD
+            comment: null
+            shippingEstimateAmount: null
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: checkoutproductkititemlineitem1
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: checkoutproductkititemlineitem2
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: checkoutproductkititemlineitem3
+    -
+        type: checkoutproductkititemlineitems
+        id: checkoutproductkititemlineitem1
+        attributes:
+            quantity: 1
+            sortOrder: 1
+            price: '115.9000'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: checkoutproductkititemlineitems
+        id: checkoutproductkititemlineitem2
+        attributes:
+            quantity: 2
+            sortOrder: 2
+            price: '12.5900'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: checkoutproductkititemlineitems
+        id: checkoutproductkititemlineitem3
+        attributes:
+            quantity: 1
+            sortOrder: 3
+            price: '2.5000'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

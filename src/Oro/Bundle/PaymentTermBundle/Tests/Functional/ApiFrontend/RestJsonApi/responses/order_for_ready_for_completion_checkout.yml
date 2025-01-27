@@ -1,0 +1,37 @@
+data:
+    type: orders
+    attributes:
+        customerNotes: 'checkout.ready_for_completion'
+        shipUntil: null
+        currency: 'USD'
+        subtotalWithDiscounts: '90.5000'
+        subtotalValue: '100.5000'
+        totalValue: '100.5000'
+        shippingCostAmount: '10.0000'
+        totalIncludingTax: "110.5000"
+        totalExcludingTax: "110.5000"
+        totalTaxAmount: "0.0000"
+        paymentTerm: 'net 10'
+        paymentStatus:
+            code: 'pending'
+            label: 'Pending payment'
+        discounts:
+            -
+                type: 'promotion.order'
+                description: 'Discount'
+                amount: '10.0000'
+    relationships:
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+        status:
+            data: ~
+        shippingStatus:
+            data:
+                type: ordershippingstatuses
+                id: not_shipped

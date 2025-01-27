@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider\MultiShipping;
 
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelper;
 use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
@@ -30,7 +29,7 @@ class LineItemGroupTitleProvider
         $this->translator = $translator;
     }
 
-    public function getTitle(string $lineItemGroupKey, CheckoutLineItem $lineItem): string
+    public function getTitle(string $lineItemGroupKey, object $lineItem): string
     {
         if (GroupLineItemHelper::OTHER_ITEMS_KEY === $lineItemGroupKey) {
             return $this->translator->trans('oro.checkout.line_items_grouping.other_items_group.title');

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryWithEntityFallbackValuesData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -35,81 +36,80 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
             LoadCategoryWithEntityFallbackValuesData::class,
             LoadCheckoutSubtotals::class
         ]);
-
-        $this->repository = $this->getRepository();
+        $this->repository = $this->getDoctrine()->getRepository(Checkout::class);
     }
 
-    protected function getRepository(): CheckoutRepository
+    private function getDoctrine(): ManagerRegistry
     {
-        return $this->getContainer()->get('doctrine')->getRepository(Checkout::class);
+        return self::getContainer()->get('doctrine');
     }
 
-    public function testGetCheckoutWithRelations()
+    private function getCheckoutIds(iterable $checkouts): array
     {
-        $repository = $this->getRepository();
-
-        $expected = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1);
-        $result = $repository->getCheckoutWithRelations($expected->getId());
-
-        $this->assertSame($expected, $result);
-    }
-
-    public function testCountItemsPerCheckout()
-    {
-        $repository = $this->getRepository();
-
-        $checkouts = $repository->findAll();
-
         $ids = [];
-
+        /** @var Checkout $checkout */
         foreach ($checkouts as $checkout) {
             $ids[] = $checkout->getId();
         }
 
-        $counts = $repository->countItemsPerCheckout($ids);
+        return $ids;
+    }
 
-        $this->assertTrue(count($counts) > 0);
+    private function deleteAllWorkflowItems(): void
+    {
+        $em = $this->getDoctrine()->getManagerForClass(WorkflowItem::class);
+        $workflowItems = $em->getRepository(WorkflowItem::class)->findAll();
+        foreach ($workflowItems as $workflowItem) {
+            $em->remove($workflowItem);
+        }
+        $em->flush();
+    }
+
+    public function testGetCheckoutWithRelations(): void
+    {
+        /** @var Checkout $checkout */
+        $expected = $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1);
+        $found = $this->repository->getCheckoutWithRelations($expected->getId());
+        self::assertSame($expected, $found);
+    }
+
+    public function testCountItemsPerCheckout(): void
+    {
+        $checkouts = $this->repository->findAll();
+
+        $counts = $this->repository->countItemsPerCheckout($this->getCheckoutIds($checkouts));
+        self::assertNotEmpty($counts);
 
         $found = 0;
-
         foreach ($checkouts as $checkout) {
             if (isset($counts[$checkout->getId()])) {
                 $found++;
             }
         }
-
-        $this->assertEquals(count($ids), $found);
+        self::assertEquals(count($checkouts), $found);
     }
 
-    public function testGetCheckoutsByIds()
+    public function testGetCheckoutsByIds(): void
     {
-        $repository = $this->getRepository();
-
-        $checkouts = $repository->findAll();
-
-        $ids = [];
+        $checkouts = $this->repository->findAll();
 
         $withSource = 0;
-
         foreach ($checkouts as $checkout) {
-            $ids[] = $checkout->getId();
-
             if (is_object($checkout->getSourceEntity())) {
                 $withSource++;
             }
         }
 
-        $sources = $repository->getCheckoutsByIds($ids);
-
+        $checkoutsWithSource = $this->repository->getCheckoutsByIds($this->getCheckoutIds($checkouts));
         $found = 0;
-
         foreach ($checkouts as $checkout) {
-            if (isset($sources[$checkout->getId()]) && is_object($sources[$checkout->getId()])) {
+            if (isset($checkoutsWithSource[$checkout->getId()])
+                && is_object($checkoutsWithSource[$checkout->getId()])
+            ) {
                 $found++;
             }
         }
-
-        $this->assertEquals($withSource, $found);
+        self::assertEquals($withSource, $found);
     }
 
     /**
@@ -120,15 +120,13 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         string $currency,
         string $expected
     ): void {
-        $this->assertSame(
-            $this->getReference($expected),
-            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
-                $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL),
-                ['shoppingList' => $this->getReference($shoppingList)],
-                'b2b_flow_checkout',
-                $currency
-            )
+        $foundCheckout = $this->repository->findCheckoutByCustomerUserAndSourceCriteriaWithCurrency(
+            $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL),
+            ['shoppingList' => $this->getReference($shoppingList)],
+            'b2b_flow_checkout',
+            $currency
         );
+        self::assertSame($this->getReference($expected), $foundCheckout);
     }
 
     /**
@@ -139,105 +137,83 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         string $currency,
         string $expected
     ): void {
-        $this->assertSame(
-            $this->getReference($expected),
-            $this->getRepository()->findCheckoutBySourceCriteriaWithCurrency(
-                ['shoppingList' => $this->getReference($shoppingList)],
-                'b2b_flow_checkout',
-                $currency
-            )
+        $foundCheckout = $this->repository->findCheckoutBySourceCriteriaWithCurrency(
+            ['shoppingList' => $this->getReference($shoppingList)],
+            'b2b_flow_checkout',
+            $currency
         );
+        self::assertSame($this->getReference($expected), $foundCheckout);
     }
 
-    public function findCheckoutWithCurrencyDataProvider(): array
+    public static function findCheckoutWithCurrencyDataProvider(): array
     {
         return [
             [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_7,
                 'currency' => 'USD',
-                'expected' => LoadShoppingListsCheckoutsData::CHECKOUT_7,
+                'expected' => LoadShoppingListsCheckoutsData::CHECKOUT_7
             ],
             [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_8,
                 'currency' => 'EUR',
-                'expected' => LoadShoppingListsCheckoutsData::CHECKOUT_10,
-            ],
+                'expected' => LoadShoppingListsCheckoutsData::CHECKOUT_10
+            ]
         ];
     }
 
-    public function testDeleteWithoutWorkflowItem()
+    public function testDeleteWithoutWorkflowItem(): void
     {
-        $repository = $this->getRepository();
-
-        $checkouts = $repository->findBy(['deleted' => false]);
+        $checkouts = $this->repository->findBy(['deleted' => false]);
 
         $this->deleteAllWorkflowItems();
-        $repository->deleteWithoutWorkflowItem();
+        $this->repository->deleteWithoutWorkflowItem();
 
-        $this->assertCount(count($checkouts), $repository->findBy(['deleted' => true]));
+        self::assertCount(count($checkouts), $this->repository->findBy(['deleted' => true]));
     }
 
-    public function testFindByType()
+    public function testFindByType(): void
     {
         $checkouts = $this->repository->findByPaymentMethod(LoadShoppingListsCheckoutsData::PAYMENT_METHOD);
-
-        static::assertContains($this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7), $checkouts);
+        self::assertContains($this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7), $checkouts);
     }
 
-    protected function deleteAllWorkflowItems()
-    {
-        $manager = $this->getContainer()->get('doctrine')->getManagerForClass(WorkflowItem::class);
-        $repository = $manager->getRepository(WorkflowItem::class);
-
-        $workflowItems = $repository->findAll();
-
-        foreach ($workflowItems as $workflowItem) {
-            $manager->remove($workflowItem);
-        }
-
-        $manager->flush();
-    }
-
-    public function testGetRelatedEntitiesCount()
+    public function testGetRelatedEntitiesCount(): void
     {
         $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
-
         self::assertSame(3, $this->repository->getRelatedEntitiesCount($customerUser));
     }
 
-    public function testGetRelatedEntitiesCountZero()
+    public function testGetRelatedEntitiesCountZero(): void
     {
         $customerUserWithoutRelatedEntities = $this->getReference(LoadCustomerUserData::LEVEL_1_1_EMAIL);
-
         self::assertSame(0, $this->repository->getRelatedEntitiesCount($customerUserWithoutRelatedEntities));
     }
 
-    public function testResetCustomerUserForSomeEntities()
+    public function testResetCustomerUserForSomeEntities(): void
     {
-        $customerUser = $this->getContainer()
-            ->get('doctrine')
+        $customerUser = $this->getDoctrine()
             ->getRepository(CustomerUser::class)
             ->findOneBy(['username' => LoadAuthCustomerUserData::AUTH_USER]);
 
-        $this->getRepository()->resetCustomerUser($customerUser, [
+        $this->repository->resetCustomerUser($customerUser, [
             $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_1),
             $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_2),
         ]);
 
-        $checkouts = $this->getRepository()->findBy(['customerUser' => null]);
-        $this->assertCount(2, $checkouts);
+        $checkouts = $this->repository->findBy(['customerUser' => null]);
+        self::assertCount(2, $checkouts);
     }
 
-    public function testResetCustomerUser()
+    public function testResetCustomerUser(): void
     {
         $customerUser = $this->getReference(LoadCustomerUserData::LEVEL_1_EMAIL);
-        $this->getRepository()->resetCustomerUser($customerUser);
+        $this->repository->resetCustomerUser($customerUser);
 
-        $checkouts = $this->getRepository()->findBy(['customerUser' => null]);
-        $this->assertCount(5, $checkouts);
+        $checkouts = $this->repository->findBy(['customerUser' => null]);
+        self::assertCount(5, $checkouts);
     }
 
-    public function testFindWithInvalidSubtotals()
+    public function testFindWithInvalidSubtotals(): void
     {
         /** @var CheckoutSubtotal $subtotal1 */
         $subtotal1 = $this->getReference(LoadCheckoutSubtotals::CHECKOUT_SUBTOTAL_1);
@@ -247,17 +223,14 @@ class CheckoutRepositoryTest extends FrontendWebTestCase
         $subtotal1->setValid(false);
         $subtotal2->setValid(false);
 
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(CheckoutSubtotal::class);
+        $em = $this->getDoctrine()->getManagerForClass(CheckoutSubtotal::class);
         $em->flush();
 
-        $checkouts = $this->getRepository()->findWithInvalidSubtotals();
-        $this->assertCount(2, $checkouts);
-        $ids = [];
-        foreach ($checkouts as $checkout) {
-            $ids[] = $checkout->getId();
-        }
+        $checkouts = $this->repository->findWithInvalidSubtotals();
+        self::assertCount(2, $checkouts);
 
-        $this->assertContains($subtotal1->getCheckout()->getId(), $ids);
-        $this->assertContains($subtotal2->getCheckout()->getId(), $ids);
+        $ids = $this->getCheckoutIds($checkouts);
+        self::assertContains($subtotal1->getCheckout()->getId(), $ids);
+        self::assertContains($subtotal2->getCheckout()->getId(), $ids);
     }
 }

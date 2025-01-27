@@ -4,12 +4,8 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
-use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\CheckoutPaymentContextProvider;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\SplitOrderActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PlaceOrder as BasePlaceOrder;
@@ -23,30 +19,14 @@ use Oro\Component\Action\Action\ExtendableAction;
  */
 class PlaceOrder extends BasePlaceOrder
 {
-    private ?CheckoutLineItemsConverter $checkoutLineItemsConverter = null;
-
     public function __construct(
         ActionExecutor $actionExecutor,
-        CheckoutPaymentContextProvider $paymentContextProvider,
-        OrderActionsInterface $orderActions,
-        CheckoutActionsInterface $checkoutActions,
         TransitionServiceInterface $baseContinueTransition,
-        private ConfigProvider $configProvider,
+        private CheckoutActionsInterface $checkoutActions,
         private SplitOrderActionsInterface $splitOrderActions,
-        private ShippingMethodActionsInterface $shippingMethodActions,
+        private ShippingMethodActionsInterface $shippingMethodActions
     ) {
-        parent::__construct(
-            $actionExecutor,
-            $paymentContextProvider,
-            $orderActions,
-            $checkoutActions,
-            $baseContinueTransition
-        );
-    }
-
-    public function setCheckoutLineItemsConverter(CheckoutLineItemsConverter $checkoutLineItemsConverter): void
-    {
-        $this->checkoutLineItemsConverter = $checkoutLineItemsConverter;
+        parent::__construct($actionExecutor, $baseContinueTransition);
     }
 
     #[\Override]
@@ -64,16 +44,6 @@ class PlaceOrder extends BasePlaceOrder
             $data->offsetGet('line_item_groups_shipping_methods')
         );
 
-        if (!$this->shippingMethodActions->hasApplicableShippingRules($checkout, $errors)) {
-            return false;
-        }
-
-        if (!$this->isPaymentMethodApplicable($checkout)) {
-            $errors?->add(['message' => 'oro.checkout.workflow.condition.payment_method_is_not_applicable.message']);
-
-            return false;
-        }
-
         return parent::isPreConditionAllowed($workflowItem, $errors);
     }
 
@@ -85,8 +55,7 @@ class PlaceOrder extends BasePlaceOrder
         $workflowResult = $workflowItem->getResult();
         $data = $workflowItem->getData();
 
-        $order = $this->placeOrder($checkout, $data->offsetGet('grouped_line_items'));
-        $data->offsetSet('order', $order);
+        $order = $this->splitOrderActions->placeOrder($checkout, $data->offsetGet('grouped_line_items'));
 
         $data->offsetSet('payment_in_progress', true);
         $responseData = $this->executeCheckoutPurchase(
@@ -115,27 +84,10 @@ class PlaceOrder extends BasePlaceOrder
             return;
         }
 
-        $url = !empty($responseData['purchaseSuccessful']) ? $responseData['successUrl'] : $responseData['failureUrl'];
+        $url = !empty($responseData['purchaseSuccessful'])
+            ? $responseData['successUrl']
+            : $responseData['failureUrl'];
         $workflowItem->getResult()->offsetSet('redirectUrl', $url);
-    }
-
-    private function placeOrder(Checkout $checkout, ?array $groupedLineItems): Order
-    {
-        if ($groupedLineItems && $this->configProvider->isCreateSubOrdersForEachGroupEnabled()) {
-            $this->checkoutLineItemsConverter->setReuseLineItems(true);
-        }
-
-        $order = $this->orderActions->placeOrder($checkout);
-
-        try {
-            if ($groupedLineItems && $this->configProvider->isCreateSubOrdersForEachGroupEnabled()) {
-                $this->splitOrderActions->createChildOrders($checkout, $order, $groupedLineItems);
-            }
-        } finally {
-            $this->checkoutLineItemsConverter->setReuseLineItems(false);
-        }
-
-        return $order;
     }
 
     private function executeCheckoutPurchase(
@@ -157,7 +109,7 @@ class PlaceOrder extends BasePlaceOrder
             ]
         );
 
-        # Used for cases when sub-orders are paid separately and some of sub-order payments failed.
+        // used for cases when sub-orders are paid separately and some of sub-order payments failed
         if (!empty($purchaseResult['responseData']['purchasePartial'])) {
             $purchaseResult['responseData']['partiallyPaidUrl'] = $this->checkoutActions->getCheckoutUrl(
                 $checkout,

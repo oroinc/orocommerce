@@ -44,17 +44,15 @@ workflows:
             edit_order_link:
                 type: string
             payment_in_progress:
-                type: bool
+                property_path: checkout.paymentInProgress
             payment_validate:
                 type: bool
             payment_save_for_later:
                 type: bool
             additional_data:
-                type: string
+                property_path: checkout.additionalData
             order:
-                type: entity
-                options:
-                    class: Oro\Bundle\OrderBundle\Entity\Order
+                property_path: checkout.order
             visitor:
                 type: entity
                 options:

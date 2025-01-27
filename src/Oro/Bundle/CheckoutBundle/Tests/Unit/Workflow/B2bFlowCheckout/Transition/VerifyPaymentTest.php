@@ -5,17 +5,19 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\B2bFlowCheckout\Transiti
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderLineItemsNotEmptyInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\VerifyPayment;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Component\Validator\ConstraintViolationInterface;
+use Symfony\Component\Validator\ConstraintViolationList;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class VerifyPaymentTest extends TestCase
 {
     private ActionExecutor|MockObject $actionExecutor;
-    private OrderLineItemsNotEmptyInterface|MockObject $orderLineItemsNotEmpty;
+    private ValidatorInterface|MockObject $validator;
 
     private VerifyPayment $verifyPayment;
 
@@ -23,12 +25,10 @@ class VerifyPaymentTest extends TestCase
     protected function setUp(): void
     {
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
-        $this->orderLineItemsNotEmpty = $this->createMock(OrderLineItemsNotEmptyInterface::class);
+        $this->validator = $this->createMock(ValidatorInterface::class);
 
-        $this->verifyPayment = new VerifyPayment(
-            $this->actionExecutor,
-            $this->orderLineItemsNotEmpty
-        );
+        $this->verifyPayment = new VerifyPayment($this->actionExecutor);
+        $this->verifyPayment->setValidator($this->validator);
     }
 
     /**
@@ -41,7 +41,7 @@ class VerifyPaymentTest extends TestCase
         bool $isContinueToOrderReviewTransition,
         ?string $paymentMethod,
         bool $isPaymentRedirectRequired,
-        array $orderLineItemsNotEmptyResult,
+        bool $validationResult,
         bool $expected,
         array $expectedErrors
     ): void {
@@ -51,15 +51,15 @@ class VerifyPaymentTest extends TestCase
         $workflowItem = new WorkflowItem();
 
         $checkout->setCompleted($isCompleted);
+        $checkout->setPaymentMethod($paymentMethod);
         $workflowData = new WorkflowData([
-            'payment_in_progress' => $paymentInProgress,
-            'payment_method' => $paymentMethod
+            'payment_in_progress' => $paymentInProgress
         ]);
 
         $workflowItem->setEntity($checkout);
         $workflowItem->setData($workflowData);
 
-        $this->actionExecutor->expects($this->any())
+        $this->actionExecutor->expects(self::any())
             ->method('evaluateExpression')
             ->willReturnMap([
                 [
@@ -85,15 +85,24 @@ class VerifyPaymentTest extends TestCase
                 ],
             ]);
 
-        $this->orderLineItemsNotEmpty->expects($this->any())
-            ->method('execute')
-            ->with($checkout)
-            ->willReturn($orderLineItemsNotEmptyResult);
+        $violationsArray = [];
+        if (!$validationResult) {
+            $violation = $this->createMock(ConstraintViolationInterface::class);
+            $violation->expects(self::once())
+                ->method('getMessageTemplate')
+                ->willReturn('error1');
+            $violationsArray[] = $violation;
+        }
+        $violations = new ConstraintViolationList($violationsArray);
+        $this->validator->expects(self::any())
+            ->method('validate')
+            ->with($checkout, null, 'checkout_verify_payment')
+            ->willReturn($violations);
 
         $result = $this->verifyPayment->isPreConditionAllowed($workflowItem, $errors);
 
-        $this->assertSame($expected, $result);
-        $this->assertEqualsCanonicalizing($expectedErrors, $errors->toArray());
+        self::assertSame($expected, $result);
+        self::assertEqualsCanonicalizing($expectedErrors, $errors->toArray());
     }
 
     /**
@@ -109,10 +118,7 @@ class VerifyPaymentTest extends TestCase
                 'isContinueToOrderReviewTransition' => false,
                 'paymentMethod' => 'payment_term',
                 'isPaymentRedirectRequired' => true,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => true,
-                    'orderLineItemsNotEmpty' => true
-                ],
+                'validationResult' => true,
                 'expected' => true,
                 'expectedErrors' => []
             ],
@@ -123,10 +129,7 @@ class VerifyPaymentTest extends TestCase
                 'isContinueToOrderReviewTransition' => false,
                 'paymentMethod' => 'payment_term',
                 'isPaymentRedirectRequired' => true,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => true,
-                    'orderLineItemsNotEmpty' => true
-                ],
+                'validationResult' => true,
                 'expected' => false,
                 'expectedErrors' => []
             ],
@@ -137,10 +140,7 @@ class VerifyPaymentTest extends TestCase
                 'isContinueToOrderReviewTransition' => false,
                 'paymentMethod' => 'payment_term',
                 'isPaymentRedirectRequired' => true,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => true,
-                    'orderLineItemsNotEmpty' => true
-                ],
+                'validationResult' => true,
                 'expected' => false,
                 'expectedErrors' => []
             ],
@@ -151,10 +151,7 @@ class VerifyPaymentTest extends TestCase
                 'isContinueToOrderReviewTransition' => true,
                 'paymentMethod' => 'payment_term',
                 'isPaymentRedirectRequired' => true,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => true,
-                    'orderLineItemsNotEmpty' => true
-                ],
+                'validationResult' => true,
                 'expected' => false,
                 'expectedErrors' => []
             ],
@@ -165,10 +162,7 @@ class VerifyPaymentTest extends TestCase
                 'isContinueToOrderReviewTransition' => false,
                 'paymentMethod' => null,
                 'isPaymentRedirectRequired' => true,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => true,
-                    'orderLineItemsNotEmpty' => true
-                ],
+                'validationResult' => true,
                 'expected' => false,
                 'expectedErrors' => []
             ],
@@ -179,10 +173,7 @@ class VerifyPaymentTest extends TestCase
                 'isContinueToOrderReviewTransition' => false,
                 'paymentMethod' => 'payment_term',
                 'isPaymentRedirectRequired' => false,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => true,
-                    'orderLineItemsNotEmpty' => true
-                ],
+                'validationResult' => true,
                 'expected' => false,
                 'expectedErrors' => []
             ],
@@ -193,31 +184,12 @@ class VerifyPaymentTest extends TestCase
                 'isContinueToOrderReviewTransition' => false,
                 'paymentMethod' => 'payment_term',
                 'isPaymentRedirectRequired' => true,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => false,
-                    'orderLineItemsNotEmpty' => true
-                ],
+                'validationResult' => false,
                 'expected' => false,
                 'expectedErrors' => [
-                    ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.not_allow_rfp.message']
+                    ['message' => 'error1', 'parameters' => []],
                 ]
-            ],
-            [
-                'isCompleted' => false,
-                'paymentInProgress' => false,
-                'isAjaxCheckoutWidget' => false,
-                'isContinueToOrderReviewTransition' => false,
-                'paymentMethod' => 'payment_term',
-                'isPaymentRedirectRequired' => true,
-                'orderLineItemsNotEmptyResult' => [
-                    'orderLineItemsNotEmptyForRfp' => true,
-                    'orderLineItemsNotEmpty' => false
-                ],
-                'expected' => false,
-                'expectedErrors' => [
-                    ['message' => 'oro.checkout.workflow.condition.order_line_items_not_empty.allow_rfp.message']
-                ]
-            ],
+            ]
         ];
     }
 }

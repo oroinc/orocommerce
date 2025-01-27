@@ -70,6 +70,20 @@ class VerifyCustomerConsentsListenerTest extends TestCase
         $this->listener->checkConsents($event);
     }
 
+    public function testCheckConsentsWhenWorkflowNotStarted(): void
+    {
+        $this->assertFeatureCheckCall(true);
+        $this->checkoutWorkflowHelper->expects($this->once())
+            ->method('getWorkflowItem')
+            ->willReturn(null);
+        $event = $this->createMock(CheckoutRequestEvent::class);
+
+        $this->workflowManager->expects($this->never())
+            ->method('transitIfAllowed');
+
+        $this->listener->checkConsents($event);
+    }
+
     public function testCheckConsentsWhenNotApplicableNoCurrentStepGuest(): void
     {
         $this->assertFeatureCheckCall(true);

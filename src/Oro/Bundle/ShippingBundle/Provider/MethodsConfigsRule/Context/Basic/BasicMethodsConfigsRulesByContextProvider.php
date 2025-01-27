@@ -15,33 +15,31 @@ use Oro\Bundle\ShippingBundle\RuleFiltration\MethodsConfigsRulesFiltrationServic
  */
 class BasicMethodsConfigsRulesByContextProvider implements MethodsConfigsRulesByContextProviderInterface
 {
-    private MethodsConfigsRulesFiltrationServiceInterface $filtrationService;
-    private ManagerRegistry $doctrine;
-    private ShippingMethodOrganizationProvider $organizationProvider;
-
     public function __construct(
-        MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
-        ManagerRegistry $doctrine,
-        ShippingMethodOrganizationProvider $organizationProvider
+        private readonly MethodsConfigsRulesFiltrationServiceInterface $filtrationService,
+        private readonly ManagerRegistry $doctrine,
+        private readonly ShippingMethodOrganizationProvider $organizationProvider
     ) {
-        $this->filtrationService = $filtrationService;
-        $this->doctrine = $doctrine;
-        $this->organizationProvider = $organizationProvider;
     }
 
     #[\Override]
     public function getShippingMethodsConfigsRules(ShippingContextInterface $context): array
     {
+        $currency = $context->getCurrency();
+        if (!$currency) {
+            return [];
+        }
+
         if ($context->getShippingAddress()) {
             $methodsConfigsRules = $this->getRepository()->getByDestinationAndCurrencyAndWebsite(
                 $context->getShippingAddress(),
-                $context->getCurrency(),
+                $currency,
                 $context->getWebsite(),
                 $this->organizationProvider->getOrganization()
             );
         } else {
             $methodsConfigsRules = $this->getRepository()->getByCurrencyAndWebsiteWithoutDestination(
-                $context->getCurrency(),
+                $currency,
                 $context->getWebsite(),
                 $this->organizationProvider->getOrganization()
             );

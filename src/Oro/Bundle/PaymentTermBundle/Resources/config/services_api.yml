@@ -1,0 +1,44 @@
+services:
+    oro_payment_term.api.checkout_payment_subresource_provider:
+        class: Oro\Bundle\CheckoutBundle\Api\CheckoutPaymentSubresourceProvider
+        arguments:
+            - '@oro_payment_term.payment_method_provider.payment_term'
+            - 'paymentPaymentTerm'
+        tags:
+            - { name: oro_checkout.api.checkout_payment_subresource_provider }
+
+    oro_payment_term.api.validate_checkout_is_ready_for_payment:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ValidateCheckoutIsReadyForPayment
+        arguments:
+            - '@oro_api.action_processor_bag'
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: data_security_check, requestType: frontend, association: paymentPaymentTerm, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+
+    oro_payment_term.api.validate_checkout_payment_method_is_applicable:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ValidateCheckoutPaymentMethodIsApplicable
+        arguments:
+            - '@oro_payment_term.api.checkout_payment_subresource_provider'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: data_security_check, requestType: frontend, association: paymentPaymentTerm, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_payment_term.api.prepare_form_data_for_checkout_payment_subresource:
+        class: Oro\Bundle\PaymentTermBundle\Api\Processor\PreparePaymentTermPaymentSubresourceFormData
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: load_data, requestType: frontend, association: paymentPaymentTerm, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -99 }
+
+    oro_payment_term.api.handle_checkout_payment_subresource:
+        class: Oro\Bundle\PaymentTermBundle\Api\Processor\HandlePaymentTermPaymentSubresource
+        arguments:
+            - '@oro_checkout.action_group.split_order_actions'
+            - '@oro_checkout.action_group.checkout_actions'
+            - '@oro_checkout.action_group.address_actions'
+            - '@oro_action.action_executor'
+            - '@oro_payment.provider.payment_status'
+            - '@oro_checkout.provider.grouped_line_items'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.save_data_handler'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: paymentPaymentTerm, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\ContinueTransition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
@@ -12,6 +13,11 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
  */
 class VerifyPayment extends ContinueTransition
 {
+    public function __construct(
+        private ActionExecutor $actionExecutor
+    ) {
+    }
+
     #[\Override]
     public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
     {
@@ -32,7 +38,7 @@ class VerifyPayment extends ContinueTransition
             return false;
         }
 
-        $paymentMethod = $workflowItem->getData()->offsetGet('payment_method');
+        $paymentMethod = $checkout->getPaymentMethod();
         if (!$paymentMethod) {
             return false;
         }
@@ -40,11 +46,7 @@ class VerifyPayment extends ContinueTransition
             return false;
         }
 
-        if (!$this->checkOrderLineItems($checkout, $errors)) {
-            return false;
-        }
-
-        return true;
+        return $this->isValidationPassed($checkout, 'checkout_verify_payment', $errors);
     }
 
     private function checkRequest(string $key, string $value): bool

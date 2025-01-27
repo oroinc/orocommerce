@@ -63,7 +63,8 @@ class GroupLineItemHelper implements GroupLineItemHelperInterface
         }
     }
 
-    private function getLineItemGroupKey(object $lineItem, string $groupingFieldPath): string
+    #[\Override]
+    public function getLineItemGroupKey(object $lineItem, string $groupingFieldPath): string
     {
         try {
             $value = $this->propertyAccessor->getValue($lineItem, $groupingFieldPath);

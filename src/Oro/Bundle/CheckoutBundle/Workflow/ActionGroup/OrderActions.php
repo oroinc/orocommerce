@@ -53,6 +53,7 @@ class OrderActions implements OrderActionsInterface
             $order->setCustomerUser($customerUser);
             $order->setCustomer($customerUser->getCustomer());
         }
+        $checkout->setOrder($order);
 
         $this->flushOrder($order);
 

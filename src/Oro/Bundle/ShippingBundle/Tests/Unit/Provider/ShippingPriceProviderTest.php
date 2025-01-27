@@ -34,13 +34,9 @@ class ShippingPriceProviderTest extends TestCase
     use ShippingLineItemTrait;
 
     private MethodsConfigsRulesByContextProviderInterface|MockObject $shippingRulesProvider;
-
     private ShippingPriceCache|MockObject $priceCache;
-
     private EventDispatcherInterface|MockObject $eventDispatcher;
-
     private MemoryCacheProviderInterface|MockObject $memoryCacheProvider;
-
     private ShippingPriceProvider $shippingPriceProvider;
 
     #[\Override]
@@ -305,7 +301,7 @@ class ShippingPriceProviderTest extends TestCase
                                 'identifier' => 'primary',
                                 'label' => 'primary.label',
                                 'sortOrder' => 1,
-                                'price' => Price::create(1, 'USD'),
+                                'price' => Price::create(1, 'USD')
                             ]
                         ]
                     ],
@@ -319,18 +315,18 @@ class ShippingPriceProviderTest extends TestCase
                                 'identifier' => 'ground',
                                 'label' => 'ground.label',
                                 'sortOrder' => 1,
-                                'price' => Price::create(2, 'USD'),
+                                'price' => Price::create(2, 'USD')
                             ],
                             'air' => [
                                 'identifier' => 'air',
                                 'label' => 'air.label',
                                 'sortOrder' => 2,
-                                'price' => Price::create(4, 'USD'),
+                                'price' => Price::create(4, 'USD')
                             ]
                         ]
                     ]
                 ]
-            ],
+            ]
         ];
     }
 
@@ -407,7 +403,7 @@ class ShippingPriceProviderTest extends TestCase
      * @dataProvider getPriceDataProvider
      */
     public function testGetPrice(
-        ?string $methodId,
+        string $methodId,
         string $typeId,
         array $shippingRules,
         Price $expectedPrice = null
@@ -446,7 +442,7 @@ class ShippingPriceProviderTest extends TestCase
                         ])
                     ])
                 ],
-                'expectedData' => null,
+                'expectedData' => null
             ],
             'one rule' => [
                 'methodId' => 'flat_rate',
@@ -458,7 +454,7 @@ class ShippingPriceProviderTest extends TestCase
                         ])
                     ])
                 ],
-                'expectedData' => Price::create(12, 'USD'),
+                'expectedData' => Price::create(12, 'USD')
             ],
             'no price' => [
                 'methodId' => 'flat_rate',
@@ -470,7 +466,7 @@ class ShippingPriceProviderTest extends TestCase
                         ])
                     ])
                 ],
-                'expectedData' => null,
+                'expectedData' => null
             ],
             'several rules with same methods ans types' => [
                 'methodId' => 'integration_method',
@@ -490,7 +486,7 @@ class ShippingPriceProviderTest extends TestCase
                         ])
                     ])
                 ],
-                'expectedData' => Price::create(1, 'USD'),
+                'expectedData' => Price::create(1, 'USD')
             ],
         ];
     }
@@ -510,7 +506,25 @@ class ShippingPriceProviderTest extends TestCase
         $this->priceCache->expects(self::never())
             ->method('savePrice');
 
-        self::assertNull($this->shippingPriceProvider->getPrice($context, null, 'ground'));
+        self::assertNull($this->shippingPriceProvider->getPrice($context, null, 'primary'));
+    }
+
+    public function testGetPriceWhenNoTypeId(): void
+    {
+        $shippingLineItems = [$this->getShippingLineItem()];
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new ArrayCollection($shippingLineItems),
+            ShippingContext::FIELD_CURRENCY => 'USD'
+        ]);
+
+        $this->shippingRulesProvider->expects(self::never())
+            ->method('getShippingMethodsConfigsRules');
+
+        $this->priceCache->expects(self::never())
+            ->method('savePrice');
+
+        self::assertNull($this->shippingPriceProvider->getPrice($context, 'flat_rate', null));
     }
 
     public function testGetPriceCache(): void

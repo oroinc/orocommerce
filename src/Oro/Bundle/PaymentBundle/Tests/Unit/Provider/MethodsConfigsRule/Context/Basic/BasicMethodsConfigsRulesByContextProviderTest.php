@@ -40,7 +40,23 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
         );
     }
 
-    public function testGetAllFilteredPaymentMethodsConfigsWithPaymentAddress()
+    public function testGetPaymentMethodsConfigsRulesWhenNoCurrency(): void
+    {
+        $this->repository->expects(self::never())
+            ->method(self::anything());
+
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::any())
+            ->method('getCurrency')
+            ->willReturn(null);
+
+        $this->filtrationService->expects(self::never())
+            ->method('getFilteredPaymentMethodsConfigsRules');
+
+        self::assertSame([], $this->provider->getPaymentMethodsConfigsRules($context));
+    }
+
+    public function testGetPaymentMethodsConfigsRulesWithPaymentAddress(): void
     {
         $currency = 'USD';
         $address = $this->createMock(AddressInterface::class);
@@ -79,7 +95,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
         );
     }
 
-    public function testGetAllFilteredPaymentMethodsConfigsWithoutPaymentAddress()
+    public function testGetPaymentMethodsConfigsRulesWithoutPaymentAddress(): void
     {
         $currency = 'USD';
         $website = $this->createMock(Website::class);

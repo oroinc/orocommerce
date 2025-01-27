@@ -4,6 +4,24 @@ trusted_data:
         Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProvider:
             getUserQueryBuilder:
                 associationName: true
+        Oro\Bundle\CheckoutBundle\Api\DeletedCheckoutQueryModifier:
+            applyCheckoutRestriction:
+                rootAlias: true
+        Oro\Bundle\CheckoutBundle\Api\CheckoutLineItemQueryModifier:
+            applyCheckoutLineItemRestriction:
+                rootAlias: true
+            applyCheckoutProductKitItemLineItemRestriction:
+                rootAlias: true
+        Oro\Bundle\CheckoutBundle\Api\CheckoutAddressQueryModifier:
+            applyCheckoutAddressRootRestriction:
+                checkoutAlias: true
         Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier:
             applyCustomerUserRestriction:
                 customerUserAlias: true
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutVisitorQueryModifier:
+            getCheckoutSourceRestrictions:
+                checkoutSourceAlias: true
+                visitorParamName: true
+    safe_methods:
+        Oro\Bundle\CheckoutBundle\Api\GuestCheckoutVisitorQueryModifier:
+            getCheckoutSourceRestrictions: true

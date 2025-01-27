@@ -2,14 +2,58 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
     constraints:
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\CheckoutShipUntil:
                 groups:
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener
-                    - checkout_before_order_create_from_shoppinglist
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener
-                    - checkout_before_order_create_from_order
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutBeforeOrderCreateEventListener
-                    - checkout_pre_order_create_from_quotedemand
+                    - checkout_order_create_checks
+        -   Oro\Bundle\CheckoutBundle\Validator\Constraints\OrderLineItemsNotEmpty:
+                groups:
+                    # Used by Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\ContinueTransition
+                    - checkout_pre_checks
+                    # Used by Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\VerifyPayment
+                    - checkout_verify_payment
+        -   Oro\Bundle\CheckoutBundle\Validator\Constraints\HasApplicablePaymentMethods:
+                groups:
+                    - checkout_order_create_pre_checks
+        -   Oro\Bundle\CheckoutBundle\Validator\Constraints\HasApplicableShippingRules:
+                groups:
+                    - checkout_order_create_pre_checks
+        -   Oro\Bundle\CheckoutBundle\Validator\Constraints\PaymentMethodIsApplicable:
+                groups:
+                    - checkout_validity
+                    - checkout_order_create_checks
+        -   Oro\Bundle\CheckoutBundle\Validator\Constraints\ShippingMethodIsValid:
+                groups:
+                    - checkout_validity
+                    - checkout_order_create_checks
     properties:
+        shippingAddress:
+            -   Oro\Bundle\CheckoutBundle\Validator\Constraints\NotEmptyShippingAddress:
+                    message: oro.checkout.workflow.condition.invalid_shipping_address.message
+                    groups:
+                        - checkout_order_create_checks
+            -   Oro\Bundle\CheckoutBundle\Validator\Constraints\ValidCheckoutAddress:
+                    message: oro.checkout.workflow.condition.invalid_shipping_address.message
+                    groups:
+                        - checkout_validity
+                        - checkout_order_create_checks
+        billingAddress:
+            -   NotBlank:
+                    message: oro.checkout.workflow.condition.invalid_billing_address.message
+                    groups:
+                        - checkout_order_create_checks
+            -   Oro\Bundle\CheckoutBundle\Validator\Constraints\ValidCheckoutAddress:
+                    message: oro.checkout.workflow.condition.invalid_billing_address.message
+                    groups:
+                        - checkout_validity
+                        - checkout_order_create_checks
+        paymentMethod:
+            -   NotBlank:
+                    message: oro.checkout.validator.payment_method_is_not_selected.message
+                    groups:
+                        - checkout_order_create_checks
         shippingMethod:
+            -   NotBlank:
+                    message: oro.checkout.validator.shipping_method_is_not_selected.message
+                    groups:
+                        - checkout_order_create_checks
             -   NotBlank:
                     allowNull: true
             -   Length:
@@ -23,29 +67,37 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
             -   Count:
                     min: 1
                     groups:
+                        - checkout_order_create_pre_checks
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_quotedemand
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_shoppinglist
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_order
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_quotedemand
             -   Valid:
                     groups:
                         - Default
+                        - checkout_order_create_pre_checks
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_quotedemand
+        source:
+            - Oro\Bundle\SaleBundle\Validator\Constraints\QuoteAcceptable:
+                  groups:
+                      # Used by Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\ContinueTransition
+                      - checkout_pre_checks
 
 Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
     constraints:
+        -   Oro\Bundle\FormBundle\Validator\Constraints\UniqueCollectionItem:
+                collection: checkout.lineItems
+                fields: [checkout, product, productUnit, checksum]
+                message: oro.checkout.checkoutlineitem.unique_entity.message
+                groups:
+                    - api
         -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
                 path: quantity
                 groups:
+                    - checkout_validity
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                     - checkout_start_from_order
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
@@ -66,14 +118,10 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                     - order_line_item_to_checkout_line_item_convert
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\QuantityToOrder:
                 groups:
+                    - checkout_validity
+                    - checkout_order_create_pre_checks
                     # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                     - datagrid_line_items_data
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                    - checkout_pre_order_create_from_shoppinglist
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                    - checkout_pre_order_create_from_order
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                    - checkout_pre_order_create_from_quotedemand
         -   Oro\Bundle\InventoryBundle\Validator\Constraints\HasEnoughInventoryLevel:
                 payload:
                     # Option "checkoutSteps" is handled by \Oro\Bundle\CheckoutBundle\Validator\Constraints\CheckoutAwareValidatorDecorator
@@ -83,16 +131,13 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                         - request_approval
                         - approve_request
                 groups:
+                    - checkout_validity
+                    - checkout_order_create_pre_checks
                     # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                     - datagrid_line_items_data
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                    - checkout_pre_order_create_from_shoppinglist
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                    - checkout_pre_order_create_from_order
-                    # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                    - checkout_pre_order_create_from_quotedemand
         -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitLineItemContainsRequiredKitItems:
                 groups:
+                    - checkout_validity
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                     - checkout_start_from_order
                     # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
@@ -116,23 +161,22 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                 groups:
                     # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                     - datagrid_line_items_data
+        -   Oro\Bundle\CheckoutBundle\Validator\Constraints\ShippingMethodIsValid:
+                groups:
+                    - checkout_validity
     properties:
         kitItemLineItems:
             -   Valid:
                     groups:
                         - Default
+                        - checkout_validity
+                        - checkout_order_create_pre_checks
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_quotedemand
                         # Used by \Oro\Bundle\CheckoutBundle\DataProvider\CheckoutDataProvider
                         - checkout_line_items_data
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_shoppinglist
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_order
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_quotedemand
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
                         # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
@@ -152,6 +196,7 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
         product:
             -   NotNull:
                     groups:
+                        - checkout_validity
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
             -   Expression:
@@ -164,31 +209,59 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
                     groups:
                         # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
                         - quote_demand_line_item_to_checkout_line_item_convert
-            - Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus:
-                  groups:
-                      # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
-                      - order_line_item_to_checkout_line_item_convert
-                      # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
-                      - quote_demand_line_item_to_checkout_line_item_convert
-        productUnit:
-            -   NotNull:
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\HasSupportedInventoryStatus:
                     groups:
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
                         # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
                         - quote_demand_line_item_to_checkout_line_item_convert
+        productUnit:
+            -   NotNull:
+                    groups:
+                        - checkout_validity
+                        # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
+                        - order_line_item_to_checkout_line_item_convert
+                        # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
+                        - quote_demand_line_item_to_checkout_line_item_convert
+        quantity:
+            -   NotBlank:
+                    message: 'oro.checkout.checkoutlineitem.quantity.greater_than_zero.message'
+                    groups:
+                        - checkout_validity
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    groups:
+                        - checkout_validity
+            -   Expression:
+                    expression: "null === value || value > 0 || !this.getProduct() || this.getProduct().isConfigurable()"
+                    message: 'oro.checkout.checkoutlineitem.quantity.greater_than_zero.message'
+                    groups:
+                        - checkout_validity
+        checkout:
+            -   NotNull:
+                    groups:
+                        - checkout_validity
 
 Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
+    constraints:
+        -   Oro\Bundle\FormBundle\Validator\Constraints\UniqueCollectionItem:
+                collection: lineItem.kitItemLineItems
+                fields: [lineItem, kitItem]
+                message: oro.checkout.checkoutproductkititemlineitem.unique_entity.message
+                groups:
+                    - api
     properties:
         lineItem:
             -   NotNull: ~
         kitItem:
-            -   NotNull: ~
+            -   NotNull:
+                    message: 'oro.checkout.checkoutproductkititemlineitem.kit_item.blank.message'
         product:
-            -   NotNull: ~
+            -   NotNull:
+                    message: 'oro.checkout.checkoutproductkititemlineitem.product.blank.message'
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductAvailable:
                     availabilityValidationGroups: [ product_kit_item_product_is_available_for_checkout ]
                     groups:
+                        - checkout_validity
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
@@ -200,12 +273,14 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                         # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
                         - quote_demand_line_item_to_checkout_line_item_convert
         quantity:
-            -   NotNull: ~
+            -   NotNull:
+                    message: 'oro.checkout.checkoutproductkititemlineitem.quantity.greater_than_zero.message'
             -   Type:
                     type: float
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
                     message: 'oro.checkout.checkoutproductkititemlineitem.quantity.greater_than_zero.message'
                     groups:
+                        - checkout_validity
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
@@ -221,22 +296,21 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
                     maxMessage: 'oro.checkout.checkoutproductkititemlineitem.quantity.range.max_message'
                     notInRangeMessage: 'oro.checkout.checkoutproductkititemlineitem.quantity.range.not_in_range_message'
                     groups:
+                        - checkout_validity
+                        - checkout_order_create_pre_checks
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_quotedemand
                         # Used by \Oro\Bundle\ShoppingListBundle\EventListener\DatagridLineItemsDataValidationListener
                         - datagrid_line_items_data
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_shoppinglist
-                        # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutPreOrderCreateEventListener
-                        - checkout_pre_order_create_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\Converter\OrderLineItemConverter
                         - order_line_item_to_checkout_line_item_convert
                         # Used by \Oro\Bundle\SaleBundle\Converter\QuoteDemandLineItemConverter
                         - quote_demand_line_item_to_checkout_line_item_convert
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemQuantityUnitPrecision:
                     groups:
+                        - checkout_validity
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
@@ -251,6 +325,7 @@ Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem:
             -   NotNull: ~
             -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductKitItemLineItemProductUnitAvailable:
                     groups:
+                        - checkout_validity
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener
                         - checkout_start_from_order
                         # Used by \Oro\Bundle\CheckoutBundle\EventListener\ValidateCheckoutOnStartEventListener

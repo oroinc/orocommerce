@@ -1,0 +1,292 @@
+data:
+    -
+        type: checkouts
+        id: '<toString(@checkout.ready_for_completion->id)>'
+        attributes:
+            poNumber: null
+            shippingType: checkout
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+            paymentMethod: null
+            shipUntil: null
+            customerNotes: checkout.ready_for_completion
+            currency: USD
+            completed: false
+            createdAt: '@checkout.ready_for_completion->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@checkout.ready_for_completion->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            shipToBillingAddress: false
+            totalValue: '90.5000'
+            totals:
+                -
+                    subtotalType: subtotal
+                    description: Subtotal
+                    amount: '100.5000'
+                -
+                    subtotalType: discount
+                    description: Discount
+                    amount: '-10.0000'
+            coupons: []
+        relationships:
+            order:
+                data: null
+            lineItems:
+                data:
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.ready_for_completion.line_item.1->id)>'
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.ready_for_completion.line_item.2->id)>'
+            lineItemGroups:
+                data: []
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+            billingAddress:
+                data:
+                    type: checkoutaddresses
+                    id: '<toString(@checkout.ready_for_completion.billing_address->id)>'
+            shippingAddress:
+                data:
+                    type: checkoutaddresses
+                    id: '<toString(@checkout.ready_for_completion.shipping_address->id)>'
+            source:
+                data:
+                    type: shoppinglists
+                    id: '<toString(@checkout.ready_for_completion.shopping_list->id)>'
+    -
+        type: checkouts
+        id: '<toString(@checkout.empty->id)>'
+        attributes:
+            poNumber: null
+            shippingType: checkout
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+            paymentMethod: null
+            shipUntil: null
+            customerNotes: null
+            currency: null
+            completed: false
+            createdAt: '@checkout.empty->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@checkout.empty->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            shipToBillingAddress: false
+            totalValue: null
+            totals: []
+            coupons: []
+        relationships:
+            order:
+                data: null
+            lineItems:
+                data: []
+            lineItemGroups:
+                data: []
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            source:
+                data: null
+    -
+        type: checkouts
+        id: '<toString(@checkout.open->id)>'
+        attributes:
+            poNumber: null
+            shippingType: checkout
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+            paymentMethod: null
+            shipUntil: null
+            shipToBillingAddress: false
+            customerNotes: checkout.open
+            currency: USD
+            completed: false
+            createdAt: '@checkout.open->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@checkout.open->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            totalValue: '10.9000'
+            totals:
+                -
+                    subtotalType: subtotal
+                    description: Subtotal
+                    amount: '20.9000'
+                -
+                    subtotalType: discount
+                    description: Discount
+                    amount: '-10.0000'
+            coupons: []
+        relationships:
+            lineItems:
+                data:
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.open.line_item.1->id)>'
+            lineItemGroups:
+                data: []
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+            billingAddress:
+                data: null
+            shippingAddress:
+                data: null
+            source:
+                data:
+                    type: shoppinglists
+                    id: '<toString(@checkout.open.shopping_list->id)>'
+            order:
+                data: null
+    -
+        type: checkouts
+        id: '<toString(@checkout.in_progress->id)>'
+        attributes:
+            poNumber: null
+            shippingType: checkout
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+            paymentMethod: null
+            shipUntil: null
+            customerNotes: checkout.in_progress
+            currency: USD
+            completed: false
+            createdAt: '@checkout.in_progress->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@checkout.in_progress->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            shipToBillingAddress: false
+            totalValue: '288.7900'
+            totals:
+                -
+                    subtotalType: subtotal
+                    description: Subtotal
+                    amount: '331.9900'
+                -
+                    subtotalType: discount
+                    description: Discount
+                    amount: '-43.2000'
+            coupons:
+                -
+                    couponCode: coupon_with_promo_and_valid_from_and_until
+                    description: 'Order percent promotion name'
+        relationships:
+            order:
+                data: null
+            lineItems:
+                data:
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.in_progress.line_item.1->id)>'
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.in_progress.line_item.2->id)>'
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.in_progress.line_item.3->id)>'
+            lineItemGroups:
+                data: []
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+            billingAddress:
+                data:
+                    type: checkoutaddresses
+                    id: '<toString(@checkout.in_progress.billing_address->id)>'
+            shippingAddress:
+                data: null
+            source:
+                data:
+                    type: shoppinglists
+                    id: '<toString(@checkout.in_progress.shopping_list->id)>'
+    -
+        type: checkouts
+        id: '<toString(@checkout.completed->id)>'
+        attributes:
+            poNumber: null
+            shippingType: checkout
+            shippingMethod: '@checkout.completed->shippingMethod'
+            shippingMethodType: primary
+            shippingEstimateAmount: '10.0000'
+            paymentMethod: '@checkout.completed->paymentMethod'
+            shipUntil: null
+            customerNotes: checkout.completed
+            currency: USD
+            completed: true
+            createdAt: '@checkout.completed->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@checkout.completed->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            shipToBillingAddress: false
+            totalValue: '90.4500'
+            totals:
+                -
+                    subtotalType: subtotal
+                    description: Subtotal
+                    amount: '100.5000'
+                -
+                    subtotalType: discount
+                    description: Discount
+                    amount: '-20.0500'
+                -
+                    subtotalType: shipping_cost
+                    description: Shipping
+                    amount: '10.0000'
+            coupons:
+                -
+                    couponCode: coupon_with_promo_and_valid_from_and_until
+                    description: 'Order percent promotion name'
+        relationships:
+            order:
+                data:
+                    type: orders
+                    id: '<toString(@checkout.completed.order->id)>'
+            lineItems:
+                data:
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.completed.line_item.1->id)>'
+                    -
+                        type: checkoutlineitems
+                        id: '<toString(@checkout.completed.line_item.2->id)>'
+            lineItemGroups:
+                data: []
+            customerUser:
+                data:
+                    type: customerusers
+                    id: '<toString(@customer_user->id)>'
+            customer:
+                data:
+                    type: customers
+                    id: '<toString(@customer->id)>'
+            billingAddress:
+                data:
+                    type: checkoutaddresses
+                    id: '<toString(@checkout.completed.billing_address->id)>'
+            shippingAddress:
+                data:
+                    type: checkoutaddresses
+                    id: '<toString(@checkout.completed.shipping_address->id)>'
+            source:
+                data:
+                    type: shoppinglists
+                    id: '<toString(@checkout.completed.shopping_list->id)>'

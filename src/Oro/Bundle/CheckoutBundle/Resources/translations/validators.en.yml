@@ -1,7 +1,21 @@
 oro:
     checkout:
+        checkoutlineitem:
+            unique_entity:
+                message: 'Checkout should contain only unique line items.'
+            quantity:
+                greater_than_zero:
+                    message: 'The quantity should be greater than 0.'
+
         checkoutproductkititemlineitem:
+            unique_entity:
+                message: 'Product kit line item must contain only unique kit item line items.'
+            kit_item:
+                blank:
+                    message: 'Product kit item must not be blank'
             product:
+                blank:
+                    message: 'Please choose a product'
                 not_enabled:
                     message: 'The selected product is not enabled'
             quantity:
@@ -11,7 +25,33 @@ oro:
                     min_message: 'The quantity should be {{ limit }} or more.'
                     max_message: 'The quantity should be {{ limit }} or less. '
                     not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}.'
-        lineitem:
-            quantity:
-                greater_than_zero:
-                    message: 'The quantity should be greater than 0.'
+
+        validator:
+            order_line_items_not_empty:
+                allow_rfp.message: No products can be added to this order. Please create an RFQ to request price.
+                not_allow_rfp.message: No products can be added to this order.
+            has_applicable_payment_methods:
+                message: The payment method has not been selected or there are no applicable payment methods available.
+            payment_method_is_applicable:
+                message: The selected payment method is not available.
+            payment_method_is_not_selected:
+                message: Payment method is not selected.
+            shipping_method_is_not_selected:
+                message: Shipping method is not selected.
+            shipping_method_is_invalid:
+                message: Shipping method is not valid.
+            shipping_method_type_is_invalid:
+                message: Shipping method type is not valid.
+            has_applicable_shipping_rules:
+                message: The selected shipping method is not available.
+            allowed_by_checkout_validation_event:
+                message: There was an error while processing the order.
+            invalid_checkout_addresses:
+                message: Checkout addresses are not valid.
+
+        workflow:
+            condition:
+                invalid_billing_address:
+                    message: Please enter correct billing address.
+                invalid_shipping_address:
+                    message: Please enter correct shipping address.

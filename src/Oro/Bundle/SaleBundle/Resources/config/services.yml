@@ -1,6 +1,8 @@
 services:
     oro_sale.condition.quote_acceptable:
         class: Oro\Bundle\SaleBundle\Model\Condition\QuoteAcceptable
+        arguments:
+            - '@validator'
         tags:
             - { name: oro_action.condition, alias: quote_acceptable }
 

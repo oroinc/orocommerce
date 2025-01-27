@@ -1,4 +1,15 @@
 services:
+    oro_checkout.api.checkout_line_item_group_repository:
+        class: Oro\Bundle\CheckoutBundle\Api\Repository\CheckoutLineItemGroupRepository
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.query_acl_helper'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_shipping.multi_shipping.group_line_item_helper'
+            - '@oro_checkout.provider.multi_shipping.line_item_group_title'
+            - '@oro_checkout.data_provider.manager.checkout_line_items'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+
     oro_checkout.api.guest_checkout_checker:
         class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutChecker
         arguments:
@@ -10,6 +21,36 @@ services:
         arguments:
             - '@oro_checkout.api.guest_checkout_checker'
             - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_checkout.api.guest_checkout_visitor_query_modifier:
+        class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutVisitorQueryModifier
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+            - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_checkout.api.deleted_checkout_query_modifier:
+        class: Oro\Bundle\CheckoutBundle\Api\DeletedCheckoutQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_checkout.api.checkout_address_query_modifier:
+        class: Oro\Bundle\CheckoutBundle\Api\CheckoutAddressQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+        tags:
+            - { name: oro.api.query_modifier, requestType: frontend }
+
+    oro_checkout.api.checkout_line_item_query_modifier:
+        class: Oro\Bundle\CheckoutBundle\Api\CheckoutLineItemQueryModifier
+        arguments:
+            - '@oro_entity.orm.entity_class_resolver'
+            - '@oro_config.manager'
         tags:
             - { name: oro.api.query_modifier, requestType: frontend }
 
@@ -30,6 +71,11 @@ services:
             - ['frontendOwner']
         tags:
             - { name: oro_api.association_access_exclusion_provider, requestType: frontend }
+
+    oro_checkout.api.checkout_payment_subresource_name_provider:
+        class: Oro\Bundle\CheckoutBundle\Api\CheckoutPaymentSubresourceNameProvider
+        arguments:
+            - !tagged_iterator oro_checkout.api.checkout_payment_subresource_provider
 
     oro_checkout.api.initialize_guest_checkout_customer_user:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\InitializeGuestCheckoutCustomerUser
@@ -89,3 +135,436 @@ services:
             - 'frontendOwner'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress, priority: 100 }
+
+    oro_checkout.api.load_available_billing_addresses_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\LoadAvailableAddressesSubresource
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@security.authorization_checker'
+            - '@oro_order.manager.order_address'
+            - '@translator'
+            - '@oro_locale.formatter.address'
+            - 'billing'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: availableBillingAddresses, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.load_available_shipping_addresses_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\LoadAvailableAddressesSubresource
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@security.authorization_checker'
+            - '@oro_order.manager.order_address'
+            - '@translator'
+            - '@oro_locale.formatter.address'
+            - 'shipping'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: availableShippingAddresses, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.load_available_shipping_methods_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\LoadAvailableShippingMethodsSubresource
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@security.authorization_checker'
+            - '@oro_checkout.shipping_method.provider_main'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: availableShippingMethods, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.load_available_payment_methods_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\LoadAvailablePaymentMethodsSubresource
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@security.authorization_checker'
+            - '@oro_payment.method.provider.applicable_methods_provider'
+            - '@oro_payment.payment_method_view.composite_provider'
+            - '@oro_checkout.provider.payment_context'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: availablePaymentMethods, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.build_form_builder_for_subresource:
+        class: Oro\Bundle\ApiBundle\Processor\Subresource\ChangeSubresource\BuildFormBuilder
+        arguments:
+            - '@oro_api.form_helper'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: transform_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+            - { name: oro.api.processor, action: delete_subresource, group: transform_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+
+    oro_checkout.api.prepare_form_data_for_change_coupon_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\PrepareAppliedCouponSubresourceFormData
+        tags:
+            - { name: oro.api.processor, action: delete_subresource, group: load_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -99 }
+            - { name: oro.api.processor, action: add_subresource, group: load_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -99 }
+
+    oro_checkout.api.handle_validate_payment_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\HandleValidatePaymentSubresource
+        arguments:
+            - '@oro_api.action_processor_bag'
+            - '@oro_checkout.api.checkout_payment_subresource_name_provider'
+            - '@router'
+            - '@oro_api.rest.routes_registry'
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: payment, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.json_api.update_validate_payment_subresource_response:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\JsonApi\UpdateValidatePaymentSubresourceResponse
+        tags:
+            - { name: oro.api.processor, action: get_subresource, group: normalize_result, requestType: frontend&json_api, association: payment, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -155 }
+
+    oro_checkout.api.handle_apply_checkout_coupon_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\HandleApplyCheckoutCouponSubresource
+        arguments:
+            - '@oro_promotion.frontend_applied_coupon_manager'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: add_subresource, group: save_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.handle_delete_checkout_coupon_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\HandleDeleteCheckoutCouponSubresource
+        arguments:
+            - '@oro_promotion.frontend_applied_coupon_manager'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: delete_subresource, group: save_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.configure_checkout_source_association:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureCheckoutSourceAssociation
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -10 }
+
+    oro_checkout.api.add_acceptable_entity_classes_to_checkout_source_association:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\AddAcceptableEntityClassesToCheckoutSourceAssociation
+        arguments:
+            - '@oro_api.resources_provider'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: get_metadata, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -90 }
+
+    oro_checkout.api.compute_checkout_source:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutSource
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.compute_checkout_totals:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutTotals
+        arguments:
+            - '@oro_checkout.provider.checkout_totals'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.value_transformer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.compute_checkout_coupons:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutCoupons
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_promotion.frontend_applied_coupon_manager'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, collection: true, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.compute_checkout_shipping_type:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutShippingType
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.compute_checkout_shipping_method:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutShippingMethod
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+            - !php/const Oro\Bundle\CheckoutBundle\Api\Repository\CheckoutLineItemGroupRepository::SHIPPING_TYPE_CHECKOUT
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.compute_checkout_line_item_shipping_method:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutShippingMethod
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+            - !php/const Oro\Bundle\CheckoutBundle\Api\Repository\CheckoutLineItemGroupRepository::SHIPPING_TYPE_LINE_ITEM
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
+
+    oro_checkout.api.compute_checkout_line_item_group_shipping_method:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutShippingMethod
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+            - !php/const Oro\Bundle\CheckoutBundle\Api\Repository\CheckoutLineItemGroupRepository::SHIPPING_TYPE_LINE_ITEM_GROUP
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup }
+
+    oro_checkout.api.compute_checkout_line_item_groups:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutLineItemGroups
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+            - '@oro_api.object_normalizer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.compute_checkout_line_item_group:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutLineItemGroup
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+            - '@oro_api.object_normalizer'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
+
+    oro_checkout.api.load_checkout_source_subresource:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\LoadCheckoutSourceSubresource
+        arguments:
+            - '@oro_api.entity_serializer'
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.config_provider'
+        tags:
+            - { name: oro.api.processor, action: get_relationship, group: load_data, requestType: frontend, association: source, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+            - { name: oro.api.processor, action: get_subresource, group: load_data, requestType: frontend, association: source, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.load_checkout_line_item_group:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\LoadCheckoutLineItemGroup
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+        tags:
+            - { name: oro.api.processor, action: get, group: load_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup }
+            - { name: oro.api.processor, action: update, group: load_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup }
+
+    oro_checkout.api.save_checkout_line_item_group:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\SaveCheckoutLineItemGroup
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_api.save_data_handler'
+        tags:
+            - { name: oro.api.processor, action: update, group: save_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup }
+
+    oro_checkout.api.handle_checkout_line_item_group_change:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\HandleCheckoutLineItemGroupChange
+        arguments:
+            - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_submit, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup, priority: -100 }
+
+    oro_checkout.api.normalize_included_data:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\RegisterNormalizeIncludedDataCallbacks
+        arguments:
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, requestType: frontend&json_api, priority: -43 }
+            - { name: oro.api.processor, action: update, group: normalize_input, requestType: frontend&json_api, priority: -43 }
+
+    oro_checkout.api.set_website_to_checkout:
+        class: Oro\Bundle\WebsiteBundle\Api\Processor\SetWebsite
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 20 }
+
+    oro_checkout.api.set_customer_to_checkout:
+        class: Oro\Bundle\CustomerBundle\Api\Processor\SetCustomer
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 10 }
+
+    oro_checkout.api.set_customer_user_to_checkout:
+        class: Oro\Bundle\CustomerBundle\Api\Processor\SetCustomerUser
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_security.token_accessor'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 10 }
+
+    oro_checkout.api.handle_checkout_source_association:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\HandleCheckoutSourceAssociation
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_submit, requestType: frontend, parentAction: create, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.recalculate_checkout_shipping_cost:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\RecalculateCheckoutShippingCost
+        arguments:
+            - '@oro_checkout.action_group.shipping_method_actions'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -150 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: -150 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: -150 }
+
+    oro_checkout.api.recalculate_checkout_totals:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\RecalculateCheckoutTotals
+        arguments:
+            - '@oro_checkout.model.checkout_subtotal_updater'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: -100 }
+
+    oro_checkout.api.update_price_by_value_and_currency:
+        class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem }
+
+    oro_checkout.api.set_checkout_line_item_checksum:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\SetCheckoutLineItemChecksum
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create|update, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: -100 }
+
+    oro_checkout.api.set_default_shipping_method:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\SetDefaultShippingMethod
+        arguments:
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.action.default_shipping_method_setter'
+            - '@oro_checkout.action.multi_shipping.default_shipping_method_setter'
+            - '@oro_checkout.action.multi_shipping.groups_default_shipping_method_setter'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create|update, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.deny_update_for_readonly_checkout:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyUpdateForReadonlyCheckout
+        tags:
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.deny_create_for_guest_checkout_without_source:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyCreateForGuestCheckoutWithoutSource
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+
+    oro_checkout.api.deny_checkout_shipping_method_change:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyCheckoutShippingMethodChange
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+            - !php/const Oro\Bundle\CheckoutBundle\Api\Repository\CheckoutLineItemGroupRepository::SHIPPING_TYPE_CHECKOUT
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 100 }
+
+    oro_checkout.api.deny_checkout_line_item_shipping_method_change:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyCheckoutShippingMethodChange
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+            - !php/const Oro\Bundle\CheckoutBundle\Api\Repository\CheckoutLineItemGroupRepository::SHIPPING_TYPE_LINE_ITEM
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 100 }
+
+    oro_checkout.api.deny_checkout_line_item_group_shipping_method_change:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyCheckoutLineItemGroupShippingMethodChange
+        arguments:
+            - '@oro_api.doctrine_helper'
+            - '@oro_checkout.api.checkout_line_item_group_repository'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutLineItemGroup, priority: 100 }
+
+    oro_checkout.api.deny_update_line_item_for_readonly_checkout:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyUpdateLineItemForReadonlyCheckout
+        tags:
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
+
+    oro_checkout.api.deny_update_kit_item_for_readonly_checkout:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyUpdateKitItemForReadonlyCheckout
+        tags:
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem }
+
+    oro_checkout.api.deny_update_address_for_readonly_checkout:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyUpdateAddressForReadonlyCheckout
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: update, group: data_security_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress }
+
+    oro_checkout.api.deny_change_subresource_for_completed_checkout:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyChangeSubresourceForCompletedCheckout
+        tags:
+            - { name: oro.api.processor, action: delete_subresource, group: data_security_check, requestType: frontend, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+            - { name: oro.api.processor, action: add_subresource, group: data_security_check, requestType: frontend, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+            - { name: oro.api.processor, action: update_subresource, group: data_security_check, requestType: frontend, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.deny_access_for_disabled_guest_checkout:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\DenyAccessForDisabledGuestCheckout
+        tags:
+            - { name: oro_featuretogle.feature, feature: guest_checkout }
+            - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: get_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: get_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: delete, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: delete, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: delete_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: delete_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete_list, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: update, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: update, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: update, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: update, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: get_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: get_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: delete_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: delete_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: add_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: add_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: add_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: add_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: update_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: update_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: update_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: update_subresource, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: get_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: get_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: get_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: delete_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: delete_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: delete_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: add_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: add_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: add_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: add_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+            - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 5 }
+            - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: 5 }
+            - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: 5 }
+            - { name: oro.api.processor, action: update_relationship, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, priority: 5 }
+
+    oro_checkout.api.disable_checkout_address_creation:
+        class: Oro\Bundle\ApiBundle\Processor\Shared\DisableResourceAccess
+        arguments:
+            - 'Use API resource to create or update a checkout. A checkout address can be created only together with a checkout.'
+        tags:
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, mainRequest: true, priority: 3 }
+
+    oro_checkout.api.fill_checkout_line_item_price:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\FillCheckoutLineItemPrice
+        arguments:
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: -20 }
+
+    oro_checkout.api.fill_checkout_product_kit_item_line_item_price:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\FillCheckoutProductKitItemLineItemPrice
+        arguments:
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: -20 }

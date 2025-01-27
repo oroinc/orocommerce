@@ -97,7 +97,7 @@ class ShippingPriceProvider implements ShippingPriceProviderInterface
     #[\Override]
     public function getPrice(ShippingContextInterface $context, ?string $methodId, ?string $typeId): ?Price
     {
-        if (!$methodId) {
+        if (!$methodId || !$typeId) {
             return null;
         }
 

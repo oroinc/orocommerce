@@ -1,0 +1,33 @@
+data:
+    type: checkoutlineitems
+    id: '<toString(@checkout.in_progress.line_item.1->id)>'
+    attributes:
+        productSku: product-1
+        freeFormProduct: null
+        quantity: 1
+        price: null
+        currency: null
+        comment: null
+        priceFixed: false
+        shippingMethod: null
+        shippingMethodType: null
+        shippingEstimateAmount: null
+    relationships:
+        checkout:
+            data:
+                type: checkouts
+                id: '<toString(@checkout.in_progress->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        parentProduct:
+            data: null
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.milliliter->code)>'
+        kitItemLineItems:
+            data: []
+        group:
+            data: null

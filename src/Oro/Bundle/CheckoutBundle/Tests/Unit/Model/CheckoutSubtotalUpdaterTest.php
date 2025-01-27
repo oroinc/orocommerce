@@ -107,7 +107,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
         $repository = $this->createMock(CheckoutRepository::class);
         $repository->expects($this->once())
             ->method('findWithInvalidSubtotals')
-            ->willReturn([$checkout]);
+            ->willReturn(new \ArrayIterator([$checkout]));
         $this->objectManager->expects($this->once())
             ->method('getRepository')
             ->with(Checkout::class)
@@ -141,7 +141,7 @@ class CheckoutSubtotalUpdaterTest extends \PHPUnit\Framework\TestCase
         $repository = $this->createMock(CheckoutRepository::class);
         $repository->expects($this->once())
             ->method('findWithInvalidSubtotals')
-            ->willReturn([]);
+            ->willReturn(new \ArrayIterator([]));
         $this->objectManager->expects($this->once())
             ->method('getRepository')
             ->with(Checkout::class)

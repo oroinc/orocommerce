@@ -1,0 +1,17 @@
+data:
+    type: checkoutlineitems
+    attributes:
+        quantity: 1
+    relationships:
+        checkout:
+            data:
+                type: checkouts
+                id: '<toString(@checkout.in_progress->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.milliliter->code)>'

@@ -9,15 +9,14 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 
 /**
- * Puts data from an array to Order line items
+ * Puts data from an array to Order line items.
  */
 class CheckoutLineItemsConverter
 {
-    /** @var array<EntityReflectionClass> */
-    private array $reflectionClass;
-
+    /** @var EntityReflectionClass[] */
+    private array $reflectionClass = [];
+    /** @var OrderLineItem[] */
     private $exisingLineItems = [];
-
     private bool $reuseLineItems = false;
 
     public function setReuseLineItems(bool $reuseLineItems): void
@@ -30,12 +29,12 @@ class CheckoutLineItemsConverter
      * @param array<int|string,array<string,mixed>> $data Line items data
      *  [
      *      [
-     *          'product' => Product $product,
-     *          'productUnit' => ProductUnit $productUnit,
-     *          'quantity' => float 12.3456,
-     *          // ...
+     *          'product' => Product,
+     *          'productUnit' => ProductUnit,
+     *          'quantity' => float,
+     *          ...
      *      ],
-     *      // ...
+     *      ...
      *  ]
      *
      * @return Collection<OrderLineItem>
@@ -45,11 +44,11 @@ class CheckoutLineItemsConverter
         $result = new ArrayCollection();
         foreach ($data as $lineItemData) {
             $hash = $lineItemData['checksum'] ?? null;
-            if ($this->reuseLineItems && array_key_exists($hash, $this->exisingLineItems)) {
+            if ($this->reuseLineItems && \array_key_exists($hash, $this->exisingLineItems)) {
                 $orderLineItem = $this->exisingLineItems[$hash];
             } else {
                 $kitItemLineItemsData = [];
-                if (isset($lineItemData['kitItemLineItems']) && is_array($lineItemData['kitItemLineItems'])) {
+                if (isset($lineItemData['kitItemLineItems']) && \is_array($lineItemData['kitItemLineItems'])) {
                     $kitItemLineItemsData = $lineItemData['kitItemLineItems'];
                     unset($lineItemData['kitItemLineItems']);
                 }
@@ -75,23 +74,16 @@ class CheckoutLineItemsConverter
     private function hydrate(string $className, array $data): object
     {
         $object = new $className();
-
         foreach ($data as $property => $value) {
             $reflectionClass = $this->getReflectionClass($className);
             if (null !== $value && $reflectionClass->hasProperty($property)) {
-                $methodName = $this->getSetterName($property);
-                $reflectionClass
-                    ->getMethod($methodName)
-                    ->invoke($object, $value);
+                $reflectionClass->getMethod($this->getSetterName($property))->invoke($object, $value);
             }
         }
 
         return $object;
     }
 
-    /**
-     * @throws \ReflectionException
-     */
     private function getReflectionClass(string $className): EntityReflectionClass
     {
         if (!isset($this->reflectionClass[$className])) {

@@ -1,0 +1,39 @@
+data:
+    type: checkoutlineitems
+    id: '<toString(@checkout.in_progress.line_item.2->id)>'
+    attributes:
+        productSku: product-kit-3
+        freeFormProduct: null
+        quantity: 1
+        price: null
+        currency: null
+        comment: null
+        priceFixed: false
+        shippingMethod: null
+        shippingMethodType: null
+        shippingEstimateAmount: null
+    relationships:
+        checkout:
+            data:
+                type: checkouts
+                id: '<toString(@checkout.in_progress->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-kit-3->id)>'
+        parentProduct:
+            data: null
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.milliliter->code)>'
+        kitItemLineItems:
+            data:
+                -
+                    type: checkoutproductkititemlineitems
+                    id: '<toString(@checkout.in_progress.line_item.2.kit_item.1->id)>'
+                -
+                    type: checkoutproductkititemlineitems
+                    id: '<toString(@checkout.in_progress.line_item.2.kit_item.2->id)>'
+        group:
+            data: null

@@ -6,38 +6,75 @@ oro:
         entity_frontend_grid_all_view_label: All Open Orders
         id.label: Id
         owner.label: Owner
-        customer.label: Customer
-        customer_user.label: Customer User
+        customer:
+            label: Customer
+            description: The customer that the customer user who created the checkout belongs to.
+        customer_user:
+            label: Customer User
+            description: The customer user that created the checkout.
         registered_customer_user.label: Registered Customer User
         organization.label: Organization
-        customer_notes.label: Customer Notes
-        customer_notes.frontend.label: Notes
-        po_number.label: PO Number
-        ship_until.label: Do Not Ship Later Than
-        billing_address.label: Billing Address
-        shipping_address.label: Shipping Address
+        customer_notes:
+            label: Customer Notes
+            description: A message the buyer has entered in the notes section for the order or a line item.
+            frontend.label: Notes
+        po_number:
+            label: PO Number
+            description: A purchase order number provided by the buyer, if any.
+        ship_until:
+            label: Do Not Ship Later Than
+            description: The latest shipping date that is acceptable to the customer user.
+        billing_address:
+            label: Billing Address
+            description: A customer user address provided as the billing address for the order.
+        shipping_address:
+            label: Shipping Address
+            description: A customer user address provided as the shipping address for the order.
         save_billing_address.label: Save address to my address book
         save_shipping_address.label: Save address to my address book
-        ship_to_billing_address.label: Ship to billing address
+        ship_to_billing_address:
+            label: Ship to billing address
+            description: Indicated whether the order should be shipped to the provided billing address.
         add_address: Add
         quoted_shipping_amount.label: Quoted shipping amount
         preferred_shipping_method.label: Preferred shipping method
-        source.label: Source
-        currency.label: Currency
-        website.label: Website
-        shipping_estimate_amount.label: Shipping Estimate Ammount
-        shipping_estimate_currency.label: Shipping Estimate Currency
+        source:
+            label: Source
+            description: The entity from which the checkout was created.
+        currency:
+            label: Currency
+            description: The currency that is used to get the prices for the checkout line items.
+        website:
+            label: Website
+            description: A website where the checkout is created.
+        shipping_estimate_amount:
+            label: Shipping Estimate Amount
+            description: The shipping cost value calculated according to configured shipping rules and assigned shipping method.
+        shipping_estimate_currency:
+            label: Shipping Estimate Currency
+            description: The currency in which the shipping estimate amount is calculated.
         shipping_method.label: Shipping Method
-        shipping_method_type.label: Shipping Method Type
-        payment_method.label: Payment Method
-        order.label: Order
+        shipping_method.description: The shipping method selected for the order delivery.
+        shipping_method_type:
+            label: Shipping Method Type
+            description: The shipping method type selected for the order delivery.
+        payment_method:
+            label: Payment Method
+            description: The payment method selected to pay for the order.
+        order:
+            label: Order
+            description: The order created during the checkout.
         created_at.label: Started At
         updated_at.label: Last Updated
         shipping_cost.label: Shipping
         ordered_by.label: Ordered By
         checkout_type.label: Checkout Type
-        line_items.label: Line Items
-        subtotals.label: Subtotals
+        line_items:
+            label: Line Items
+            description: The collection of line items. A line item represents a unique product with the quantity and unit of quantity that was ordered by the customer user.
+        subtotals:
+            label: Subtotals
+            checkout_subtotal.label: Subtotal
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
@@ -46,8 +83,17 @@ oro:
             label: Checkout
             plural_label: Open Orders
         deleted.label: Deleted
-        completed.label: Completed
+        completed:
+            label: Completed
+            description: Indicates whether the checkout is completed or not.
+        payment_in_progress:
+            label: Payment In Progress
+            description: Indicates whether the checkout payment is in progress or not.
         completed_data.label: Completed Data
+        additional_data:
+            label: Additional Data
+            description: Data storage for an additional data that may be required by the checkout.
+        order:label: Order
         confirm_email_flash_message: Please confirm your email before continue checkout
         late_registration.label: Save my data and create an account
         progress.label: Checkout Progress
@@ -67,22 +113,62 @@ oro:
             entity_grid_all_view_label: 'All %entity_plural_label%'
             entity_frontend_grid_all_view_label: 'All %entity_plural_label%'
             id.label: 'ID'
-            product.label: 'Product'
-            product_sku.label: 'Product SKU'
-            parent_product.label: 'Parent Product'
-            product_unit.empty: 'Choose Unit...'
-            product_unit.label: 'Product Unit'
-            product_unit_code.label: 'Product Unit Code'
-            comment.label: 'Notes'
-            quantity.label: 'Quantity'
+            product:
+                label: 'Product'
+                description: A reference to the product information.
+            product_sku:
+                label: 'Product SKU'
+                description: A unique human-readable product identifier.
+            parent_product:
+                label: 'Parent Product'
+                description: The parent product of the product added to the checkout.
+            product_unit:
+                label: 'Product Unit'
+                description: A reference to the product unit in which the product is ordered.
+                empty: Choose Unit...
+            product_unit_code:
+                label: 'Product Unit Code'
+                description: The human-readable product unit code.
+            checkout:
+                label: Checkout
+                description: A relationship with the checkout that contains the line item.
+            comment:
+                label: 'Notes'
+                description: Comments to the line item.
+            quantity:
+                label: 'Quantity'
+                description: The product quantity which is ordered.
             price.label: 'Price'
-            value.label: 'Price Value'
-            currency.label: 'Price Currency'
-            price_fixed.label: 'Contain Fixed Price'
-            ship_by.label: 'Ship By'
-            free_form_product.label: 'Product (free-form)'
-            from_external_source.label: 'Created from External Source'
-            price_type.label: 'Price Type'
+            value:
+                label: 'Price Value'
+                description: Price for a product unit that is used in this checkout.
+            currency:
+                label: 'Price Currency'
+                description: A currency for a product price.
+            price_fixed:
+                label: 'Contain Fixed Price'
+                description: Indicates whether a product price is fixed.
+            ship_by:
+                label: 'Ship By'
+                description: The latest shipping date that is acceptable for a buyer.
+            free_form_product:
+                label: 'Product (free-form)'
+                description: The product name as provided when the free-form entry used to add a product to the checkout line items.
+            from_external_source:
+                label: 'Created from External Source'
+                description: A flag that indicates that a product information was received from the external source.
+            price_type:
+                label: 'Price Type'
+                description: The identifier of the price type.
+            shipping_method:
+                label: Line item shipping method
+                description: Represents assigned shipping method.
+            shipping_method_type:
+                label: Line item shipping method type
+                description: Represents assigned shipping method type.
+            shipping_estimate_amount:
+                label: Line item shipping cost
+                description: The shipping cost value calculated according to configured shipping rules and assigned line item shipping method.
             kit_item_line_items:
                 label: Kit Item Line Items
                 description: Stores the collection of kit item line items when the line item product is a kit.
@@ -120,8 +206,13 @@ oro:
                 label: Price
             value:
                 label: Price Value
+                description: Price for a product kit item line item product unit
             currency:
                 label: Price Currency
+                description: A currency for a product kit item line item price
+            price_fixed:
+                label: Contain Fixed Price
+                description: Indicates whether a product price is fixed.
 
         checkoutsubtotal:
             entity_label: 'Checkout Subtotal'
@@ -168,7 +259,6 @@ oro:
 
         billing_information: Billing
         shipping_information: Shipping
-        shipping_method: Shipping Method
         payment: Payment
 
         shipping_method.hint: Please select a shipping method for each group of line items below.
@@ -300,29 +390,43 @@ oro:
             checkout_link.label: Check Out
             delete.label: Delete
 
-        workflow.condition:
+        validator:
             order_line_items_not_empty:
                 allow_rfp.message: No products can be added to this order. Please create an RFQ to request price.
                 not_allow_rfp.message: No products can be added to this order.
-            shipping_method_is_not_available.message: |-
+            has_applicable_payment_methods:
+                message: |
+                    The selected payment method is not available.
+                    Please return to the payment method selection step and select a different one.
+            payment_method_is_not_selected:
+                message: Payment method is not selected.
+            payment_method_is_applicable:
+                message: |
+                    The selected payment method is not available.
+                    Please return to the payment method selection step and select a different one.
+            shipping_method_is_not_selected:
+                message: Shipping method is not selected.
+            has_applicable_shipping_rules.message: |-
                 The selected shipping method is not available.
                 Please return to the shipping method selection step and select a different one.
+            allowed_by_checkout_validation_event:
+                message: There was an error while processing the order.
+            invalid_checkout_addresses:
+                message: Checkout addresses are not valid.
+
+        workflow.condition:
+            completed_workflow.message: You are viewing a completed checkout. Order <a href="%orderViewLink%" target="_blank">#%orderIdentifier%</a> was created based on this checkout.
             payment_has_not_been_processed.message: |-
                 Payment has not been processed. If you have already submitted this order and believe it is a mistake,
                 please contact us for assistance. Otherwise, please click on "Submit" to proceed with the order submission.
             payment_has_not_fully_been_processed.message: |-
                 We have not been able to place one or more authorization holds on the provided payment card. Order <a href="%orderViewLink%" target="_blank">#%orderIdentifier%</a> has been created and successfully processed items have been removed. To finish the order submission please review the remaining unprocessed items and the payment information and try again, or contact us at 1-800-555-5555.
-            payment_method_is_not_applicable.message: |
-                The selected payment method is not available.
-                Please return to the payment method selection step and select a different one.
             content_of_order_was_changed.message: |-
                 There was a change to the contents of your order.
                 Please review the order information before proceeding to the next step.
-            payment_method_was_not_selected.message: Please select payment method.
             invalid_request.message: Invalid request.
             invalid_billing_address.message: Please enter correct billing address.
             invalid_shipping_address.message: Please enter correct shipping address.
-            payment_method_is_not_selected.message: Payment method is not selected.
             required_consents_should_be_checked.message: You have been redirected to the Agreements page as a new mandatory consent has been added and requires your attention. Please, review and accept it to proceed.
             required_consents_should_be_checked_on_single_page_checkout.message: New mandatory consent has been added and requires your attention. Please, review and accept it to proceed.
 
@@ -422,8 +526,7 @@ oro:
             payment:
                   error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
                   error_multiple_methods: 'We were unable to process your payment. Please verify your payment information and try again, or try another payment method.'
-        subtotals:
-            checkout_subtotal.label: Subtotal
         line_items_grouping:
             other_items_group:
                 title: Other Items
+

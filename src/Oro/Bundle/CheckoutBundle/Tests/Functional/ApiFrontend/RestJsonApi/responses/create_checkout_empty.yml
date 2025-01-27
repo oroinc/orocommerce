@@ -1,0 +1,41 @@
+data:
+    type: checkouts
+    id: '<toString(@created_checkout->id)>'
+    attributes:
+        poNumber: null
+        shippingType: checkout
+        shippingMethod: null
+        shippingMethodType: null
+        shippingEstimateAmount: null
+        paymentMethod: null
+        shipUntil: null
+        shipToBillingAddress: false
+        customerNotes: null
+        currency: null
+        completed: false
+        createdAt: '@created_checkout->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@created_checkout->updatedAt->format("Y-m-d\TH:i:s\Z")'
+        totalValue: null
+        totals: []
+        coupons: []
+    relationships:
+        lineItems:
+            data: []
+        lineItemGroups:
+            data: []
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@customer_user->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@customer->id)>'
+        billingAddress:
+            data: null
+        shippingAddress:
+            data: null
+        source:
+            data: null
+        order:
+            data: null

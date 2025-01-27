@@ -1,0 +1,278 @@
+data:
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.ready_for_completion.line_item.1->id)>'
+        attributes:
+            productSku: product-1
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.ready_for_completion->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data: []
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.ready_for_completion.line_item.2->id)>'
+        attributes:
+            productSku: product-6
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.ready_for_completion->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-6->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data: []
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.open.line_item.1->id)>'
+        attributes:
+            productSku: product-2
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.open->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data: []
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.in_progress.line_item.1->id)>'
+        attributes:
+            productSku: product-1
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.in_progress->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data: []
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.in_progress.line_item.2->id)>'
+        attributes:
+            productSku: product-kit-3
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.in_progress->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-3->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: '<toString(@checkout.in_progress.line_item.2.kit_item.1->id)>'
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: '<toString(@checkout.in_progress.line_item.2.kit_item.2->id)>'
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.in_progress.line_item.3->id)>'
+        attributes:
+            productSku: product-kit-2
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.in_progress->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-2->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: '<toString(@checkout.in_progress.line_item.3.kit_item.1->id)>'
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.another_customer_user.line_item.1->id)>'
+        attributes:
+            productSku: product-1
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.another_customer_user->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data: []
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.another_customer_user.line_item.2->id)>'
+        attributes:
+            productSku: product-kit-3
+            freeFormProduct: null
+            quantity: 1
+            price: null
+            currency: null
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.another_customer_user->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-3->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: '<toString(@checkout.another_customer_user.line_item.2.kit_item.1->id)>'
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: '<toString(@checkout.another_customer_user.line_item.2.kit_item.2->id)>'
+            group:
+                data: null

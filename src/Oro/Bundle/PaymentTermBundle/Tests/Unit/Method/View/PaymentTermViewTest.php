@@ -12,6 +12,9 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
 {
     /** @var PaymentTermProvider|\PHPUnit\Framework\MockObject\MockObject */
@@ -30,7 +33,7 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
         $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
 
         $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects($this->any())
+        $translator->expects(self::any())
             ->method('trans')
             ->willReturnCallback(function (string $key) {
                 return sprintf('[trans]%s[/trans]', $key);
@@ -39,24 +42,27 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
         $this->methodView = new PaymentTermView($this->paymentTermProvider, $translator, $this->paymentConfig);
     }
 
-    public function testGetOptionsEmpty()
+    public function testGetFrontendApiOptionsEmpty(): void
     {
         $customer = $this->createMock(Customer::class);
 
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(self::any())
+        $context->expects(self::once())
             ->method('getCustomer')
             ->willReturn($customer);
 
-        $this->paymentTermProvider->expects($this->once())
+        $this->paymentTermProvider->expects(self::once())
             ->method('getPaymentTerm')
             ->with($customer)
             ->willReturn(null);
 
-        $this->assertEquals([], $this->methodView->getOptions($context));
+        self::assertEquals(
+            ['paymentTerm' => null],
+            $this->methodView->getFrontendApiOptions($context)
+        );
     }
 
-    public function testGetOptions()
+    public function testGetFrontendApiOptions(): void
     {
         $paymentTerm = new PaymentTerm();
         $paymentTerm->setLabel('testLabel');
@@ -64,89 +70,237 @@ class PaymentTermViewTest extends \PHPUnit\Framework\TestCase
         $customer = $this->createMock(Customer::class);
 
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(self::any())
+        $context->expects(self::once())
             ->method('getCustomer')
             ->willReturn($customer);
 
-        $this->paymentTermProvider->expects($this->once())
+        $this->paymentTermProvider->expects(self::once())
             ->method('getPaymentTerm')
             ->with($customer)
-            ->willReturn(new PaymentTerm());
+            ->willReturn($paymentTerm);
 
-        $this->assertEquals(
-            ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
-            $this->methodView->getOptions($context)
+        self::assertEquals(
+            ['paymentTerm' => 'testLabel'],
+            $this->methodView->getFrontendApiOptions($context)
         );
     }
 
-    public function testGetOptionsWithCheckout()
+    public function testGetFrontendApiOptionsWithCheckoutSource(): void
     {
         $paymentTerm = new PaymentTerm();
         $paymentTerm->setLabel('testLabel');
 
         $checkoutSourceEntity = $this->createMock(CheckoutSourceEntityInterface::class);
         $sourceEntity = $this->createMock(CheckoutInterface::class);
-        $sourceEntity->expects($this->once())
+        $sourceEntity->expects(self::once())
             ->method('getSourceEntity')
             ->willReturn($checkoutSourceEntity);
         $context = $this->createMock(PaymentContextInterface::class);
-        $context->expects(self::any())
+        $context->expects(self::once())
             ->method('getSourceEntity')
             ->willReturn($sourceEntity);
 
-        $this->paymentTermProvider->expects($this->once())
+        $this->paymentTermProvider->expects(self::once())
             ->method('getObjectPaymentTerm')
             ->with($checkoutSourceEntity)
             ->willReturn($paymentTerm);
 
-        $this->assertEquals(
-            ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
-            $this->methodView->getOptions($context)
+        self::assertEquals(
+            ['paymentTerm' => 'testLabel'],
+            $this->methodView->getFrontendApiOptions($context)
         );
     }
 
-    public function testGetOptionsNullCustomer()
+    public function testGetFrontendApiOptionsWithoutCheckoutSource(): void
+    {
+        $paymentTerm = new PaymentTerm();
+        $paymentTerm->setLabel('testLabel');
+
+        $customer = $this->createMock(Customer::class);
+
+        $sourceEntity = $this->createMock(CheckoutInterface::class);
+        $sourceEntity->expects(self::once())
+            ->method('getSourceEntity')
+            ->willReturn(null);
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::once())
+            ->method('getSourceEntity')
+            ->willReturn($sourceEntity);
+        $context->expects(self::once())
+            ->method('getCustomer')
+            ->willReturn($customer);
+
+        $this->paymentTermProvider->expects(self::never())
+            ->method('getObjectPaymentTerm');
+
+        $this->paymentTermProvider->expects(self::once())
+            ->method('getPaymentTerm')
+            ->with($customer)
+            ->willReturn($paymentTerm);
+
+        self::assertEquals(
+            ['paymentTerm' => 'testLabel'],
+            $this->methodView->getFrontendApiOptions($context)
+        );
+    }
+
+    public function testGetFrontendApiOptionsNullCustomer(): void
     {
         $context = $this->createMock(PaymentContextInterface::class);
         $context->expects(self::once())
             ->method('getCustomer')
             ->willReturn(null);
 
-        $this->paymentTermProvider->expects($this->never())
+        $this->paymentTermProvider->expects(self::never())
             ->method('getPaymentTerm');
 
-        $this->assertEmpty($this->methodView->getOptions($context));
+        self::assertEquals(
+            ['paymentTerm' => null],
+            $this->methodView->getFrontendApiOptions($context)
+        );
     }
 
-    public function testGetBlock()
+    public function testGetOptionsEmpty(): void
     {
-        $this->assertEquals('_payment_methods_payment_term_widget', $this->methodView->getBlock());
+        $customer = $this->createMock(Customer::class);
+
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::once())
+            ->method('getCustomer')
+            ->willReturn($customer);
+
+        $this->paymentTermProvider->expects(self::once())
+            ->method('getPaymentTerm')
+            ->with($customer)
+            ->willReturn(null);
+
+        self::assertEquals([], $this->methodView->getOptions($context));
     }
 
-    public function testGetLabel()
+    public function testGetOptions(): void
     {
-        $this->paymentConfig->expects($this->once())
+        $paymentTerm = new PaymentTerm();
+        $paymentTerm->setLabel('testLabel');
+
+        $customer = $this->createMock(Customer::class);
+
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::once())
+            ->method('getCustomer')
+            ->willReturn($customer);
+
+        $this->paymentTermProvider->expects(self::once())
+            ->method('getPaymentTerm')
+            ->with($customer)
+            ->willReturn($paymentTerm);
+
+        self::assertEquals(
+            ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
+            $this->methodView->getOptions($context)
+        );
+    }
+
+    public function testGetOptionsWithCheckoutSource(): void
+    {
+        $paymentTerm = new PaymentTerm();
+        $paymentTerm->setLabel('testLabel');
+
+        $checkoutSourceEntity = $this->createMock(CheckoutSourceEntityInterface::class);
+        $sourceEntity = $this->createMock(CheckoutInterface::class);
+        $sourceEntity->expects(self::once())
+            ->method('getSourceEntity')
+            ->willReturn($checkoutSourceEntity);
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::once())
+            ->method('getSourceEntity')
+            ->willReturn($sourceEntity);
+
+        $this->paymentTermProvider->expects(self::once())
+            ->method('getObjectPaymentTerm')
+            ->with($checkoutSourceEntity)
+            ->willReturn($paymentTerm);
+
+        self::assertEquals(
+            ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
+            $this->methodView->getOptions($context)
+        );
+    }
+
+    public function testGetOptionsWithoutCheckoutSource(): void
+    {
+        $paymentTerm = new PaymentTerm();
+        $paymentTerm->setLabel('testLabel');
+
+        $customer = $this->createMock(Customer::class);
+
+        $sourceEntity = $this->createMock(CheckoutInterface::class);
+        $sourceEntity->expects(self::once())
+            ->method('getSourceEntity')
+            ->willReturn(null);
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::once())
+            ->method('getSourceEntity')
+            ->willReturn($sourceEntity);
+        $context->expects(self::once())
+            ->method('getCustomer')
+            ->willReturn($customer);
+
+        $this->paymentTermProvider->expects(self::never())
+            ->method('getObjectPaymentTerm');
+
+        $this->paymentTermProvider->expects(self::once())
+            ->method('getPaymentTerm')
+            ->with($customer)
+            ->willReturn($paymentTerm);
+
+        self::assertEquals(
+            ['value' => '[trans]oro.paymentterm.payment_terms.label[/trans]'],
+            $this->methodView->getOptions($context)
+        );
+    }
+
+    public function testGetOptionsNullCustomer(): void
+    {
+        $context = $this->createMock(PaymentContextInterface::class);
+        $context->expects(self::once())
+            ->method('getCustomer')
+            ->willReturn(null);
+
+        $this->paymentTermProvider->expects(self::never())
+            ->method('getPaymentTerm');
+
+        self::assertEmpty($this->methodView->getOptions($context));
+    }
+
+    public function testGetBlock(): void
+    {
+        self::assertEquals('_payment_methods_payment_term_widget', $this->methodView->getBlock());
+    }
+
+    public function testGetLabel(): void
+    {
+        $this->paymentConfig->expects(self::once())
             ->method('getLabel')
             ->willReturn('label');
 
-        $this->assertEquals('label', $this->methodView->getLabel());
+        self::assertEquals('label', $this->methodView->getLabel());
     }
 
-    public function testGetShortLabel()
+    public function testGetShortLabel(): void
     {
-        $this->paymentConfig->expects($this->once())
+        $this->paymentConfig->expects(self::once())
             ->method('getShortLabel')
             ->willReturn('short label');
 
-        $this->assertEquals('short label', $this->methodView->getShortLabel());
+        self::assertEquals('short label', $this->methodView->getShortLabel());
     }
 
-    public function testGetPaymentMethodIdentifier()
+    public function testGetPaymentMethodIdentifier(): void
     {
-        $this->paymentConfig->expects($this->once())
+        $this->paymentConfig->expects(self::once())
             ->method('getPaymentMethodIdentifier')
             ->willReturn('identifier');
 
-        $this->assertEquals('identifier', $this->methodView->getPaymentMethodIdentifier());
+        self::assertEquals('identifier', $this->methodView->getPaymentMethodIdentifier());
     }
 }

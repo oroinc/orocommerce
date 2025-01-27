@@ -1,0 +1,113 @@
+data:
+    type: checkoutlineitems
+    id: '<toString(@checkout.in_progress.line_item.3->id)>'
+    attributes:
+        quantity: 1
+    relationships:
+        product:
+            data:
+                type: products
+                id: '<toString(@product-kit-3->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.milliliter->code)>'
+        kitItemLineItems:
+            data:
+                -
+                    type: checkoutproductkititemlineitems
+                    id: checkoutproductkititemlineitem1
+                -
+                    type: checkoutproductkititemlineitems
+                    id: checkoutproductkititemlineitem2
+                -
+                    type: checkoutproductkititemlineitems
+                    id: checkoutproductkititemlineitem3
+                -
+                    type: checkoutproductkititemlineitems
+                    id: checkoutproductkititemlineitem4
+included:
+    -
+        type: checkoutproductkititemlineitems
+        id: checkoutproductkititemlineitem1
+        attributes:
+            quantity: 1
+            sortOrder: 1
+            price: '115.9000'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-0->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: checkoutproductkititemlineitems
+        id: checkoutproductkititemlineitem2
+        attributes:
+            quantity: 2
+            sortOrder: 2
+            price: '12.5900'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-3->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: checkoutproductkititemlineitems
+        id: checkoutproductkititemlineitem3
+        attributes:
+            quantity: 1
+            sortOrder: 3
+            price: '2.5000'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+    -
+        type: checkoutproductkititemlineitems
+        id: checkoutproductkititemlineitem4
+        attributes:
+            quantity: 1
+            sortOrder: 3
+            price: '2.5000'
+            currency: USD
+        relationships:
+            kitItem:
+                data:
+                    type: productkititems
+                    id: '<toString(@product-kit-3-kit-item-2->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-4->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'

@@ -12,6 +12,9 @@ use Oro\Bundle\ShippingBundle\Provider\GroupLineItemHelper;
 use Oro\Component\Testing\ReflectionUtil;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class GroupLineItemHelperTest extends \PHPUnit\Framework\TestCase
 {
     /** @var ConfigProvider|\PHPUnit\Framework\MockObject\MockObject */
@@ -175,6 +178,59 @@ class GroupLineItemHelperTest extends \PHPUnit\Framework\TestCase
         self::assertSame(
             $lineItemId,
             $this->groupLineItemHelper->getGroupingFieldValue($lineItem, 'id')
+        );
+    }
+
+    public function testGetLineItemGroupKeyWhenLineItemIsGroupedByAssociation(): void
+    {
+        $organization = $this->getOrganization(10);
+        $lineItem = $this->getLineItem(1);
+        $this->setLineItemProduct($lineItem, $organization);
+
+        self::assertEquals(
+            'product.organization:10',
+            $this->groupLineItemHelper->getLineItemGroupKey($lineItem, 'product.organization')
+        );
+    }
+
+    public function testGetLineItemGroupKeyWhenLineItemIsGroupedByAssociationAndItsValueIsNull(): void
+    {
+        $lineItem = $this->getLineItem(1);
+        $this->setLineItemProduct($lineItem, null);
+
+        self::assertEquals(
+            'product.organization:0',
+            $this->groupLineItemHelper->getLineItemGroupKey($lineItem, 'product.organization')
+        );
+    }
+
+    public function testGetLineItemGroupKeyWhenLineItemIsGroupedByAssociationAndFailToGetItsValue(): void
+    {
+        $lineItem = $this->getLineItem(1);
+
+        self::assertEquals(
+            GroupLineItemHelper::OTHER_ITEMS_KEY,
+            $this->groupLineItemHelper->getLineItemGroupKey($lineItem, 'product.organization')
+        );
+    }
+
+    public function testGetLineItemGroupKeyWhenLineItemIsGroupedByAssociationAndCannotGetItsValue(): void
+    {
+        $lineItem = $this->getLineItem(1);
+
+        self::assertEquals(
+            GroupLineItemHelper::OTHER_ITEMS_KEY,
+            $this->groupLineItemHelper->getLineItemGroupKey($lineItem, 'product.undefined')
+        );
+    }
+
+    public function testGetLineItemGroupKeyWhenLineItemIsGroupedByField(): void
+    {
+        $lineItem = $this->getLineItem(1);
+
+        self::assertEquals(
+            'id:1',
+            $this->groupLineItemHelper->getLineItemGroupKey($lineItem, 'id')
         );
     }
 }

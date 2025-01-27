@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Manager\MultiShipping\CheckoutLineItemsShippingManagerInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\DefaultMultipleShippingMethodProvider;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Sets a default shipping method and a shipping cost for a checkout and its line items
@@ -16,18 +15,15 @@ class DefaultMultiShippingMethodSetter implements DefaultMultiShippingMethodSett
 {
     private DefaultMultipleShippingMethodProvider $multiShippingMethodProvider;
     private CheckoutShippingMethodsProviderInterface $shippingPriceProvider;
-    private ManagerRegistry $doctrine;
     private CheckoutLineItemsShippingManagerInterface $lineItemsShippingManager;
 
     public function __construct(
         DefaultMultipleShippingMethodProvider $multiShippingMethodProvider,
         CheckoutShippingMethodsProviderInterface $shippingPriceProvider,
-        ManagerRegistry $doctrine,
         CheckoutLineItemsShippingManagerInterface $lineItemsShippingManager
     ) {
         $this->multiShippingMethodProvider = $multiShippingMethodProvider;
         $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->doctrine = $doctrine;
         $this->lineItemsShippingManager = $lineItemsShippingManager;
     }
 
@@ -55,7 +51,5 @@ class DefaultMultiShippingMethodSetter implements DefaultMultiShippingMethodSett
         if (null !== $price) {
             $checkout->setShippingCost($price);
         }
-
-        $this->doctrine->getManagerForClass(Checkout::class)->flush();
     }
 }

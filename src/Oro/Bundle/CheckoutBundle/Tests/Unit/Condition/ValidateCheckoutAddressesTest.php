@@ -16,133 +16,128 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var ValidateCheckoutAddresses
-     */
-    private $condition;
-
-    /**
-     * @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ValidatorInterface|\PHPUnit\Framework\MockObject\MockObject */
     private $validator;
+
+    /** @var ValidateCheckoutAddresses */
+    private $condition;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->validator = $this->createMock(ValidatorInterface::class);
+
         $this->condition = new ValidateCheckoutAddresses($this->validator);
     }
 
-    public function testInitializeInvalid()
+    public function testInitializeInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Missing "checkout" option');
 
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             AbstractCondition::class,
             $this->condition->initialize([])
         );
     }
 
-    public function testInitialize()
+    public function testInitialize(): void
     {
-        $this->assertInstanceOf(
+        self::assertInstanceOf(
             AbstractCondition::class,
             $this->condition->initialize(['Method', new \stdClass()])
         );
     }
 
-    public function testGetName()
+    public function testGetName(): void
     {
-        $this->assertEquals(ValidateCheckoutAddresses::NAME, $this->condition->getName());
+        self::assertEquals('validate_checkout_addresses', $this->condition->getName());
     }
 
-    public function testToArray()
+    public function testToArray(): void
     {
         $stdClass = new \stdClass();
         $this->condition->initialize(['checkout' => $stdClass]);
         $result = $this->condition->toArray();
 
-        $key = '@'.ValidateCheckoutAddresses::NAME;
+        $key = '@validate_checkout_addresses';
 
-        $this->assertIsArray($result);
-        $this->assertArrayHasKey($key, $result);
+        self::assertIsArray($result);
+        self::assertArrayHasKey($key, $result);
 
         $resultSection = $result[$key];
-        $this->assertIsArray($resultSection);
-        $this->assertArrayHasKey('parameters', $resultSection);
-        $this->assertContains($stdClass, $resultSection['parameters']);
+        self::assertIsArray($resultSection);
+        self::assertArrayHasKey('parameters', $resultSection);
+        self::assertContains($stdClass, $resultSection['parameters']);
     }
 
-    public function testCompile()
+    public function testCompile(): void
     {
         $toStringStub = new ToStringStub();
         $options = ['checkout' => $toStringStub];
 
         $this->condition->initialize($options);
         $result = $this->condition->compile('$factory');
-        $this->assertEquals(
-            sprintf(
-                '$factory->create(\'%s\', [%s])',
-                ValidateCheckoutAddresses::NAME,
-                $toStringStub
-            ),
+        self::assertEquals(
+            sprintf('$factory->create(\'validate_checkout_addresses\', [%s])', $toStringStub),
             $result
         );
     }
 
-    public function testEvaluateNoCheckoutPassed()
+    public function testEvaluateNoCheckoutPassed(): void
     {
         $this->condition->initialize(['checkout' => new \stdClass()]);
-        $this->validator->expects($this->never())->method('validate');
-        $this->assertEquals(false, $this->condition->evaluate([]));
+        $this->validator->expects(self::never())
+            ->method('validate');
+        self::assertFalse($this->condition->evaluate([]));
     }
 
-    public function testEvaluateNoBillingAddress()
+    public function testEvaluateNoBillingAddress(): void
     {
         $this->condition->initialize(['checkout' => new Checkout()]);
-        $this->validator->expects($this->never())->method('validate');
-        $this->assertEquals(false, $this->condition->evaluate([]));
+        $this->validator->expects(self::never())
+            ->method('validate');
+        self::assertFalse($this->condition->evaluate([]));
     }
 
-    public function testEvaluateInvalidBillingAddress()
+    public function testEvaluateInvalidBillingAddress(): void
     {
         $billingAddress = new OrderAddress();
         $checkout = (new Checkout())->setBillingAddress($billingAddress);
         $this->condition->initialize(['checkout' =>  $checkout]);
-        $this->validator->expects($this->once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->willReturn(ConstraintViolationList::createFromMessage('error'));
-        $this->assertEquals(false, $this->condition->evaluate([]));
+        self::assertFalse($this->condition->evaluate([]));
     }
 
-    public function testEvaluateCorrectBillingAddressAndShipToBillingEnabled()
+    public function testEvaluateCorrectBillingAddressAndShipToBillingEnabled(): void
     {
         $billingAddress = new OrderAddress();
         $checkout = (new Checkout())
             ->setBillingAddress($billingAddress)
             ->setShipToBillingAddress(true);
         $this->condition->initialize(['checkout' =>  $checkout]);
-        $this->validator->expects($this->once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->willReturn(new ConstraintViolationList());
-        $this->assertEquals(true, $this->condition->evaluate([]));
+        self::assertTrue($this->condition->evaluate([]));
     }
 
-    public function testEvaluateEmptyShippingAddress()
+    public function testEvaluateEmptyShippingAddress(): void
     {
         $billingAddress = new OrderAddress();
         $checkout = (new Checkout())
             ->setBillingAddress($billingAddress)
             ->setShipToBillingAddress(false);
         $this->condition->initialize(['checkout' =>  $checkout]);
-        $this->validator->expects($this->once())
+        $this->validator->expects(self::once())
             ->method('validate')
             ->willReturn(new ConstraintViolationList());
-        $this->assertEquals(false, $this->condition->evaluate([]));
+        self::assertFalse($this->condition->evaluate([]));
     }
 
-    public function testEvaluateEmptyAddresses()
+    public function testEvaluateEmptyAddresses(): void
     {
         $billingAddress = new OrderAddress();
         $shippingAddress = new OrderAddress();
@@ -151,13 +146,13 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
             ->setShippingAddress($shippingAddress)
             ->setShipToBillingAddress(false);
         $this->condition->initialize(['checkout' =>  $checkout]);
-        $this->validator->expects($this->exactly(2))
+        $this->validator->expects(self::once())
             ->method('validate')
             ->willReturn(ConstraintViolationList::createFromMessage('error'));
-        $this->assertEquals(false, $this->condition->evaluate([]));
+        self::assertFalse($this->condition->evaluate([]));
     }
 
-    public function testEvaluateInvalidShippingAddress()
+    public function testEvaluateInvalidShippingAddress(): void
     {
         $billingAddress = new OrderAddress();
         $checkout = (new Checkout())
@@ -165,16 +160,16 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
             ->setShippingAddress($billingAddress)
             ->setShipToBillingAddress(false);
         $this->condition->initialize(['checkout' =>  $checkout]);
-        $this->validator->expects($this->exactly(2))
+        $this->validator->expects(self::exactly(2))
             ->method('validate')
             ->willReturnOnConsecutiveCalls(
                 new ConstraintViolationList(),
                 ConstraintViolationList::createFromMessage('error')
             );
-        $this->assertEquals(false, $this->condition->evaluate([]));
+        self::assertFalse($this->condition->evaluate([]));
     }
 
-    public function testEvaluateAllAddressesCorrect()
+    public function testEvaluateAllAddressesCorrect(): void
     {
         $billingAddress = new OrderAddress();
         $checkout = (new Checkout())
@@ -182,9 +177,9 @@ class ValidateCheckoutAddressesTest extends \PHPUnit\Framework\TestCase
             ->setShippingAddress($billingAddress)
             ->setShipToBillingAddress(false);
         $this->condition->initialize(['checkout' =>  $checkout]);
-        $this->validator->expects($this->exactly(2))
+        $this->validator->expects(self::exactly(2))
             ->method('validate')
             ->willReturn(new ConstraintViolationList());
-        $this->assertEquals(true, $this->condition->evaluate([]));
+        self::assertTrue($this->condition->evaluate([]));
     }
 }

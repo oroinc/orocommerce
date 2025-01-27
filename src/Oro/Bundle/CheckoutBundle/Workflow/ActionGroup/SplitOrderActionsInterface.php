@@ -11,11 +11,17 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 interface SplitOrderActionsInterface
 {
     /**
-     * @param Checkout $checkout
-     * @param Order $order
-     * @param array $groupedLineItemsIds ['product.owner:1' => ['sku-1:item', ...], ...]
+     * @param Checkout   $checkout
+     * @param array|null $groupedLineItemsIds ['product.owner:1' => ['sku-1:item', ...], ...]
      *
-     * @return void
+     * @return Order
+     */
+    public function placeOrder(Checkout $checkout, ?array $groupedLineItemsIds): Order;
+
+    /**
+     * @param Checkout $checkout
+     * @param Order    $order
+     * @param array    $groupedLineItemsIds ['product.owner:1' => ['sku-1:item', ...], ...]
      */
     public function createChildOrders(Checkout $checkout, Order $order, array $groupedLineItemsIds): void;
 }

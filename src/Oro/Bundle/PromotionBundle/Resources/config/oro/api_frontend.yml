@@ -1,5 +1,9 @@
 api:
     entities:
+        Oro\Bundle\PromotionBundle\Entity\AppliedCoupon:
+            # this entity does not have own API resource
+            actions: false
+
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             documentation_resource: '@OroPromotionBundle/Resources/doc/api_frontend/order_line_item.md'
             fields:

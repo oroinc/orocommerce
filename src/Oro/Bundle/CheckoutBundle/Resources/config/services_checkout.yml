@@ -38,6 +38,7 @@ services:
             - '@oro_checkout.manager.multi_shipping.checkout_line_items_shipping'
             - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
             - '@oro_checkout.action_group.update_shipping_price'
+            - '@doctrine'
         tags:
             - { name: 'oro_action_group_service' }
 
@@ -56,6 +57,8 @@ services:
             - '@oro_checkout.provider.multi_shipping.sub_order_shipping_method_setter'
             - '@oro_checkout.checkout_sub_order_shipping_price_provider'
             - '@oro_promotion.applied_promotion_manager'
+            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.data_provider.converter.checkout_line_items'
         tags:
             - { name: 'oro_action_group_service' }
 
@@ -132,8 +135,8 @@ services:
     oro_checkout.workflow.base_transition.payment_error:
         class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\PaymentError
         arguments:
-            - '@doctrine'
             - '@oro_checkout.workflow.transition.unblock_and_recalculate'
+            - '@doctrine'
         tags:
             - { name: 'oro_workflow.transition_service' }
 
@@ -155,16 +158,14 @@ services:
         abstract: true
         arguments:
             - '@oro_action.action_executor'
-            - '@oro_checkout.provider.payment_context'
-            - '@oro_checkout.action_group.order_actions'
-            - '@oro_checkout.action_group.checkout_actions'
             - '@oro_checkout.workflow.base_transition.continue_transition'
+        calls:
+            - ['setValidator', ['@validator']]
 
     oro_checkout.workflow.base_transition.continue_transition:
         class: Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\ContinueTransition
-        arguments:
-            - '@oro_action.action_executor'
-            - '@oro_checkout.action_group.order_line_items_not_empty'
+        calls:
+            - ['setValidator', ['@validator']]
         tags:
             - { name: 'oro_workflow.transition_service' }
 
@@ -190,10 +191,7 @@ services:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\ContinueToShippingMethod
         arguments:
             - '@oro_checkout.action_group.address_actions'
-            - '@oro_checkout.provider.multi_shipping_config'
-            - '@oro_checkout.action.default_shipping_method_setter'
-            - '@oro_checkout.action.multi_shipping.default_shipping_method_setter'
-            - '@oro_checkout.action.multi_shipping.groups_default_shipping_method_setter'
+            - '@oro_checkout.action_group.shipping_method_actions'
             - '@oro_checkout.workflow.base_transition.continue_transition'
         tags:
             - { name: 'oro_workflow.transition_service' }
@@ -225,17 +223,17 @@ services:
         parent: oro_checkout.workflow.transition.place_order_abstract
         arguments:
             # Inherits dependencies from parent
-            - '@oro_checkout.provider.multi_shipping_config'
+            - '@oro_checkout.action_group.checkout_actions'
             - '@oro_checkout.action_group.split_order_actions'
             - '@oro_checkout.action_group.shipping_method_actions'
         tags:
             - { name: 'oro_workflow.transition_service' }
-        calls:
-            - [ setCheckoutLineItemsConverter, [ '@oro_checkout.data_provider.converter.checkout_line_items' ] ]
 
     oro_checkout.workflow.b2b_flow_checkout.transition.verify_payment:
         class: Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition\VerifyPayment
         parent: oro_checkout.workflow.base_transition.continue_transition
+        arguments:
+            - '@oro_action.action_executor'
         tags:
             - { name: 'oro_workflow.transition_service' }
 
@@ -301,6 +299,8 @@ services:
         parent: oro_checkout.workflow.transition.place_order_abstract
         arguments:
             # Inherits dependencies from parent
+            - '@oro_checkout.action_group.order_actions'
+            - '@oro_checkout.action_group.checkout_actions'
             - '@oro_checkout.action_group.update_shipping_price'
             - '@oro_checkout.action_group.payment_method_actions'
             - '@oro_checkout.action_group.customer_user_actions'
@@ -313,11 +313,11 @@ services:
         arguments:
             - '@oro_action.action_executor'
             - '@oro_checkout.action_group.checkout_actions'
-            - '@oro_checkout.action_group.shipping_method_actions'
             - '@oro_checkout.action_group.payment_method_actions'
-            - '@oro_checkout.provider.payment_context'
             - '@oro_payment.provider.payment_transaction'
             - '@oro_checkout.workflow.base_transition.continue_transition'
+        calls:
+            - ['setValidator', ['@validator']]
         tags:
             - { name: 'oro_workflow.transition_service' }
 
@@ -401,11 +401,8 @@ services:
     oro_checkout.action_group.actualize_checkout:
         class: Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ActualizeCheckout
         arguments:
-            - '@oro_action.action_executor'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_checkout.line_items.factory'
-            - '@oro_checkout.shipping_method.provider_main'
-            - '@oro_checkout.model.checkout_subtotal_updater'
+            - '@oro_checkout.checkout_by_source_criteria_manipulator'
         tags:
             - { name: 'oro_action_group_service' }
 
@@ -418,12 +415,11 @@ services:
             - '@oro_action.action_executor'
             - '@oro_workflow.manager'
             - '@oro_pricing.user_currency_manager'
-            - '@oro_checkout.repository.checkout'
             - '@oro_website.manager'
-            - '@oro_checkout.action_group.actualize_checkout'
             - '@oro_checkout.line_items.factory'
             - '@oro_checkout.helper.check_compare'
             - '@security.token_storage'
+            - '@oro_checkout.checkout_by_source_criteria_manipulator'
         tags:
             - { name: 'oro_action_group_service' }
 
@@ -510,6 +506,7 @@ services:
             - '@oro_checkout.helper.checkout_workflow_helper'
             - '@oro_workflow.manager'
             - '@oro_checkout.handler.checkout_request_handler_registry'
+            - 'b2b_checkout_flow'
         tags:
             - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -200 }
 
@@ -556,6 +553,13 @@ services:
             - '@oro_workflow.manager'
         tags:
             - { name: kernel.event_listener, event: oro_workflow.completed, method: onComplete }
+
+    oro_checkout.event_listener.completed_checkout_event_listener:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\CompletedCheckoutEventListener
+        arguments:
+            - '@router'
+        tags:
+            - { name: kernel.event_listener, event: oro_workflow.pre_announce, method: onPreAnnounce }
 
     oro_checkout.event_listener.checkout_request_actualize_currency:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\CheckoutRequestActualizeCurrencyListener

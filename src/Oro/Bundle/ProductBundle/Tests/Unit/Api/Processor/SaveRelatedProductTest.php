@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Model\Error;
+use Oro\Bundle\ApiBundle\Model\Label;
 use Oro\Bundle\ApiBundle\Tests\Unit\Processor\Create\CreateProcessorTestCase;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Api\Processor\SaveRelatedProduct;
@@ -34,7 +35,7 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->assignerStrategy = $this->createMock(AssignerStrategyInterface::class);
 
-        $this->doctrineHelper->expects($this->any())
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityRepositoryForClass')
             ->with(RelatedProduct::class)
             ->willReturn($this->relatedProductsRepository);
@@ -47,20 +48,20 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $relatedProduct = new RelatedProduct();
         $relatedProduct->setProduct(new Product())->setRelatedItem(new Product());
 
-        $this->relatedProductsRepository->expects($this->once())
+        $this->relatedProductsRepository->expects(self::once())
             ->method('findOneBy')
             ->willReturn(new RelatedProduct());
-        $this->relatedProductsRepository->expects($this->once())
+        $this->relatedProductsRepository->expects(self::once())
             ->method('exists')
             ->willReturn(false);
 
-        $this->assignerStrategy->expects($this->once())
+        $this->assignerStrategy->expects(self::once())
             ->method('addRelations');
 
         $this->context->setResult($relatedProduct);
         $this->processor->process($this->context);
 
-        $this->assertFalse($this->context->hasErrors());
+        self::assertFalse($this->context->hasErrors());
     }
 
     public function testErrorIsAddedToContextWhenRelatedItemsFunctionalityIsDisabled()
@@ -68,18 +69,18 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $relatedProduct = new RelatedProduct();
         $relatedProduct->setProduct(new Product())->setRelatedItem(new Product());
 
-        $this->relatedProductsRepository->expects($this->once())
+        $this->relatedProductsRepository->expects(self::once())
             ->method('exists')
             ->willReturn(false);
 
-        $this->assignerStrategy->expects($this->once())
+        $this->assignerStrategy->expects(self::once())
             ->method('addRelations')
             ->willThrowException(new \LogicException('Related Items functionality is disabled.'));
 
         $this->context->setResult($relatedProduct);
         $this->processor->process($this->context);
 
-        $this->assertCount(1, $this->context->getErrors());
+        self::assertCount(1, $this->context->getErrors());
     }
 
     public function testErrorIsAddedToContextWhenUserTriesToAddRelatedProductToItself()
@@ -87,11 +88,11 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $relatedProduct = new RelatedProduct();
         $relatedProduct->setProduct(new Product())->setRelatedItem(new Product());
 
-        $this->relatedProductsRepository->expects($this->once())
+        $this->relatedProductsRepository->expects(self::once())
             ->method('exists')
             ->willReturn(false);
 
-        $this->assignerStrategy->expects($this->once())
+        $this->assignerStrategy->expects(self::once())
             ->method('addRelations')
             ->willThrowException(new \InvalidArgumentException(
                 'It is not possible to create relations from product to itself.'
@@ -100,7 +101,7 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $this->context->setResult($relatedProduct);
         $this->processor->process($this->context);
 
-        $this->assertCount(1, $this->context->getErrors());
+        self::assertCount(1, $this->context->getErrors());
     }
 
     public function testErrorIsAddedToContextWhenUserTriesToAddMoreProductsThanLimitAllows()
@@ -108,11 +109,11 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $relatedProduct = new RelatedProduct();
         $relatedProduct->setProduct(new Product())->setRelatedItem(new Product());
 
-        $this->relatedProductsRepository->expects($this->once())
+        $this->relatedProductsRepository->expects(self::once())
             ->method('exists')
             ->willReturn(false);
 
-        $this->assignerStrategy->expects($this->once())
+        $this->assignerStrategy->expects(self::once())
             ->method('addRelations')
             ->willThrowException(new \OverflowException(
                 'It is not possible to add more related items, because of the limit of relations.'
@@ -121,7 +122,7 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $this->context->setResult($relatedProduct);
         $this->processor->process($this->context);
 
-        $this->assertCount(1, $this->context->getErrors());
+        self::assertCount(1, $this->context->getErrors());
     }
 
     public function testErrorIsAddedToContextWhenUserTriesToAddAlreadyExistingRelation()
@@ -129,21 +130,23 @@ class SaveRelatedProductTest extends CreateProcessorTestCase
         $relatedProduct = new RelatedProduct();
         $relatedProduct->setProduct(new Product())->setRelatedItem(new Product());
 
-        $this->relatedProductsRepository->expects($this->once())
+        $this->relatedProductsRepository->expects(self::once())
             ->method('exists')
             ->willReturn(true);
 
-        $this->assignerStrategy->expects($this->never())
+        $this->assignerStrategy->expects(self::never())
             ->method('addRelations');
 
         $this->context->setResult($relatedProduct);
         $this->processor->process($this->context);
 
         $errors = $this->context->getErrors();
-        $this->assertCount(1, $errors);
+        self::assertCount(1, $errors);
         /** @var Error $error */
         $error = reset($errors);
-        $expectedErrorMessage = 'oro.product.related_items.related_product.relation_already_exists';
-        $this->assertSame($expectedErrorMessage, (string)$error->getDetail()->getName());
+        self::assertEquals(
+            new Label('oro.product.related_items.related_product.relation_already_exists', 'validators'),
+            $error->getDetail()
+        );
     }
 }

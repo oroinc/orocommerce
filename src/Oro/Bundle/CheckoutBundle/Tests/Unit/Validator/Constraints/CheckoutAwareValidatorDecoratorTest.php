@@ -21,33 +21,43 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class CheckoutAwareValidatorDecoratorTest extends TestCase
 {
     private ConstraintValidator|MockObject $innerValidator;
-
     private CheckoutWorkflowHelper|MockObject $checkoutWorkflowHelper;
-
-    private CheckoutAwareValidatorDecorator $decorator;
-
     private ExecutionContextInterface|MockObject $context;
+    private CheckoutAwareValidatorDecorator $decorator;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->innerValidator = $this->createMock(ConstraintValidator::class);
         $this->checkoutWorkflowHelper = $this->createMock(CheckoutWorkflowHelper::class);
+        $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->decorator = new CheckoutAwareValidatorDecorator($this->innerValidator, $this->checkoutWorkflowHelper);
-
-        $this->context = $this->createMock(ExecutionContextInterface::class);
         $this->decorator->initialize($this->context);
+    }
+
+    private function getWorkflowItem(WorkflowStep $currentStep): WorkflowItem
+    {
+        $workflowItem = new WorkflowItem();
+        $workflowItem->setCurrentStep($currentStep);
+
+        return $workflowItem;
+    }
+
+    private function getWorkflowStep(string $name): WorkflowStep
+    {
+        $workflowStep = new WorkflowStep();
+        $workflowStep->setName($name);
+
+        return $workflowStep;
     }
 
     public function testValidateWhenNull(): void
     {
-        $this->innerValidator
-            ->expects(self::never())
+        $this->innerValidator->expects(self::never())
             ->method(self::anything());
 
-        $this->checkoutWorkflowHelper
-            ->expects(self::never())
+        $this->checkoutWorkflowHelper->expects(self::never())
             ->method(self::anything());
 
         $this->decorator->validate(null, $this->createMock(Constraint::class));
@@ -56,20 +66,17 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
     public function testValidateWhenNoCheckoutStepsOption(): void
     {
         $value = new \stdClass();
+
         $constraint = $this->createMock(Constraint::class);
 
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('initialize')
             ->with($this->context);
-
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('validate')
-            ->with($value, $constraint);
+            ->with(self::identicalTo($value), self::identicalTo($constraint));
 
-        $this->checkoutWorkflowHelper
-            ->expects(self::never())
+        $this->checkoutWorkflowHelper->expects(self::never())
             ->method(self::anything());
 
         $this->decorator->validate($value, $constraint);
@@ -78,21 +85,18 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
     public function testValidateWhenValueIsNotCheckout(): void
     {
         $value = new \stdClass();
+
         $constraint = new NotNull();
         $constraint->payload['checkoutSteps'] = ['sample_step_1'];
 
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('initialize')
             ->with($this->context);
-
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('validate')
-            ->with($value, $constraint);
+            ->with(self::identicalTo($value), self::identicalTo($constraint));
 
-        $this->checkoutWorkflowHelper
-            ->expects(self::never())
+        $this->checkoutWorkflowHelper->expects(self::never())
             ->method(self::anything());
 
         $this->decorator->validate($value, $constraint);
@@ -101,26 +105,21 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
     public function testValidateWhenValueIsProductLineItemsHolderAwareButHolderIsNotCheckout(): void
     {
         $value = $this->createMock(ProductLineItemsHolderAwareInterface::class);
-        $value
-            ->expects(self::once())
+        $value->expects(self::once())
             ->method('getLineItemsHolder')
             ->willReturn($this->createMock(ProductLineItemsHolderInterface::class));
 
         $constraint = new NotNull();
         $constraint->payload['checkoutSteps'] = ['sample_step_1'];
 
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('initialize')
             ->with($this->context);
-
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('validate')
-            ->with($value, $constraint);
+            ->with(self::identicalTo($value), self::identicalTo($constraint));
 
-        $this->checkoutWorkflowHelper
-            ->expects(self::never())
+        $this->checkoutWorkflowHelper->expects(self::never())
             ->method(self::anything());
 
         $this->decorator->validate($value, $constraint);
@@ -130,23 +129,19 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
     {
         $value = $this->createMock(ProductLineItemsHolderAwareInterface::class);
         $checkout = new Checkout();
-        $value
-            ->expects(self::once())
+        $value->expects(self::once())
             ->method('getLineItemsHolder')
             ->willReturn($checkout);
 
         $constraint = new NotNull();
         $constraint->payload['checkoutSteps'] = ['sample_step_1'];
 
-        $this->innerValidator
-            ->expects(self::never())
+        $this->innerValidator->expects(self::never())
             ->method(self::anything())
             ->with($this->context);
 
-        $workflowItem = (new WorkflowItem())
-            ->setCurrentStep((new WorkflowStep())->setName('sample_step_2'));
-        $this->checkoutWorkflowHelper
-            ->expects(self::once())
+        $workflowItem = $this->getWorkflowItem($this->getWorkflowStep('sample_step_2'));
+        $this->checkoutWorkflowHelper->expects(self::once())
             ->method('getWorkflowItem')
             ->with($checkout)
             ->willReturn($workflowItem);
@@ -158,28 +153,22 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
     {
         $value = $this->createMock(ProductLineItemsHolderAwareInterface::class);
         $checkout = new Checkout();
-        $value
-            ->expects(self::once())
+        $value->expects(self::once())
             ->method('getLineItemsHolder')
             ->willReturn($checkout);
 
         $constraint = new NotNull();
         $constraint->payload['checkoutSteps'] = ['sample_step_1'];
 
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('initialize')
             ->with($this->context);
-
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('validate')
-            ->with($value, $constraint);
+            ->with(self::identicalTo($value), self::identicalTo($constraint));
 
-        $workflowItem = (new WorkflowItem())
-            ->setCurrentStep((new WorkflowStep())->setName('sample_step_1'));
-        $this->checkoutWorkflowHelper
-            ->expects(self::once())
+        $workflowItem = $this->getWorkflowItem($this->getWorkflowStep('sample_step_1'));
+        $this->checkoutWorkflowHelper->expects(self::once())
             ->method('getWorkflowItem')
             ->with($checkout)
             ->willReturn($workflowItem);
@@ -194,15 +183,12 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
         $constraint = new NotNull();
         $constraint->payload['checkoutSteps'] = ['sample_step_1'];
 
-        $this->innerValidator
-            ->expects(self::never())
+        $this->innerValidator->expects(self::never())
             ->method(self::anything())
             ->with($this->context);
 
-        $workflowItem = (new WorkflowItem())
-            ->setCurrentStep((new WorkflowStep())->setName('sample_step_2'));
-        $this->checkoutWorkflowHelper
-            ->expects(self::once())
+        $workflowItem = $this->getWorkflowItem($this->getWorkflowStep('sample_step_2'));
+        $this->checkoutWorkflowHelper->expects(self::once())
             ->method('getWorkflowItem')
             ->with($value)
             ->willReturn($workflowItem);
@@ -217,23 +203,40 @@ class CheckoutAwareValidatorDecoratorTest extends TestCase
         $constraint = new NotNull();
         $constraint->payload['checkoutSteps'] = ['sample_step_1'];
 
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('initialize')
             ->with($this->context);
-
-        $this->innerValidator
-            ->expects(self::once())
+        $this->innerValidator->expects(self::once())
             ->method('validate')
-            ->with($value, $constraint);
+            ->with(self::identicalTo($value), self::identicalTo($constraint));
 
-        $workflowItem = (new WorkflowItem())
-            ->setCurrentStep((new WorkflowStep())->setName('sample_step_1'));
-        $this->checkoutWorkflowHelper
-            ->expects(self::once())
+        $workflowItem = $this->getWorkflowItem($this->getWorkflowStep('sample_step_1'));
+        $this->checkoutWorkflowHelper->expects(self::once())
             ->method('getWorkflowItem')
             ->with($value)
             ->willReturn($workflowItem);
+
+        $this->decorator->validate($value, $constraint);
+    }
+
+    public function testValidateWhenValueIsCheckoutAndWorkflowNotStarted(): void
+    {
+        $value = new Checkout();
+
+        $constraint = new NotNull();
+        $constraint->payload['checkoutSteps'] = ['sample_step_1'];
+
+        $this->innerValidator->expects(self::once())
+            ->method('initialize')
+            ->with($this->context);
+        $this->innerValidator->expects(self::once())
+            ->method('validate')
+            ->with(self::identicalTo($value), self::identicalTo($constraint));
+
+        $this->checkoutWorkflowHelper->expects(self::once())
+            ->method('getWorkflowItem')
+            ->with($value)
+            ->willReturn(null);
 
         $this->decorator->validate($value, $constraint);
     }

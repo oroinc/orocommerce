@@ -47,7 +47,26 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
         );
     }
 
-    public function testGetAllFilteredShippingMethodsConfigsWithShippingAddress()
+    public function testGetShippingMethodsConfigsRulesWhenNoCurrency(): void
+    {
+        $this->organizationProvider->expects(self::never())
+            ->method('getOrganization');
+
+        $this->repository->expects(self::never())
+            ->method(self::anything());
+
+        $context = $this->createMock(ShippingContextInterface::class);
+        $context->expects(self::any())
+            ->method('getCurrency')
+            ->willReturn(null);
+
+        $this->filtrationService->expects(self::never())
+            ->method('getFilteredShippingMethodsConfigsRules');
+
+        self::assertSame([], $this->provider->getShippingMethodsConfigsRules($context));
+    }
+
+    public function testGetShippingMethodsConfigsRulesWithShippingAddress(): void
     {
         $currency = 'USD';
         $address = $this->createMock(AddressInterface::class);
@@ -99,7 +118,7 @@ class BasicMethodsConfigsRulesByContextProviderTest extends \PHPUnit\Framework\T
         );
     }
 
-    public function testGetAllFilteredShippingMethodsConfigsWithoutShippingAddress()
+    public function testGetShippingMethodsConfigsRulesWithoutShippingAddress(): void
     {
         $currency = 'USD';
         $website = $this->createMock(Website::class);

@@ -134,14 +134,16 @@ class CheckoutActions implements CheckoutActionsInterface
         }
     }
 
-    private function fillCheckoutCompletedData(Checkout $checkout, Order $order): void
+    public function fillCheckoutCompletedData(Checkout $checkout, Order $order): void
     {
         $checkout->setCompleted(true);
-        $checkout->getCompletedData()->offsetSet(
+        $completedData = $checkout->getCompletedData();
+
+        $completedData->offsetSet(
             'itemsCount',
             count($order->getLineItems())
         );
-        $checkout->getCompletedData()->offsetSet(
+        $completedData->offsetSet(
             'orders',
             [
                 [
@@ -150,21 +152,21 @@ class CheckoutActions implements CheckoutActionsInterface
                 ]
             ]
         );
-        $checkout->getCompletedData()->offsetSet(
+        $completedData->offsetSet(
             'currency',
             $order->getCurrency()
         );
-        $checkout->getCompletedData()->offsetSet(
+        $completedData->offsetSet(
             'subtotal',
             $order->getSubtotalObject()->getValue()
         );
-        $checkout->getCompletedData()->offsetSet(
+        $completedData->offsetSet(
             'total',
             $order->getTotalObject()->getValue()
         );
 
         if ($checkout->getSourceEntity()) {
-            $checkout->getCompletedData()->offsetSet(
+            $completedData->offsetSet(
                 'startedFrom',
                 $this->entityNameResolver->getName($checkout->getSourceEntity()->getSourceDocument())
             );

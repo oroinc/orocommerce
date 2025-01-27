@@ -5,7 +5,6 @@ namespace Oro\Bundle\CheckoutBundle\Helper;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Use it to process checkout workflow
@@ -42,11 +41,11 @@ class CheckoutWorkflowHelper
         return !empty($metadata['is_checkout_workflow']);
     }
 
-    public function getWorkflowItem(CheckoutInterface $checkout): WorkflowItem
+    public function getWorkflowItem(CheckoutInterface $checkout): ?WorkflowItem
     {
         $items = $this->findWorkflowItems($checkout);
         if (\count($items) !== 1) {
-            throw new NotFoundHttpException('Unable to find correct WorkflowItem for current checkout');
+            return null;
         }
 
         return reset($items);
@@ -65,5 +64,10 @@ class CheckoutWorkflowHelper
         }
 
         return $this->workflowItems[$checkoutId];
+    }
+
+    public function clearCaches(CheckoutInterface $checkout): void
+    {
+        unset($this->workflowItems[$checkout->getId()]);
     }
 }

@@ -4,8 +4,10 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CheckoutBundle\Action\MultiShipping\SubOrderMultiShippingMethodSetter;
+use Oro\Bundle\CheckoutBundle\DataProvider\Converter\CheckoutLineItemsConverter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
+use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\GroupedCheckoutLineItemsProvider;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOrganizationProviderInterface;
 use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\SubOrderOwnerProviderInterface;
@@ -33,6 +35,8 @@ class SplitOrderActionsTest extends TestCase
     private SubOrderMultiShippingMethodSetter|MockObject $subOrderMultiShippingMethodSetter;
     private CheckoutSubOrderShippingPriceProvider|MockObject $checkoutSubOrderShippingPriceProvider;
     private AppliedPromotionManager|MockObject $appliedPromotionManager;
+    private ConfigProvider|MockObject $configProvider;
+    private CheckoutLineItemsConverter|MockObject $checkoutLineItemsConverter;
     private SplitOrderActions $splitOrderActions;
 
     #[\Override]
@@ -47,6 +51,8 @@ class SplitOrderActionsTest extends TestCase
         $this->subOrderMultiShippingMethodSetter = $this->createMock(SubOrderMultiShippingMethodSetter::class);
         $this->checkoutSubOrderShippingPriceProvider = $this->createMock(CheckoutSubOrderShippingPriceProvider::class);
         $this->appliedPromotionManager = $this->createMock(AppliedPromotionManager::class);
+        $this->configProvider = $this->createMock(ConfigProvider::class);
+        $this->checkoutLineItemsConverter = $this->createMock(CheckoutLineItemsConverter::class);
 
         $this->splitOrderActions = new SplitOrderActions(
             $this->orderActions,
@@ -57,8 +63,51 @@ class SplitOrderActionsTest extends TestCase
             $this->subOrderOrganizationProvider,
             $this->subOrderMultiShippingMethodSetter,
             $this->checkoutSubOrderShippingPriceProvider,
-            $this->appliedPromotionManager
+            $this->appliedPromotionManager,
+            $this->configProvider,
+            $this->checkoutLineItemsConverter
         );
+    }
+
+    public function testPlaceOrderWithoutSplit(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $order = $this->createMock(Order::class);
+
+        $this->configProvider->expects(self::never())
+            ->method('isCreateSubOrdersForEachGroupEnabled');
+
+        $this->checkoutLineItemsConverter->expects(self::never())
+            ->method('setReuseLineItems');
+
+        $this->orderActions->expects(self::once())
+            ->method('placeOrder')
+            ->with($checkout)
+            ->willReturn($order);
+
+        $this->splitOrderActions->placeOrder($checkout, null);
+    }
+
+    public function testPlaceOrderWithSplit(): void
+    {
+        $checkout = $this->createMock(Checkout::class);
+        $order = $this->createMock(Order::class);
+        $groupedLineItemsIds = ['group1' => ['item1'], 'group2' => ['item2']];
+
+        $this->configProvider->expects(self::once())
+            ->method('isCreateSubOrdersForEachGroupEnabled')
+            ->willReturn(true);
+
+        $this->checkoutLineItemsConverter->expects(self::exactly(2))
+            ->method('setReuseLineItems')
+            ->withConsecutive([true], [false]);
+
+        $this->orderActions->expects(self::once())
+            ->method('placeOrder')
+            ->with($checkout)
+            ->willReturn($order);
+
+        $this->splitOrderActions->placeOrder($checkout, $groupedLineItemsIds);
     }
 
     /**
@@ -68,15 +117,15 @@ class SplitOrderActionsTest extends TestCase
     {
         $checkout = $this->createMock(Checkout::class);
         $order = $this->createMock(Order::class);
-        $order->expects($this->any())
+        $order->expects(self::once())
             ->method('getIdentifier')
             ->willReturn('O1');
         $childOrder1 = $this->createMock(Order::class);
-        $childOrder1->expects($this->once())
+        $childOrder1->expects(self::once())
             ->method('setIdentifier')
             ->with('O1-1');
         $childOrder2 = $this->createMock(Order::class);
-        $childOrder2->expects($this->once())
+        $childOrder2->expects(self::once())
             ->method('setIdentifier')
             ->with('O1-2');
 
@@ -85,55 +134,56 @@ class SplitOrderActionsTest extends TestCase
         $shippingAddress1 = $this->createMock(OrderAddress::class);
         $shippingAddress2 = $this->createMock(OrderAddress::class);
 
-        $groupedLineItemsIds = [1, 2, 3];
+        $groupedLineItemsIds = ['group1' => ['item1'], 'group2' => ['item2']];
         $splitCheckout1 = $this->createMock(Checkout::class);
-        $splitCheckout1->expects($this->any())
+        $splitCheckout1->expects(self::once())
             ->method('getBillingAddress')
             ->willReturn($billingAddress1);
-        $splitCheckout1->expects($this->any())
+        $splitCheckout1->expects(self::once())
             ->method('getShippingAddress')
             ->willReturn($shippingAddress1);
-        $splitCheckout1->expects($this->once())
+        $splitCheckout1->expects(self::once())
             ->method('setShippingCost')
             ->with(Price::create(100, 'USD'));
         $splitCheckout2 = $this->createMock(Checkout::class);
-        $splitCheckout2->expects($this->any())
+        $splitCheckout2->expects(self::once())
             ->method('getBillingAddress')
             ->willReturn($billingAddress2);
-        $splitCheckout2->expects($this->once())
+        $splitCheckout2->expects(self::once())
             ->method('setShippingCost')
             ->with(Price::create(200, 'USD'));
-        $splitCheckout2->expects($this->any())
+        $splitCheckout2->expects(self::once())
             ->method('getShippingAddress')
             ->willReturn($shippingAddress2);
 
         $splitCheckouts = [
             'group1' => $splitCheckout1,
-            'group2' => $splitCheckout2,
+            'group2' => $splitCheckout2
         ];
 
         $lineItems1 = new ArrayCollection([$this->createMock(CheckoutLineItem::class)]);
         $lineItems2 = new ArrayCollection([$this->createMock(CheckoutLineItem::class)]);
 
-        $splitCheckout1->method('getLineItems')->willReturn($lineItems1);
-        $splitCheckout2->method('getLineItems')->willReturn($lineItems2);
+        $splitCheckout1->expects(self::once())
+            ->method('getLineItems')
+            ->willReturn($lineItems1);
+        $splitCheckout2->expects(self::once())
+            ->method('getLineItems')
+            ->willReturn($lineItems2);
 
-        $this->groupedLineItemsProvider
-            ->expects($this->once())
+        $this->groupedLineItemsProvider->expects(self::once())
             ->method('getGroupedLineItemsByIds')
             ->with($checkout, $groupedLineItemsIds)
             ->willReturn([$lineItems1, $lineItems2]);
 
-        $this->checkoutSplitter
-            ->expects($this->once())
+        $this->checkoutSplitter->expects(self::once())
             ->method('split')
             ->with($checkout, [$lineItems1, $lineItems2])
             ->willReturn($splitCheckouts);
 
         $organization = $this->createMock(Organization::class);
 
-        $this->subOrderOrganizationProvider
-            ->expects($this->exactly(2))
+        $this->subOrderOrganizationProvider->expects(self::exactly(2))
             ->method('getOrganization')
             ->withConsecutive(
                 [$lineItems1, 'group1'],
@@ -141,40 +191,36 @@ class SplitOrderActionsTest extends TestCase
             )
             ->willReturn($organization);
 
-        $this->subOrderMultiShippingMethodSetter
-            ->expects($this->exactly(2))
+        $this->subOrderMultiShippingMethodSetter->expects(self::exactly(2))
             ->method('setShippingMethod')
             ->withConsecutive(
                 [$checkout, $splitCheckout1, 'group1'],
-                [$checkout, $splitCheckout2, 'group2'],
+                [$checkout, $splitCheckout2, 'group2']
             );
 
-        $this->checkoutSubOrderShippingPriceProvider
-            ->expects($this->exactly(2))
+        $this->checkoutSubOrderShippingPriceProvider->expects(self::exactly(2))
             ->method('getPrice')
             ->withConsecutive(
                 [$splitCheckout1, $organization],
-                [$splitCheckout2, $organization],
+                [$splitCheckout2, $organization]
             )
             ->willReturnOnConsecutiveCalls(
                 Price::create(100, 'USD'),
                 Price::create(200, 'USD')
             );
 
-        $this->orderActions
-            ->expects($this->exactly(2))
+        $this->orderActions->expects(self::exactly(2))
             ->method('createOrderByCheckout')
             ->withConsecutive(
                 [$splitCheckout1, $billingAddress1, $shippingAddress1],
-                [$splitCheckout2, $billingAddress2, $shippingAddress2],
+                [$splitCheckout2, $billingAddress2, $shippingAddress2]
             )
             ->willReturnOnConsecutiveCalls(
                 $childOrder1,
                 $childOrder2
             );
 
-        $this->orderActions
-            ->expects($this->exactly(3))
+        $this->orderActions->expects(self::exactly(3))
             ->method('flushOrder')
             ->withConsecutive(
                 [$childOrder1],
@@ -182,13 +228,11 @@ class SplitOrderActionsTest extends TestCase
                 [$order]
             );
 
-        $this->appliedPromotionManager
-            ->expects($this->once())
+        $this->appliedPromotionManager->expects(self::once())
             ->method('createAppliedPromotions')
             ->with($order, true);
 
-        $this->totalHelper
-            ->expects($this->once())
+        $this->totalHelper->expects(self::once())
             ->method('fill')
             ->with($order);
 

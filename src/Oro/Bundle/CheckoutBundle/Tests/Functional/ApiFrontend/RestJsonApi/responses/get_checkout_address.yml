@@ -1,0 +1,32 @@
+data:
+    type: checkoutaddresses
+    id: '<toString(@checkout.in_progress.billing_address->id)>'
+    attributes:
+        label: null
+        street: '1215 Caldwell Road'
+        street2: null
+        city: Rochester
+        postalCode: '14608'
+        organization: null
+        customRegion: null
+        namePrefix: null
+        nameSuffix: null
+        firstName: John
+        middleName: null
+        lastName: Doe
+        createdAt: '@checkout.in_progress.billing_address->created->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@checkout.in_progress.billing_address->updated->format("Y-m-d\TH:i:s\Z")'
+        phone: null
+    relationships:
+        country:
+            data:
+                type: countries
+                id: '<toString(@country_usa->iso2Code)>'
+        region:
+            data:
+                type: regions
+                id: '<toString(@region_usa_california->combinedCode)>'
+        customerAddress:
+            data: null
+        customerUserAddress:
+            data: null

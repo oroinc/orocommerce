@@ -4,6 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Method\View;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewFrontendApiOptionsInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
@@ -11,9 +12,9 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProviderInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * View class for PaymentTerm.
+ * PaymentTerm payment method view.
  */
-class PaymentTermView implements PaymentMethodViewInterface
+class PaymentTermView implements PaymentMethodViewInterface, PaymentMethodViewFrontendApiOptionsInterface
 {
     /**
      * @var PaymentTermProviderInterface
@@ -38,6 +39,14 @@ class PaymentTermView implements PaymentMethodViewInterface
         $this->paymentTermProvider = $paymentTermProvider;
         $this->translator = $translator;
         $this->config = $config;
+    }
+
+    #[\Override]
+    public function getFrontendApiOptions(PaymentContextInterface $context): array
+    {
+        return [
+            'paymentTerm' => $this->getPaymentTerm($context)?->getLabel()
+        ];
     }
 
     #[\Override]
@@ -95,19 +104,18 @@ class PaymentTermView implements PaymentMethodViewInterface
         $paymentTerm = null;
         $sourceEntity = $context->getSourceEntity();
         if ($sourceEntity instanceof CheckoutInterface) {
-            $paymentTerm = $this->paymentTermProvider->getObjectPaymentTerm(
-                $sourceEntity->getSourceEntity()
-            );
+            $source = $sourceEntity->getSourceEntity();
+            if (null !== $source) {
+                $paymentTerm = $this->paymentTermProvider->getObjectPaymentTerm($source);
+            }
+        }
+        if (!$paymentTerm) {
+            $customer = $context->getCustomer();
+            if (null !== $customer) {
+                $paymentTerm = $this->paymentTermProvider->getPaymentTerm($customer);
+            }
         }
 
-        if ($paymentTerm) {
-            return $paymentTerm;
-        }
-
-        if ($context->getCustomer()) {
-            return $this->paymentTermProvider->getPaymentTerm($context->getCustomer());
-        }
-
-        return null;
+        return $paymentTerm;
     }
 }

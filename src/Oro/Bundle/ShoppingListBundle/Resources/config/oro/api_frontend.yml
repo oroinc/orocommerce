@@ -70,6 +70,17 @@ api:
                 customerUser:
                     actions:
                         update_relationship: false
+                checkout:
+                    target_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+                    actions:
+                        add_subresource:
+                            description: Create checkout
+                            request_target_class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutStartOptions
+                            status_codes:
+                                200: Returned when a checkout already exists
+                                201: Returned when a new checkout was successfully created
+                                403: Returned when no permissions to view the parent entity
+                        get_subresource: false
 
         Oro\Bundle\ShoppingListBundle\Entity\LineItem:
             documentation_resource: '@OroShoppingListBundle/Resources/doc/api_frontend/shopping_list_item.md'

@@ -488,14 +488,14 @@ services:
         arguments:
             - 'Use API resource to create a product kit item. A product kit item label can be created only together with a product kit item.'
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, class: Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel, mainRequest: true, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, class: Oro\Bundle\ProductBundle\Entity\ProductKitItemLabel, mainRequest: true }
 
     oro_product.api.disable_product_kit_item_product_creation:
         class: Oro\Bundle\ApiBundle\Processor\Shared\DisableResourceAccess
         arguments:
             - 'Use API resource to create a product kit item. A product kit item product can be created only together with a product kit item.'
         tags:
-            - { name: oro.api.processor, action: create, group: resource_check, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, mainRequest: true, priority: 250 }
+            - { name: oro.api.processor, action: create, group: resource_check, requestType: '!frontend', class: Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct, mainRequest: true }
 
     oro_product.api.product_localized_fallback_value_changed:
         class: Oro\Bundle\ProductBundle\Api\Processor\ReindexProductFallbackValueChanged

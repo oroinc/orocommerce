@@ -41,7 +41,7 @@ class ContinueToPayment implements TransitionServiceInterface
 
         if (!$this->availableShippingMethodChecker->hasAvailableShippingMethods($checkout)) {
             $errors?->add(
-                ['message' => 'oro.checkout.workflow.condition.shipping_method_is_not_available.message']
+                ['message' => 'oro.checkout.validator.has_applicable_shipping_rules.message']
             );
 
             return false;
@@ -57,7 +57,7 @@ class ContinueToPayment implements TransitionServiceInterface
         $checkout = $workflowItem->getEntity();
         if (!$checkout->getShippingMethod()) {
             $errors?->add(
-                ['message' => 'oro.checkout.workflow.condition.shipping_method_is_not_available.message']
+                ['message' => 'oro.checkout.validator.has_applicable_shipping_rules.message']
             );
 
             return false;

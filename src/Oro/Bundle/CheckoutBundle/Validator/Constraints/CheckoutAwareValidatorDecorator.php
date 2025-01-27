@@ -20,35 +20,27 @@ use Symfony\Component\Validator\Exception\ValidatorException;
  */
 class CheckoutAwareValidatorDecorator extends ConstraintValidator
 {
-    private ConstraintValidator $innerValidator;
-
-    private CheckoutWorkflowHelper $checkoutWorkflowHelper;
-
     public function __construct(
-        ConstraintValidator $innerValidator,
-        CheckoutWorkflowHelper $checkoutWorkflowHelper
+        private readonly ConstraintValidator $innerValidator,
+        private readonly CheckoutWorkflowHelper $checkoutWorkflowHelper
     ) {
-        $this->innerValidator = $innerValidator;
-        $this->checkoutWorkflowHelper = $checkoutWorkflowHelper;
     }
 
     #[\Override]
-    public function validate($value, Constraint $constraint): void
+    public function validate(mixed $value, Constraint $constraint): void
     {
-        if ($value === null) {
+        if (null === $value) {
             return;
         }
 
         $checkoutSteps = $constraint->payload['checkoutSteps'] ?? [];
         if ($checkoutSteps) {
-            if (!is_array($checkoutSteps)) {
-                throw new ValidatorException(
-                    sprintf(
-                        'The constraint payload option "checkoutSteps" is expected to be of type "array", '
-                        . 'but is of type "%s".',
-                        get_debug_type($checkoutSteps)
-                    )
-                );
+            if (!\is_array($checkoutSteps)) {
+                throw new ValidatorException(\sprintf(
+                    'The constraint payload option "checkoutSteps" is expected to be of type "array", '
+                    . 'but is of type "%s".',
+                    get_debug_type($checkoutSteps)
+                ));
             }
 
             $entity = $value;
@@ -58,7 +50,7 @@ class CheckoutAwareValidatorDecorator extends ConstraintValidator
 
             if ($entity instanceof Checkout) {
                 $workflowItem = $this->checkoutWorkflowHelper->getWorkflowItem($entity);
-                if (!in_array($workflowItem->getCurrentStep()->getName(), $checkoutSteps, false)) {
+                if ($workflowItem && !\in_array($workflowItem->getCurrentStep()?->getName(), $checkoutSteps, true)) {
                     return;
                 }
             }

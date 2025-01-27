@@ -150,7 +150,7 @@ Feature: Product Localized Fields Auditable
     Given go to System/ Data Audit
     Then number of records should be 4
     When I press "Action"
-    Then I should see following grid:
+    Then I should see following grid containing rows:
       | Action | Entity Type | Entity Name         |
       | Create | Product     | Product1 Auditable  |
       | Create | Brand       | New Auditable Brand |

@@ -3,12 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Transition;
 
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
-use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingGroupMethodSetterInterface;
-use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Provider\MultiShipping\ConfigProvider;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\AddressActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 
@@ -19,10 +16,7 @@ class ContinueToShippingMethod implements TransitionServiceInterface
 {
     public function __construct(
         private AddressActionsInterface $addressActions,
-        private ConfigProvider $configProvider,
-        private DefaultShippingMethodSetterInterface $defaultShippingMethodSetter,
-        private DefaultMultiShippingMethodSetterInterface $defaultMultiShippingMethodSetter,
-        private DefaultMultiShippingGroupMethodSetterInterface $defaultMultiShippingGroupMethodSetter,
+        private ShippingMethodActionsInterface $shippingMethodActions,
         private TransitionServiceInterface $baseContinueTransition
     ) {
     }
@@ -59,22 +53,8 @@ class ContinueToShippingMethod implements TransitionServiceInterface
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();
         $this->addressActions->updateShippingAddress($checkout);
-
         $this->updateEmail($workflowItem, $checkout);
-
-        if (!$this->configProvider->isMultiShippingEnabled()) {
-            $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
-        }
-
-        if ($this->configProvider->isShippingSelectionByLineItemEnabled()) {
-            $this->defaultMultiShippingMethodSetter->setDefaultShippingMethods($checkout);
-        }
-
-        if ($this->configProvider->isLineItemsGroupingEnabled()
-            && !$this->configProvider->isShippingSelectionByLineItemEnabled()
-        ) {
-            $this->defaultMultiShippingGroupMethodSetter->setDefaultShippingMethods($checkout);
-        }
+        $this->shippingMethodActions->updateDefaultShippingMethods($checkout, null, null, false);
     }
 
     private function updateEmail(WorkflowItem $workflowItem, Checkout $checkout): void

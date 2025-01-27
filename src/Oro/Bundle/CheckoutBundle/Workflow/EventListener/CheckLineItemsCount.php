@@ -30,6 +30,9 @@ class CheckLineItemsCount
         $request = $event->getRequest();
         $checkout = $event->getCheckout();
         $workflowItem = $this->checkoutWorkflowHelper->getWorkflowItem($checkout);
+        if (!$workflowItem) {
+            return;
+        }
 
         if ($this->isLineItemsCheckNeeded($checkout, $workflowItem, $request)) {
             $this->checkLineItemsCount($checkout, $request);

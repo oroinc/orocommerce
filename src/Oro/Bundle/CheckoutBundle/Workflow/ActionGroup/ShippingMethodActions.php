@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\Collection;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingGroupMethodSetterInterface;
@@ -25,7 +26,8 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
         private DefaultMultiShippingGroupMethodSetterInterface $defaultMultiShippingGroupMethodSetter,
         private CheckoutLineItemsShippingManagerInterface $checkoutLineItemsShipping,
         private CheckoutLineItemGroupsShippingManagerInterface $checkoutLineItemGroupsShipping,
-        private UpdateShippingPriceInterface $updateShippingPrice
+        private UpdateShippingPriceInterface $updateShippingPrice,
+        private ManagerRegistry $doctrine
     ) {
     }
 
@@ -41,28 +43,27 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
     public function updateDefaultShippingMethods(
         Checkout $checkout,
         ?array $lineItemsShippingMethods,
-        ?array $lineItemGroupsShippingMethods
+        ?array $lineItemGroupsShippingMethods,
+        bool $useDefaults = true
     ): void {
-        if (!$this->configProvider->isMultiShippingEnabled()) {
-            $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
-        }
-
-        // Sync actual shipping values for cases if new line items have been added.
         if ($this->configProvider->isShippingSelectionByLineItemEnabled()) {
+            // Sync actual shipping values for cases if new line items have been added.
             $this->defaultMultiShippingMethodSetter->setDefaultShippingMethods(
                 $checkout,
                 $lineItemsShippingMethods,
-                true
+                $useDefaults
             );
-        }
-
-        // Sync actual shipping values for cases if new line items have been added.
-        if ($this->isMultiShippingEnabledPerLineItemGroup()) {
+            $this->flushData();
+        } elseif ($this->configProvider->isLineItemsGroupingEnabled()) {
+            // Sync actual shipping values for cases if new line items have been added.
             $this->defaultMultiShippingGroupMethodSetter->setDefaultShippingMethods(
                 $checkout,
                 $lineItemGroupsShippingMethods,
-                true
+                $useDefaults
             );
+            $this->flushData();
+        } else {
+            $this->defaultShippingMethodSetter->setDefaultShippingMethod($checkout);
         }
     }
 
@@ -78,6 +79,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
                 $checkout,
                 $lineItemsShippingMethods
             );
+            $this->flushData();
         }
 
         // Update line items group shipping data if customer returns to the checkout on the order payment method step.
@@ -86,6 +88,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
                 $checkout,
                 $lineItemGroupsShippingMethods
             );
+            $this->flushData();
         }
     }
 
@@ -94,9 +97,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
     {
         if ($this->configProvider->isShippingSelectionByLineItemEnabled()) {
             $this->checkoutLineItemsShipping->updateLineItemsShippingPrices($checkout);
-        }
-
-        if ($this->isMultiShippingEnabledPerLineItemGroup()) {
+        } elseif ($this->configProvider->isLineItemsGroupingEnabled()) {
             $this->checkoutLineItemGroupsShipping->updateLineItemGroupsShippingPrices($checkout);
         }
 
@@ -105,12 +106,13 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
 
     private function hasEnabledShippingRules(Checkout $checkout, ?Collection $errors): bool
     {
-        return !$this->configProvider->isMultiShippingEnabled()
+        return $checkout->getShippingMethod()
+            && !$this->configProvider->isMultiShippingEnabled()
             && $this->actionExecutor->evaluateExpression(
                 'shipping_method_has_enabled_shipping_rules',
                 ['method_identifier' => $checkout->getShippingMethod()],
                 $errors,
-                'oro.checkout.workflow.condition.shipping_method_is_not_available.message'
+                'oro.checkout.validator.has_applicable_shipping_rules.message'
             );
     }
 
@@ -121,7 +123,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
                 'line_items_shipping_methods_has_enabled_shipping_rules',
                 ['entity' => $checkout],
                 $errors,
-                'oro.checkout.workflow.condition.shipping_method_is_not_available.message'
+                'oro.checkout.validator.has_applicable_shipping_rules.message'
             );
     }
 
@@ -134,7 +136,7 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
                 'line_item_groups_shipping_methods_has_enabled_shipping_rules',
                 ['entity' => $checkout],
                 $errors,
-                'oro.checkout.workflow.condition.shipping_method_is_not_available.message'
+                'oro.checkout.validator.has_applicable_shipping_rules.message'
             );
     }
 
@@ -164,5 +166,10 @@ class ShippingMethodActions implements ShippingMethodActionsInterface
     {
         return $this->configProvider->isLineItemsGroupingEnabled()
             && !$this->configProvider->isShippingSelectionByLineItemEnabled();
+    }
+
+    private function flushData(): void
+    {
+        $this->doctrine->getManagerForClass(Checkout::class)->flush();
     }
 }

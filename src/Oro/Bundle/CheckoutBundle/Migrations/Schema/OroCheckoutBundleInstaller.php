@@ -21,7 +21,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_16';
+        return 'v1_17';
     }
 
     #[\Override]
@@ -69,6 +69,7 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('po_number', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('customer_notes', 'text', ['notnull' => false]);
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
@@ -91,13 +92,16 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
         $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('deleted', 'boolean', ['default' => false]);
+        $table->addColumn('payment_in_progress', 'boolean', ['default' => false]);
         $table->addColumn('completed', 'boolean', ['default' => false]);
+        $table->addColumn('additional_data', 'text', ['notnull' => false]);
         $table->addColumn('completed_data', 'json_array', ['comment' => '(DC2Type:json_array)']);
         $table->addColumn('line_item_group_shipping_data', 'json', ['notnull' => false, 'comment' => '(DC2Type:json)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['billing_address_id'], 'uniq_checkout_bill_addr');
         $table->addUniqueIndex(['shipping_address_id'], 'uniq_checkout_shipp_addr');
         $table->addUniqueIndex(['source_id'], 'uniq_e56b559d953c1c61');
+        $table->addUniqueIndex(['order_id'], 'UNIQ_C040FD598D9F6D38');
         $table->addUniqueIndex(['registered_customer_user_id'], 'UNIQ_C040FD5916A5A0D');
     }
 
@@ -112,6 +116,12 @@ class OroCheckoutBundleInstaller implements Installation, ExtendExtensionAwareIn
             ['source_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_order'),
+            ['order_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_website'),
