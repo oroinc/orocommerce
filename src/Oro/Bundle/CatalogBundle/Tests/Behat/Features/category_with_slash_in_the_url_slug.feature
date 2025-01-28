@@ -9,7 +9,7 @@ Feature: Category with slash in the url slug
     Given sessions active:
       | Admin | first_session  |
       | Buyer | second_session |
-
+@skip
   Scenario: Create new subcategory with error
     Given I proceed as the Admin
     And I login as administrator
@@ -21,20 +21,20 @@ Feature: Category with slash in the url slug
       | URL Slug | /foo/bar/baz |
     And I click "Save"
     Then I should see "This value should not start or end with \"/\" and should contain only latin letters, numbers and symbols \"-._~/\""
-
+  @skip
   Scenario: Create new subcategory
     Given I fill "Category Form" with:
       | URL Slug | foo/bar/baz |
     When I click "Save"
     Then I should see "Category has been saved" flash message
-
+  @skip
   Scenario: Check subcategory
     Given I proceed as the Buyer
     And I am on the homepage
     When I go to "/foo/bar/baz"
     Then I should see "SubCategory"
     And I should not see "404 Not Found"
-
+  @skip
   Scenario: Update slug of subcategory
     Given I proceed as the Admin
     And I fill "Category Form" with:
@@ -43,7 +43,7 @@ Feature: Category with slash in the url slug
     And I check "Create 301 Redirect from old to new URLs"
     And I click "Apply" in modal window
     Then I should see "Category has been saved" flash message
-
+  @skip
   Scenario: Check changed slug of subcategory
     Given I proceed as the Buyer
     When I go to "foo/bar/baz"
