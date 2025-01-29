@@ -45,19 +45,19 @@ class CouponRepositoryTest extends WebTestCase
         );
     }
 
-    public function testGetPromotionsWithMatchedCoupons()
+    public function testGetPromotionsWithMatchedCouponsIds(): void
     {
         $promotionsIds = [
             $this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId(),
             $this->getReference(LoadPromotionData::ORDER_AMOUNT_PROMOTION)->getId(),
         ];
         $couponCodes = [
-            LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED,
-            LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL,
-            LoadCouponData::COUPON_DISABLED,
+            $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_EXPIRED)->getId(),
+            $this->getReference(LoadCouponData::COUPON_WITH_PROMO_AND_VALID_FROM_AND_UNTIL)->getId(),
+            $this->getReference(LoadCouponData::COUPON_DISABLED)->getId()
         ];
 
-        $result = $this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, $couponCodes);
+        $result = $this->getCouponRepository()->getPromotionsWithMatchedCouponsIds($promotionsIds, $couponCodes);
 
         $this->assertEquals([$this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()], $result);
     }
@@ -66,7 +66,7 @@ class CouponRepositoryTest extends WebTestCase
     {
         $promotionsIds = [$this->getReference(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getId()];
 
-        $this->assertEmpty($this->getCouponRepository()->getPromotionsWithMatchedCoupons($promotionsIds, [1234567]));
+        $this->assertEmpty($this->getCouponRepository()->getPromotionsWithMatchedCouponsIds($promotionsIds, [1234567]));
     }
 
     public function testGetCouponByCodeCaseSensitiveFound()

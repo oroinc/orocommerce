@@ -261,6 +261,13 @@ oro:
             coupons_actions.label: Coupons Actions
             importexport:
                 promotion: Promotion Name
+            violation:
+                disabled: Coupon %coupon_name% is disabled
+                absent_promotion: No promotion found for coupon %coupon_name%
+                expired: Coupon %coupon_name% has expired
+                not_started: The %coupon_name% coupon has not started yet
+                usage_limit_exceeded: Usage limit exceeded for coupon %coupon_name%
+                customer_user_usage_limit_exceeded: Customer user coupon usage limit is exceeded
 
         appliedpromotion:
             entity_label: Applied Promotion

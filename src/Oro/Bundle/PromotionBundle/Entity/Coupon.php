@@ -261,6 +261,13 @@ class Coupon implements
      */
     protected $validUntil;
 
+    public function setId(?int $id): self
+    {
+        $this->id = $id;
+
+        return $this;
+    }
+
     /**
      * @return int
      */

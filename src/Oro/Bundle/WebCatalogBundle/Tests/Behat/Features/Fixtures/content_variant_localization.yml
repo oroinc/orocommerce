@@ -1,0 +1,26 @@
+include:
+    - '@OroLocaleBundle:GermanLocalization.yml'
+
+Oro\Bundle\CMSBundle\Entity\Page:
+    landing_page_en:
+        __calls:
+            - addTitle: ['@landing_page_en_title']
+        content: 'Landing page EN'
+        organization: '@organization'
+        slugPrototypes: ['@landing_page_en_prototype']
+    landing_page_de:
+        __calls:
+            - addTitle: ['@landing_page_de_title']
+        content: 'Landing page DE'
+        organization: '@organization'
+        slugPrototypes: ['@landing_page_de_prototype']
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    landing_page_en_title:
+        string: 'Landing Page EN'
+    landing_page_de_title:
+        string: 'Landing Page DE'
+    landing_page_en_prototype:
+        string: 'landing-page-en-prototype'
+    landing_page_de_prototype:
+        string: 'landing-page-de-prototype'

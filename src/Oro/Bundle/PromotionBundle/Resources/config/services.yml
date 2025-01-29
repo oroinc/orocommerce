@@ -887,3 +887,15 @@ services:
             - '@oro_tax.provider.taxation_settings_provider'
         tags:
             - { name: kernel.event_listener, event: Oro\Bundle\TaxBundle\Event\SkipOrderTaxRecalculationEvent, method: onSkipOrderTaxRecalculation, priority: -250 }
+
+    # Workflow Event listeners
+    oro_promotion.event_listener.frontend_coupon_remove:
+        class: Oro\Bundle\PromotionBundle\EventListener\FrontendCouponRemoveListener
+        arguments:
+            - '@doctrine'
+            - '@translator'
+            - '@oro_promotion.handler.frontend_coupon_remove_handler'
+            - '@oro_promotion.validation_service.coupon_validation'
+            - !tagged_iterator oro_promotion.coupon_validator
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.request, method: onCheckoutRequest, priority: -150 }
