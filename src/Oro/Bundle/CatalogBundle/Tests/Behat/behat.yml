@@ -223,6 +223,7 @@ oro_behat_extension:
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\WebCatalogBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\RedirectBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\RedirectBundle\Tests\Behat\Context\SlugPrototypesContext
         - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
         - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\ProductImportExportContext

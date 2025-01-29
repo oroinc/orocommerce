@@ -18,7 +18,7 @@ Feature: Category with slash in the url slug
     And I click "Create Subcategory"
     And I fill "Category Form" with:
       | Title    | SubCategory  |
-      | URL Slug | /foo/bar/baz |
+    And I fill in URL Slug field with "/foo/bar/baz"
     And I click "Save"
     Then I should see "This value should not start or end with \"/\" and should contain only latin letters, numbers and symbols \"-._~/\""
   @skip
