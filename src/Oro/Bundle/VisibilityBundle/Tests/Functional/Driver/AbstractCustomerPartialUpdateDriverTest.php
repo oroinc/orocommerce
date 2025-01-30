@@ -27,11 +27,11 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
     use DefaultWebsiteIdTestTrait;
     use ConfigManagerAwareTestTrait;
 
-    private const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
-    private const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
+    protected const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
+    protected const CATEGORY_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.category_visibility';
 
-    private ConfigManager $configManager;
-    private CustomerPartialUpdateDriverInterface $driver;
+    protected ConfigManager $configManager;
+    protected CustomerPartialUpdateDriverInterface $driver;
 
     protected function setUp(): void
     {
@@ -49,12 +49,12 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
 
     abstract protected function checkTestToBeSkipped(): void;
 
-    private function getVisibilityCustomerFieldName(Customer $customer): string
+    protected function getVisibilityCustomerFieldName(Customer $customer): string
     {
-        return 'integer.visibility_customer.' . $customer->getId();
+        return 'visibility_customer.' . $customer->getId();
     }
 
-    private function searchVisibilitiesForCustomer(Customer $customer): Result
+    protected function searchVisibilitiesForCustomer(Customer $customer): Result
     {
         $query = new Query();
         $query
@@ -67,7 +67,7 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         return $this->getContainer()->get('oro_website_search.engine')->search($query);
     }
 
-    private function reindexProducts(): void
+    protected function reindexProducts(): void
     {
         $this->getContainer()->get('event_dispatcher')->dispatch(
             new ReindexationRequestEvent([Product::class], [], [], false),
@@ -98,7 +98,6 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Customer::class);
         $manager->persist($customer);
         $manager->flush();
-
         $searchResult = $this->searchVisibilitiesForCustomer($customer);
         $values = $searchResult->getElements();
 
