@@ -484,10 +484,10 @@ oro:
                     tooltip: 'When enabled, customers are allowed to select different shipping methods per line item. Please note that the shipping rules are calculated and applied separately for each line item. For example, subtotal, shipment weight, etc., will represent a single line item for which the shipping rules are calculated.'
                 minimum_order_amount:
                     label: 'Minimum Order Amount'
-                    tooltip: 'Minimum amount (subtotal) required to start the checkout process. In case of multiple currencies enabled on the storefront the system will pick the limit in the selected currency only if it is actually specified here for the same currency (no automatic currency conversions).'
+                    tooltip: 'Specify the minimum amount (subtotal) required for checkout. If multiple currencies are enabled on the storefront, the system will use the value set for the selected storefront currency. No automatic currency conversions are applied.'
                 maximum_order_amount:
                     label: 'Maximum Order Amount'
-                    tooltip: 'Maximum amount (subtotal) allowed to start the checkout process. In case of multiple currencies enabled on the storefront the system will pick the limit in the selected currency only if it is actually specified  here for the same currency (no automatic currency conversions).'
+                    tooltip: 'Specify the maximum amount (subtotal) required for checkout. If multiple currencies are enabled on the storefront, the system will use the value set for the selected storefront currency. No automatic currency conversions are applied.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'
