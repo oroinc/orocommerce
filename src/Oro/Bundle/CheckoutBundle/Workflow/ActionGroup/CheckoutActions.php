@@ -84,7 +84,7 @@ class CheckoutActions implements CheckoutActionsInterface
         $this->addressActions->actualizeAddresses($checkout, $order);
         $this->sendConfirmationEmail($checkout, $order);
         $this->fillCheckoutCompletedData($checkout, $order);
-        $this->checkoutComplete($checkout);
+        $this->checkoutComplete($checkout, $order);
         $this->finalizeSourceEntity(
             $checkout,
             $autoRemoveSource,
@@ -107,13 +107,13 @@ class CheckoutActions implements CheckoutActionsInterface
         );
     }
 
-    public function checkoutComplete(Checkout $checkout): void
+    private function checkoutComplete(Checkout $checkout, Order $order): void
     {
         $this->actionExecutor->executeAction(
             ExtendableAction::NAME,
             [
                 'events' => ['extendable_action.checkout_complete'],
-                'eventData' => ['checkout' => $checkout]
+                'eventData' => ['checkout' => $checkout, 'order' => $order]
             ]
         );
     }

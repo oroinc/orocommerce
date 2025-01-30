@@ -15,6 +15,7 @@ use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Component\Action\Action\ExtendableAction;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -150,6 +151,12 @@ class CheckoutActionsTest extends TestCase
                 'checkout' => $checkout,
                 'order' => $order,
                 'workflow' => 'b2b_flow_checkout'
+            ]);
+        $this->actionExecutor->expects($this->once())
+            ->method('executeAction')
+            ->with(ExtendableAction::NAME, [
+                'events' => ['extendable_action.checkout_complete'],
+                'eventData' => ['checkout' => $checkout, 'order' => $order]
             ]);
 
         $this->entityAliasResolver->expects($this->once())
