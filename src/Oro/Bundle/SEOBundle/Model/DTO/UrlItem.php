@@ -34,7 +34,7 @@ class UrlItem implements UrlItemInterface
      */
     public function __construct(
         $location,
-        \DateTime $lastModification = null,
+        ?\DateTime $lastModification = null,
         $changeFrequency = null,
         $priority = null
     ) {

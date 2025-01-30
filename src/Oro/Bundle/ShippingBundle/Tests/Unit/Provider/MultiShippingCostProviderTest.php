@@ -51,7 +51,7 @@ class MultiShippingCostProviderTest extends \PHPUnit\Framework\TestCase
         return $checkout;
     }
 
-    private function getLineItem(Organization $organization = null, Brand $brand = null): CheckoutLineItem
+    private function getLineItem(?Organization $organization = null, ?Brand $brand = null): CheckoutLineItem
     {
         $product = new Product();
         $product->setOrganization($organization ?? $this->getOrganization(1));

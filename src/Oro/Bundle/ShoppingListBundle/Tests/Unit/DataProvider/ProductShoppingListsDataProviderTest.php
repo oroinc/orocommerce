@@ -72,7 +72,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         float $quantity,
         ShoppingList $shoppingList,
         Product $product,
-        Product $parentProduct = null
+        ?Product $parentProduct = null
     ): LineItem {
         $lineItem = new LineItem();
         ReflectionUtil::setId($lineItem, $id);
@@ -110,7 +110,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         ?Product $product,
         ?ShoppingList $shoppingList,
         array $lineItems = [],
-        array $expected = null
+        ?array $expected = null
     ): void {
         $customerUser = new CustomerUser();
 
@@ -145,7 +145,7 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit\Framework\TestCase
         ?Product $product,
         ?ShoppingList $shoppingList,
         array $lineItems = [],
-        array $expected = null
+        ?array $expected = null
     ): void {
         $customerUser = new CustomerUser();
 

@@ -49,7 +49,7 @@ trait ShippingAddressTrait
      * @param OrderAddress|null $shippingAddress
      * @return $this
      */
-    public function setShippingAddress(OrderAddress $shippingAddress = null)
+    public function setShippingAddress(?OrderAddress $shippingAddress = null)
     {
         $this->shippingAddress = $shippingAddress;
 

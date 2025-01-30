@@ -220,7 +220,7 @@ class UniqueVariantLinksSimpleProductValidatorTest extends ConstraintValidatorTe
             ->assertRaised();
     }
 
-    private function prepareProduct(array $parentProducts = [], int $id = null): Product
+    private function prepareProduct(array $parentProducts = [], ?int $id = null): Product
     {
         $product = (new StubProduct())
             ->setType(Product::TYPE_SIMPLE)

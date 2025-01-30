@@ -40,8 +40,8 @@ class ProductRepository extends AbstractVisibilityRepository
      */
     public function insertStatic(
         InsertFromSelectQueryExecutor $insertExecutor,
-        Scope $scope = null,
-        $product = null
+        ?Scope                        $scope = null,
+                                      $product = null
     ) {
         $qb = $this->getInsertStaticQueryBuilder($scope, $product);
 
@@ -77,7 +77,7 @@ class ProductRepository extends AbstractVisibilityRepository
         Product $product,
         $visibility,
         Scope $scope,
-        Category $category = null
+        ?Category $category = null
     ) {
         $this->insertStatic($insertExecutor, null, $product);
 
@@ -173,7 +173,7 @@ class ProductRepository extends AbstractVisibilityRepository
      * @param Product|null $product
      * @return QueryBuilder
      */
-    protected function getInsertStaticQueryBuilder(Scope $scope = null, Product $product = null)
+    protected function getInsertStaticQueryBuilder(?Scope $scope = null, ?Product $product = null)
     {
         $visibilityCondition = sprintf(
             "CASE WHEN pv.visibility = '%s' THEN %s ELSE %s END",

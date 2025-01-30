@@ -246,7 +246,7 @@ class Taxable
         return $this->taxationAddress;
     }
 
-    public function setTaxationAddress(AbstractAddress $taxationAddress = null): self
+    public function setTaxationAddress(?AbstractAddress $taxationAddress = null): self
     {
         $this->taxationAddress = $taxationAddress;
 

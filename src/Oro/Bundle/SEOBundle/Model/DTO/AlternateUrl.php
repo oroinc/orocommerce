@@ -22,7 +22,7 @@ class AlternateUrl
      * @param string $url
      * @param Localization|null $localization
      */
-    public function __construct($url, Localization $localization = null)
+    public function __construct($url, ?Localization $localization = null)
     {
         $this->url = $url;
         $this->localization = $localization;

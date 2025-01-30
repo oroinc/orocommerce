@@ -166,7 +166,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         string $priceList,
         string $website,
         callable $getActual,
-        string $targetEntity = null
+        ?string $targetEntity = null
     ) {
         /** @var CombinedPriceList $priceList */
         $priceList = $this->getReference($priceList);

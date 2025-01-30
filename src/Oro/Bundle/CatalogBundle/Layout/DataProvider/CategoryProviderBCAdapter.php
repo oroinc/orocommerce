@@ -98,7 +98,7 @@ class CategoryProviderBCAdapter
      *
      * @return array
      */
-    public function getCategoryTreeArray(CustomerUser $user = null)
+    public function getCategoryTreeArray(?CustomerUser $user = null)
     {
         $cacheKey = $this->getCacheKey($user);
 
@@ -120,7 +120,7 @@ class CategoryProviderBCAdapter
      *
      * @return Category[]
      */
-    public function getCategoryTree(CustomerUser $user = null)
+    public function getCategoryTree(?CustomerUser $user = null)
     {
         $userId = $user ? $user->getId() : 0;
         if (!array_key_exists($userId, $this->tree)) {
@@ -152,7 +152,7 @@ class CategoryProviderBCAdapter
         return $this->tree[$userId];
     }
 
-    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
+    public function getIncludeSubcategoriesChoice(?bool $defaultValue = null): bool
     {
         return $this->requestProductHandler->getIncludeSubcategoriesChoice($defaultValue);
     }

@@ -14,7 +14,7 @@ class CategoryDefaultProductUnitProvider implements DefaultProductUnitProviderIn
      */
     protected $category;
 
-    public function setCategory(Category $category = null)
+    public function setCategory(?Category $category = null)
     {
         $this->category = $category;
     }

@@ -93,7 +93,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
         return $customerUser;
     }
 
-    private function getShoppingList(int $id = null): ShoppingList
+    private function getShoppingList(?int $id = null): ShoppingList
     {
         $shoppingList = new ShoppingList();
         if (null !== $id) {
@@ -104,10 +104,10 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     private function getLineItem(
-        int $id = null,
-        Product $product = null,
-        ProductUnit $unit = null,
-        int $quantity = null
+        ?int         $id = null,
+        ?Product     $product = null,
+        ?ProductUnit $unit = null,
+        ?int         $quantity = null
     ): LineItem {
         $lineItem = new LineItem();
         if (null !== $id) {

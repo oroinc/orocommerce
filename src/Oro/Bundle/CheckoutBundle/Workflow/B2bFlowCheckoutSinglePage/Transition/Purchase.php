@@ -31,7 +31,7 @@ class Purchase extends TransitionServiceAbstract
     }
 
     #[\Override]
-    public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();
@@ -105,7 +105,7 @@ class Purchase extends TransitionServiceAbstract
     private function isPurchaseViaDirectUrlAllowed(
         Checkout $checkout,
         WorkflowItem $workflowItem,
-        Collection $errors = null
+        ?Collection $errors = null
     ): bool {
         if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
             return false;

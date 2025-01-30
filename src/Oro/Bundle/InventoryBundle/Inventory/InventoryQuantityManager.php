@@ -74,7 +74,7 @@ class InventoryQuantityManager
      * @param Product|null $product
      * @return bool
      */
-    public function shouldDecrement(Product $product = null)
+    public function shouldDecrement(?Product $product = null)
     {
         if (!$product instanceof Product) {
             return false;

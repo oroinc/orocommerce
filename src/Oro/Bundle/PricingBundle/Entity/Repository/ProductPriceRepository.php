@@ -286,7 +286,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
     }
 
     #[\Override]
-    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    public function findBy(array $criteria, ?array $orderBy = null, $limit = null, $offset = null)
     {
         throw new \LogicException('Method locked because of sharded tables');
     }
@@ -298,7 +298,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
     }
 
     #[\Override]
-    public function findOneBy(array $criteria, array $orderBy = null)
+    public function findOneBy(array $criteria, ?array $orderBy = null)
     {
         throw new \LogicException('Method locked because of sharded tables');
     }

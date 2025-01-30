@@ -15,7 +15,7 @@ class CustomerCategoryVisibilityRepository extends AbstractCategoryVisibilityRep
     public function getCategoryCustomerIdsByVisibility(
         Category $category,
         $visibility,
-        array $restrictedCustomerIds = null
+        ?array $restrictedCustomerIds = null
     ) {
         $qb = $this->createQueryBuilder('customerCategoryVisibility');
 

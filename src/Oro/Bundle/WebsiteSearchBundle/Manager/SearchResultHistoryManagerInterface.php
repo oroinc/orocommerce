@@ -11,7 +11,7 @@ interface SearchResultHistoryManagerInterface
         string $searchTerm,
         string $searchType,
         int $resultsCount,
-        string $searchSessionId = null
+        ?string $searchSessionId = null
     ): void;
 
     public function removeOutdatedHistoryRecords(): void;

@@ -28,7 +28,7 @@ class PriceListProductPricesReader extends EntityReader
     protected $priceListId;
 
     #[\Override]
-    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null, array $ids = [])
+    protected function createSourceEntityQueryBuilder($entityName, ?Organization $organization = null, array $ids = [])
     {
         $qb = parent::createSourceEntityQueryBuilder($entityName, $organization, $ids);
 

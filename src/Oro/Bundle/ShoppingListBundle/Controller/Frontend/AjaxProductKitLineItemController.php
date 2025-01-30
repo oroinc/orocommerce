@@ -180,7 +180,7 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
     /**
      * @throws AccessDeniedException
      */
-    private function checkShoppingListAcl(ShoppingList $shoppingList = null): void
+    private function checkShoppingListAcl(?ShoppingList $shoppingList = null): void
     {
         if ($shoppingList === null || !$this->isGranted(BasicPermission::EDIT, $shoppingList)) {
             throw $this->createAccessDeniedException();

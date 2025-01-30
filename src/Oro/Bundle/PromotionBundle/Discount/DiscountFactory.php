@@ -36,7 +36,7 @@ class DiscountFactory
 
     public function create(
         DiscountConfiguration $configuration,
-        PromotionDataInterface $promotion = null
+        ?PromotionDataInterface $promotion = null
     ): DiscountInterface {
         $type = $configuration->getType();
         if (!array_key_exists($type, $this->typeToServiceMap)) {

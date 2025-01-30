@@ -183,12 +183,12 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @return QuoteProduct
      */
     protected function getQuoteProduct(
-        int $productId,
-        int $type = null,
-        string $comment = null,
-        string $commentCustomer = null,
-        array $requests = [],
-        array $offers = []
+        int     $productId,
+        ?int    $type = null,
+        ?string $comment = null,
+        ?string $commentCustomer = null,
+        array   $requests = [],
+        array   $offers = []
     ): QuoteProduct {
         $product = $this->getProduct($productId);
 
@@ -216,11 +216,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     protected function getQuoteProductOffer(
-        int $productId = null,
-        float $quantity = null,
-        string $unitCode = null,
-        int $priceType = null,
-        Price $price = null
+        ?int    $productId = null,
+        ?float  $quantity = null,
+        ?string $unitCode = null,
+        ?int    $priceType = null,
+        ?Price  $price = null
     ): QuoteProductOffer {
         $quoteProductOffer = new QuoteProductOffer();
         $quoteProductOffer->setQuoteProduct($this->getQuoteProduct($productId));
@@ -243,10 +243,10 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     protected function getQuoteProductRequest(
-        int $productId = null,
-        float $quantity = null,
-        string $unitCode = null,
-        Price $price = null
+        ?int    $productId = null,
+        ?float  $quantity = null,
+        ?string $unitCode = null,
+        ?Price  $price = null
     ): QuoteProductRequest {
         $quoteProductRequest = new QuoteProductRequest();
         $quoteProductRequest->setQuoteProduct($this->getQuoteProduct($productId));

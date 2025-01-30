@@ -108,7 +108,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      * @param Product|null $product
      * @return array
      */
-    protected function getUnitPrecisions(FormInterface $form, Product $product = null)
+    protected function getUnitPrecisions(FormInterface $form, ?Product $product = null)
     {
         if (!$product) {
             return [];
@@ -139,7 +139,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      * @param Product|null $product
      * @return ProductUnit[]
      */
-    protected function getProductUnits(FormInterface $form, Product $product = null)
+    protected function getProductUnits(FormInterface $form, ?Product $product = null)
     {
         $options = $form->getConfig()->getOptions();
         $sell = $options['sell'];
@@ -248,7 +248,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
         ProductUnitHolderInterface $productUnitHolder,
         Product $product,
         array $choices,
-        ProductUnit $productUnit = null
+        ?ProductUnit $productUnit = null
     ) {
         return (!$productUnit && $productUnitHolder->getEntityIdentifier())
             || ($product && $productUnit && !in_array($productUnit, $choices, true));
@@ -277,7 +277,7 @@ class ProductUnitSelectionType extends AbstractProductAwareType
      * @param Product|null $product
      * @return array
      */
-    private function getProductUnitChoices(FormInterface $form, Product $product = null)
+    private function getProductUnitChoices(FormInterface $form, ?Product $product = null)
     {
         $units = $this->getProductUnits($form, $product);
         $choices = [];

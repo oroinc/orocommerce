@@ -315,7 +315,7 @@ class OrderLineItemDataStorageExtensionTest extends \PHPUnit\Framework\TestCase
 
     private function getFormBuilder(
         bool $expectsAddEventListener = false,
-        FormInterface|\PHPUnit\Framework\MockObject\MockObject $form = null
+        FormInterface|\PHPUnit\Framework\MockObject\MockObject|null $form = null
     ): FormBuilderInterface {
         if (!$form) {
             $form = $this->createMock(FormInterface::class);

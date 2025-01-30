@@ -52,7 +52,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecorator implements ProductUnitFie
      * @throws DefaultUnitNotFoundException
      */
     #[\Override]
-    public function getAvailablePrimaryUnitChoices(Product $product = null): array
+    public function getAvailablePrimaryUnitChoices(?Product $product = null): array
     {
         if (!$this->singleUnitModeService->isSingleUnitMode()) {
             return $this->settings->getAvailablePrimaryUnitChoices($product);

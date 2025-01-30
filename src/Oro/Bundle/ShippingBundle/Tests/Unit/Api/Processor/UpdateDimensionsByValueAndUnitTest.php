@@ -36,7 +36,7 @@ class UpdateDimensionsByValueAndUnitTest extends CustomizeFormDataProcessorTestC
         $this->processor = new UpdateDimensionsByValueAndUnit($this->doctrine);
     }
 
-    private function getStubEntity(Dimensions $dimensions = null): ProductShippingOptionsStub
+    private function getStubEntity(?Dimensions $dimensions = null): ProductShippingOptionsStub
     {
         $entity = new ProductShippingOptionsStub();
         $entity->setDimensions($dimensions);

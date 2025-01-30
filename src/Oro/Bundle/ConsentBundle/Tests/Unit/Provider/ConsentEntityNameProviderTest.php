@@ -20,7 +20,7 @@ class ConsentEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new ConsentEntityNameProvider();
     }
 
-    private function getConsentName(string $string, Localization $localization = null): LocalizedFallbackValue
+    private function getConsentName(string $string, ?Localization $localization = null): LocalizedFallbackValue
     {
         $value = new LocalizedFallbackValue();
         $value->setString($string);

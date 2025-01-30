@@ -58,7 +58,7 @@ class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
         return new LexemeCircularReferenceValidator($this->parser, $doctrine, PropertyAccess::createPropertyAccessor());
     }
 
-    private function getPriceList(int $id, string $productAssignmentRule = null): PriceList
+    private function getPriceList(int $id, ?string $productAssignmentRule = null): PriceList
     {
         $priceList = new PriceList();
         ReflectionUtil::setId($priceList, $id);
@@ -70,10 +70,10 @@ class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
     }
 
     private function getPriceRule(
-        int $id,
-        PriceList $priceList = null,
-        string $rule = null,
-        string $ruleCondition = null
+        int        $id,
+        ?PriceList $priceList = null,
+        ?string    $rule = null,
+        ?string    $ruleCondition = null
     ): PriceRule {
         $priceRule = new PriceRule();
         ReflectionUtil::setId($priceRule, $id);

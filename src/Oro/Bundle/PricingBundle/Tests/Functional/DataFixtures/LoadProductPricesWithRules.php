@@ -70,7 +70,7 @@ class LoadProductPricesWithRules extends AbstractFixture implements DependentFix
     }
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }

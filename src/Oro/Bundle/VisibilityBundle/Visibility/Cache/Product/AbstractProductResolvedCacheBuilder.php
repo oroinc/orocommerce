@@ -27,7 +27,7 @@ abstract class AbstractProductResolvedCacheBuilder extends AbstractResolvedCache
 
     protected function resolveStaticValues(
         string $selectedVisibility,
-        VisibilityInterface $productVisibility = null
+        ?VisibilityInterface $productVisibility = null
     ): array {
         $updateData = [
             'sourceProductVisibility' => $productVisibility,

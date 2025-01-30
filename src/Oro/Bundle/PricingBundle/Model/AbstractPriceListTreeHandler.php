@@ -77,7 +77,7 @@ abstract class AbstractPriceListTreeHandler
      * @param Website|null $website
      * @return BasePriceList|null
      */
-    public function getPriceList(Customer $customer = null, Website $website = null)
+    public function getPriceList(?Customer $customer = null, ?Website $website = null)
     {
         if (!$website) {
             $website = $this->websiteManager->getCurrentWebsite();
@@ -144,7 +144,7 @@ abstract class AbstractPriceListTreeHandler
      * @param Website|null $website
      * @return string
      */
-    protected function getUniqueKey(Customer $customer = null, Website $website = null)
+    protected function getUniqueKey(?Customer $customer = null, ?Website $website = null)
     {
         $key = '';
         if ($customer) {

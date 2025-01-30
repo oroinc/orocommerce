@@ -66,7 +66,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
     /**
      * @dataProvider testProcessProvider
      */
-    public function testProcess(int $relatedJobId, array $fieldGroups = null): void
+    public function testProcess(int $relatedJobId, ?array $fieldGroups = null): void
     {
         $session = $this->getConnection()->createSession();
         $message = $this->createMessage(
@@ -120,7 +120,7 @@ class ReindexRequestItemProductsByRelatedJobProcessorTest extends WebTestCase
         ];
     }
 
-    private function getExpectedResultsFor(string $relatedJobId, array $fieldsGroups = null): array
+    private function getExpectedResultsFor(string $relatedJobId, ?array $fieldsGroups = null): array
     {
         $expectedResults = Yaml::parse(
             file_get_contents(

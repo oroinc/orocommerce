@@ -26,7 +26,7 @@ class DefaultShippingMethodSetterDecoratorTest extends \PHPUnit\Framework\TestCa
         );
     }
 
-    private function getCheckout(object $sourceEntity = null): Checkout
+    private function getCheckout(?object $sourceEntity = null): Checkout
     {
         $checkout = new Checkout();
         if (null !== $sourceEntity) {

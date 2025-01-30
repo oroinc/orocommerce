@@ -21,7 +21,7 @@ trait ValidationTrait
     protected function isValidationPassed(
         Checkout $checkout,
         string|array $validationGroups,
-        Collection $errors = null
+        ?Collection $errors = null
     ): bool {
         $violationList = $this->validator->validate($checkout, null, $validationGroups);
         if ($violationList->count() === 0) {

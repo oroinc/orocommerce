@@ -242,7 +242,7 @@ class CategoryAddOrReplaceStrategyTest extends WebTestCase
         );
     }
 
-    private function createCategory(int $id = null): Category
+    private function createCategory(?int $id = null): Category
     {
         $category = new Category();
         if (null !== $id) {

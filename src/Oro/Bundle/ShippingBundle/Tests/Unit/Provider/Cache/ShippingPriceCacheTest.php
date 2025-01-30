@@ -75,7 +75,7 @@ class ShippingPriceCacheTest extends TestCase
     /**
      * @dataProvider getPriceDataProvider
      */
-    public function testGetPrice(bool $isContains, Price $price = null): void
+    public function testGetPrice(bool $isContains, ?Price $price = null): void
     {
         $context = $this->createShippingContext([]);
 

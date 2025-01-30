@@ -20,10 +20,10 @@ class SubcategoryProvider
     }
 
     /**
-     * @param null|Category $category
+     * @param Category|null $category
      * @return array|Category[]
      */
-    public function getAvailableSubcategories(Category $category = null)
+    public function getAvailableSubcategories(?Category $category = null)
     {
         if (!$category) {
             return [];

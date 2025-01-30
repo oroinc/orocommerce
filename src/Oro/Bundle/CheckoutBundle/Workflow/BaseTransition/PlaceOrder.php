@@ -22,7 +22,7 @@ abstract class PlaceOrder implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isPreConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         if (!$workflowItem->getId()) {
             return false;
@@ -36,7 +36,7 @@ abstract class PlaceOrder implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         return $this->isValidationPassed($workflowItem->getEntity(), 'checkout_order_create_checks', $errors);
     }

@@ -32,7 +32,7 @@ class StartFromOrder extends AbstractOperationService
     ) {
     }
 
-    public function isPreConditionAllowed(ActionData $data, Collection $errors = null): bool
+    public function isPreConditionAllowed(ActionData $data, ?Collection $errors = null): bool
     {
         $applicableWorkflow = $this->workflowManager
             ->getAvailableWorkflowByRecordGroup(Checkout::class, 'b2b_checkout_flow');

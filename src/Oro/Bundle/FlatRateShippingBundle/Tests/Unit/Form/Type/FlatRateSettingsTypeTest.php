@@ -109,9 +109,9 @@ class FlatRateSettingsTypeTest extends FormIntegrationTestCase
     }
 
     private function createLocalizedValue(
-        string $string,
-        string $text = null,
-        Localization $localization = null
+        string        $string,
+        ?string       $text = null,
+        ?Localization $localization = null
     ): LocalizedFallbackValue {
         $value = new LocalizedFallbackValue();
         $value->setString($string)

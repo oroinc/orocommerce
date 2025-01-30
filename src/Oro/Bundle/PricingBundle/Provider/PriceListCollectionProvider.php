@@ -149,12 +149,12 @@ class PriceListCollectionProvider
         return $priceListCollection;
     }
 
-    protected function isFallbackToCurrentCustomerOnly(PriceListCustomerFallback $fallbackEntity = null): bool
+    protected function isFallbackToCurrentCustomerOnly(?PriceListCustomerFallback $fallbackEntity = null): bool
     {
         return $fallbackEntity && $fallbackEntity->getFallback() === PriceListCustomerFallback::CURRENT_ACCOUNT_ONLY;
     }
 
-    protected function isFallbackToCustomerGroup(PriceListCustomerFallback $fallbackEntity = null): bool
+    protected function isFallbackToCustomerGroup(?PriceListCustomerFallback $fallbackEntity = null): bool
     {
         return !$fallbackEntity || $fallbackEntity->getFallback() === PriceListCustomerFallback::ACCOUNT_GROUP;
     }

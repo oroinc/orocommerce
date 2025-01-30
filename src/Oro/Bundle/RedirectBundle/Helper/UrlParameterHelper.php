@@ -12,7 +12,7 @@ class UrlParameterHelper
      *
      * @return string
      */
-    public static function hashParams(array $parameters = null)
+    public static function hashParams(?array $parameters = null)
     {
         return md5(base64_encode(serialize($parameters)));
     }

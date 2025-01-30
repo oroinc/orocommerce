@@ -58,7 +58,7 @@ class TestContentVariant
         return $this->product_page_product;
     }
 
-    public function setProductPageProduct(Product $product_page_product = null)
+    public function setProductPageProduct(?Product $product_page_product = null)
     {
         $this->product_page_product = $product_page_product;
     }
@@ -71,7 +71,7 @@ class TestContentVariant
         return $this->category_page_category;
     }
 
-    public function setCategoryPageCategory(Category $category_page_category = null)
+    public function setCategoryPageCategory(?Category $category_page_category = null)
     {
         $this->category_page_category = $category_page_category;
     }
@@ -84,7 +84,7 @@ class TestContentVariant
         return $this->product_collection_segment;
     }
 
-    public function setProductCollectionSegment(Segment $product_collection_segment = null)
+    public function setProductCollectionSegment(?Segment $product_collection_segment = null)
     {
         $this->product_collection_segment = $product_collection_segment;
     }
@@ -93,7 +93,7 @@ class TestContentVariant
      * @param TestContentNode|null $node
      * @return $this
      */
-    public function setNode(TestContentNode $node = null)
+    public function setNode(?TestContentNode $node = null)
     {
         $this->node = $node;
 

@@ -24,7 +24,7 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
     protected ?ContainerInterface $container = null;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null): void
+    public function setContainer(?ContainerInterface $container = null): void
     {
         $this->container = $container;
     }

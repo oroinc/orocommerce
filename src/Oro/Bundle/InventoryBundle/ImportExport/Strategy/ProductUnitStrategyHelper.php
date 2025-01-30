@@ -52,10 +52,10 @@ class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
     /**
      * Extract the existing product unit based on its code
      *
-     * @param null|ProductUnit $productUnit
+     * @param ProductUnit|null $productUnit
      * @return null|object|ProductUnit
      */
-    protected function getProductUnit(ProductUnit $productUnit = null)
+    protected function getProductUnit(?ProductUnit $productUnit = null)
     {
         if ($productUnit && !empty($productUnit->getCode())) {
             $code = $this->productUnitTransformer->transformToProductUnit($productUnit->getCode());
@@ -76,7 +76,7 @@ class ProductUnitStrategyHelper extends AbstractInventoryLevelStrategyHelper
      * @param ProductUnit|null $productUnit
      * @return null|ProductUnitPrecision
      */
-    protected function getProductUnitPrecision(Product $product, ProductUnit $productUnit = null)
+    protected function getProductUnitPrecision(Product $product, ?ProductUnit $productUnit = null)
     {
         if ($productUnit && !empty(trim($productUnit->getCode()))) {
             return $this->checkAndRetrieveEntity(

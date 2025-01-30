@@ -47,7 +47,7 @@ class MatrixGridOrderManager
      *
      * @return MatrixCollection
      */
-    public function getMatrixCollection(Product $product, ShoppingList $shoppingList = null)
+    public function getMatrixCollection(Product $product, ?ShoppingList $shoppingList = null)
     {
         $shoppingListId = $shoppingList?->getId();
         if (isset($this->collectionCache[$product->getId()][$shoppingListId])) {
@@ -206,7 +206,7 @@ class MatrixGridOrderManager
      * @return array ex.: ['red' => ['xxl' => ['product' => object(Product)#1], ...], ...]
      * @throws \InvalidArgumentException
      */
-    private function getAvailableVariants(Product $product, array $variantFields, ProductUnit $unit = null)
+    private function getAvailableVariants(Product $product, array $variantFields, ?ProductUnit $unit = null)
     {
         if (!$unit) {
             $unit = $product->getPrimaryUnitPrecision()->getUnit();
@@ -299,7 +299,7 @@ class MatrixGridOrderManager
      *
      * @return float|null
      */
-    private function getQuantity(ProductUnit $productUnit, Product $cellProduct, ShoppingList $shoppingList = null)
+    private function getQuantity(ProductUnit $productUnit, Product $cellProduct, ?ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
             return null;

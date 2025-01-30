@@ -30,7 +30,7 @@ trait BillingAddressTrait
      * @param OrderAddress|null $billingAddress
      * @return $this
      */
-    public function setBillingAddress(OrderAddress $billingAddress = null)
+    public function setBillingAddress(?OrderAddress $billingAddress = null)
     {
         $this->billingAddress = $billingAddress;
 

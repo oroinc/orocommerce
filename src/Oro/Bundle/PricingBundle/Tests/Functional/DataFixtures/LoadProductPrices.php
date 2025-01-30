@@ -232,7 +232,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     }
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }

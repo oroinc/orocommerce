@@ -60,7 +60,7 @@ class AjaxUPSController extends AbstractController
     #[Route(path: '/validate-connection/{channelId}/', name: 'oro_ups_validate_connection', methods: ['POST'])]
     #[ParamConverter('channel', class: Channel::class, options: ['id' => 'channelId'])]
     #[CsrfProtection()]
-    public function validateConnectionAction(Request $request, Channel $channel = null)
+    public function validateConnectionAction(Request $request, ?Channel $channel = null)
     {
         if (!$channel) {
             $channel = new Channel();

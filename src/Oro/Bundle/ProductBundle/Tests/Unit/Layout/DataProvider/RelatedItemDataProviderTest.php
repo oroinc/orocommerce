@@ -294,12 +294,12 @@ class RelatedItemDataProviderTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @param Product[] $products
-     * @param int|null  $max
-     * @param int|null  $limit
+     * @param int|null $max
+     * @param int|null $limit
      *
      * @return int[]
      */
-    private function restrictionReturnsRelatedProducts(array $products, int $max = null, int $limit = null): array
+    private function restrictionReturnsRelatedProducts(array $products, ?int $max = null, ?int $limit = null): array
     {
         if ($max) {
             $products = array_slice($products, 0, $max, true);

@@ -34,7 +34,7 @@ class LoadProductContentVariants extends AbstractFixture implements DependentFix
      * @param string $reference
      * @param Product|null $product
      */
-    private function createTestContentVariant(ObjectManager $manager, $reference, Product $product = null)
+    private function createTestContentVariant(ObjectManager $manager, $reference, ?Product $product = null)
     {
         $testContentVariant = new TestContentVariant();
         $testContentVariant->setProductPageProduct($product);

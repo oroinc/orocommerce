@@ -22,10 +22,10 @@ class ProductIndexScheduler
     }
 
     public function scheduleProductsReindex(
-        array $categories,
-        int $websiteId = null,
-        bool $isScheduled = true,
-        array $fieldGroups = null
+        array  $categories,
+        ?int   $websiteId = null,
+        bool   $isScheduled = true,
+        ?array $fieldGroups = null
     ): void {
         $this->productReindexManager->reindexProducts(
             $this->doctrine->getRepository(Category::class)->getProductIdsByCategories($categories),

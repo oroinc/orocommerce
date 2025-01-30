@@ -171,7 +171,7 @@ class ProductMicrodataContext extends OroFeatureContext implements OroPageObject
         return $blockElement;
     }
 
-    private function findProductItem(string $sku, Element $context = null): Element
+    private function findProductItem(string $sku, ?Element $context = null): Element
     {
         $productItem = $this->findElementContains('ProductItem', $sku, $context);
         if (!$productItem) {

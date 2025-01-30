@@ -64,7 +64,7 @@ class ConsentDataBuilder
      *
      * @return ConsentData
      */
-    protected function getBuiltConsentData(Consent $consent, ConsentAcceptance $consentAcceptance = null)
+    protected function getBuiltConsentData(Consent $consent, ?ConsentAcceptance $consentAcceptance = null)
     {
         $consentData = new ConsentData($consent);
 

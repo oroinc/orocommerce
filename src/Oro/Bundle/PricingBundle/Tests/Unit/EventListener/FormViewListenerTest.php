@@ -336,7 +336,7 @@ class FormViewListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function createEvent(Product $entity, FormView $formView = null): BeforeListRenderEvent
+    private function createEvent(Product $entity, ?FormView $formView = null): BeforeListRenderEvent
     {
         $defaultData = [
             ScrollData::DATA_BLOCKS => [

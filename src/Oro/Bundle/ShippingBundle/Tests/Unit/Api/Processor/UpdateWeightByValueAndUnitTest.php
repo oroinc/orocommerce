@@ -36,7 +36,7 @@ class UpdateWeightByValueAndUnitTest extends CustomizeFormDataProcessorTestCase
         $this->processor = new UpdateWeightByValueAndUnit($this->doctrine);
     }
 
-    private function getStubEntity(Weight $weight = null): ProductShippingOptionsStub
+    private function getStubEntity(?Weight $weight = null): ProductShippingOptionsStub
     {
         $entity = new ProductShippingOptionsStub();
         $entity->setWeight($weight);

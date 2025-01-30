@@ -27,9 +27,9 @@ class CouponUsageManager
      * @return CouponUsage
      */
     public function createCouponUsage(
-        Coupon $coupon,
-        CustomerUser $customerUser = null,
-        $flush = false
+        Coupon        $coupon,
+        ?CustomerUser $customerUser = null,
+                      $flush = false
     ) {
         $couponUsage = new CouponUsage();
         $couponUsage->setCoupon($coupon);

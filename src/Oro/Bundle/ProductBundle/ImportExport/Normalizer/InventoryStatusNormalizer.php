@@ -11,7 +11,7 @@ use Symfony\Component\Serializer\Normalizer\ContextAwareNormalizerInterface;
 class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
 {
     #[\Override]
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         $processors = [
             'oro_product.inventory_status_only',
@@ -24,7 +24,7 @@ class InventoryStatusNormalizer implements ContextAwareNormalizerInterface
     }
 
     #[\Override]
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         return [
             'product' => [

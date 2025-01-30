@@ -71,7 +71,7 @@ class RequestProductHandler
         );
     }
 
-    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
+    public function getIncludeSubcategoriesChoice(?bool $defaultValue = null): bool
     {
         if ($defaultValue === null) {
             $defaultValue = self::INCLUDE_SUBCATEGORIES_DEFAULT_VALUE;

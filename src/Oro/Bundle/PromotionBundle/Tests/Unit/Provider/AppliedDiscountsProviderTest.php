@@ -66,7 +66,7 @@ class AppliedDiscountsProviderTest extends \PHPUnit\Framework\TestCase
      * @param OrderLineItem|null $lineItem
      * @return AppliedPromotion
      */
-    private function createAppliedPromotion(string $type, array $discountAmounts, OrderLineItem $lineItem = null)
+    private function createAppliedPromotion(string $type, array $discountAmounts, ?OrderLineItem $lineItem = null)
     {
         $appliedPromotion = new AppliedPromotion();
         $appliedPromotion->setType($type);

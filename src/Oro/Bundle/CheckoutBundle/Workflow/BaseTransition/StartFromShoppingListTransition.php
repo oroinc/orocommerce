@@ -37,7 +37,7 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     #[\Override]
-    public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isPreConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         $shoppingList = $this->getShoppingList($workflowItem);
         if (!$shoppingList) {
@@ -122,7 +122,7 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
     private function isStartAllowedByListeners(
         WorkflowItem $workflowItem,
         ShoppingList $shoppingList,
-        Collection $errors = null
+        ?Collection $errors = null
     ): bool {
         $workflowResult = $workflowItem->getResult();
         if (!$workflowResult->offsetExists('extendableConditionShoppingListStart')) {

@@ -85,7 +85,7 @@ class MenuDataProvider
      *
      * @return array
      */
-    public function getItems(int $maxNodesNestedLevel = null)
+    public function getItems(?int $maxNodesNestedLevel = null)
     {
         $scopes = $this->requestWebContentScopeProvider->getScopes();
         if ($scopes) {
@@ -107,7 +107,7 @@ class MenuDataProvider
         return [];
     }
 
-    private function getResolvedItems(array $scopes, int $maxNodesNestedLevel = null): array
+    private function getResolvedItems(array $scopes, ?int $maxNodesNestedLevel = null): array
     {
         $resolvedItems = [];
         foreach ($scopes as $scope) {
@@ -149,7 +149,7 @@ class MenuDataProvider
      * @param int|null $maxNodesNestedLevel
      * @return array
      */
-    private function getResolvedRootItem(Scope $scope, int $maxNodesNestedLevel = null)
+    private function getResolvedRootItem(Scope $scope, ?int $maxNodesNestedLevel = null)
     {
         $rootItem = [];
         $rootNode = $this->getRootNode();
@@ -169,7 +169,7 @@ class MenuDataProvider
      *
      * @return array
      */
-    private function prepareItemsData(ResolvedContentNode $node, int $remainingNestedLevel = null)
+    private function prepareItemsData(ResolvedContentNode $node, ?int $remainingNestedLevel = null)
     {
         $result = [];
 

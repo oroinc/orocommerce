@@ -32,7 +32,7 @@ class ProductImageResizeEvent extends Event
      * @param bool $forceOption
      * @param array|null $dimensions
      */
-    public function __construct($productImageId, $forceOption = false, array $dimensions = null)
+    public function __construct($productImageId, $forceOption = false, ?array $dimensions = null)
     {
         $this->productImageId = $productImageId;
         $this->forceOption = $forceOption;

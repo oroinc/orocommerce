@@ -59,7 +59,7 @@ class ContactInfoProvider implements ContactInfoProviderInterface
      * @return ContactInfo
      */
     #[\Override]
-    public function getContactInfo(CustomerUserInterface $customerUser = null)
+    public function getContactInfo(?CustomerUserInterface $customerUser = null)
     {
         $contactInfo = $this->getContactInformationByUserConfiguration($customerUser);
 
@@ -101,7 +101,7 @@ class ContactInfoProvider implements ContactInfoProviderInterface
         return (bool)$this->configManager->get($configKey);
     }
 
-    private function getContactInformationByUserConfiguration(CustomerUserInterface $customerUser = null): ?ContactInfo
+    private function getContactInformationByUserConfiguration(?CustomerUserInterface $customerUser = null): ?ContactInfo
     {
         if ($customerUser && $this->isUserConfigurationAllowed()) {
             $owner = $customerUser->getOwner();
@@ -119,7 +119,7 @@ class ContactInfoProvider implements ContactInfoProviderInterface
         return null;
     }
 
-    private function getContactInformationByDisplaySettings(CustomerUserInterface $customerUser = null): ?ContactInfo
+    private function getContactInformationByDisplaySettings(?CustomerUserInterface $customerUser = null): ?ContactInfo
     {
         $selectedOption = $this->sourceOptionsProvider->getSelectedOption();
         if (!$customerUser && $selectedOption !== ContactInfoSourceOptionsProvider::DONT_DISPLAY) {

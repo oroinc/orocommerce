@@ -10,7 +10,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
  */
 interface CheckoutActionsInterface
 {
-    public function getCheckoutUrl(Checkout $checkout, string $transition = null): string;
+    public function getCheckoutUrl(Checkout $checkout, ?string $transition = null): string;
 
     /**
      * @param Checkout $checkout

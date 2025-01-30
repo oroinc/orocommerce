@@ -110,7 +110,7 @@ class PriceRuleLexemeHandler
      * @param PriceRule|null $priceRule
      * @return PriceRuleLexeme[]
      */
-    protected function prepareLexemes(array $lexemes, PriceList $priceList, PriceRule $priceRule = null)
+    protected function prepareLexemes(array $lexemes, PriceList $priceList, ?PriceRule $priceRule = null)
     {
         $lexemeEntities = [];
         /**

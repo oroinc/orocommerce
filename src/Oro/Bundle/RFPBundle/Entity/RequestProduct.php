@@ -112,7 +112,7 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
      * @param Request|null $request
      * @return RequestProduct
      */
-    public function setRequest(Request $request = null)
+    public function setRequest(?Request $request = null)
     {
         $this->request = $request;
 
@@ -135,7 +135,7 @@ class RequestProduct implements ProductHolderInterface, ProductKitItemLineItemsA
      * @param Product|null $product
      * @return RequestProduct
      */
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         $this->product = $product;
         if ($product) {

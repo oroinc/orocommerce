@@ -44,7 +44,7 @@ class UserProductFiltersSidebarStateManager
         $this->configManager = $configManager;
     }
 
-    public function setCurrentProductFiltersSidebarState(bool $sidebarExpanded, Website $website = null): void
+    public function setCurrentProductFiltersSidebarState(bool $sidebarExpanded, ?Website $website = null): void
     {
         $website = $this->getWebsite($website);
         if (!$website) {
@@ -70,7 +70,7 @@ class UserProductFiltersSidebarStateManager
         }
     }
 
-    public function isProductFiltersSidebarExpanded(Website $website = null): bool
+    public function isProductFiltersSidebarExpanded(?Website $website = null): bool
     {
         $isSidebarExpanded = null;
         $website = $this->getWebsite($website);
@@ -106,7 +106,7 @@ class UserProductFiltersSidebarStateManager
         return $this->getProductFiltersSidebarExpandedStates()[$websiteId] ?? null;
     }
 
-    private function getDefaultFiltersDisplaySettingsState(Website $website = null): string
+    private function getDefaultFiltersDisplaySettingsState(?Website $website = null): string
     {
         return $this->configManager->get(
             Configuration::getConfigKeyByName(Configuration::FILTERS_DISPLAY_SETTINGS_STATE),
@@ -123,7 +123,7 @@ class UserProductFiltersSidebarStateManager
         return $token?->getUser();
     }
 
-    private function getWebsite(Website $website = null): ?Website
+    private function getWebsite(?Website $website = null): ?Website
     {
         return $website ?: $this->websiteManager->getCurrentWebsite();
     }

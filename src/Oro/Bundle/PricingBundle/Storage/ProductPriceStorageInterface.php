@@ -21,9 +21,9 @@ interface ProductPriceStorageInterface
      */
     public function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $products,
-        array $productUnitCodes = null,
-        array $currencies = null
+        array                              $products,
+        ?array                             $productUnitCodes = null,
+        ?array                             $currencies = null
     );
 
     /**

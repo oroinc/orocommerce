@@ -156,7 +156,7 @@ class Consent implements
      *
      * @return $this
      */
-    public function setContentNode(ContentNode $contentNode = null)
+    public function setContentNode(?ContentNode $contentNode = null)
     {
         $this->contentNode = $contentNode;
 

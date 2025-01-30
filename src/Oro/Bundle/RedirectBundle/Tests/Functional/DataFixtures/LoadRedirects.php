@@ -103,7 +103,7 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
     }
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }

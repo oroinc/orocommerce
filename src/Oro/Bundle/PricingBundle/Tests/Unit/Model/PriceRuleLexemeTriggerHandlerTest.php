@@ -41,7 +41,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider criteriaDataProvider
      */
-    public function testFindEntityLexemes(string $className, array $updatedFields = [], int $relationId = null): void
+    public function testFindEntityLexemes(string $className, array $updatedFields = [], ?int $relationId = null): void
     {
         $lexemes = [new PriceRuleLexeme()];
         $repo = $this->createMock(PriceRuleLexemeRepository::class);
@@ -84,7 +84,7 @@ class PriceRuleLexemeTriggerHandlerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider productDataProvider
      */
-    public function testProcessLexemes(Product $product = null): void
+    public function testProcessLexemes(?Product $product = null): void
     {
         $organization = $this->getEntity(Organization::class, ['id' => 1]);
         $priceList1 = $this->getEntity(PriceList::class, ['id' => 1]);

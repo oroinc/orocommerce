@@ -17,7 +17,7 @@ interface ProductPriceProviderInterface
      * @param ProductPriceScopeCriteriaInterface $scopeCriteria
      * @param int[]|Product[]                    $products
      * @param string[]                           $currencies
-     * @param string|null                        $unitCode
+     * @param string|null $unitCode
      *
      * @return array [product id => [ProductPriceInterface, ...], ...]
      */
@@ -25,7 +25,7 @@ interface ProductPriceProviderInterface
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
         array $currencies,
-        string $unitCode = null
+        ?string $unitCode = null
     ): array;
 
     /**

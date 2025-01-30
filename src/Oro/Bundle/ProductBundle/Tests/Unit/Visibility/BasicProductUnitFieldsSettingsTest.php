@@ -33,7 +33,7 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider productsDataProvider
      */
-    public function testIsProductPrimaryUnitVisible(Product $product = null)
+    public function testIsProductPrimaryUnitVisible(?Product $product = null)
     {
         $this->assertTrue($this->settings->isProductPrimaryUnitVisible($product));
     }
@@ -41,7 +41,7 @@ class BasicProductUnitFieldsSettingsTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider productsDataProvider
      */
-    public function testIsAddingAdditionalUnitsToProductAvailable(Product $product = null)
+    public function testIsAddingAdditionalUnitsToProductAvailable(?Product $product = null)
     {
         $this->assertTrue($this->settings->isAddingAdditionalUnitsToProductAvailable($product));
     }

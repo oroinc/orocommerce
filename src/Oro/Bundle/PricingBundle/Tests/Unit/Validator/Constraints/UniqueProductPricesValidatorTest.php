@@ -82,7 +82,7 @@ class UniqueProductPricesValidatorTest extends ConstraintValidatorTestCase
         int $priceListId,
         int $quantity,
         string $unitCode,
-        string $currency = null
+        ?string $currency = null
     ): ProductPrice {
         $unit = new ProductUnit();
         $unit->setCode($unitCode);

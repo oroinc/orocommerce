@@ -434,7 +434,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
      * @param CustomerGroup|null $customerGroup
      * @return array
      */
-    public function getCustomersWithAssignedPriceLists(Website $website, CustomerGroup $customerGroup = null)
+    public function getCustomersWithAssignedPriceLists(Website $website, ?CustomerGroup $customerGroup = null)
     {
         $qb = $this->createQueryBuilder('p');
 

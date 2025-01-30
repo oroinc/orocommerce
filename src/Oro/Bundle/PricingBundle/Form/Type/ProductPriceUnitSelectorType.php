@@ -21,7 +21,7 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
      * @return ProductUnit[]
      */
     #[\Override]
-    protected function getProductUnits(FormInterface $form, Product $product = null)
+    protected function getProductUnits(FormInterface $form, ?Product $product = null)
     {
         $productForm = $this->getProductForm($form);
         if (!$productForm ||
@@ -46,8 +46,8 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
      * @return ProductUnit[]
      */
     protected function getAllProductEnabledUnits(
-        ProductUnitPrecision $primaryUnitPrecision = null,
-        $additionalUnitPrecisions
+        ?ProductUnitPrecision $primaryUnitPrecision = null,
+                              $additionalUnitPrecisions
     ) {
         $units = [];
         if ($primaryUnitPrecision) {

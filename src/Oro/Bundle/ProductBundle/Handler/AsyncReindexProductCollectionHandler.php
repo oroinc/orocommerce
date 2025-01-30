@@ -50,7 +50,7 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
         iterable $childJobPartialMessages,
         string $uniqueJobName,
         bool $throwExceptionOnFailToRunJob = false,
-        array $indexationFieldGroups = null
+        ?array $indexationFieldGroups = null
     ): bool {
         $runCallback = fn (JobRunner $jobRunner, Job $job) => $this->doJob(
             $jobRunner,
@@ -72,7 +72,7 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
         JobRunner $jobRunner,
         Job $job,
         iterable $childJobPartialMessages,
-        array $indexationFieldGroups = null
+        ?array $indexationFieldGroups = null
     ): bool {
         $isDependentJobAdded = false;
         $childJobMessageTopic = ReindexProductCollectionBySegmentTopic::NAME;
@@ -101,7 +101,7 @@ class AsyncReindexProductCollectionHandler implements AsyncReindexProductCollect
         return true;
     }
 
-    private function addDependentJob(Job $rootJob, array $indexationFieldGroups = null): void
+    private function addDependentJob(Job $rootJob, ?array $indexationFieldGroups = null): void
     {
         $dependentJobContext = $this->dependentJobService->createDependentJobContext($rootJob);
         $dependentJobContext->addDependentJob(

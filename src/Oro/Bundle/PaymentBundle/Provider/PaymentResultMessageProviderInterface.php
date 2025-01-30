@@ -10,5 +10,5 @@ interface PaymentResultMessageProviderInterface
      * @param PaymentTransaction|null $transaction
      * @return string
      */
-    public function getErrorMessage(PaymentTransaction $transaction = null);
+    public function getErrorMessage(?PaymentTransaction $transaction = null);
 }

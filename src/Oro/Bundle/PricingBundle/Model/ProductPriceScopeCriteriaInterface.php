@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  */
 interface ProductPriceScopeCriteriaInterface
 {
-    public function setCustomer(Customer $customer = null);
+    public function setCustomer(?Customer $customer = null);
 
     public function getCustomer(): ?Customer;
 
@@ -25,7 +25,7 @@ interface ProductPriceScopeCriteriaInterface
      */
     public function getContext();
 
-    public function setWebsite(Website $website = null);
+    public function setWebsite(?Website $website = null);
 
     public function getWebsite(): ?Website;
 

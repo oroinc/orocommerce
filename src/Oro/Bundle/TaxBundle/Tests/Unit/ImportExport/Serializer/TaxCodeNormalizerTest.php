@@ -10,7 +10,7 @@ class TaxCodeNormalizerTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider normalizeDataProvider
      */
-    public function testNormalize(object $object, array $context = [], array $expected = null)
+    public function testNormalize(object $object, array $context = [], ?array $expected = null)
     {
         $serializer = new TaxCodeNormalizer();
         $this->assertSame($expected, $serializer->normalize($object, null, $context));

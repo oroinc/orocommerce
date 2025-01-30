@@ -12,7 +12,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
  */
 class PageRepository extends EntityRepository
 {
-    public function findOneByTitle(string $title, Localization $localization = null, bool $partial = true): ?Page
+    public function findOneByTitle(string $title, ?Localization $localization = null, bool $partial = true): ?Page
     {
         $qb = $this->createQueryBuilder('page');
 

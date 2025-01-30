@@ -32,7 +32,7 @@ class PromotionSchedule implements ScheduleIntervalInterface
     #[ORM\Column(name: 'deactivate_at', type: Types::DATETIME_MUTABLE, nullable: true)]
     protected ?\DateTimeInterface $deactivateAt = null;
 
-    public function __construct(\DateTime $activeAt = null, \DateTime $deactivateAt = null)
+    public function __construct(?\DateTime $activeAt = null, ?\DateTime $deactivateAt = null)
     {
         $this->activeAt = $activeAt;
         $this->deactivateAt = $deactivateAt;

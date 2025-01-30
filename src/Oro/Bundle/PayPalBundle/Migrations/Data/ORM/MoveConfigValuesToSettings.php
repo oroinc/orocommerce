@@ -42,7 +42,7 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
     protected $paymentMethodIdentifierByChannelProvider;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         parent::setContainer($container);
 

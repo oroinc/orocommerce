@@ -141,7 +141,7 @@ class ResolvePaymentTermListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($paymentTerm, $this->event->getPaymentTerm());
     }
 
-    private function mockGetCurrentCheckout(Checkout $checkout = null): void
+    private function mockGetCurrentCheckout(?Checkout $checkout = null): void
     {
         $request = new Request();
         $request->attributes->set('_route', ResolvePaymentTermListener::CHECKOUT_ROUTE);

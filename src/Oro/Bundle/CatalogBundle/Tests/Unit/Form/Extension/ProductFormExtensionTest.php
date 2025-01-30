@@ -230,7 +230,7 @@ class ProductFormExtensionTest extends TestCase
         return new FormEvent($mainForm, $data);
     }
 
-    private function createProduct(int $id = null): Product
+    private function createProduct(?int $id = null): Product
     {
         $product = new Product();
         ReflectionUtil::setId($product, $id);
@@ -238,7 +238,7 @@ class ProductFormExtensionTest extends TestCase
         return $product;
     }
 
-    private function createCategory(int $id = null): Category
+    private function createCategory(?int $id = null): Category
     {
         $category = new CategoryStub();
         ReflectionUtil::setId($category, $id);

@@ -82,7 +82,7 @@ class AjaxQuoteController extends AbstractController
     #[Route(path: '/entry-point/{id}', name: 'oro_quote_entry_point', defaults: ['id' => 0], methods: ['POST'])]
     #[AclAncestor('oro_quote_update')]
     #[CsrfProtection()]
-    public function entryPointAction(Request $request, Quote $quote = null)
+    public function entryPointAction(Request $request, ?Quote $quote = null)
     {
         if (!$quote) {
             $quote = new Quote();
@@ -122,7 +122,7 @@ class AjaxQuoteController extends AbstractController
      * @param CustomerUser|null $customerUser
      * @return null|Customer
      */
-    protected function getCustomer(CustomerUser $customerUser = null)
+    protected function getCustomer(?CustomerUser $customerUser = null)
     {
         $customer = $this->getQuoteRequestHandler()->getCustomer();
         if (!$customer && $customerUser) {

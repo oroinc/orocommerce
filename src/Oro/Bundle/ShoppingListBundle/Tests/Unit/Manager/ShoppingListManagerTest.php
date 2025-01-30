@@ -119,7 +119,7 @@ class ShoppingListManagerTest extends TestCase
         return $lineItem;
     }
 
-    private function getProduct(int $id, string $type = null): Product
+    private function getProduct(int $id, ?string $type = null): Product
     {
         $product = new Product();
         ReflectionUtil::setId($product, $id);

@@ -24,7 +24,7 @@ class Dimensions
      *
      * @return Dimensions
      */
-    public static function create($length, $width, $height, LengthUnit $unit = null)
+    public static function create($length, $width, $height, ?LengthUnit $unit = null)
     {
         $value = DimensionsValue::create($length, $width, $height);
 
@@ -68,7 +68,7 @@ class Dimensions
      *
      * @return $this
      */
-    public function setUnit(LengthUnit $unit = null)
+    public function setUnit(?LengthUnit $unit = null)
     {
         $this->unit = $unit;
 

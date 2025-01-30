@@ -85,7 +85,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
      *
      * @return string
      */
-    public function formatValue($value, MeasureUnitInterface $unit = null)
+    public function formatValue($value, ?MeasureUnitInterface $unit = null)
     {
         return $this->getValueFormatter()->format($value, $unit);
     }
@@ -96,7 +96,7 @@ class ProductUnitExtension extends AbstractExtension implements ServiceSubscribe
      *
      * @return string
      */
-    public function formatValueShort($value, MeasureUnitInterface $unit = null)
+    public function formatValueShort($value, ?MeasureUnitInterface $unit = null)
     {
         return $this->getValueFormatter()->formatShort($value, $unit);
     }

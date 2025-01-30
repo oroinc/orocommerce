@@ -188,8 +188,8 @@ class ProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
      * @dataProvider getProductAndVariantLinksWithDifferentFamilyDataProvider
      */
     public function testAddViolationWhenProductHasVariantLinksFromDifferentFamily(
-        AttributeFamily $parentProductAttributeFamily = null,
-        AttributeFamily $variantLinkAttributeFamily = null
+        ?AttributeFamily $parentProductAttributeFamily = null,
+        ?AttributeFamily $variantLinkAttributeFamily = null
     ): void {
         $product = $this->prepareProduct(
             [
@@ -242,10 +242,10 @@ class ProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
     }
 
     private function prepareProduct(
-        array $variantFields,
-        array $variantLinkFields,
-        AttributeFamily $parentProductAttributeFamily = null,
-        AttributeFamily $variantLinkAttributeFamily = null
+        array            $variantFields,
+        array            $variantLinkFields,
+        ?AttributeFamily $parentProductAttributeFamily = null,
+        ?AttributeFamily $variantLinkAttributeFamily = null
     ): Product {
         $product = new Product();
         $product->setType(Product::TYPE_CONFIGURABLE);

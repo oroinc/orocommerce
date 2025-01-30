@@ -20,7 +20,7 @@ class ProductEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new ProductEntityNameProvider();
     }
 
-    private function getProductName(string $string, Localization $localization = null): ProductName
+    private function getProductName(string $string, ?Localization $localization = null): ProductName
     {
         $value = new ProductName();
         $value->setString($string);

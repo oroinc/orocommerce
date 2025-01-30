@@ -36,10 +36,10 @@ class ProductKitLineItemFactory
      * @return LineItem
      */
     public function createProductKitLineItem(
-        Product $product,
-        ProductUnit $productUnit = null,
-        float $quantity = null,
-        ShoppingList $shoppingList = null
+        Product       $product,
+        ?ProductUnit  $productUnit = null,
+        ?float        $quantity = null,
+        ?ShoppingList $shoppingList = null
     ): LineItem {
         $lineItem = (new LineItem())
             ->setProduct($product);

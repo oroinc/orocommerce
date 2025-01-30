@@ -317,7 +317,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         return $entityManager;
     }
 
-    private function getCategory(int $id = null): Category
+    private function getCategory(?int $id = null): Category
     {
         $category = new Category();
         ReflectionUtil::setId($category, $id);
@@ -325,7 +325,7 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit\Framework\TestCas
         return $category;
     }
 
-    private function generateContentVariant(int $categoryId = null, int $webCatalogId = 1): ContentVariantStub
+    private function generateContentVariant(?int $categoryId = null, int $webCatalogId = 1): ContentVariantStub
     {
         $node = null;
         if ($webCatalogId) {

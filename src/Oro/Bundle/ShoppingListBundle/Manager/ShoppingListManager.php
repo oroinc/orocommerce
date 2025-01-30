@@ -82,7 +82,7 @@ class ShoppingListManager
      * @param CustomerUser|null $customerUser
      * @return ShoppingList
      */
-    public function create($flush = false, $label = '', CustomerUser $customerUser = null)
+    public function create($flush = false, $label = '', ?CustomerUser $customerUser = null)
     {
         if (!$customerUser) {
             $customerUser = $this->getCustomerUser();

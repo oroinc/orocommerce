@@ -50,7 +50,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         EventDispatcherInterface $eventDispatcher,
         FieldUpdatesChecker $fieldUpdatesChecker,
         ProductCollectionVariantReindexMessageSendListener $messageSendListener,
-        WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
+        ?WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
     ) {
         $this->eventDispatcher = $eventDispatcher;
         $this->webCatalogUsageProvider = $webCatalogUsageProvider;

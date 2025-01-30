@@ -251,7 +251,7 @@ class LineItemHandlerTest extends TestCase
         return $shoppingList;
     }
 
-    private function getLineItem(ShoppingList $shoppingList, int $id = null): LineItem
+    private function getLineItem(ShoppingList $shoppingList, ?int $id = null): LineItem
     {
         return (new LineItemStub())
             ->setId($id)

@@ -11,9 +11,9 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit\Framework\TestCase
 {
     abstract protected function getExtension(): AbstractTaxExtension;
 
-    abstract protected function createTaxCodeTarget(int $id = null): object;
+    abstract protected function createTaxCodeTarget(?int $id = null): object;
 
-    abstract protected function createTaxCode(int $id = null): AbstractTaxCode;
+    abstract protected function createTaxCode(?int $id = null): AbstractTaxCode;
 
     protected function createEvent(mixed $data): FormEvent
     {

@@ -34,7 +34,7 @@ class WebCatalogProvider
      * @param WebsiteInterface|null $website
      * @return null|WebCatalog
      */
-    public function getWebCatalog(WebsiteInterface $website = null)
+    public function getWebCatalog(?WebsiteInterface $website = null)
     {
         $webCatalogId = $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
 
@@ -50,7 +50,7 @@ class WebCatalogProvider
      * @param WebsiteInterface|null $website
      * @return null|ContentNode
      */
-    public function getNavigationRoot(WebsiteInterface $website = null)
+    public function getNavigationRoot(?WebsiteInterface $website = null)
     {
         $webCatalogId = (int) $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
         $contentNodeId = $this->configManager->get('oro_web_catalog.navigation_root', false, false, $website);
@@ -68,7 +68,7 @@ class WebCatalogProvider
         return null;
     }
 
-    public function getNavigationRootWithCatalogRootFallback(WebsiteInterface $website = null): ?ContentNode
+    public function getNavigationRootWithCatalogRootFallback(?WebsiteInterface $website = null): ?ContentNode
     {
         $contentNode = $this->getNavigationRoot($website);
         if ($contentNode instanceof ContentNode) {

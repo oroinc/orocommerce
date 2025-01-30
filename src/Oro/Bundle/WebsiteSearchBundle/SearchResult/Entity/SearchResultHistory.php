@@ -238,7 +238,7 @@ class SearchResultHistory implements
      * @return $this
      */
     #[\Override]
-    public function setCreatedAt(\DateTime $createdAt = null)
+    public function setCreatedAt(?\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 

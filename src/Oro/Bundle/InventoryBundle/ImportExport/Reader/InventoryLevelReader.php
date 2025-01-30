@@ -18,7 +18,7 @@ class InventoryLevelReader extends EntityReader
     protected $currentEntityName;
 
     #[\Override]
-    public function setSourceEntityName($entityName, Organization $organization = null, array $ids = [])
+    public function setSourceEntityName($entityName, ?Organization $organization = null, array $ids = [])
     {
         $this->currentEntityName = $entityName;
         parent::setSourceEntityName($entityName, $organization, $ids);
@@ -32,7 +32,7 @@ class InventoryLevelReader extends EntityReader
     }
 
     #[\Override]
-    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null, array $ids = [])
+    protected function createSourceEntityQueryBuilder($entityName, ?Organization $organization = null, array $ids = [])
     {
         $qb = parent::createSourceEntityQueryBuilder($entityName, $organization, $ids);
         switch ($this->currentEntityName) {

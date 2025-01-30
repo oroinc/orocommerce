@@ -228,7 +228,7 @@ class ContentNode implements
      *
      * @return $this
      */
-    public function setParentNode(ContentNode $parentNode = null)
+    public function setParentNode(?ContentNode $parentNode = null)
     {
         $this->parentNode = $parentNode;
 

@@ -248,7 +248,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
      * @param Quote|null $quote
      * @return QuoteProduct
      */
-    public function setQuote(Quote $quote = null)
+    public function setQuote(?Quote $quote = null)
     {
         $this->quote = $quote;
 
@@ -271,7 +271,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
      * @param Product|null $product
      * @return QuoteProduct
      */
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         $this->product = $product;
         $this->updateProducts();
@@ -347,7 +347,7 @@ class QuoteProduct implements ProductHolderInterface, ExtendEntityInterface, Pro
      * @param Product|null $productReplacement
      * @return QuoteProduct
      */
-    public function setProductReplacement(Product $productReplacement = null)
+    public function setProductReplacement(?Product $productReplacement = null)
     {
         $this->productReplacement = $productReplacement;
         $this->updateProducts();

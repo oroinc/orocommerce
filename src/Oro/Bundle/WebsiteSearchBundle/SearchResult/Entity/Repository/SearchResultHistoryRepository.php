@@ -29,18 +29,18 @@ class SearchResultHistoryRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function upsertSearchHistoryRecord(
-        string $searchTerm,
-        string $resultType,
-        int $resultsCount,
-        string $searchTermHash,
-        int $businessUnitId,
-        int $websiteId = null,
+        string  $searchTerm,
+        string  $resultType,
+        int     $resultsCount,
+        string  $searchTermHash,
+        int     $businessUnitId,
+        ?int    $websiteId = null,
         ?string $searchSessionId = null,
-        ?int $localizationId = null,
-        ?int $customerId = null,
-        ?int $customerUserId = null,
-        ?int $customerVisitorId = null,
-        ?int $organizationId = null,
+        ?int    $localizationId = null,
+        ?int    $customerId = null,
+        ?int    $customerUserId = null,
+        ?int    $customerVisitorId = null,
+        ?int    $organizationId = null,
     ): void {
         $query = "
             INSERT INTO oro_website_search_result_history (

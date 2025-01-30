@@ -26,7 +26,7 @@ class SlugUrl
      * @param Localization|null $localization
      * @param string|null $slug
      */
-    public function __construct($url, Localization $localization = null, $slug = null)
+    public function __construct($url, ?Localization $localization = null, $slug = null)
     {
         $this->url = $url;
         $this->localization = $localization;

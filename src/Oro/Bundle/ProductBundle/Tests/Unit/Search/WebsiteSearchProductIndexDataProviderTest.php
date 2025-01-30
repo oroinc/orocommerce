@@ -545,7 +545,7 @@ class WebsiteSearchProductIndexDataProviderTest extends \PHPUnit\Framework\TestC
         return new TestEnumValue($enumCode, $name, $internalId, $priority);
     }
 
-    private function getLocalizedValue(string $string, Localization $localization = null): ProductDescription
+    private function getLocalizedValue(string $string, ?Localization $localization = null): ProductDescription
     {
         $value = new ProductDescription();
         $value->setLocalization($localization)->setString($string);

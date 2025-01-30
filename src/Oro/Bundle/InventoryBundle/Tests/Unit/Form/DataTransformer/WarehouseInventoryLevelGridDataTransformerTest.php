@@ -46,9 +46,9 @@ class WarehouseInventoryLevelGridDataTransformerTest extends \PHPUnit\Framework\
      */
     public function testReverseTransform(
         ArrayCollection|array|null $value,
-        ArrayCollection $expected,
-        DoctrineHelper $doctrineHelper = null,
-        Product $product = null
+        ArrayCollection            $expected,
+        ?DoctrineHelper            $doctrineHelper = null,
+        ?Product                   $product = null
     ) {
         $doctrineHelper = $doctrineHelper ?: $this->doctrineHelper;
         $product = $product ?: $this->product;

@@ -32,7 +32,7 @@ class ChannelLoader implements ChannelLoaderInterface
     }
 
     #[\Override]
-    public function loadChannels(string $channelType, bool $applyAcl, Organization $organization = null): array
+    public function loadChannels(string $channelType, bool $applyAcl, ?Organization $organization = null): array
     {
         $organization = $organization ?? $this->tokenAccessor->getOrganization();
         if (null === $organization || ($applyAcl && !$this->isViewChannelGranted())) {

@@ -46,7 +46,7 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
     }
 
     #[\Override]
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         $this->lineItem->setProduct($product);
 
@@ -74,7 +74,7 @@ class DisabledDiscountLineItemDecorator implements DiscountLineItemInterface
     }
 
     #[\Override]
-    public function setProductUnit(ProductUnit $productUnit = null)
+    public function setProductUnit(?ProductUnit $productUnit = null)
     {
         $this->lineItem->setProductUnit($productUnit);
 

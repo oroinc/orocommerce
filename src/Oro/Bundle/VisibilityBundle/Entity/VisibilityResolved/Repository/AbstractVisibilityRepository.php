@@ -14,7 +14,7 @@ abstract class AbstractVisibilityRepository extends ServiceEntityRepository
      * @param Scope|null $scope
      * @return int
      */
-    public function clearTable(Scope $scope = null)
+    public function clearTable(?Scope $scope = null)
     {
         $qb = $this->createQueryBuilder('visibility_resolved')
             ->delete();

@@ -60,7 +60,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function getProduct(int $id = null): Product
+    private function getProduct(?int $id = null): Product
     {
         $product = new Product();
         if (null !== $id) {
@@ -70,7 +70,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         return $product;
     }
 
-    private function getProductUnit(string $code = null): ProductUnit
+    private function getProductUnit(?string $code = null): ProductUnit
     {
         $productUnit = new ProductUnit();
         if (null !== $code) {
@@ -91,11 +91,11 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     private function getLineItem(
-        int $id = null,
-        Product $product = null,
-        float $quantity = null,
-        ProductUnit $unit = null,
-        Product $parentProduct = null
+        ?int         $id = null,
+        ?Product     $product = null,
+        ?float       $quantity = null,
+        ?ProductUnit $unit = null,
+        ?Product     $parentProduct = null
     ): LineItem {
         $lineItem = new LineItem();
         if (null !== $id) {

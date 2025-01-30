@@ -52,7 +52,7 @@ class PaymentMethodsListener extends AbstractMethodsListener
     }
 
     #[\Override]
-    protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
+    protected function hasMethodsConfigsForAddress(Checkout $checkout, ?OrderAddress $address = null)
     {
         $checkout->setBillingAddress($address);
         $paymentContext = $this->checkoutPaymentContextProvider->getContext($checkout);

@@ -179,7 +179,7 @@ abstract class AbstractCustomerFormViewListenerTest extends \PHPUnit\Framework\T
      * @param FormView|null $formView
      * @return BeforeListRenderEvent
      */
-    protected function createEvent(Environment $environment, FormView $formView = null)
+    protected function createEvent(Environment $environment, ?FormView $formView = null)
     {
         $defaultData = [
             ScrollData::DATA_BLOCKS => [

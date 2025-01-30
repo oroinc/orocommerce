@@ -37,7 +37,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     }
 
     #[\Override]
-    public function setCustomer(Customer $customer = null)
+    public function setCustomer(?Customer $customer = null)
     {
         $this->customer = $customer;
     }
@@ -49,7 +49,7 @@ class ProductPriceScopeCriteria implements ProductPriceScopeCriteriaInterface
     }
 
     #[\Override]
-    public function setWebsite(Website $website = null)
+    public function setWebsite(?Website $website = null)
     {
         $this->website = $website;
     }

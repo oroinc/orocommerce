@@ -66,7 +66,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         return $this->createTotal($entity);
     }
 
-    private function createTotal(object $entity, ArrayCollection $subtotals = null): Subtotal
+    private function createTotal(object $entity, ?ArrayCollection $subtotals = null): Subtotal
     {
         $total = new Subtotal();
 

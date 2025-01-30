@@ -285,7 +285,7 @@ class ProductFormExtensionTest extends TestCase
         ];
     }
 
-    private function getProduct(int $id = null): Product
+    private function getProduct(?int $id = null): Product
     {
         $product = new Product();
         if (null !== $id) {
@@ -303,7 +303,7 @@ class ProductFormExtensionTest extends TestCase
         return $productUnit;
     }
 
-    private function getProductShippingOptions(int $id = null, ProductUnit $productUnit = null): ProductShippingOptions
+    private function getProductShippingOptions(?int $id = null, ?ProductUnit $productUnit = null): ProductShippingOptions
     {
         $productShippingOptions = new ProductShippingOptions();
         if (null !== $id) {

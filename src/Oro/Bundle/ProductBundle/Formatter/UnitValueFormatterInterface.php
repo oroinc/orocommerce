@@ -12,7 +12,7 @@ interface UnitValueFormatterInterface
      *
      * @return string
      */
-    public function format($value, MeasureUnitInterface $unit = null);
+    public function format($value, ?MeasureUnitInterface $unit = null);
 
     /**
      * @param null|float|integer $value
@@ -20,7 +20,7 @@ interface UnitValueFormatterInterface
      *
      * @return string
      */
-    public function formatShort($value, MeasureUnitInterface $unit = null);
+    public function formatShort($value, ?MeasureUnitInterface $unit = null);
 
     /**
      * @param float|integer $value

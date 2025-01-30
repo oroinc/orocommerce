@@ -38,9 +38,9 @@ class CompositeProductPriceStorage implements ProductPriceStorageInterface
     #[\Override]
     public function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $products,
-        array $productUnitCodes = null,
-        array $currencies = null
+        array                              $products,
+        ?array                             $productUnitCodes = null,
+        ?array                             $currencies = null
     ) {
         $storage = $this->getStorage();
         if ($storage) {

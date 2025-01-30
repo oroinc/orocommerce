@@ -139,7 +139,7 @@ class OrderDiscount
      *
      * @return OrderDiscount
      */
-    public function setOrder(Order $order = null)
+    public function setOrder(?Order $order = null)
     {
         $this->order = $order;
 

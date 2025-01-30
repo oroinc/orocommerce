@@ -69,7 +69,7 @@ class QuoteAddressSecurityProvider
      *
      * @return bool
      */
-    public function isCustomerAddressGranted($type, Customer $customer = null)
+    public function isCustomerAddressGranted($type, ?Customer $customer = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
@@ -96,7 +96,7 @@ class QuoteAddressSecurityProvider
      *
      * @return bool
      */
-    public function isCustomerUserAddressGranted($type, CustomerUser $customerUser = null)
+    public function isCustomerUserAddressGranted($type, ?CustomerUser $customerUser = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;

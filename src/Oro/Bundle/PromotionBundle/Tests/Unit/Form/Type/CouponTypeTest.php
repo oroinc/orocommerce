@@ -114,13 +114,13 @@ class CouponTypeTest extends FormIntegrationTestCase
     }
 
     private function createCoupon(
-        string $couponCode,
-        bool $enabled = false,
-        int $usesPerPerson = null,
-        int $usesPerCoupon = null,
-        Promotion $promotion = null,
-        \DateTime $validFrom = null,
-        \DateTime $validUntil = null
+        string     $couponCode,
+        bool       $enabled = false,
+        ?int       $usesPerPerson = null,
+        ?int       $usesPerCoupon = null,
+        ?Promotion $promotion = null,
+        ?\DateTime $validFrom = null,
+        ?\DateTime $validUntil = null
     ): Coupon {
         return (new Coupon())
             ->setCode($couponCode)

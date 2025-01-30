@@ -20,18 +20,18 @@ class ProductReindexManager
 
     public function reindexProduct(
         Product $product,
-        int $websiteId = null,
-        bool $isScheduled = true,
-        array $fieldGroups = null
+        ?int    $websiteId = null,
+        bool    $isScheduled = true,
+        ?array  $fieldGroups = null
     ): void {
         $this->reindexProducts([$product->getId()], $websiteId, $isScheduled, $fieldGroups);
     }
 
     public function reindexProducts(
-        array $productIds,
-        int $websiteId = null,
-        bool $isScheduled = true,
-        array $fieldGroups = null
+        array  $productIds,
+        ?int   $websiteId = null,
+        bool   $isScheduled = true,
+        ?array $fieldGroups = null
     ): void {
         if ($productIds) {
             $this->doReindexProducts($productIds, $websiteId, $isScheduled, $fieldGroups);
@@ -39,9 +39,9 @@ class ProductReindexManager
     }
 
     public function reindexAllProducts(
-        int $websiteId = null,
-        bool $isScheduled = true,
-        array $fieldGroups = null
+        ?int   $websiteId = null,
+        bool   $isScheduled = true,
+        ?array $fieldGroups = null
     ): void {
         $this->doReindexProducts([], $websiteId, $isScheduled, $fieldGroups);
     }
@@ -50,7 +50,7 @@ class ProductReindexManager
         array $productIds,
         ?int $websiteId,
         bool $isScheduled,
-        array $fieldGroups = null
+        ?array $fieldGroups = null
     ): void {
         $this->dispatcher->dispatch(
             new ReindexationRequestEvent(

@@ -69,7 +69,7 @@ class DoctrinePostFlushListenerTest extends \PHPUnit\Framework\TestCase
         $this->assertNotEmpty($storage->getScheduledForInsert());
     }
 
-    private function getDoctrineHelper(ManagerRegistry $doctrine = null): DoctrineHelper
+    private function getDoctrineHelper(?ManagerRegistry $doctrine = null): DoctrineHelper
     {
         return new DoctrineHelper($doctrine ?: $this->createMock(ManagerRegistry::class));
     }

@@ -101,7 +101,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @return $this
      */
     #[\Override]
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         $this->product = $product;
 
@@ -144,7 +144,7 @@ class DiscountLineItem implements DiscountLineItemInterface
      * @return $this
      */
     #[\Override]
-    public function setProductUnit(ProductUnit $productUnit = null)
+    public function setProductUnit(?ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
 

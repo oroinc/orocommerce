@@ -53,8 +53,8 @@ class CanonicalUrlGenerator
      */
     public function getUrl(
         SluggableInterface $entity,
-        Localization $localization = null,
-        WebsiteInterface $website = null
+        ?Localization      $localization = null,
+        ?WebsiteInterface  $website = null
     ) {
         $url = '';
 
@@ -78,8 +78,8 @@ class CanonicalUrlGenerator
      */
     public function getDirectUrl(
         SlugAwareInterface $entity,
-        Localization $localization = null,
-        WebsiteInterface $website = null
+        ?Localization      $localization = null,
+        ?WebsiteInterface  $website = null
     ) {
         $url = '';
         $slug = $this->getDirectUrlSlug($entity, $localization);
@@ -91,7 +91,7 @@ class CanonicalUrlGenerator
         return $url;
     }
 
-    public function getCanonicalDomainUrl(WebsiteInterface $website = null): ?string
+    public function getCanonicalDomainUrl(?WebsiteInterface $website = null): ?string
     {
         if ($this->getCanonicalUrlSecurityType($website) === Configuration::SECURE) {
             return $this->websiteSystemUrlResolver->getWebsiteSecureUrl($website);
@@ -106,7 +106,7 @@ class CanonicalUrlGenerator
      *
      * @return string
      */
-    public function getAbsoluteUrl($slugUrl, WebsiteInterface $website = null)
+    public function getAbsoluteUrl($slugUrl, ?WebsiteInterface $website = null)
     {
         return $this->createUrl($this->getCanonicalDomainUrl($website), $slugUrl);
     }
@@ -117,7 +117,7 @@ class CanonicalUrlGenerator
      *
      * @return string
      */
-    public function getSystemUrl(SluggableInterface $entity, WebsiteInterface $website = null)
+    public function getSystemUrl(SluggableInterface $entity, ?WebsiteInterface $website = null)
     {
         $routeData = $this->routingInformationProvider->getRouteData($entity);
 
@@ -142,7 +142,7 @@ class CanonicalUrlGenerator
      * @param WebsiteInterface|null $website
      * @return bool
      */
-    public function isDirectUrlEnabled(WebsiteInterface $website = null)
+    public function isDirectUrlEnabled(?WebsiteInterface $website = null)
     {
         return $this->getCanonicalUrlType($website) === Configuration::DIRECT_URL;
     }
@@ -152,7 +152,7 @@ class CanonicalUrlGenerator
      *
      * @return string
      */
-    public function getCanonicalUrlType(WebsiteInterface $website = null)
+    public function getCanonicalUrlType(?WebsiteInterface $website = null)
     {
         return $this->getCachedConfigValue(Configuration::CANONICAL_URL_TYPE, $website);
     }
@@ -162,12 +162,12 @@ class CanonicalUrlGenerator
      *
      * @return string
      */
-    public function getCanonicalUrlSecurityType(WebsiteInterface $website = null)
+    public function getCanonicalUrlSecurityType(?WebsiteInterface $website = null)
     {
         return $this->getCachedConfigValue(Configuration::CANONICAL_URL_SECURITY_TYPE, $website);
     }
 
-    public function clearCache(WebsiteInterface $website = null)
+    public function clearCache(?WebsiteInterface $website = null)
     {
         $this->cache->delete($this->getCacheKey(
             $this->getConfigKey(Configuration::CANONICAL_URL_TYPE),
@@ -180,7 +180,7 @@ class CanonicalUrlGenerator
         $this->cache->delete($this->getCacheKey($this->getConfigKey(Configuration::USE_LOCALIZED_CANONICAL)));
     }
 
-    private function getCachedConfigValue($key, WebsiteInterface $website = null): mixed
+    private function getCachedConfigValue($key, ?WebsiteInterface $website = null): mixed
     {
         $configKey = $this->getConfigKey($key);
         $cacheKey = $this->getCacheKey($configKey, $website);
@@ -195,7 +195,7 @@ class CanonicalUrlGenerator
      *
      * @return null|Slug
      */
-    protected function getDirectUrlSlug(SlugAwareInterface $entity, Localization $localization = null)
+    protected function getDirectUrlSlug(SlugAwareInterface $entity, ?Localization $localization = null)
     {
         if ($localization === null) {
             $localization = $this->getLocalization();
@@ -243,7 +243,7 @@ class CanonicalUrlGenerator
         return Configuration::ROOT_NODE . '.' . $configField;
     }
 
-    private function getCacheKey(string $configKey, WebsiteInterface $website = null): string
+    private function getCacheKey(string $configKey, ?WebsiteInterface $website = null): string
     {
         return UniversalCacheKeyGenerator::normalizeCacheKey(
             $website ? \sprintf('%s.%s', $configKey, $website->getId()) : $configKey

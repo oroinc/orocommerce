@@ -23,12 +23,12 @@ interface UserLocalizationManagerInterface
      * localization, could not reflect accurately current localization for a site.
      * Mostly you can call LocalizationProviderInterface::getCurrentLocalization instead.
      */
-    public function getCurrentLocalization(Website $website = null): ?Localization;
+    public function getCurrentLocalization(?Website $website = null): ?Localization;
 
     public function getCurrentLocalizationByCustomerUser(
         CustomerUser $customerUser,
-        Website $website = null
+        ?Website $website = null
     ): ?Localization;
 
-    public function setCurrentLocalization(Localization $localization, Website $website = null): void;
+    public function setCurrentLocalization(Localization $localization, ?Website $website = null): void;
 }

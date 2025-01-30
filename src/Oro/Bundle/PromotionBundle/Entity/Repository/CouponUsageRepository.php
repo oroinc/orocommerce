@@ -13,7 +13,7 @@ class CouponUsageRepository extends EntityRepository
      * @param CustomerUser|null $customerUser
      * @return int
      */
-    public function getCouponUsageCount(Coupon $coupon, CustomerUser $customerUser = null)
+    public function getCouponUsageCount(Coupon $coupon, ?CustomerUser $customerUser = null)
     {
         $queryBuilder = $this->createQueryBuilder('couponUsage');
 

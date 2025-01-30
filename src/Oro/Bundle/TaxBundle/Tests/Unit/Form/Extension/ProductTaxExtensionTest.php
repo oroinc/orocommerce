@@ -23,7 +23,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
     }
 
     #[\Override]
-    protected function createTaxCodeTarget(int $id = null): object
+    protected function createTaxCodeTarget(?int $id = null): object
     {
         $entity = $this->getMockBuilder(Product::class)
             ->disableOriginalConstructor()
@@ -38,7 +38,7 @@ class ProductTaxExtensionTest extends AbstractTaxExtensionTest
     }
 
     #[\Override]
-    protected function createTaxCode(int $id = null): AbstractTaxCode
+    protected function createTaxCode(?int $id = null): AbstractTaxCode
     {
         $taxCode = new ProductTaxCode();
         if (null !== $id) {

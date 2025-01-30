@@ -512,7 +512,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         return new BuildAfter($this->getDatagrid($config));
     }
 
-    private function getDatagrid(DatagridConfiguration $config = null): DatagridInterface
+    private function getDatagrid(?DatagridConfiguration $config = null): DatagridInterface
     {
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->expects($this->any())
@@ -528,7 +528,7 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit\Framework\
         return $datagrid;
     }
 
-    private function prepareRepositoryProduct(Product $product = null)
+    private function prepareRepositoryProduct(?Product $product = null)
     {
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')

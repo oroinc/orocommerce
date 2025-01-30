@@ -20,7 +20,7 @@ class PageEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new PageEntityNameProvider();
     }
 
-    private function getPageTitle(string $string, Localization $localization = null): LocalizedFallbackValue
+    private function getPageTitle(string $string, ?Localization $localization = null): LocalizedFallbackValue
     {
         $value = new LocalizedFallbackValue();
         $value->setString($string);

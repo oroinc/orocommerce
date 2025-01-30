@@ -97,7 +97,7 @@ class RestrictSitemapCmsPageByWebCatalogListener
         return $subQb;
     }
 
-    private function isRestrictionActive(WebsiteInterface $website = null): bool
+    private function isRestrictionActive(?WebsiteInterface $website = null): bool
     {
         return $this->provider->isRestrictionActive($website) && (
             $this->provider->isRestrictedToPagesBelongToWebCatalogOnly($website) ||

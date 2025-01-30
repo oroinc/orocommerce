@@ -150,7 +150,7 @@ class Tax implements DatesAwareInterface
      * @return $this
      */
     #[\Override]
-    public function setCreatedAt(\DateTime $createdAt = null)
+    public function setCreatedAt(?\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -172,7 +172,7 @@ class Tax implements DatesAwareInterface
      * @return $this
      */
     #[\Override]
-    public function setUpdatedAt(\DateTime $updatedAt = null)
+    public function setUpdatedAt(?\DateTime $updatedAt = null)
     {
         $this->updatedAtSet = false;
         if ($updatedAt !== null) {

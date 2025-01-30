@@ -31,7 +31,7 @@ class QuantityRoundingService extends AbstractRoundingService
      * @return float|int
      * @throws InvalidRoundingTypeException
      */
-    public function roundQuantity($quantity, ProductUnit $unit = null, Product $product = null)
+    public function roundQuantity($quantity, ?ProductUnit $unit = null, ?Product $product = null)
     {
         if (!$unit) {
             return $quantity;

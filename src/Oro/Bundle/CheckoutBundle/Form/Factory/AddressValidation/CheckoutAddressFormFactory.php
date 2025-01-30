@@ -27,7 +27,7 @@ class CheckoutAddressFormFactory implements AddressValidationAddressFormFactoryI
     }
 
     #[\Override]
-    public function createAddressForm(Request $request, AbstractAddress $address = null): FormInterface
+    public function createAddressForm(Request $request, ?AbstractAddress $address = null): FormInterface
     {
         $checkout = $request->attributes->get('checkout');
         $workflowItem = $this->checkoutWorkflowHelper->getWorkflowItem($checkout);

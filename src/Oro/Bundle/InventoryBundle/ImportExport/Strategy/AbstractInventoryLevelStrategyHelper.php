@@ -56,7 +56,7 @@ abstract class AbstractInventoryLevelStrategyHelper implements InventoryLevelStr
     /**
      * Translates the received error and adds it to the list of errors
      */
-    protected function addError(string $error, array $translationParams = [], string $prefix = null)
+    protected function addError(string $error, array $translationParams = [], ?string $prefix = null)
     {
         $errorMessage = $this->translator->trans($error, $translationParams);
 

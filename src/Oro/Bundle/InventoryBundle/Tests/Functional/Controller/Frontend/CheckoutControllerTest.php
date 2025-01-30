@@ -109,7 +109,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         bool $minError = true,
         bool $maxError = false,
         bool $shouldBeFirstStep = false,
-        int $quantityLimit = null
+        ?int $quantityLimit = null
     ): void {
         $continueButton = $crawler->filterXPath(self::CONTINUE_BUTTON);
         $buttonClasses = $continueButton->attr('class');

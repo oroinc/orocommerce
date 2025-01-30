@@ -101,7 +101,7 @@ class CustomerGroupCategoryResolvedCacheBuilder extends AbstractCategoryResolved
     }
 
     #[\Override]
-    public function buildCache(Scope $scope = null)
+    public function buildCache(?Scope $scope = null)
     {
         $resolvedRepository = $this->getCustomerGroupCategoryRepository();
 

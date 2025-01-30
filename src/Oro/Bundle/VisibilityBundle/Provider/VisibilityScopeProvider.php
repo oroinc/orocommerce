@@ -101,17 +101,17 @@ class VisibilityScopeProvider
         );
     }
 
-    protected function findOrCreateScope(string $scopeType, array $context = null): Scope
+    protected function findOrCreateScope(string $scopeType, ?array $context = null): Scope
     {
         return $this->scopeManager->findOrCreate($scopeType, $context);
     }
 
-    protected function findScope(string $scopeType, array $context = null): ?Scope
+    protected function findScope(string $scopeType, ?array $context = null): ?Scope
     {
         return $this->scopeManager->find($scopeType, $context);
     }
 
-    protected function findScopeId(string $scopeType, array $context = null): ?int
+    protected function findScopeId(string $scopeType, ?array $context = null): ?int
     {
         return $this->scopeManager->findId($scopeType, $context);
     }

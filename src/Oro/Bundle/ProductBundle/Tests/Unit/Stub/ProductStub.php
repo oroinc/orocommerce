@@ -75,7 +75,7 @@ class ProductStub extends Product
         return $this->getFallbackValue($this->names);
     }
 
-    public function getName(Localization $localization = null): ?ProductName
+    public function getName(?Localization $localization = null): ?ProductName
     {
         return $this->getFallbackValue($this->names, $localization);
     }

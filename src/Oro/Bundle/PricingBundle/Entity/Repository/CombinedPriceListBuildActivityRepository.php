@@ -30,7 +30,7 @@ class CombinedPriceListBuildActivityRepository extends EntityRepository
         $qb->getQuery()->execute();
     }
 
-    public function addBuildActivities(iterable $cpls, int $jobId = null): void
+    public function addBuildActivities(iterable $cpls, ?int $jobId = null): void
     {
         if (!$cpls) {
             return;

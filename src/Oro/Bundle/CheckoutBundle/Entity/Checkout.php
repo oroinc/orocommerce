@@ -306,7 +306,7 @@ class Checkout implements
      * @param \DateTime|null $shipUntil
      * @return Checkout
      */
-    public function setShipUntil(\DateTime $shipUntil = null)
+    public function setShipUntil(?\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
@@ -320,7 +320,7 @@ class Checkout implements
     }
 
     #[\Override]
-    public function setWebsite(Website $website = null)
+    public function setWebsite(?Website $website = null)
     {
         $this->website = $website;
 
@@ -363,7 +363,7 @@ class Checkout implements
      * @param Price|null $shippingCost
      * @return $this
      */
-    public function setShippingCost(Price $shippingCost = null)
+    public function setShippingCost(?Price $shippingCost = null)
     {
         $this->shippingCost = $shippingCost;
 

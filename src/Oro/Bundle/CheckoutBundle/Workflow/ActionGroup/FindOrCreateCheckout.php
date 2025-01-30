@@ -40,7 +40,7 @@ class FindOrCreateCheckout implements FindOrCreateCheckoutInterface
         array $checkoutData = [],
         bool $updateData = false,
         bool $forceStartCheckout = false,
-        string $startTransition = null
+        ?string $startTransition = null
     ): array {
         $currentWorkflow = $this->getCurrentWorkflow();
         $currentUser = $this->getCurrentUser();

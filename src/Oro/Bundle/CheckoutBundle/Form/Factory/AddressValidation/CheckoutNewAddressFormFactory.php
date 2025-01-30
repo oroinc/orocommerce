@@ -27,7 +27,7 @@ class CheckoutNewAddressFormFactory implements AddressValidationAddressFormFacto
     }
 
     #[\Override]
-    public function createAddressForm(Request $request, AbstractAddress $address = null): FormInterface
+    public function createAddressForm(Request $request, ?AbstractAddress $address = null): FormInterface
     {
         $checkout = new Checkout();
 

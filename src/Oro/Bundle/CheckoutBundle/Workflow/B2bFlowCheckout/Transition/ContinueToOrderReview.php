@@ -29,7 +29,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isPreConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();
@@ -61,7 +61,7 @@ class ContinueToOrderReview implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         if (!$this->checkRequest('_wid', 'ajax_checkout')) {
             $errors?->add(['message' => 'oro.checkout.workflow.condition.invalid_request.message']);

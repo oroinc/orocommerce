@@ -30,8 +30,8 @@ class CanonicalUrlGenerator extends BaseGenerator implements FeatureToggleableIn
     #[\Override]
     public function getUrl(
         SluggableInterface $entity,
-        Localization $localization = null,
-        WebsiteInterface $website = null
+        ?Localization      $localization = null,
+        ?WebsiteInterface  $website = null
     ) {
         $url = '';
 

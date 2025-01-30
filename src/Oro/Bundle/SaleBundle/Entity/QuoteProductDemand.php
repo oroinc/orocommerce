@@ -156,7 +156,7 @@ class QuoteProductDemand implements
      * @return $this
      * @throws \LogicException
      */
-    public function setPrice(Price $price = null)
+    public function setPrice(?Price $price = null)
     {
         throw new \LogicException('Price can\'t be changed to this entity');
     }

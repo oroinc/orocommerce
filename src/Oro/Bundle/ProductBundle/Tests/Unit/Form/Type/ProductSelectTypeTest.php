@@ -136,7 +136,7 @@ class ProductSelectTypeTest extends FormIntegrationTestCase
     private function createProductHolder(
         int $id,
         string $productSku,
-        Product $product = null
+        ?Product $product = null
     ): ProductHolderInterface {
         $productHolder = $this->createMock(ProductHolderInterface::class);
         $productHolder->expects($this->any())

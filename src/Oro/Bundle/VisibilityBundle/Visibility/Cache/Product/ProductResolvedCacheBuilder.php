@@ -123,7 +123,7 @@ class ProductResolvedCacheBuilder extends AbstractProductResolvedCacheBuilder im
     }
 
     #[\Override]
-    public function buildCache(Scope $scope = null)
+    public function buildCache(?Scope $scope = null)
     {
         $repository = $this->getProductRepository();
         $em = $this->doctrine->getManagerForClass(ProductVisibilityResolved::class);

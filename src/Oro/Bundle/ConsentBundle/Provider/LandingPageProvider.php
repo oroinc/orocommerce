@@ -24,7 +24,7 @@ class LandingPageProvider
         $this->localizationHelper = $localizationHelper;
     }
 
-    public function getLandingPages(string $variantIds = null): string
+    public function getLandingPages(?string $variantIds = null): string
     {
         if (!$variantIds) {
             return '';

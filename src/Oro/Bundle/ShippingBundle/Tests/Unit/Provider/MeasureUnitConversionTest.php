@@ -38,7 +38,7 @@ class MeasureUnitConversionTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function getMeasureUnitConversion(array $units = null): MeasureUnitConversion
+    private function getMeasureUnitConversion(?array $units = null): MeasureUnitConversion
     {
         $configManager = $this->createMock(ConfigManager::class);
         if (null !== $units && !$units) {

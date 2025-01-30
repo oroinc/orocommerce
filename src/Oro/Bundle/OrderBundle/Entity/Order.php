@@ -436,7 +436,7 @@ class Order implements
      * @param OrderAddress|null $billingAddress
      * @return Order
      */
-    public function setBillingAddress(OrderAddress $billingAddress = null)
+    public function setBillingAddress(?OrderAddress $billingAddress = null)
     {
         $this->billingAddress = $billingAddress;
 
@@ -455,7 +455,7 @@ class Order implements
      * @param OrderAddress|null $shippingAddress
      * @return Order
      */
-    public function setShippingAddress(OrderAddress $shippingAddress = null)
+    public function setShippingAddress(?OrderAddress $shippingAddress = null)
     {
         $this->shippingAddress = $shippingAddress;
 
@@ -530,7 +530,7 @@ class Order implements
      *
      * @return Order
      */
-    public function setShipUntil(\DateTime $shipUntil = null)
+    public function setShipUntil(?\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
@@ -947,7 +947,7 @@ class Order implements
      * @param Price|null $totalDiscounts
      * @return Order
      */
-    public function setTotalDiscounts(Price $totalDiscounts = null)
+    public function setTotalDiscounts(?Price $totalDiscounts = null)
     {
         $this->totalDiscounts = $totalDiscounts;
 

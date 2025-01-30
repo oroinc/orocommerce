@@ -29,7 +29,7 @@ class AjaxOrderController extends AbstractController
      */
     #[Route(path: '/entry-point/{id}', name: 'oro_order_entry_point', defaults: ['id' => 0])]
     #[AclAncestor('oro_order_update')]
-    public function entryPointAction(Request $request, Order $order = null)
+    public function entryPointAction(Request $request, ?Order $order = null)
     {
         if (!$order) {
             $order = new Order();
@@ -54,7 +54,7 @@ class AjaxOrderController extends AbstractController
 
     #[Route(path: '/suborder-entry-point/{id}', name: 'oro_suborder_entry_point', defaults: ['id' => 0])]
     #[AclAncestor('oro_order_update')]
-    public function suborderEntryPointAction(Request $request, Order $order = null)
+    public function suborderEntryPointAction(Request $request, ?Order $order = null)
     {
         if (!$order) {
             $order = new Order();

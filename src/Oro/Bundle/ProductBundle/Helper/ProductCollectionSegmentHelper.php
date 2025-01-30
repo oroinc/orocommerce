@@ -18,7 +18,7 @@ class ProductCollectionSegmentHelper
 
     public function __construct(
         ContentVariantSegmentProvider $contentVariantSegmentProvider,
-        WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
+        ?WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
     ) {
         $this->contentVariantSegmentProvider = $contentVariantSegmentProvider;
         $this->webCatalogUsageProvider = $webCatalogUsageProvider;

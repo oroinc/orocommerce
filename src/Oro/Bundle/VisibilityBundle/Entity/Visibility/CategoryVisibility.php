@@ -137,7 +137,7 @@ class CategoryVisibility implements VisibilityInterface, ScopeAwareInterface
      * @return $this
      */
     #[\Override]
-    public function setScope(Scope $scope = null)
+    public function setScope(?Scope $scope = null)
     {
         $this->scope = $scope;
 

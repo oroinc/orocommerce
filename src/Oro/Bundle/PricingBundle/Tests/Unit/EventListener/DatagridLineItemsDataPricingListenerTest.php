@@ -463,7 +463,7 @@ class DatagridLineItemsDataPricingListenerTest extends TestCase
         );
     }
 
-    private function getLineItem(int $id, int $quantity, string $unit, float $price = null): ProductLineItemInterface
+    private function getLineItem(int $id, int $quantity, string $unit, ?float $price = null): ProductLineItemInterface
     {
         $product = $this->getEntity(Product::class, ['id' => $id * 10]);
         $productUnit = (new ProductUnit())->setCode($unit);

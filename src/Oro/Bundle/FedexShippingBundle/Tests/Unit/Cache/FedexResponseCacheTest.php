@@ -157,7 +157,7 @@ class FedexResponseCacheTest extends TestCase
         self::assertTrue($this->fedexCache->deleteAll());
     }
 
-    private function createCacheKey(\DateTime $invalidateAt = null): FedexResponseCacheKey
+    private function createCacheKey(?\DateTime $invalidateAt = null): FedexResponseCacheKey
     {
         return new FedexResponseCacheKey(
             new FedexRequest('test/uri'),

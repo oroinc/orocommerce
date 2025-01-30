@@ -237,7 +237,7 @@ class AssignerDatabaseStrategyTest extends \PHPUnit\Framework\TestCase
     private function findOneByShouldReturnRelation(
         Product $productFrom,
         Product $productTo,
-        UpsellProduct $upsellProduct = null
+        ?UpsellProduct $upsellProduct = null
     ) {
         $this->upsellProductRepository->expects($this->any())
             ->method('findOneBy')

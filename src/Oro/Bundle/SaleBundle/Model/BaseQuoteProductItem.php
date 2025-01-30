@@ -170,7 +170,7 @@ class BaseQuoteProductItem implements
      * @param QuoteProduct|null $quoteProduct
      * @return $this
      */
-    public function setQuoteProduct(QuoteProduct $quoteProduct = null)
+    public function setQuoteProduct(?QuoteProduct $quoteProduct = null)
     {
         $this->quoteProduct = $quoteProduct;
         $this->loadKitItemLineItems();
@@ -194,7 +194,7 @@ class BaseQuoteProductItem implements
      * @param ProductUnit|null $productUnit
      * @return $this
      */
-    public function setProductUnit(ProductUnit $productUnit = null)
+    public function setProductUnit(?ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
         if ($productUnit) {

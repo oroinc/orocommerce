@@ -22,7 +22,7 @@ class RequestRepository extends EntityRepository implements ResettableCustomerUs
      */
     public function hasRecordsWithRemovingCurrencies(
         array $removingCurrencies,
-        Organization $organization = null
+        ?Organization $organization = null
     ) {
         $qb = $this->createQueryBuilder('r');
         $qb

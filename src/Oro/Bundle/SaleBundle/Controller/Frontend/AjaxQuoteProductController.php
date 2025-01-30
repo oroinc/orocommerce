@@ -51,7 +51,7 @@ class AjaxQuoteProductController extends AbstractController
      * @param QuoteProductOffer|null $offer
      * @return array
      */
-    protected function createResponseData(QuoteProductOffer $offer = null)
+    protected function createResponseData(?QuoteProductOffer $offer = null)
     {
         if (!$offer) {
             return [];

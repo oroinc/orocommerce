@@ -265,7 +265,7 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setUpsCountry(Country $country = null)
+    public function setUpsCountry(?Country $country = null)
     {
         $this->upsCountry = $country;
         return $this;
@@ -404,7 +404,7 @@ class UPSTransport extends Transport
      *
      * @return $this
      */
-    public function setUpsInvalidateCacheAt(\DateTime $invalidateCacheAt = null)
+    public function setUpsInvalidateCacheAt(?\DateTime $invalidateCacheAt = null)
     {
         $this->upsInvalidateCacheAt = $invalidateCacheAt;
 

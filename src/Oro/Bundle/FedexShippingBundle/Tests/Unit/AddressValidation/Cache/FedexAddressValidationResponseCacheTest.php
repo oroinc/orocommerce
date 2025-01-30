@@ -152,7 +152,7 @@ final class FedexAddressValidationResponseCacheTest extends TestCase
         self::assertTrue($this->fedexCache->deleteAll());
     }
 
-    private function createCacheKey(\DateTime $invalidateAt = null): AddressValidationCacheKey
+    private function createCacheKey(?\DateTime $invalidateAt = null): AddressValidationCacheKey
     {
         return new AddressValidationCacheKey(
             new AddressValidationRequest('test/uri', ['test']),

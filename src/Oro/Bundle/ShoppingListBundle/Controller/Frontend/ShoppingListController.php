@@ -33,7 +33,7 @@ class ShoppingListController extends AbstractController
     )]
     #[Layout]
     #[AclAncestor('oro_shopping_list_frontend_view')]
-    public function viewAction(ShoppingList $shoppingList = null): array
+    public function viewAction(?ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
             $shoppingList = $this->container->get(CurrentShoppingListManager::class)->getCurrent();
@@ -70,7 +70,7 @@ class ShoppingListController extends AbstractController
     )]
     #[Layout]
     #[AclAncestor('oro_shopping_list_frontend_update')]
-    public function updateAction(ShoppingList $shoppingList = null): array
+    public function updateAction(?ShoppingList $shoppingList = null): array
     {
         if (!$shoppingList) {
             $shoppingList = $this->container->get(CurrentShoppingListManager::class)->getCurrent();

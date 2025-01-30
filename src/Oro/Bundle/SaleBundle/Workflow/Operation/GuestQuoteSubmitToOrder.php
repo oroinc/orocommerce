@@ -31,7 +31,7 @@ class GuestQuoteSubmitToOrder extends AbstractOperationService
     ) {
     }
 
-    public function isPreConditionAllowed(ActionData $data, Collection $errors = null): bool
+    public function isPreConditionAllowed(ActionData $data, ?Collection $errors = null): bool
     {
         if (!$this->baseQuoteSubmitToOrder->isPreConditionAllowed($data, $errors)) {
             return false;

@@ -74,7 +74,7 @@ class RequestAdditionalNote implements DatesAwareInterface, ExtendEntityInterfac
      * @param Request|null $request
      * @return $this
      */
-    public function setRequest(Request $request = null)
+    public function setRequest(?Request $request = null)
     {
         $this->request = $request;
 

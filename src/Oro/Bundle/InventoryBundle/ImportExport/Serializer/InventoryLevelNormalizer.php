@@ -40,13 +40,13 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return $data instanceof InventoryLevel;
     }
 
     #[\Override]
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         $result = $this->dispatchNormalize($object, [], $context, Events::BEFORE_NORMALIZE_ENTITY);
 
@@ -112,7 +112,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function denormalize($data, string $type, string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = [])
     {
         if (!is_array($data) || !isset($data['product'])) {
             return null;
@@ -181,7 +181,7 @@ class InventoryLevelNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = array()): bool
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = array()): bool
     {
         return !empty($data) && isset($data['product']) && $type === InventoryLevel::class;
     }

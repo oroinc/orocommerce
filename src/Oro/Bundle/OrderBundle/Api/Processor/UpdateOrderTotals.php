@@ -38,7 +38,7 @@ class UpdateOrderTotals implements ProcessorInterface
         SharedDataAwareContextInterface $context,
         Order $order,
         FormInterface $form,
-        string $orderFieldName = null
+        ?string $orderFieldName = null
     ): void {
         $orderKey = $order->getId();
         if (null === $orderKey) {

@@ -61,7 +61,7 @@ class ProductListBuilder
      *
      * @return ProductView[]
      */
-    public function getProducts(string $productListType, callable $initializeQueryCallback = null): array
+    public function getProducts(string $productListType, ?callable $initializeQueryCallback = null): array
     {
         return array_values($this->loadProducts($productListType, $initializeQueryCallback));
     }
@@ -72,7 +72,7 @@ class ProductListBuilder
      *
      * @return ProductView[] [product id => product view, ...]
      */
-    private function loadProducts(string $productListType, callable $initializeQueryCallback = null): array
+    private function loadProducts(string $productListType, ?callable $initializeQueryCallback = null): array
     {
         $query = $this->queryFactory->create(['search_index' => 'website'])
             ->setFrom('oro_product_WEBSITE_ID')

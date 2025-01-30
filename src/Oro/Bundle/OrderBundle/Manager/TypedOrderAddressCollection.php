@@ -31,7 +31,7 @@ class TypedOrderAddressCollection
      * @param string $type
      * @param array $addresses
      */
-    public function __construct(CustomerUser $customerUser = null, $type, array $addresses = [])
+    public function __construct(?CustomerUser $customerUser = null, $type, array $addresses = [])
     {
         $this->customerUser = $customerUser;
         $this->type = $type;

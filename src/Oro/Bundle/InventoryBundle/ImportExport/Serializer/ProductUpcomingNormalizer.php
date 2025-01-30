@@ -20,7 +20,7 @@ class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
     }
 
     #[\Override]
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_a($type, EntityFieldFallbackValue::class, true) &&
             $context['entityName'] === Product::class &&
@@ -29,7 +29,7 @@ class ProductUpcomingNormalizer implements ContextAwareDenormalizerInterface
     }
 
     #[\Override]
-    public function denormalize($data, string $type, string $format = null, array $context = [])
+    public function denormalize($data, string $type, ?string $format = null, array $context = [])
     {
         if ($data === '1') {
             $fallbackEntity = new EntityFieldFallbackValue();

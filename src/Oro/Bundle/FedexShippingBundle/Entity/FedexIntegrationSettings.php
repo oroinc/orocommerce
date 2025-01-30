@@ -268,7 +268,7 @@ class FedexIntegrationSettings extends Transport
         return self::DIMENSION_CM;
     }
 
-    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null): self
+    public function setInvalidateCacheAt(?\DateTime $invalidateCacheAt = null): self
     {
         $this->invalidateCacheAt = $invalidateCacheAt;
 

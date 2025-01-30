@@ -26,7 +26,7 @@ class ProductKitItemAvailabilityChecker
 
     public function isAvailable(
         ProductKitItem $productKitItem,
-        ConstraintViolationListInterface &$constraintViolationList = null
+        ?ConstraintViolationListInterface &$constraintViolationList = null
     ): bool {
         $constraintViolationList = $this->validator->validate(
             $productKitItem,

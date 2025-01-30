@@ -862,7 +862,7 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         string $productUnitCode,
         int $productId,
         int $kitItemLineItemsCount,
-        string $notes = null
+        ?string $notes = null
     ): void {
         self::assertEquals($organizationId, $lineItem->getOrganization()->getId());
         self::assertEquals($userId, $lineItem->getOwner()->getId());

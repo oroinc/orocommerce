@@ -132,7 +132,7 @@ class CustomerGroupCategoryVisibility implements VisibilityInterface, ScopeAware
      * @return $this
      */
     #[\Override]
-    public function setScope(Scope $scope = null)
+    public function setScope(?Scope $scope = null)
     {
         $this->scope = $scope;
 

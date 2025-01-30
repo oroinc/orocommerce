@@ -283,7 +283,7 @@ class LineItem implements
      *
      * @return $this
      */
-    public function setCustomerUser(CustomerUser $user = null)
+    public function setCustomerUser(?CustomerUser $user = null)
     {
         $this->customerUser = $user;
 

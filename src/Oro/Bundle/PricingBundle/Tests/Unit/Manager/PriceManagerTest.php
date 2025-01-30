@@ -80,7 +80,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function getProductPrice(int $id = null): ProductPrice
+    private function getProductPrice(?int $id = null): ProductPrice
     {
         $price = new ProductPrice();
         $price->setId($id);
@@ -88,7 +88,7 @@ class PriceManagerTest extends \PHPUnit\Framework\TestCase
         return $price;
     }
 
-    private function getPriceList(int $id = null): PriceList
+    private function getPriceList(?int $id = null): PriceList
     {
         $priceList = new PriceList();
         ReflectionUtil::setId($priceList, $id);

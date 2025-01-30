@@ -133,7 +133,7 @@ class TaxJurisdiction implements DatesAwareInterface
      *
      * @return TaxJurisdiction
      */
-    public function setCountry(Country $country = null)
+    public function setCountry(?Country $country = null)
     {
         $this->country = $country;
 
@@ -157,7 +157,7 @@ class TaxJurisdiction implements DatesAwareInterface
      *
      * @return TaxJurisdiction
      */
-    public function setRegion(Region $region = null)
+    public function setRegion(?Region $region = null)
     {
         $this->region = $region;
 

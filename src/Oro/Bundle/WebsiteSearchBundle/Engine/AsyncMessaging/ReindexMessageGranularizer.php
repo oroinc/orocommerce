@@ -56,7 +56,7 @@ class ReindexMessageGranularizer
         $this->resetChunkSize();
     }
 
-    private function buildMessage(string $entityClass, array $context, array $chunk, int $websiteId = null): array
+    private function buildMessage(string $entityClass, array $context, array $chunk, ?int $websiteId = null): array
     {
         $itemContext = [];
         $itemContext = $this->setContextEntityIds($itemContext, $chunk);

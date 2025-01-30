@@ -22,7 +22,7 @@ class ContinueToShippingMethod implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isPreConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
             return false;
@@ -32,7 +32,7 @@ class ContinueToShippingMethod implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();

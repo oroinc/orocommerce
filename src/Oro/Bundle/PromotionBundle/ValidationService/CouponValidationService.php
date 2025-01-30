@@ -25,7 +25,7 @@ class CouponValidationService implements CouponValidatorInterface
         $this->couponUsageManager = $couponUsageManager;
     }
 
-    public function isValid(Coupon $coupon, CustomerUser $customerUser = null): bool
+    public function isValid(Coupon $coupon, ?CustomerUser $customerUser = null): bool
     {
         return !$this->getViolations($coupon, $customerUser);
     }
@@ -36,7 +36,7 @@ class CouponValidationService implements CouponValidatorInterface
         return $this->getViolations($coupon, $entity->getCustomerUser());
     }
 
-    public function getViolations(Coupon $coupon, CustomerUser $customerUser = null): array
+    public function getViolations(Coupon $coupon, ?CustomerUser $customerUser = null): array
     {
         $violations = [];
 
@@ -83,7 +83,7 @@ class CouponValidationService implements CouponValidatorInterface
             && $coupon->getUsesPerCoupon() <= $this->couponUsageManager->getCouponUsageCount($coupon);
     }
 
-    private function isCouponUsagePerCustomerUserLimitExceeded(Coupon $coupon, CustomerUser $customerUser = null): bool
+    private function isCouponUsagePerCustomerUserLimitExceeded(Coupon $coupon, ?CustomerUser $customerUser = null): bool
     {
         return $customerUser
             && $coupon->getUsesPerPerson() !== null

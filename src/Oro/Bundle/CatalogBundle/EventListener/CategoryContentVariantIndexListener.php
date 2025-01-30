@@ -49,7 +49,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         ProductIndexScheduler $indexScheduler,
         PropertyAccessorInterface $accessor,
         FieldUpdatesChecker $fieldUpdatesChecker,
-        WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
+        ?WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
     ) {
         $this->indexScheduler = $indexScheduler;
         $this->accessor = $accessor;

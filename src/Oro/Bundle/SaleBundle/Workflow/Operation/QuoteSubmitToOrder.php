@@ -31,7 +31,7 @@ class QuoteSubmitToOrder extends AbstractOperationService
     ) {
     }
 
-    public function isPreConditionAllowed(ActionData $data, Collection $errors = null): bool
+    public function isPreConditionAllowed(ActionData $data, ?Collection $errors = null): bool
     {
         $quoteAcceptable = $this->actionExecutor->evaluateExpression(
             'quote_acceptable',

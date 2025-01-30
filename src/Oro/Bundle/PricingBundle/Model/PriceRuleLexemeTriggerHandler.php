@@ -33,11 +33,11 @@ class PriceRuleLexemeTriggerHandler
     /**
      * @param string   $className
      * @param array    $updatedFields
-     * @param null|int $relationId
+     * @param int|null $relationId
      *
      * @return PriceRuleLexeme[]
      */
-    public function findEntityLexemes(string $className, array $updatedFields = [], int $relationId = null): array
+    public function findEntityLexemes(string $className, array $updatedFields = [], ?int $relationId = null): array
     {
         /** @var PriceRuleLexemeRepository $repository */
         $repository = $this->doctrine->getRepository(PriceRuleLexeme::class);

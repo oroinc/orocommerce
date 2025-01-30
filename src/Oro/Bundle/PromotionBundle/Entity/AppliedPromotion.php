@@ -126,7 +126,7 @@ class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
      * @param AppliedCoupon|null $appliedCoupon
      * @return $this
      */
-    public function setAppliedCoupon(AppliedCoupon $appliedCoupon = null)
+    public function setAppliedCoupon(?AppliedCoupon $appliedCoupon = null)
     {
         if ($appliedCoupon) {
             $appliedCoupon->setAppliedPromotion($this);

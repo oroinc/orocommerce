@@ -39,7 +39,7 @@ class RestrictProductViewByInventoryStatusListenerTest extends \PHPUnit\Framewor
      * @param Product|null $product
      * @param string|null $inventoryStatusCode
      */
-    public function testNoRestriction($controller, Product $product = null, string $inventoryStatusCode = null): void
+    public function testNoRestriction($controller, ?Product $product = null, ?string $inventoryStatusCode = null): void
     {
         if ($inventoryStatusCode) {
             $inventoryStatus = new InventoryStatus('test_enum_code', 'Test', $inventoryStatusCode);

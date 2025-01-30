@@ -19,7 +19,7 @@ class VerifyPayment extends ContinueTransition
     }
 
     #[\Override]
-    public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isPreConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         /** @var Checkout $checkout */
         $checkout = $workflowItem->getEntity();

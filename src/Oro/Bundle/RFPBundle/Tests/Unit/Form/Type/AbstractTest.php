@@ -231,9 +231,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
      * @return RequestProduct
      */
     protected function getRequestProduct(
-        int $productId = null,
-        string $comment = null,
-        array $items = []
+        ?int    $productId = null,
+        ?string $comment = null,
+        array   $items = []
     ): RequestProduct {
         /* @var Product|null $product */
         $product = null;
@@ -260,10 +260,10 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     protected function getRequestProductItem(
-        int $productId,
-        int $quantity = null,
-        string $unitCode = null,
-        Price $price = null
+        int     $productId,
+        ?int    $quantity = null,
+        ?string $unitCode = null,
+        ?Price  $price = null
     ): RequestProductItem {
         $requestProductItem = new RequestProductItem();
         $requestProductItem->setRequestProduct($this->getRequestProduct($productId));
@@ -286,15 +286,15 @@ abstract class AbstractTest extends FormIntegrationTestCase
     }
 
     protected function getRequest(
-        string $firstName = null,
-        string $lastName = null,
-        string $email = null,
-        string $note = null,
-        string $company = null,
-        string $role = null,
-        string $phone = null,
-        string $poNumber = null,
-        \DateTime $shipUntil = null
+        ?string    $firstName = null,
+        ?string    $lastName = null,
+        ?string    $email = null,
+        ?string    $note = null,
+        ?string    $company = null,
+        ?string    $role = null,
+        ?string    $phone = null,
+        ?string    $poNumber = null,
+        ?\DateTime $shipUntil = null
     ): Request {
         $request = new Request();
         $request

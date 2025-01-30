@@ -27,7 +27,7 @@ interface DiscountLineItemInterface extends
      * @param Product|null $product
      * @return $this
      */
-    public function setProduct(Product $product = null);
+    public function setProduct(?Product $product = null);
 
     public function getProductSku(): string;
 
@@ -46,7 +46,7 @@ interface DiscountLineItemInterface extends
      * @param ProductUnit|null $productUnit
      * @return $this
      */
-    public function setProductUnit(ProductUnit $productUnit = null);
+    public function setProductUnit(?ProductUnit $productUnit = null);
 
     public function getProductUnitCode(): string;
 

@@ -448,7 +448,7 @@ class Request implements
      *
      * @return Request
      */
-    public function setShipUntil(\DateTime $shipUntil = null)
+    public function setShipUntil(?\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
@@ -606,7 +606,7 @@ class Request implements
      * @return $this
      */
     #[\Override]
-    public function setWebsite(Website $website = null)
+    public function setWebsite(?Website $website = null)
     {
         $this->website = $website;
 

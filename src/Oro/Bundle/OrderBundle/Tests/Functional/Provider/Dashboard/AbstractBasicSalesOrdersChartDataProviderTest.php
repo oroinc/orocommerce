@@ -140,7 +140,7 @@ abstract class AbstractBasicSalesOrdersChartDataProviderTest extends WebTestCase
     /**
      * Loads the response content.
      */
-    protected function loadData(string $fileName, string $folderName = null): string
+    protected function loadData(string $fileName, ?string $folderName = null): string
     {
         if ($this->isRelativePath($fileName)) {
             $fileName = $this->getTestResourcePath($folderName, $fileName);

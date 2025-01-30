@@ -123,7 +123,7 @@ class CustomerCategoryResolvedCacheBuilder extends AbstractCategoryResolvedCache
     }
 
     #[\Override]
-    public function buildCache(Scope $scope = null)
+    public function buildCache(?Scope $scope = null)
     {
         $resolvedRepository = $this->getCustomerCategoryRepository();
 

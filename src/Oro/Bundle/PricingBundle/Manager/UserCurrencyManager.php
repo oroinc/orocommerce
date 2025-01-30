@@ -33,7 +33,7 @@ class UserCurrencyManager
      * @param Website|null $website
      * @return string|null
      */
-    public function getUserCurrency(Website $website = null)
+    public function getUserCurrency(?Website $website = null)
     {
         $currency = $this->currentCurrencyProvider->getCurrentCurrency();
         if ($currency) {
@@ -64,7 +64,7 @@ class UserCurrencyManager
      * @param string $currency
      * @param Website|null $website
      */
-    public function saveSelectedCurrency($currency, Website $website = null)
+    public function saveSelectedCurrency($currency, ?Website $website = null)
     {
         $website = $this->getWebsite($website);
         if (!$website) {
@@ -136,7 +136,7 @@ class UserCurrencyManager
      * @param Website|null $website
      * @return Website|null
      */
-    protected function getWebsite(Website $website = null)
+    protected function getWebsite(?Website $website = null)
     {
         if (!$website) {
             $website = $this->websiteManager->getCurrentWebsite();

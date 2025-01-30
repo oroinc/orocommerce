@@ -783,7 +783,7 @@ class FrontendProductPricesProviderTest extends TestCase
         ];
     }
 
-    private function getProductView(int $id, string $type, array $units = null): ProductView
+    private function getProductView(int $id, string $type, ?array $units = null): ProductView
     {
         $product = new ProductView();
         $product->set('id', $id);
@@ -793,7 +793,7 @@ class FrontendProductPricesProviderTest extends TestCase
         return $product;
     }
 
-    private function getProduct(int $id, string $type, array $unitPrecisions = null): ProductStub
+    private function getProduct(int $id, string $type, ?array $unitPrecisions = null): ProductStub
     {
         $product = new ProductStub();
         $product->setId($id);

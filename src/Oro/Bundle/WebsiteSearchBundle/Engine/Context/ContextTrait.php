@@ -80,7 +80,7 @@ trait ContextTrait
         return $context;
     }
 
-    private function setContextFieldGroups(array $context, array $fieldGroups = null): array
+    private function setContextFieldGroups(array $context, ?array $fieldGroups = null): array
     {
         if (null !== $fieldGroups) {
             $context[AbstractIndexer::CONTEXT_FIELD_GROUPS] = $fieldGroups;

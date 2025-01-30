@@ -23,7 +23,7 @@ class ConsentConfig
      * @param Consent|null $consent
      * @param int|null $sortOrder
      */
-    public function __construct(Consent $consent = null, $sortOrder = null)
+    public function __construct(?Consent $consent = null, $sortOrder = null)
     {
         $this->consent = $consent;
         $this->sortOrder = $sortOrder;
@@ -42,7 +42,7 @@ class ConsentConfig
      *
      * @return $this
      */
-    public function setConsent(Consent $consent = null)
+    public function setConsent(?Consent $consent = null)
     {
         $this->consent = $consent;
 

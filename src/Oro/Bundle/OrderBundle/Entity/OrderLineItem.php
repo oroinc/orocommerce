@@ -234,7 +234,7 @@ class OrderLineItem implements
      * @param Product|null $product
      * @return $this
      */
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         if ($product && (!$this->product || $product->getId() !== $this->product->getId())) {
             $this->requirePriceRecalculation = true;
@@ -318,7 +318,7 @@ class OrderLineItem implements
         return (array)$this->productVariantFields;
     }
 
-    public function setProductVariantFields(array $productVariantFields = null)
+    public function setProductVariantFields(?array $productVariantFields = null)
     {
         $this->productVariantFields = $productVariantFields;
     }
@@ -376,7 +376,7 @@ class OrderLineItem implements
      * @param ProductUnit|null $productUnit
      * @return $this
      */
-    public function setProductUnit(ProductUnit $productUnit = null)
+    public function setProductUnit(?ProductUnit $productUnit = null)
     {
         if ($productUnit && (!$this->productUnit || $productUnit->getCode() !== $this->productUnit->getCode())) {
             $this->requirePriceRecalculation = true;
@@ -412,7 +412,7 @@ class OrderLineItem implements
         return $this->productUnitCode;
     }
 
-    public function setPrice(Price $price = null): self
+    public function setPrice(?Price $price = null): self
     {
         $this->price = $price;
         $this->updatePrice();
@@ -530,7 +530,7 @@ class OrderLineItem implements
      * @param \DateTime|null $shipBy
      * @return $this
      */
-    public function setShipBy(\DateTime $shipBy = null)
+    public function setShipBy(?\DateTime $shipBy = null)
     {
         $this->shipBy = $shipBy;
 

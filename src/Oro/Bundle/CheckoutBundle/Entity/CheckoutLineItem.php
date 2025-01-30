@@ -206,7 +206,7 @@ class CheckoutLineItem implements
      *
      * @return $this
      */
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         $this->product = $product;
 
@@ -230,7 +230,7 @@ class CheckoutLineItem implements
      *
      * @return $this
      */
-    public function setParentProduct(Product $parentProduct = null)
+    public function setParentProduct(?Product $parentProduct = null)
     {
         $this->parentProduct = $parentProduct;
 
@@ -298,7 +298,7 @@ class CheckoutLineItem implements
      *
      * @return $this
      */
-    public function setProductUnit(ProductUnit $productUnit = null)
+    public function setProductUnit(?ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
 
@@ -334,7 +334,7 @@ class CheckoutLineItem implements
      *
      * @return $this
      */
-    public function setPrice(Price $price = null)
+    public function setPrice(?Price $price = null)
     {
         $this->price = $price;
 

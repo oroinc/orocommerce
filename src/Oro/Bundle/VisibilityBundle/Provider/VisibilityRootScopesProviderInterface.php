@@ -15,5 +15,5 @@ interface VisibilityRootScopesProviderInterface
      *
      * @return Scope[]
      */
-    public function getScopes(Product $product = null);
+    public function getScopes(?Product $product = null);
 }

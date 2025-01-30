@@ -44,7 +44,7 @@ class RenameFlatRateMethods extends AbstractFixture implements ContainerAwareInt
     protected $installed;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->integrationIdentifierGenerator = $container
             ->get('oro_flat_rate_shipping.method.identifier_generator.method');

@@ -42,7 +42,7 @@ class CombinedPriceListTriggerHandler
         $this->websiteReindexRequestDataStorage = $websiteReindexRequestDataStorage;
     }
 
-    public function process(CombinedPriceList $combinedPriceList, Website $website = null): void
+    public function process(CombinedPriceList $combinedPriceList, ?Website $website = null): void
     {
         $this->scheduleCpl[$this->getWebsiteId($website)][$combinedPriceList->getId()] = $combinedPriceList->getId();
 
@@ -57,7 +57,7 @@ class CombinedPriceListTriggerHandler
     public function processByProduct(
         CombinedPriceList $combinedPriceList,
         array $productIds = [],
-        Website $website = null
+        ?Website $website = null
     ): void {
         if ($productIds) {
             $this->scheduleProductsByWebsite($productIds, $this->getWebsiteId($website));
@@ -72,7 +72,7 @@ class CombinedPriceListTriggerHandler
      * Mass process changes in a set of Combined Price Lists.
      * Called by Combined Price List Garbage Collector.
      */
-    public function massProcess(array $combinedPriceLists, Website $website = null): void
+    public function massProcess(array $combinedPriceLists, ?Website $website = null): void
     {
         $productIds = $this->getProductIdsByCombinedPriceLists($combinedPriceLists);
         $this->scheduleProductsByWebsite($productIds, $this->getWebsiteId($website));

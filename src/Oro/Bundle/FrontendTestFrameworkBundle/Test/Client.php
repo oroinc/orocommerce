@@ -14,13 +14,13 @@ class Client extends BaseClient
 
     #[\Override]
     public function request(
-        string $method,
-        string $uri,
-        array  $parameters = [],
-        array  $files = [],
-        array  $server = [],
-        string $content = null,
-        bool   $changeHistory = true
+        string  $method,
+        string  $uri,
+        array   $parameters = [],
+        array   $files = [],
+        array   $server = [],
+        ?string $content = null,
+        bool    $changeHistory = true
     ): Crawler {
         $crawler = parent::request($method, $uri, $parameters, $files, $server, $content, $changeHistory);
 

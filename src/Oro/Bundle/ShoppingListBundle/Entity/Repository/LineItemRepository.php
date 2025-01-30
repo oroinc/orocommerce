@@ -220,7 +220,7 @@ class LineItemRepository extends ServiceEntityRepository
     public function getLastProductsGroupedByShoppingList(
         array $shoppingLists,
         $productCount,
-        Localization $localization = null
+        ?Localization $localization = null
     ) {
         if (!$shoppingLists) {
             return [];

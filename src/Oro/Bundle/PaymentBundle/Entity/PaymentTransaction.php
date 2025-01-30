@@ -230,7 +230,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param array|null $request
      * @return PaymentTransaction
      */
-    public function setRequest(array $request = null)
+    public function setRequest(?array $request = null)
     {
         $this->request = $request;
 
@@ -250,7 +250,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param array|null $response
      * @return PaymentTransaction
      */
-    public function setResponse(array $response = null)
+    public function setResponse(?array $response = null)
     {
         $this->response = $response;
 
@@ -421,7 +421,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param array|null $transactionOptions
      * @return PaymentTransaction
      */
-    public function setTransactionOptions(array $transactionOptions = null)
+    public function setTransactionOptions(?array $transactionOptions = null)
     {
         $this->transactionOptions = $transactionOptions;
 
@@ -478,7 +478,7 @@ class PaymentTransaction implements DatesAwareInterface, OrganizationAwareInterf
      * @param CustomerUser|null $frontendOwner
      * @return PaymentTransaction
      */
-    public function setFrontendOwner(CustomerUser $frontendOwner = null)
+    public function setFrontendOwner(?CustomerUser $frontendOwner = null)
     {
         $this->frontendOwner = $frontendOwner;
 

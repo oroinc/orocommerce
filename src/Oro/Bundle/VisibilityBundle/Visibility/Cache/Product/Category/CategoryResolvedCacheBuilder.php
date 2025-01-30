@@ -115,7 +115,7 @@ class CategoryResolvedCacheBuilder extends AbstractCategoryResolvedCacheBuilder 
     }
 
     #[\Override]
-    public function buildCache(Scope $scope = null)
+    public function buildCache(?Scope $scope = null)
     {
         $resolvedRepository = $this->getCategoryRepository();
 

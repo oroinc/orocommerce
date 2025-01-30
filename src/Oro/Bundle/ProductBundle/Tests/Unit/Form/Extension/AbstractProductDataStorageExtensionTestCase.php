@@ -201,7 +201,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         return $requestStack;
     }
 
-    protected function getProduct(string $sku, ProductUnit $productUnit = null): Product
+    protected function getProduct(string $sku, ?ProductUnit $productUnit = null): Product
     {
         $product = new ProductStub();
         $product->setSku($sku);

@@ -88,7 +88,7 @@ abstract class AbstractShippingOptionSelectTypeTest extends FormIntegrationTestC
         mixed $submittedData,
         mixed $expectedData,
         array $expectedLabels,
-        array $customChoices = null
+        ?array $customChoices = null
     ) {
         $units = ['lbs', 'kg'];
 

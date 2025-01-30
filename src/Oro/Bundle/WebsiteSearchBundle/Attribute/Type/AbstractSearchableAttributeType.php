@@ -39,19 +39,19 @@ abstract class AbstractSearchableAttributeType implements SearchAttributeTypeInt
     }
 
     #[\Override]
-    public function getSearchableValue(FieldConfigModel $attribute, $originalValue, Localization $localization = null)
+    public function getSearchableValue(FieldConfigModel $attribute, $originalValue, ?Localization $localization = null)
     {
         return $this->attributeType->getSearchableValue($attribute, $originalValue, $localization);
     }
 
     #[\Override]
-    public function getFilterableValue(FieldConfigModel $attribute, $originalValue, Localization $localization = null)
+    public function getFilterableValue(FieldConfigModel $attribute, $originalValue, ?Localization $localization = null)
     {
         return $this->attributeType->getFilterableValue($attribute, $originalValue, $localization);
     }
 
     #[\Override]
-    public function getSortableValue(FieldConfigModel $attribute, $originalValue, Localization $localization = null)
+    public function getSortableValue(FieldConfigModel $attribute, $originalValue, ?Localization $localization = null)
     {
         return $this->attributeType->getSortableValue($attribute, $originalValue, $localization);
     }

@@ -106,7 +106,7 @@ class ProductShippingOptions implements
      *
      * @return $this
      */
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         $this->product = $product;
 
@@ -127,7 +127,7 @@ class ProductShippingOptions implements
      *
      * @return $this
      */
-    public function setProductUnit(ProductUnit $productUnit = null)
+    public function setProductUnit(?ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
 
@@ -148,7 +148,7 @@ class ProductShippingOptions implements
      *
      * @return $this
      */
-    public function setWeight(Weight $weight = null)
+    public function setWeight(?Weight $weight = null)
     {
         $this->weight = $weight;
         $this->updateWeight();
@@ -170,7 +170,7 @@ class ProductShippingOptions implements
      *
      * @return $this
      */
-    public function setDimensions(Dimensions $dimensions = null)
+    public function setDimensions(?Dimensions $dimensions = null)
     {
         $this->dimensions = $dimensions;
         $this->updateDimensions();
@@ -190,7 +190,7 @@ class ProductShippingOptions implements
      * @param FreightClass|null $freightClass
      * @return $this
      */
-    public function setFreightClass(FreightClass $freightClass = null)
+    public function setFreightClass(?FreightClass $freightClass = null)
     {
         $this->freightClass = $freightClass;
 

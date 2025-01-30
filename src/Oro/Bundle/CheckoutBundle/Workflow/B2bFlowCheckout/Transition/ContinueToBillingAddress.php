@@ -19,7 +19,7 @@ class ContinueToBillingAddress extends TransitionServiceAbstract
     }
 
     #[\Override]
-    public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         if (!parent::isConditionAllowed($workflowItem, $errors)) {
             return false;
@@ -47,7 +47,7 @@ class ContinueToBillingAddress extends TransitionServiceAbstract
         }
     }
 
-    private function isEmailConfirmed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    private function isEmailConfirmed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         return $this->actionExecutor->evaluateExpression(
             'is_email_confirmed',

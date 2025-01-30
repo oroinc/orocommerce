@@ -19,7 +19,7 @@ class ProductVisibilityRepository extends AbstractProductVisibilityRepository
     public function setToDefaultWithoutCategory(
         InsertFromSelectQueryExecutor $insertExecutor,
         Scope $scope,
-        Product $product = null
+        ?Product $product = null
     ) {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb

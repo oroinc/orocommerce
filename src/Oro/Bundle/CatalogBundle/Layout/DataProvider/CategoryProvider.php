@@ -45,7 +45,7 @@ class CategoryProvider
         return $this->loadCategory($this->requestProductHandler->getCategoryId());
     }
 
-    public function getIncludeSubcategoriesChoice(bool $defaultValue = null): bool
+    public function getIncludeSubcategoriesChoice(?bool $defaultValue = null): bool
     {
         return $this->requestProductHandler->getIncludeSubcategoriesChoice($defaultValue);
     }
@@ -75,7 +75,7 @@ class CategoryProvider
      *
      * @return array
      */
-    public function getCategoryTreeArray(CustomerUser $user = null)
+    public function getCategoryTreeArray(?CustomerUser $user = null)
     {
         return $this->providerBCAdapter->getCategoryTreeArray($user);
     }
@@ -87,7 +87,7 @@ class CategoryProvider
      *
      * @return Category[]
      */
-    public function getCategoryTree(CustomerUser $user = null)
+    public function getCategoryTree(?CustomerUser $user = null)
     {
         return $this->providerBCAdapter->getCategoryTree($user);
     }

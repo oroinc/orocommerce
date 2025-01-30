@@ -30,7 +30,7 @@ class RestrictSitemapEntitiesEvent extends Event
      * @param int $version
      * @param WebsiteInterface|null $website
      */
-    public function __construct(QueryBuilder $qb, $version, WebsiteInterface $website = null)
+    public function __construct(QueryBuilder $qb, $version, ?WebsiteInterface $website = null)
     {
         $this->queryBuilder = $qb;
         $this->version = $version;

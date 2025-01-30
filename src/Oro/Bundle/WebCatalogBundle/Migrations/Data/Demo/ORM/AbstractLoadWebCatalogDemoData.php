@@ -38,7 +38,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
     protected ContainerInterface $container;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null): void
+    public function setContainer(?ContainerInterface $container = null): void
     {
         $this->container = $container;
     }
@@ -47,7 +47,7 @@ abstract class AbstractLoadWebCatalogDemoData extends AbstractFixture implements
         ObjectManager $manager,
         WebCatalog $webCatalog,
         array $nodes,
-        ContentNode $parent = null
+        ?ContentNode $parent = null
     ): void {
         foreach ($nodes as $name => $contentNode) {
             $node = new ContentNode();

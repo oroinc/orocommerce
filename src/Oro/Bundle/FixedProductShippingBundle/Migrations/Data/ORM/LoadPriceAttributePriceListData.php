@@ -20,7 +20,7 @@ class LoadPriceAttributePriceListData extends AbstractFixture implements Contain
     protected ?ContainerInterface $container;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null): void
+    public function setContainer(?ContainerInterface $container = null): void
     {
         $this->container = $container;
     }

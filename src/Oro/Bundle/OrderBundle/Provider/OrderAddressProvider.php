@@ -200,7 +200,7 @@ class OrderAddressProvider implements AddressProviderInterface, ResetInterface
         return $this->permissionsByType[$type][$key] . $postfix;
     }
 
-    protected function isGranted(string $attribute, string $subject = null): bool
+    protected function isGranted(string $attribute, ?string $subject = null): bool
     {
         return $this->authorizationChecker->isGranted($attribute, $subject);
     }

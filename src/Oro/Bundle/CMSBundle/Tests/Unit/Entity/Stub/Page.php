@@ -16,7 +16,7 @@ class Page extends BasePage
         'slug' => 'slugs',
     ];
 
-    public function __construct(int $id = null)
+    public function __construct(?int $id = null)
     {
         parent::__construct();
 

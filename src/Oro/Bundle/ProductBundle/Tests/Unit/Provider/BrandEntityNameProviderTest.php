@@ -20,7 +20,7 @@ class BrandEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new BrandEntityNameProvider();
     }
 
-    private function getBrandName(string $string, Localization $localization = null): LocalizedFallbackValue
+    private function getBrandName(string $string, ?Localization $localization = null): LocalizedFallbackValue
     {
         $value = new LocalizedFallbackValue();
         $value->setString($string);

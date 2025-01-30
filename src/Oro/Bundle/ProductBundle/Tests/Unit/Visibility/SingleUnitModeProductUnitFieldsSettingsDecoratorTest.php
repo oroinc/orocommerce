@@ -244,7 +244,7 @@ class SingleUnitModeProductUnitFieldsSettingsDecoratorTest extends \PHPUnit\Fram
     /**
      * @dataProvider productsDataProvider
      */
-    public function testIsAddingAdditionalUnitsToProductAvailable(Product $product = null)
+    public function testIsAddingAdditionalUnitsToProductAvailable(?Product $product = null)
     {
         $this->singleUnitService->expects($this->once())
             ->method('isSingleUnitMode')

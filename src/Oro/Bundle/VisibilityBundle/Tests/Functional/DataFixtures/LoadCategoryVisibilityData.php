@@ -35,7 +35,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     protected $scopeManager;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }

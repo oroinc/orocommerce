@@ -46,7 +46,7 @@ class CmsPageDataBuilder
      *
      * @return null|CmsPageData
      */
-    public function build(Consent $consent, ConsentAcceptance $consentAcceptance = null)
+    public function build(Consent $consent, ?ConsentAcceptance $consentAcceptance = null)
     {
         $useCmsPageUrl = false;
 

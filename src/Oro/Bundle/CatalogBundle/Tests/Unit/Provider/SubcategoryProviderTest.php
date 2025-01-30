@@ -69,7 +69,7 @@ class SubcategoryProviderTest extends \PHPUnit\Framework\TestCase
      * @param array $products
      * @return Category
      */
-    protected function getCategory(Category $parentCategory = null, array $products = [])
+    protected function getCategory(?Category $parentCategory = null, array $products = [])
     {
         $category = new Category();
         $category->setParentCategory($parentCategory);

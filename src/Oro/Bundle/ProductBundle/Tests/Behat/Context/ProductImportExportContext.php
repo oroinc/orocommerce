@@ -191,7 +191,7 @@ class ProductImportExportContext extends OroFeatureContext
         $this->importExportContext->setAbsoluteUrl(null);
     }
 
-    private function copyFilesToStorage(string $filesPath, FileManager $fileManager, string $directory = null): void
+    private function copyFilesToStorage(string $filesPath, FileManager $fileManager, ?string $directory = null): void
     {
         $finder = new Finder();
         /** @var \SplFileInfo[] $files */

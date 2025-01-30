@@ -28,7 +28,7 @@ class OrderPageAddressFormFactory implements AddressValidationAddressFormFactory
     }
 
     #[\Override]
-    public function createAddressForm(Request $request, AbstractAddress $address = null): FormInterface
+    public function createAddressForm(Request $request, ?AbstractAddress $address = null): FormInterface
     {
         $order = (new Order())
             ->setCustomer($this->orderRequestHandler->getCustomer())

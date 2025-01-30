@@ -26,7 +26,7 @@ class QuoteAddressManager extends AbstractAddressManager
         $this->addressCopier = $addressCopier;
     }
 
-    public function updateFromAbstract(AbstractAddress $address = null, QuoteAddress $quoteAddress = null): QuoteAddress
+    public function updateFromAbstract(?AbstractAddress $address = null, ?QuoteAddress $quoteAddress = null): QuoteAddress
     {
         if (!$quoteAddress) {
             $quoteAddress = new QuoteAddress();

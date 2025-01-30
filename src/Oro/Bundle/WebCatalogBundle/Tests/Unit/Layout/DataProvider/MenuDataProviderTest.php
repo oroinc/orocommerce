@@ -81,7 +81,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetItemsWithNavigationRoot(
         ResolvedContentNode $resolvedRootNode,
         array $expectedData,
-        int $maxNodesNestedLevel = null
+        ?int $maxNodesNestedLevel = null
     ) {
         $rootNode = new ContentNode();
         $scope = new Scope();
@@ -131,7 +131,7 @@ class MenuDataProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider getItemsCachedDataProvider
      */
-    public function testGetItemsCached(int $maxNodesNestedLevel = null)
+    public function testGetItemsCached(?int $maxNodesNestedLevel = null)
     {
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
 

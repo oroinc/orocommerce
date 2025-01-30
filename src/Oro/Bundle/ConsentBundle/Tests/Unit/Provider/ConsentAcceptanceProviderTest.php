@@ -119,7 +119,7 @@ class ConsentAcceptanceProviderTest extends \PHPUnit\Framework\TestCase
     public function testGetCustomerConsentAcceptanceByConsentId(
         array $consentAcceptances,
         int $consentId,
-        ConsentAcceptance $expectedResult = null
+        ?ConsentAcceptance $expectedResult = null
     ) {
         $customerUser = $this->getEntity(CustomerUser::class, ['id' => 21]);
 

@@ -37,7 +37,7 @@ abstract class AbstractMethodsListener
      * @param OrderAddress|null $address
      * @return bool
      */
-    abstract protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null);
+    abstract protected function hasMethodsConfigsForAddress(Checkout $checkout, ?OrderAddress $address = null);
 
     /**
      * @param Checkout $checkout

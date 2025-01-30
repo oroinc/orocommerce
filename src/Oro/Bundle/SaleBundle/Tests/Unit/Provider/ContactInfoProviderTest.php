@@ -306,7 +306,7 @@ class ContactInfoProviderTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    private function getCustomerUser(User $customerUserOwner, User $customerOwner = null): CustomerUser
+    private function getCustomerUser(User $customerUserOwner, ?User $customerOwner = null): CustomerUser
     {
         $customer = new Customer();
         $customer->setOwner($customerOwner ?: $customerUserOwner);

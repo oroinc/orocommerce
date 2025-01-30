@@ -42,7 +42,7 @@ class CompositeCacheBuilder implements CacheBuilderInterface
     }
 
     #[\Override]
-    public function buildCache(Scope $scope = null)
+    public function buildCache(?Scope $scope = null)
     {
         foreach ($this->builders as $builder) {
             $builder->buildCache($scope);

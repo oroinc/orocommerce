@@ -18,7 +18,7 @@ class PaymentResultMessageProvider implements PaymentResultMessageProviderInterf
     }
 
     #[\Override]
-    public function getErrorMessage(PaymentTransaction $transaction = null)
+    public function getErrorMessage(?PaymentTransaction $transaction = null)
     {
         if (!$transaction) {
             return 'oro.checkout.errors.payment.error_single_method';

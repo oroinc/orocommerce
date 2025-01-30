@@ -181,7 +181,7 @@ class ShoppingListLineItemHandler implements ResetInterface
         $this->shoppingListManager->addLineItem($lineItem, $shoppingList);
     }
 
-    public function isAllowed(ShoppingList $shoppingList = null): bool
+    public function isAllowed(?ShoppingList $shoppingList = null): bool
     {
         if (!$this->tokenAccessor->hasUser() && !$this->isAllowedForGuest()) {
             return false;

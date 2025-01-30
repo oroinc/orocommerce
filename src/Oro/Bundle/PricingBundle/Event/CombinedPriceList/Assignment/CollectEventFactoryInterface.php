@@ -10,8 +10,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 interface CollectEventFactoryInterface
 {
     public function createEvent(
-        bool $force = false,
-        Website $website = null,
-        object $targetEntity = null
+        bool     $force = false,
+        ?Website $website = null,
+        ?object  $targetEntity = null
     ): CollectByConfigEvent;
 }

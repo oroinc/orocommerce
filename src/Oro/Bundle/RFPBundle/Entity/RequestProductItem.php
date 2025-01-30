@@ -141,7 +141,7 @@ class RequestProductItem implements
      * @param RequestProduct|null $requestProduct
      * @return RequestProductItem
      */
-    public function setRequestProduct(RequestProduct $requestProduct = null)
+    public function setRequestProduct(?RequestProduct $requestProduct = null)
     {
         $this->requestProduct = $requestProduct;
         $this->loadKitItemLineItems();
@@ -165,7 +165,7 @@ class RequestProductItem implements
      * @param ProductUnit|null $productUnit
      * @return RequestProductItem
      */
-    public function setProductUnit(ProductUnit $productUnit = null)
+    public function setProductUnit(?ProductUnit $productUnit = null)
     {
         $this->productUnit = $productUnit;
         if ($productUnit) {
@@ -240,7 +240,7 @@ class RequestProductItem implements
      * @param Price|null $price
      * @return RequestProductItem
      */
-    public function setPrice(Price $price = null)
+    public function setPrice(?Price $price = null)
     {
         $this->price = $price;
 

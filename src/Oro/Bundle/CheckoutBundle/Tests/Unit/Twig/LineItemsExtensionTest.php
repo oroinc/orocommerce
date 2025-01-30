@@ -241,7 +241,7 @@ class LineItemsExtensionTest extends TestCase
         string $sku,
         string $comment,
         \DateTime $shipBy,
-        Product $product = null
+        ?Product $product = null
     ): OrderLineItem {
         $lineItem = new OrderLineItem();
         $lineItem->setCurrency($currency);

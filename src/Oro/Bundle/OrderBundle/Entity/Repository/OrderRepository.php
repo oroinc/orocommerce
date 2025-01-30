@@ -38,7 +38,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
     public function hasRecordsWithRemovingCurrencies(
         array $removingCurrencies,
-        Organization $organization = null
+        ?Organization $organization = null
     ): bool {
         $qb = $this->createQueryBuilder('orders');
         $qb

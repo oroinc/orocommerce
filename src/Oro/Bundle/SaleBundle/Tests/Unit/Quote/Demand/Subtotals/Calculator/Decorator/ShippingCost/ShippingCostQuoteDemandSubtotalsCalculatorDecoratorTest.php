@@ -53,7 +53,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit\F
     /**
      * @dataProvider calculateSubtotalsProvider
      */
-    public function testCalculateSubtotals(?int $priceAmount, Price $price = null)
+    public function testCalculateSubtotals(?int $priceAmount, ?Price $price = null)
     {
         $shippingMethod = 'someShippingMethodId';
         $shippingMethodType = 'someShippingMethodTypeId';

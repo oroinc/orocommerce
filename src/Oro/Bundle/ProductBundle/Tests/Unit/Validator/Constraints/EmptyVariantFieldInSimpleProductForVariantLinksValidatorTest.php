@@ -154,7 +154,7 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends Const
             ->assertRaised();
     }
 
-    private function prepareProduct(int $id = null, string $size = null, array $parentProducts = []): StubProduct
+    private function prepareProduct(?int $id = null, ?string $size = null, array $parentProducts = []): StubProduct
     {
         $product = (new StubProduct())
             ->setType(Product::TYPE_SIMPLE);

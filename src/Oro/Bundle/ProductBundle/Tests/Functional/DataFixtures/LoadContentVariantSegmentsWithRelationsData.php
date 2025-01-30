@@ -60,7 +60,7 @@ class LoadContentVariantSegmentsWithRelationsData extends AbstractFixture implem
     private function createTestContentVariant(
         ObjectManager $manager,
         TestWebCatalog $webCatalog,
-        Segment $segment = null
+        ?Segment $segment = null
     ) {
         $contentNode = new TestContentNode();
         $contentNode->setWebCatalog($webCatalog);

@@ -9,5 +9,5 @@ use Oro\Component\Website\WebsiteInterface;
  */
 interface SwitchableUrlItemsProviderInterface
 {
-    public function isUrlItemsExcluded(WebsiteInterface $website = null): bool;
+    public function isUrlItemsExcluded(?WebsiteInterface $website = null): bool;
 }

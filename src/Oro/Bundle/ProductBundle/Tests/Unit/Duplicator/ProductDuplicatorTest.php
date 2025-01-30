@@ -109,7 +109,7 @@ class ProductDuplicatorTest extends \PHPUnit\Framework\TestCase
         return $product;
     }
 
-    private function getProductName(?string $string, ?string $text, Localization $localization = null): ProductName
+    private function getProductName(?string $string, ?string $text, ?Localization $localization = null): ProductName
     {
         $value = new ProductName();
         $value->setString($string);

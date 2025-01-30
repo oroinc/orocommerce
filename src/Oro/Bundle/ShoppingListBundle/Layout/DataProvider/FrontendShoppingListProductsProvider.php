@@ -48,7 +48,7 @@ class FrontendShoppingListProductsProvider
      *
      * @return array|null
      */
-    public function getAllPrices(ShoppingList $shoppingList = null)
+    public function getAllPrices(?ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
             return null;
@@ -79,7 +79,7 @@ class FrontendShoppingListProductsProvider
      *      // ...
      *  ]
      */
-    public function getMatchedPrice(ShoppingList $shoppingList = null)
+    public function getMatchedPrice(?ShoppingList $shoppingList = null)
     {
         if (!$shoppingList) {
             return null;
@@ -199,7 +199,7 @@ class FrontendShoppingListProductsProvider
     public function getLastProductsGroupedByShoppingList(
         array $shoppingLists,
         $productCount,
-        Localization $localization = null
+        ?Localization $localization = null
     ) {
         return $this->lineItemRepository->getLastProductsGroupedByShoppingList(
             $shoppingLists,

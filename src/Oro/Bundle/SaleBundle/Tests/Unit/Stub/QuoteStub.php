@@ -18,7 +18,7 @@ class QuoteStub extends Quote
         return $this->internalStatus;
     }
 
-    public function setInternalStatus(EnumOptionInterface $internalStatus = null)
+    public function setInternalStatus(?EnumOptionInterface $internalStatus = null)
     {
         $this->internalStatus = $internalStatus;
     }

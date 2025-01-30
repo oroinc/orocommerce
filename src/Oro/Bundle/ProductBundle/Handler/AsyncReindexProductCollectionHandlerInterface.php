@@ -26,6 +26,6 @@ interface AsyncReindexProductCollectionHandlerInterface
         iterable $childJobPartialMessages,
         string $uniqueJobName,
         bool $throwExceptionOnFailToRunJob = false,
-        array $indexationFieldGroups = null
+        ?array $indexationFieldGroups = null
     ): bool;
 }

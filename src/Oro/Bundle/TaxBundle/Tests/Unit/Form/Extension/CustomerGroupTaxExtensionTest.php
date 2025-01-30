@@ -16,7 +16,7 @@ class CustomerGroupTaxExtensionTest extends AbstractCustomerTaxExtensionTest
     }
 
     #[\Override]
-    protected function createTaxCodeTarget(int $id = null): object
+    protected function createTaxCodeTarget(?int $id = null): object
     {
         $entity = $this->getMockBuilder(CustomerGroup::class)
             ->onlyMethods(['getId'])

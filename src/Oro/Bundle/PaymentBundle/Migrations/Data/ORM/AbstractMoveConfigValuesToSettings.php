@@ -37,7 +37,7 @@ abstract class AbstractMoveConfigValuesToSettings extends AbstractFixture implem
     protected $dispatcher;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->doctrine = $container->get('doctrine');
         $this->installed = $container->get(ApplicationState::class)->isInstalled();

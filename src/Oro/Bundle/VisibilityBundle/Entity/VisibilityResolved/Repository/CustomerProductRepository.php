@@ -50,7 +50,7 @@ class CustomerProductRepository extends AbstractVisibilityRepository
     public function insertByProduct(
         InsertFromSelectQueryExecutor $insertExecutor,
         Product $product,
-        Category $category = null
+        ?Category $category = null
     ) {
         $visibilityMap = [
             CustomerProductVisibility::HIDDEN => [
@@ -90,7 +90,7 @@ class CustomerProductRepository extends AbstractVisibilityRepository
     public function insertByCategory(
         InsertFromSelectQueryExecutor $insertExecutor,
         ScopeManager $scopeManager,
-        Scope $scope = null
+        ?Scope $scope = null
     ) {
         $qb = $this->getCustomerProductVisibilityResolvedQueryBuilder($scopeManager, $scope);
 
@@ -108,7 +108,7 @@ class CustomerProductRepository extends AbstractVisibilityRepository
         );
     }
 
-    public function insertStatic(InsertFromSelectQueryExecutor $insertExecutor, Scope $scope = null)
+    public function insertStatic(InsertFromSelectQueryExecutor $insertExecutor, ?Scope $scope = null)
     {
         $queryBuilder = $this->getInsertStaticQueryBuilder($scope);
 
@@ -195,7 +195,7 @@ class CustomerProductRepository extends AbstractVisibilityRepository
      */
     private function getCustomerProductVisibilityResolvedQueryBuilder(
         ScopeManager $scopeManager,
-        Scope $scope = null
+        ?Scope $scope = null
     ) {
         $configValue = CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG;
         $qb = $this->getEntityManager()
@@ -251,7 +251,7 @@ class CustomerProductRepository extends AbstractVisibilityRepository
      * @param Scope|null $scope
      * @return QueryBuilder
      */
-    private function getInsertStaticQueryBuilder(Scope $scope = null)
+    private function getInsertStaticQueryBuilder(?Scope $scope = null)
     {
         $visibility = <<<VISIBILITY
 CASE WHEN apv.visibility = :visible

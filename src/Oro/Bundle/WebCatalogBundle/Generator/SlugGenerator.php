@@ -289,7 +289,7 @@ class SlugGenerator
      * @param Localization|null $localization
      * @return int|null
      */
-    protected function getLocaleId(Localization $localization = null)
+    protected function getLocaleId(?Localization $localization = null)
     {
         if ($localization) {
             return $localization->getId();

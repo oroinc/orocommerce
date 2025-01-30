@@ -44,5 +44,5 @@ interface SlugAwareInterface
      * @param Localization|null $localization
      * @return Slug|null
      */
-    public function getSlugByLocalization(Localization $localization = null);
+    public function getSlugByLocalization(?Localization $localization = null);
 }

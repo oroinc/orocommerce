@@ -43,7 +43,7 @@ class QuoteCheckoutProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider quoteDemandDataProvider
      */
-    public function testGetCheckoutByQuote(QuoteDemand $quoteDemand = null)
+    public function testGetCheckoutByQuote(?QuoteDemand $quoteDemand = null)
     {
         $quote = $this->createMock(Quote::class);
         $customerUser = $this->createMock(CustomerUser::class);

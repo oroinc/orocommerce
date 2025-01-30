@@ -114,7 +114,7 @@ class TaxRule implements DatesAwareInterface
      *
      * @return $this
      */
-    public function setProductTaxCode(ProductTaxCode $productTaxCode = null)
+    public function setProductTaxCode(?ProductTaxCode $productTaxCode = null)
     {
         $this->productTaxCode = $productTaxCode;
 
@@ -134,7 +134,7 @@ class TaxRule implements DatesAwareInterface
      *
      * @return $this
      */
-    public function setCustomerTaxCode(CustomerTaxCode $customerTaxCode = null)
+    public function setCustomerTaxCode(?CustomerTaxCode $customerTaxCode = null)
     {
         $this->customerTaxCode = $customerTaxCode;
 
@@ -154,7 +154,7 @@ class TaxRule implements DatesAwareInterface
      *
      * @return $this
      */
-    public function setTax(Tax $tax = null)
+    public function setTax(?Tax $tax = null)
     {
         $this->tax = $tax;
 
@@ -174,7 +174,7 @@ class TaxRule implements DatesAwareInterface
      *
      * @return $this
      */
-    public function setTaxJurisdiction(TaxJurisdiction $taxJurisdiction = null)
+    public function setTaxJurisdiction(?TaxJurisdiction $taxJurisdiction = null)
     {
         $this->taxJurisdiction = $taxJurisdiction;
 
@@ -203,7 +203,7 @@ class TaxRule implements DatesAwareInterface
      * @return $this
      */
     #[\Override]
-    public function setCreatedAt(\DateTime $createdAt = null)
+    public function setCreatedAt(?\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -225,7 +225,7 @@ class TaxRule implements DatesAwareInterface
      * @return $this
      */
     #[\Override]
-    public function setUpdatedAt(\DateTime $updatedAt = null)
+    public function setUpdatedAt(?\DateTime $updatedAt = null)
     {
         $this->updatedAtSet = false;
         if ($updatedAt !== null) {

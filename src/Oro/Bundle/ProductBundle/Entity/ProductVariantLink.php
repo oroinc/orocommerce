@@ -35,7 +35,7 @@ class ProductVariantLink
     #[ConfigField(defaultValues: ['importexport' => ['order' => 20]])]
     protected ?bool $visible = true;
 
-    public function __construct(Product $parentProduct = null, Product $product = null)
+    public function __construct(?Product $parentProduct = null, ?Product $product = null)
     {
         $this->parentProduct = $parentProduct;
         $this->product = $product;

@@ -406,7 +406,7 @@ class ShippingPriceProviderTest extends TestCase
         string $methodId,
         string $typeId,
         array $shippingRules,
-        Price $expectedPrice = null
+        ?Price $expectedPrice = null
     ): void {
         $shippingLineItems = [$this->getShippingLineItem()];
 

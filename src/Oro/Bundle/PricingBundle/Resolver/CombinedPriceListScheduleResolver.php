@@ -52,7 +52,7 @@ class CombinedPriceListScheduleResolver
         $this->triggerHandler = $triggerHandler;
     }
 
-    public function updateRelations(\DateTime $time = null)
+    public function updateRelations(?\DateTime $time = null)
     {
         if (!$time) {
             $time = new \DateTime('now', new \DateTimeZone('UTC'));
@@ -85,7 +85,7 @@ class CombinedPriceListScheduleResolver
      * @param \DateTime|null $time
      * @return null|CombinedPriceList
      */
-    public function getActiveCplByFullCPL(CombinedPriceList $fullCPl, \DateTime $time = null)
+    public function getActiveCplByFullCPL(CombinedPriceList $fullCPl, ?\DateTime $time = null)
     {
         if (!$time) {
             $time = new \DateTime('now', new \DateTimeZone('UTC'));

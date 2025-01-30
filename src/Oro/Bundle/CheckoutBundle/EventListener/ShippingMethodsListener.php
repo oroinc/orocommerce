@@ -32,7 +32,7 @@ class ShippingMethodsListener extends AbstractMethodsListener
     }
 
     #[\Override]
-    protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null)
+    protected function hasMethodsConfigsForAddress(Checkout $checkout, ?OrderAddress $address = null)
     {
         $checkout->setShippingAddress($address);
 

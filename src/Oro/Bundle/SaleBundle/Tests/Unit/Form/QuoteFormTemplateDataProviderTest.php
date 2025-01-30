@@ -81,7 +81,7 @@ class QuoteFormTemplateDataProviderTest extends TestCase
         $this->provider->getData($entity, $this->createForm(), $this->createMock(Request::class));
     }
 
-    private function createForm(string $name = 'test_type', Quote $quote = null): FormInterface|MockObject
+    private function createForm(string $name = 'test_type', ?Quote $quote = null): FormInterface|MockObject
     {
         $form = $this->createMock(FormInterface::class);
         $form

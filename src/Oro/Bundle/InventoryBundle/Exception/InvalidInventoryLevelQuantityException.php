@@ -4,7 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Exception;
 
 class InvalidInventoryLevelQuantityException extends \Exception
 {
-    public function __construct($message = "", $code = 0, \Exception $previous = null)
+    public function __construct($message = "", $code = 0, ?\Exception $previous = null)
     {
         if (empty($message)) {
             $message = 'Invalid quantity value provided!';

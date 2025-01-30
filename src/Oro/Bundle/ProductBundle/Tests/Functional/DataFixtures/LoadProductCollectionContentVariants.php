@@ -146,7 +146,7 @@ class LoadProductCollectionContentVariants extends AbstractFixture implements De
         ObjectManager $manager,
         string $reference,
         TestContentNode $node,
-        Segment $segment = null
+        ?Segment $segment = null
     ): void {
         $testContentVariant = new TestContentVariant();
         $testContentVariant->setProductCollectionSegment($segment);

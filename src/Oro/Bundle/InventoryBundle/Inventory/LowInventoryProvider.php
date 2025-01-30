@@ -33,7 +33,7 @@ class LowInventoryProvider
      * Second parameter can specify in what units we are going to check quantity,
      * if it is not provided the main product unit is used.
      */
-    public function isLowInventoryProduct(Product $product, ProductUnit $productUnit = null): bool
+    public function isLowInventoryProduct(Product $product, ?ProductUnit $productUnit = null): bool
     {
         if ($productUnit === null) {
             $productUnit = $this->getDefaultProductUnit($product);

@@ -55,7 +55,7 @@ class ProductImageListenerTest extends WebTestCase
         ];
     }
 
-    private function prepareProductsReindexMessage(array $products, array $expectedFieldGroups = null): array
+    private function prepareProductsReindexMessage(array $products, ?array $expectedFieldGroups = null): array
     {
         $entityIds = [];
         /** @var Product $product */

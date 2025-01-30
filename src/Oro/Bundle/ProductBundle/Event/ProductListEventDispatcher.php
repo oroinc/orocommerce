@@ -16,14 +16,14 @@ class ProductListEventDispatcher extends ImmutableEventDispatcher
     /**
      *
      * @param ProductListEvent $event
-     * @param string|null      $eventName
+     * @param string|null $eventName
      *
      * @return ProductListEvent
      *
      * @throws \InvalidArgumentException when the given event is not supported or an event name is not provided
      */
     #[\Override]
-    public function dispatch(object $event, string $eventName = null): object
+    public function dispatch(object $event, ?string $eventName = null): object
     {
         if (!$event instanceof ProductListEvent) {
             throw new \InvalidArgumentException(sprintf(

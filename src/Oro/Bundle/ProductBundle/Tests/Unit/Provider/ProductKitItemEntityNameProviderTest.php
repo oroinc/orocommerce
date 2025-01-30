@@ -20,7 +20,7 @@ class ProductKitItemEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new ProductKitItemEntityNameProvider();
     }
 
-    private function getProductKitItemLabel(string $string, Localization $localization = null): ProductKitItemLabel
+    private function getProductKitItemLabel(string $string, ?Localization $localization = null): ProductKitItemLabel
     {
         $value = new ProductKitItemLabel();
         $value->setString($string);

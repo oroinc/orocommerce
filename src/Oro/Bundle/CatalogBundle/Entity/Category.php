@@ -360,7 +360,7 @@ class Category implements
      *
      * @return $this
      */
-    public function setParentCategory(Category $parentCategory = null)
+    public function setParentCategory(?Category $parentCategory = null)
     {
         $this->parentCategory = $parentCategory;
 
@@ -544,7 +544,7 @@ class Category implements
      *
      * @return Category
      */
-    public function setDefaultProductOptions(CategoryDefaultProductOptions $defaultProductOptions = null)
+    public function setDefaultProductOptions(?CategoryDefaultProductOptions $defaultProductOptions = null)
     {
         $this->defaultProductOptions = $defaultProductOptions;
 

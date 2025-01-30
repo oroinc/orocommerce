@@ -55,7 +55,7 @@ class ContentNodeProvider
      *
      * @return int[]
      */
-    public function getContentNodeIds(QueryBuilder $qb = null, ScopeCriteria $criteria = null): array
+    public function getContentNodeIds(?QueryBuilder $qb = null, ?ScopeCriteria $criteria = null): array
     {
         if (null === $criteria) {
             $criteria = $this->scopeManager->getCriteria(self::SCOPE_TYPE);
@@ -100,7 +100,7 @@ class ContentNodeProvider
      *
      * @throws AccessDeniedException if the requested node is not available for the storefront
      */
-    public function getContentNode(int $id, ScopeCriteria $criteria = null): ?ContentNode
+    public function getContentNode(int $id, ?ScopeCriteria $criteria = null): ?ContentNode
     {
         if (null === $criteria) {
             $criteria = $this->scopeManager->getCriteria(self::SCOPE_TYPE);
@@ -133,7 +133,7 @@ class ContentNodeProvider
      *      // ..
      *  ]
      */
-    public function getContentVariantIds(array $nodeIds, ScopeCriteria $criteria = null): array
+    public function getContentVariantIds(array $nodeIds, ?ScopeCriteria $criteria = null): array
     {
         if (null === $criteria) {
             $criteria = $this->scopeManager->getCriteria(self::SCOPE_TYPE);
@@ -177,7 +177,7 @@ class ContentNodeProvider
     public function getContentVariantDetails(
         array $nodeIds,
         array $contentVariantFields,
-        ScopeCriteria $criteria = null
+        ?ScopeCriteria $criteria = null
     ): array {
         if (null === $criteria) {
             $criteria = $this->scopeManager->getCriteria(self::SCOPE_TYPE);
@@ -220,7 +220,7 @@ class ContentNodeProvider
 
     public function getFirstMatchingVariantForEntity(
         object $entity,
-        WebsiteInterface $website = null
+        ?WebsiteInterface $website = null
     ): ?ContentVariant {
         $webCatalog = $this->webCatalogProvider->getWebCatalog($website);
         if (!$webCatalog) {

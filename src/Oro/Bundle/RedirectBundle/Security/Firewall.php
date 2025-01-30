@@ -33,7 +33,7 @@ class Firewall
     public function __construct(
         MatchedUrlDecisionMaker $matchedUrlDecisionMaker,
         SlugRequestFactoryInterface $slugRequestFactory,
-        RequestContext $context = null
+        ?RequestContext $context = null
     ) {
         $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
         $this->slugRequestFactory = $slugRequestFactory;

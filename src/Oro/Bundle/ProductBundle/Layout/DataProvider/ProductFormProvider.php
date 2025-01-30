@@ -52,7 +52,7 @@ class ProductFormProvider extends AbstractFormProvider
         return $this->getFormView(QuickAddType::class, null, $options, $cacheKeyOptions);
     }
 
-    public function getQuickAddForm(array $data = null, array $options = []): FormInterface
+    public function getQuickAddForm(?array $data = null, array $options = []): FormInterface
     {
         $options['action'] = $this->generateUrl(self::PRODUCT_QUICK_ADD_ROUTE_NAME);
         $cacheKeyOptions = $this->getQuickAddFormCacheKeyOptions();

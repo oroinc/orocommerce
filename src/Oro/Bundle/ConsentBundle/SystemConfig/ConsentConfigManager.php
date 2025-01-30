@@ -37,7 +37,7 @@ class ConsentConfigManager
         $this->converter = $converter;
     }
 
-    public function updateConsentsConfigForWebsiteScope(Consent $consent, Website $website = null)
+    public function updateConsentsConfigForWebsiteScope(Consent $consent, ?Website $website = null)
     {
         $this->updateConsentsConfig($consent, $this->configManager, $website);
     }
@@ -48,9 +48,9 @@ class ConsentConfigManager
     }
 
     private function updateConsentsConfig(
-        Consent $consent,
-        ConfigManager $configManager = null,
-        Website $website = null
+        Consent        $consent,
+        ?ConfigManager $configManager = null,
+        ?Website       $website = null
     ) {
         $configKey = Configuration::getConfigKey(Configuration::ENABLED_CONSENTS);
         $config = $configManager->get($configKey, false, true, $website);

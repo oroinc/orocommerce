@@ -127,7 +127,7 @@ class TaxValueManager
      *
      * @return bool
      */
-    public function flushTaxValueIfAllowed(array|TaxValue $entity = null): bool
+    public function flushTaxValueIfAllowed(array|TaxValue|null $entity = null): bool
     {
         $em = $this->getTaxValueEntityManager();
         if (!$this->doctrineFlushProgressListener->isFlushInProgress($em)) {

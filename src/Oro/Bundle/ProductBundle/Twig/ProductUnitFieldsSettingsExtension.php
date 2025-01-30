@@ -67,7 +67,7 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension implements Se
      *
      * @return bool
      */
-    public function isProductPrimaryUnitVisible(Product $product = null)
+    public function isProductPrimaryUnitVisible(?Product $product = null)
     {
         return $this->getProductUnitFieldsSettings()->isProductPrimaryUnitVisible($product);
     }
@@ -77,7 +77,7 @@ class ProductUnitFieldsSettingsExtension extends AbstractExtension implements Se
      *
      * @return bool
      */
-    public function isAddingAdditionalUnitsToProductAvailable(Product $product = null)
+    public function isAddingAdditionalUnitsToProductAvailable(?Product $product = null)
     {
         return $this->getProductUnitFieldsSettings()->isAddingAdditionalUnitsToProductAvailable($product);
     }

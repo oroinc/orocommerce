@@ -18,5 +18,5 @@ interface InventoryQuantityProviderInterface
      * @param Product|null $product
      * @return bool
      */
-    public function canDecrement(Product $product = null);
+    public function canDecrement(?Product $product = null);
 }

@@ -72,7 +72,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @param Product|null $product
      * @return ProductUnitPrecision
      */
-    public function setProduct(Product $product = null)
+    public function setProduct(?Product $product = null)
     {
         $this->product = $product;
 
@@ -95,7 +95,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @param ProductUnit|null $unit
      * @return ProductUnitPrecision
      */
-    public function setUnit(ProductUnit $unit = null)
+    public function setUnit(?ProductUnit $unit = null)
     {
         $this->unit = $unit;
 
@@ -118,7 +118,7 @@ class ProductUnitPrecision implements ProductUnitHolderInterface
      * @param int|null $precision
      * @return ProductUnitPrecision
      */
-    public function setPrecision(int $precision = null)
+    public function setPrecision(?int $precision = null)
     {
         $this->precision = $precision;
 

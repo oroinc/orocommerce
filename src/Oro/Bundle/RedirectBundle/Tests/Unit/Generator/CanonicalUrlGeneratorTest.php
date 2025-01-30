@@ -140,9 +140,9 @@ class CanonicalUrlGeneratorTest extends AbstractCanonicalUrlGeneratorTestCase
      * @dataProvider localizedUrlDataProvider
      */
     public function testGetDirectUrl(
-        string $expectedUrl,
-        Localization $localization = null,
-        Localization $currentLocalization = null
+        string        $expectedUrl,
+        ?Localization $localization = null,
+        ?Localization $currentLocalization = null
     ) {
         $expectedWebsiteUrl = 'http://example.com/';
 

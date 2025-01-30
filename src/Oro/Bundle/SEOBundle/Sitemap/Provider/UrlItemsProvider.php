@@ -235,7 +235,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
      * @param \DateTime|null $updatedAt
      * @return null|UrlItem
      */
-    private function getDirectUrlItem(WebsiteInterface $website, $url, \DateTime $updatedAt = null)
+    private function getDirectUrlItem(WebsiteInterface $website, $url, ?\DateTime $updatedAt = null)
     {
         if ($url) {
             $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl($url, $website);
@@ -264,7 +264,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     private function getSystemUrlItem(
         WebsiteInterface $website,
         SluggableInterface $entityReference,
-        \DateTime $updatedAt = null
+        ?\DateTime $updatedAt = null
     ) {
         $systemUrl = $this->canonicalUrlGenerator->getSystemUrl($entityReference, $website);
 
@@ -358,7 +358,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
      *
      * @return UrlItem
      */
-    private function createUrlItem($url, \DateTime $updatedAt = null)
+    private function createUrlItem($url, ?\DateTime $updatedAt = null)
     {
         return new UrlItem(
             $url,

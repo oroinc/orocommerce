@@ -43,7 +43,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
     private array $prices = [];
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null): void
+    public function setContainer(?ContainerInterface $container = null): void
     {
         $this->container = $container;
 

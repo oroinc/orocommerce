@@ -37,7 +37,7 @@ class LineItemStub implements PriceTypeAwareInterface, PriceAwareInterface, Quan
      * @param Price|null $price
      * @return $this
      */
-    public function setPrice(Price $price = null)
+    public function setPrice(?Price $price = null)
     {
         $this->price = $price;
 

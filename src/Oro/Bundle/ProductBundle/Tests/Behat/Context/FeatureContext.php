@@ -2001,7 +2001,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         return $productItem;
     }
 
-    private function findProductItemInShoppingList(string $SKU, Element $context = null): Element
+    private function findProductItemInShoppingList(string $SKU, ?Element $context = null): Element
     {
         $productItem = $this->findElementContains('Shopping list line item', $SKU, $context);
         self::assertNotNull($productItem, sprintf('Product with SKU "%s" not found', $SKU));

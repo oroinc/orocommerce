@@ -66,7 +66,7 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
         OptionsResolver $resolver,
         $field,
         array $allowedTypes = [],
-        \Closure $normalizer = null
+        ?\Closure $normalizer = null
     ) {
         $resolver
             ->setDefined($field)

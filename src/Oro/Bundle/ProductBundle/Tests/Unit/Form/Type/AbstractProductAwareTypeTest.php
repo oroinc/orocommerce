@@ -124,7 +124,7 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider getProductFromViewDataProvider
      */
-    public function testGetProductFromView(array $options, Product $product = null, bool $useParentView = false)
+    public function testGetProductFromView(array $options, ?Product $product = null, bool $useParentView = false)
     {
         $form = $this->factory->createNamed(
             AbstractProductAwareTypeStub::NAME,
@@ -176,9 +176,9 @@ class AbstractProductAwareTypeTest extends FormIntegrationTestCase
      * @dataProvider getProductFromFormOrViewDataProvider
      */
     public function testGetProductFromFormOrView(
-        Product $formProduct = null,
-        Product $viewProduct = null,
-        Product $product = null
+        ?Product $formProduct = null,
+        ?Product $viewProduct = null,
+        ?Product $product = null
     ) {
         $form = $this->factory->createNamed(
             AbstractProductAwareTypeStub::NAME,

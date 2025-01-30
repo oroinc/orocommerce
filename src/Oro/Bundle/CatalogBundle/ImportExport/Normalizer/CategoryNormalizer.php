@@ -30,13 +30,13 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return is_a($data, Category::class);
     }
 
     #[\Override]
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         return is_a($type, Category::class, true);
     }
@@ -46,7 +46,7 @@ class CategoryNormalizer extends ConfigurableEntityNormalizer
      * @param Category $object
      */
     #[\Override]
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         $object = $this->revitalizeObject($object);
 

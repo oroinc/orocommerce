@@ -13,7 +13,7 @@ use Symfony\Component\Form\FormInterface;
 abstract class AbstractCustomerTaxExtensionTest extends AbstractTaxExtensionTest
 {
     #[\Override]
-    protected function createTaxCode(int $id = null): AbstractTaxCode
+    protected function createTaxCode(?int $id = null): AbstractTaxCode
     {
         $taxCode = new CustomerTaxCode();
         if (null !== $id) {

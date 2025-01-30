@@ -32,14 +32,14 @@ class StartCheckout implements StartCheckoutInterface
 
     #[\Override]
     public function execute(
-        array $sourceCriteria,
-        bool $force = false,
-        array $data = [],
-        array $settings = [],
-        bool $showErrors = false,
-        bool $forceStartCheckout = false,
-        string $startTransition = null,
-        bool $validateOnStartCheckout = true
+        array   $sourceCriteria,
+        bool    $force = false,
+        array   $data = [],
+        array   $settings = [],
+        bool    $showErrors = false,
+        bool    $forceStartCheckout = false,
+        ?string $startTransition = null,
+        bool    $validateOnStartCheckout = true
     ): array {
         $findResult = $this->findOrCreateCheckout->execute(
             $sourceCriteria,

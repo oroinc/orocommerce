@@ -54,10 +54,10 @@ class PaymentTransactionProvider
      */
     public function getPaymentTransactions(
         object $object,
-        array $criteria = [],
-        array $orderBy = [],
-        int $limit = null,
-        int $offset = null
+        array  $criteria = [],
+        array  $orderBy = [],
+        ?int   $limit = null,
+        ?int   $offset = null
     ): array {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);

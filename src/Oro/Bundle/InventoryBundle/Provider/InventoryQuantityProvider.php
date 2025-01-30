@@ -24,7 +24,7 @@ class InventoryQuantityProvider implements InventoryQuantityProviderInterface
     }
 
     #[\Override]
-    public function canDecrement(Product $product = null)
+    public function canDecrement(?Product $product = null)
     {
         return $this->quantityManager->shouldDecrement($product);
     }

@@ -53,7 +53,7 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
         ProductPriceScopeCriteriaInterface $scopeCriteria,
         array $products,
         array $currencies,
-        string $unitCode = null
+        ?string $unitCode = null
     ): array {
         $currencies = $this->getAllowedCurrencies($scopeCriteria, $currencies);
         if (empty($currencies)) {
@@ -167,9 +167,9 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
      */
     private function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array $productsIds,
-        array $productUnitCodes = null,
-        array $currencies = null
+        array                              $productsIds,
+        ?array                             $productUnitCodes = null,
+        ?array                             $currencies = null
     ): array {
         if (!$currencies) {
             // There is no sense to get prices when no allowed currencies present.

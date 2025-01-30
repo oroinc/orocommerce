@@ -455,10 +455,10 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     }
 
     private function createProductUnitHolder(
-        ?int $id,
-        ?string $productUnitCode,
-        ProductUnit $productUnit = null,
-        ProductHolderInterface $productHolder = null
+        ?int                    $id,
+        ?string                 $productUnitCode,
+        ?ProductUnit            $productUnit = null,
+        ?ProductHolderInterface $productHolder = null
     ): ProductUnitHolderInterface {
         $productUnitHolder = $this->createMock(ProductUnitHolderInterface::class);
         $productUnitHolder->expects(self::any())
@@ -477,7 +477,7 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
         return $productUnitHolder;
     }
 
-    private function createProductHolder(string $productSku, Product $product = null): ProductHolderInterface
+    private function createProductHolder(string $productSku, ?Product $product = null): ProductHolderInterface
     {
         $productHolder = $this->createMock(ProductHolderInterface::class);
         $productHolder->expects(self::any())

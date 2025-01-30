@@ -237,7 +237,7 @@ class Coupon implements
      * @param \DateTime|null $validFrom
      * @return Coupon
      */
-    public function setValidFrom(\DateTime $validFrom = null)
+    public function setValidFrom(?\DateTime $validFrom = null)
     {
         $this->validFrom = $validFrom;
 
@@ -253,7 +253,7 @@ class Coupon implements
      * @param \DateTime|null $validUntil
      * @return Coupon
      */
-    public function setValidUntil(\DateTime $validUntil = null)
+    public function setValidUntil(?\DateTime $validUntil = null)
     {
         $this->validUntil = $validUntil;
 

@@ -27,7 +27,7 @@ class FreightClassesProvider extends MeasureUnitProvider
      *
      * @return FreightClass[]
      */
-    public function getFreightClasses(ProductShippingOptions $options = null)
+    public function getFreightClasses(?ProductShippingOptions $options = null)
     {
         $sourceUnits = $this->getUnits();
 

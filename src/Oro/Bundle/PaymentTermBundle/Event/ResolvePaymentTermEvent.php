@@ -12,7 +12,7 @@ class ResolvePaymentTermEvent extends Event
     /** @var PaymentTerm|null */
     protected $paymentTerm;
 
-    public function __construct(PaymentTerm $paymentTerm = null)
+    public function __construct(?PaymentTerm $paymentTerm = null)
     {
         $this->paymentTerm = $paymentTerm;
     }
@@ -25,7 +25,7 @@ class ResolvePaymentTermEvent extends Event
         return $this->paymentTerm;
     }
 
-    public function setPaymentTerm(PaymentTerm $paymentTerm = null)
+    public function setPaymentTerm(?PaymentTerm $paymentTerm = null)
     {
         $this->paymentTerm = $paymentTerm;
     }

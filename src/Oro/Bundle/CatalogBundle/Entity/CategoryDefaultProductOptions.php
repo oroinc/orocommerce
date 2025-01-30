@@ -54,7 +54,7 @@ class CategoryDefaultProductOptions
      *
      * @return Category
      */
-    public function setUnitPrecision(CategoryUnitPrecision $unitPrecision = null)
+    public function setUnitPrecision(?CategoryUnitPrecision $unitPrecision = null)
     {
         $this->unitPrecision = $unitPrecision;
         $this->updateUnitPrecision();

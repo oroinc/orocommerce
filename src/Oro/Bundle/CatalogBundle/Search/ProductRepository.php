@@ -22,7 +22,7 @@ class ProductRepository extends WebsiteSearchRepository
      *
      * @return array ['<categoryId>' => <numberOfProducts>, ...]
      */
-    public function getCategoryCountsByCategory(Category $category, SearchQueryInterface $searchQuery = null)
+    public function getCategoryCountsByCategory(Category $category, ?SearchQueryInterface $searchQuery = null)
     {
         // calculate counts of products per category
         $counts = $this->getCategoryCounts($searchQuery);
@@ -69,7 +69,7 @@ class ProductRepository extends WebsiteSearchRepository
      *
      * @return array ['<materializedPath>' => <numberOfProducts>, ...]
      */
-    protected function getCategoryCounts(SearchQueryInterface $query = null)
+    protected function getCategoryCounts(?SearchQueryInterface $query = null)
     {
         if (!$query) {
             $query = $this->createQuery();

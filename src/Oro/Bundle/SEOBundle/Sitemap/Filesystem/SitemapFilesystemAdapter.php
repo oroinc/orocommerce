@@ -54,15 +54,15 @@ class SitemapFilesystemAdapter
 
     /**
      * @param WebsiteInterface $website
-     * @param string|null      $pattern
-     * @param string|null      $notPattern
+     * @param string|null $pattern
+     * @param string|null $notPattern
      *
      * @return File[]
      */
     public function getSitemapFiles(
         WebsiteInterface $website,
-        string $pattern = null,
-        string $notPattern = null
+        ?string          $pattern = null,
+        ?string          $notPattern = null
     ): array {
         $iterator = new FilenameFilterIterator(
             new \ArrayIterator(

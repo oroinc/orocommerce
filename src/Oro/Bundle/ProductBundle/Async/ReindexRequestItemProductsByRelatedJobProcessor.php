@@ -94,7 +94,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         Job $job,
         int $relatedJobId,
         array $websiteIds,
-        array $fieldGroups = null
+        ?array $fieldGroups = null
     ): void {
         foreach ($websiteIds as $websiteId) {
             $productIdIteratorOnReindex = $this->websiteReindexRequestDataStorage
@@ -132,7 +132,7 @@ class ReindexRequestItemProductsByRelatedJobProcessor implements
         int $websiteId,
         array $productIds,
         int $batchId,
-        array $fieldGroups = null
+        ?array $fieldGroups = null
     ): void {
         $jobRunner->createDelayed(
             sprintf('%s:reindex:%d:%d', $job->getName(), $websiteId, $batchId),

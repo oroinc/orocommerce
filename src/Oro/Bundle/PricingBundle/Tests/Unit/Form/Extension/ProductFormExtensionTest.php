@@ -119,7 +119,7 @@ class ProductFormExtensionTest extends TestCase
     /**
      * @dataProvider badProductDataProvider
      */
-    public function testOnPreSubmitBadProduct(Product $product = null)
+    public function testOnPreSubmitBadProduct(?Product $product = null)
     {
         $form = $this->createMock(FormInterface::class);
         $form->expects($this->once())
@@ -689,7 +689,7 @@ class ProductFormExtensionTest extends TestCase
         return new FormEvent($mainForm, $data);
     }
 
-    private function getProduct(int $id = null): Product
+    private function getProduct(?int $id = null): Product
     {
         $product = new Product();
         ReflectionUtil::setId($product, $id);
@@ -697,7 +697,7 @@ class ProductFormExtensionTest extends TestCase
         return $product;
     }
 
-    private function getProductPrice(int $id = null): ProductPrice
+    private function getProductPrice(?int $id = null): ProductPrice
     {
         $productPrice = new ProductPrice();
         ReflectionUtil::setId($productPrice, $id);

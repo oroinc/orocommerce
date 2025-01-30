@@ -30,7 +30,7 @@ class MenuCategoriesCache implements CacheInterface
      *                           as per {@see MenuCategoriesProviderInterface::getCategories}.
      */
     #[\Override]
-    public function get(string $key, callable $callback, float $beta = null, array &$metadata = null)
+    public function get(string $key, callable $callback, ?float $beta = null, ?array &$metadata = null)
     {
         $wrappedCallback = function (CacheItemInterface $cacheItem) use ($callback, &$denormalizedMenuCategories) {
             $denormalizedMenuCategories = $callback($cacheItem);

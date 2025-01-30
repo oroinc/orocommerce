@@ -33,7 +33,7 @@ abstract class AbstractLoadRelatedItemDemoData extends AbstractFixture implement
     protected $container;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }

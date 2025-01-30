@@ -22,8 +22,8 @@ class TaxationAddressProvider
      * @return AbstractAddress|null Billing, shipping or origin address according to exclusions
      */
     public function getTaxationAddress(
-        AbstractAddress $billingAddress = null,
-        AbstractAddress $shippingAddress = null
+        ?AbstractAddress $billingAddress = null,
+        ?AbstractAddress $shippingAddress = null
     ) {
         $address = $this->getDestinationAddress($billingAddress, $shippingAddress);
         $isOriginBaseByDefaultAddressType = $this->settingsProvider->isOriginBaseByDefaultAddressType();
@@ -77,8 +77,8 @@ class TaxationAddressProvider
      * @return null|AbstractAddress Billing or shipping address
      */
     public function getDestinationAddress(
-        AbstractAddress $billingAddress = null,
-        AbstractAddress $shippingAddress = null
+        ?AbstractAddress $billingAddress = null,
+        ?AbstractAddress $shippingAddress = null
     ) {
         $type = $this->settingsProvider->getDestination();
         if ($type === TaxationSettingsProvider::DESTINATION_BILLING_ADDRESS) {

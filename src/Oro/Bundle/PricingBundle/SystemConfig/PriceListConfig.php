@@ -30,7 +30,7 @@ class PriceListConfig implements PriceListAwareInterface
      * @param int|null $sortOrder
      * @param null|boolean $mergeAllowed
      */
-    public function __construct(PriceList $priceList = null, $sortOrder = null, $mergeAllowed = null)
+    public function __construct(?PriceList $priceList = null, $sortOrder = null, $mergeAllowed = null)
     {
         $this->priceList = $priceList;
         $this->sortOrder = $sortOrder;

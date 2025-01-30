@@ -285,7 +285,7 @@ class ProductAssignmentRuleCompilerTest extends WebTestCase
      * @param Product|null $product
      * @return QueryBuilder
      */
-    protected function getQueryBuilder(PriceList $priceList, Product $product = null)
+    protected function getQueryBuilder(PriceList $priceList, ?Product $product = null)
     {
         $qb = $this->compiler->compile($priceList, $product ? [$product] : []);
         $aliases = $qb->getRootAliases();

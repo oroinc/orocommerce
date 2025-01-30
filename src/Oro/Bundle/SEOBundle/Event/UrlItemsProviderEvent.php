@@ -24,7 +24,7 @@ class UrlItemsProviderEvent extends Event
      * @param int $version
      * @param WebsiteInterface|null $website
      */
-    public function __construct($version, WebsiteInterface $website = null)
+    public function __construct($version, ?WebsiteInterface $website = null)
     {
         $this->version = $version;
         $this->website = $website;

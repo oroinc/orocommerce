@@ -39,7 +39,7 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * 'Include Landing Pages Not Used In Web Catalog' is unchecked
      * indicates that the sitemap for landing pages will only contain pages that belong to the web catalog.
      */
-    public function isRestrictedToPagesBelongToWebCatalogOnly(WebsiteInterface $website = null): bool
+    public function isRestrictedToPagesBelongToWebCatalogOnly(?WebsiteInterface $website = null): bool
     {
         return !$this->isExcludedPagesBelongToWebCatalog($website)
             && !$this->isIncludedPagesNotBelongToWebCatalog($website);
@@ -50,7 +50,7 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * 'Include Landing Pages Not Used In Web Catalog' is checked
      * indicates that the sitemap for landing pages will only contain pages that not belong to the web catalog.
      */
-    public function isRestrictedToPagesNotBelongToWebCatalogOnly(WebsiteInterface $website = null): bool
+    public function isRestrictedToPagesNotBelongToWebCatalogOnly(?WebsiteInterface $website = null): bool
     {
         return $this->isExcludedPagesBelongToWebCatalog($website)
             && $this->isExcludedPagesBelongToWebCatalog($website);
@@ -62,7 +62,7 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * A sitemap for landing pages will not be generated.
      */
     #[\Override]
-    public function isUrlItemsExcluded(WebsiteInterface $website = null): bool
+    public function isUrlItemsExcluded(?WebsiteInterface $website = null): bool
     {
         return $this->isExcludedPagesBelongToWebCatalog($website)
             && !$this->isIncludedPagesNotBelongToWebCatalog($website);
@@ -73,7 +73,7 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
      * or 'Exclude Direct URLs Of Landing Pages' is checked and 'Include Landing Pages Not Used In Web Catalog'
      * is unchecked.
      */
-    public function isRestrictionActive(WebsiteInterface $website = null): bool
+    public function isRestrictionActive(?WebsiteInterface $website = null): bool
     {
         if ($this->isFeaturesEnabled($website) || $this->isUrlItemsExcluded($website)) {
             return false;
@@ -85,7 +85,7 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
     /**
      * Exclude direct URLs of landing pages option.
      */
-    private function isExcludedPagesBelongToWebCatalog(WebsiteInterface $website = null): bool
+    private function isExcludedPagesBelongToWebCatalog(?WebsiteInterface $website = null): bool
     {
         return $this->configManager->get(
             self::EXCLUDE_WEB_CATALOG_LANDING_PAGES,
@@ -98,7 +98,7 @@ class CmsPageSitemapRestrictionProvider implements SwitchableUrlItemsProviderInt
     /**
      * Include landing pages that are not used in web catalog option.
      */
-    private function isIncludedPagesNotBelongToWebCatalog(WebsiteInterface $website = null): bool
+    private function isIncludedPagesNotBelongToWebCatalog(?WebsiteInterface $website = null): bool
     {
         return $this->configManager->get(
             self::INCLUDE_NOT_IN_WEB_CATALOG_LANDING_PAGES,

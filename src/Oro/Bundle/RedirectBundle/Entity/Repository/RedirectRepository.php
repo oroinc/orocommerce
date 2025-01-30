@@ -18,7 +18,7 @@ class RedirectRepository extends EntityRepository
      * @param ScopeCriteria|null $scopeCriteria
      * @return null|Redirect
      */
-    public function findByUrl($from, ScopeCriteria $scopeCriteria = null)
+    public function findByUrl($from, ?ScopeCriteria $scopeCriteria = null)
     {
         $qb = $this->createQueryBuilder('redirect');
         $qb->leftJoin('redirect.scopes', 'scope', Join::WITH)

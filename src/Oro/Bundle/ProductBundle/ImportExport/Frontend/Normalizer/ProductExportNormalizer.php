@@ -44,7 +44,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function normalize($object, string $format = null, array $context = [])
+    public function normalize($object, ?string $format = null, array $context = [])
     {
         $result = parent::normalize($object, $format, $context);
 
@@ -63,7 +63,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function supportsNormalization($data, string $format = null, array $context = []): bool
+    public function supportsNormalization($data, ?string $format = null, array $context = []): bool
     {
         return is_a($data, Product::class)
             && isset($context['processorAlias'])
@@ -71,7 +71,7 @@ class ProductExportNormalizer extends ConfigurableEntityNormalizer
     }
 
     #[\Override]
-    public function supportsDenormalization($data, string $type, string $format = null, array $context = []): bool
+    public function supportsDenormalization($data, string $type, ?string $format = null, array $context = []): bool
     {
         return false;
     }

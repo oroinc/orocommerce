@@ -618,7 +618,7 @@ class Product implements
      * @return Product
      */
     #[\Override]
-    public function setCreatedAt(\DateTime $createdAt = null)
+    public function setCreatedAt(?\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -640,7 +640,7 @@ class Product implements
      * @return Product
      */
     #[\Override]
-    public function setUpdatedAt(\DateTime $updatedAt = null)
+    public function setUpdatedAt(?\DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
 
@@ -702,7 +702,7 @@ class Product implements
      * @return Product
      */
     #[\Override]
-    public function setOrganization(OrganizationInterface $organization = null)
+    public function setOrganization(?OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
 

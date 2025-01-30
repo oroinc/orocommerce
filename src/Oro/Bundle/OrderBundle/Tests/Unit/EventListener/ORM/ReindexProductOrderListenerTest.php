@@ -109,7 +109,7 @@ class ReindexProductOrderListenerTest extends \PHPUnit\Framework\TestCase
         );
     }
 
-    private function getOrderLineItem(Product $product, Product $parentProduct = null): OrderLineItem
+    private function getOrderLineItem(Product $product, ?Product $parentProduct = null): OrderLineItem
     {
         $lineItem = new OrderLineItem();
         $lineItem->setProduct($product);

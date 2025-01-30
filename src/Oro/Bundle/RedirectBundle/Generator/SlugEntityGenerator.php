@@ -229,7 +229,7 @@ class SlugEntityGenerator
      * @param Localization|null $localization
      * @return int
      */
-    private function getLocalizationId(Localization $localization = null)
+    private function getLocalizationId(?Localization $localization = null)
     {
         if ($localization) {
             return $localization->getId();

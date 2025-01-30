@@ -153,7 +153,7 @@ abstract class ConfigureWYSIWYGFields implements ProcessorInterface
         EntityDefinitionConfig $definition,
         string $wysiwygFieldName,
         bool $excluded,
-        string $sourceWysiwygFieldName = null
+        ?string $sourceWysiwygFieldName = null
     ): EntityDefinitionFieldConfig {
         if ($sourceWysiwygFieldName && $sourceWysiwygFieldName !== $wysiwygFieldName) {
             $sourceWysiwygFieldName = $definition->findFieldNameByPropertyPath($sourceWysiwygFieldName);

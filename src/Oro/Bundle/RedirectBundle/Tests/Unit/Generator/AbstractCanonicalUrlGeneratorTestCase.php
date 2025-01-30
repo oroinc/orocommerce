@@ -70,7 +70,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
 
     abstract protected function createGenerator(): CanonicalUrlGenerator;
 
-    protected function assertUrlTypeCalls(string $urlSecurityType, WebsiteInterface $website = null): void
+    protected function assertUrlTypeCalls(string $urlSecurityType, ?WebsiteInterface $website = null): void
     {
         $urlTypeKey = 'oro_redirect.canonical_url_type';
         $urlSecurityTypeKey = 'oro_redirect.canonical_url_security_type';

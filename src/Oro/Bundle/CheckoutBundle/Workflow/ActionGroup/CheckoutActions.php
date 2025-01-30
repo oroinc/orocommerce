@@ -26,7 +26,7 @@ class CheckoutActions implements CheckoutActionsInterface
     }
 
     #[\Override]
-    public function getCheckoutUrl(Checkout $checkout, string $transition = null): string
+    public function getCheckoutUrl(Checkout $checkout, ?string $transition = null): string
     {
         $parameters = ['id' => $checkout->getId()];
         if ($transition) {

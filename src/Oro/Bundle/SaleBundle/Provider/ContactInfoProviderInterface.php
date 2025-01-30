@@ -15,5 +15,5 @@ interface ContactInfoProviderInterface
      *
      * @return ContactInfo
      */
-    public function getContactInfo(CustomerUserInterface $customerUser = null);
+    public function getContactInfo(?CustomerUserInterface $customerUser = null);
 }

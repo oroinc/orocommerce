@@ -38,7 +38,7 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
     protected $methodIdentifierGenerator;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         parent::setContainer($container);
 

@@ -19,5 +19,5 @@ interface CacheBuilderInterface
      * @param Scope|null $scope
      * @return mixed
      */
-    public function buildCache(Scope $scope = null);
+    public function buildCache(?Scope $scope = null);
 }

@@ -164,7 +164,7 @@ class Subtotal
      *
      * @return Subtotal
      */
-    public function setPriceList(BasePriceList $priceList = null)
+    public function setPriceList(?BasePriceList $priceList = null)
     {
         $this->priceList = $priceList;
 

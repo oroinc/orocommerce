@@ -248,7 +248,7 @@ class PriceRuleRelationExpressionsValidatorTest extends ConstraintValidatorTestC
         string $message,
         array $messageParams,
         NodeInterface $parsedCurrencyExpression,
-        NodeInterface $parsedRuleExpression = null
+        ?NodeInterface $parsedRuleExpression = null
     ) {
         $this->fieldsProvider->expects($this->any())
             ->method('getRealClassName')
@@ -354,7 +354,7 @@ class PriceRuleRelationExpressionsValidatorTest extends ConstraintValidatorTestC
         string $message,
         array $messageParams,
         NodeInterface $parsedQuantityExpression,
-        NodeInterface $parsedRuleExpression = null
+        ?NodeInterface $parsedRuleExpression = null
     ) {
         $this->fieldsProvider->expects($this->any())
             ->method('getRealClassName')
@@ -462,7 +462,7 @@ class PriceRuleRelationExpressionsValidatorTest extends ConstraintValidatorTestC
         string $message,
         array $messageParams,
         NodeInterface $parsedUnitExpression,
-        NodeInterface $parsedRuleExpression = null
+        ?NodeInterface $parsedRuleExpression = null
     ) {
         $this->fieldsProvider->expects($this->any())
             ->method('getRealClassName')

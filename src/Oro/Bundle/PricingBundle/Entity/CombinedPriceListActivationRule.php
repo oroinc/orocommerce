@@ -99,7 +99,7 @@ class CombinedPriceListActivationRule
      * @param \DateTime|null $expireAt
      * @return $this
      */
-    public function setExpireAt(\DateTime $expireAt = null)
+    public function setExpireAt(?\DateTime $expireAt = null)
     {
         $this->expireAt = $expireAt;
 
@@ -118,7 +118,7 @@ class CombinedPriceListActivationRule
      * @param \DateTime|null $activateAt
      * @return $this
      */
-    public function setActivateAt(\DateTime $activateAt = null)
+    public function setActivateAt(?\DateTime $activateAt = null)
     {
         $this->activateAt = $activateAt;
 

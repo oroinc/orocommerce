@@ -56,7 +56,7 @@ class LoadCategoryContentVariants extends AbstractFixture implements DependentFi
      * @param string $reference
      * @param Category|null $category
      */
-    private function createTestContentVariant(ObjectManager $manager, $reference, Category $category = null)
+    private function createTestContentVariant(ObjectManager $manager, $reference, ?Category $category = null)
     {
         $testContentVariant = new TestContentVariant();
         $testContentVariant->setCategoryPageCategory($category);

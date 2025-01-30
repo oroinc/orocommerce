@@ -70,7 +70,7 @@ abstract class AbstractProcessAssociationEventListener
         CombinedPriceList $cpl,
         Website $website,
         ?int $version,
-        object $targetEntity = null
+        ?object $targetEntity = null
     ): BaseCombinedPriceListRelation {
         $activeCpl = $this->activeCombinedPriceListResolver->getActiveCplByFullCPL($cpl);
 

@@ -28,7 +28,7 @@ class ContinueToShippingAddress implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isPreConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isPreConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         if (!$this->baseContinueTransition->isPreConditionAllowed($workflowItem, $errors)) {
             return false;
@@ -38,7 +38,7 @@ class ContinueToShippingAddress implements TransitionServiceInterface
     }
 
     #[\Override]
-    public function isConditionAllowed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    public function isConditionAllowed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         if (!$this->getCheckout($workflowItem)->getBillingAddress()) {
             return false;
@@ -83,7 +83,7 @@ class ContinueToShippingAddress implements TransitionServiceInterface
         }
     }
 
-    private function isEmailConfirmed(WorkflowItem $workflowItem, Collection $errors = null): bool
+    private function isEmailConfirmed(WorkflowItem $workflowItem, ?Collection $errors = null): bool
     {
         return $this->actionExecutor->evaluateExpression(
             'is_email_confirmed',

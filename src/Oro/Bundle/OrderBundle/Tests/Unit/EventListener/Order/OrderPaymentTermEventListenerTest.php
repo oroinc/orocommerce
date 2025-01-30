@@ -124,9 +124,9 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider onOrderEventProvider
      */
     public function testOnOrderEvent(
-        Customer $customer = null,
-        PaymentTerm $customerPaymentTerm = null,
-        PaymentTerm $customerGroupPaymentTerm = null
+        ?Customer    $customer = null,
+        ?PaymentTerm $customerPaymentTerm = null,
+        ?PaymentTerm $customerGroupPaymentTerm = null
     ) {
         $form = $this->createMock(FormInterface::class);
 

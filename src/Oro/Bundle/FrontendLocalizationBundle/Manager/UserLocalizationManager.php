@@ -58,7 +58,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     #[\Override]
-    public function getCurrentLocalization(Website $website = null): ?Localization
+    public function getCurrentLocalization(?Website $website = null): ?Localization
     {
         $website = $this->getWebsite($website);
 
@@ -98,7 +98,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
     #[\Override]
     public function getCurrentLocalizationByCustomerUser(
         CustomerUser $customerUser,
-        Website $website = null
+        ?Website $website = null
     ): ?Localization {
         $website = $this->getWebsite($website);
 
@@ -120,7 +120,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
     }
 
     #[\Override]
-    public function setCurrentLocalization(Localization $localization, Website $website = null): void
+    public function setCurrentLocalization(Localization $localization, ?Website $website = null): void
     {
         $website = $this->getWebsite($website);
         if (!$website) {
@@ -160,7 +160,7 @@ class UserLocalizationManager implements UserLocalizationManagerInterface
      * @param Website|null $website
      * @return Website|null
      */
-    protected function getWebsite(Website $website = null)
+    protected function getWebsite(?Website $website = null)
     {
         return $website ?: $this->websiteManager->getCurrentWebsite();
     }

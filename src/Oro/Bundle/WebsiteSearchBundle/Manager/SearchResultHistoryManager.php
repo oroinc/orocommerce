@@ -62,7 +62,7 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
         string $searchTerm,
         string $searchType,
         int $resultsCount,
-        string $searchSessionId = null
+        ?string $searchSessionId = null
     ): void {
         $token = $this->tokenStorage->getToken();
         $website = $this->websiteManager->getCurrentWebsite();

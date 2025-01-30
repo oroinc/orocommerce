@@ -261,7 +261,7 @@ HELP
         array $websiteIds,
         array $entityId,
         bool $isScheduled,
-        array $fieldGroups = null
+        ?array $fieldGroups = null
     ): void {
         $event = new ReindexationRequestEvent($classes, $websiteIds, $entityId, $isScheduled, $fieldGroups);
         $this->eventDispatcher->dispatch($event, ReindexationRequestEvent::EVENT_NAME);
@@ -272,7 +272,7 @@ HELP
         array $websiteIds,
         array $chunks,
         bool $isScheduled,
-        array $fieldGroups = null
+        ?array $fieldGroups = null
     ): void {
         foreach ($chunks as $chunk) {
             $this->fireReindexationEvents($classes, $websiteIds, $chunk, $isScheduled, $fieldGroups);

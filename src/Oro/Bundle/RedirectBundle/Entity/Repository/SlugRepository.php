@@ -31,9 +31,9 @@ class SlugRepository extends ServiceEntityRepository
     }
 
     public function getOneDirectUrlBySlugQueryBuilder(
-        string $slug,
-        SlugAwareInterface $restrictedEntity = null,
-        ScopeCriteria $scopeCriteria = null
+        string              $slug,
+        ?SlugAwareInterface $restrictedEntity = null,
+        ?ScopeCriteria      $scopeCriteria = null
     ): QueryBuilder {
         $qb = $this->getSlugByUrlQueryBuilder($slug);
         $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
@@ -45,9 +45,9 @@ class SlugRepository extends ServiceEntityRepository
     }
 
     public function findAllDirectUrlsByPattern(
-        string $pattern,
-        SlugAwareInterface $restrictedEntity = null,
-        ScopeCriteria $scopeCriteria = null
+        string              $pattern,
+        ?SlugAwareInterface $restrictedEntity = null,
+        ?ScopeCriteria      $scopeCriteria = null
     ): array {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from($this->getEntityName(), 'slug')
@@ -123,7 +123,7 @@ class SlugRepository extends ServiceEntityRepository
      * @param ScopeCriteria|null $scopeCriteria
      * @return \array[]|\Iterator
      */
-    public function getSlugDataForDirectUrls(array $entityIds, ScopeCriteria $scopeCriteria = null)
+    public function getSlugDataForDirectUrls(array $entityIds, ?ScopeCriteria $scopeCriteria = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from($this->getEntityName(), 'slug')
@@ -386,7 +386,7 @@ class SlugRepository extends ServiceEntityRepository
         return reset($result);
     }
 
-    private function restrictByEntitySlugs(QueryBuilder $qb, SlugAwareInterface $restrictedEntity = null): void
+    private function restrictByEntitySlugs(QueryBuilder $qb, ?SlugAwareInterface $restrictedEntity = null): void
     {
         if ($restrictedEntity && count($restrictedEntity->getSlugs())) {
             $qb->andWhere($qb->expr()->notIn('slug', ':slugs'))
@@ -394,7 +394,7 @@ class SlugRepository extends ServiceEntityRepository
         }
     }
 
-    private function applyDirectUrlScopeCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria = null): void
+    private function applyDirectUrlScopeCriteria(QueryBuilder $qb, ?ScopeCriteria $scopeCriteria = null): void
     {
         if (null === $scopeCriteria) {
             $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)

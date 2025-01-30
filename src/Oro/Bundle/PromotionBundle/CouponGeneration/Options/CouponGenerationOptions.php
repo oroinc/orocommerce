@@ -169,7 +169,7 @@ class CouponGenerationOptions extends CodeGenerationOptions
      *
      * @return $this
      */
-    public function setOwner(BusinessUnit $owner = null)
+    public function setOwner(?BusinessUnit $owner = null)
     {
         $this->owner = $owner;
 

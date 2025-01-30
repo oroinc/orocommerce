@@ -35,7 +35,7 @@ class CustomerCategoryRepository extends ServiceEntityRepository
     public function getFallbackToCustomerVisibility(
         Category $category,
         Scope $customerScope,
-        Scope $customerGroupScope = null
+        ?Scope $customerGroupScope = null
     ) {
         $qb = $this->getEntityManager()->createQueryBuilder();
 
@@ -89,7 +89,7 @@ class CustomerCategoryRepository extends ServiceEntityRepository
      * @param Scope|null $groupScope
      * @return array
      */
-    public function getCategoryIdsByVisibility($visibility, $configValue, Scope $scope, Scope $groupScope = null)
+    public function getCategoryIdsByVisibility($visibility, $configValue, Scope $scope, ?Scope $groupScope = null)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->select('category.id')
@@ -179,7 +179,7 @@ class CustomerCategoryRepository extends ServiceEntityRepository
      * @param int $configValue
      * @return bool
      */
-    public function isCategoryVisible(Category $category, $configValue, Scope $scope, Scope $groupScope = null)
+    public function isCategoryVisible(Category $category, $configValue, Scope $scope, ?Scope $groupScope = null)
     {
         $visibility = $this->getFallbackToCustomerVisibility($category, $scope, $groupScope);
         if ($visibility === CustomerCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {

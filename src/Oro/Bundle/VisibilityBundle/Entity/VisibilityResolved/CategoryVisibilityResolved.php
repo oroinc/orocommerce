@@ -35,7 +35,7 @@ class CategoryVisibilityResolved extends BaseCategoryVisibilityResolved
      * @param CategoryVisibility|null $sourceVisibility
      * @return $this
      */
-    public function setSourceCategoryVisibility(CategoryVisibility $sourceVisibility = null)
+    public function setSourceCategoryVisibility(?CategoryVisibility $sourceVisibility = null)
     {
         $this->sourceCategoryVisibility = $sourceVisibility;
 

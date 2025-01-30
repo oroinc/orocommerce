@@ -57,9 +57,9 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      */
     protected function updateProductVisibilitiesForCategoryRelatedEntities(
         Category $category,
-        $visibility,
-        array $customerGroupIdsWithChangedVisibility = null,
-        array $customerIdsWithChangedVisibility = null
+                 $visibility,
+        ?array   $customerGroupIdsWithChangedVisibility = null,
+        ?array   $customerIdsWithChangedVisibility = null
     ) {
         if ($customerGroupIdsWithChangedVisibility === null) {
             $this->customerGroupIdsWithChangedVisibility[$category->getId()]
@@ -189,7 +189,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      */
     protected function getCategoryCustomerGroupIdsWithVisibilityFallbackToParent(
         Category $category,
-        array $restrictedCustomerGroupIds = null
+        ?array $restrictedCustomerGroupIds = null
     ) {
         return $this->registry
             ->getManagerForClass(CustomerGroupCategoryVisibility::class)
@@ -206,7 +206,7 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      * @param array|null $restrictedCustomerIds
      * @return array
      */
-    protected function getCustomerIdsWithFallbackToParent(Category $category, array $restrictedCustomerIds = null)
+    protected function getCustomerIdsWithFallbackToParent(Category $category, ?array $restrictedCustomerIds = null)
     {
         return $this->registry
             ->getManagerForClass(CustomerCategoryVisibility::class)

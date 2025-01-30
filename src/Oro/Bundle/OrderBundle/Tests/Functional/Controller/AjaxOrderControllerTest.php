@@ -27,7 +27,7 @@ class AjaxOrderControllerTest extends WebTestCase
         ]);
     }
 
-    private function assertTotal(Crawler $crawler, int $id = null): void
+    private function assertTotal(Crawler $crawler, ?int $id = null): void
     {
         $form = $crawler->selectButton('Save and Close')->form();
         $form->getFormNode()->setAttribute('action', $this->getUrl('oro_order_entry_point', ['id' => $id]));
@@ -69,7 +69,7 @@ class AjaxOrderControllerTest extends WebTestCase
     /**
      * @dataProvider getRelatedDataActionDataProvider
      */
-    public function testGetRelatedDataAction(string $customer, string $customerUser = null): void
+    public function testGetRelatedDataAction(string $customer, ?string $customerUser = null): void
     {
         /** @var Customer $order */
         $customerEntity = $this->getReference($customer);

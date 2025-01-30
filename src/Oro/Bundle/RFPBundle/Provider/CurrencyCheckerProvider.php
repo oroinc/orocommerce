@@ -33,7 +33,7 @@ class CurrencyCheckerProvider implements RepositoryCurrencyCheckerProviderInterf
     #[\Override]
     public function hasRecordsWithRemovingCurrencies(
         array $removingCurrencies,
-        Organization $organization = null
+        ?Organization $organization = null
     ) {
         $rfpRepository = $this->doctrine->getRepository(Request::class);
         return $rfpRepository->hasRecordsWithRemovingCurrencies($removingCurrencies, $organization);

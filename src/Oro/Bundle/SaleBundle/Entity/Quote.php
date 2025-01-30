@@ -301,7 +301,7 @@ class Quote implements
      * @param \DateTime|null $validUntil
      * @return Quote
      */
-    public function setValidUntil(\DateTime $validUntil = null)
+    public function setValidUntil(?\DateTime $validUntil = null)
     {
         $this->validUntil = $validUntil;
 
@@ -368,7 +368,7 @@ class Quote implements
      *
      * @return Quote
      */
-    public function setRequest(Request $request = null)
+    public function setRequest(?Request $request = null)
     {
         $this->request = $request;
 
@@ -489,7 +489,7 @@ class Quote implements
      *
      * @return Quote
      */
-    public function setShipUntil(\DateTime $shipUntil = null)
+    public function setShipUntil(?\DateTime $shipUntil = null)
     {
         $this->shipUntil = $shipUntil;
 
@@ -520,7 +520,7 @@ class Quote implements
      * @return $this
      */
     #[\Override]
-    public function setWebsite(Website $website = null)
+    public function setWebsite(?Website $website = null)
     {
         $this->website = $website;
 
@@ -540,7 +540,7 @@ class Quote implements
      *
      * @return Quote
      */
-    public function setShippingAddress(QuoteAddress $shippingAddress = null)
+    public function setShippingAddress(?QuoteAddress $shippingAddress = null)
     {
         $this->shippingAddress = $shippingAddress;
 

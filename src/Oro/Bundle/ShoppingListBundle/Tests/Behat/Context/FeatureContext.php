@@ -187,7 +187,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
      * @When /^(?:|I )click on "(?P<sku>[^"]+)" configurable product in "(?P<tableName>[^"]+)"(?:| with the following attributes:)$/
      */
     //@codingStandardsIgnoreEnd
-    public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, TableNode $table = null)
+    public function iClickOnConfigurableProductWithAttributes(string $sku, string $tableName, ?TableNode $table = null)
     {
         $attributeLabels = [];
         if ($table) {

@@ -146,7 +146,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
      *
      * @return string
      */
-    public function formatDimensionsUnitValue($value, MeasureUnitInterface $unit = null)
+    public function formatDimensionsUnitValue($value, ?MeasureUnitInterface $unit = null)
     {
         return $this->getDimensionsUnitValueFormatter()->format($value, $unit);
     }
@@ -157,7 +157,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
      *
      * @return string
      */
-    public function formatDimensionsUnitValueShort($value, MeasureUnitInterface $unit = null)
+    public function formatDimensionsUnitValueShort($value, ?MeasureUnitInterface $unit = null)
     {
         return $this->getDimensionsUnitValueFormatter()->formatShort($value, $unit);
     }
@@ -192,7 +192,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
      *
      * @return string
      */
-    public function formatWeightUnitValue($value, MeasureUnitInterface $unit = null)
+    public function formatWeightUnitValue($value, ?MeasureUnitInterface $unit = null)
     {
         return $this->getWeightUnitValueFormatter()->format($value, $unit);
     }
@@ -203,7 +203,7 @@ class ShippingExtension extends AbstractExtension implements ServiceSubscriberIn
      *
      * @return string
      */
-    public function formatWeightUnitValueShort($value, MeasureUnitInterface $unit = null)
+    public function formatWeightUnitValueShort($value, ?MeasureUnitInterface $unit = null)
     {
         return $this->getWeightUnitValueFormatter()->formatShort($value, $unit);
     }

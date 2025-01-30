@@ -41,7 +41,7 @@ abstract class AbstractRuleEntityListener
      * @param Product|null $product
      * @param int|null $relationId
      */
-    protected function recalculateByEntityFieldsUpdate(array $changeSet, Product $product = null, $relationId = null)
+    protected function recalculateByEntityFieldsUpdate(array $changeSet, ?Product $product = null, $relationId = null)
     {
         $fields = $this->getEntityFields();
         $updatedFields = array_intersect(
@@ -67,7 +67,7 @@ abstract class AbstractRuleEntityListener
      * @param Product|null $product
      * @param int|null $relationId
      */
-    protected function recalculateByEntity(Product $product = null, $relationId = null)
+    protected function recalculateByEntity(?Product $product = null, $relationId = null)
     {
         $lexemes = $this->priceRuleLexemeTriggerHandler->findEntityLexemes(
             $this->getEntityClassName(),

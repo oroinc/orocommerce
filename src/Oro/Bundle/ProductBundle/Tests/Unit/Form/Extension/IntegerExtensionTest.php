@@ -66,7 +66,7 @@ class IntegerExtensionTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    private function createView(string $type = null): FormView
+    private function createView(?string $type = null): FormView
     {
         $result = new FormView();
         if ($type) {

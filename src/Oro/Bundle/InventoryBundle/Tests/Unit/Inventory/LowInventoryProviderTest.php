@@ -241,7 +241,7 @@ class LowInventoryProviderTest extends \PHPUnit\Framework\TestCase
         return $inventoryLevel;
     }
 
-    private function getProduct(int $id = null, bool $withPrimaryUnitPrecision = true): Product
+    private function getProduct(?int $id = null, bool $withPrimaryUnitPrecision = true): Product
     {
         $product = new Product();
         ReflectionUtil::setId($product, $id);

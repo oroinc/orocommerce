@@ -29,7 +29,7 @@ class LoadNewArrivalProductsSegmentData extends AbstractFixture implements
     private $newArrivalsSegmentName;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->newArrivalsSegmentName = $container->getParameter(self::NEW_ARRIVALS_SEGMENT_NAME_PARAMETER_NAME);
     }

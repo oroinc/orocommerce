@@ -23,9 +23,9 @@ class CombinedPriceListAssociationsProvider
     }
 
     public function getCombinedPriceListsWithAssociations(
-        bool $force = false,
-        Website $website = null,
-        object $targetEntity = null
+        bool     $force = false,
+        ?Website $website = null,
+        ?object  $targetEntity = null
     ): array {
         $event = $this->eventFactory->createEvent($force, $website, $targetEntity);
         $this->eventDispatcher->dispatch($event, $event::NAME);

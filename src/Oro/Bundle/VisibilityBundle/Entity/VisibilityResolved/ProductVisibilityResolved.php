@@ -35,7 +35,7 @@ class ProductVisibilityResolved extends BaseProductVisibilityResolved
      * @param ProductVisibility|null $sourceProductVisibility
      * @return $this
      */
-    public function setSourceProductVisibility(ProductVisibility $sourceProductVisibility = null)
+    public function setSourceProductVisibility(?ProductVisibility $sourceProductVisibility = null)
     {
         $this->sourceProductVisibility = $sourceProductVisibility;
 

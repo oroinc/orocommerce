@@ -20,7 +20,7 @@ class ContentNodeEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new ContentNodeEntityNameProvider();
     }
 
-    private function getContentNodeTitle(string $string, Localization $localization = null): LocalizedFallbackValue
+    private function getContentNodeTitle(string $string, ?Localization $localization = null): LocalizedFallbackValue
     {
         $value = new LocalizedFallbackValue();
         $value->setString($string);

@@ -22,7 +22,7 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
     protected $container;
 
     #[\Override]
-    public function setContainer(ContainerInterface $container = null)
+    public function setContainer(?ContainerInterface $container = null)
     {
         $this->container = $container;
     }

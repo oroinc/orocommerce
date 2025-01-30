@@ -241,14 +241,14 @@ class LocalizationCurrencySwitcherElement extends Element
         return $text ? trim(strip_tags($text)) : null;
     }
 
-    protected function getElementByMappedSelector(string $selectorName, array $parameters = null)
+    protected function getElementByMappedSelector(string $selectorName, ?array $parameters = null)
     {
         [$type, $locator] = $this->getNormalizedSelector($selectorName, $parameters);
 
         return $this->find($type, $locator);
     }
 
-    protected function hasElementByMappedSelector(string $selectorName, array $parameters = null): bool
+    protected function hasElementByMappedSelector(string $selectorName, ?array $parameters = null): bool
     {
         [$type, $locator] = $this->getNormalizedSelector($selectorName, $parameters);
 
@@ -258,7 +258,7 @@ class LocalizationCurrencySwitcherElement extends Element
     protected function hasInternalElementByMappedSelector(
         string $selectorName,
         Element $switcherElement,
-        array $parameters = null
+        ?array $parameters = null
     ): bool {
         [$type, $locator] = $this->getNormalizedSelector($selectorName, $parameters);
 

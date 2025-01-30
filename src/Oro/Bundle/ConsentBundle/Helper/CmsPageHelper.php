@@ -38,7 +38,7 @@ class CmsPageHelper
      *
      * @return null|Page
      */
-    public function getCmsPage(Consent $consent, ConsentAcceptance $consentAcceptance = null)
+    public function getCmsPage(Consent $consent, ?ConsentAcceptance $consentAcceptance = null)
     {
         $cmsPage = null;
 

@@ -54,7 +54,7 @@ class SplitProductTaxCodeBetweenOrganizations extends AbstractFixture implements
         }
     }
 
-    private function getProductTaxCodes(ObjectManager $manager, OrganizationInterface $organization = null): array
+    private function getProductTaxCodes(ObjectManager $manager, ?OrganizationInterface $organization = null): array
     {
         /** @var ProductTaxCodeRepository $priceAttributeRepository */
         $priceAttributeRepository = $manager->getRepository(ProductTaxCode::class);

@@ -13,5 +13,5 @@ interface ChannelLoaderInterface
     /**
      * @psalm-return array<int, Channel>
      */
-    public function loadChannels(string $channelType, bool $applyAcl, Organization $organization = null): array;
+    public function loadChannels(string $channelType, bool $applyAcl, ?Organization $organization = null): array;
 }

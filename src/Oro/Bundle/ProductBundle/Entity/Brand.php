@@ -290,7 +290,7 @@ class Brand implements
      * @return Brand
      */
     #[\Override]
-    public function setOrganization(OrganizationInterface $organization = null)
+    public function setOrganization(?OrganizationInterface $organization = null)
     {
         $this->organization = $organization;
         return $this;

@@ -45,7 +45,7 @@ class PriceRequestFactory
      * @param UPSTransport             $transport
      * @param ShippingContextInterface $context
      * @param string                   $requestOption
-     * @param ShippingService|null     $shippingService
+     * @param ShippingService|null $shippingService
      *
      * @return PriceRequest|null
      * @throws \UnexpectedValueException
@@ -54,7 +54,7 @@ class PriceRequestFactory
         UPSTransport $transport,
         ShippingContextInterface $context,
         $requestOption,
-        ShippingService $shippingService = null
+        ?ShippingService $shippingService = null
     ) {
         if (!$context->getShippingAddress()) {
             return null;

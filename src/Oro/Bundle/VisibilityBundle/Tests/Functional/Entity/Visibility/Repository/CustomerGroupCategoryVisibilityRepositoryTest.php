@@ -37,7 +37,7 @@ class CustomerGroupCategoryVisibilityRepositoryTest extends WebTestCase
         string $categoryName,
         string $visibility,
         array $expectedCustomerGroups,
-        array $restricted = null
+        ?array $restricted = null
     ) {
         /** @var Category $category */
         $category = $this->getReference($categoryName);

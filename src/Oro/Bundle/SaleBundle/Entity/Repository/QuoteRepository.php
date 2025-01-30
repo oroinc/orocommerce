@@ -75,7 +75,7 @@ class QuoteRepository extends EntityRepository implements ResettableCustomerUser
 
     public function hasRecordsWithRemovingCurrencies(
         array $removingCurrencies,
-        Organization $organization = null
+        ?Organization $organization = null
     ): bool {
         $qb = $this->createQueryBuilder('q');
         $qb

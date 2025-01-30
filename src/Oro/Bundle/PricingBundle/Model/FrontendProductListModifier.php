@@ -36,12 +36,12 @@ class FrontendProductListModifier implements FeatureCheckerAwareInterface
     /**
      * @param QueryBuilder $queryBuilder
      * @param string|null $currency
-     * @param null|BasePriceList $priceList
+     * @param BasePriceList|null $priceList
      */
     public function applyPriceListLimitations(
         QueryBuilder $queryBuilder,
         $currency = null,
-        BasePriceList $priceList = null
+        ?BasePriceList $priceList = null
     ) {
         if (!$this->isFeaturesEnabled()) {
             return;

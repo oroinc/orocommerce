@@ -38,7 +38,7 @@ class MatrixGridOrderProvider
         $this->doctrine = $doctrine;
     }
 
-    public function getTotalQuantity(Product $product, ShoppingList $shoppingList = null): float|int
+    public function getTotalQuantity(Product $product, ?ShoppingList $shoppingList = null): float|int
     {
         $shoppingList = $shoppingList ?: $this->currentShoppingListManager->getCurrent();
 
@@ -54,7 +54,7 @@ class MatrixGridOrderProvider
         return $totalQuantity;
     }
 
-    public function getTotalPriceFormatted(Product $product, ShoppingList $shoppingList = null): string
+    public function getTotalPriceFormatted(Product $product, ?ShoppingList $shoppingList = null): string
     {
         $shoppingList = $shoppingList ?: $this->currentShoppingListManager->getCurrent();
 
@@ -96,7 +96,7 @@ class MatrixGridOrderProvider
      *
      * @return array
      */
-    public function getTotalsQuantityPrice(array $products, ShoppingList $shoppingList = null): array
+    public function getTotalsQuantityPrice(array $products, ?ShoppingList $shoppingList = null): array
     {
         $totals = [];
         $configurableProducts = [];

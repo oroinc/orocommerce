@@ -24,6 +24,6 @@ interface FindOrCreateCheckoutInterface
         array $checkoutData = [],
         bool $updateData = false,
         bool $forceStartCheckout = false,
-        string $startTransition = null
+        ?string $startTransition = null
     ): array;
 }

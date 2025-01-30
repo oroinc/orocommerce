@@ -20,7 +20,7 @@ class CategoryEntityNameProviderTest extends \PHPUnit\Framework\TestCase
         $this->provider = new CategoryEntityNameProvider();
     }
 
-    private function getCategoryTitle(string $string, Localization $localization = null): CategoryTitle
+    private function getCategoryTitle(string $string, ?Localization $localization = null): CategoryTitle
     {
         $value = new CategoryTitle();
         $value->setString($string);
