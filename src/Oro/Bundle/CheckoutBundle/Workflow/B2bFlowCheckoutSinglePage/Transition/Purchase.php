@@ -16,6 +16,7 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Component\Action\Action\ExtendableAction;
 use Oro\Component\Action\Condition\ExtendableCondition;
+use Oro\Component\Action\Event\ExtendableActionEvent;
 
 /**
  * B2bFlowCheckoutSinglePage workflow transition purchase logic implementation.
@@ -116,7 +117,8 @@ class Purchase extends TransitionServiceAbstract
                     'order' => $order,
                     'checkout' => $checkout,
                     'responseData' => $responseData,
-                    'email' => $data->offsetGet('email')
+                    'email' => $data->offsetGet('email'),
+                    ExtendableActionEvent::CONTEXT_KEY => $workflowItem
                 ]
             ]
         );
@@ -163,7 +165,8 @@ class Purchase extends TransitionServiceAbstract
                 'events' => ['extendable_condition.before_order_create'],
                 'eventData' => [
                     'checkout' => $data->offsetGet('checkout'),
-                    'order' => $data->offsetGet('order')
+                    'order' => $data->offsetGet('order'),
+                    ExtendableActionEvent::CONTEXT_KEY => $workflowItem
                 ]
             ],
             errors: $errors,

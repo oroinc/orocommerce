@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CheckoutActionsInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\CustomerUserActionsInterface;
+use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\FinishCheckoutActionBcInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
@@ -45,13 +46,27 @@ class FinishCheckout extends TransitionServiceAbstract
         $order = $data->offsetGet('order');
 
         $this->customerUserActions->handleLateRegistration($checkout, $order, $data->offsetGet('late_registration'));
-        $this->checkoutActions->finishCheckout(
-            $checkout,
-            $order,
-            (bool)$data->offsetGet('auto_remove_source'),
-            (bool)$data->offsetGet('allow_manual_source_remove'),
-            (bool)$data->offsetGet('remove_source'),
-            (bool)$data->offsetGet('clear_source')
-        );
+
+        // BC layer
+        if ($this->checkoutActions instanceof FinishCheckoutActionBcInterface) {
+            $this->checkoutActions->finishCheckoutBC(
+                $checkout,
+                $order,
+                (bool)$data->offsetGet('auto_remove_source'),
+                (bool)$data->offsetGet('allow_manual_source_remove'),
+                (bool)$data->offsetGet('remove_source'),
+                (bool)$data->offsetGet('clear_source'),
+                $workflowItem
+            );
+        } else {
+            $this->checkoutActions->finishCheckout(
+                $checkout,
+                $order,
+                (bool)$data->offsetGet('auto_remove_source'),
+                (bool)$data->offsetGet('allow_manual_source_remove'),
+                (bool)$data->offsetGet('remove_source'),
+                (bool)$data->offsetGet('clear_source')
+            );
+        }
     }
 }

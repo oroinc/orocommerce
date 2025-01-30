@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
@@ -17,6 +18,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Condition\ExtendableCondition;
+use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -112,7 +114,11 @@ class StartCheckoutTest extends TestCase
                     'showErrors' => false,
                     'eventData' => [
                         'checkout' => $workflowItem->getEntity(),
-                        'validateOnStartCheckout' => true
+                        'validateOnStartCheckout' => true,
+                        ExtendableConditionEvent::CONTEXT_KEY => new ActionData([
+                            'checkout' => $workflowItem->getEntity(),
+                            'validateOnStartCheckout' => true
+                        ])
                     ]
                 ],
             )
@@ -189,7 +195,11 @@ class StartCheckoutTest extends TestCase
                     'showErrors' => false,
                     'eventData' => [
                         'checkout' => $workflowItem->getEntity(),
-                        'validateOnStartCheckout' => true
+                        'validateOnStartCheckout' => true,
+                        ExtendableConditionEvent::CONTEXT_KEY => new ActionData([
+                            'checkout' => $workflowItem->getEntity(),
+                            'validateOnStartCheckout' => true
+                        ])
                     ]
                 ],
             )
@@ -276,7 +286,11 @@ class StartCheckoutTest extends TestCase
                     'showErrors' => false,
                     'eventData' => [
                         'checkout' => $workflowItem->getEntity(),
-                        'validateOnStartCheckout' => true
+                        'validateOnStartCheckout' => true,
+                        ExtendableConditionEvent::CONTEXT_KEY => new ActionData([
+                            'checkout' => $workflowItem->getEntity(),
+                            'validateOnStartCheckout' => true
+                        ])
                     ]
                 ],
             )
@@ -354,7 +368,11 @@ class StartCheckoutTest extends TestCase
                     'showErrors' => false,
                     'eventData' => [
                         'checkout' => $workflowItem->getEntity(),
-                        'validateOnStartCheckout' => true
+                        'validateOnStartCheckout' => true,
+                        ExtendableConditionEvent::CONTEXT_KEY => new ActionData([
+                            'checkout' => $workflowItem->getEntity(),
+                            'validateOnStartCheckout' => true
+                        ])
                     ]
                 ],
             )

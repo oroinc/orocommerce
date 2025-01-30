@@ -16,6 +16,7 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Component\Action\Action\ExtendableAction;
+use Oro\Component\Action\Event\ExtendableActionEvent;
 
 /**
  * B2bCheckout workflow transition place_order logic implementation.
@@ -96,7 +97,8 @@ class PlaceOrder extends BasePlaceOrder
                     'order' => $order,
                     'checkout' => $checkout,
                     'responseData' => $responseData,
-                    'email' => $data->offsetGet('email')
+                    'email' => $data->offsetGet('email'),
+                    ExtendableActionEvent::CONTEXT_KEY => $workflowItem
                 ]
             ]
         );

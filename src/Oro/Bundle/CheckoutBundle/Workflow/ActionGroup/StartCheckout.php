@@ -3,12 +3,14 @@
 namespace Oro\Bundle\CheckoutBundle\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\PrepareCheckoutSettingsProvider;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Condition\ExtendableCondition;
+use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Component\PhpUtils\ArrayUtil;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
@@ -124,15 +126,19 @@ class StartCheckout implements StartCheckoutInterface
         WorkflowItem $workflowItem,
         bool $validateOnStartCheckout
     ): bool {
+        $data = [
+            'checkout' => $workflowItem->getEntity(),
+            'validateOnStartCheckout' => $validateOnStartCheckout
+        ];
+        // BC layer
+        $data[ExtendableConditionEvent::CONTEXT_KEY] = new ActionData($data);
+
         return $this->actionExecutor->evaluateExpression(
             expressionName: ExtendableCondition::NAME,
             data: [
                 'events' => ['extendable_condition.start_checkout'],
                 'showErrors' => $showErrors,
-                'eventData' => [
-                    'checkout' => $workflowItem->getEntity(),
-                    'validateOnStartCheckout' => $validateOnStartCheckout
-                ]
+                'eventData' => $data
             ],
             errors: $errors
         );

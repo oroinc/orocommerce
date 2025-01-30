@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\BaseTransition;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -17,6 +18,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 use Oro\Component\Action\Condition\ExtendableCondition;
+use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -91,29 +93,42 @@ class StartFromShoppingListTransitionTest extends TestCase
 
         $this->actionExecutor->expects($this->any())
             ->method('evaluateExpression')
-            ->willReturnMap(
-                [
-                    [
-                        'acl_granted',
-                        ['CHECKOUT_CREATE', $shoppingList],
-                        null,
-                        null,
-                        $isAclAllowed
-                    ],
-                    [
-                        ExtendableCondition::NAME,
-                        [
-                            'events' => ['extendable_condition.shopping_list_start'],
-                            'eventData' => [
-                                'checkout' => $checkout,
-                                'shoppingList' => $shoppingList
-                            ]
-                        ],
-                        null,
-                        null,
-                        $isStartAllowedByListeners
-                    ]
-                ]
+            ->willReturnCallback(
+                function (
+                    string $expressionName,
+                    array $data = []
+                ) use (
+                    $shoppingList,
+                    $checkout,
+                    $isAclAllowed,
+                    $isStartAllowedByListeners
+                ) {
+                    if ($expressionName === 'acl_granted') {
+                        self::assertEquals(['CHECKOUT_CREATE', $shoppingList], $data);
+
+                        return $isAclAllowed;
+                    }
+                    if ($expressionName === ExtendableCondition::NAME) {
+                        self::assertEquals(
+                            [
+                                'events' => ['extendable_condition.shopping_list_start'],
+                                'eventData' => [
+                                    'checkout' => $checkout,
+                                    'shoppingList' => $shoppingList,
+                                    ExtendableConditionEvent::CONTEXT_KEY => new ActionData([
+                                        'checkout' => $checkout,
+                                        'shoppingList' => $shoppingList
+                                    ])
+                                ]
+                            ],
+                            $data
+                        );
+
+                        return $isStartAllowedByListeners;
+                    }
+
+                    return false;
+                }
             );
 
         $this->isWorkflowStartFromShoppingListAllowed->expects($this->any())

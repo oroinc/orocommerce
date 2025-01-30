@@ -8,13 +8,14 @@ use Oro\Bundle\EntityBundle\ORM\EntityAliasResolver;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\Action\Action\ExtendableAction;
+use Oro\Component\Action\Event\ExtendableActionEvent;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 /**
  * Checkout workflow Checkout-related actions.
  */
-class CheckoutActions implements CheckoutActionsInterface
+class CheckoutActions implements CheckoutActionsInterface, FinishCheckoutActionBcInterface
 {
     public function __construct(
         private EntityAliasResolver $entityAliasResolver,
@@ -81,7 +82,41 @@ class CheckoutActions implements CheckoutActionsInterface
         $this->addressActions->actualizeAddresses($checkout, $order);
         $this->sendConfirmationEmail($checkout, $order);
         $this->fillCheckoutCompletedData($checkout, $order);
-        $this->checkoutComplete($checkout);
+        $this->checkoutComplete($checkout, $order);
+        $this->finalizeSourceEntity(
+            $checkout,
+            $autoRemoveSource,
+            $allowManualSourceRemove,
+            $removeSource,
+            $clearSource
+        );
+    }
+
+    public function finishCheckoutBC(
+        Checkout $checkout,
+        Order $order,
+        bool $autoRemoveSource = false,
+        bool $allowManualSourceRemove = false,
+        bool $removeSource = false,
+        bool $clearSource = false,
+        mixed $context = null
+    ): void {
+        $this->addressActions->actualizeAddresses($checkout, $order);
+        $this->sendConfirmationEmail($checkout, $order);
+        $this->fillCheckoutCompletedData($checkout, $order);
+
+        $this->actionExecutor->executeAction(
+            ExtendableAction::NAME,
+            [
+                'events' => ['extendable_action.checkout_complete'],
+                'eventData' => [
+                    'checkout' => $checkout,
+                    'order' => $order,
+                    ExtendableActionEvent::CONTEXT_KEY => $context
+                ]
+            ]
+        );
+
         $this->finalizeSourceEntity(
             $checkout,
             $autoRemoveSource,
@@ -103,13 +138,16 @@ class CheckoutActions implements CheckoutActionsInterface
         );
     }
 
-    private function checkoutComplete(Checkout $checkout): void
+    private function checkoutComplete(Checkout $checkout, Order $order): void
     {
         $this->actionExecutor->executeAction(
             ExtendableAction::NAME,
             [
                 'events' => ['extendable_action.checkout_complete'],
-                'eventData' => ['checkout' => $checkout]
+                'eventData' => [
+                    'checkout' => $checkout,
+                    'order' => $order
+                ],
             ]
         );
     }

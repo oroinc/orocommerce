@@ -11,6 +11,7 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\OrderActionsInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Component\Action\Condition\ExtendableCondition;
+use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
  * Base implementation of checkout place_order transition.
@@ -50,7 +51,8 @@ abstract class PlaceOrder implements TransitionServiceInterface
             data: [
                 'events' => ['extendable_condition.before_order_create'],
                 'eventData' => [
-                    'checkout' => $workflowItem->getEntity()
+                    'checkout' => $workflowItem->getEntity(),
+                    ExtendableConditionEvent::CONTEXT_KEY => $workflowItem
                 ]
             ],
             errors: $errors,
@@ -100,7 +102,8 @@ abstract class PlaceOrder implements TransitionServiceInterface
             data: [
                 'events' => ['extendable_condition.pre_order_create'],
                 'eventData' => [
-                    'checkout' => $workflowItem->getEntity()
+                    'checkout' => $workflowItem->getEntity(),
+                    ExtendableConditionEvent::CONTEXT_KEY => $workflowItem
                 ]
             ],
             errors: $errors

@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Workflow\BaseTransition;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Condition\IsWorkflowStartFromShoppingListAllowed;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
@@ -12,6 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridInterface;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceAbstract;
 use Oro\Component\Action\Condition\ExtendableCondition;
+use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
@@ -112,14 +114,18 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
     ): bool {
         $workflowResult = $workflowItem->getResult();
         if (!$workflowResult->offsetExists('extendableConditionShoppingListStart')) {
+            $eventData = [
+                'checkout' => $workflowItem->getEntity(),
+                'shoppingList' => $shoppingList
+            ];
+            // BC layer
+            $eventData[ExtendableConditionEvent::CONTEXT_KEY] = new ActionData($eventData);
+
             $isAllowed = $this->actionExecutor->evaluateExpression(
                 expressionName: ExtendableCondition::NAME,
                 data: [
                     'events' => ['extendable_condition.shopping_list_start'],
-                    'eventData' => [
-                        'checkout' => $workflowItem->getEntity(),
-                        'shoppingList' => $shoppingList
-                    ]
+                    'eventData' => $eventData
                 ],
                 errors: $errors
             );

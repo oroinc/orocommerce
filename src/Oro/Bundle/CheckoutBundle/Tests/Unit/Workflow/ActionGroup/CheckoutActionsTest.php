@@ -14,7 +14,9 @@ use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Action\ExtendableAction;
+use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -154,7 +156,7 @@ class CheckoutActionsTest extends TestCase
             ->method('executeAction')
             ->with(ExtendableAction::NAME, [
                 'events' => ['extendable_action.checkout_complete'],
-                'eventData' => ['checkout' => $checkout]
+                'eventData' => ['checkout' => $checkout, 'order' => $order]
             ]);
 
         $this->entityAliasResolver->expects($this->once())
@@ -167,6 +169,72 @@ class CheckoutActionsTest extends TestCase
             ->willReturn('SL1');
 
         $this->checkoutActions->finishCheckout($checkout, $order);
+
+        $this->assertTrue($checkout->isCompleted());
+
+        $completedData = $checkout->getCompletedData();
+        $this->assertEquals(1, $completedData->offsetGet('itemsCount'));
+        $this->assertEquals(
+            [['entityAlias' => 'order_alias', 'entityId' => ['id' => 2]]],
+            $completedData->offsetGet('orders')
+        );
+        $this->assertEquals('USD', $completedData->offsetGet('currency'));
+        $this->assertEquals(100, $completedData->offsetGet('subtotal'));
+        $this->assertEquals(100, $completedData->offsetGet('total'));
+        $this->assertEquals('SL1', $completedData->offsetGet('startedFrom'));
+    }
+
+    public function testFinishCheckoutBC(): void
+    {
+        $checkout = $this->getEntity(Checkout::class, ['id' => 1]);
+        $order = $this->getEntity(Order::class, ['id' => 2]);
+        $order->addLineItem(new OrderLineItem());
+        $order->setCurrency('USD');
+        $totalObject = MultiCurrency::create(100, 'USD');
+        $subtotalObject = MultiCurrency::create(100, 'USD');
+        $order->setTotalObject($totalObject);
+        $order->setSubtotalObject($subtotalObject);
+        $workflowItem = $this->createMock(WorkflowItem::class);
+
+        $sourceEntity = $this->getEntity(ShoppingList::class, ['id' => 3]);
+        $checkoutSource = $this->createMock(CheckoutSource::class);
+        $checkoutSource->expects($this->any())
+            ->method('getEntity')
+            ->willReturn($sourceEntity);
+        $checkout->setSource($checkoutSource);
+
+        $this->addressActions->expects($this->once())
+            ->method('actualizeAddresses')
+            ->with($checkout, $order);
+
+        $this->actionExecutor->expects($this->once())
+            ->method('executeActionGroup')
+            ->with('b2b_flow_checkout_send_order_confirmation_email', [
+                'checkout' => $checkout,
+                'order' => $order,
+                'workflow' => 'b2b_flow_checkout'
+            ]);
+        $this->actionExecutor->expects($this->once())
+            ->method('executeAction')
+            ->with(ExtendableAction::NAME, [
+                'events' => ['extendable_action.checkout_complete'],
+                'eventData' => [
+                    'checkout' => $checkout,
+                    'order' => $order,
+                    ExtendableActionEvent::CONTEXT_KEY => $workflowItem
+                ]
+            ]);
+
+        $this->entityAliasResolver->expects($this->once())
+            ->method('getAlias')
+            ->with(Order::class)
+            ->willReturn('order_alias');
+        $this->entityNameResolver->expects($this->once())
+            ->method('getName')
+            ->with($sourceEntity)
+            ->willReturn('SL1');
+
+        $this->checkoutActions->finishCheckoutBC($checkout, $order, false, false, false, false, $workflowItem);
 
         $this->assertTrue($checkout->isCompleted());
 

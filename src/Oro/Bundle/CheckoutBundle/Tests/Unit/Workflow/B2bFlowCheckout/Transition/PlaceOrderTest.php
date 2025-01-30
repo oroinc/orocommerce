@@ -18,6 +18,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionServiceInterface;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Component\Action\Action\ExtendableAction;
+use Oro\Component\Action\Event\ExtendableActionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
@@ -193,7 +194,8 @@ class PlaceOrderTest extends TestCase
                         'order' => $order,
                         'checkout' => $checkout,
                         'responseData' => [],
-                        'email' => null
+                        'email' => null,
+                        ExtendableActionEvent::CONTEXT_KEY => $workflowItem
                     ]
                 ]
             );
@@ -263,7 +265,8 @@ class PlaceOrderTest extends TestCase
                         'order' => $order,
                         'checkout' => $checkout,
                         'responseData' => $purchaseResult,
-                        'email' => null
+                        'email' => null,
+                        ExtendableActionEvent::CONTEXT_KEY => $workflowItem
                     ]
                 ]
             );
@@ -334,7 +337,8 @@ class PlaceOrderTest extends TestCase
                         'order' => $order,
                         'checkout' => $checkout,
                         'responseData' => $purchaseResult,
-                        'email' => null
+                        'email' => null,
+                        ExtendableActionEvent::CONTEXT_KEY => $workflowItem
                     ]
                 ]
             );
@@ -407,7 +411,8 @@ class PlaceOrderTest extends TestCase
                         'order' => $order,
                         'checkout' => $checkout,
                         'responseData' => array_merge($purchaseResult, ['partiallyPaidUrl' => 'paid_partially_url']),
-                        'email' => null
+                        'email' => null,
+                        ExtendableActionEvent::CONTEXT_KEY => $workflowItem
                     ]
                 ]
             );

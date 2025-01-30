@@ -19,6 +19,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 use Oro\Component\Action\Action\ExtendableAction;
 use Oro\Component\Action\Condition\ExtendableCondition;
+use Oro\Component\Action\Event\ExtendableConditionEvent;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -181,7 +182,11 @@ class PurchaseTest extends TestCase
                     ExtendableCondition::NAME,
                     [
                         'events' => ['extendable_condition.before_order_create'],
-                        'eventData' => ['checkout' => $checkout, 'order' => $order]
+                        'eventData' => [
+                            'checkout' => $checkout,
+                            'order' => $order,
+                            ExtendableConditionEvent::CONTEXT_KEY => $workflowItem
+                        ]
                     ],
                     $errors,
                     'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message',
@@ -244,7 +249,8 @@ class PurchaseTest extends TestCase
                         'order' => $order,
                         'checkout' => $checkout,
                         'responseData' => ['purchaseSuccessful' => true],
-                        'email' => 'test@example.com'
+                        'email' => 'test@example.com',
+                        ExtendableConditionEvent::CONTEXT_KEY => $workflowItem
                     ]
                 ]
             );
@@ -301,7 +307,8 @@ class PurchaseTest extends TestCase
                         'order' => $order,
                         'checkout' => $checkout,
                         'responseData' => ['purchaseSuccessful' => false],
-                        'email' => 'test@example.com'
+                        'email' => 'test@example.com',
+                        ExtendableConditionEvent::CONTEXT_KEY => $workflowItem
                     ]
                 ]
             );
