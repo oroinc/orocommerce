@@ -8,6 +8,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
 use Oro\Bundle\PromotionBundle\Entity\CouponUsage;
 
+/**
+ * Manages coupon usage records, including creating new usages and retrieving usage counts.
+ */
 class CouponUsageManager
 {
     /**
@@ -27,9 +30,9 @@ class CouponUsageManager
      * @return CouponUsage
      */
     public function createCouponUsage(
-        Coupon        $coupon,
+        Coupon $coupon,
         ?CustomerUser $customerUser = null,
-                      $flush = false
+        $flush = false
     ) {
         $couponUsage = new CouponUsage();
         $couponUsage->setCoupon($coupon);

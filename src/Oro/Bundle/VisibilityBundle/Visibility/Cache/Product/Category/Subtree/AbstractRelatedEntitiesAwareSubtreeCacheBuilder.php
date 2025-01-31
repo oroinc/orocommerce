@@ -57,9 +57,9 @@ abstract class AbstractRelatedEntitiesAwareSubtreeCacheBuilder extends AbstractS
      */
     protected function updateProductVisibilitiesForCategoryRelatedEntities(
         Category $category,
-                 $visibility,
-        ?array   $customerGroupIdsWithChangedVisibility = null,
-        ?array   $customerIdsWithChangedVisibility = null
+        $visibility,
+        ?array $customerGroupIdsWithChangedVisibility = null,
+        ?array $customerIdsWithChangedVisibility = null
     ) {
         if ($customerGroupIdsWithChangedVisibility === null) {
             $this->customerGroupIdsWithChangedVisibility[$category->getId()]

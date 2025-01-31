@@ -180,10 +180,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
      */
     public function getPricesBatch(
         ShardManager $shardManager,
-                     $priceListId,
-        array        $productIds,
-        ?array       $productUnitCodes = null,
-        ?array       $currencies = null
+        $priceListId,
+        array $productIds,
+        ?array $productUnitCodes = null,
+        ?array $currencies = null
     ) {
         if (!$productIds) {
             return [];

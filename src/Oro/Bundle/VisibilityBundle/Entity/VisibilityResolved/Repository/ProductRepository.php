@@ -40,8 +40,8 @@ class ProductRepository extends AbstractVisibilityRepository
      */
     public function insertStatic(
         InsertFromSelectQueryExecutor $insertExecutor,
-        ?Scope                        $scope = null,
-                                      $product = null
+        ?Scope $scope = null,
+        $product = null
     ) {
         $qb = $this->getInsertStaticQueryBuilder($scope, $product);
 

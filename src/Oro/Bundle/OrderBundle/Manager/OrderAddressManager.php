@@ -28,8 +28,10 @@ class OrderAddressManager extends AbstractAddressManager
         $this->addressCopier = $addressCopier;
     }
 
-    public function updateFromAbstract(?AbstractAddress $address = null, ?OrderAddress $orderAddress = null): OrderAddress
-    {
+    public function updateFromAbstract(
+        ?AbstractAddress $address = null,
+        ?OrderAddress $orderAddress = null
+    ): OrderAddress {
         if (!$orderAddress) {
             $orderAddress = new OrderAddress();
         }

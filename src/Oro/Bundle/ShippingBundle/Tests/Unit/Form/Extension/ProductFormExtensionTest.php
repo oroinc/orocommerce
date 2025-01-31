@@ -303,8 +303,10 @@ class ProductFormExtensionTest extends TestCase
         return $productUnit;
     }
 
-    private function getProductShippingOptions(?int $id = null, ?ProductUnit $productUnit = null): ProductShippingOptions
-    {
+    private function getProductShippingOptions(
+        ?int $id = null,
+        ?ProductUnit $productUnit = null
+    ): ProductShippingOptions {
         $productShippingOptions = new ProductShippingOptions();
         if (null !== $id) {
             ReflectionUtil::setId($productShippingOptions, $id);

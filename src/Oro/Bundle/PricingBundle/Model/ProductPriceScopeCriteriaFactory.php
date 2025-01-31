@@ -14,10 +14,10 @@ class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFacto
 {
     #[\Override]
     public function create(
-        ?Website  $website = null,
+        ?Website $website = null,
         ?Customer $customer = null,
-                  $context = null,
-        array     $data = []
+        $context = null,
+        array $data = []
     ): ProductPriceScopeCriteriaInterface {
         $criteria = new ProductPriceScopeCriteria();
         $criteria->setWebsite($website);

@@ -19,10 +19,10 @@ interface ProductPriceScopeCriteriaFactoryInterface
      * @return ProductPriceScopeCriteriaInterface
      */
     public function create(
-        ?Website  $website = null,
+        ?Website $website = null,
         ?Customer $customer = null,
-                  $context = null,
-        array     $data = []
+        $context = null,
+        array $data = []
     ): ProductPriceScopeCriteriaInterface;
 
     /**

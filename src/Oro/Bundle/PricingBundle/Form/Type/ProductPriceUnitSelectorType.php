@@ -47,7 +47,7 @@ class ProductPriceUnitSelectorType extends ProductUnitSelectionType
      */
     protected function getAllProductEnabledUnits(
         ?ProductUnitPrecision $primaryUnitPrecision = null,
-                              $additionalUnitPrecisions
+        $additionalUnitPrecisions
     ) {
         $units = [];
         if ($primaryUnitPrecision) {

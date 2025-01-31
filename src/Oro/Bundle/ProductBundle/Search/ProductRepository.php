@@ -46,7 +46,7 @@ class ProductRepository extends WebsiteSearchRepository
      */
     public function getFamilyAttributeCountsQuery(
         ?SearchQueryInterface $query = null,
-                              $aggregateAlias = 'familyAttributesCount'
+        $aggregateAlias = 'familyAttributesCount'
     ): SearchQueryInterface {
         if (!$query) {
             $query = $this->createQuery();
