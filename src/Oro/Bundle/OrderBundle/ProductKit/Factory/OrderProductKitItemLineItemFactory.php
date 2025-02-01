@@ -24,9 +24,9 @@ class OrderProductKitItemLineItemFactory
 
     public function createKitItemLineItem(
         ProductKitItem $kitItem,
-        ?Product       $product = null,
-        ?ProductUnit   $productUnit = null,
-        ?float         $quantity = null
+        ?Product $product = null,
+        ?ProductUnit $productUnit = null,
+        ?float $quantity = null
     ): OrderProductKitItemLineItem {
         $kitItemLineItem = (new OrderProductKitItemLineItem())
             ->setKitItem($kitItem)

@@ -104,10 +104,10 @@ class MatrixGridOrderProviderTest extends \PHPUnit\Framework\TestCase
     }
 
     private function getLineItem(
-        ?int         $id = null,
-        ?Product     $product = null,
+        ?int $id = null,
+        ?Product $product = null,
         ?ProductUnit $unit = null,
-        ?int         $quantity = null
+        ?int $quantity = null
     ): LineItem {
         $lineItem = new LineItem();
         if (null !== $id) {

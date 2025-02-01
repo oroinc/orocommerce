@@ -124,7 +124,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider onOrderEventProvider
      */
     public function testOnOrderEvent(
-        ?Customer    $customer = null,
+        ?Customer $customer = null,
         ?PaymentTerm $customerPaymentTerm = null,
         ?PaymentTerm $customerGroupPaymentTerm = null
     ) {

@@ -125,7 +125,7 @@ class CategoryResolvedCacheBuilderTest extends WebTestCase
         $qb = $this->doctrine->getRepository(CategoryVisibilityResolved::class)
             ->createQueryBuilder('CategoryVisibilityResolved');
 
-        return  $qb->select('CategoryVisibilityResolved', 'CategoryVisibility')
+        return $qb->select('CategoryVisibilityResolved', 'CategoryVisibility')
             ->leftJoin('CategoryVisibilityResolved.sourceCategoryVisibility', 'CategoryVisibility')
             ->where(
                 $qb->expr()->eq('CategoryVisibilityResolved.category', ':category')

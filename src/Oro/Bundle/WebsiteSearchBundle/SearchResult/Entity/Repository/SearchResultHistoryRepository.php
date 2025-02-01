@@ -29,21 +29,21 @@ class SearchResultHistoryRepository extends ServiceEntityRepository
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function upsertSearchHistoryRecord(
-        string  $searchTerm,
-        string  $resultType,
-        int     $resultsCount,
-        string  $searchTermHash,
-        int     $businessUnitId,
-        ?int    $websiteId = null,
+        string $searchTerm,
+        string $resultType,
+        int $resultsCount,
+        string $searchTermHash,
+        int $businessUnitId,
+        ?int $websiteId = null,
         ?string $searchSessionId = null,
-        ?int    $localizationId = null,
-        ?int    $customerId = null,
-        ?int    $customerUserId = null,
-        ?int    $customerVisitorId = null,
-        ?int    $organizationId = null,
+        ?int $localizationId = null,
+        ?int $customerId = null,
+        ?int $customerUserId = null,
+        ?int $customerVisitorId = null,
+        ?int $organizationId = null
     ): void {
-        $query = "
-            INSERT INTO oro_website_search_result_history (
+        $query =
+            'INSERT INTO oro_website_search_result_history (
                 id,
                 website_id,
                 localization_id,
@@ -64,7 +64,7 @@ class SearchResultHistoryRepository extends ServiceEntityRepository
                result_type = excluded.result_type,
                search_term = excluded.search_term,
                normalized_search_term_hash = excluded.normalized_search_term_hash,
-               created_at = excluded.created_at";
+               created_at = excluded.created_at';
 
         $this->getEntityManager()->getConnection()->executeQuery(
             $query,

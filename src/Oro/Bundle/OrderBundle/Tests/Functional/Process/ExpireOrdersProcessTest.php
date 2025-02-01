@@ -216,7 +216,7 @@ class ExpireOrdersProcessTest extends WebTestCase
 
     private function prepareOrderObject(
         ?\DateTime $doNotShipLater = null,
-        string     $internalStatus = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
+        string $internalStatus = OrderStatusesProviderInterface::INTERNAL_STATUS_OPEN
     ): Order {
         /** @var User $user */
         $user = $this->getReference(LoadOrderUsers::ORDER_USER_1);

@@ -147,7 +147,7 @@ class WebsiteSearchReindexProcessor implements MessageProcessorInterface, TopicS
 
     private function isMessageBufferingEnabled(): bool
     {
-        return  $this->messageProducer instanceof BufferedMessageProducer
+        return $this->messageProducer instanceof BufferedMessageProducer
             && $this->messageProducer->isBufferingEnabled();
     }
 }

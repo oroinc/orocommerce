@@ -94,9 +94,9 @@ class QuoteProductValidatorTest extends ConstraintValidatorTestCase
     private function getQuoteProduct(
         ?Product $product = null,
         ?Product $replacement = null,
-        int      $type = QuoteProduct::TYPE_OFFER,
-        string   $freeFormProduct = '',
-        string   $freeFormProductReplacement = ''
+        int $type = QuoteProduct::TYPE_OFFER,
+        string $freeFormProduct = '',
+        string $freeFormProductReplacement = ''
     ): QuoteProduct {
         $quoteProduct = new QuoteProduct();
         $quoteProduct

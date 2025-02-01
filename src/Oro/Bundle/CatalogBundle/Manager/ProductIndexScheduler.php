@@ -22,9 +22,9 @@ class ProductIndexScheduler
     }
 
     public function scheduleProductsReindex(
-        array  $categories,
-        ?int   $websiteId = null,
-        bool   $isScheduled = true,
+        array $categories,
+        ?int $websiteId = null,
+        bool $isScheduled = true,
         ?array $fieldGroups = null
     ): void {
         $this->productReindexManager->reindexProducts(

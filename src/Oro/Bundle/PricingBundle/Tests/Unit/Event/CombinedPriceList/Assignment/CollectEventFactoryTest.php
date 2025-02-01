@@ -24,9 +24,9 @@ class CollectEventFactoryTest extends TestCase
      */
     public function testCreateEvent(
         CollectByConfigEvent $expectedEvent,
-        bool                 $force = false,
-        ?Website             $website = null,
-        ?object              $targetEntity = null
+        bool $force = false,
+        ?Website $website = null,
+        ?object $targetEntity = null
     ) {
         $factory = new CollectEventFactory();
         $event = $factory->createEvent($force, $website, $targetEntity);

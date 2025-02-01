@@ -224,11 +224,11 @@ class CombinedPriceListTriggerHandlerTest extends TestCase
      * @dataProvider processByProductDataProvider
      */
     public function testProcessByProduct(
-        array  $combinedPriceList,
-        array  $expectedEvents,
-        array  $products = [],
+        array $combinedPriceList,
+        array $expectedEvents,
+        array $products = [],
         ?array $website = null,
-        array  $productIds = []
+        array $productIds = []
     ): void {
         $combinedPriceList = $this->getEntity(CombinedPriceList::class, $combinedPriceList);
         if ($website) {

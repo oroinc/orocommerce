@@ -66,11 +66,11 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
      * @dataProvider submitProvider
      */
     public function testSubmit(
-        bool                    $isValid,
-        array                   $submittedData,
-        ProductShippingOptions  $expectedData,
+        bool $isValid,
+        array $submittedData,
+        ProductShippingOptions $expectedData,
         ?ProductShippingOptions $defaultData = null,
-        array                   $options = []
+        array $options = []
     ) {
         $form = $this->factory->create(ProductShippingOptionsType::class, $defaultData, $options);
 
@@ -214,8 +214,8 @@ class ProductShippingOptionsTypeTest extends FormIntegrationTestCase
 
     private function getProductShippingOptions(
         ?string $unitCode = null,
-        ?array  $weight = null,
-        ?array  $dimensions = null,
+        ?array $weight = null,
+        ?array $dimensions = null,
         ?string $freightClass = null
     ): ProductShippingOptions {
         $productShippingOptions = new ProductShippingOptions();

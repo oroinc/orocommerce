@@ -27,18 +27,10 @@ class ProductKitLineItemFactory
         $this->kitItemLineItemFactory = $kitItemLineItemFactory;
     }
 
-    /**
-     * @param Product $product Product Kit to create a line item for.
-     * @param ProductUnit|null $productUnit
-     * @param float|null $quantity
-     * @param ShoppingList|null $shoppingList
-     *
-     * @return LineItem
-     */
     public function createProductKitLineItem(
-        Product       $product,
-        ?ProductUnit  $productUnit = null,
-        ?float        $quantity = null,
+        Product $product,
+        ?ProductUnit $productUnit = null,
+        ?float $quantity = null,
         ?ShoppingList $shoppingList = null
     ): LineItem {
         $lineItem = (new LineItem())

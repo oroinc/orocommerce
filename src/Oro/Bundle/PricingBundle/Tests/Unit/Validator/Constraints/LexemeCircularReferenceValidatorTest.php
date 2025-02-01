@@ -70,10 +70,10 @@ class LexemeCircularReferenceValidatorTest extends ConstraintValidatorTestCase
     }
 
     private function getPriceRule(
-        int        $id,
+        int $id,
         ?PriceList $priceList = null,
-        ?string    $rule = null,
-        ?string    $ruleCondition = null
+        ?string $rule = null,
+        ?string $ruleCondition = null
     ): PriceRule {
         $priceRule = new PriceRule();
         ReflectionUtil::setId($priceRule, $id);

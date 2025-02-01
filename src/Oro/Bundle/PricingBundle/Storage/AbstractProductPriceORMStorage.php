@@ -35,9 +35,9 @@ abstract class AbstractProductPriceORMStorage implements ProductPriceStorageInte
     #[\Override]
     public function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array                              $products,
-        ?array                             $productUnitCodes = null,
-        ?array                             $currencies = null
+        array $products,
+        ?array $productUnitCodes = null,
+        ?array $currencies = null
     ) {
         $priceList = $this->getPriceListByScopeCriteria($scopeCriteria);
         if (!$priceList) {

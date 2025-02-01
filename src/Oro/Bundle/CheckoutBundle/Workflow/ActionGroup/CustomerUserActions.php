@@ -34,8 +34,8 @@ class CustomerUserActions implements CustomerUserActionsInterface
 
     #[\Override]
     public function createGuestCustomerUser(
-        Checkout         $checkout,
-        ?string          $email = null,
+        Checkout $checkout,
+        ?string $email = null,
         ?AbstractAddress $billingAddress = null
     ): void {
         if ($checkout->getCustomerUser() || $checkout->getCustomer()) {
@@ -60,8 +60,8 @@ class CustomerUserActions implements CustomerUserActionsInterface
 
     #[\Override]
     public function updateGuestCustomerUser(
-        Checkout         $checkout,
-        ?string          $email = null,
+        Checkout $checkout,
+        ?string $email = null,
         ?AbstractAddress $billingAddress = null
     ): void {
         if (!$email) {

@@ -51,11 +51,11 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
      * @dataProvider quoteDataProvider
      */
     public function testUpdateFromAbstract(
-        AbstractAddress  $address,
-        ?QuoteAddress    $expected = null,
+        AbstractAddress $address,
+        ?QuoteAddress $expected = null,
         ?AbstractAddress $expectedCustomerAddress = null,
         ?AbstractAddress $expectedCustomerUserAddress = null,
-        ?QuoteAddress    $quoteAddress = null
+        ?QuoteAddress $quoteAddress = null
     ): void {
         $classMetadata = $this->createMock(ClassMetadata::class);
         $classMetadata->expects($this->once())

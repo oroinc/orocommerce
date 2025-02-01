@@ -156,10 +156,10 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit\Framework\TestCase
      * @dataProvider isAllowedDataProvider
      */
     public function testIsAllowed(
-        bool          $isGrantedAdd,
-        bool          $expected,
+        bool $isGrantedAdd,
+        bool $expected,
         ?ShoppingList $shoppingList = null,
-        bool          $isGrantedEdit = false
+        bool $isGrantedEdit = false
     ): void {
         $this->tokenAccessor->expects(self::once())
             ->method('hasUser')

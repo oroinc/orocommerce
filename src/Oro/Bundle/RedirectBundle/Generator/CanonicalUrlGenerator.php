@@ -45,16 +45,12 @@ class CanonicalUrlGenerator
     }
 
     /**
-     * @param SluggableInterface $entity
-     * @param Localization|null $localization
-     * @param WebsiteInterface|null $website
-     *
      * @return string
      */
     public function getUrl(
         SluggableInterface $entity,
-        ?Localization      $localization = null,
-        ?WebsiteInterface  $website = null
+        ?Localization $localization = null,
+        ?WebsiteInterface $website = null
     ) {
         $url = '';
 
@@ -70,16 +66,12 @@ class CanonicalUrlGenerator
     }
 
     /**
-     * @param SlugAwareInterface $entity
-     * @param Localization|null $localization
-     * @param WebsiteInterface|null $website
-     *
      * @return string
      */
     public function getDirectUrl(
         SlugAwareInterface $entity,
-        ?Localization      $localization = null,
-        ?WebsiteInterface  $website = null
+        ?Localization $localization = null,
+        ?WebsiteInterface $website = null
     ) {
         $url = '';
         $slug = $this->getDirectUrlSlug($entity, $localization);

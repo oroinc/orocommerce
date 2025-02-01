@@ -59,7 +59,7 @@ class UpdateDimensionsByValueAndUnitTest extends CustomizeFormDataProcessorTestC
      * @dataProvider requestDataProvider
      */
     public function testPreSubmit(
-        array                      $data,
+        array $data,
         ProductShippingOptionsStub $entity,
         ProductShippingOptionsStub $expectedEntity
     ): void {

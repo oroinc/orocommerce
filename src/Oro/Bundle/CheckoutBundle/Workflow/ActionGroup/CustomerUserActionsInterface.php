@@ -12,14 +12,14 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 interface CustomerUserActionsInterface
 {
     public function createGuestCustomerUser(
-        Checkout         $checkout,
-        ?string          $email = null,
+        Checkout $checkout,
+        ?string $email = null,
         ?AbstractAddress $billingAddress = null
     ): void;
 
     public function updateGuestCustomerUser(
-        Checkout         $checkout,
-        ?string          $email = null,
+        Checkout $checkout,
+        ?string $email = null,
         ?AbstractAddress $billingAddress = null
     ): void;
 

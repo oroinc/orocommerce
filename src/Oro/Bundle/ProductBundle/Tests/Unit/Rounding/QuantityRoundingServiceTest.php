@@ -31,12 +31,12 @@ class QuantityRoundingServiceTest extends AbstractRoundingServiceTest
      * @dataProvider roundQuantityProvider
      */
     public function testRoundQuantity(
-        int          $roundingType,
-        float        $value,
-        float        $expectedValue,
-        int          $precision,
+        int $roundingType,
+        float $value,
+        float $expectedValue,
+        int $precision,
         ?ProductUnit $productUnit = null,
-        ?Product     $product = null
+        ?Product $product = null
     ) {
         $this->prepareConfigManager($roundingType, $precision);
 

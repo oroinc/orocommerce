@@ -57,12 +57,12 @@ abstract class AbstractRuleEntityListenerTest extends \PHPUnit\Framework\TestCas
     }
 
     protected function assertRecalculateByEntityFieldsUpdate(
-        int      $providerNumberOfCalls,
-        int      $handlerNumberOfCalls,
-        array    $expectedFields,
-        array    $changeSet,
+        int $providerNumberOfCalls,
+        int $handlerNumberOfCalls,
+        array $expectedFields,
+        array $changeSet,
         ?Product $product = null,
-        ?int     $relationId = null
+        ?int $relationId = null
     ) {
         $updatedFields = array_intersect($expectedFields, array_keys($changeSet));
 

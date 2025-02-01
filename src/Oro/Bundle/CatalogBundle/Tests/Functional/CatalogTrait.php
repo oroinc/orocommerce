@@ -24,6 +24,6 @@ trait CatalogTrait
         /** @var MasterCatalogRootProviderInterface $masterCatalogRootProvider */
         $masterCatalogRootProvider = self::getContainer()->get('oro_catalog.provider.master_catalog_root');
 
-        return  $masterCatalogRootProvider->getMasterCatalogRoot();
+        return $masterCatalogRootProvider->getMasterCatalogRoot();
     }
 }

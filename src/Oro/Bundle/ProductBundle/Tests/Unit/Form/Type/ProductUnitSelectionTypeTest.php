@@ -455,9 +455,9 @@ class ProductUnitSelectionTypeTest extends FormIntegrationTestCase
     }
 
     private function createProductUnitHolder(
-        ?int                    $id,
-        ?string                 $productUnitCode,
-        ?ProductUnit            $productUnit = null,
+        ?int $id,
+        ?string $productUnitCode,
+        ?ProductUnit $productUnit = null,
         ?ProductHolderInterface $productHolder = null
     ): ProductUnitHolderInterface {
         $productUnitHolder = $this->createMock(ProductUnitHolderInterface::class);

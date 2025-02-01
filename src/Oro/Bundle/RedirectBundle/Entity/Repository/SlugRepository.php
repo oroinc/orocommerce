@@ -31,9 +31,9 @@ class SlugRepository extends ServiceEntityRepository
     }
 
     public function getOneDirectUrlBySlugQueryBuilder(
-        string              $slug,
+        string $slug,
         ?SlugAwareInterface $restrictedEntity = null,
-        ?ScopeCriteria      $scopeCriteria = null
+        ?ScopeCriteria $scopeCriteria = null
     ): QueryBuilder {
         $qb = $this->getSlugByUrlQueryBuilder($slug);
         $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
@@ -45,9 +45,9 @@ class SlugRepository extends ServiceEntityRepository
     }
 
     public function findAllDirectUrlsByPattern(
-        string              $pattern,
+        string $pattern,
         ?SlugAwareInterface $restrictedEntity = null,
-        ?ScopeCriteria      $scopeCriteria = null
+        ?ScopeCriteria $scopeCriteria = null
     ): array {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb->from($this->getEntityName(), 'slug')

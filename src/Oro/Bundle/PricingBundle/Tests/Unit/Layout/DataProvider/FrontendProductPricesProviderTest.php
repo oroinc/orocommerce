@@ -648,11 +648,11 @@ class FrontendProductPricesProviderTest extends TestCase
      */
     public function testIsShowProductPriceContainer(
         Product $checkedProduct,
-        array   $products,
-        array   $variants,
-        array   $prices,
-        bool    $expected,
-        bool    $expectedNoExternalServiceCalled
+        array $products,
+        array $variants,
+        array $prices,
+        bool $expected,
+        bool $expectedNoExternalServiceCalled
     ): void {
         if ($expectedNoExternalServiceCalled) {
             $this->expectNoExternalServiceCalled();

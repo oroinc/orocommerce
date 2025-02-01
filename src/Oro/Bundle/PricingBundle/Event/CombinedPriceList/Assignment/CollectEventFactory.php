@@ -14,9 +14,9 @@ class CollectEventFactory implements CollectEventFactoryInterface
 {
     #[\Override]
     public function createEvent(
-        bool     $force = false,
+        bool $force = false,
         ?Website $website = null,
-        ?object  $targetEntity = null
+        ?object $targetEntity = null
     ): CollectByConfigEvent {
         if (!$website) {
             return new CollectByConfigEvent($force);

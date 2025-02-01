@@ -530,8 +530,8 @@ class WebsiteSearchProductIndexerListenerTest extends \PHPUnit\Framework\TestCas
 
     private function getLocalizedFallbackValue(
         ?Localization $localization = null,
-        ?string       $string = null,
-        ?string       $text = null
+        ?string $string = null,
+        ?string $text = null
     ): LocalizedFallbackValue {
         $value = new LocalizedFallbackValue();
         $value->setString($string);

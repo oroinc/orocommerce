@@ -121,7 +121,7 @@ class ShippingOriginTypeTest extends AddressFormExtensionTestCase
 
     private function getShippingOrigin(
         ?string $countryCode = null,
-        ?bool   $linkRegionCountry = null,
+        ?bool $linkRegionCountry = null,
         ?string $regionCode = null,
         ?string $postalCode = null,
         ?string $city = null,

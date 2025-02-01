@@ -158,18 +158,13 @@ class ProductPriceProvider implements ProductPriceProviderInterface, MatchedProd
     }
 
     /**
-     * @param ProductPriceScopeCriteriaInterface $scopeCriteria
-     * @param array $productsIds
-     * @param array|null $productUnitCodes
-     * @param array|null $currencies
-     *
      * @return ProductPriceInterface[]
      */
     private function getPrices(
         ProductPriceScopeCriteriaInterface $scopeCriteria,
-        array                              $productsIds,
-        ?array                             $productUnitCodes = null,
-        ?array                             $currencies = null
+        array $productsIds,
+        ?array $productUnitCodes = null,
+        ?array $currencies = null
     ): array {
         if (!$currencies) {
             // There is no sense to get prices when no allowed currencies present.

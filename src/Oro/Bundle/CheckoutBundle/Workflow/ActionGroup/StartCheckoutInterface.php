@@ -24,13 +24,13 @@ interface StartCheckoutInterface
      * }
      */
     public function execute(
-        array   $sourceCriteria,
-        bool    $force = false,
-        array   $data = [],
-        array   $settings = [],
-        bool    $showErrors = false,
-        bool    $forceStartCheckout = false,
+        array $sourceCriteria,
+        bool $force = false,
+        array $data = [],
+        array $settings = [],
+        bool $showErrors = false,
+        bool $forceStartCheckout = false,
         ?string $startTransition = null,
-        bool    $validateOnStartCheckout = true
+        bool $validateOnStartCheckout = true
     ): array;
 }

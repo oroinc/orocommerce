@@ -71,13 +71,13 @@ class TaxManagerTest extends WebTestCase
     public function testMethods(
         string $method,
         string $reference,
-        array  $configuration,
-        array  $databaseBefore,
-        array  $databaseBeforeSecondPart,
-        bool   $disableTaxCalculation,
-        array  $expectedResult = [],
-        array  $databaseAfter = [],
-        bool   $enablePromotion = false
+        array $configuration,
+        array $databaseBefore,
+        array $databaseBeforeSecondPart,
+        bool $disableTaxCalculation,
+        array $expectedResult = [],
+        array $databaseAfter = [],
+        bool $enablePromotion = false
     ) {
         if ($enablePromotion) {
             $this->initClient([], self::generateBasicAuthHeader());
@@ -126,7 +126,7 @@ class TaxManagerTest extends WebTestCase
     private function prepareDatabase(
         array $databaseBefore,
         array $databaseBeforeSecondPart,
-        bool  $disableTaxCalculation
+        bool $disableTaxCalculation
     ): void {
         if ($disableTaxCalculation) {
             // Disable taxation for load fixtures

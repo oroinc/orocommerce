@@ -48,9 +48,9 @@ class ConsentConfigManager
     }
 
     private function updateConsentsConfig(
-        Consent        $consent,
+        Consent $consent,
         ?ConfigManager $configManager = null,
-        ?Website       $website = null
+        ?Website $website = null
     ) {
         $configKey = Configuration::getConfigKey(Configuration::ENABLED_CONSENTS);
         $config = $configManager->get($configKey, false, true, $website);

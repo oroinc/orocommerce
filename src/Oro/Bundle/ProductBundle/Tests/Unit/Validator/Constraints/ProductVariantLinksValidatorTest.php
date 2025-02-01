@@ -242,8 +242,8 @@ class ProductVariantLinksValidatorTest extends ConstraintValidatorTestCase
     }
 
     private function prepareProduct(
-        array            $variantFields,
-        array            $variantLinkFields,
+        array $variantFields,
+        array $variantLinkFields,
         ?AttributeFamily $parentProductAttributeFamily = null,
         ?AttributeFamily $variantLinkAttributeFamily = null
     ): Product {

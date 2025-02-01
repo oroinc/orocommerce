@@ -45,19 +45,14 @@ class PaymentTransactionProvider
     }
 
     /**
-     * @param object $object
-     * @param array $criteria
-     * @param array $orderBy
-     * @param int|null $limit
-     * @param int|null $offset
      * @return PaymentTransaction[]
      */
     public function getPaymentTransactions(
         object $object,
-        array  $criteria = [],
-        array  $orderBy = [],
-        ?int   $limit = null,
-        ?int   $offset = null
+        array $criteria = [],
+        array $orderBy = [],
+        ?int $limit = null,
+        ?int $offset = null
     ): array {
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);

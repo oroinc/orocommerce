@@ -23,12 +23,12 @@ class SegmentMessageFactory
     }
 
     public function createMessage(
-        int      $jobId,
-        array    $websiteIds,
+        int $jobId,
+        array $websiteIds,
         ?Segment $segment = null,
-        ?string  $definition = null,
-        bool     $isFull = true,
-        array    $additionalProducts = []
+        ?string $definition = null,
+        bool $isFull = true,
+        array $additionalProducts = []
     ): array {
         return [
             Topic::OPTION_NAME_JOB_ID => $jobId,
@@ -57,11 +57,11 @@ class SegmentMessageFactory
      * till root job with child jobs for this type of messages will be created
      */
     public function getPartialMessageData(
-        array    $websiteIds,
+        array $websiteIds,
         ?Segment $segment = null,
-        ?string  $definition = null,
-        bool     $isFull = true,
-        array    $additionalProducts = []
+        ?string $definition = null,
+        bool $isFull = true,
+        array $additionalProducts = []
     ): array {
         return [
             Topic::OPTION_NAME_ID => $segment?->getId(),

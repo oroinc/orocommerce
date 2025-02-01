@@ -27,7 +27,7 @@ class ValidateShoppingListLimit implements ProcessorInterface
     public function __construct(
         FeatureChecker $featureChecker,
         GuestShoppingListManager $guestShoppingListManager,
-        TokenStorageInterface    $tokenStorage,
+        TokenStorageInterface $tokenStorage,
         TranslatorInterface $translator
     ) {
         $this->featureChecker = $featureChecker;

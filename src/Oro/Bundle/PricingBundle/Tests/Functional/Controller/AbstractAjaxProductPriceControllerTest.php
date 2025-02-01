@@ -14,8 +14,8 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
      * @dataProvider getProductPricesByCustomerActionDataProvider
      */
     public function testGetProductPricesByCustomerAction(
-        string  $product,
-        array   $expected,
+        string $product,
+        array $expected,
         ?string $currency = null,
         ?string $customer = null,
         ?string $website = null

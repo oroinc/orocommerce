@@ -80,14 +80,14 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
     private static function assertLineItem(
         LineItem $lineItem,
-        int      $organizationId,
-        int      $userId,
-        int      $customerUserId,
-        float    $quantity,
-        string   $productUnitCode,
-        int      $productId,
-        ?string  $notes = null,
-        ?int     $parentProductId = null
+        int $organizationId,
+        int $userId,
+        int $customerUserId,
+        float $quantity,
+        string $productUnitCode,
+        int $productId,
+        ?string $notes = null,
+        ?int $parentProductId = null
     ): void {
         self::assertEquals($organizationId, $lineItem->getOrganization()->getId());
         self::assertEquals($userId, $lineItem->getOwner()->getId());

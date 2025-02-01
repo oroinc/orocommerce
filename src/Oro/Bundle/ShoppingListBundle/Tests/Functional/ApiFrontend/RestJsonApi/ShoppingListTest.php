@@ -84,7 +84,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         int $customerUserId,
         int $websiteId,
         ?string $notes = null
-    ) {
+    ): void {
         self::assertEquals($organizationId, $shoppingList->getOrganization()->getId());
         self::assertEquals($userId, $shoppingList->getOwner()->getId());
         self::assertEquals($customerUserId, $shoppingList->getCustomerUser()->getId());
@@ -102,16 +102,16 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
      */
     private static function assertLineItem(
         LineItem $lineItem,
-        int      $organizationId,
-        int      $userId,
-        int      $customerUserId,
-        int      $shoppingListId,
-        float    $quantity,
-        string   $productUnitCode,
-        int      $productId,
-        ?string  $notes = null,
-        ?int     $parentProductId = null
-    ) {
+        int $organizationId,
+        int $userId,
+        int $customerUserId,
+        int $shoppingListId,
+        float $quantity,
+        string $productUnitCode,
+        int $productId,
+        ?string $notes = null,
+        ?int $parentProductId = null
+    ): void {
         self::assertEquals($organizationId, $lineItem->getOrganization()->getId());
         self::assertEquals($userId, $lineItem->getOwner()->getId());
         self::assertEquals($customerUserId, $lineItem->getCustomerUser()->getId());
@@ -135,7 +135,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         ShoppingList $shoppingList,
         float $total,
         string $currency
-    ) {
+    ): void {
         $totalEntity = $this->getShoppingListTotal($shoppingList->getId());
         self::assertEquals($total, $totalEntity->getSubtotal()->getAmount());
         self::assertEquals($currency, $totalEntity->getCurrency());

@@ -71,11 +71,11 @@ class OrderAddressManagerTest extends AbstractAddressManagerTest
      * @dataProvider orderDataProvider
      */
     public function testUpdateFromAbstract(
-        AbstractAddress  $address,
-        ?OrderAddress    $expected = null,
+        AbstractAddress $address,
+        ?OrderAddress $expected = null,
         ?AbstractAddress $expectedCustomerAddress = null,
         ?AbstractAddress $expectedCustomerUserAddress = null,
-        ?OrderAddress    $orderAddress = null
+        ?OrderAddress $orderAddress = null
     ): void {
         $classMetadata = $this->createMock(ClassMetadata::class);
         $classMetadata->expects($this->once())

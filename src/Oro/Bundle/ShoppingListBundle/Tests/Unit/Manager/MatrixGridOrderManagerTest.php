@@ -91,11 +91,11 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     private function getLineItem(
-        ?int         $id = null,
-        ?Product     $product = null,
-        ?float       $quantity = null,
+        ?int $id = null,
+        ?Product $product = null,
+        ?float $quantity = null,
         ?ProductUnit $unit = null,
-        ?Product     $parentProduct = null
+        ?Product $parentProduct = null
     ): LineItem {
         $lineItem = new LineItem();
         if (null !== $id) {

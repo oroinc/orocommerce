@@ -109,10 +109,10 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
 
     private function createSlug(
         ObjectManager $manager,
-        string        $url,
-        string        $routeName,
-        array         $routeParameters,
-        ?string       $reference = null,
+        string $url,
+        string $routeName,
+        array $routeParameters,
+        ?string $reference = null,
         ?Localization $localization = null
     ): Slug {
         $slug = new Slug();
