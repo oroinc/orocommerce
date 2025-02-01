@@ -56,7 +56,7 @@ MARKDOWN;
         $defaultShoppingListId = null;
         if ($token instanceof AnonymousCustomerUserToken) {
             $visitor = $token->getVisitor();
-            if (null !== $visitor) {
+            if (null !== $visitor && $visitor->getId()) {
                 $defaultShoppingListId = $this->getDefaultShoppingListIdForVisitor($visitor->getId());
             }
         } else {
