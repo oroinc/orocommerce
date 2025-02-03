@@ -6,6 +6,7 @@ use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Entity\Repository\EmailTemplateRepository;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Form\Type\EmailType;
+use Oro\Bundle\EmailBundle\Provider\EmailTemplateOrganizationProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -25,6 +26,8 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
 
     /** @var FeatureChecker */
     private $featureChecker;
+
+    private EmailTemplateOrganizationProvider $emailTemplateOrganizationProvider;
 
     public function __construct(TokenAccessorInterface $tokenAccessor, FeatureChecker $featureChecker)
     {
@@ -66,7 +69,7 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
 
                             return $templateRepository->getEntityTemplatesQueryBuilder(
                                 Quote::class,
-                                $this->tokenAccessor->getOrganization(),
+                                $this->emailTemplateOrganizationProvider->getOrganization(),
                                 false,
                                 false,
                                 true,
@@ -78,6 +81,11 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
                 );
             }
         );
+    }
+
+    public function setOrganizationProvider(EmailTemplateOrganizationProvider $emailTemplateOrganizationProvider): void
+    {
+        $this->emailTemplateOrganizationProvider = $emailTemplateOrganizationProvider;
     }
 
     /**
