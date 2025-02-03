@@ -6,10 +6,10 @@ use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
 use Oro\Bundle\EmailBundle\Entity\Repository\EmailTemplateRepository;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Form\Type\EmailType;
+use Oro\Bundle\EmailBundle\Provider\EmailTemplateOrganizationProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -20,16 +20,10 @@ use Symfony\Component\Form\FormEvents;
  */
 class QuoteEmailTemplateExtension extends AbstractTypeExtension
 {
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
-
-    /** @var FeatureChecker */
-    private $featureChecker;
-
-    public function __construct(TokenAccessorInterface $tokenAccessor, FeatureChecker $featureChecker)
-    {
-        $this->tokenAccessor = $tokenAccessor;
-        $this->featureChecker = $featureChecker;
+    public function __construct(
+        private EmailTemplateOrganizationProvider $organizationProvider,
+        private FeatureChecker $featureChecker
+    ) {
     }
 
     #[\Override]
@@ -64,7 +58,7 @@ class QuoteEmailTemplateExtension extends AbstractTypeExtension
 
                             return $templateRepository->getEntityTemplatesQueryBuilder(
                                 Quote::class,
-                                $this->tokenAccessor->getOrganization(),
+                                $this->organizationProvider->getOrganization(),
                                 false,
                                 false,
                                 true,
