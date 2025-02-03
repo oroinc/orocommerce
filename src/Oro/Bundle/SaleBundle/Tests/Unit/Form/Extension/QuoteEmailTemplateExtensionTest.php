@@ -15,6 +15,7 @@ use Oro\Bundle\EmailBundle\Form\Type\EmailAddressRecipientsType;
 use Oro\Bundle\EmailBundle\Form\Type\EmailOriginFromType;
 use Oro\Bundle\EmailBundle\Form\Type\EmailType;
 use Oro\Bundle\EmailBundle\Provider\EmailRenderer;
+use Oro\Bundle\EmailBundle\Provider\EmailTemplateOrganizationProvider;
 use Oro\Bundle\EmailBundle\Provider\RelatedEmailsProvider;
 use Oro\Bundle\EmailBundle\Tools\EmailOriginHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
@@ -52,6 +53,12 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
     /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
     private $featureChecker;
 
+    /** @var EmailTemplateOrganizationProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $organizationProvider;
+
+    /** @var Organization|\PHPUnit\Framework\MockObject\MockObject */
+    private $organization;
+
     /** @var QuoteEmailTemplateExtension */
     private $extension;
 
@@ -62,12 +69,14 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
         $this->repository = $this->createMock(EmailTemplateRepository::class);
         $this->tokenAccessor = $this->createMock(TokenAccessorInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-
-        $this->tokenAccessor->expects($this->any())
+        $this->organizationProvider = $this->createMock(EmailTemplateOrganizationProvider::class);
+        $this->organization = $this->createMock(Organization::class);
+        $this->organizationProvider->expects($this->any())
             ->method('getOrganization')
-            ->willReturn(new Organization());
+            ->willReturn($this->organization);
 
         $this->extension = new QuoteEmailTemplateExtension($this->tokenAccessor, $this->featureChecker);
+        $this->extension->setOrganizationProvider($this->organizationProvider);
 
         parent::setUp();
     }
@@ -97,7 +106,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
             ->method('getEntityTemplatesQueryBuilder')
             ->with(
                 Quote::class,
-                $this->tokenAccessor->getOrganization(),
+                $this->organization,
                 false,
                 false,
                 true,
@@ -147,7 +156,7 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
             ->method('getEntityTemplatesQueryBuilder')
             ->with(
                 \stdClass::class,
-                $this->tokenAccessor->getOrganization(),
+                $this->organization,
                 true,
                 true,
                 true,
@@ -207,13 +216,17 @@ class QuoteEmailTemplateExtensionTest extends FormIntegrationTestCase
             ->method('isGranted')
             ->willReturn(true);
 
-        return new EmailType(
+        $emailType = new EmailType(
             $authorizationChecker,
             $this->tokenAccessor,
             $emailRenderer,
             $emailModelBuilderHelper,
             $this->configManager
         );
+
+        $emailType->setOrganizationProvider($this->organizationProvider);
+
+        return $emailType;
     }
 
     private function createContextsSelectType(): ContextsSelectType
