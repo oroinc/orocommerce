@@ -7,3 +7,5 @@ oro:
                 append_products_invalid: "The products specified for addition cannot be found"
                 remove_products_invalid: "The products specified for removal cannot be found"
                 sort_order_invalid: "The specified sort order values cannot be processed"
+            parent_category:
+              parent_category_id_same_as_id: "Category parent id is the same as category id"
