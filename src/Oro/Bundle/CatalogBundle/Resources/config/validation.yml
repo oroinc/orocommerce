@@ -9,6 +9,8 @@ Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
 
 Oro\Bundle\CatalogBundle\Entity\Category:
+    constraints:
+        - Oro\Bundle\CatalogBundle\Validator\Constraints\ParentCategoryIdNotEqualCategoryId: ~
     properties:
         titles:
             - Oro\Bundle\LocaleBundle\Validator\Constraints\NotBlankDefaultLocalizedFallbackValue:
