@@ -21,6 +21,15 @@ Feature: Check shopping list subtotal using different customer users
     When I save form
     Then I should see "Configuration saved" flash message
 
+  Scenario: Enable required currencies
+    Given I go to System/Configuration
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
+    When fill "Pricing Form" with:
+      | Enabled Currencies System | false                     |
+      | Enabled Currencies        | [US Dollar ($), Euro (€)] |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
+
   Scenario: Change Administrator role's Shopping list view permission
     Given I go to Customers/Customer User Roles
     When I click Edit Administrator in grid
@@ -181,3 +190,15 @@ Feature: Check shopping list subtotal using different customer users
     When I open shopping list widget
     # $25.00 because cache for AmandaRCole created.
     Then I should see "1 item | $25.00"
+
+  Scenario: Remove line item from Shopping List using CustomerHeadoffice
+    Given I proceed as the CustomerHeadoffice
+    And click "Account Dropdown"
+    And click "Shopping Lists"
+    And click "Grid Toolbar Action Filter Toggle"
+    And click "Clear All Filters"
+    When I click edit "Shopping List" in grid
+    And click Delete product_simple_2 in grid
+    Then I should see "Are you sure you want to delete this product?"
+    When I click "Delete" in modal window
+    Then I should see 'The "Simple product 2' flash message
