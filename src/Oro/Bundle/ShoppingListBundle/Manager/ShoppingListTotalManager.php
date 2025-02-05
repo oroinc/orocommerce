@@ -169,7 +169,8 @@ class ShoppingListTotalManager
         foreach ($currencies as $eachCurrency => $i) {
             $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $eachCurrency);
 
-            $shoppingListTotals[$eachCurrency] = (new ShoppingListTotal($shoppingList, $eachCurrency))
+            $shoppingListTotals[$eachCurrency] = new ShoppingListTotal($shoppingList, $eachCurrency)
+                ->setCustomerUser($customerUser ?? $assignedCustomerUser)
                 ->setSubtotal($subtotal)
                 ->setValid(true);
 

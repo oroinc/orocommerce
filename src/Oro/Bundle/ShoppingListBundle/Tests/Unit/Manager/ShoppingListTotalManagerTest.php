@@ -200,6 +200,53 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
         $this->assertSame(80.0, $totalEUR->getSubtotal()->getAmount());
     }
 
+    public function testRecalculateTotalsWithCurrentCustomer()
+    {
+        $currentCustomerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 2]);
+
+        $shoppingList = new ShoppingList();
+        $shoppingList->setCustomerUser($customerUser);
+
+        $this->currencyManager
+            ->expects($this->any())
+            ->method('getAvailableCurrencies')
+            ->willReturn([self::USD]);
+
+        $this->customerUserProvider
+            ->expects($this->any())
+            ->method('getLoggedUser')
+            ->willReturn($currentCustomerUser);
+
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em
+            ->expects($this->once())
+            ->method('contains')
+            ->willReturn(true);
+        $em
+            ->expects($this->once())
+            ->method('persist');
+        $em
+            ->expects($this->once())
+            ->method('flush');
+
+        $this->registry
+            ->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ShoppingListTotal::class)
+            ->willReturn($em);
+
+        $this->subtotalProvider->expects($this->once())
+            ->method('getSubtotalByCurrency')
+            ->with($shoppingList, self::USD)
+            ->willReturn(new Subtotal()->setCurrency(self::USD)->setAmount(100));
+
+        $this->totalManager->recalculateTotals($shoppingList, true);
+        $totals = $shoppingList->getTotals();
+        $this->assertCount(1, $totals);
+        $this->assertEquals($currentCustomerUser, $totals->first()->getCustomerUser());
+    }
+
     public function testGetShoppingListTotalForCurrency(): void
     {
         # Default customer user.
