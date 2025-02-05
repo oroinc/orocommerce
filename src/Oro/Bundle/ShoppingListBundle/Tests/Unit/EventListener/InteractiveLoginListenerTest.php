@@ -23,7 +23,7 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 final class InteractiveLoginListenerTest extends TestCase
 {
-    private const array VISITOR_CREDENTIALS = [1, 'someSessionId'];
+    private const string VISITOR_SESSION_ID = 'someSessionId';
 
     private Request $request;
     private InteractiveLoginListener $listener;
@@ -112,12 +112,12 @@ final class InteractiveLoginListenerTest extends TestCase
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
-            \base64_encode(\json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
 
         $this->visitorManager->expects(self::once())
             ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
+            ->with(self::VISITOR_SESSION_ID)
             ->willReturn(null);
 
         $this->sendChangedEntitiesListener->expects(self::once())
@@ -143,13 +143,13 @@ final class InteractiveLoginListenerTest extends TestCase
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
-            \base64_encode(\json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
 
         $visitor = new CustomerVisitorStub();
         $this->visitorManager->expects(self::once())
             ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
+            ->with(self::VISITOR_SESSION_ID)
             ->willReturn($visitor);
 
         $this->sendChangedEntitiesListener->expects(self::exactly(2))
@@ -180,12 +180,12 @@ final class InteractiveLoginListenerTest extends TestCase
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
-            \base64_encode(\json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
 
         $this->visitorManager->expects(self::once())
             ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
+            ->with(self::VISITOR_SESSION_ID)
             ->willReturn($visitor);
 
         $this->sendChangedEntitiesListener->expects(self::exactly(2))
@@ -221,12 +221,12 @@ final class InteractiveLoginListenerTest extends TestCase
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
-            \base64_encode(\json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
 
         $this->visitorManager->expects(self::once())
             ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
+            ->with(self::VISITOR_SESSION_ID)
             ->willReturn($visitor);
 
         $this->sendChangedEntitiesListener->expects(self::exactly(2))

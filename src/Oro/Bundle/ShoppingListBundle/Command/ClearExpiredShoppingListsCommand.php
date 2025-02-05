@@ -9,7 +9,6 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CronBundle\Command\CronCommandScheduleDefinitionInterface;
-use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendDbIdentifierNameGenerator;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -100,15 +99,9 @@ HELP
 
     protected function getExpiredLastVisitDate(): \DateTime
     {
-        $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
         $cookieLifetime = $this->configManager->get('oro_customer.customer_visitor_cookie_lifetime_days');
-
-        $expiredLastVisitDate->modify(
-            sprintf(
-                '-%d seconds',
-                $cookieLifetime * Configuration::SECONDS_IN_DAY
-            )
-        );
+        $expiredLastVisitDate = new \DateTime('now', new \DateTimeZone('UTC'));
+        $expiredLastVisitDate->modify(\sprintf('-%d seconds', $cookieLifetime * 86400 /* seconds in day */));
 
         return $expiredLastVisitDate;
     }

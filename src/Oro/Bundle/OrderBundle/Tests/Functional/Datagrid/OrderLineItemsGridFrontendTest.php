@@ -15,18 +15,16 @@ class OrderLineItemsGridFrontendTest extends FrontendWebTestCase
     protected function setUp(): void
     {
         $this->initClient();
-        $this->loadFixtures([
-            LoadCustomerVisitors::class
-        ]);
+        $this->loadFixtures([LoadCustomerVisitors::class]);
     }
 
-    public function testDatagridWIthCustomerVisitor()
+    public function testDatagridWIthCustomerVisitor(): void
     {
         $visitor = $this->getReference(LoadCustomerVisitors::CUSTOMER_VISITOR);
         $this->client->getCookieJar()->set(
             new Cookie(
                 AnonymousCustomerUserAuthenticator::COOKIE_NAME,
-                base64_encode(\json_encode([$visitor->getId(), $visitor->getSessionId()])),
+                base64_encode(json_encode($visitor->getSessionId(), JSON_THROW_ON_ERROR)),
                 time() + 60
             )
         );
@@ -39,11 +37,11 @@ class OrderLineItemsGridFrontendTest extends FrontendWebTestCase
         self::assertEquals(Response::HTTP_UNAUTHORIZED, $gridResponse->getStatusCode());
     }
 
-    public function testDatagridWIthCustomerUser()
+    public function testDatagridWIthCustomerUser(): void
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            self::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $gridResponse = $this->client->requestFrontendGrid(
