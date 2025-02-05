@@ -17,7 +17,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_13';
+        return 'v1_14';
     }
 
     #[\Override]
@@ -290,7 +290,7 @@ class OroShoppingListBundleInstaller implements Installation, ExtendExtensionAwa
             $tableDetailedColumnNames,
             $tableGridColumnNames,
             [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM, 'cascade' => ['persist']],
                 'form' => ['is_enabled' => false],
                 'view' => ['is_displayable' => false],
                 'merge' => ['display' => false],
