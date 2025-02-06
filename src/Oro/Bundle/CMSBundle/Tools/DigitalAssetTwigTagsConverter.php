@@ -103,7 +103,7 @@ class DigitalAssetTwigTagsConverter
                 },
                 '/(?P<schema>https?:\/\/|\/\/)?(?:[a-z0-9_~:\.\/-]+?)?'
                 . '\/attachment\/(?P<actionName>get|download)'
-                . '\/(?P<fileId>\d+?)\/[\w%|-]+?\.[a-z0-9-]+/isu' =>
+                . '\/(?P<fileId>\d+?)\/[\w%|-]+(\.[a-z0-9-]+)+/isu' =>
                     function (array $matches) use ($context, &$buffer) {
                         return $this->replaceFileUrlToTwigTag($matches, $context, $buffer);
                     },

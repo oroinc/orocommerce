@@ -357,6 +357,16 @@ convertToTwigTags:
       {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
       <a title="new file" src="{{ wysiwyg_file('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
 
+  wysiwyg file with double extension:
+    contentWithUrls: |
+      <h3>Sample content</h3>
+      /attachment/download/2010/file2010.jpg.jpg
+      <a title="new file" src="/attachment/download/2020/file2020.jpg.jpg"/>
+    expected: |
+      <h3>Sample content</h3>
+      {{ wysiwyg_file('201','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}
+      <a title="new file" src="{{ wysiwyg_file('202','0e6bffee-15bb-44ec-9a4a-0113ca51452d') }}"/>
+
   wysiwyg file with encoded name:
     contentWithUrls: |
       <h3>Sample content</h3>
