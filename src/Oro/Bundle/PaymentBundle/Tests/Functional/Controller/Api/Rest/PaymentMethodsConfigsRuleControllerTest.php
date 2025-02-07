@@ -32,7 +32,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
             'POST',
             $this->getUrl('oro_api_disable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
             [],
-            static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
+            static::generateApiAuthHeader(LoadUserData::USER_EDITOR)
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);
@@ -53,7 +53,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
             'POST',
             $this->getUrl('oro_api_enable_paymentmethodsconfigsrules', ['id' => $paymentRule->getId()]),
             [],
-            static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
+            static::generateApiAuthHeader(LoadUserData::USER_EDITOR)
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);

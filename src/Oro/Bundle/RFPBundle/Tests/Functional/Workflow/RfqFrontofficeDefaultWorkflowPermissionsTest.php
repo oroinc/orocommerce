@@ -35,8 +35,8 @@ class RfqFrontofficeDefaultWorkflowPermissionsTest extends AbstractRfqFrontoffic
     }
 
     #[\Override]
-    protected function getWsseAuthHeader()
+    protected function getAuthHeader()
     {
-        return self::generateWsseAuthHeader(LoadUserData::ACCOUNT1_USER2, LoadUserData::ACCOUNT1_USER2);
+        return self::generateApiAuthHeader(LoadUserData::ACCOUNT1_USER2);
     }
 }

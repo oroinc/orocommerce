@@ -15,12 +15,11 @@ class LoadUserData extends AbstractLoadUserData
     {
         return [
             [
-                'username' => 'system_user_catalog_manager',
+                'username' => self::USER_NAME_CATALOG_MANAGER,
                 'email' => 'system_user_cm@example.com',
                 'firstName' => 'Giffard',
                 'lastName' => 'Gray',
-                'plainPassword' => 'system_user_cm_api_key',
-                'apiKey' => 'system_user_cm_api_key',
+                'plainPassword' => self::USER_PASSWORD_CATALOG_MANAGER,
                 'reference' => 'oro_user:user:system_user_cm',
                 'enabled' => true,
                 'role' => self::ROLE_CATALOG_MANAGER,

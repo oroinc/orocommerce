@@ -394,7 +394,7 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
         $response = $this->post(
             ['entity' => 'shoppinglistitems'],
             $data,
-            self::generateWsseAuthHeader('john@example.com', 'john')
+            self::generateApiAuthHeader('john@example.com')
         );
 
         $lineItemId = (int)$this->getResourceId($response);

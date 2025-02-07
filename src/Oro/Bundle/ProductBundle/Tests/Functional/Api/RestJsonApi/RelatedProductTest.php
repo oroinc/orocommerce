@@ -72,10 +72,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
             [],
-            self::generateWsseAuthHeader(
-                LoadUserData::USER_NAME,
-                LoadUserData::USER_PASSWORD
-            ),
+            self::generateApiAuthHeader(LoadUserData::USER_NAME),
             false
         );
 
@@ -104,10 +101,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'relatedproducts'],
             [],
-            self::generateWsseAuthHeader(
-                CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
-                CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
-            ),
+            self::generateApiAuthHeader(CatalogLoadUserData::USER_NAME_CATALOG_MANAGER),
             false
         );
 
@@ -136,10 +130,7 @@ class RelatedProductTest extends RestJsonApiTestCase
                 'id'     => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
-            self::generateWsseAuthHeader(
-                LoadUserData::USER_NAME,
-                LoadUserData::USER_PASSWORD
-            ),
+            self::generateApiAuthHeader(LoadUserData::USER_NAME),
             false
         );
 
@@ -171,10 +162,7 @@ class RelatedProductTest extends RestJsonApiTestCase
                 'id'     => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
-            self::generateWsseAuthHeader(
-                CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
-                CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
-            ),
+            self::generateApiAuthHeader(CatalogLoadUserData::USER_NAME_CATALOG_MANAGER),
             false
         );
 
@@ -333,10 +321,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->post(
             ['entity' => 'relatedproducts'],
             'related_product/post.yml',
-            self::generateWsseAuthHeader(
-                LoadUserData::USER_NAME,
-                LoadUserData::USER_PASSWORD
-            ),
+            self::generateApiAuthHeader(LoadUserData::USER_NAME),
             false
         );
 
@@ -366,10 +351,7 @@ class RelatedProductTest extends RestJsonApiTestCase
         $response = $this->post(
             ['entity' => 'relatedproducts'],
             'related_product/post.yml',
-            self::generateWsseAuthHeader(
-                LoadUserData::USER_NAME_2,
-                LoadUserData::USER_PASSWORD_2
-            ),
+            self::generateApiAuthHeader(LoadUserData::USER_NAME_2),
             false
         );
 
@@ -423,10 +405,7 @@ class RelatedProductTest extends RestJsonApiTestCase
                 'id'     => '<toString(@related-product-product-3-product-1->id)>',
             ],
             [],
-            self::generateWsseAuthHeader(
-                CatalogLoadUserData::USER_NAME_CATALOG_MANAGER,
-                CatalogLoadUserData::USER_PASSWORD_CATALOG_MANAGER
-            ),
+            self::generateApiAuthHeader(CatalogLoadUserData::USER_NAME_CATALOG_MANAGER),
             false
         );
 

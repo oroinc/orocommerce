@@ -36,7 +36,7 @@ class WebCatalogControllerTest extends WebTestCase
                 '_widgetContainer' => 'dialog',
             ],
             [],
-            $this->generateWsseAuthHeader()
+            self::generateApiAuthHeader()
         );
 
         $form = $crawler->selectButton('Save')->form();

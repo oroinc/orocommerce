@@ -1558,7 +1558,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $response = $this->postSubresource(
             ['entity' => 'shoppinglists', 'id' => 'default', 'association' => 'items'],
             'add_line_item.yml',
-            self::generateWsseAuthHeader('john@example.com', 'john')
+            self::generateApiAuthHeader('john@example.com')
         );
 
         $responseContent = $this->updateResponseContent('add_line_item.yml', $response);

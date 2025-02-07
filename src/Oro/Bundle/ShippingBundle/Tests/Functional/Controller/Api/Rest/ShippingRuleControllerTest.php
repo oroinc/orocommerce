@@ -31,7 +31,7 @@ class ShippingRuleControllerTest extends WebTestCase
             'POST',
             $this->getUrl('oro_api_disable_shippingrules', ['id' => $shippingRule->getId()]),
             [],
-            static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
+            static::generateApiAuthHeader(LoadUserData::USER_EDITOR)
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);
@@ -46,7 +46,7 @@ class ShippingRuleControllerTest extends WebTestCase
             'POST',
             $this->getUrl('oro_api_enable_shippingrules', ['id' => $shippingRule->getId()]),
             [],
-            static::generateWsseAuthHeader(LoadUserData::USER_EDITOR, LoadUserData::USER_EDITOR)
+            static::generateApiAuthHeader(LoadUserData::USER_EDITOR)
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);

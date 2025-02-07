@@ -15,10 +15,6 @@ Oro\Bundle\WebCatalogBundle\Entity\WebCatalog:
         name: 'Web Catalog 2'
         organization: '@organization'
 
-Oro\Bundle\CustomerBundle\Entity\CustomerUserApi:
-    api_key_customer_user{1..2}:
-        apiKey: 'user<current()>'
-
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     customer_user{1..2}:
         confirmed: true
@@ -31,8 +27,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         website: '@website'
         owner: '@user'
         organization: '@organization'
-        __calls:
-            - addApiKey: ['@api_key_customer_user<current()>']
 
 Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     customer_group{1..2}:

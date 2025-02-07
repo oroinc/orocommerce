@@ -19,10 +19,6 @@ Oro\Bundle\CustomerBundle\Entity\Customer:
         organization: '@organization'
         owner: '@user'
 
-Oro\Bundle\CustomerBundle\Entity\CustomerUserApi:
-    api_key_john:
-        apiKey: 'john'
-
 Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     amanda:
         email: 'AmandaRCole@example.org'
@@ -50,8 +46,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         website: '@website'
         owner: '@user'
         organization: '@organization'
-        __calls:
-            - addApiKey: ['@api_key_john']
     customer_user1:
         email: 'bob_doe@example.org'
         username: 'user1@example.com'

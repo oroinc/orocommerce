@@ -87,7 +87,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->cget(
             ['entity' => 'webcatalogtree'],
             [],
-            self::generateWsseAuthHeader('user1@example.com', 'user1')
+            self::generateApiAuthHeader('user1@example.com')
         );
         $this->assertResponseContains(
             [
@@ -115,7 +115,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             [],
             array_merge(
                 ['HTTP_X-Localization-ID' => $this->getReference('es')->getId()],
-                self::generateWsseAuthHeader('user1@example.com', 'user1')
+                self::generateApiAuthHeader('user1@example.com')
             )
         );
         $this->assertResponseContains(
@@ -352,7 +352,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node14_customer1->id)>'],
             [],
-            self::generateWsseAuthHeader('user1@example.com', 'user1')
+            self::generateApiAuthHeader('user1@example.com')
         );
         $this->assertResponseContains(
             ['data' => ['type' => 'webcatalogtree', 'id' => '<toString(@catalog1_node14_customer1->id)>']],
@@ -365,7 +365,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node141->id)>'],
             [],
-            self::generateWsseAuthHeader('user1@example.com', 'user1')
+            self::generateApiAuthHeader('user1@example.com')
         );
         $this->assertResponseContains(
             ['data' => ['type' => 'webcatalogtree', 'id' => '<toString(@catalog1_node141->id)>']],
@@ -414,7 +414,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node15_customer_group1->id)>'],
             [],
-            self::generateWsseAuthHeader('user1@example.com', 'user1')
+            self::generateApiAuthHeader('user1@example.com')
         );
         $this->assertResponseContains(
             ['data' => ['type' => 'webcatalogtree', 'id' => '<toString(@catalog1_node15_customer_group1->id)>']],
@@ -427,7 +427,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node151->id)>'],
             [],
-            self::generateWsseAuthHeader('user1@example.com', 'user1')
+            self::generateApiAuthHeader('user1@example.com')
         );
         $this->assertResponseContains(
             ['data' => ['type' => 'webcatalogtree', 'id' => '<toString(@catalog1_node151->id)>']],
@@ -440,7 +440,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node15_customer_group1->id)>'],
             [],
-            self::generateWsseAuthHeader('user2@example.com', 'user2'),
+            self::generateApiAuthHeader('user2@example.com'),
             false
         );
         $this->assertResponseValidationError(
@@ -496,7 +496,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             [],
             array_merge(
                 ['HTTP_X-Localization-ID' => $this->getReference('es')->getId()],
-                self::generateWsseAuthHeader('user1@example.com', 'user1')
+                self::generateApiAuthHeader('user1@example.com')
             )
         );
         $this->assertResponseContains(
@@ -510,7 +510,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node1311_customer1->id)>'],
             [],
-            self::generateWsseAuthHeader('user1@example.com', 'user1'),
+            self::generateApiAuthHeader('user1@example.com'),
             false
         );
         $this->assertResponseValidationError(
@@ -566,7 +566,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             [],
             array_merge(
                 ['HTTP_X-Localization-ID' => $this->getReference('es')->getId()],
-                self::generateWsseAuthHeader('user1@example.com', 'user1')
+                self::generateApiAuthHeader('user1@example.com')
             )
         );
         $this->assertResponseContains(
@@ -580,7 +580,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node13111->id)>'],
             [],
-            self::generateWsseAuthHeader('user1@example.com', 'user1'),
+            self::generateApiAuthHeader('user1@example.com'),
             false
         );
         $this->assertResponseValidationError(
@@ -1017,7 +1017,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
         $response = $this->get(
             ['entity' => 'webcatalogtree', 'id' => '<toString(@catalog1_node11->id)>'],
             ['fields[webcatalogtree]' => 'content'],
-            self::generateWsseAuthHeader('user1@example.com', 'user1')
+            self::generateApiAuthHeader('user1@example.com')
         );
         $this->assertResponseContains(
             [
@@ -1065,7 +1065,7 @@ class WebCatalogTreeTest extends WebCatalogTreeTestCase
             ['fields[webcatalogtree]' => 'content'],
             array_merge(
                 ['HTTP_X-Localization-ID' => $this->getReference('es')->getId()],
-                self::generateWsseAuthHeader('user1@example.com', 'user1')
+                self::generateApiAuthHeader('user1@example.com')
             )
         );
         $this->assertResponseContains(

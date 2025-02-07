@@ -187,7 +187,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 
         $dialogUrl = $link->attr('data-dialog-url');
         $this->assertNotEmpty($dialogUrl);
-        $crawler = $this->client->request('GET', $dialogUrl, [], [], $this->generateWsseAuthHeader());
+        $crawler = $this->client->request('GET', $dialogUrl, [], [], self::generateApiAuthHeader());
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
         $button = $crawler->selectButton('Submit');
         $form = $button->form(['oro_workflow_transition[notes]' => 'test notes']);
@@ -286,7 +286,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
             $link->attr('data-transition-url'),
             [],
             [],
-            $this->generateWsseAuthHeader()
+            self::generateApiAuthHeader()
         );
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);

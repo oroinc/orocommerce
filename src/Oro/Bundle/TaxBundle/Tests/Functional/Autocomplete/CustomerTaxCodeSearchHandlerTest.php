@@ -14,7 +14,7 @@ class CustomerTaxCodeSearchHandlerTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateWsseAuthHeader());
+        $this->initClient([], self::generateApiAuthHeader());
         $this->loadFixtures([LoadCustomerTaxCodes::class]);
 
         $this->searchHandler = $this->getContainer()->get('oro_tax.form.autocomplete.customer_tax_code.search_handler');

@@ -66,7 +66,7 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
     /**
      * @return array
      */
-    abstract protected function getWsseAuthHeader();
+    abstract protected function getAuthHeader();
 
     /**
      * @param object $entity
@@ -94,14 +94,14 @@ abstract class AbstractRfqFrontofficeDefaultWorkflowTest extends FrontendWebTest
         $dialogUrl = $link->attr('data-dialog-url');
         $transitionUrl = $link->attr('data-transition-url');
         if ($dialogUrl) {
-            $crawler = $this->client->request('GET', $dialogUrl, [], [], $this->getWsseAuthHeader());
+            $crawler = $this->client->request('GET', $dialogUrl, [], [], $this->generateApiAuthHeader());
             $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
             $button = $crawler->selectButton($submitButton);
             $form = $button->form($formValues);
             $this->client->followRedirects(true);
             $this->client->submit($form);
         } else {
-            $this->ajaxRequest('POST', $transitionUrl, [], [], $this->getWsseAuthHeader());
+            $this->ajaxRequest('POST', $transitionUrl, [], [], $this->generateApiAuthHeader());
             $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
         }
 

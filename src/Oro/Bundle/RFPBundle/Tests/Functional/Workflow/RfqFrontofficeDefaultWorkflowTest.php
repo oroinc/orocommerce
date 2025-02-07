@@ -168,9 +168,9 @@ class RfqFrontofficeDefaultWorkflowTest extends AbstractRfqFrontofficeDefaultWor
     }
 
     #[\Override]
-    protected function getWsseAuthHeader()
+    protected function getAuthHeader()
     {
-        return self::generateWsseAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1);
+        return self::generateApiAuthHeader(LoadUserData::ACCOUNT1_USER1);
     }
 
     private function getExpectedTransitions(): array

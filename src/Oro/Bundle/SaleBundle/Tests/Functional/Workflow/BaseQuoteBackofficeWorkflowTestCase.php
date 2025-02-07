@@ -182,7 +182,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $dialogUrl = $link->attr('data-dialog-url');
         $this->assertNotEmpty($dialogUrl);
 
-        $crawler = $this->client->request('GET', $dialogUrl, [], [], $this->generateWsseAuthHeader());
+        $crawler = $this->client->request('GET', $dialogUrl, [], [], self::generateApiAuthHeader());
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $form = $crawler->selectButton('Submit')->form();
@@ -224,7 +224,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
             $link->attr('data-transition-url'),
             [],
             [],
-            $this->generateWsseAuthHeader()
+            self::generateApiAuthHeader()
         );
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
@@ -287,7 +287,7 @@ abstract class BaseQuoteBackofficeWorkflowTestCase extends WebTestCase
         $dialogUrl = $link->attr('data-dialog-url');
         $this->assertNotEmpty($dialogUrl);
 
-        $crawler = $this->client->request('GET', $dialogUrl, [], [], $this->generateWsseAuthHeader());
+        $crawler = $this->client->request('GET', $dialogUrl, [], [], self::generateApiAuthHeader());
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         $formNode = $crawler->filter('form[name=oro_workflow_transition]');
