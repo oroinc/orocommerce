@@ -116,7 +116,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         foreach ($entities as $entity) {
             $providers = $this->subtotalProviderRegistry->getSupportedProviders($entity);
             foreach ($providers as $provider) {
-                $subtotals = $this->summTotals($subtotals, $this->getEntitySubtotals($provider, $entity));
+                $subtotals = $this->sumTotals($subtotals, $this->getEntitySubtotals($provider, $entity));
             }
         }
 
@@ -127,7 +127,7 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         return new ArrayCollection($subtotals);
     }
 
-    private function summTotals(array $totals, array $providerTotals): array
+    private function sumTotals(array $totals, array $providerTotals): array
     {
         /**
          * @var string $totalKey

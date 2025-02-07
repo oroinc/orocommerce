@@ -13,6 +13,7 @@ use Oro\Bundle\ProductBundle\Api\Model\ProductLatestPurchase;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeProviderInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Loads product latest purchases.
@@ -114,15 +115,18 @@ class LoadProductLatestPurchases implements ProcessorInterface
     private function getLatestIdentifiers(Criteria $criteria): array
     {
         $em = $this->doctrineHelper->getEntityManager(OrderLineItem::class);
+        /** @var QueryBuilder $qb */
         $qb = $em->createQueryBuilder();
 
         $groupByFields = $this->getGroupByFields($criteria);
-        $concatFields = array_map(function (string $field) {
-            return !in_array($field, ['oi.productUnitCode', 'oi.currency']) ? "IDENTITY($field)" : $field;
+
+        $formatFields = array_map(function (string $field) {
+            return !in_array($field, ['oi.productUnitCode', 'oi.currency']) ? "IDENTITY(%s)" : '%s';
         }, $groupByFields);
+
         $qb->select(
             "CONCAT_WS('_',
-                " . implode(', ', $concatFields) . ",
+                " . QueryBuilderUtil::sprintf(implode(',', $formatFields), ...$groupByFields) . ",
                 MAX(o.createdAt)
             ) as latestIdentifier"
         )
@@ -130,7 +134,11 @@ class LoadProductLatestPurchases implements ProcessorInterface
             ->innerJoin('oi.orders', 'o');
 
         $this->applyCriteriaToQueryBuilder($criteria, $qb);
-        $qb->groupBy(implode(', ', $groupByFields));
+
+        foreach ($groupByFields as $field) {
+            QueryBuilderUtil::checkField($field);
+            $qb->addGroupBy($field);
+        }
 
         return $qb->getQuery()->getArrayResult();
     }
@@ -141,10 +149,12 @@ class LoadProductLatestPurchases implements ProcessorInterface
         $qb = $em->createQueryBuilder();
 
         $groupByFields = $this->getGroupByFields($criteria);
-        $concatFields = array_map(function (string $field) {
-            return !in_array($field, ['oi.productUnitCode', 'oi.currency']) ? "IDENTITY($field)" : $field;
+        $formatFields = array_map(function (string $field) {
+            return !in_array($field, ['oi.productUnitCode', 'oi.currency']) ? "IDENTITY(%s)" : '%s';
         }, $groupByFields);
-        $concatFields = implode(', ', $concatFields) . ', o.createdAt';
+
+        $groupByFields[] = 'o.createdAt';
+        $formatFields[] = '%s';
 
         $qb->select(
             'IDENTITY(o.website) as websiteId',
@@ -160,7 +170,9 @@ class LoadProductLatestPurchases implements ProcessorInterface
             ->innerJoin('oi.orders', 'o')
             ->where(
                 $qb->expr()->in(
-                    "CONCAT_WS('_', $concatFields)",
+                    "CONCAT_WS('_', " .
+                    QueryBuilderUtil::sprintf(implode(',', $formatFields), ...$groupByFields) .
+                    ")",
                     ":latestIdentifiers"
                 )
             )
@@ -193,10 +205,12 @@ class LoadProductLatestPurchases implements ProcessorInterface
 
             switch ($comparison->getOperator()) {
                 case Comparison::EQ:
+                    QueryBuilderUtil::checkField($field);
                     $qb->andWhere($qb->expr()->eq($mappedField, ":$field"))
                         ->setParameter($field, $value);
                     break;
                 case Comparison::IN:
+                    QueryBuilderUtil::checkField($field);
                     $qb->andWhere($qb->expr()->in($mappedField, ":$field"))
                         ->setParameter($field, $value);
                     break;

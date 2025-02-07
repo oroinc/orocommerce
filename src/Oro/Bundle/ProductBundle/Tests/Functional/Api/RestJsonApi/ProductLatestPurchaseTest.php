@@ -12,14 +12,14 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
+ *
+ * @dbIsolationPerTest
  */
 class ProductLatestPurchaseTest extends RestJsonApiTestCase
 {
     #[\Override]
     protected function setUp(): void
     {
-        $this->markTestSkipped('will be unskipped in BB-24895');
-
         parent::setUp();
         $this->loadFixtures([
             LoadProductLatestPurchasesData::class
