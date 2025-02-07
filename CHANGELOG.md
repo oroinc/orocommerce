@@ -26,6 +26,11 @@ The current file describes significant changes in the code that may affect the u
 
 ### Changed
 
+#### OrderBundle
+* Moved logic for address copying from `\Oro\Bundle\OrderBundle\Manager\AbstractAddressManager` to `\Oro\Bundle\CustomerBundle\Utils\AddressCopier`.
+* Made `\Oro\Bundle\OrderBundle\Provider\OrderAddressProvider` resettable.
+* Changed logic from readonly to disabled fields when no custom address is selected in address book address component. 
+
 #### CheckoutBundle
 
 * CheckoutLineItem entity was made extendable
@@ -35,6 +40,10 @@ The current file describes significant changes in the code that may affect the u
 * Migrated the `b2b_flow_checkout_single_page_new_shipping_address` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckoutSinglePage\Operation\NewShippingAddress`.
 * Migrated the `oro_checkout_frontend_start_from_order` operation body to the class `\Oro\Bundle\CheckoutBundle\Workflow\Operation\StartFromOrder`.
 * Changed logic of `\Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutListener` that executes restart the for guest checkout after user login.
+* Decoupled the following form types to separate storefront and backoffice:
+  - `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType` and `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressType`
+  - `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType` and `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType`  
+* Fixed billing and shipping address duplicating on single-page checkout.
 
 ##### Checkout start transitions
 
@@ -98,6 +107,31 @@ Previously known as GOD Object
 
 ### Added
 
+#### SaleBundle
+* Added the following system config options to enable/disable address validation scenario on quote for shipping address on backoffice:
+  - `oro_sale.validate_shipping_addresses__backoffice_quote_page`
+* Added validatedAt field to `\Oro\Bundle\SaleBundle\Entity\QuoteAddress` entity.
+* Added validatedAt field to `\Oro\Bundle\SaleBundle\Form\Type\QuoteAddressType` form type.
+* Added `\Oro\Bundle\SaleBundle\Form\Type\QuoteAddressSelectType` that should be used for address book address component for quote form on backoffice.  
+* Added `oroquote/js/app/views/quote-address-validated-at-view` that intercepts form submit and address book address change to validate address via Address Validation feature on backoffice quote create and edit pages.
+
+#### CheckoutBundle
+* Added the following system config options to enable/disable address validation scenarios on checkout for billing and shipping addresses on storefront:
+  - `oro_checkout.validate_shipping_addresses__checkout`
+  - `oro_checkout.validate_billing_addresses__checkout`
+* Added `\Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Operation\NewBillingAddress` that contains full logic for the action operation 'b2b_flow_checkout_new_billing_address'.
+* Added `\Oro\Bundle\CheckoutBundle\Workflow\B2bFlowCheckout\Operation\NewShippingAddress` that contains full logic for the action operation 'b2b_flow_checkout_new_shipping_address'.
+* Added `validatedAt` field to `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType` form type.
+* Added the following js scripts on multi-step and single-page checkout to intercepts submit and address change to validate address via Address Validation feature:
+  - `orocheckout/js/app/views/checkout-address-validation-dialog-widget`
+  - `orocheckout/js/app/views/checkout-multi-step-address-validated-at-view`
+  - `orocheckout/js/app/views/checkout-multi-step-address-validation-view`
+  - `orocheckout/js/app/views/checkout-multi-step-address-validation-view`
+  - `orocheckout/js/app/views/checkout-base-new-address-validated-at-view`
+  - `orocheckout/js/app/views/checkout-multi-step-new-address-validated-at-view`
+  - `orocheckout/js/app/views/checkout-single-page-address-validation-view`
+  - `orocheckout/js/app/views/checkout-single-page-new-address-validated-at-view`
+
 #### OrderBundle
 * Added a new backend `ordersubtotals` API resource representing calculated subtotals for a specific order.
 * Added an `orderSubtotals` relation for the backend `orders` API resource.
@@ -106,6 +140,12 @@ Previously known as GOD Object
   relation of OrderLineItem entity should be manually updated after update. 
 * Relation between Order and OrderShippingTracking entities changed to ManyToMany. Reports and segments that use `order`
   relation of OrderShippingTracking entity should be manually updated after update.
+* Added the following system config options to enable/disable address validation scenarios for order billing and shipping addresses on backoffice:
+  - `oro_order.validate_shipping_addresses__backoffice_order_page`
+  - `oro_order.validate_billing_addresses__backoffice_order_page`
+* Added validatedAt field to `\Oro\Bundle\OrderBundle\Entity\OrderAddress` entity.
+* Added validatedAt field to `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressType` form type.
+* Added `oroorder/js/app/views/order-address-validated-at-view` that intercepts form submit and address book address change to validate address via Address Validation feature on backoffice order create and edit pages.
 
 #### ProductBundle
 * Added a new frontend `inventory-switcher` filter.

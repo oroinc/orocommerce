@@ -519,5 +519,5 @@ oro.address_validation.system_configuration:
         validate_shipping_addresses:
             backoffice:
                 quote_page:
-                    label: Validate Shipping Addresses on Back-Office Quote Page
+                    label: Validate Shipping Addresses on the Quote Page
 

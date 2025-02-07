@@ -383,8 +383,8 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
       options:
         mapping:
-          Validate Shipping Addresses on Back-Office Quote Page: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][value]'
-          Validate Shipping Addresses on Back-Office Quote Page Use Default: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][use_parent_scope_value]'
+          Validate Shipping Addresses on the Quote Page: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][value]'
+          Validate Shipping Addresses on the Quote Page Use Default: 'address_validation[oro_sale___validate_shipping_addresses__backoffice_quote_page][use_parent_scope_value]'
 
   pages:
     Quote Create:

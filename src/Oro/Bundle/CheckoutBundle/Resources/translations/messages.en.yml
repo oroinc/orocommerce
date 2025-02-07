@@ -550,11 +550,11 @@ oro.address_validation.system_configuration:
     fields:
         validate_shipping_addresses:
             backoffice:
-                label: Validate Shipping Addresses in Back-Office
+                label: Validate Shipping Addresses
                 order_page:
-                    label: Validate Shipping Addresses on Back-Office Order Page
+                    label: Validate Shipping Addresses on the Order Page
         validate_billing_addresses:
             backoffice:
-                label: Validate Billing Addresses in Back-Office
+                label: Validate Billing Addresses
                 order_page:
-                    label: Validate Billing Addresses on Back-Office Order Page
+                    label: Validate Billing Addresses on the Order Page

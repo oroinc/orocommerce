@@ -19,10 +19,10 @@ Feature: Address Validation - Edit Order - Dialog Not Displayed When Feature Not
     And I submit form
     Then I should see "Configuration saved" flash message
     When I fill "Address Validation Configuration Order Form" with:
-      | Validate Shipping Addresses on Back-Office Order Page Use Default | false |
-      | Validate Billing Addresses on Back-Office Order Page Use Default  | false |
-      | Validate Shipping Addresses on Back-Office Order Page             | false |
-      | Validate Billing Addresses on Back-Office Order Page              | false |
+      | Validate Shipping Addresses on the Order Page Use Default | false |
+      | Validate Billing Addresses on the Order Page Use Default  | false |
+      | Validate Shipping Addresses on the Order Page             | false |
+      | Validate Billing Addresses on the Order Page              | false |
     And I submit form
     Then I should see "Configuration saved" flash message
 

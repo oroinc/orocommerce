@@ -18,10 +18,10 @@ Feature: Address Validation - Edit Order - Validate Few Addresses
     And I submit form
     Then I should see "Configuration saved" flash message
     When I fill "Address Validation Configuration Order Form" with:
-      | Validate Shipping Addresses on Back-Office Order Page Use Default | false |
-      | Validate Billing Addresses on Back-Office Order Page Use Default  | false |
-      | Validate Shipping Addresses on Back-Office Order Page             | true  |
-      | Validate Billing Addresses on Back-Office Order Page              | true  |
+      | Validate Shipping Addresses on the Order Page Use Default | false |
+      | Validate Billing Addresses on the Order Page Use Default  | false |
+      | Validate Shipping Addresses on the Order Page             | true  |
+      | Validate Billing Addresses on the Order Page              | true  |
     And I submit form
     Then I should see "Configuration saved" flash message
 

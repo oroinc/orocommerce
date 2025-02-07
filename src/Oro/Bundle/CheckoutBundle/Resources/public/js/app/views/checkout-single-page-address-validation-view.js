@@ -126,7 +126,8 @@ const CheckoutSinglePageAddressValidationView = BaseView.extend({
             }
         }
 
-        return !this.getAddressBookAddressData(this.$addressBook.val(), 'validatedAt');
+        return this.$addressBook.val() !== '' &&
+            !this.getAddressBookAddressData(this.$addressBook.val(), 'validatedAt');
     },
 
     /**

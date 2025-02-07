@@ -21,8 +21,8 @@ Feature: Address Validation - Edit Quote - Dialog Not Displayed When Feature Not
     And I submit form
     Then I should see "Configuration saved" flash message
     When I fill "Address Validation Configuration Quote Form" with:
-      | Validate Shipping Addresses on Back-Office Quote Page Use Default | false |
-      | Validate Shipping Addresses on Back-Office Quote Page             | false |
+      | Validate Shipping Addresses on the Quote Page Use Default | false |
+      | Validate Shipping Addresses on the Quote Page             | false |
     And I submit form
     Then I should see "Configuration saved" flash message
 

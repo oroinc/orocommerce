@@ -166,6 +166,7 @@ const CheckoutBaseNewAddressValidatedAtView = BaseView.extend({
             addressFormDataArray = $(event.addressForm)
                 .find(':input')
                 .not('[data-name="field__id"]')
+                .not('[data-name="field__visitor-email"]')
                 .serializeArray();
         }
 
