@@ -17,7 +17,7 @@ class ChangeShippingOriginToOrigin implements Migration
     {
         $queries->addQuery(new ParametrizedSqlMigrationQuery(
             'UPDATE oro_config_value SET text_value = :new_value'
-            . ' WHERE name = :name AND section = :section AND section = :section',
+            . ' WHERE name = :name AND section = :section AND text_value = :old_value',
             [
                 'new_value' => 'origin',
                 'name' => 'use_as_base_by_default',
