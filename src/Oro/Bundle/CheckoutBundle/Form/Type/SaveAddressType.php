@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Form\Type;
 
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\SecurityBundle\Acl\Extension\ObjectIdentityHelper;
@@ -27,15 +26,13 @@ class SaveAddressType extends AbstractType
     #[\Override]
     public function getParent(): ?string
     {
-        return $this->isCreateAllowed(CustomerUserAddress::class) && $this->isCreateAllowed(CustomerAddress::class)
-            ? CheckboxType::class
-            : HiddenType::class;
+        return $this->isCreateAllowed(CustomerUserAddress::class) ? CheckboxType::class : HiddenType::class;
     }
 
     #[\Override]
     public function configureOptions(OptionsResolver $resolver)
     {
-        if (!$this->isCreateAllowed(CustomerUserAddress::class) && !$this->isCreateAllowed(CustomerAddress::class)) {
+        if (!$this->isCreateAllowed(CustomerUserAddress::class)) {
             $resolver->setDefaults([
                'data' => 0
             ]);
