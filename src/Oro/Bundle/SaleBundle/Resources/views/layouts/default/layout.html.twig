@@ -4,7 +4,7 @@
 
 {% block _sales_menu_user_info_widget %}
     <div class="information-nav" id="sales-contact-info">
-        <h3 class="information-nav__title">{{ 'oro.commercemenu.frontend.navigation.items.sales.label'|trans }}</h3>
+        <p class="h6 information-nav__title">{{ 'oro.commercemenu.frontend.navigation.items.sales.label'|trans }}</p>
         <ul class=" information-nav__list">
             {% if blockView.attributes.contactInfo.name %}
                 <li class=" information-nav__item first">
@@ -52,7 +52,7 @@
                 data-page-component-module="oroui/js/app/components/viewport-component"
                 data-page-component-options="{{ collapseOptions|json_encode() }}"
             >
-                <h3 class="information-nav__title">{{ dataText }}</h3>
+                <p class="h6 information-nav__title">{{ dataText }}</p>
                 <ul class="information-nav__list">
                 {% for row in infoRows %}
                     <li class="information-nav__item first">
