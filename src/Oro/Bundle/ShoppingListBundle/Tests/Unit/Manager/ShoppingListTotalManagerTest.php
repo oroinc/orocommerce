@@ -239,7 +239,7 @@ class ShoppingListTotalManagerTest extends \PHPUnit\Framework\TestCase
         $this->subtotalProvider->expects($this->once())
             ->method('getSubtotalByCurrency')
             ->with($shoppingList, self::USD)
-            ->willReturn(new Subtotal()->setCurrency(self::USD)->setAmount(100));
+            ->willReturn((new Subtotal())->setCurrency(self::USD)->setAmount(100));
 
         $this->totalManager->recalculateTotals($shoppingList, true);
         $totals = $shoppingList->getTotals();
