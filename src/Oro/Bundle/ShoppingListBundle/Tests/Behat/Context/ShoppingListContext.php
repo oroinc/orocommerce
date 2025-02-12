@@ -112,4 +112,16 @@ class ShoppingListContext extends OroFeatureContext implements OroPageObjectAwar
             sprintf('Element %s was expected to have class %s', $elementName, $className)
         );
     }
+
+    /**
+     * @When /^I click on "Shopping Lists" in the sidebar$/
+     */
+    public function iClickOnShoppingListsInSidebar(): void
+    {
+        $shoppingListsLink = $this->createElement('SidebarShoppingListsLink');
+        if (!$shoppingListsLink->isVisible()) {
+            throw new \Exception('The "Shopping Lists" link in the sidebar is not visible.');
+        }
+        $shoppingListsLink->click();
+    }
 }

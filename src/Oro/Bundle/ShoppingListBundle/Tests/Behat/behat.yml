@@ -52,6 +52,9 @@ oro_behat_extension:
     ShoppingListEditPopupRows:
       selector: '.shopping-lists-popup'
 
+    SidebarShoppingListsLink:
+      selector: '.primary-menu__item a[href="/customer/shoppinglist/all"]'
+
     FirstRowAcceptButton:
       selector: '.shopping-lists-popup .btn'
 

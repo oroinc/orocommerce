@@ -34,6 +34,15 @@ action_groups:
                 actions:
                     - '@assign_value': [$.checkout.sourceEntity.customerUser, $.checkout.customerUser]
                     - '@assign_value': [$.checkout.sourceEntity.customer, $.checkout.customerUser.customer]
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $.checkout.sourceEntity.totals
+                        actions:
+                            - '@foreach':
+                                  array: $.checkout.sourceEntity.totals
+                                  value: $.result.shoppingListTotal
+                                  actions:
+                                      - '@assign_value': [$.result.shoppingListTotal.customerUser, $.checkout.customerUser]
             - '@assign_constant_value': [$.typeShippingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_SHIPPING]
             - '@call_method':
                 conditions:

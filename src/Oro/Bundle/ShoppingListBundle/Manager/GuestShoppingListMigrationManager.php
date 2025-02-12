@@ -97,6 +97,8 @@ class GuestShoppingListMigrationManager
         foreach ($lineItems as $lineItem) {
             $lineItem->setCustomerUser($customerUser);
         }
+        $this->migrateShoppingListTotals($shoppingList, $customerUser);
+        $shoppingList->setCustomerUser($customerUser);
         $this->currentShoppingListManager->setCurrent($customerUser, $shoppingList);
         $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class)->flush();
 
@@ -159,5 +161,23 @@ class GuestShoppingListMigrationManager
 
         $event = new ShoppingListEventPostTransfer($shoppingList, $currentShoppingList);
         $this->eventDispatcher->dispatch($event, ShoppingListEventPostTransfer::NAME);
+    }
+
+    private function migrateShoppingListTotals(ShoppingList $shoppingList, CustomerUser $customerUser): void
+    {
+        $guestTotals = $shoppingList->getTotalsForCustomerUser();
+
+        foreach ($guestTotals as $guestTotal) {
+            $existingTotal = $shoppingList->getTotalForCustomerUser(
+                $guestTotal->getCurrency(),
+                $customerUser
+            );
+
+            if ($existingTotal) {
+                $shoppingList->removeTotal($guestTotal);
+            } else {
+                $guestTotal->setCustomerUser($customerUser);
+            }
+        }
     }
 }

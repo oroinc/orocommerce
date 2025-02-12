@@ -24,7 +24,7 @@ datagrids:
                         - join: 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal'
                           alias: cachedTotal
                           conditionType: WITH
-                          condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = shopping_list.currency"
+                          condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = shopping_list.currency AND cachedTotal.valid = true"
         columns:
             id:
                 label:         oro.shoppinglist.id.label
