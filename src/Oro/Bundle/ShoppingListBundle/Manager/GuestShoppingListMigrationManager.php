@@ -94,6 +94,10 @@ class GuestShoppingListMigrationManager
         foreach ($lineItems as $lineItem) {
             $lineItem->setCustomerUser($customerUser);
         }
+        foreach ($shoppingList->getTotals() as $shoppingListTotal) {
+            $shoppingListTotal->setCustomerUser($customerUser);
+        }
+        $shoppingList->setCustomerUser($customerUser);
         $this->currentShoppingListManager->setCurrent($customerUser, $shoppingList);
         $this->doctrineHelper->getEntityManagerForClass(ShoppingList::class)->flush();
 

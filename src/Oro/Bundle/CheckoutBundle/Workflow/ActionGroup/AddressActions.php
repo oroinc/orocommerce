@@ -49,6 +49,9 @@ class AddressActions implements AddressActionsInterface
         if ($sourceEntity instanceof ShoppingList && !$sourceEntity->getCustomerUser()) {
             $sourceEntity->setCustomer($checkout->getCustomer());
             $sourceEntity->setCustomerUser($checkout->getCustomerUser());
+            foreach ($sourceEntity->getTotals() as $shoppingListTotal) {
+                $shoppingListTotal->setCustomerUser($checkout->getCustomerUser());
+            }
         }
 
         $billingAddressHasShipping = true;
