@@ -22,7 +22,7 @@ Feature: Shopping list subtotal and currency
     And click "Save settings"
     Then I should see "Configuration saved" flash message
 
-  Scenario: Create shopping list on frontend
+  Scenario: Buyer creates a shopping list on the storefront
     Given I proceed as the Buyer
     And I signed in as AmandaRCole@example.org on the store frontend
     And I select "€" currency
@@ -37,7 +37,26 @@ Feature: Shopping list subtotal and currency
     When I click "Add to Shopping List"
     And I should see 'Product has been added to "Shopping List"' flash message
 
-  Scenario: Check shopping lists subtotals and currencies
+  # These scenarios ensure shopping_list_total is updated with isValid = true
+  Scenario: Buyer (Amanda) updates Shopping List currency to USD
+    Given I proceed as the Buyer
+    And I signed in as AmandaRCole@example.org on the store frontend
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
+    And I select "$" currency
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
+
+  Scenario: Buyer (Nancy) updates Shopping List currency to EUR
+    Given I proceed as the Buyer
+    And I signed in as NancyJSallee@example.org on the store frontend
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
+    And I select "€" currency
+    And I click "Account Dropdown"
+    And I click on "Shopping Lists"
+
+  Scenario: Admin verifies shopping list subtotals and currencies
     Given I proceed as the Admin
     And I go to Sales/Shopping Lists
     And records in grid should be 4
