@@ -14,6 +14,8 @@ $responsive-shopping-list-edit-select-row-cell-width-mobile: 50px !default;
 $responsive-shopping-list-edit-sub-row-offset: (
     $responsive-shopping-list-edit-select-row-cell-width-mobile * .5
 ) !default;
+// Actions cannot be too close together because it makes them difficult to tap accurately on touch devices
+$responsive-shopping-list-edit-action-launchers-list-gap-mobile: 2px !default;
 $responsive-shopping-list-edit-select-row-cell-height-mobile: $product-item-image-holder-tiny-height !default;
 
 $responsive-shopping-list-edit-action-cell-width-mobile: 44px * 2 !default;

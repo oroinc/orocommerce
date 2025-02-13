@@ -1,8 +1,6 @@
-<% var labelId = _.uniqueId('datagrid-toolbar-label-') %>
 <select class="oro-select2 input-widget"
         data-skip-input-widgets
         <% if (inlineSortingLabel) { %>data-label="<%-_.__('oro.product.frontend.datagrid.toolbar_sorting.label') %>:"<% } %>
-        aria-labelledby="<%- labelId %>"
     >
     <% if (disableNotSelectedOption === false || currentDirection === null) { %>
         <option value="not-selected" <% if (currentDirection === null) { %>selected="selected"<% } %>>

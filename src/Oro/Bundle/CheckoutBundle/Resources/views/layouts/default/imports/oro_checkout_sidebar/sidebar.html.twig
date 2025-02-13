@@ -76,7 +76,7 @@
                             </span>
                         </div>
                         <div class="checkout-navigation__base">
-                            <h5 class="checkout-navigation__title transition-content-node {{ isCurrent ? 'checkout-navigation__title--current' : '' }}" style="--step-index: {{ stepNum }}">
+                            <p class="checkout-navigation__title transition-content-node {{ isCurrent ? 'checkout-navigation__title--current' : '' }}" style="--step-index: {{ stepNum }}">
                                 <span data-role="transition-trigger">{{ step.label|trans({},'workflows') }}</span>
                                 {% if isComplete and editTransitions[step.name] is defined and block.step_edit_button is defined %}
                                     {% set editTransitionData = editTransitions[step.name] %}
@@ -87,7 +87,7 @@
                                         }
                                     ) }}
                                 {% endif %}
-                            </h5>
+                            </p>
                             {% set informationBlockId = step.name ~ '_information' %}
                             {% if isComplete and block[informationBlockId] is defined %}
                                 <div class="checkout-navigation__content transition-content-node " style="--step-index: {{ stepNum }}" aria-hidden="true">

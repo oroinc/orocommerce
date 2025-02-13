@@ -261,7 +261,7 @@ about:
                         </div>
                     </div>
                     <div class="grid-col-8 grid-col-tablet-6 grid-col-mobile-big-12">
-                        <iframe class="iframe-map" frameborder="0" src="https://maps.google.com/maps?&q=Box 564, Disneyland&z=7&t=q&output=embed"></iframe>
+                        <iframe title="Address Overview Map" class="iframe-map" frameborder="0" src="https://maps.google.com/maps?&q=Box 564, Disneyland&z=7&t=q&output=embed"></iframe>
                    </div>
                 </div>
             </div>

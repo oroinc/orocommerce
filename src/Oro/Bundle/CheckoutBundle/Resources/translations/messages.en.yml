@@ -280,6 +280,7 @@ oro:
             subtotal: Subtotal
             edit_order:
                 title: Edit items
+                aria_label: Proceed to edit products
             item: Product
             sku: SKU
             # used in old themes
@@ -536,7 +537,9 @@ oro:
                     maximum_order_amount_alert: 'Please remove at least %difference% to proceed.'
                 back_action:
                     text: 'Back'
+                summary_block.aria_label: 'Expand or Collapse Summary Section'
             start_from_order: 'Re-Order'
+
 
         errors:
             payment:

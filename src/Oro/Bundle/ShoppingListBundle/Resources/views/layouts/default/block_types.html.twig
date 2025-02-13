@@ -13,11 +13,12 @@
     {% endif %}
 
     <div {{ block('block_attributes') }}>
+        {% set isOpen = (open == 1 or open == 'true') ? 'true' : 'false' %}
         <button class="btn btn--circle btn--size-small {{ "#{class_prefix ?: 'summary-collapse'}__toggle" }} {{ open ? '' : 'collapsed' }}"
                 type="button"
                 data-toggle="collapse"
                 data-target="#{{ collapseId }}"
-                aria-expanded="{{ open }}"
+                aria-expanded="{{ isOpen }}"
                 aria-controls="{{ collapseId }}"
                 aria-label="{{ 'oro.frontend.shoppinglist.summary_block.aria_label'|trans }}"
         >

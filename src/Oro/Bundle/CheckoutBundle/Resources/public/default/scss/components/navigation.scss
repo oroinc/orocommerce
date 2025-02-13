@@ -43,9 +43,13 @@
         align-items: center;
         gap: spacing('md');
 
-        color: $checkout-navigation-title-color;
         min-height: $checkout-navigation-icon-size;
+        margin-top: 0;
         margin-bottom: spacing('xs');
+
+        color: $checkout-navigation-title-color;
+        font-weight: $headline5-font-weight;
+        line-height: $headline5-line-height;
 
         &:has(.transition-step-edit-button) {
             grid-template-columns: minmax(0, 1fr) auto;

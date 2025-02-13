@@ -353,6 +353,10 @@
             &:empty {
                 display: none;
             }
+
+            .launchers-list {
+                gap: $responsive-shopping-list-edit-action-launchers-list-gap-mobile;
+            }
         }
 
         .grid-body-cell-quantity {

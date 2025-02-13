@@ -584,7 +584,7 @@
         '~class': ' product-view-attribute__group'
     }) %}
     <div {{ block('block_attributes') }}>
-        <h3 class="product-view-attribute__group-title" id="{{ headingBlockId }}">
+        <p class="h3 product-view-attribute__group-title" id="{{ headingBlockId }}">
             <button
                 class="product-view-attribute__group-toggle collapsed"
                 type="button"
@@ -594,7 +594,7 @@
                 aria-controls="{{ contentBlockId }}"
                 title="{{ tabOptionsById.label }}"
             >{{ renderIcon.icon({name: 'chevron-down'}) }}{{ tabOptionsById.label }}</button>
-        </h3>
+        </p>
 
         <div id="{{ contentBlockId }}" aria-labelledby="{{ headingBlockId }}" class="product-view-attribute__group-content collapse">{{ childContent|raw }}</div>
     </div>
