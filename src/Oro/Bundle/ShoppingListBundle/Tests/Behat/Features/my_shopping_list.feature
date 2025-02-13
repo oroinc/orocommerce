@@ -647,7 +647,7 @@ Feature: My Shopping List
     And I should see product picture in the "Product Item Preview"
     And I click "Product Item Gallery Trigger"
     Then I should see an "Popup Gallery Widget" element
-    And I should see gallery image with alt "Configurable Product 1"
+    And I should see gallery image with alt "Configurable Product 1 product BB04"
     And I click "Popup Gallery Widget Close"
     And I should not see an "Popup Gallery Widget" element
 
