@@ -13,14 +13,8 @@
     {% endif %}
 
     <div {{ block('block_attributes') }}>
-        {% if tooltip %}
-            <div class="summary-collapse__trigger-tooltip"
-                 data-toggle="tooltip"
-                 data-placement="{{ tooltipPlacement|default('top') }}"
-                 title="{{ tooltipLabel|trans }}"
-            >
-        {% endif %}
-            {% set isOpen = (open == 1 or open == 'true') ? 'true' : 'false' %}
+        {% set isOpen = (open == 1 or open == 'true') ? 'true' : 'false' %}
+        {% set buttonTrigger %}
             <button class="btn btn--circle btn--size-small {{ "#{class_prefix ?: 'summary-collapse'}__toggle" }} {{ open ? '' : 'collapsed' }}"
                     type="button"
                     data-toggle="collapse"
@@ -31,8 +25,18 @@
             >
                 {{ renderIcon.icon({name: 'chevron-up'}) }}
             </button>
+        {% endset %}
+
         {% if tooltip %}
+            <div class="summary-collapse__trigger-tooltip"
+                 data-toggle="tooltip"
+                 data-placement="{{ tooltipPlacement|default('top') }}"
+                 title="{{ tooltipLabel|trans }}"
+            >
+                {{ buttonTrigger|raw }}
             </div>
+        {% else %}
+            {{ buttonTrigger|raw }}
         {% endif %}
         <div id="{{ collapseId }}" class="{{ "#{class_prefix ?: 'summary-collapse'}-content" }} {{ open ? 'show' : '' }}">
             {{ block_widget(block) }}

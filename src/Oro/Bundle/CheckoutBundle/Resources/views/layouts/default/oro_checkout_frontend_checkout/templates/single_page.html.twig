@@ -425,14 +425,8 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {% if tooltipLabel is defined %}
-            <div class="summary-collapse__trigger-tooltip"
-                 data-toggle="tooltip"
-                 data-placement="{{ tooltipPlacement|default('top') }}"
-                 title="{{ tooltipLabel|trans }}"
-            >
-        {% endif %}
-        <button class="btn btn--circle btn--size-small checkout__footer-toggle {{ isMobileVersion() ? 'collapsed' : '' }}"
+        {% set buttonTrigger %}
+            <button class="btn btn--circle btn--size-small checkout__footer-toggle {{ isMobileVersion() ? 'collapsed' : '' }}"
                 type="button"
                 data-toggle="collapse"
                 data-target="#{{ collapseId }}"
@@ -440,11 +434,21 @@
                 aria-expanded="{{ isMobileVersion() ? 'false' : 'true' }}"
                 aria-controls="{{ collapseId }}"
                 aria-label="{{ 'oro.checkout.frontend.order.summary_block.aria_label'|trans }}"
-        >
-            {{ renderIcon.icon({name: 'chevron-up'}) }}
-        </button>
+            >
+                {{ renderIcon.icon({name: 'chevron-up'}) }}
+            </button>
+        {% endset %}
+
         {% if tooltipLabel is defined %}
+            <div class="summary-collapse__trigger-tooltip"
+                 data-toggle="tooltip"
+                 data-placement="{{ tooltipPlacement|default('top') }}"
+                 title="{{ tooltipLabel|trans }}"
+            >
+                {{ buttonTrigger|raw }}
             </div>
+        {% else %}
+            {{ buttonTrigger|raw }}
         {% endif %}
         <div id="{{ collapseId }}" class="checkout__footer-collapse summary-collapse-content {{ isMobileVersion() ? '' : 'show' }}">
             {{ block_widget(block) }}
