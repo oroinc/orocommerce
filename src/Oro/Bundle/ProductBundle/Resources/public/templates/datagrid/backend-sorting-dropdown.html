@@ -1,6 +1,7 @@
 <select class="oro-select2 input-widget"
         data-skip-input-widgets
-        <% if (inlineSortingLabel) { %>data-label="<%-_.__('oro.product.frontend.datagrid.toolbar_sorting.label') %>:"<% } %>
+        <% if (inlineSortingLabel) { %>data-label="<%-_.__('oro.product.frontend.datagrid.toolbar_sorting.label') %>"<% } %>
+        aria-label="<%-_.__('oro.product.frontend.datagrid.toolbar_sorting.aria_label') %>"
     >
     <% if (disableNotSelectedOption === false || currentDirection === null) { %>
         <option value="not-selected" <% if (currentDirection === null) { %>selected="selected"<% } %>>

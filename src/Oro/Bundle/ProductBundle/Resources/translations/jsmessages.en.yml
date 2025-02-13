@@ -208,7 +208,8 @@ oro:
                 selected_view: '{{ count }} selected'
             datagrid:
                 toolbar_sorting:
-                    label: Sort by
+                    label: 'Sort by:'
+                    aria_label: 'Sort by'
 
 
         dialog:

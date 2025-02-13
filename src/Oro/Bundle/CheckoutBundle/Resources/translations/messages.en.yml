@@ -541,9 +541,9 @@ oro:
             start_from_order: 'Re-Order'
             tooltip_trigger:
                 totals:
-                    label: 'Show/Hide Summary'
+                    label: 'Summary Details'
                 products:
-                    label: 'Show/Hide Products'
+                    label: 'Order Items'
         errors:
             payment:
                 error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
