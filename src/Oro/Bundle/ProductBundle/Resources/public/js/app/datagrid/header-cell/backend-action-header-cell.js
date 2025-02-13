@@ -207,12 +207,10 @@ define(function(require, exports, module) {
         },
 
         _attributes() {
-            const attrs = BackendActionHeaderCell.__super__._attributes.call(this);
-
-            attrs['aria-colindex'] = null;
-            attrs['aria-label'] = null;
-
-            return attrs;
+            return {
+                'aria-colindex': null,
+                'aria-label': null
+            };
         },
 
         _renderSelectedItemsView(selectState) {
