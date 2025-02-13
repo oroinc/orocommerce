@@ -206,6 +206,15 @@ define(function(require, exports, module) {
             }
         },
 
+        _attributes() {
+            const attrs = BackendActionHeaderCell.__super__._attributes.call(this);
+
+            attrs['aria-colindex'] = null;
+            attrs['aria-label'] = null;
+
+            return attrs;
+        },
+
         _renderSelectedItemsView(selectState) {
             this.$('.product-selected-counter').text(
                 `${__('oro.product.frontend.actions_panel.selected_view', {count: selectState.get('rows').length})}`
