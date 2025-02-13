@@ -539,8 +539,11 @@ oro:
                     text: 'Back'
                 summary_block.aria_label: 'Expand or Collapse Summary Section'
             start_from_order: 'Re-Order'
-
-
+            tooltip_trigger:
+                totals:
+                    label: 'Show/Hide Summary'
+                products:
+                    label: 'Show/Hide Products'
         errors:
             payment:
                 error_single_method: 'We were unable to process your payment. Please verify your payment information and try again.'
