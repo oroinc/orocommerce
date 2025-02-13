@@ -65,6 +65,7 @@ const openDigitalAssetsCommand = {
 
     _openChooseDialog(editor) {
         const options = {
+            ...this.options,
             title: this.options.title,
             url: routing.generate(
                 this.options.routeName,
