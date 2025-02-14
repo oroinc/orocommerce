@@ -98,9 +98,7 @@ oro_behat_extension:
       selector: 'div.checkout-order-summary__totals'
 
     CheckoutStepTitle:
-      selector:
-        type: xpath
-        locator: '//p[contains(concat(" ",normalize-space(@class)," ")," checkout-navigation__title--current ")] | //p  [contains(concat(" ",normalize-space(@class)," ")," checkout__title ")]'
+      selector: '.checkout-navigation__title--current, .checkout__title'
 
     CheckoutSuccessStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep
