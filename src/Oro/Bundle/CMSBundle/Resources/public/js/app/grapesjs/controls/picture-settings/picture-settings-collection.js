@@ -23,7 +23,8 @@ const PictureSettingsCollection = BaseCollection.extend({
     },
 
     updateSortable() {
-        this.each(model => model.set('sortable', this.models.length > 2));
+        this.each(model => model.set('sortable', this.models.length > 2)
+            .trigger('change:sortable', model, this.models.length > 2));
     }
 });
 

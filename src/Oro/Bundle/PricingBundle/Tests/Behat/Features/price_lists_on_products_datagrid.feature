@@ -34,3 +34,17 @@ Feature: Price lists on Products Datagrid
     And I should see "Price (EUR)" column in grid
     And the "USD" checkbox should be checked
     And the "EUR" checkbox should be checked
+
+  Scenario: Disable all permissions for price lists
+    Given I go to System/User Management/Roles
+    And click edit "Administrator" in grid
+    And select following permissions:
+      | Price List | View:None | Create:None | Edit:None | Delete:None | Assign:None | Recalculate:None |
+    And I save and close form
+
+  Scenario: Check product list page
+    Given I go to Products/ Products
+    And I should not see an "PriceListSidebarSelector" element
+    And shouldn't see "Price (USD)" column in grid
+    And shouldn't see "Price (EUR)" column in grid
+    And records in grid should be 1

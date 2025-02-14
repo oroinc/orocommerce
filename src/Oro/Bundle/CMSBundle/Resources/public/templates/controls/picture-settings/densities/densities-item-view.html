@@ -1,0 +1,53 @@
+<td class="empty-cell"></td>
+<td class="density-selector text-center">
+    <% if (origin) { %>
+    <span>x<%- density %></span>
+    <% } else { %>
+    <div class="dropdown">
+        <% var availableOptions = getAvailableOptions() %>
+        <button class="btn" type="button" data-toggle="dropdown"<% if (!availableOptions.length) { %> disabled="disabled"<% } %>>
+            <span>x<%- density %></span>
+        </button>
+
+        <% if (availableOptions.length) { %>
+        <ul class="dropdown-menu">
+            <% _.each(availableOptions, function(option) { %>
+            <li class="dropdown-item" title="<%- option.name %>" data-role="density-option" data-value="<%- option.id %>"><%- option.name %></li>
+            <% }); %>
+        </ul>
+        <% } %>
+    </div>
+    <% } %>
+</td>
+<td class="wide">
+    <div class="preview-container">
+        <% if (preview) { %>
+            <div class="preview" data-role="upload">
+                <img src="<%- preview %>" class="thumbnail">
+                <% if (!origin) { %>
+                    <span class="fa-edit"></span>
+                <% } %>
+            </div>
+        <% } %>
+
+        <% if (!preview) { %>
+            <button class="btn" data-role="upload" type="button"><%- _.__('oro.cms.wysiwyg.dialog.picture_settings.select_image') %></button>
+        <% } else { %>
+            <div><%- getMemeType(preview) %></div>
+        <% } %>
+    </div>
+</td>
+<td>
+    <% if (!origin) { %>
+        <div class="btn-group actions-group">
+            <% if (preview) { %>
+                <button type="button" class="editRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>">
+                    <span class="fa-edit"></span>
+                </button>
+            <% } %>
+            <button type="button" class="removeRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>">
+                <span class="fa-trash-o"></span>
+            </button>
+        </div>
+    <% } %>
+</td>

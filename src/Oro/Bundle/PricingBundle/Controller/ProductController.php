@@ -16,6 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Form;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -94,15 +95,18 @@ class ProductController extends AbstractController
      * @param Request $request
      * @return Form|null
      */
-    protected function createCurrenciesForm(Request $request)
+    protected function createCurrenciesForm(Request $request): ?FormInterface
     {
-        if ($this->isPriceListsEnabled()) {
-            $priceList = $this->getPriceListHandler()->getPriceList();
+        $priceListHandler = $this->getPriceListHandler();
+        $priceList = $this->isPriceListsEnabled() ? $priceListHandler->getPriceList() : null;
+
+        if ($priceList) {
             $availableCurrencies = $priceList->getCurrencies();
-            $selectedCurrencies = $this->getPriceListHandler()->getPriceListSelectedCurrencies($priceList);
+            $selectedCurrencies = $priceListHandler->getPriceListSelectedCurrencies($priceList);
             $showForm = true;
         } else {
-            $availableCurrencies = $this->container->get(UserCurrencyManager::class)->getAvailableCurrencies();
+            $currencyManager = $this->container->get(UserCurrencyManager::class);
+            $availableCurrencies = $currencyManager->getAvailableCurrencies();
             $selectedCurrencies = $request->get(PriceListRequestHandlerInterface::PRICE_LIST_CURRENCY_KEY);
             $showForm = count($availableCurrencies) > 1;
         }

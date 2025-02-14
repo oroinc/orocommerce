@@ -99,7 +99,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         return filter_var($request->get(self::TIER_PRICES_KEY), FILTER_VALIDATE_BOOLEAN);
     }
 
-    private function getFirstPriceList(): PriceList
+    private function getFirstPriceList(): ?PriceList
     {
         if (!$this->priceList) {
             $qb = $this->doctrine->getRepository(PriceList::class)
@@ -108,10 +108,6 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
                 ->setMaxResults(1);
 
             $this->priceList = $this->aclHelper->apply($qb)->getOneOrNullResult();
-        }
-
-        if (!isset($this->priceList)) {
-            throw new \InvalidArgumentException('PriceList not found');
         }
 
         return $this->priceList;

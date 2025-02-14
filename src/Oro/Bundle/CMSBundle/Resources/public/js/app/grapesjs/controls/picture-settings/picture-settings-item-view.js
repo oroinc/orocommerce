@@ -3,15 +3,19 @@ import BaseView from 'oroui/js/app/views/base/view';
 import template from 'tpl-loader!orocms/templates/controls/picture-settings/picture-settings-item-view.html';
 import templateMain from 'tpl-loader!orocms/templates/controls/picture-settings/picture-settings-item-main-view.html';
 import BreakpointsSelectorView from './breakpoints-selector-view';
+import DensitiesCollectionView from './densities/densities-collection-view';
+import DeleteConfirmation from 'oroui/js/delete-confirmation';
 
 const PictureSettingsItemView = BaseView.extend({
-    optionNames: BaseView.prototype.optionNames.concat(['editor', 'dialog']),
+    optionNames: BaseView.prototype.optionNames.concat(['editor', 'dialog', 'model']),
 
     dialog: null,
 
     editor: null,
 
     tagName: 'tr',
+
+    className: 'picture-source-item',
 
     template,
 
@@ -20,20 +24,22 @@ const PictureSettingsItemView = BaseView.extend({
     events: {
         'click .removeRow': 'removeItem',
         'click .preview': 'updateSourceImage',
-        'click .editRow': 'updateSourceImage'
+        'click .editRow': 'updateSourceImage',
+        'change [name="enable-density"]': 'toggleDensities'
     },
 
     listen: {
         'change:attributes model': 'render',
         'change:invalid model': 'render',
-        'change:sortable model': 'render'
+        'change:sortable model': 'render',
+        'change:density model': 'render'
     },
 
     constructor: function PictureSettingsItemView(...args) {
         PictureSettingsItemView.__super__.constructor.apply(this, args);
     },
 
-    render() {
+    render(model) {
         PictureSettingsItemView.__super__.render.call(this);
 
         if (!this.model.get('main')) {
@@ -52,6 +58,29 @@ const PictureSettingsItemView = BaseView.extend({
         } else {
             this.$el.addClass('exclude');
         }
+
+        if (this.model.get('density')) {
+            this.subview('densities', new DensitiesCollectionView({
+                container: this.$el,
+                model: this.model,
+                containerMethod: 'after',
+                autoRender: true,
+                editor: this.editor,
+                dialog: this.dialog,
+                alwaysAddInitialEmpty: (model && model.hasChanged('density')) || this.isAbleToAddInitial(),
+                collection: this.model.get('densities')
+            }));
+        } else {
+            if (this.subview('densities')) {
+                this.subview('densities').dispose();
+            }
+        }
+
+        return this;
+    },
+
+    isAbleToAddInitial() {
+        return this.model.get('densities') && this.model.get('densities').isEmpty();
     },
 
     getTemplateFunction(templateKey) {
@@ -74,7 +103,15 @@ const PictureSettingsItemView = BaseView.extend({
     },
 
     removeItem() {
-        this.model.collection.remove(this.model);
+        const confirm = new DeleteConfirmation({
+            content: __('oro.cms.wysiwyg.dialog.picture_settings.remove_confirmation')
+        });
+        confirm.on('ok', () => this.model.collection.remove(this.model));
+        confirm.open();
+    },
+
+    toggleDensities({currentTarget}) {
+        this.model.set('density', currentTarget.checked);
     },
 
     onChangeMedia({normalizeValue}) {

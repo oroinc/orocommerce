@@ -13,10 +13,15 @@
 <td><%- attributes.type.replace('image/', '') %></td>
 <td class="media-field-container actions-panel"></td>
 <td>
-    <button type="button" class="editRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>">
-        <span class="fa-edit"></span>
-    </button>
-    <button type="button" class="removeRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>">
-        <span class="fa-trash-o"></span>
-    </button>
+    <input type="checkbox" name="enable-density"<% if (density) { %> checked="checked"<% } %>>
+</td>
+<td>
+    <div class="btn-group actions-group">
+        <button type="button" class="editRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.update') %>">
+            <span class="fa-edit"></span>
+        </button>
+        <button type="button" class="removeRow btn btn-icon btn-square-lighter" title="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>" aria-label="<%- _.__('oro.cms.wysiwyg.dialog.picture_settings.actions.remove') %>">
+            <span class="fa-trash-o"></span>
+        </button>
+    </div>
 </td>

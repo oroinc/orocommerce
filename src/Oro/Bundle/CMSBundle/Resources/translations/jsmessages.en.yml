@@ -614,16 +614,22 @@ oro.cms:
                 add: 'Add Source'
                 type: 'Type'
                 media: 'Media Query'
+                hi_res: 'Hi-Res'
                 sizes: 'Sizes'
                 media_hint: 'The media attribute accepts any valid media query that would normally be defined in a CSS. <a href="{{ url }}" target="_blank">More about media query</a>'
+                hi_res_hint: 'High-resolution images will be displayed on high-DPI (Retina) screens, large desktop monitors, and modern mobile devices, ensuring crisp, detailed visuals. <a href="{{ url }}" target="_blank">More about image responsive</a>'
                 save: 'Save'
                 cancel: 'Cancel'
+                remove_confirmation: 'Are you sure you want to delete this picture source item?'
                 actions:
                     update: 'Update source'
                     remove: 'Remove source'
                 main_image: 'Main image'
                 select_breakpoints: 'Click to select breakpoint'
                 unknown_type: 'unknown'
+                hi_res_assets: 'High-Resolution Images'
+                add_hi_res_assets_hint: 'Add High-Resolution Image'
+                select_image: 'Select image'
             component_settings:
                 label: '{{ name }} Settings'
         screenshot_plugin:

@@ -1,3 +1,4 @@
+import $ from 'jquery';
 import PictureTypeSettingsView from 'orocms/js/app/grapesjs/controls/picture-settings';
 
 describe('orocms/js/app/grapesjs/controls/picture-settings "PictureTypeSettingsView" model', () => {
@@ -82,6 +83,7 @@ describe('orocms/js/app/grapesjs/controls/picture-settings "PictureTypeSettingsV
     it('check remove item', () => {
         expect(pictureTypeSettingsView.subview('sourceCollection').collection.length).toEqual(4);
         pictureTypeSettingsView.$('tbody tr:eq(1) .removeRow').trigger('click');
+        $('.ok').trigger('click');
         expect(pictureTypeSettingsView.subview('sourceCollection').collection.length).toEqual(3);
     });
 
@@ -101,6 +103,9 @@ describe('orocms/js/app/grapesjs/controls/picture-settings "PictureTypeSettingsV
                 srcset: 'http://example-image.png',
                 type: 'image/png'
             },
+            density: false,
+            src: '',
+            srcset: '',
             preview: 'http://example-image.png',
             invalid: false,
             errorMessage: '',
@@ -120,6 +125,9 @@ describe('orocms/js/app/grapesjs/controls/picture-settings "PictureTypeSettingsV
                 srcset: 'http://example-image.png',
                 type: 'image/png'
             },
+            density: false,
+            src: '',
+            srcset: '',
             preview: 'http://example-image.png',
             invalid: false,
             errorMessage: '',
@@ -144,6 +152,9 @@ describe('orocms/js/app/grapesjs/controls/picture-settings "PictureTypeSettingsV
                 srcset: 'http://otherpath/wysiwyg_original/example-test-image.webp',
                 type: 'image/webp'
             },
+            density: false,
+            src: '',
+            srcset: '',
             preview: 'http://otherpath/digital_asset_in_dialog/example-test-image.webp',
             invalid: false,
             errorMessage: '',
@@ -165,6 +176,9 @@ describe('orocms/js/app/grapesjs/controls/picture-settings "PictureTypeSettingsV
                 srcset: 'http://path/wysiwyg_original/example-image.jpeg',
                 type: 'image/jpeg'
             },
+            density: false,
+            src: '',
+            srcset: '',
             errorMessage: '',
             index: 0,
             invalid: false,

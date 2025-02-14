@@ -77,6 +77,12 @@ const PictureType = BaseType.extend({
                 },
                 setMain({attributes}) {
                     this.image.set('src', attributes.src);
+
+                    if (attributes.srcset) {
+                        this.image.addAttributes({
+                            srcset: attributes.srcset
+                        });
+                    }
                 }
             };
         },

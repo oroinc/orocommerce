@@ -8,6 +8,7 @@ const ImageTypeBuilder = BaseType.extend({
     modelProps: {
         defaults: {
             tagName: 'img',
+            alt: '',
             previewMetadata: {}
         },
 

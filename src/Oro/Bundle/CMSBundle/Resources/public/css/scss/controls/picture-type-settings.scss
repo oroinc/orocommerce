@@ -1,6 +1,8 @@
 /* @theme: admin.oro; */
 
 .picture-type-settings {
+    --table-tbody-tr-border-color: #{$primary-700};
+
     padding: 20px;
 
     .media-container {
@@ -9,12 +11,6 @@
 
     .breakpoint-selector {
         margin-right: 8px;
-    }
-
-    .sortable-wrapper {
-        tr > td {
-            background: $primary-inverse;
-        }
     }
 
     thead {
@@ -75,6 +71,21 @@
                 visibility: visible;
             }
         }
+
+        &:not(:has(.thumbnail)) {
+            background-color: $primary-830;
+
+            .fa-edit {
+                opacity: 1;
+                visibility: visible;
+            }
+        }
+    }
+
+    .preview-container {
+        display: flex;
+        align-items: center;
+        gap: $content-padding-medium;
     }
 
     .thumbnail {
@@ -84,5 +95,82 @@
 
     .grid {
         margin-bottom: 16px;
+    }
+
+    .wide {
+        width: 100%;
+    }
+
+    .additional-srcset-collection {
+        position: relative;
+
+        --table-tbody-tr-border-color: #{$primary-860};
+
+        > td {
+            padding: 0;
+            border-top: none;
+            border-color: $primary-700;
+        }
+
+        .srcset-controls {
+            text-align: center;
+            border: none;
+
+            background: transparent;
+
+            transition: opacity 230ms ease-in-out, visibility 230ms ease-in-out;
+        }
+
+        .density-selector {
+            min-width: 55px;
+
+            &--input-group {
+                display: flex;
+                align-items: center;
+                gap: 4px;
+
+                font-weight: font-weight('bold');
+            }
+
+            .input--density {
+                width: 50px;
+            }
+        }
+
+        .empty-cell {
+            min-width: 50px;
+            border: none;
+        }
+    }
+
+    .sortable-wrapper {
+        tr > td {
+            background: $primary-inverse;
+        }
+    }
+
+    .picture-source-item:has(+ .additional-srcset-collection) {
+        > td {
+            border: none;
+        }
+    }
+
+    .additional-srcset-collection:has([data-role='list']:empty) > td {
+        padding: 0;
+        height: auto;
+        border: none;
+    }
+
+    .additional-srcset-collection-list {
+        margin-top: 2px;
+
+        &:has(tbody:empty) thead {
+            display: none;
+        }
+    }
+
+    .actions-group {
+        justify-content: end;
+        width: 100%;
     }
 }
