@@ -147,9 +147,6 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testPriceListNotFound(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('PriceList not found');
-
         $qb = $this->createMock(QueryBuilder::class);
         $query = $this->createMock(AbstractQuery::class);
 
@@ -176,7 +173,7 @@ class PriceListRequestHandlerTest extends \PHPUnit\Framework\TestCase
             ->method('getOneOrNullResult')
             ->willReturn(null);
 
-        $this->handler->getPriceList();
+        self::assertNull($this->handler->getPriceList());
     }
 
     public function testGetPriceListNotFound(): void

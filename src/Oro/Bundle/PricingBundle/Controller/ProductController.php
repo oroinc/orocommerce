@@ -99,13 +99,16 @@ class ProductController extends AbstractController
      */
     protected function createCurrenciesForm(Request $request)
     {
-        if ($this->isPriceListsEnabled()) {
-            $priceList = $this->getPriceListHandler()->getPriceList();
+        $priceListHandler = $this->getPriceListHandler();
+        $priceList = $this->isPriceListsEnabled() ? $priceListHandler->getPriceList() : null;
+
+        if ($priceList) {
             $availableCurrencies = $priceList->getCurrencies();
-            $selectedCurrencies = $this->getPriceListHandler()->getPriceListSelectedCurrencies($priceList);
+            $selectedCurrencies = $priceListHandler->getPriceListSelectedCurrencies($priceList);
             $showForm = true;
         } else {
-            $availableCurrencies = $this->container->get(UserCurrencyManager::class)->getAvailableCurrencies();
+            $currencyManager = $this->container->get(UserCurrencyManager::class);
+            $availableCurrencies = $currencyManager->getAvailableCurrencies();
             $selectedCurrencies = $request->get(PriceListRequestHandlerInterface::PRICE_LIST_CURRENCY_KEY);
             $showForm = count($availableCurrencies) > 1;
         }

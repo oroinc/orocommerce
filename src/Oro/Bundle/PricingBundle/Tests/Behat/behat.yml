@@ -26,6 +26,7 @@ oro_behat_extension:
         - Oro\Bundle\CatalogBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\ConsoleContext
         - Oro\Bundle\PricingBundle\Tests\Behat\Context\PriceCalculationDetailsContext
+        - Oro\Bundle\EntityExtendBundle\Tests\Behat\Context\EntityExtendContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
 
