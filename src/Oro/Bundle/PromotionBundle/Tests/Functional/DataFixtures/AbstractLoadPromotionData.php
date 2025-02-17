@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
@@ -49,6 +50,12 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
             $promotion->setProductsSegment($this->getReference($promotionData['segmentReference']));
             foreach ($promotionData['scopeCriterias'] as $scopeCriteria) {
                 $promotion->addScope($this->getScope($scopeCriteria));
+            }
+
+            if (!empty($promotionData['schedules'])) {
+                foreach ($promotionData['schedules'] as $schedule) {
+                    $promotion->addSchedule(new PromotionSchedule($schedule['activateAt'], $schedule['deactivateAt']));
+                }
             }
 
             $manager->persist($promotion);
