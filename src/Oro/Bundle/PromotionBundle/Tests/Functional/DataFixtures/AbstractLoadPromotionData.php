@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
+use Oro\Bundle\PromotionBundle\Entity\PromotionSchedule;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -53,6 +54,12 @@ abstract class AbstractLoadPromotionData extends AbstractFixture implements
             foreach ($promotionData['scopeCriterias'] as $scopeCriteria) {
                 $scopeCriteria = $this->getScope($scopeCriteria);
                 $promotion->addScope($scopeCriteria);
+            }
+
+            if (!empty($promotionData['schedules'])) {
+                foreach ($promotionData['schedules'] as $schedule) {
+                    $promotion->addSchedule(new PromotionSchedule($schedule['activateAt'], $schedule['deactivateAt']));
+                }
             }
 
             $manager->persist($promotion);

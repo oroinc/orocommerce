@@ -48,7 +48,7 @@ class PromotionRepositoryTest extends WebTestCase
         $promotions = $this->repository->getAllPromotions(
             $this->getPromotion(LoadPromotionData::ORDER_PERCENT_PROMOTION)->getOrganization()->getId()
         );
-        self::assertCount(3, $promotions);
+        self::assertCount(4, $promotions);
     }
 
     public function testGetAvailablePromotions(): void

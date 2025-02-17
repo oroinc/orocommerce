@@ -175,6 +175,12 @@ oro_behat_extension:
     Coupons Selection Button:
       selector: '.coupon-select .entity-select-btn'
 
+    Add Promotion Schedule:
+      selector: '.schedule-intervals button.add-list-item'
+
+    Remove Promotion Schedule:
+      selector: '.schedule-intervals table tr[data-role="schedule-interval-row"] .removeRow'
+
     Coupons Selection:
       selector: 'div.ui-dialog div.oro-datagrid'
       class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid

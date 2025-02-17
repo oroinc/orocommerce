@@ -82,8 +82,9 @@ class PromotionRepository extends ServiceEntityRepository
         $queryBuilder
             ->leftJoin('promotion.schedules', 'schedule')
             ->andWhere(
-                'schedule.activeAt IS NULL OR schedule.activeAt <= :now'
-                . ' AND schedule.deactivateAt IS NULL OR schedule.deactivateAt >= :now'
+                'schedule.activeAt IS NULL AND schedule.deactivateAt IS NULL'
+                . ' OR schedule.activeAt <= :now AND (schedule.deactivateAt >= :now OR schedule.deactivateAt IS NULL)'
+                . ' OR schedule.activeAt IS NULL AND  schedule.deactivateAt >= :now'
             )
             ->setParameter('now', new \DateTime('now', new \DateTimeZone('UTC')));
 

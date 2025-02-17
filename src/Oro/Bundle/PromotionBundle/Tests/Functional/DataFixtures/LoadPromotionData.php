@@ -5,7 +5,8 @@ namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 class LoadPromotionData extends AbstractLoadPromotionData
 {
     const ORDER_PERCENT_PROMOTION = 'order_percent_promotion';
-    const ORDER_AMOUNT_PROMOTION = 'order_amount_promotion';
+    const ORDER_PERCENT_PROMOTION_IN_FUTURE = 'order_percent_promotion_in_future';
+    public const ORDER_AMOUNT_PROMOTION = 'order_amount_promotion';
     const SHIPPING_PROMOTION = 'shipping_promotion';
 
     /**
@@ -39,6 +40,29 @@ class LoadPromotionData extends AbstractLoadPromotionData
                         'website' => null,
                         'customerGroup' => null,
                         'customer' => null
+                    ]
+                ]
+            ],
+            self::ORDER_PERCENT_PROMOTION_IN_FUTURE => [
+                'rule' => [
+                    'name' => 'Order percent promotion name in future',
+                    'sortOrder' => 100,
+                    'enabled' => true,
+                ],
+                'segmentReference' => LoadSegmentData::PRODUCT_DYNAMIC_SEGMENT,
+                'discountConfiguration' => LoadDiscountConfigurationData::ANOTHER_DISCOUNT_CONFIGURATION_ORDER_PERCENT,
+                'useCoupons' => true,
+                'scopeCriterias' => [
+                    [
+                        'website' => null,
+                        'customerGroup' => null,
+                        'customer' => null
+                    ]
+                ],
+                'schedules' => [
+                    [
+                        'activateAt' => new \DateTime('now +1 day'),
+                        'deactivateAt' => new \DateTime('now +2 day'),
                     ]
                 ]
             ],
