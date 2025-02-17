@@ -60,9 +60,14 @@ services:
         class: 'Oro\Component\Expression\QueryExpressionConverter\ValueNodeConverter'
         public: false
 
+    oro_product.expression.query_expression.converter.null_safe_node:
+        class: 'Oro\Component\Expression\QueryExpressionConverter\NullSafeConverter'
+        public: false
+
     oro_product.expression.query_expression_builder:
         class: 'Oro\Component\Expression\QueryExpressionBuilder'
         calls:
+            - ['registerConverter', ['@oro_product.expression.query_expression.converter.null_safe_node']]
             - ['registerConverter', ['@oro_product.expression.query_expression.converter.binary_node']]
             - ['registerConverter', ['@oro_product.expression.query_expression.converter.name_node']]
             - ['registerConverter', ['@oro_product.expression.query_expression.converter.relation_node']]
