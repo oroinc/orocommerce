@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\FormBundle\Form\Type\Select2EntityType;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -80,8 +81,8 @@ class QuoteProductKitItemLineItemType extends AbstractType
                             'empty_data' => $options['required'] ? $emptyDataChoice : null,
                         ]
                     )
-                    ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'disableQuantity'])
-                    ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'disableQuantity'])
+                    ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'disableQuantityAndPrice'])
+                    ->addEventListener(FormEvents::POST_SUBMIT, [$this, 'disableQuantityAndPrice'])
             )
             ->add(
                 'quantity',
@@ -91,13 +92,22 @@ class QuoteProductKitItemLineItemType extends AbstractType
                     'useInputTypeNumberValueFormat' => true,
                     'empty_data' => $kitItem?->getMinimumQuantity() ?: 1.0,
                 ]
+            )
+            ->add(
+                'price',
+                PriceType::class,
+                [
+                    'required' => $options['required'],
+                    'hide_currency' => true,
+                    'default_currency' => $options['currency'],
+                ]
             );
 
         $builder->addEventSubscriber($this->kitItemLineItemDefaultDataListener);
         $builder->addEventSubscriber($this->kitItemLineItemGhostOptionListener);
     }
 
-    public function disableQuantity(FormEvent $event): void
+    public function disableQuantityAndPrice(FormEvent $event): void
     {
         $form = $event->getForm();
         $isDisabled = $form->getData() === null;
@@ -110,12 +120,18 @@ class QuoteProductKitItemLineItemType extends AbstractType
         }
 
         FormUtils::replaceField($parentForm, 'quantity', $options);
+
+        $priceForm = $parentForm->get('price');
+        FormUtils::replaceField($priceForm, 'value', $options);
+        $defaultCurrency = $priceForm->getConfig()->getOption('default_currency');
+        FormUtils::replaceField($priceForm, 'currency', ['empty_data' => $defaultCurrency] + $options);
     }
 
     #[\Override]
     public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['product_kit_item'] = $options['product_kit_item'];
+        $view->vars['currency'] = $options['currency'];
 
         /** @var QuoteProductKitItemLineItem|null $kitItemLineItem */
         $kitItemLineItem = $form->getData();
@@ -148,6 +164,11 @@ class QuoteProductKitItemLineItemType extends AbstractType
             ->define('product_kit_item')
             ->default(null)
             ->allowedTypes(ProductKitItem::class, 'null');
+
+        $resolver
+            ->define('currency')
+            ->default(null)
+            ->allowedTypes('string', 'null');
     }
 
     #[\Override]

@@ -6,9 +6,12 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * The collection form type for QuoteProductOffer entity.
+ */
 class QuoteProductOfferCollectionType extends AbstractType
 {
-    const NAME = 'oro_sale_quote_product_offer_collection';
+    public const string NAME = 'oro_sale_quote_product_offer_collection';
 
     #[\Override]
     public function getParent(): ?string
@@ -17,17 +20,17 @@ class QuoteProductOfferCollectionType extends AbstractType
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'entry_type'                  => QuoteProductOfferType::class,
-            'show_form_when_empty'  => false,
-            'error_bubbling'        => false,
-            'prototype_name'        => '__namequoteproductoffer__',
+            'entry_type'           => QuoteProductOfferType::class,
+            'show_form_when_empty' => false,
+            'error_bubbling'       => false,
+            'prototype_name'       => '__namequoteproductoffer__',
         ]);
     }
 
-    public function getName()
+    public function getName(): string
     {
         return $this->getBlockPrefix();
     }

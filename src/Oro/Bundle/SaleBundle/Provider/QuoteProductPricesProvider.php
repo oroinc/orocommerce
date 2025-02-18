@@ -17,35 +17,22 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
  */
 class QuoteProductPricesProvider
 {
-    private ProductPriceProviderInterface $productPriceProvider;
-
-    private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory;
-
-    private ProductLineItemProductPriceProviderInterface $productLineItemProductPriceProvider;
-
-    private UserCurrencyManager $userCurrencyManager;
-
     public function __construct(
-        ProductPriceProviderInterface $productPriceProvider,
-        ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
-        ProductLineItemProductPriceProviderInterface $productLineItemProductPriceProvider,
-        UserCurrencyManager $userCurrencyManager
+        private ProductPriceProviderInterface $productPriceProvider,
+        private ProductPriceScopeCriteriaFactoryInterface $priceScopeCriteriaFactory,
+        private ProductLineItemProductPriceProviderInterface $productLineItemProductPriceProvider,
+        private UserCurrencyManager $userCurrencyManager
     ) {
-        $this->productPriceProvider = $productPriceProvider;
-        $this->priceScopeCriteriaFactory = $priceScopeCriteriaFactory;
-        $this->productLineItemProductPriceProvider = $productLineItemProductPriceProvider;
-        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     /**
-     * @param Quote $quote
      * @param array<string> $currencies
      *
      * @return array<int,array<string,array<ProductPriceInterface>>> Array of arrays of {@see ProductPriceInterface}
      *  objects, keyed by a product id and quote product offer checksum.
      *  [
      *      64 => [ // product id
-     *          'sample-checksum' => [ // quote product offer checksum
+     *          'checksum-for-kit-product' => [ // quote product offer checksum
      *              ProductPriceInterface $productPrice,
      *              // ...
      *          ],
@@ -56,32 +43,37 @@ class QuoteProductPricesProvider
      */
     public function getProductLineItemsTierPrices(Quote $quote, array $currencies = []): array
     {
-        $tierPrices = [];
-        foreach ($this->doGetTierPrices($quote, $currencies) as [$productId, $checksum, $offerTierPrices]) {
-            if (isset($tierPrices[$productId][$checksum])) {
-                continue;
-            }
-
-            $tierPrices[$productId][$checksum] = $offerTierPrices;
-        }
-
-        return $tierPrices;
-    }
-
-    /**
-     * @param Quote $quote
-     * @param array<string> $currencies
-     *
-     * @return \Generator<ProductPriceInterface>
-     */
-    private function doGetTierPrices(Quote $quote, array $currencies = []): \Generator
-    {
         if (!$currencies) {
             $currencies = $this->userCurrencyManager->getAvailableCurrencies();
         }
 
-        $productPricesByProduct = $this->getProductPrices($quote, $currencies);
-        $productPriceCollection = new ProductPriceCollectionDTO(array_merge(...$productPricesByProduct));
+        $productPrices = $this->getProductPrices($quote, $currencies);
+        $quoteProductOffersPrices = $this->getQuoteProductOffersPrices($quote, $productPrices, $currencies);
+
+        foreach ($quoteProductOffersPrices as $productId => $checksumPrices) {
+            foreach ($checksumPrices as $checksum => $prices) {
+                $productPrices[$productId][$checksum] = $prices;
+            }
+        }
+
+        return $productPrices;
+    }
+
+    /**
+     * @param array<int,array<ProductPriceInterface>> $productPrices
+     * @param array<string> $currencies
+     *
+     * @return array<int,array<string,array<ProductPriceInterface>>> Array of arrays of {@see ProductPriceInterface}
+     *  objects, keyed by a product id and quote product offer.
+     *  [
+     *      64 => ['checksum-for-kit-product' => [ProductPriceInterface $productPrice, ...], ...], //
+     *      1 => [0 => [ProductPriceInterface $productPrice], 1 => [ProductPriceInterface $productPrice], ...]
+     *  ]
+     */
+    private function getQuoteProductOffersPrices(Quote $quote, array $productPrices, array $currencies = []): array
+    {
+        $prices = [];
+        $productPriceCollection = new ProductPriceCollectionDTO(\array_merge(...$productPrices));
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
             $product = $quoteProduct->getProduct();
@@ -93,25 +85,27 @@ class QuoteProductPricesProvider
             foreach ($quoteProduct->getQuoteProductOffers() as $quoteProductOffer) {
                 $quoteProductOffer->loadKitItemLineItems();
 
-                $checksum = $quoteProductOffer->getChecksum();
-
                 $quoteProductOfferTierPrices = [];
                 foreach ($currencies as $currency) {
-                    $productPrices = $this->productLineItemProductPriceProvider
+                    $quoteProductPrices = $this->productLineItemProductPriceProvider
                         ->getProductLineItemProductPrices($quoteProductOffer, $productPriceCollection, $currency);
 
-                    if (!empty($productPrices)) {
-                        $quoteProductOfferTierPrices[] = $productPrices;
+                    if (!empty($quoteProductPrices)) {
+                        $quoteProductOfferTierPrices[] = $quoteProductPrices;
                     }
                 }
 
-                yield [$productId, $checksum, array_merge(...$quoteProductOfferTierPrices)];
+                $checksum = $quoteProductOffer->getChecksum();
+                if (!isset($prices[$productId][$checksum])) {
+                    $prices[$productId][$checksum] = \array_merge(...$quoteProductOfferTierPrices);
+                }
             }
         }
+
+        return $prices;
     }
 
     /**
-     * @param Quote $quote
      * @param array<string> $currencies
      *
      * @return array<int,array<ProductPriceInterface>> Array of arrays of {@see ProductPriceInterface} objects,
@@ -173,13 +167,11 @@ class QuoteProductPricesProvider
             }
         }
 
-        return array_values($products);
+        return \array_values($products);
     }
 
     /**
      * Checks whatever quote has line items with no prices set
-     * @param Quote $quote
-     * @return bool
      */
     public function hasEmptyPrice(Quote $quote): bool
     {

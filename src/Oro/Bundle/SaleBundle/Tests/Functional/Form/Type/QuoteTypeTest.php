@@ -894,6 +894,9 @@ class QuoteTypeTest extends WebTestCase
         self::assertEquals(Price::create(30.1234, 'USD'), $quoteProduct2Offer2->getPrice());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     private function assertQuoteFormFields(FormInterface $form): void
     {
         $authorizationChecker = self::getContainer()->get('security.authorization_checker');
@@ -976,6 +979,7 @@ class QuoteTypeTest extends WebTestCase
                     'compact_units' => true,
                     'allow_prices_override' => $isAllowPricesOverride,
                     'allow_add_free_form_items' => $isAllowAddFreeFormItems,
+                    'currency' => $form->getData()?->getCurrency()
                 ]
             ],
             $form->get('quoteProducts')->getConfig()->getOptions()

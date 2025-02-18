@@ -216,6 +216,10 @@ define(function(require) {
         },
 
         currencyChanged: function(options) {
+            if (options.scopeClass && this.$el.parents(options?.scopeClass).length === 0) {
+                return;
+            }
+
             if (options.currency) {
                 this.model.set('currency', options.currency);
             }

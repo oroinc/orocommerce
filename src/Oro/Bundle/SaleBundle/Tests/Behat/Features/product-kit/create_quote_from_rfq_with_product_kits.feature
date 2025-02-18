@@ -33,8 +33,13 @@ Feature: Create Quote from RFQ with Product Kits
       | Line Item 2 Price           | 134.5667                              |
       | Line Item 2 Item 1 Product  | simple-product-03 - Simple Product 03 |
       | Line Item 2 Item 1 Quantity | 2                                     |
+      | Line Item 2 Item 1 Price    | 3.70                                  |
       | Line Item 2 Item 2 Product  | simple-product-01 - Simple Product 01 |
       | Line Item 2 Item 2 Quantity | 3                                     |
+      | Line Item 2 Item 2 Price    | 1.23                                  |
+    And I should not see an "Line Item 2 Add Offer Button" element
+    And I should see "Line Item 2 Offer 1 Remove Button" button disabled
+    And the "LineItemPrice2" field should be readonly in form "Quote Form"
 
   Scenario: Check that Quote can be saved
     When I save and close form

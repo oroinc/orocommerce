@@ -460,6 +460,12 @@ services:
         tags:
             - { name: oro_email.emailtemplate.variable_provider, scope: system }
 
+    oro_sale.product_kit.checksum.quote_product_kit_offer_line_item_checksum_generator:
+        class: Oro\Bundle\SaleBundle\ProductKit\Checksum\QuoteProductKitOfferLineItemChecksumGenerator
+        tags:
+            - name: oro_product.line_item_checksum_generator
+              priority: 10 # Must be called before the default one - oro_product.product_kit.checksum.product_kit_line_item_checksum_generator
+
     oro_sale.quote_customer_data_request_handler:
         public: true
         class: Oro\Bundle\SaleBundle\Form\Handler\QuoteCustomerDataRequestHandler

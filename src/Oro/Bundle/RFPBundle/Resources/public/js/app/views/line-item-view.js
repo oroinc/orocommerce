@@ -30,7 +30,10 @@ define(function(require) {
             compactUnits: false,
             kitItemLineItemsRoute: 'oro_rfp_request_product_kit_item_line_item_entry_point',
             itemWidget: '[data-role="lineitem"]',
-            skipLoadingMask: false
+            skipLoadingMask: false,
+            offerLineItems: '.rfp-lineitem-requested-item',
+            addOfferLineItemButton: '.rfp-lineitem-requested-item-add',
+            removeOfferLineItemButton: '.rfp-lineitem-requested-remove .removeRow'
         },
 
         /**
@@ -90,10 +93,12 @@ define(function(require) {
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
             this.$el.on('content:changed', this.onContentChanged.bind(this));
+            this.$el.on('click', this.options.removeOfferLineItemButton, this.onRemoveOfferLineItem.bind(this));
 
             this.initModel(options);
             this.initializeElements(options);
             this.model.set('product_units', this.options.units[this.model.get('productId')] || {});
+            this.model.set('productType', this.options?.productType || 'simple');
 
             this.$el.on('options:set:lineItemModel', (e, options) => {
                 options.lineItemModel = this.model;
@@ -102,6 +107,8 @@ define(function(require) {
             this.initializeSubviews({
                 lineItemModel: this.model
             });
+
+            this.updateKitOfferLineItems();
         },
 
         removeRow: function() {
@@ -167,6 +174,8 @@ define(function(require) {
             const productId = this.model.get('productId');
             const productUnits = this.units[productId];
 
+            this.updateKitOfferLineItems();
+
             if (!productId || productUnits) {
                 this.updateProductUnits(productUnits, force || false);
             } else {
@@ -198,6 +207,15 @@ define(function(require) {
         },
 
         /**
+         * @param {jQuery.Event} event
+         */
+        onRemoveOfferLineItem: function(event) {
+            if (this.model.get('productType') === 'kit' && this.$el.find(this.options.offerLineItems).length <= 1) {
+                this.$el.find(this.options.addOfferLineItemButton).toggleClass('hide', false);
+            }
+        },
+
+        /**
          * Update available ProductUnit select
          *
          * @param {Object} units
@@ -222,6 +240,20 @@ define(function(require) {
 
             if (force) {
                 this.$el.find('select').inputWidget('refresh');
+            }
+        },
+
+        updateKitOfferLineItems: function() {
+            const self = this;
+
+            const addOfferLineItem = self.$el.find(self.options.addOfferLineItemButton);
+            const offerLineItems = self.$el.find(self.options.offerLineItems);
+
+            if (self.model.get('productType') === 'kit' && offerLineItems.length >= 1) {
+                offerLineItems.find(self.options.removeOfferLineItemButton).slice(1).trigger('click');
+                addOfferLineItem.toggleClass('hide', true);
+            } else {
+                addOfferLineItem.toggleClass('hide', false);
             }
         },
 

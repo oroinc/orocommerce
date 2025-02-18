@@ -474,7 +474,7 @@ oro:
                 description: Used to sort kit item line item products when displaying. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
             price:
                 label: Price
-                form_label: 'Price, %currency%'
+                form_label: 'Price, <span class="line-item-price-symbol">%currency%</span>'
             value:
                 label: Price Value
                 description: Price for a product kit item line item product unit

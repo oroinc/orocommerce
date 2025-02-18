@@ -14,6 +14,8 @@ Feature: Update RFQ with Product Kits
     And I click "Line Item 2 Add Another Line"
     And fill "Request Form" with:
       | Line Item 2 Product      | product-kit-01 |
+    And I should not see an "Line Item 2 Add Another Line" element
+    And fill "Request Form" with:
       | Line Item 2 Quantity     | 1              |
       | Line Item 2 Unit         | piece          |
       | Line Item 2 Target Price | 104.69         |
@@ -36,6 +38,25 @@ Feature: Update RFQ with Product Kits
     When I click on "Request Form Line Item 2 Kit Item 1 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
     And I click on empty space
+
+  Scenario: Change simple product on kit product
+    When click "Add Another Product"
+    And fill "Request Form" with:
+      | Line Item 3 Product | simple-product-01 |
+    And I click on "Line Item 3 Add Another Line"
+    And I click on "Line Item 3 Add Another Line"
+    Then "Request Form" must contains values:
+      | Line Item 3 Target Price  |   |
+      | Line Item 3 Target Price2 |   |
+      | Line Item 3 Quantity      | 1 |
+      | Line Item 3 Quantity2     | 1 |
+    When fill "Request Form" with:
+      | Line Item 3 Product | product-kit-01 |
+    Then "Request Form" must contains values:
+      | Line Item 3 Target Price |   |
+      | Line Item 3 Quantity     | 1 |
+    And I should not see an "Line Item 3 Add Another Line" element
+    And I click "Request Form Line Item 3 Remove"
 
   Scenario: Add one more product kit line item via the entity select popup
     When click "Add Another Product"

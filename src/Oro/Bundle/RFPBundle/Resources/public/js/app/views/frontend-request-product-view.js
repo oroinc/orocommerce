@@ -26,6 +26,8 @@ const FrontendRequestProductView = BaseView.extend(_.extend({}, ElementsHelper, 
 
     addRequestProductItemButtonSelector: '[data-role="request-product-item-add"]',
 
+    removeOfferLineItemSelector: '[data-role="request-product-item-remove"]',
+
     /**
      * @property {$.Element}
      */
@@ -230,7 +232,10 @@ const FrontendRequestProductView = BaseView.extend(_.extend({}, ElementsHelper, 
     },
 
     toggleAddRequestProductItemButton: function() {
-        this.$addRequestProductItemButton.toggleClass('hidden', Boolean(this.model.get('productId')) === false);
+        this.$addRequestProductItemButton.toggleClass(
+            'hidden',
+            Boolean(this.model.get('productId')) === false || this.model.get('productType') === 'kit'
+        );
     },
 
     onFieldCommentCheckboxChange(event) {
@@ -248,6 +253,10 @@ const FrontendRequestProductView = BaseView.extend(_.extend({}, ElementsHelper, 
             this.model.set('productSku', _.unescape(data.event.added.sku || ''));
             this.model.set('productName', _.unescape(data.event.added['defaultName.string'] || ''));
             this.model.set('productType', data.event.added.type || 'simple');
+
+            if (this.model.get('productType') === 'kit' && this.$requestProductItemsContainer.children().length > 1) {
+                this.$requestProductItemsContainer.find(this.removeOfferLineItemSelector).slice(1).trigger('click');
+            }
 
             if (this.model.get('productId') && !this.$requestProductItemsContainer.children().length) {
                 this.$addRequestProductItemButton.trigger('click');

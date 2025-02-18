@@ -79,13 +79,13 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
                         continue;
                     }
 
-                    $pricesByOffer = $prices[$productId][$productOffer->getChecksum()] ?? [];
-
-                    if (!$productOffer->getPrice()) {
+                    if (!$productOffer->getPrice()?->getCurrency()) {
                         continue;
                     }
 
-                    $priceDto = $this->getPricesByScopeCriteria(
+                    $pricesByOffer = $prices[$productId][$productOffer->getChecksum()] ?? [];
+
+                    $priceDto = $this->getTierPriceByScopeCriteria(
                         $pricesByOffer,
                         $productOffer->getQuantity(),
                         $productOffer->getProductUnit()->getCode(),
@@ -98,13 +98,19 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
         }
     }
 
-    private function getPricesByScopeCriteria(
+    /**
+     * Get tier prices by scope:
+     *  1  QTY - 10$
+     *  5  QTY - 8$
+     *  10 QTY - 5$
+     */
+    private function getTierPriceByScopeCriteria(
         array $prices,
         float $qty,
         string $unit,
         string $currency
     ): ?ProductPriceDTO {
-        $prices = array_filter(
+        $prices = \array_filter(
             $prices,
             function (ProductPriceDTO $priceDto) use ($unit, $currency) {
                 return $priceDto->getUnit()->getCode() === $unit
@@ -112,18 +118,21 @@ class QuoteDataStorageExtension extends AbstractProductDataStorageExtension
             }
         );
 
-        $countPrices = count($prices);
-        if ($countPrices === 0) {
+        if (\count($prices) === 0) {
             return null;
         }
 
-        for ($i = 0; $i <= $countPrices - 1; $i++) {
-            if (!isset($prices[$i + 1]) || $prices[$i + 1]->getQuantity() > $qty) {
-                return $prices[$i];
+        $matchedPrice = null;
+        $matchedQuantity = 0;
+
+        foreach ($prices as $price) {
+            if ($matchedQuantity <= $qty && $qty >= $price->getQuantity()) {
+                $matchedQuantity = $price->getQuantity();
+                $matchedPrice = $price;
             }
         }
 
-        return null;
+        return $matchedPrice;
     }
 
     private function addItems(Product $product, QuoteProduct $quoteProduct, array $itemsData): void

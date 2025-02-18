@@ -108,7 +108,9 @@ oro_behat_extension:
                         locator: '//div[contains(@id,"s2id_oro_rfp_request_requestProducts_2_product-uid")]//input'
                     Line Item 3 Unit: 'oro_rfp_request[requestProducts][2][requestProductItems][0][productUnit]'
                     Line Item 3 Quantity: 'oro_rfp_request[requestProducts][2][requestProductItems][0][quantity]'
+                    Line Item 3 Quantity2: 'oro_rfp_request[requestProducts][2][requestProductItems][1][quantity]'
                     Line Item 3 Target Price: 'oro_rfp_request[requestProducts][2][requestProductItems][0][price][value]'
+                    Line Item 3 Target Price2: 'oro_rfp_request[requestProducts][2][requestProductItems][1][price][value]'
                     Line Item 3 Item 1 Product:
                         locator: '//tr[@data-content="oro_rfp_request[requestProducts][2]"]//tr[contains(@class, "rfp-request-product-kit-item-line-item")][1]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
                         type: xpath
@@ -142,6 +144,8 @@ oro_behat_extension:
                         type: 'css'
                         locator: 'input[name="oro_rfp_frontend_request[requestProducts][1][product]"]'
                         element: Select2Entity
+                    Line Item 2 Target Price: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][0][price][value]'
+                    Line Item 2 Target Price2: 'oro_rfp_frontend_request[requestProducts][1][requestProductItems][1][price][value]'
 
         RFQ Products List:
             selector: '.request-form__content'
@@ -297,6 +301,15 @@ oro_behat_extension:
             selector: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_1_product_1"]'
         RFQ Kit Item Line Item 3 Product 1:
             selector: 'input[data-ftid="oro_rfp_frontend_request_product_kit_configuration_kitItemLineItems_3_product_0"]'
+
+        RFQ Line Item 2 Add Another Line:
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][1]"] .request-form-lineitems__add'
+
+        RFQ Line Item 2 Delete:
+            selector: '[data-content="oro_rfp_frontend_request[requestProducts][1]"] [data-role="decline"]'
+
+        RFQ Line Item 2 Target Price2:
+            selector: '[name="oro_rfp_frontend_request[requestProducts][1][requestProductItems][1][price][value]"]'
 
         RFQ Kit Item Line Item 1 Configure Button:
             selector:

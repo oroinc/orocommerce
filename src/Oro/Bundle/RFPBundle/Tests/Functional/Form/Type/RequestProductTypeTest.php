@@ -101,6 +101,7 @@ class RequestProductTypeTest extends WebTestCase
             [
                 'units' => [],
                 'compactUnits' => false,
+                'productType' => null
             ],
             $formView->vars['componentOptions']
         );
@@ -183,6 +184,7 @@ class RequestProductTypeTest extends WebTestCase
             [
                 'units' => [$productSimple1->getId() => $productSimple1->getAvailableUnitsPrecision()],
                 'compactUnits' => false,
+                'productType' => 'simple'
             ],
             $formView->vars['componentOptions']
         );
@@ -279,6 +281,7 @@ class RequestProductTypeTest extends WebTestCase
             [
                 'units' => [$productKit1->getId() => $productKit1->getAvailableUnitsPrecision()],
                 'compactUnits' => false,
+                'productType' => 'kit'
             ],
             $formView->vars['componentOptions']
         );

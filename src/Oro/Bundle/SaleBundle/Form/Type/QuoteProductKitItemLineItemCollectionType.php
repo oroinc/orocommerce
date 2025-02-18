@@ -22,6 +22,7 @@ class QuoteProductKitItemLineItemCollectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $entryOptions = [
+            'currency' => $options['currency'],
             'block_name' => 'entry',
         ];
 
@@ -56,6 +57,11 @@ class QuoteProductKitItemLineItemCollectionType extends AbstractType
     {
         $resolver->setDefault('by_reference', false);
         $resolver->setDefault('error_bubbling', false);
+
+        $resolver
+            ->define('currency')
+            ->default(null)
+            ->allowedTypes('string', 'null');
 
         $resolver
             ->define('product')

@@ -1,4 +1,5 @@
 import mediator from 'oroui/js/mediator';
+import localeSettings from 'orolocale/js/locale-settings';
 import LineItemProductView from 'oroproduct/js/app/views/line-item-product-view';
 
 const KitItemLineItemView = LineItemProductView.extend({
@@ -12,7 +13,8 @@ const KitItemLineItemView = LineItemProductView.extend({
         quantity: '[data-name="field__quantity"]',
         priceValue: '[data-name="field__value"]',
         currency: '[data-name="field__currency"]',
-        isPriceChanged: '[data-name="field__is-price-changed"]'
+        isPriceChanged: '[data-name="field__is-price-changed"]',
+        priceLabelSymbol: '.line-item-price-symbol'
     },
 
     listen: {
@@ -42,7 +44,8 @@ const KitItemLineItemView = LineItemProductView.extend({
         'id onProductChange': ['change', 'onProductChange'],
         'id resetChecksum': ['change', 'resetChecksum'],
         'quantity resetChecksum': ['change', 'resetChecksum'],
-        'priceValue resetChecksum': ['change', 'resetChecksum']
+        'priceValue resetChecksum': ['change', 'resetChecksum'],
+        'currency currencyChanged': ['change', 'currencyChanged']
     },
 
     lineItemModel: null,
@@ -117,6 +120,17 @@ const KitItemLineItemView = LineItemProductView.extend({
     resetChecksum() {
         if (this.lineItemModel.get('checksum')) {
             this.lineItemModel.set('checksum', '');
+        }
+    },
+
+    currencyChanged() {
+        if (this.model.changed?.currency) {
+            const symbol = localeSettings.getCurrencySymbol(this.model.changed?.currency);
+            if (!symbol) {
+                return;
+            }
+
+            this.getElement('priceLabelSymbol').text(symbol);
         }
     },
 

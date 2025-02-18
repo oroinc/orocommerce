@@ -176,7 +176,13 @@
                 view: 'orosale/js/app/views/kit-item-line-item-view',
                 options: {
                     minimumQuantity: minimum_quantity ?: 1.0,
-                    maximumQuantity: maximum_quantity ?: null
+                    maximumQuantity: maximum_quantity ?: null,
+                    modelAttr: {
+                        unit: unit_code,
+                        product_units: {
+                            (unit_code): unit_precision
+                        }
+                    }
                 }
             }) }}
         class="sale-quote-product-kit-item-line-item">
@@ -203,6 +209,21 @@
                     }
                 }) }}
                 {{ form_errors(form.quantity) }}
+            </div>
+        </td>
+        <td class="line-item-price-label">
+            {{ form_label(
+                form.price,
+                'oro.sale.quoteproductkititemlineitem.price.form_label'|trans({'%currency%': oro_currency_symbol(currency)})|oro_html_sanitize ~ ':',
+                {'raw_label': true}
+            ) }}
+        </td>
+        <td class="line-item-price">
+            <div {{ UI.renderPageComponentAttributes({
+                view: 'oropricing/js/app/views/line-item-product-prices-extended-view'
+            }) }}>
+                {{ form_widget(form.price) }}
+                {{ form_errors(form.price) }}
             </div>
         </td>
     </tr>
@@ -291,10 +312,14 @@
     {% set modelAttr = {} %}
     {% set productForm = form.parent.parent %}
     {% set quoteProduct = productForm.vars.value %}
+
     {% if quoteProduct is not empty %}
         {% set product = quoteProduct.product %}
         {% if product is not empty %}
-            {% set modelAttr = {product_units: product.sellUnitsPrecision, checksum: data.checksum|default('')} %}
+            {% set modelAttr = {product_units: product.sellUnitsPrecision} %}
+            {% if product.isKit() %}
+                {% set modelAttr = modelAttr|merge({checksum: form.vars.checksum}) %}
+            {% endif %}
         {% endif %}
     {% endif %}
     <tr data-content="{{ name }}"
@@ -355,7 +380,8 @@
         data-page-component-module="oroui/js/app/components/view-component"
         data-page-component-options="{{ {
             view: 'oropricing/js/app/views/line-item-product-prices-view',
-            editable: form.vars.allow_prices_override
+            editable: form.vars.allow_prices_override,
+            modelAttr: {checksum: form.vars.checksum}
         }|json_encode }}">
         <div class="fields-row">
             {{ form_widget(form.price) }}

@@ -8,6 +8,7 @@ define(function(require) {
     const ElementsHelper = require('orofrontend/js/app/elements-helper');
     const LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     const mediator = require('oroui/js/mediator');
+    const localeSettings = require('orolocale/js/locale-settings');
     const routing = require('routing');
     require('jquery.validate');
 
@@ -56,6 +57,10 @@ define(function(require) {
             errorMessage: 'Sorry, an unexpected error has occurred.',
             submitButton: 'button#save-and-transit',
             kitItemLineItems: '.quote-lineitem-product .quote-lineitem-kit-item-line-items',
+            addOfferLineItemButton: '.quote-lineitem-offers-item-add',
+            removeOfferLineItemButton: '.quote-lineitem-offers-remove .removeRow',
+            kitOfferCurrencySelect: '[data-name="field__currency"]',
+            priceLabelSymbol: '.line-item-price-symbol',
             allUnits: {},
             units: {},
             events: {
@@ -175,6 +180,11 @@ define(function(require) {
             this.initModel(this.options);
             this.initializeElements(this.options);
 
+            this.model.set('productType', this.options?.productType || 'simple');
+            if (this.model.get('productType') === 'kit') {
+                this.model.set('currency', this.options?.currency);
+            }
+
             this.units = _.defaults(this.units, options.units);
             this.allUnits = _.defaults(this.allUnits, options.allUnits);
 
@@ -186,7 +196,8 @@ define(function(require) {
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
             this.delegate('click', '.removeLineItem', this.removeRow);
-            this.delegate('click', '.removeRow', this.removeOfferRow);
+            this.delegate('click', '.removeRow', this.triggerEntryPointQuote);
+            this.delegate('click', this.options.addOfferLineItemButton, this.triggerEntryPointQuote);
 
             this.$productSelect = this.$el.find(this.options.productSelect);
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
@@ -207,10 +218,13 @@ define(function(require) {
                 .on('click', this.options.removeNotesButton, this.onRemoveNotesClick.bind(this))
                 .on('click', this.options.freeFormLink, this.onFreeFormLinkClick.bind(this))
                 .on('click', this.options.productSelectLink, this.onProductSelectLinkClick.bind(this))
+                .on('content:changed', this.updateKitOfferLineItems.bind(this))
+                .on('change', this.options.kitOfferCurrencySelect, this.currencyChanged.bind(this))
             ;
 
             this.listenTo(mediator, this.options.events.before, this.disableSubmit);
             this.listenTo(mediator, this.options.events.after, this.enableSubmit);
+            this.listenTo(mediator, this.options.events.after, this.updateKitOfferLineItems.bind(this));
 
             this.$typeSelect.trigger('change');
 
@@ -294,7 +308,7 @@ define(function(require) {
             this.$itemCollection.toggleClass('hide', !enabled);
         },
 
-        removeOfferRow: function() {
+        triggerEntryPointQuote: function() {
             mediator.trigger(this.options.events.trigger);
         },
 
@@ -305,6 +319,30 @@ define(function(require) {
             mediator.trigger(this.options.events.trigger);
         },
 
+        currencyChanged(e) {
+            if (this.model.get('productType') !== 'kit' || (e.manually !== undefined && e.manually === false)) {
+                return;
+            }
+
+            const currency = e.currentTarget?.value;
+            if (currency) {
+                if (this.model.get('checksum')) {
+                    this.model.set('checksum', '');
+                }
+
+                const symbol = localeSettings.getCurrencySymbol(currency);
+                if (symbol) {
+                    this.$el.find(this.options.priceLabelSymbol).text(symbol);
+                }
+
+                this.model.set('currency', currency);
+                const scopeClass = '[data-content="' + this.$el.data('content') + '"]';
+
+                mediator.trigger('kit:pricing:currency:changed', {scopeClass: scopeClass});
+                mediator.trigger('pricing:currency:changed', {currency: currency, scopeClass: scopeClass});
+            }
+        },
+
         /**
          * Handle Product change
          *
@@ -312,6 +350,7 @@ define(function(require) {
          */
         onProductChanged: function(e) {
             this.checkAddButton();
+            this.model.set('productType', e?.added?.type || 'simple');
 
             this.updateProductUnits().then(() => {
                 if (this.getProductId() && !this.$itemsContainer.children().length) {
@@ -326,6 +365,27 @@ define(function(require) {
 
                 mediator.trigger(this.options.events.trigger);
             });
+        },
+
+        updateKitOfferLineItems: function() {
+            const self = this;
+            if (!self.model.get('productId')) {
+                return;
+            }
+
+            const addOfferLineItemButton = self.$el.find(self.options.addOfferLineItemButton);
+            const offerLineItems = self.$el.find(self.options.itemWidget);
+            const removeOfferLineItemButton = offerLineItems.find(self.options.removeOfferLineItemButton);
+            const isKit = self.model.get('productType') === 'kit';
+
+            if (isKit && offerLineItems.length >= 1) {
+                removeOfferLineItemButton.slice(1).trigger('click');
+                removeOfferLineItemButton.prop('disabled', true);
+                addOfferLineItemButton.toggleClass('hide', true);
+            } else {
+                removeOfferLineItemButton.prop('disabled', false);
+                addOfferLineItemButton.toggleClass('hide', false);
+            }
         },
 
         showLoadingMask: function() {

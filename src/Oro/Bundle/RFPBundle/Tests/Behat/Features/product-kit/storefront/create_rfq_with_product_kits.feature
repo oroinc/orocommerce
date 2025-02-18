@@ -37,7 +37,7 @@ Feature: Create RFQ with Product Kits
       | Kit Item 1 Product 2 | None                                 |
       | Kit Item 2 Product 1 | simple-product-01 Product 01 $1.2345 |
       | Kit Item 2 Product 2 | simple-product-02 Product 02 $2.469  |
-      | Price                | Total: $124.6867       |
+      | Price                | Total: $124.6867                     |
       | okButton             | Save                                 |
     And "RFQ Product Kit Line Item Form" must contain values:
       | Readonly Kit Item Line Item 1 Quantity |   |
@@ -50,8 +50,24 @@ Feature: Create RFQ with Product Kits
     When I click "Save"
     And fill "Frontstore RFQ Line Item Form1" with:
       | Target Price | 124 |
-    And click "Update Line Item"
+    Then I should not see "Add Another Line"
+    When I click "Update Line Item"
     Then I should see "product-kit-01 - Product Kit 01 Mandatory Item 1 piece simple-product-01 - Simple Product 01 QTY: 1 piece Target Price $124.00 Listed Price: $124.6867" in the "RFQ Products List Line Item 1" element
+
+  Scenario: Change simple product on kit product
+    When I click "Add Another Product"
+    And fill "Frontend Request Form" with:
+      | Line Item 2 Product | simple-product-01 |
+    And I click "RFQ Line Item 2 Add Another Line"
+    And fill "Frontend Request Form" with:
+      | Line Item 2 Target Price  | 1 |
+      | Line Item 2 Target Price2 | 2 |
+    When fill "Frontend Request Form" with:
+      | Line Item 2 Product | product-kit-01 - Product Kit 01 |
+    And I click "Save"
+    Then I should not see "Add Another Line"
+    And I should not see an "RFQ Line Item 2 Target Price2" element
+    And I click "RFQ Line Item 2 Delete"
 
   Scenario: Add another Product Kit configuration to RFQ
     When I click "Add Another Product"

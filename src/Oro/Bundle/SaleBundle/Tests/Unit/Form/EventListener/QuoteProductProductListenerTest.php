@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\Tools\EntityStateChecker;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\FormTypeStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\EventListener\QuoteProductProductListener;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductKitItemLineItemCollectionType;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -20,7 +22,7 @@ use Symfony\Component\Form\Forms;
 
 class QuoteProductProductListenerTest extends TestCase
 {
-    private EntityStateChecker|MockObject $entityStateChecker;
+    private EntityStateChecker&MockObject $entityStateChecker;
 
     private QuoteProductProductListener $listener;
 
@@ -61,9 +63,10 @@ class QuoteProductProductListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertTrue($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($product, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
-            ['allow_prices_override' => false],
+            ['allow_prices_override' => true],
             $form->get('quoteProductOffers')->getConfig()->getOption('entry_options')
         );
     }
@@ -86,6 +89,7 @@ class QuoteProductProductListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -111,6 +115,7 @@ class QuoteProductProductListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -120,6 +125,7 @@ class QuoteProductProductListenerTest extends TestCase
         $form->submit([]);
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -147,6 +153,7 @@ class QuoteProductProductListenerTest extends TestCase
         $product = (new ProductStub())->setType(Product::TYPE_KIT);
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -156,9 +163,10 @@ class QuoteProductProductListenerTest extends TestCase
         $form->submit(['product' => $product]);
 
         self::assertTrue($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($product, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
-            ['allow_prices_override' => false],
+            ['allow_prices_override' => true],
             $form->get('quoteProductOffers')->getConfig()->getOption('entry_options')
         );
     }
@@ -183,6 +191,7 @@ class QuoteProductProductListenerTest extends TestCase
         $product = (new ProductStub())->setType(Product::TYPE_SIMPLE);
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -192,6 +201,7 @@ class QuoteProductProductListenerTest extends TestCase
         $form->submit(['product' => $product]);
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($product, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -220,6 +230,7 @@ class QuoteProductProductListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -235,10 +246,11 @@ class QuoteProductProductListenerTest extends TestCase
         $form->submit(['product' => $productKit]);
 
         self::assertTrue($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($productKit, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(new ArrayCollection(), $form->get('kitItemLineItems')->getConfig()->getOption('data'));
         self::assertEquals(
-            ['allow_prices_override' => false],
+            ['allow_prices_override' => true],
             $form->get('quoteProductOffers')->getConfig()->getOption('entry_options')
         );
     }
@@ -247,8 +259,8 @@ class QuoteProductProductListenerTest extends TestCase
     {
         $productSimple = (new ProductStub())->setType(Product::TYPE_SIMPLE);
         $productKit = (new ProductStub())->setType(Product::TYPE_KIT);
-        $quoteProduct = (new QuoteProduct())
-            ->setProduct($productSimple);
+        $quoteProduct = (new QuoteProduct())->setProduct($productSimple);
+        $quoteProduct->addQuoteProductOffer((new QuoteProductOffer())->setPrice(Price::create(1.0, 'USD')));
 
         $formBuilder = $this->formFactory->createBuilder(FormType::class, $quoteProduct)
             ->add('product', FormType::class, ['compound' => false])
@@ -266,6 +278,7 @@ class QuoteProductProductListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertFalse($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($productSimple, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
             ['allow_prices_override' => true],
@@ -281,10 +294,11 @@ class QuoteProductProductListenerTest extends TestCase
         $form->submit(['product' => $productKit]);
 
         self::assertTrue($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($productKit, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(new ArrayCollection(), $form->get('kitItemLineItems')->getConfig()->getOption('data'));
         self::assertEquals(
-            ['allow_prices_override' => false],
+            ['allow_prices_override' => true],
             $form->get('quoteProductOffers')->getConfig()->getOption('entry_options')
         );
     }
@@ -294,6 +308,7 @@ class QuoteProductProductListenerTest extends TestCase
         $productKit = (new ProductStub())->setType(Product::TYPE_KIT);
         $quoteProduct = (new QuoteProduct())
             ->setProduct($productKit);
+        $quoteProduct->addQuoteProductOffer((new QuoteProductOffer())->setPrice(Price::create(1.0, 'USD')));
 
         $formBuilder = $this->formFactory->createBuilder(FormType::class, $quoteProduct)
             ->add('product', FormType::class, ['compound' => false])
@@ -311,9 +326,10 @@ class QuoteProductProductListenerTest extends TestCase
         $form = $formBuilder->getForm();
 
         self::assertTrue($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertEquals('USD', $form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($productKit, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertEquals(
-            ['allow_prices_override' => false],
+            ['allow_prices_override' => true],
             $form->get('quoteProductOffers')->getConfig()->getOption('entry_options')
         );
 
@@ -326,10 +342,11 @@ class QuoteProductProductListenerTest extends TestCase
         $form->submit(['product' => $productKit]);
 
         self::assertTrue($form->get('kitItemLineItems')->getConfig()->getOption('required'));
+        self::assertEquals('USD', $form->get('kitItemLineItems')->getConfig()->getOption('currency'));
         self::assertSame($productKit, $form->get('kitItemLineItems')->getConfig()->getOption('product'));
         self::assertNull($form->get('kitItemLineItems')->getConfig()->getOption('data'));
         self::assertEquals(
-            ['allow_prices_override' => false],
+            ['allow_prices_override' => true],
             $form->get('quoteProductOffers')->getConfig()->getOption('entry_options')
         );
     }

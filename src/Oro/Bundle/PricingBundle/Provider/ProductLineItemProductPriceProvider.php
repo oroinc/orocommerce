@@ -87,7 +87,7 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
 
         $kitItemLineItemsPriceValue = BigDecimal::of(0.0);
         foreach ($productLineItem->getKitItemLineItems() as $kitItemLineItem) {
-            $kitItemPrice = $this->getKitItemLineItemPrice($kitItemLineItem, $productPriceCollection);
+            $kitItemPrice = $this->getKitItemLineItemPrice($kitItemLineItem, $productPriceCollection, $currency);
             if ($kitItemPrice === null) {
                 continue;
             }
@@ -129,13 +129,15 @@ class ProductLineItemProductPriceProvider implements ProductLineItemProductPrice
 
     private function getKitItemLineItemPrice(
         ProductKitItemLineItemInterface|PriceAwareInterface $kitItemLineItem,
-        ProductPriceCollectionDTO $productPriceCollection
+        ProductPriceCollectionDTO $productPriceCollection,
+        string $currency
     ): ?Price {
         $price = null;
-        if ($kitItemLineItem instanceof PriceAwareInterface && $kitItemLineItem->getPrice() !== null) {
+        if ($kitItemLineItem instanceof PriceAwareInterface && $kitItemLineItem->getPrice()) {
             $price = $kitItemLineItem->getPrice();
         } elseif ($kitItemLineItem->getProduct() && $kitItemLineItem->getProductUnit()) {
-            $productPriceCriteria = $this->productPriceCriteriaFactory->createFromProductLineItem($kitItemLineItem);
+            $productPriceCriteria = $this->productPriceCriteriaFactory
+                ->createFromProductLineItem($kitItemLineItem, $currency);
             if ($productPriceCriteria !== null) {
                 $price = $this->productPriceByMatchingCriteriaProvider
                     ->getProductPriceMatchingCriteria($productPriceCriteria, $productPriceCollection)

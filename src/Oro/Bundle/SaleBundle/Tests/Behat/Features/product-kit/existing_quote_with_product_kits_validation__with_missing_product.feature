@@ -56,6 +56,11 @@ Feature: Existing Quote with Product Kits Validation - with Missing Product
 
   Scenario: Check the validation error for kit item line item with a missing product
     When I click "Submit"
+    Then I should see "Price value should not be blank."
+
+    When I fill "Quote Form" with:
+      | Line Item 2 Item 2 Price   | 10 |
+    And I click "Submit"
     Then I should see "Quote Form" validation errors:
       | Line Item 2 Item 2 Product | Original selection no longer available |
 
@@ -63,6 +68,7 @@ Feature: Existing Quote with Product Kits Validation - with Missing Product
     When fill "Quote Form" with:
       | Line Item 2 Item 2 Product | simple-product-02 - Simple Product 02 |
     And I click "Submit"
+    And I click "Save" in modal window
     Then I should see "Quote Form" validation errors:
       | Line Item 3 Item 2 Product | The selected product is not enabled |
 

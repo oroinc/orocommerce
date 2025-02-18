@@ -94,6 +94,7 @@ class QuoteProductOfferType extends AbstractType
                 'data_class' => QuoteProductOffer::class,
                 'compact_units' => false,
                 'allow_prices_override' => true,
+                'checksum' => '',
                 'csrf_token_id' => 'sale_quote_product_offer',
             ]
         );
@@ -102,6 +103,12 @@ class QuoteProductOfferType extends AbstractType
     #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options): void
     {
+        $quoteProductOffer = $form->getData();
+        if ($quoteProductOffer?->getQuoteProduct()?->getProduct()?->isKit()) {
+            $checksum = $quoteProductOffer->getCheckSum();
+        }
+
+        $view->vars['checksum'] = $checksum ?? $options['checksum'];
         $view->vars['allow_prices_override'] = $options['allow_prices_override'];
     }
 

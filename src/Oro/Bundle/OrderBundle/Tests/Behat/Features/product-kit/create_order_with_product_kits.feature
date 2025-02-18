@@ -46,6 +46,24 @@ Feature: Create Order with Product Kits
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
     And I click on empty space
 
+  Scenario: Change currency
+    And I should see "Price, $:" in the "Order Form Line Item 1 Kit Item 1 Price Label" element
+    And I should see "Price, $:" in the "Order Form Line Item 1 Kit Item 2 Price Label" element
+    When I fill "Order Form" with:
+      | Currency | Euro (€) |
+    Then I should see "Price, €:" in the "Order Form Line Item 1 Kit Item 1 Price Label" element
+    And I should see "Price, €:" in the "Order Form Line Item 1 Kit Item 2 Price Label" element
+    And I should not see "Price, $:"
+    And "Order Form" must contains values:
+      | ProductKitItem1Price | |
+      | ProductKitItem2Price | |
+    When I fill "Order Form" with:
+      | Currency | US Dollar ($) |
+    Then I should not see "Price, €:"
+    And "Order Form" must contains values:
+      | ProductKitItem1Price |      |
+      | ProductKitItem2Price | 1.23 |
+
   Scenario: Add one more product kit line item via the entity select popup
     When I click "Add Product"
     And I open select entity popup for field "Product2Dropdown" in form "Order Form"

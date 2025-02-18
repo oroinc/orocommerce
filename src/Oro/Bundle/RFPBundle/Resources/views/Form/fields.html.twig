@@ -263,10 +263,12 @@
         {% if quantity is not empty %}
             {% set quantity = quantity|oro_format_decimal %}
         {% endif %}
-        {% set price = offer.price %}
+
+        {% set price = offer.price|default %}
         {% if price is not empty %}
             {% set price = price|oro_format_decimal %}
         {% endif %}
+
         {{ form_widget(form, {
             attr: {
                 'data-quantity': quantity|default,

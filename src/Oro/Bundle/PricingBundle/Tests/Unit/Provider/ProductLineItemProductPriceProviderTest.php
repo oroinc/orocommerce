@@ -388,8 +388,8 @@ class ProductLineItemProductPriceProviderTest extends TestCase
             ->expects(self::exactly(2))
             ->method('createFromProductLineItem')
             ->willReturnMap([
-                [$kitItemLineItem1, null, $productPriceCriteria1],
-                [$kitItemLineItem2, null, $productPriceCriteria2],
+                [$kitItemLineItem1, 'USD', $productPriceCriteria1],
+                [$kitItemLineItem2, 'USD', $productPriceCriteria2],
             ]);
 
         $this->productPriceByMatchingCriteriaProvider

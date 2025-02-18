@@ -46,6 +46,7 @@ Feature: Quote with Product Kits Validation
     When fill "Quote Form" with:
       | Line Item 2 Item 1 Quantity | <Item 1 Quantity> |
       | Line Item 2 Item 2 Quantity | <Item 2 Quantity> |
+    And I wait for 1 seconds
     And I click "Submit"
     And agree that shipping cost may have changed
     And I focus on "Quote Form Line Item 2 Kit Item 2 Label"

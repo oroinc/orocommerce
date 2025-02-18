@@ -74,12 +74,18 @@ Feature: Create New Quote from existing Quote with Product Kits Validation - wit
 
   Scenario: Check the validation errors for kit item line items
     When I click "Submit"
+    Then I should see "Price value should not be blank."
+
+    When I fill "Quote Form" with:
+      | Line Item 2 Item 2 Price   | 10 |
+    And I click "Submit"
     And I should see "Quote Form" validation errors:
       | Line Item 2 Item 2 Product | Original selection no longer available |
 
     When fill "Quote Form" with:
       | Line Item 2 Item 2 Product | simple-product-02 - Simple Product 02 |
     And I click "Submit"
+    And I click "Save" in modal window
     Then I should see "Quote Form" validation errors:
       | Line Item 3 Item 2 Product | The selected product is not enabled |
 

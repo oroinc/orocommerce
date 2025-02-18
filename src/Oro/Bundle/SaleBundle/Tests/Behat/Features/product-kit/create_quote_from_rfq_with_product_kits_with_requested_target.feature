@@ -41,11 +41,13 @@ Feature: Create Quote from RFQ with Product Kits with requested target
     And click on "Edit Request Product Line Item"
     And fill "Frontstore RFQ Line Item Form1" with:
       | Target Price | 100 |
+    And I should not see "Add Another Line"
     And click "Update Line Item"
 
     And click on "Edit Request Product Line Item 2"
     And fill "Frontstore RFQ Line Item Form2" with:
       | Target Price | 101 |
+    And I should not see "Add Another Line"
     And click "Update Line Item"
 
     And I click "Submit Request"
@@ -69,12 +71,19 @@ Feature: Create Quote from RFQ with Product Kits with requested target
 
       | Line Item 1 Item 1 Product  | simple-product-03 - Simple Product 03 |
       | Line Item 1 Item 1 Quantity | 1                                     |
+      | Line Item 1 Item 1 Price    | 3.70                                  |
       | Line Item 1 Item 2 Product  | simple-product-02 - Simple Product 02 |
       | Line Item 1 Item 2 Quantity | 1                                     |
+      | Line Item 1 Item 2 Price    | 2.47                                  |
       | LineItemPrice               | 129.6267                              |
 
+      | Line Item 2 Item 1 Price    |                                       |
       | Line Item 2 Item 2 Product  | simple-product-02 - Simple Product 02 |
       | Line Item 2 Item 2 Quantity | 1                                     |
+      | Line Item 2 Item 2 Price    | 2.47                                  |
       | LineItemPrice2              | 125.9267                              |
-    And I save and close form
-    And I should see "Quote has been saved" flash message
+    And I should not see "Add Offer"
+    And I should see "Line Item 1 Offer 1 Remove Button" button disabled
+    And I should see "Line Item 2 Offer 1 Remove Button" button disabled
+    When I save and close form
+    Then I should see "Quote has been saved" flash message
