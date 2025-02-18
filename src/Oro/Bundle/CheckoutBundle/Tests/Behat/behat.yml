@@ -98,7 +98,7 @@ oro_behat_extension:
       selector: 'div.checkout-order-summary__totals'
 
     CheckoutStepTitle:
-      selector: '.checkout-navigation__title--current, .checkout__title:not([class*="hide-on-desktop-small"])'
+      selector: '.checkout-navigation__title--current'
 
     CheckoutSuccessStep:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep
