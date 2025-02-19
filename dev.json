@@ -123,14 +123,13 @@
             "Oro\\Component\\Website\\": "src/Oro/Component/Website"
         },
         "exclude-from-classmap": [
-            "**/Tests/"
+            "/Tests/"
         ]
     },
     "config": {
         "allow-plugins": {
             "symfony/runtime": false,
-            "php-http/discovery": false,
-            "symfony/flex": true
+            "php-http/discovery": false
         }
     }
 }
