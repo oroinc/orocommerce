@@ -11,6 +11,12 @@ services:
             - ['%oro_api.rest.prefix%', '/js/', '/media/', '/_fragment', '/_profiler', '/_wdt']
             - '@oro_frontend.request.frontend_helper'
 
+    # we create copy of MatchedUrlDecisionMaker because we have decoration of this service but
+    # for RequestWebContentScopeProvider we must use original service which check storefront include homepage
+    oro_redirect.routing.web_content_matched_url_decision_maker:
+        class: Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker
+        parent: oro_redirect.routing.matched_url_decision_maker
+
     oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
         arguments:
