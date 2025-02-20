@@ -27,6 +27,8 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
 {
     use LoggerAwareTrait;
 
+    private const LENGTH_LIMIT_TINYTEXT = 255;
+
     private SearchResultHistoryRepository $historyRepository;
     private SearchTermReportRepository $reportRepository;
     private TokenStorageInterface $tokenStorage;
@@ -147,7 +149,11 @@ class SearchResultHistoryManager implements SearchResultHistoryManagerInterface,
     {
         $searchTerm = trim($searchTerm);
 
-        return preg_replace('/[\s\t]+/', ' ', $searchTerm);
+        return mb_substr(
+            preg_replace('/[\s\t]+/', ' ', $searchTerm),
+            0,
+            self::LENGTH_LIMIT_TINYTEXT
+        );
     }
 
     private function getOrganization(?TokenInterface $token): ?Organization
