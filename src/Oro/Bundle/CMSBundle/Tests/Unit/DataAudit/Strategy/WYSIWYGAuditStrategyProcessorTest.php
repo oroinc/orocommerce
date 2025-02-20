@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\DataAudit\Strategy;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\DataAudit\Strategy;
 
 use Oro\Bundle\CMSBundle\DataAudit\Strategy\WYSIWYGAuditStrategyProcessor;
 use Oro\Bundle\DataAuditBundle\Strategy\EntityAuditStrategyDelegateProcessor;

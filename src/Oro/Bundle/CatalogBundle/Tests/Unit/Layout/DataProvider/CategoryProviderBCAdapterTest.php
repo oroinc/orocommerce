@@ -1,6 +1,6 @@
 <?php
 
-namespace Unit\Layout\DataProvider;
+namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;

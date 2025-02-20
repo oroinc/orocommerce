@@ -116,7 +116,7 @@
             "Oro\\Component\\WebCatalog\\": "src/Oro/Component/WebCatalog",
             "Oro\\Component\\Website\\": "src/Oro/Component/Website"
         },
-        "exclude-from-classmap": ["/Tests/"]
+        "exclude-from-classmap": ["**/Tests/"]
     },
     "config": {
         "allow-plugins": {
