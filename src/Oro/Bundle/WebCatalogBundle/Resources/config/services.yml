@@ -160,7 +160,7 @@ services:
             - '@request_stack'
             - '@doctrine'
             - '@oro_scope.scope_manager'
-            - '@oro_redirect.routing.matched_url_decision_maker'
+            - '@oro_redirect.routing.web_content_matched_url_decision_maker'
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
         parent: oro_form.autocomplete.search_handler
