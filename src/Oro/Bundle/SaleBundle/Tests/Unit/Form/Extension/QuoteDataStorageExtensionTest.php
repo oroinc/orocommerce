@@ -28,10 +28,10 @@ use Oro\Bundle\SaleBundle\Provider\QuoteProductPricesProvider;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
+final class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
     private Quote $entity;
-    private QuoteProductPricesProvider|MockObject $quoteProductPricesProvider;
+    private QuoteProductPricesProvider&MockObject $quoteProductPricesProvider;
 
     #[\Override]
     protected function setUp(): void
@@ -363,7 +363,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                     123 => [
                         '123|item|6' => [
                             [
-                                'qty' => 1,
+                                'qty' => 2,
                                 'unit' => 'item',
                                 'price' => Price::create(7, 'USD'),
                             ],

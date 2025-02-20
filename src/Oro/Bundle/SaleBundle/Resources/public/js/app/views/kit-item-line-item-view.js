@@ -9,27 +9,36 @@ const KitItemLineItemView = LineItemProductView.extend({
     elements: {
         id: '[data-name="field__product"]',
         product: '[data-name="field__product"]',
-        quantity: '[data-name="field__quantity"]'
+        quantity: '[data-name="field__quantity"]',
+        priceValue: '[data-name="field__value"]',
+        priceLabelSymbol: '.line-item-price-symbol'
     },
 
     modelElements: {
         id: 'id',
         product: 'product',
-        quantity: 'quantity'
+        quantity: 'quantity',
+        priceValue: 'priceValue'
     },
 
     modelAttr: {
         id: '',
         product: '',
         quantity: null,
+        currency: '',
         unit: '',
         product_units: []
     },
 
     modelEvents: {
         ...LineItemProductView.prototype.modelEvents,
-        'id onProductChange': ['change', 'onProductChange']
+        'id onProductChange': ['change', 'onProductChange'],
+        'id resetChecksum': ['change', 'resetChecksum'],
+        'quantity resetChecksum': ['change', 'resetChecksum'],
+        'priceValue resetChecksum': ['change', 'resetChecksum']
     },
+
+    lineItemModel: null,
 
     /**
      * @property {number}
@@ -53,13 +62,21 @@ const KitItemLineItemView = LineItemProductView.extend({
      * @inheritdoc
      */
     initialize(options) {
+        this.lineItemModel = options.lineItemModel || null;
+        if (this.lineItemModel === null) {
+            throw Error('Option "lineItemModel" cannot be null');
+        }
+
         KitItemLineItemView.__super__.initialize.call(this, options);
+
+        this.listenTo(mediator, 'kit:pricing:currency:changed', this.resetPriceValue.bind(this));
     },
 
     handleLayoutInit(options) {
         this.entryPointTriggers([
             this.getElement('product'),
-            this.getElement('quantity')
+            this.getElement('quantity'),
+            this.getElement('priceValue')
         ]);
 
         KitItemLineItemView.__super__.handleLayoutInit.call(this, options);
@@ -79,18 +96,38 @@ const KitItemLineItemView = LineItemProductView.extend({
     onProductChange() {
         if (!this.model.get('id')) {
             this.model.set('quantity', null, {silent: true});
+            this.model.set('priceValue', null, {silent: true});
 
             this.getElement('quantity').attr('disabled', true).val(null);
+            this.getElement('priceValue').attr('disabled', true).val(null);
 
             this.getElement('quantity').valid();
+            this.getElement('priceValue').valid();
         } else {
             this.resetData();
 
             this.getElement('quantity').prop('disabled', false);
+            this.getElement('priceValue').prop('disabled', false);
         }
     },
 
+    resetChecksum() {
+        if (this.lineItemModel.get('checksum')) {
+            this.lineItemModel.set('checksum', '');
+        }
+    },
+
+    resetPriceValue(options) {
+        if (options.scopeClass && this.$el.parents(options?.scopeClass).length === 0) {
+            return;
+        }
+
+        this.model.set('priceValue', null, {silent: true});
+    },
+
     resetData() {
+        this.getElement('priceValue').addClass('matched-price');
+
         this.model.set('quantity', this.minimumQuantity);
         this.getElement('quantity').valid();
     },

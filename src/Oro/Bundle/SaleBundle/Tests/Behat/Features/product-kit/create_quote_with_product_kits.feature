@@ -7,7 +7,7 @@ Feature: Create Quote with Product Kits
     Given I login as administrator
     And go to Sales / Quotes
     And click "Create Quote"
-    And I fill "Quote Form" with:
+    When I fill "Quote Form" with:
       | Customer         | Customer1                                                   |
       | Customer User    | Amanda Cole                                                 |
       | Shipping Address | Test Customer, ORO, 801 Scenic Hwy, HAINES CITY FL US 33844 |
@@ -25,9 +25,34 @@ Feature: Create Quote with Product Kits
       | LineItemPrice               | 124.69                                |
       | Line Item 1 Item 1 Product  | None                                  |
       | Line Item 1 Item 1 Quantity |                                       |
+      | Line Item 1 Item 1 Price    |                                       |
       | Line Item 1 Item 2 Product  | simple-product-01 - Simple Product 01 |
       | Line Item 1 Item 2 Quantity | 1                                     |
+      | Line Item 1 Item 2 Price    | 1.23                                  |
+    And I should not see "Add Offer"
+    And I should see "Line Item 1 Offer 1 Remove Button" button disabled
     And the "LineItemPrice" field should be readonly in form "Quote Form"
+
+  Scenario: Change offer currency for line item with kit product
+    When I fill "Quote Form" with:
+      | LineItemCurrency | € |
+    Then I should see "Price, €:" in the "Quote Form Line Item 1 Kit Item 1 Price Label" element
+    And I should see "Price, €:" in the "Quote Form Line Item 1 Kit Item 2 Price Label" element
+    And I should not see "Price, $:"
+    And "Quote Form" must contains values:
+      | LineItemQuantity            | 1                                     |
+      | LineItemPrice               |                                       |
+      | Line Item 1 Item 1 Product  | None                                  |
+      | Line Item 1 Item 1 Quantity |                                       |
+      | Line Item 1 Item 1 Price    |                                       |
+      | Line Item 1 Item 2 Product  | simple-product-01 - Simple Product 01 |
+      | Line Item 1 Item 2 Quantity | 1                                     |
+      | Line Item 1 Item 2 Price    |                                       |
+    When I fill "Quote Form" with:
+      | LineItemCurrency | $ |
+    Then I should see "Price, $:" in the "Quote Form Line Item 1 Kit Item 1 Price Label" element
+    And I should see "Price, $:" in the "Quote Form Line Item 1 Kit Item 2 Price Label" element
+    And I should not see "Price, €:"
     When I click on "Quote Form Line Item 1 Kit Item 1 Quantity Label Tooltip"
     Then I should see "The quantity of product kit item units to be purchased: piece (whole numbers)" in the "Tooltip Popover Content" element
 
@@ -49,11 +74,13 @@ Feature: Create Quote with Product Kits
     Then "Quote Form" must contains values:
       | Line Item 2 Product         | product-kit-01 - Product Kit 01       |
       | Line Item 2 Quantity        | 2                                     |
-      | Line Item 2 Price           | 128.39                                |
+      | Line Item 2 Price           | 128.38                                |
       | Line Item 2 Item 1 Product  | simple-product-03 - Simple Product 03 |
       | Line Item 2 Item 1 Quantity | 3                                     |
+      | Line Item 2 Item 1 Price    | 1.23                                  |
       | Line Item 2 Item 2 Product  | simple-product-01 - Simple Product 01 |
       | Line Item 2 Item 2 Quantity | 1                                     |
+      | Line Item 2 Item 2 Price    | 1.23                                  |
     And the "LineItemPrice" field should be readonly in form "Quote Form"
     And the "LineItemPrice2" field should be readonly in form "Quote Form"
 
@@ -67,4 +94,4 @@ Feature: Create Quote with Product Kits
     And I should see next rows in "Quote Line Items Table" table
       | SKU            | Product                                                                                                 | Quantity      | Price   |
       | product-kit-01 | Product Kit 01 Mandatory Item [piece x 1] Simple Product 01                                             | 1 pc or more  | $124.69 |
-      | product-kit-01 | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more | $128.39 |
+      | product-kit-01 | Product Kit 01 Optional Item [piece x 3] Simple Product 03 Mandatory Item [piece x 1] Simple Product 01 | 2 pcs or more | $128.38 |

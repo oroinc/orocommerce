@@ -23,24 +23,12 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class QuoteProductType extends AbstractType
 {
-    private UnitLabelFormatterInterface $labelFormatter;
-
-    private ManagerRegistry $doctrine;
-
-    private EventSubscriberInterface $quoteProductProductListener;
-
-    private EventSubscriberInterface $quoteProductOfferChecksumListener;
-
     public function __construct(
-        UnitLabelFormatterInterface $labelFormatter,
-        ManagerRegistry $doctrine,
-        EventSubscriberInterface $quoteProductProductListener,
-        EventSubscriberInterface $quoteProductOfferChecksumListener
+        private UnitLabelFormatterInterface $labelFormatter,
+        private ManagerRegistry $doctrine,
+        private EventSubscriberInterface $quoteProductProductListener,
+        private EventSubscriberInterface $quoteProductOfferChecksumListener
     ) {
-        $this->labelFormatter = $labelFormatter;
-        $this->doctrine = $doctrine;
-        $this->quoteProductProductListener = $quoteProductProductListener;
-        $this->quoteProductOfferChecksumListener = $quoteProductOfferChecksumListener;
     }
 
     #[\Override]
@@ -57,6 +45,7 @@ class QuoteProductType extends AbstractType
         $units = [];
         /* @var Product[] $products */
         $products = [];
+        $productType = null;
 
         $isFreeForm = false;
         if ($view->vars['value']) {
@@ -64,8 +53,14 @@ class QuoteProductType extends AbstractType
             $quoteProduct = $view->vars['value'];
 
             if ($quoteProduct->getProduct()) {
+                $productType = $quoteProduct->getProduct()->getType();
                 $product = $quoteProduct->getProduct();
                 $products[$product->getId()] = $product;
+            }
+
+            if ($quoteProduct->getProduct()?->isKit()) {
+                $quoteProductOffer = $quoteProduct->getQuoteProductOffers()->first();
+                $currency = $quoteProductOffer ? $quoteProductOffer->getPrice()?->getCurrency() : null;
             }
 
             if ($quoteProduct->getProductReplacement()) {
@@ -80,6 +75,11 @@ class QuoteProductType extends AbstractType
             $units[$product->getId()] = $product->getSellUnitsPrecision();
         }
 
+        // Set read-only attribute in this place for cases with backend validation
+        if ($productType === Product::TYPE_KIT) {
+            $this->setReadonlyForOfferPriceField($view);
+        }
+
         $view->vars['componentOptions'] = [
             'units' => $units,
             'allUnits' => $this->getAllUnits($options['compact_units']),
@@ -89,6 +89,8 @@ class QuoteProductType extends AbstractType
             'isFreeForm' => $isFreeForm,
             'allowEditFreeForm' => $options['allow_add_free_form_items'],
             'fullName' => $view->vars['full_name'],
+            'productType' => $productType,
+            'currency' => $currency ?? null,
         ];
     }
 
@@ -124,7 +126,7 @@ class QuoteProductType extends AbstractType
             ->add(
                 'kitItemLineItems',
                 QuoteProductKitItemLineItemCollectionType::class,
-                ['required' => false]
+                ['required' => false, 'currency' => $options['currency']]
             )
             ->add('productReplacement', ProductSelectType::class, [
                 'required' => false,
@@ -183,6 +185,11 @@ class QuoteProductType extends AbstractType
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => ['view' => 'orosale/js/app/views/line-item-view'],
         ]);
+
+        $resolver
+            ->define('currency')
+            ->default(null)
+            ->allowedTypes('string', 'null');
     }
 
     #[\Override]
@@ -196,5 +203,16 @@ class QuoteProductType extends AbstractType
         $units = $this->doctrine->getRepository(ProductUnit::class)->getAllUnits();
 
         return $this->labelFormatter->formatChoices($units, $isCompactUnits);
+    }
+
+    private function setReadonlyForOfferPriceField(FormView $view): void
+    {
+        foreach ($view->children['quoteProductOffers'] as $child) {
+            if (!$child->children['price']) {
+                continue;
+            }
+
+            $child->children['price']->children['value']->vars['attr']['readonly'] = true;
+        }
     }
 }

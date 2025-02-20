@@ -67,6 +67,7 @@ class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
                 'required' => !$productKit1Item1->isOptional(),
                 'property_path' => '[' . $productKit1Item1->getId() . ']',
                 'block_name' => 'entry',
+                'currency' => null,
                 'product_kit_item' => $productKit1Item1,
             ],
             $kitItemLineItem1Form->getConfig()->getOptions()
@@ -85,6 +86,7 @@ class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
                 'required' => !$productKit1Item2->isOptional(),
                 'property_path' => '[' . $productKit1Item2->getId() . ']',
                 'block_name' => 'entry',
+                'currency' => null,
                 'product_kit_item' => $productKit1Item2,
             ],
             $kitItemLineItem2Form->getConfig()->getOptions()
@@ -131,7 +133,7 @@ class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
         $form = $formFactory->create(
             QuoteProductKitItemLineItemCollectionType::class,
             $collection,
-            ['product' => $productKit1, 'csrf_protection' => false]
+            ['product' => $productKit1, 'csrf_protection' => false, 'currency' => 'USD']
         );
 
         self::assertCount(2, $form);
@@ -153,6 +155,7 @@ class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
                 'required' => !$productKit1Item1->isOptional(),
                 'property_path' => '[' . $productKit1Item1->getId() . ']',
                 'block_name' => 'entry',
+                'currency' => 'USD',
                 'product_kit_item' => $productKit1Item1,
             ],
             $kitItemLineItem1Form->getConfig()->getOptions()
@@ -168,6 +171,7 @@ class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
                 'required' => !$productKit1Item2->isOptional(),
                 'property_path' => '[' . $productKit1Item2->getId() . ']',
                 'block_name' => 'entry',
+                'currency' => 'USD',
                 'product_kit_item' => $productKit1Item2,
             ],
             $kitItemLineItem2Form->getConfig()->getOptions()
@@ -237,7 +241,7 @@ class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
         $form = $formFactory->create(
             QuoteProductKitItemLineItemCollectionType::class,
             null,
-            ['csrf_protection' => false, 'validation_groups' => false, 'product' => $productKit1]
+            ['csrf_protection' => false, 'validation_groups' => false, 'product' => $productKit1, 'currency' => 'USD']
         );
 
         $form->submit([
@@ -276,6 +280,10 @@ class QuoteProductKitItemLineItemCollectionTypeTest extends WebTestCase
             ],
             $actualCollection
         );
+
+        foreach ($form->all() as $child) {
+            self::assertEquals('USD', $child->getConfig()->getOption('currency'));
+        }
     }
 
     public function testSubmitExisting(): void

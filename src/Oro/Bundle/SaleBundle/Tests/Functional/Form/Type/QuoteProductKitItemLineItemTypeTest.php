@@ -82,6 +82,16 @@ class QuoteProductKitItemLineItemTypeTest extends WebTestCase
             $form->get('quantity')->getConfig()->getOptions()
         );
 
+        self::assertTrue($form->has('price'));
+        self::assertArrayIntersectEquals(
+            [
+                'required' => true,
+                'hide_currency' => true,
+                'default_currency' => null,
+            ],
+            $form->get('price')->getConfig()->getOptions()
+        );
+
         $kitItemLineItem = self::getContainer()
             ->get('oro_sale.product_kit.factory.quote_product_kit_item_line_item')
             ->createKitItemLineItem($productKit1Item1);
@@ -90,6 +100,7 @@ class QuoteProductKitItemLineItemTypeTest extends WebTestCase
 
         $formView = $form->createView();
         self::assertSame($productKit1Item1, $formView->vars['product_kit_item']);
+        self::assertNull($formView->vars['currency']);
         self::assertContains('oro_sale_quote_product_kit_item_line_item', $formView->vars['block_prefixes']);
     }
 
@@ -142,6 +153,16 @@ class QuoteProductKitItemLineItemTypeTest extends WebTestCase
             $form->get('quantity')->getConfig()->getOptions()
         );
 
+        self::assertTrue($form->has('price'));
+        self::assertArrayIntersectEquals(
+            [
+                'required' => false,
+                'hide_currency' => true,
+                'default_currency' => null,
+            ],
+            $form->get('price')->getConfig()->getOptions()
+        );
+
         $kitItemLineItem = self::getContainer()
             ->get('oro_sale.product_kit.factory.quote_product_kit_item_line_item')
             ->createKitItemLineItem($productKit1Item1);
@@ -150,9 +171,10 @@ class QuoteProductKitItemLineItemTypeTest extends WebTestCase
 
         $formView = $form->createView();
         self::assertSame($productKit1Item1, $formView->vars['product_kit_item']);
+        self::assertNull($formView->vars['currency']);
     }
 
-    public function testCreateShouldHaveDisabledQuantityWhenHasDataAndNoProduct(): void
+    public function testCreateShouldHaveDisabledQuantityAndPriceWhenHasDataAndNoProduct(): void
     {
         /** @var ProductKitItem $productKit1Item1 */
         $productKit1Item1 = $this->getReference('product_kit1_item1');
@@ -170,7 +192,12 @@ class QuoteProductKitItemLineItemTypeTest extends WebTestCase
         $form = $formFactory->create(
             QuoteProductKitItemLineItemType::class,
             $kitItemLineItem,
-            ['csrf_protection' => false, 'product_kit_item' => $productKit1Item1, 'required' => false]
+            [
+                'csrf_protection' => false,
+                'product_kit_item' => $productKit1Item1,
+                'required' => false,
+                'currency' => 'USD'
+            ]
         );
 
         self::assertArrayIntersectEquals(
@@ -207,11 +234,26 @@ class QuoteProductKitItemLineItemTypeTest extends WebTestCase
             $form->get('quantity')->getConfig()->getOptions()
         );
 
+        self::assertTrue($form->has('price'));
+        self::assertArrayIntersectEquals(
+            [
+                'required' => false,
+                'hide_currency' => true,
+                'default_currency' => "USD",
+                'disabled' => false,
+            ],
+            $form->get('price')->getConfig()->getOptions()
+        );
+
+        self::assertTrue($form->get('price')->get('value')->getConfig()->getOption('disabled'));
+        self::assertTrue($form->get('price')->get('currency')->getConfig()->getOption('disabled'));
+
         $actualKitItemLineItem = $form->getData();
         self::assertEquals($kitItemLineItem, $actualKitItemLineItem);
 
         $formView = $form->createView();
         self::assertSame($productKit1Item1, $formView->vars['product_kit_item']);
+        self::assertEquals('USD', $formView->vars['currency']);
     }
 
     public function testCreateShouldHaveGhostProduct(): void

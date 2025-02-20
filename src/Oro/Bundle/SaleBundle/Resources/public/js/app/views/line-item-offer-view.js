@@ -73,7 +73,7 @@ define(function(require) {
             ]);
 
             this.listenTo(mediator, {
-                'entry-point:quote:load': this.onQuoteEntryPointLoad.bind(this)
+                'entry-point:quote:load:response': this.onQuoteEntryPointLoad.bind(this)
             });
 
             mediator.trigger('entry-point:listeners:on');

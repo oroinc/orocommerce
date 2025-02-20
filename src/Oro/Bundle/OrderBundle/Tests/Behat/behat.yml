@@ -269,6 +269,11 @@ oro_behat_extension:
         locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td//span[contains(@class, "prices-tier-per-item")]'
         type: xpath
 
+    Order Form Line Item 1 Kit Item 1 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][1]/td[contains(@class, "line-item-price-label")]/label'
+        type: xpath
+
     Order Form Line Item 1 Price Overridden:
       selector:
         locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//td[contains(@class, "order-line-item-price")]//div[contains(@class, "product-price-overridden")]'
@@ -297,6 +302,11 @@ oro_behat_extension:
     Order Form Line Item 1 Kit Item 2 Unit:
       selector:
         locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td//span[contains(@class, "prices-tier-per-item")]'
+        type: xpath
+
+    Order Form Line Item 1 Kit Item 2 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_order_type[lineItems][0]"]//tr[contains(@class, "order-line-kit-item")][2]/td[contains(@class, "line-item-price-label")]/label'
         type: xpath
 
     Order Form Line Item 1 Kit Item 2 Matched Price:

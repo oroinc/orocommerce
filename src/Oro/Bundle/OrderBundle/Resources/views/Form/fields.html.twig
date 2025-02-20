@@ -211,7 +211,11 @@
             </div>
         </td>
         <td class="line-item-price-label">
-            {{ form_label(form.price, 'oro.order.orderproductkititemlineitem.price.form_label'|trans({'%currency%': oro_currency_symbol(currency)}) ~ ':') }}
+            {{ form_label(
+                form.price,
+                'oro.order.orderproductkititemlineitem.price.form_label'|trans({'%currency%': oro_currency_symbol(currency)})|oro_html_sanitize ~ ':',
+                {'raw_label': true}
+            ) }}
         </td>
         <td class="line-item-price">
             <div {{ UI.renderPageComponentAttributes({

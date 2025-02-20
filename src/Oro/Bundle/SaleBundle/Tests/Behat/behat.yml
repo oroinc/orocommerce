@@ -62,6 +62,7 @@ oro_behat_extension:
           LineItemFreeFormProduct: 'oro_sale_quote[quoteProducts][0][freeFormProduct]'
           LineItemPrice: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
           LineItemCurrency: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][currency]'
+          LineItemCurrency3: 'oro_sale_quote[quoteProducts][2][quoteProductOffers][0][price][currency]'
           LineItemQuantity: 'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][quantity]'
           LineItemFreeFormSku2: 'oro_sale_quote[quoteProducts][1][productSku]'
           LineItemFreeFormProduct2: 'oro_sale_quote[quoteProducts][1][freeFormProduct]'
@@ -101,17 +102,26 @@ oro_behat_extension:
           Line Item 1 Item 1 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td//input[@data-name="field__quantity"]'
             type: xpath
+          Line Item 1 Item 1 Price:
+            locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td//input[@data-name="field__value"]'
+            type: xpath
           Line Item 1 Item 2 Product:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
             type: xpath
           Line Item 1 Item 2 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//input[@data-name="field__quantity"]'
             type: xpath
+          Line Item 1 Item 2 Price:
+            locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//input[@data-name="field__value"]'
+            type: xpath
           Line Item 1 Item 3 Product:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][3]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
             type: xpath
           Line Item 1 Item 3 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][3]/td//input[@data-name="field__quantity"]'
+            type: xpath
+          Line Item 1 Item 3 Price:
+            locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][3]/td//input[@data-name="field__value"]'
             type: xpath
           Line Item 2 Product Dropdown:
             element: Select2Entity
@@ -129,11 +139,17 @@ oro_behat_extension:
           Line Item 2 Item 1 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td//input[@data-name="field__quantity"]'
             type: xpath
+          Line Item 2 Item 1 Price:
+            locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td//input[@data-name="field__value"]'
+            type: xpath
           Line Item 2 Item 2 Product:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
             type: xpath
           Line Item 2 Item 2 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//input[@data-name="field__quantity"]'
+            type: xpath
+          Line Item 2 Item 2 Price:
+            locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//input[@data-name="field__value"]'
             type: xpath
           Line Item 3 Product:
             locator: '//div[contains(@id,"s2id_oro_sale_quote_quoteProducts_2_product-uid")]//input'
@@ -151,12 +167,25 @@ oro_behat_extension:
           Line Item 3 Item 1 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td//input[@data-name="field__quantity"]'
             type: xpath
+          Line Item 3 Item 1 Price:
+            locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td//input[@data-name="field__value"]'
+            type: xpath
           Line Item 3 Item 2 Product:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//div[contains(@class, "oro-select2") and contains(@id, "product")]/input'
             type: xpath
           Line Item 3 Item 2 Quantity:
             locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//input[@data-name="field__quantity"]'
             type: xpath
+          Line Item 3 Item 2 Price:
+            locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td//input[@data-name="field__value"]'
+            type: xpath
+          Line Item 4 Product:
+            locator: '//div[contains(@id,"s2id_oro_sale_quote_quoteProducts_3_product-uid")]//input'
+            type: xpath
+          Line Item 4 Quantity: 'oro_sale_quote[quoteProducts][3][quoteProductOffers][0][quantity]'
+          Line Item 4 Price: 'oro_sale_quote[quoteProducts][3][quoteProductOffers][0][price][value]'
+          Line Item 4 Price2: 'oro_sale_quote[quoteProducts][3][quoteProductOffers][1][price][value]'
+          Line Item 4 Price3: 'oro_sale_quote[quoteProducts][3][quoteProductOffers][2][price][value]'
 
     Quote Form Shipping Address Select:
       selector:
@@ -269,6 +298,11 @@ oro_behat_extension:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td[contains(@class, "line-item-label")]/label'
         type: xpath
 
+    Quote Form Line Item 1 Kit Item 1 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td[contains(@class, "line-item-price-label")]/label'
+        type: xpath
+
     Quote Form Line Item 1 Kit Item 1 Quantity Label Tooltip:
       selector:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td[contains(@class, "line-item-quantity-label")]//i[contains(@class, "tooltip-icon")]'
@@ -277,6 +311,11 @@ oro_behat_extension:
     Quote Form Line Item 1 Kit Item 2 Label:
       selector:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td[contains(@class, "line-item-label")]/label'
+        type: xpath
+
+    Quote Form Line Item 1 Kit Item 2 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][0]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td[contains(@class, "line-item-price-label")]/label'
         type: xpath
 
     Quote Form Line Item 1 Kit Item 2 Quantity Label Tooltip:
@@ -294,9 +333,19 @@ oro_behat_extension:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td[contains(@class, "line-item-label")]/label'
         type: xpath
 
+    Quote Form Line Item 2 Kit Item 1 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td[contains(@class, "line-item-price-label")]/label'
+        type: xpath
+
     Quote Form Line Item 2 Kit Item 2 Label:
       selector:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td[contains(@class, "line-item-label")]/label'
+        type: xpath
+
+    Quote Form Line Item 2 Kit Item 2 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td[contains(@class, "line-item-price-label")]/label'
         type: xpath
 
     Quote Form Line Item 3 Kit Item 2 Label:
@@ -314,6 +363,16 @@ oro_behat_extension:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][1]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td[contains(@class, "line-item-quantity-label")]//i[contains(@class, "tooltip-icon")]'
         type: xpath
 
+    Quote Form Line Item 3 Kit Item 1 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][1]/td[contains(@class, "line-item-price-label")]/label'
+        type: xpath
+
+    Quote Form Line Item 3 Kit Item 2 Price Label:
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//tr[contains(@class, "sale-quote-product-kit-item-line-item")][2]/td[contains(@class, "line-item-price-label")]/label'
+        type: xpath
+
     Quote Line Items Table:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Table
       selector:
@@ -323,6 +382,11 @@ oro_behat_extension:
     Quote Form Line Item 3 Remove:
       selector:
         locator: '//tr[@data-content="oro_sale_quote[quoteProducts][2]"]//td[contains(@class, "quote-lineitem-remove")]/button'
+        type: xpath
+
+    Quote Form Line Item 4 Remove:
+      selector:
+        locator: '//tr[@data-content="oro_sale_quote[quoteProducts][3]"]//td[contains(@class, "quote-lineitem-remove")]/button'
         type: xpath
 
     Quote Product Kit Item Line Item Product Ghost Option 1:
@@ -349,20 +413,47 @@ oro_behat_extension:
         locator: '//input[@name="oro_sale_quote_demand[demandProducts][0][quoteProductOffer]" and @value="0"]'
         type: xpath
 
+    Line Item 1 Offer 1 Remove Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][0][quoteProductOffers][0]"] .quote-lineitem-offers-remove .removeRow'
+
     Line Item 1 Offer 2:
       selector:
         locator: '//input[@name="oro_sale_quote_demand[demandProducts][0][quoteProductOffer]" and @value="1"]'
         type: xpath
+
+    Line Item 1 Add Offer Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][0]"] .quote-lineitem-offers-item-add'
 
     Line Item 2 Offer 1:
       selector:
         locator: '//input[@name="oro_sale_quote_demand[demandProducts][1][quoteProductOffer]" and @value="0"]'
         type: xpath
 
+    Line Item 2 Offer 1 Remove Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][1][quoteProductOffers][0]"] .quote-lineitem-offers-remove .removeRow'
+
     Line Item 2 Offer 2:
       selector:
         locator: '//input[@name="oro_sale_quote_demand[demandProducts][1][quoteProductOffer]" and @value="1"]'
         type: xpath
+
+    Line Item 2 Add Offer Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][1]"] .quote-lineitem-offers-item-add'
+
+    Line Item 3 Add Offer Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][2]"] .quote-lineitem-offers-item-add'
+
+    Line Item 3 Offer 1 Remove Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][2][quoteProductOffers][0]"] .quote-lineitem-offers-remove .removeRow'
+
+    Line Item 4 Add Offer Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][3]"] .quote-lineitem-offers-item-add'
+
+    Line Item 4 Price2:
+      selector: '[name="oro_sale_quote[quoteProducts][3][quoteProductOffers][1][price][value]"]'
+
+    Line Item 4 Offer 1 Remove Button:
+      selector: '[data-content="oro_sale_quote[quoteProducts][3][quoteProductOffers][0]"] .quote-lineitem-offers-remove .removeRow'
 
     Frontend Guest Quote Grid:
       selector: 'div[data-page-component-name="guest-frontend-quotes-line-items-grid"]'
@@ -375,6 +466,7 @@ oro_behat_extension:
     Frontend Quote Grid Filters:
       selector: 'div[data-page-component-name="frontend-quotes-line-items-grid"] div.filter-box'
       class: Oro\Bundle\ProductBundle\Tests\Behat\Element\FrontendProductGridFilters
+
     Customer TopBar Action Dropdown:
       selector: '.toggle-container--dropdown-btn'
 

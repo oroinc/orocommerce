@@ -101,6 +101,10 @@ Previously known as GOD Object
 #### SaleBundle
 * Migrated the `oro_sale_frontend_quote_submit_to_order` operation body to the class `\Oro\Bundle\SaleBundle\Workflow\Operation\QuoteSubmitToOrder`.
 * Migrated the `oro_sale_frontend_guest_quote_submit_to_order` operation body to the class `\Oro\Bundle\SaleBundle\Workflow\Operation\GuestQuoteSubmitToOrder`.
+* The "Add Offer" button has been hidden for line items containing kit products on the quote page. This restriction is implemented because such type line items can have only a single offer.
+
+#### RFPBundle
+* The "Add Offer" button has been hidden for line items containing kit products on the RFQ storefront, back-office, and converted RFQ to quote pages. This restriction is implemented because such type line items can have only a single offer.
 
 #### WebCatalogBundle
 * Changed the type of `oro_web_catalog.empty_search_result_page` system config setting from `array` to `scalar` to get rid of serialized objects in `oro_config_value` table.

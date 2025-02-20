@@ -30,7 +30,7 @@ const DensitiesCollection = BaseCollection.extend({
             if (!added.includes(i)) {
                 densities.push({
                     id: i,
-                    name: `${i}x`
+                    name: `x${i}`
                 });
             }
         }

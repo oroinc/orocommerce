@@ -56,6 +56,7 @@ const QuoteProductsPricesComponent = BaseComponent.extend({
     },
 
     onQuoteEntryPointLoad: function(response) {
+        mediator.trigger('entry-point:quote:load:response', response || {});
         mediator.trigger('pricing:refresh:products-tier-prices', response.tierPrices || {});
     }
 });

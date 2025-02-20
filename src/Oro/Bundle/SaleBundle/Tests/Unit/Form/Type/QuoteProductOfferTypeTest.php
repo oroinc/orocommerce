@@ -8,13 +8,15 @@ use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteProductOfferType;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class QuoteProductOfferTypeTest extends AbstractTest
+final class QuoteProductOfferTypeTest extends AbstractTest
 {
     use QuantityTypeTrait;
 
@@ -28,7 +30,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         parent::setUp();
     }
 
-    public function testConfigureOptions()
+    public function testConfigureOptions(): void
     {
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())
@@ -37,6 +39,8 @@ class QuoteProductOfferTypeTest extends AbstractTest
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertArrayHasKey('compact_units', $options);
                 $this->assertArrayHasKey('csrf_token_id', $options);
+                $this->assertArrayHasKey('allow_prices_override', $options);
+                $this->assertArrayHasKey('checksum', $options);
 
                 return true;
             }));
@@ -47,13 +51,28 @@ class QuoteProductOfferTypeTest extends AbstractTest
     /**
      * @dataProvider postSetDataProvider
      */
-    public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = [])
+    public function testPostSetData(QuoteProductOffer $inputData, array $expectedData = []): void
     {
         $form = $this->createForm($inputData, []);
 
         foreach ($expectedData as $key => $value) {
             $this->assertEquals($value, $form->get($key)->getData(), $key);
         }
+    }
+
+    public function testSubmitWithKitProduct()
+    {
+        $quoteProduct = (new QuoteProduct())->setProduct((new ProductStub())->setType('kit'));
+        $quoteProductOffer = (new QuoteProductOffer())->setQuoteProduct($quoteProduct);
+        $quoteProductOffer->setChecksum('checksum');
+
+        $form = $this->createForm($quoteProductOffer, []);
+
+        $form->submit([]);
+        $view = $form->createView();
+
+        self::assertEquals('checksum', $view->vars['checksum']);
+        self::assertTrue($view->vars['allow_prices_override']);
     }
 
     public function postSetDataProvider(): array
@@ -199,7 +218,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         ];
     }
 
-    public function testOnPreSetData()
+    public function testOnPreSetData(): void
     {
         $form = $this->createForm(new QuoteProductOffer(), []);
 
@@ -212,7 +231,7 @@ class QuoteProductOfferTypeTest extends AbstractTest
         self::assertFalse($priceFieldOptions['match_price_on_null']);
     }
 
-    public function testOnPreSetDataNoEntity()
+    public function testOnPreSetDataNoEntity(): void
     {
         $form = $this->createForm(null, []);
 

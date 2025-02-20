@@ -23,6 +23,7 @@ Feature: RFQ with Product Kits Validation
     Then "Request Form" must contains values:
       | Line Item 2 Item 1 Quantity | 2 |
       | Line Item 2 Item 2 Quantity | 3 |
+    And I should not see an "Line Item 2 Add Another Line" element
 
   Scenario Outline: Set product kit line item quantity with violation
     When fill "Request Form" with:

@@ -106,6 +106,7 @@ class QuoteType extends AbstractType
                         'compact_units' => true,
                         'allow_prices_override' => $options['allow_prices_override'],
                         'allow_add_free_form_items' => $options['allow_add_free_form_items'],
+                        'currency' => $quote->getCurrency()
                     ]
                 ]
             )

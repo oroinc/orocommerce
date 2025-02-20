@@ -27,13 +27,13 @@ use PHPUnit\Framework\TestCase;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class QuoteProductPricesProviderTest extends TestCase
+final class QuoteProductPricesProviderTest extends TestCase
 {
-    private ProductPriceProviderInterface|MockObject $productPriceProvider;
+    private ProductPriceProviderInterface&MockObject $productPriceProvider;
 
-    private ProductPriceScopeCriteriaFactoryInterface|MockObject $priceScopeCriteriaFactory;
+    private ProductPriceScopeCriteriaFactoryInterface&MockObject $priceScopeCriteriaFactory;
 
-    private ProductLineItemProductPriceProviderInterface|MockObject $lineItemProductPriceProvider;
+    private ProductLineItemProductPriceProviderInterface&MockObject $lineItemProductPriceProvider;
 
     private QuoteProductPricesProvider $provider;
 
@@ -89,6 +89,7 @@ class QuoteProductPricesProviderTest extends TestCase
     public function testGetTierPricesWhenHasLineItemWithProductButNoPrices(): void
     {
         $product = (new ProductStub())->setId(42);
+        $product->setType(Product::TYPE_KIT);
         $website = new Website();
         $quoteProductOffer = (new QuoteProductOffer())
             ->setChecksum('sample-checksum');
@@ -151,6 +152,8 @@ class QuoteProductPricesProviderTest extends TestCase
         self::assertSame(
             [
                 $product->getId() => [
+                    $productPrice1,
+                    $productPrice2,
                     $quoteProductOffer->getChecksum() => [$productPrice1, $productPrice2],
                 ],
             ],
@@ -203,6 +206,9 @@ class QuoteProductPricesProviderTest extends TestCase
         self::assertSame(
             [
                 $product->getId() => [
+                    $productPrice1,
+                    $productPrice2,
+                    $productPrice3,
                     $quoteProduct1Offer->getChecksum() => [$productPrice1, $productPrice2],
                     $quoteProduct2Offer->getChecksum() => [$productPrice3],
                 ],

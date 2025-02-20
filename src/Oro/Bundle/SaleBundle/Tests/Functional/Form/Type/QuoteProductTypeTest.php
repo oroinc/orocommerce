@@ -62,6 +62,8 @@ class QuoteProductTypeTest extends WebTestCase
                 'isFreeForm' => false,
                 'allowEditFreeForm' => true,
                 'fullName' => 'oro_sale_quote_product',
+                'productType' => null,
+                'currency' => null
             ],
             $formView->vars['componentOptions']
         );
@@ -111,6 +113,8 @@ class QuoteProductTypeTest extends WebTestCase
                 'isFreeForm' => false,
                 'allowEditFreeForm' => true,
                 'fullName' => 'oro_sale_quote_product',
+                'productType' => 'simple',
+                'currency' => null
             ],
             $formView->vars['componentOptions']
         );
@@ -123,7 +127,8 @@ class QuoteProductTypeTest extends WebTestCase
         $productUnitItem = $this->getReference('each');
         $quoteProductOffer = (new QuoteProductOffer())
             ->setQuantity(12.3456)
-            ->setProductUnit($productUnitItem);
+            ->setProductUnit($productUnitItem)
+            ->setPrice(Price::create(10, 'USD'));
         $quoteProduct = (new QuoteProduct())
             ->setProduct($productKit1)
             ->addQuoteProductOffer($quoteProductOffer)
@@ -132,7 +137,7 @@ class QuoteProductTypeTest extends WebTestCase
         $formFactory = self::getContainer()->get('form.factory');
         $form = $formFactory->create(QuoteProductType::class, $quoteProduct, ['csrf_protection' => false]);
 
-        $this->assertSimpleProductFormFields($form, false, false);
+        $this->assertSimpleProductFormFields($form, false, true);
 
         self::assertTrue($form->has('kitItemLineItems'));
         self::assertArrayIntersectEquals(
@@ -167,6 +172,8 @@ class QuoteProductTypeTest extends WebTestCase
                 'isFreeForm' => false,
                 'allowEditFreeForm' => true,
                 'fullName' => 'oro_sale_quote_product',
+                'productType' => 'kit',
+                'currency' => 'USD'
             ],
             $formView->vars['componentOptions']
         );
@@ -381,6 +388,11 @@ class QuoteProductTypeTest extends WebTestCase
         self::assertNotEmpty($actualQuoteProductOffer1->getChecksum());
 
         self::assertEquals('Sample comment', $actualQuoteProduct->getComment());
+
+        $view = $form->createView();
+        self::assertTrue(
+            $view->children['quoteProductOffers'][0]->children['price']->children['value']->vars['attr']['readonly']
+        );
     }
 
     public function testSubmitExistingProductKit(): void

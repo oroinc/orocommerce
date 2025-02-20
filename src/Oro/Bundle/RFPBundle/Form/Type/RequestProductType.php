@@ -19,33 +19,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RequestProductType extends AbstractType
 {
-    /**
-     * @var string
-     */
-    protected $dataClass;
-
-    private EventSubscriberInterface $requestProductProductListener;
-
-    private EventSubscriberInterface $requestProductItemChecksumListener;
+    protected ?string $dataClass = null;
 
     public function __construct(
-        EventSubscriberInterface $requestProductProductListener,
-        EventSubscriberInterface $requestProductItemChecksumListener
+        private EventSubscriberInterface $requestProductProductListener,
+        private EventSubscriberInterface $requestProductItemChecksumListener
     ) {
-        $this->requestProductProductListener = $requestProductProductListener;
-        $this->requestProductItemChecksumListener = $requestProductItemChecksumListener;
     }
 
-    /**
-     * @param string $dataClass
-     */
-    public function setDataClass($dataClass)
+    public function setDataClass(string $dataClass): void
     {
         $this->dataClass = $dataClass;
     }
 
     #[\Override]
-    public function buildForm(FormBuilderInterface $builder, array $options)
+    public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add(
@@ -91,7 +79,7 @@ class RequestProductType extends AbstractType
     }
 
     #[\Override]
-    public function configureOptions(OptionsResolver $resolver)
+    public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
@@ -103,7 +91,7 @@ class RequestProductType extends AbstractType
     }
 
     #[\Override]
-    public function finishView(FormView $view, FormInterface $form, array $options)
+    public function finishView(FormView $view, FormInterface $form, array $options): void
     {
         $units = [];
 
@@ -115,6 +103,7 @@ class RequestProductType extends AbstractType
             $requestProduct = $view->vars['value'];
 
             if ($requestProduct->getProduct()) {
+                $productType = $requestProduct->getProduct()->getType();
                 $product = $requestProduct->getProduct();
                 $products[$product->getId()] = $product;
             }
@@ -127,13 +116,14 @@ class RequestProductType extends AbstractType
         $componentOptions = [
             'units' => $units,
             'compactUnits' => $options['compact_units'],
+            'productType' => $productType ?? null
         ];
 
         $view->vars['componentOptions'] = $componentOptions;
     }
 
     #[\Override]
-    public function buildView(FormView $view, FormInterface $form, array $options)
+    public function buildView(FormView $view, FormInterface $form, array $options): void
     {
         $view->vars['page_component'] = $options['page_component'];
         $view->vars['page_component_options'] = $options['page_component_options'];

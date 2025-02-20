@@ -15,15 +15,13 @@ use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * Updates "kitItemLineItems" and "quoteProductOffers" form field according to the selected product.
+ * Updates "kitItemLineItems" form field according to the selected product.
  */
-class QuoteProductProductListener implements EventSubscriberInterface
+final class QuoteProductProductListener implements EventSubscriberInterface
 {
-    private EntityStateChecker $entityStateChecker;
-
-    public function __construct(EntityStateChecker $entityStateChecker)
-    {
-        $this->entityStateChecker = $entityStateChecker;
+    public function __construct(
+        private EntityStateChecker $entityStateChecker
+    ) {
     }
 
     #[\Override]
@@ -40,12 +38,14 @@ class QuoteProductProductListener implements EventSubscriberInterface
         $form = $event->getForm();
         /** @var Product|null $product */
         $product = $event->getData();
+        $currency = $this->getCurrency($form);
 
-        FormUtils::replaceField($form->getParent(), 'kitItemLineItems', [
-            'required' => $product?->isKit() === true,
-            'product' => $product,
-        ]);
-        $this->setForbidPricesOverride($product, $form->getParent());
+        $modifyOptions = ['required' => $product?->isKit() === true, 'product' => $product];
+        if ($product?->isKit() && $currency) {
+            $modifyOptions['currency'] = $currency;
+        }
+
+        FormUtils::replaceField($form->getParent(), 'kitItemLineItems', $modifyOptions);
     }
 
     public function onPostSubmit(FormEvent $event): void
@@ -71,15 +71,12 @@ class QuoteProductProductListener implements EventSubscriberInterface
         }
 
         FormUtils::replaceField($form->getParent(), 'kitItemLineItems', $modifyOptions);
-        $this->setForbidPricesOverride($product, $form->getParent());
     }
 
-    private function setForbidPricesOverride(?Product $product, FormInterface $form): void
+    private function getCurrency(FormInterface $form): ?string
     {
-        if ($product?->isKit()) {
-            FormUtils::replaceFieldOptionsRecursive($form, 'quoteProductOffers', [
-                'entry_options' => ['allow_prices_override' => false]
-            ]);
-        }
+        $quoteProductOffer = $form->getParent()?->getData()?->getQuoteProductOffers()?->first();
+
+        return $quoteProductOffer ? $quoteProductOffer->getPrice()?->getCurrency() : null;
     }
 }

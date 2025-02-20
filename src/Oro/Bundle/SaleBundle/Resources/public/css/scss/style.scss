@@ -336,7 +336,8 @@ td.quote-lineitem-product-sku {
                 line-height: $form-horizontal-control-label-line-height;
             }
 
-            &.line-item-quantity-label {
+            &.line-item-quantity-label,
+            &.line-item-price-label {
                 white-space: nowrap;
             }
 
