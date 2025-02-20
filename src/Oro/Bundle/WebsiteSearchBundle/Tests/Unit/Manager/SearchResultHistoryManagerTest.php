@@ -86,9 +86,11 @@ class SearchResultHistoryManagerTest extends TestCase
         $this->manager->setLogger($this->logger);
     }
 
-    public function testSaveSearchResultForLoggedInCustomerUser(): void
+    /**
+     * @dataProvider searchTermDataProvider
+     */
+    public function testSaveSearchResultForLoggedInCustomerUser(string $searchTerm, string $expectedSearchTerm): void
     {
-        $searchTerm = '    test    - test   ';
         $upperCaseSearchTerm = mb_strtoupper($searchTerm);
         $searchType = 'test search type';
         $resultsCount = 10;
@@ -126,10 +128,10 @@ class SearchResultHistoryManagerTest extends TestCase
             ->method('upsertSearchHistoryRecord')
             ->withConsecutive(
                 [
-                    'test - test',
+                    $expectedSearchTerm,
                     $searchType,
                     $resultsCount,
-                    md5('test - test'),
+                    md5($expectedSearchTerm),
                     $businessUnit->getId(),
                     $website->getId(),
                     $searchSessionId,
@@ -145,9 +147,11 @@ class SearchResultHistoryManagerTest extends TestCase
         $this->manager->saveSearchResult($upperCaseSearchTerm, $searchType, $resultsCount, $searchSessionId);
     }
 
-    public function testSaveSearchResultForAnonymous(): void
+    /**
+     * @dataProvider searchTermDataProvider
+     */
+    public function testSaveSearchResultForAnonymous(string $searchTerm, string $expectedSearchTerm): void
     {
-        $searchTerm = 'TEST   search   Term';
         $searchType = 'test search type';
         $resultsCount = 10;
         $searchSessionId = 'test search session id';
@@ -181,10 +185,10 @@ class SearchResultHistoryManagerTest extends TestCase
         $this->historyRepository->expects($this->once())
             ->method('upsertSearchHistoryRecord')
             ->with(
-                'TEST search Term',
+                $expectedSearchTerm,
                 $searchType,
                 $resultsCount,
-                md5('TEST search Term'),
+                md5($expectedSearchTerm),
                 $businessUnit->getId(),
                 $website->getId(),
                 $searchSessionId,
@@ -291,5 +295,28 @@ class SearchResultHistoryManagerTest extends TestCase
             ->with($organization, new \DateTimeZone('Europe/Kyiv'));
 
         $this->manager->actualizeHistoryReport();
+    }
+
+    public function searchTermDataProvider()
+    {
+        return [
+            'less then max search term length with special character' => [
+                'searchTerm' => 'test    - test   ',
+                'expectedSearchTerm' => 'test - test',
+            ],
+            'less then max search term length' => [
+                'searchTerm' => 'TEST   search   Term',
+                'expectedSearchTerm' => 'TEST search Term',
+            ],
+            'more  then max search term length' => [
+                'searchTerm' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum'
+                    .' has been the industrys standard dummy text ever since the 1500s, when an unknown printer took a'
+                    . ' galley of type and scrambled it to make a type specimen book. It has survived not only five'
+                    . 'centuries',
+                'expectedSearchTerm' => 'Lorem Ipsum is simply dummy text of the printing and typesetting industry. '
+                    . 'Lorem Ipsum has been the industrys standard dummy text ever since the 1500s, when an unknown '
+                    . 'printer took a galley of type and scrambled it to make a type specimen book. It has sur',
+            ],
+        ];
     }
 }
