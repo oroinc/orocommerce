@@ -6,10 +6,10 @@
     {% elseif record.getValue('productId') %}
         {% if record.getValue('productIsConfigurable') %}
             {% set routeOptions = {'id': record.getValue('parentProductId'), 'variantProductId': record.getValue('productId')} %}
-            <a class="no-decoration" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ record.getValue('parentProductNames')|localized_value|e }}</a>
+            <a class="oro-grid-table__link no-decoration" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ record.getValue('parentProductNames')|localized_value|e }}</a>
         {% else %}
             {% set routeOptions = {'id': record.getValue('productId')} %}
-            <a class="no-decoration" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ record.getValue('productNames')|localized_value|e }}</a>
+            <a class="oro-grid-table__link no-decoration" href="{{ path('oro_product_frontend_product_view', routeOptions) }}">{{ record.getValue('productNames')|localized_value|e }}</a>
         {% endif %}
     {% else %}
         {{ record.getValue('productName') }}

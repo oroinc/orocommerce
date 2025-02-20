@@ -5,7 +5,7 @@
         {{ UI.link({
             path: path('oro_product_frontend_product_view', {'id': record.getValue('productId')}),
             label: record.getValue('productNames')|localized_value|trim,
-            class: 'no-decoration'
+            class: 'oro-grid-table__link no-decoration'
         }) }}
     {% else %}
         {{ record.getValue('productSku') }}

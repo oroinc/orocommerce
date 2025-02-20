@@ -92,7 +92,7 @@
             {{ UI.link({
                 path: path('oro_product_frontend_product_view', {'id': quoteProduct.product.id}),
                 label : quoteProduct.product.names|localized_value,
-                class: 'no-decoration'
+                class: 'oro-grid-table__link no-decoration'
             }) }}
         {% else %}
             {{ quoteProduct.productName }}

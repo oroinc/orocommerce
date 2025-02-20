@@ -57,6 +57,8 @@
 
     &__title-content {
         display: inline-flex;
+        align-items: $grid-line-item-link-align-items;
+        min-height: $grid-line-item-link-min-height;
         font-size: $grid-line-item-link-font-size;
         line-height: $grid-line-item-link-line-height;
         color: $grid-line-items-link-color;
