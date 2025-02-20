@@ -3,7 +3,7 @@
     <div class="filter-container">
         <div class="filter-container-header sticky sticky--top" data-sticky="{}">
             <div class="filter-container-title">
-                <h3><%- _.__('oro.product.sidebar_filters.title') %></h3>
+                <p><%- _.__('oro.product.sidebar_filters.title') %></p>
             </div>
 
             <div class="filter-container-manager">
@@ -27,7 +27,11 @@
             </div>
 
             <div class="filter-container-additional">
-                <button type="button" class="btn btn--icon btn--plain filter-container-close-btn" data-role="close-sidebar">
+                <button type="button"
+                        class="btn btn--icon btn--plain filter-container-close-btn"
+                        data-role="close-sidebar"
+                        aria-label="<%- _.__('oro_frontend.filter_manager.close_sidebar.aria_label') %>"
+                >
                     <%= oroui.renderIcon({
                         name: 'close'
                     }) %>
