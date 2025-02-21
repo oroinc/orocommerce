@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Model\Action;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CheckoutBundle\Payment\Method\EntityPaymentMethodsProvider;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\Action\Exception\InvalidParameterException;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -97,7 +98,7 @@ class CreateOrder extends AbstractAction
             );
         }
 
-        $order = $this->mapper->map($checkout, $additionalData);
+        $order = $checkout->getOrder() ?? $this->mapper->map($checkout, $additionalData);
         $this->paymentMethodsProvider->storePaymentMethodsToEntity($order, [$checkout->getPaymentMethod()]);
 
         $this->contextAccessor->setValue($context, $this->options[self::OPTION_KEY_ATTRIBUTE], $order);
