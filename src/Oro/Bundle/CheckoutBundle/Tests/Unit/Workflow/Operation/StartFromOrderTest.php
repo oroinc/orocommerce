@@ -9,6 +9,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutLineItemsFactory;
 use Oro\Bundle\CheckoutBundle\Provider\CheckoutLineItemsProvider;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitFormattedProviderInterface;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitProviderInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartCheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\Operation\StartFromOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -25,6 +27,8 @@ class StartFromOrderTest extends TestCase
     private StartCheckoutInterface|MockObject $startCheckout;
     private CheckoutLineItemsProvider|MockObject $checkoutLineItemsProvider;
     private ActionExecutor|MockObject $actionExecutor;
+    private OrderLimitProviderInterface|MockObject $orderLimitProvider;
+    private OrderLimitFormattedProviderInterface|MockObject $orderLimitFormattedProvider;
     private StartFromOrder $operation;
 
     protected function setUp(): void
@@ -34,6 +38,8 @@ class StartFromOrderTest extends TestCase
         $this->startCheckout = $this->createMock(StartCheckoutInterface::class);
         $this->checkoutLineItemsProvider = $this->createMock(CheckoutLineItemsProvider::class);
         $this->actionExecutor = $this->createMock(ActionExecutor::class);
+        $this->orderLimitProvider = $this->createMock(OrderLimitProviderInterface::class);
+        $this->orderLimitFormattedProvider = $this->createMock(OrderLimitFormattedProviderInterface::class);
 
         $this->operation = new StartFromOrder(
             $this->workflowManager,
@@ -41,6 +47,10 @@ class StartFromOrderTest extends TestCase
             $this->startCheckout,
             $this->checkoutLineItemsProvider,
             $this->actionExecutor
+        );
+        $this->operation->setOrderLimitProviders(
+            $this->orderLimitProvider,
+            $this->orderLimitFormattedProvider
         );
     }
 
@@ -109,6 +119,114 @@ class StartFromOrderTest extends TestCase
         $this->operation->execute($data);
     }
 
+    public function testExecuteMinimumOrderAmountNotMet(): void
+    {
+        $order = new Order();
+
+        $data = new ActionData();
+        $data->offsetSet('data', $order);
+
+        $this->lineItemsFactory->expects($this->once())
+            ->method('create')
+            ->with($order)
+            ->willReturn(new ArrayCollection([$this->createMock(CheckoutLineItem::class)]));
+
+        $this->orderLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->with($order)
+            ->willReturn(false);
+        $this->orderLimitFormattedProvider->expects($this->once())
+            ->method('getMinimumOrderAmountFormatted')
+            ->willReturn('$123.45');
+        $this->orderLimitFormattedProvider->expects($this->once())
+            ->method('getMinimumOrderAmountDifferenceFormatted')
+            ->with($order)
+            ->willReturn('$23.50');
+
+        $this->orderLimitProvider->expects($this->never())
+            ->method('isMaximumOrderAmountMet');
+        $this->orderLimitFormattedProvider->expects($this->never())
+            ->method('getMaximumOrderAmountFormatted');
+        $this->orderLimitFormattedProvider->expects($this->never())
+            ->method('getMaximumOrderAmountDifferenceFormatted');
+
+        $this->startCheckout->expects($this->never())
+            ->method('execute');
+        $this->checkoutLineItemsProvider->expects($this->never())
+            ->method('getProductSkusWithDifferences');
+
+        $this->actionExecutor->expects($this->once())
+            ->method('executeAction')
+            ->with(
+                'flash_message',
+                [
+                    'message' => 'oro.checkout.frontend.checkout.order_limits.minimum_order_amount_flash',
+                    'message_parameters' => [
+                        'amount' => '$123.45',
+                        'difference' => '$23.50',
+                    ],
+                    'type' => 'error'
+                ]
+            );
+
+        $this->operation->execute($data);
+    }
+
+    public function testExecuteMaximumOrderAmountNotMet(): void
+    {
+        $order = new Order();
+
+        $data = new ActionData();
+        $data->offsetSet('data', $order);
+
+        $this->lineItemsFactory->expects($this->once())
+            ->method('create')
+            ->with($order)
+            ->willReturn(new ArrayCollection([$this->createMock(CheckoutLineItem::class)]));
+
+        $this->orderLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->with($order)
+            ->willReturn(true);
+        $this->orderLimitFormattedProvider->expects($this->never())
+            ->method('getMinimumOrderAmountFormatted');
+        $this->orderLimitFormattedProvider->expects($this->never())
+            ->method('getMinimumOrderAmountDifferenceFormatted');
+
+        $this->orderLimitProvider->expects($this->once())
+            ->method('isMaximumOrderAmountMet')
+            ->with($order)
+            ->willReturn(false);
+        $this->orderLimitFormattedProvider->expects($this->once())
+            ->method('getMaximumOrderAmountFormatted')
+            ->willReturn('$543.21');
+        $this->orderLimitFormattedProvider->expects($this->once())
+            ->method('getMaximumOrderAmountDifferenceFormatted')
+            ->with($order)
+            ->willReturn('$5.32');
+
+        $this->startCheckout->expects($this->never())
+            ->method('execute');
+        $this->checkoutLineItemsProvider->expects($this->never())
+            ->method('getProductSkusWithDifferences');
+
+        $this->actionExecutor->expects($this->once())
+            ->method('executeAction')
+            ->with(
+                'flash_message',
+                [
+                    'message' => 'oro.checkout.frontend.checkout.order_limits.maximum_order_amount_flash',
+                    'message_parameters' => [
+                        'amount' => '$543.21',
+                        'difference' => '$5.32',
+                    ],
+                    'type' => 'error'
+                ]
+            );
+
+        $this->operation->execute($data);
+    }
+
     public function testExecute(): void
     {
         $order = new Order();
@@ -121,6 +239,16 @@ class StartFromOrderTest extends TestCase
             ->method('create')
             ->with($order)
             ->willReturn(new ArrayCollection([$this->createMock(CheckoutLineItem::class)]));
+
+        $this->orderLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->with($order)
+            ->willReturn(true);
+
+        $this->orderLimitProvider->expects($this->once())
+            ->method('isMaximumOrderAmountMet')
+            ->with($order)
+            ->willReturn(true);
 
         $this->startCheckout->expects($this->once())
             ->method('execute')
@@ -166,6 +294,16 @@ class StartFromOrderTest extends TestCase
             ->method('create')
             ->with($order)
             ->willReturn(new ArrayCollection([$this->createMock(CheckoutLineItem::class)]));
+
+        $this->orderLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->with($order)
+            ->willReturn(true);
+
+        $this->orderLimitProvider->expects($this->once())
+            ->method('isMaximumOrderAmountMet')
+            ->with($order)
+            ->willReturn(true);
 
         $this->startCheckout->expects($this->once())
             ->method('execute')

@@ -15,3 +15,6 @@ oro:
             quantity:
                 greater_than_zero:
                     message: 'The quantity should be greater than 0.'
+        system_configuration:
+            order_limits:
+                message: 'Only positive numeric values are allowed'

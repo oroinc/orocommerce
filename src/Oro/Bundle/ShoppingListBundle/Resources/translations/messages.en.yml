@@ -338,6 +338,7 @@ oro:
                 delete: 'Delete'
                 delete_aria_label: 'Delete %name%'
                 delete_item_aria_label: 'Delete this Shopping list item'
+                or: 'or'
             workflow:
                 remove_source.label: Delete this shopping list after submitting order
             matrix_grid_order:

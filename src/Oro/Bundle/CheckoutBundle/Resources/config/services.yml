@@ -801,6 +801,20 @@ services:
         tags:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin, priority: 30 }
 
+    oro_checkout.event_listener.login_on_checkout_order_limit:
+        class: Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutOrderLimitListener
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_checkout.manager'
+            - '@router'
+            - '@oro_checkout.provider.checkout_id_by_target_path_request'
+            - '@oro_shopping_list.provider.order_limit'
+            - '@doctrine'
+        lazy: true
+        tags:
+            # this should run before the oro_checkout.event_listener.login_on_checkout listener to redirect back to shopping list instead of checkout
+            - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\LoginSuccessEvent, method: onCheckoutLogin, priority: 100 }
+
     oro_checkout.event_listener.reset_checkout_on_source_change:
         class: Oro\Bundle\CheckoutBundle\EventListener\ResetCheckoutOnSourceChange
         lazy: true
@@ -1143,6 +1157,29 @@ services:
         tags:
             - { name: kernel.event_listener, event: extendable_condition.shopping_list_start, method: onStartFromShoppingList, priority: 128 }
 
+    oro_checkout.event_listener.config_setting_form.minimum_order_amount:
+        class: Oro\Bundle\CheckoutBundle\EventListener\OrderLimitConfigListener
+        arguments:
+            - '@oro_currency.config.currency'
+            - 'oro_checkout.minimum_order_amount'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+
+    oro_checkout.event_listener.config_setting_form.maximum_order_amount:
+        class: Oro\Bundle\CheckoutBundle\EventListener\OrderLimitConfigListener
+        arguments:
+            - '@oro_currency.config.currency'
+            - 'oro_checkout.maximum_order_amount'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
+
+    oro_checkout.provider.minimum_order_amount:
+        class: Oro\Bundle\CheckoutBundle\Provider\OrderLimitConfigProvider
+        public: true
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_currency.config.currency'
+
     oro_checkout.layout.provider.checkout_theme_provider:
         class: Oro\Bundle\CheckoutBundle\Layout\Provider\CheckoutThemeBCProvider
         arguments:
@@ -1160,3 +1197,9 @@ services:
             - '@oro_pricing.user_currency_manager'
             - '@oro_customer.provider.current_user'
             - '@oro_workflow.manager'
+
+    oro_checkout.provider.checkout_id_by_target_path_request:
+        class: Oro\Bundle\CheckoutBundle\Provider\CheckoutIdByTargetPathRequestProvider
+        arguments:
+            - '@oro_security.util.same_site_url_helper'
+            - '@router'

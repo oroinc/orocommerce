@@ -101,6 +101,16 @@
                     </div>
                 </div>
             {% endblock data_totals_container %}
+
+            {% block data_totals_errors_container %}
+                {% if errors is defined and errors %}
+                    <div class="errors-container-list">
+                        {% for error in errors %}
+                            <div class="errors-container-list__item {{ error['type'] }}">{{ error['value'] }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            {% endblock data_totals_errors_container %}
         </div>
         {% placeholder oro_pricing_totals %}
     </div>

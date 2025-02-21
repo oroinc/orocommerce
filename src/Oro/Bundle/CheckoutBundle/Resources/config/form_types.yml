@@ -62,3 +62,13 @@ services:
             - '@oro_checkout.manager.multi_shipping.checkout_line_item_groups_shipping'
         tags:
             - { name: form.type }
+
+    oro_checkout.form.order_limit:
+        class: Oro\Bundle\CheckoutBundle\Form\Type\OrderLimitType
+        tags:
+            - { name: form.type }
+
+    oro_checkout.form.order_limit_collection:
+        class: Oro\Bundle\CheckoutBundle\Form\Type\OrderLimitCollectionType
+        tags:
+            - { name: form.type }

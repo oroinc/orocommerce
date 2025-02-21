@@ -74,6 +74,70 @@ class CreateOrderTest extends FrontendRestJsonApiTestCase
         self::assertEquals($this->generateLineItemChecksum($lineItem), $lineItem->getChecksum());
     }
 
+    public function testTryToCreateWithMinimumOrderAmountNotMet(): void
+    {
+        $shipUntil = (new \DateTime('now + 10 day'))->format('Y-m-d');
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['attributes']['shipUntil'] = $shipUntil;
+
+        $minimumOrderAmountConfigKey = 'oro_checkout.minimum_order_amount';
+        $configManager = $this->getConfigManager();
+        $originalMinimumOrderAmount = $configManager->get($minimumOrderAmountConfigKey);
+        $configManager->set($minimumOrderAmountConfigKey, [['value' => '112.55', 'currency' => 'USD']]);
+        $configManager->flush();
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'order limit amounts constraint',
+                'detail' =>
+                    'A minimum order subtotal of $112.55 is required to check out. Please add $90.75 more to proceed.',
+            ],
+            $response
+        );
+
+        $configManager->set($minimumOrderAmountConfigKey, $originalMinimumOrderAmount);
+        $configManager->flush();
+    }
+
+    public function testTryToCreateWithMaximumOrderAmountNotMet(): void
+    {
+        $shipUntil = (new \DateTime('now + 10 day'))->format('Y-m-d');
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['attributes']['shipUntil'] = $shipUntil;
+
+        $maximumOrderAmountConfigKey = 'oro_checkout.maximum_order_amount';
+        $configManager = $this->getConfigManager();
+        $originalMaximumOrderAmount = $configManager->get($maximumOrderAmountConfigKey);
+        $configManager->set($maximumOrderAmountConfigKey, [['value' => '11.55', 'currency' => 'USD']]);
+        $configManager->flush();
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title'  => 'order limit amounts constraint',
+                'detail' =>
+                    'The order subtotal cannot exceed $11.55. Please remove at least $10.25 to proceed.',
+            ],
+            $response
+        );
+
+        $configManager->set($maximumOrderAmountConfigKey, $originalMaximumOrderAmount);
+        $configManager->flush();
+    }
+
     public function testCreateWithRequiredDataOnly(): void
     {
         $response = $this->post(

@@ -7,6 +7,8 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitFormattedProviderInterface;
+use Oro\Bundle\CheckoutBundle\Provider\OrderLimitProviderInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartQuickOrderCheckout;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -17,6 +19,7 @@ use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class StartQuickOrderCheckoutTest extends TestCase
 {
@@ -26,6 +29,9 @@ class StartQuickOrderCheckoutTest extends TestCase
     private ManagerRegistry|MockObject $registry;
     private StartShoppingListCheckoutInterface|MockObject $startShoppingListCheckout;
     private WorkflowManager|MockObject $workflowManager;
+    private OrderLimitProviderInterface|MockObject $shoppingListLimitProvider;
+    private OrderLimitFormattedProviderInterface|MockObject $shoppingListLimitFormattedProvider;
+    private TranslatorInterface|MockObject $translator;
 
     private StartQuickOrderCheckout $startQuickOrderCheckout;
 
@@ -37,6 +43,9 @@ class StartQuickOrderCheckoutTest extends TestCase
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->startShoppingListCheckout = $this->createMock(StartShoppingListCheckoutInterface::class);
         $this->workflowManager = $this->createMock(WorkflowManager::class);
+        $this->shoppingListLimitProvider = $this->createMock(OrderLimitProviderInterface::class);
+        $this->shoppingListLimitFormattedProvider = $this->createMock(OrderLimitFormattedProviderInterface::class);
+        $this->translator = $this->createMock(TranslatorInterface::class);
 
         $this->startQuickOrderCheckout = new StartQuickOrderCheckout(
             $this->actionExecutor,
@@ -45,6 +54,13 @@ class StartQuickOrderCheckoutTest extends TestCase
             $this->registry,
             $this->startShoppingListCheckout,
             $this->workflowManager
+        );
+        $this->startQuickOrderCheckout->setOrderLimitProviders(
+            $this->shoppingListLimitProvider,
+            $this->shoppingListLimitFormattedProvider
+        );
+        $this->startQuickOrderCheckout->setTranslator(
+            $this->translator
         );
     }
 
@@ -65,6 +81,14 @@ class StartQuickOrderCheckoutTest extends TestCase
                 ['attribute' => null]
             )
             ->willReturn(['attribute' => $currentUser]);
+
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->willReturn(true);
+
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMaximumOrderAmountMet')
+            ->willReturn(true);
 
         $this->startShoppingListCheckout->expects($this->once())
             ->method('execute')
@@ -125,6 +149,14 @@ class StartQuickOrderCheckoutTest extends TestCase
             )
             ->willReturn(['attribute' => $currentUser]);
 
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->willReturn(true);
+
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMaximumOrderAmountMet')
+            ->willReturn(true);
+
         $this->startShoppingListCheckout->expects($this->once())
             ->method('execute')
             ->with($shoppingList, false, true, true, true, true, false)
@@ -160,6 +192,14 @@ class StartQuickOrderCheckoutTest extends TestCase
                 ]
             ]);
 
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->willReturn(true);
+
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMaximumOrderAmountMet')
+            ->willReturn(true);
+
         $this->startShoppingListCheckout->expects($this->once())
             ->method('execute')
             ->with($shoppingList, false, true, true, true, true, false)
@@ -168,5 +208,95 @@ class StartQuickOrderCheckoutTest extends TestCase
         $result = $this->startQuickOrderCheckout->execute($shoppingList, 'test_transition');
 
         $this->assertEquals(['checkout' => $checkout, 'workflowItem' => $workflowItem], $result);
+    }
+
+    /**
+     * @dataProvider executeOrderAmountsNotMetProvider
+     */
+    public function testExecuteOrderAmountsNotMet(
+        bool $isMinimumOrderAmountMet,
+        string $minimumOrderAmountFormatted,
+        string $minimumOrderAmountDifferenceFormatted,
+        bool $isMaximumOrderAmountMet,
+        string $maximumOrderAmountFormatted,
+        string $getMaximumOrderAmountDifferenceFormatted,
+        array $expected
+    ): void {
+        $shoppingList = new ShoppingList();
+
+        $this->translator->expects($this->any())
+            ->method('trans')
+            ->willReturnCallback(
+                static fn (string $key, array $params) => sprintf(
+                    '%s:%s:%s',
+                    $key,
+                    $params['%amount%'],
+                    $params['%difference%']
+                )
+            );
+
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMinimumOrderAmountMet')
+            ->willReturn($isMinimumOrderAmountMet);
+        $this->shoppingListLimitFormattedProvider->expects($this->any())
+            ->method('getMinimumOrderAmountFormatted')
+            ->willReturn($minimumOrderAmountFormatted);
+        $this->shoppingListLimitFormattedProvider->expects($this->any())
+            ->method('getMinimumOrderAmountDifferenceFormatted')
+            ->willReturn($minimumOrderAmountDifferenceFormatted);
+
+        $this->shoppingListLimitProvider->expects($this->once())
+            ->method('isMaximumOrderAmountMet')
+            ->willReturn($isMaximumOrderAmountMet);
+        $this->shoppingListLimitFormattedProvider->expects($this->any())
+            ->method('getMaximumOrderAmountFormatted')
+            ->willReturn($maximumOrderAmountFormatted);
+        $this->shoppingListLimitFormattedProvider->expects($this->any())
+            ->method('getMaximumOrderAmountDifferenceFormatted')
+            ->willReturn($getMaximumOrderAmountDifferenceFormatted);
+
+        $result = $this->startQuickOrderCheckout->execute($shoppingList, 'test_transition');
+
+        $this->assertEquals(['errors' => $expected], $result);
+    }
+
+    public function executeOrderAmountsNotMetProvider(): array
+    {
+        return [
+            'minimum amount not met' => [
+                'isMinimumOrderAmountMet' => false,
+                'minimumOrderAmountFormatted' => '$123.45',
+                'minimumOrderAmountDifferenceFormatted' => '$23.50',
+                'isMaximumOrderAmountMet' => true,
+                'maximumOrderAmountFormatted' => '',
+                'getMaximumOrderAmountDifferenceFormatted' => '',
+                'expected' => [
+                    'oro.checkout.frontend.checkout.order_limits.minimum_order_amount_flash:$123.45:$23.50',
+                ],
+            ],
+            'maximum amount not met' => [
+                'isMinimumOrderAmountMet' => true,
+                'minimumOrderAmountFormatted' => '',
+                'minimumOrderAmountDifferenceFormatted' => '',
+                'isMaximumOrderAmountMet' => false,
+                'maximumOrderAmountFormatted' => '$543.21',
+                'getMaximumOrderAmountDifferenceFormatted' => '$5.32',
+                'expected' => [
+                    'oro.checkout.frontend.checkout.order_limits.maximum_order_amount_flash:$543.21:$5.32',
+                ],
+            ],
+            'minimum and maximum amounts not met' => [
+                'isMinimumOrderAmountMet' => false,
+                'minimumOrderAmountFormatted' => '$123.45',
+                'minimumOrderAmountDifferenceFormatted' => '$23.50',
+                'isMaximumOrderAmountMet' => false,
+                'maximumOrderAmountFormatted' => '$543.21',
+                'getMaximumOrderAmountDifferenceFormatted' => '$5.32',
+                'expected' => [
+                    'oro.checkout.frontend.checkout.order_limits.minimum_order_amount_flash:$123.45:$23.50',
+                    'oro.checkout.frontend.checkout.order_limits.maximum_order_amount_flash:$543.21:$5.32',
+                ],
+            ],
+        ];
     }
 }

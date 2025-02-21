@@ -116,6 +116,16 @@ workflows:
                             method: hasEmptyMatrix
                             method_parameters: [$.result.shoppingList]
                             attribute: $.result.shoppingListHasEmptyMatrix
+                    - '@call_service_method':
+                        attribute: $isMinimumOrderAmountMet
+                        service: oro_shopping_list.provider.order_limit
+                        method: isMinimumOrderAmountMet
+                        method_parameters: [$.result.shoppingList]
+                    - '@call_service_method':
+                        attribute: $isMaximumOrderAmountMet
+                        service: oro_shopping_list.provider.order_limit
+                        method: isMaximumOrderAmountMet
+                        method_parameters: [$.result.shoppingList]
 
                 preconditions:
                    '@and':
@@ -123,6 +133,8 @@ workflows:
                        - '@not_empty': $.result.shoppingList
                        - '@has_elements': $.result.shoppingList.lineItems
                        - '@equal': [$.result.extendableConditionShoppingListStart, true]
+                       - '@equal': [$isMinimumOrderAmountMet, true]
+                       - '@equal': [$isMaximumOrderAmountMet, true]
 
                 actions:
                     - '@run_action_group':

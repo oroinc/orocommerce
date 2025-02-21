@@ -359,3 +359,13 @@ services:
             - { name: oro.api.processor, action: get_list, group: build_query, requestType: frontend, class: Extend\Entity\EV_Order_Status, priority: -105 }
             - { name: oro.api.processor, action: get_relationship, group: build_query, requestType: frontend, class: Extend\Entity\EV_Order_Status, priority: -105 }
             - { name: oro.api.processor, action: get_subresource, group: build_query, requestType: frontend, class: Extend\Entity\EV_Order_Status, priority: -105 }
+
+    oro_order.api.order_limit_amounts_validation:
+        class: Oro\Bundle\OrderBundle\Api\Processor\OrderLimitAmountsValidationProcessor
+        arguments:
+            - '@oro_order.provider.order_limit'
+            - '@oro_order.provider.order_limit_formatted'
+            - '@translator'
+        tags:
+            # This should be executed after oro_order.api.fill_order_line_item_price, as order limits can only be validated after line item prices are filled
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\Order, priority: 0 }

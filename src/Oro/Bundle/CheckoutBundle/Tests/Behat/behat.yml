@@ -505,6 +505,27 @@ oro_behat_extension:
 
     After Validation Buttons Controls Group:
       selector: '.quick-order-add__buttons-wrapper:last-child'
+
+    Minimum Order Amount USD Config Field:
+      selector:
+        locator: '//*[@data-ftid="checkout_oro_checkout___minimum_order_amount_value"]//span[contains(text(),"USD")]/..//input'
+        type: 'xpath'
+
+    Maximum Order Amount USD Config Field:
+      selector:
+        locator: '//*[@data-ftid="checkout_oro_checkout___maximum_order_amount_value"]//span[contains(text(),"USD")]/..//input'
+        type: 'xpath'
+
+    Create Order From Shopping List Button:
+      selector:
+        type: xpath
+        locator: '//a[@role="button"][contains(text(),"Create Order")]'
+
+    Disabled Create Order From Shopping List Button:
+      selector:
+        type: xpath
+        locator: '//button[contains(concat(" ",@class," ")," disabled ")][contains(text(),"Create Order")]'
+
   pages:
     Checkout:
       class: Oro\Bundle\CheckoutBundle\Tests\Behat\Page\CheckoutPage

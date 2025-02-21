@@ -14,6 +14,10 @@
 
         border-radius: $base-ui-element-border-radius;
         background: $responsive-shopping-list-layout-background;
+
+        .checkout-button-separator {
+            margin: spacing('xmd') 0;
+        }
     }
 }
 

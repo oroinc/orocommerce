@@ -181,3 +181,19 @@
 
     <div {{ block('block_attributes') }}>&nbsp;</div>
 {% endblock %}
+
+{% block __customer_user_shopping_list__order_limit_disabled_checkout_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' order-limit-disabled-checkout-button',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <button class="btn btn--full disabled"
+                type="button"
+        >
+            {{ 'oro.workflow.b2b_flow_checkout.transition.start_from_shoppinglist.button_label'|trans({},'workflows') }}
+        </button>
+
+        <div class="checkout-button-separator divider"><span>{{ 'oro.frontend.shoppinglist.btn.or'|trans }}</span></div>
+    </div>
+{% endblock %}

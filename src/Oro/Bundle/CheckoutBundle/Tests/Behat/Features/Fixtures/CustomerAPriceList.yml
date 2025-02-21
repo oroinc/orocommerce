@@ -1,0 +1,29 @@
+Oro\Bundle\PricingBundle\Entity\PriceList:
+    customer_a_price_list:
+        name: 'Customer A Price List'
+        __calls:
+            - setCurrencies: [['USD']]
+        active: true
+        organization: '@organization'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
+    price_list_to_customer_customer_a_price_list:
+        customer: '@customer'
+        pricelist: '@customer_a_price_list'
+        website: '@website1'
+        sortOrder: 10
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelationSku123ToCustomerAPriceList:
+        product: '@product'
+        priceList: '@customer_a_price_list'
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice:
+        pricelist: '@customer_a_price_list'
+        product: '@product'
+        productSku: 'SKU123'
+        quantity: 5
+        unit: '@item'
+        value: 1.50
+        currency: 'USD'

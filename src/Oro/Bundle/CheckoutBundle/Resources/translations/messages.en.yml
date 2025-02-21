@@ -360,6 +360,12 @@ oro:
                 enable_shipping_method_selection_per_line_item:
                     label: 'Enable shipping method selection per line item'
                     tooltip: 'When enabled, customers are allowed to select different shipping methods per line item. Please note that the shipping rules are calculated and applied separately for each line item. For example, subtotal, shipment weight, etc., will represent a single line item for which the shipping rules are calculated.'
+                minimum_order_amount:
+                    label: 'Minimum Order Amount'
+                    tooltip: 'Specify the minimum amount (subtotal) required for checkout. If multiple currencies are enabled in the storefront, the system will use the value set for the selected storefront currency. No automatic currency conversions are applied.'
+                maximum_order_amount:
+                    label: 'Maximum Order Amount'
+                    tooltip: 'Specify the maximum amount (subtotal) required for checkout. If multiple currencies are enabled in the storefront, the system will use the value set for the selected storefront currency. No automatic currency conversions are applied.'
             groups:
                 open_orders.title: 'Open Orders'
                 checkout.title: 'Checkout'
@@ -372,6 +378,8 @@ oro:
                     title: 'General Options'
                 multishipping_line_items_grouping_options.title: 'Line Items Grouping Options'
                 multishipping_order_history_options.title: 'Order History Options'
+                order_limits:
+                    title: 'Order Limits'
 
         privilege:
             category.checkout.label: 'Checkout'
@@ -397,6 +405,13 @@ oro:
                         inventory_status.label: 'Availability'
                         quantity.label: 'Quantity'
                         unit.label: 'Unit'
+                order_limits:
+                    minimum_order_amount_flash: 'A minimum order subtotal of %amount% is required to check out. Please add %difference% more to proceed.'
+                    minimum_order_amount_message: 'A minimum order subtotal of %amount% is required to check out.'
+                    minimum_order_amount_alert: 'Please add %difference% more to proceed.'
+                    maximum_order_amount_flash: 'The order subtotal cannot exceed %amount%. Please remove at least %difference% to proceed.'
+                    maximum_order_amount_message: 'The order subtotal cannot exceed %amount%.'
+                    maximum_order_amount_alert: 'Please remove at least %difference% to proceed.'
             start_from_order: 'Re-Order'
 
         errors:

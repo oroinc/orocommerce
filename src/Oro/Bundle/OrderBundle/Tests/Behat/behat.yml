@@ -521,6 +521,10 @@ oro_behat_extension:
       class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderFrontendViewPage
       route: oro_order_frontend_view
 
+    Order History:
+      class: Oro\Bundle\OrderBundle\Tests\Behat\Page\OrderHistoryPage
+      route: oro_order_frontend_index
+
   suites:
     OroOrderBundle:
       contexts:

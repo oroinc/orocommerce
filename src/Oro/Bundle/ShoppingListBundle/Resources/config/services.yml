@@ -848,6 +848,33 @@ services:
             - { name: doctrine.orm.entity_listener, entity_manager: default, entity: Oro\Bundle\ShoppingListBundle\Entity\LineItem, event: preUpdate }
             - { name: doctrine.event_listener, event: postFlush }
 
+    oro_shopping_list.provider.order_limit:
+        class: Oro\Bundle\CheckoutBundle\Provider\OrderLimitProvider
+        arguments:
+            - '@oro_checkout.provider.minimum_order_amount'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+            - '@oro_pricing.user_currency_manager'
+        public: true
+
+    oro_shopping_list.provider.order_limit_formatted:
+        class: Oro\Bundle\CheckoutBundle\Provider\OrderLimitFormattedProvider
+        arguments:
+            - '@oro_checkout.provider.minimum_order_amount'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_locale.formatter.number'
+            - '@oro_currency.rounding.price_rounding_service'
+        public: true
+
+    oro_shopping_list.layout.data_provider.order_limit:
+        class: Oro\Bundle\ShoppingListBundle\Layout\DataProvider\OrderLimitLayoutProvider
+        arguments:
+            - '@oro_shopping_list.provider.order_limit'
+            - '@oro_shopping_list.provider.order_limit_formatted'
+            - '@translator'
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_order_limit }
+
     oro_shopping_list.provider.shopping_list_checkout_provider:
         class: Oro\Bundle\CheckoutBundle\Provider\ShoppingListCheckoutProvider
         public: true

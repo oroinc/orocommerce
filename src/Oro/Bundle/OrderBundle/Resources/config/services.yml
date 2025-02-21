@@ -758,3 +758,21 @@ services:
         class: Oro\Bundle\OrderBundle\Provider\OrderDuplicator
         arguments:
             - '@oro_action.factory.duplicator_factory'
+
+    oro_order.provider.order_limit:
+        class: Oro\Bundle\CheckoutBundle\Provider\OrderLimitProvider
+        arguments:
+            - '@oro_checkout.provider.minimum_order_amount'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_pricing.user_currency_manager'
+        public: true
+
+    oro_order.provider.order_limit_formatted:
+        class: Oro\Bundle\CheckoutBundle\Provider\OrderLimitFormattedProvider
+        arguments:
+            - '@oro_checkout.provider.minimum_order_amount'
+            - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_locale.formatter.number'
+            - '@oro_currency.rounding.price_rounding_service'
+        public: true

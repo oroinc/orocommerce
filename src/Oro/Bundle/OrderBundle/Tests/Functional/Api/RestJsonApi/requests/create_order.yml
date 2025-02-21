@@ -58,6 +58,8 @@ included:
         id: product_kit_line_item_1
         attributes:
             quantity: 6
+            # It is expected that after the order line item is saved the price must be overridden with the sum of
+            # prices of its kit item line items, i.e. 10.59 for this case.
             value: 200
             currency: 'USD'
         relationships:

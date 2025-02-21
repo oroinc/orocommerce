@@ -2049,6 +2049,10 @@ oro_behat_extension:
       class: Oro\Bundle\ProductBundle\Tests\Behat\Page\ProductView
       route: 'oro_product_view'
 
+    Quick Order:
+      class: Oro\Bundle\ProductBundle\Tests\Behat\Page\QuickOrder
+      route: oro_product_frontend_quick_add
+
   suites:
     # Revert by OPI-52
     OroProductBundle:

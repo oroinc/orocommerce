@@ -15,6 +15,7 @@ Oro\Bundle\OrderBundle\Entity\Order:
                     - api_frontend_order_create
                     # Used in UPDATE action by orderlineitems storefront API resource
                     - api_frontend_order_update
+
     properties:
         createdBy:
             -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField: ~
