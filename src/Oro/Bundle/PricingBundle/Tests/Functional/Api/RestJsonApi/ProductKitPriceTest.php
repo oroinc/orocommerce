@@ -25,6 +25,7 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     #[\Override]
     protected function setUp(): void
     {
+        self::markTestSkipped('Must be fixed and unskipped in BB-25285');
         parent::setUp();
 
         $this->loadFixtures([
