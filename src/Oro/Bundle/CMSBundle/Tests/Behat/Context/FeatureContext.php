@@ -215,6 +215,8 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware
         } else {
             $this->dragAndDropTheBlockToGrapesJs($block, $toSelected ? 'SelectedComponent' : '');
         }
+
+        $this->waitForAjax();
     }
 
     /**

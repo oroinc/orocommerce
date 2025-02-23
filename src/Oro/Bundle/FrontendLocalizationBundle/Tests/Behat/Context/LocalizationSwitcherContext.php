@@ -122,12 +122,11 @@ class LocalizationSwitcherContext extends OroFeatureContext implements OroPageOb
     public function iSelectLocalization(string $localizationName)
     {
         $this->commerceMainContext->openMainMenu();
-
         /** @var LocalizationCurrencySwitcherElement $switcher */
         $switcher = $this->createElement('LocalizationCurrencySwitcher');
         $switcher->setLocalizationValue($localizationName);
-
         $this->waitForAjax();
+
         $this->commerceMainContext->closeMainMenu();
     }
 }

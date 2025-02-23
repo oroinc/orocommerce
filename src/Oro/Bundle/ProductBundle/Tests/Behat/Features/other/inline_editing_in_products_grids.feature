@@ -1,5 +1,3 @@
-@skip
-@ticket-OPI-1390
 @fixture-OroProductBundle:Product_tax_codes_Inline_edit.yml
 @regression
 Feature: Inline Editing in Products Grids
@@ -52,9 +50,9 @@ Feature: Inline Editing in Products Grids
       | <value> |
     Examples:
       | field            | input        | value        |
+      | Tax Code         | XCODE2       | TaxCode2     |
       | Inventory Status | Out of Stock | Out of Stock |
       | Status           | Disabled     | Disabled     |
-      | Tax Code         | XCODE2       | TaxCode2     |
 
   Scenario: Canceling inline editing on Changing Page URLs warning pop-up
     When I edit "Product2" Name as "Product1" without saving

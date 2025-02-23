@@ -1,5 +1,3 @@
-@skip
-@ticket-OPI-1390
 @regression
 @ticket-BB-17908
 @ticket-BB-22542
@@ -128,7 +126,7 @@ Feature: Landing Page Drafts
     When I go to Marketing/ Landing Pages
     And I click view "Test page" in grid
     And I click edit "Draft 1" in grid
-    And I fill in Landing Page Titles field with "New Title"
+    When I fill in Landing Page Titles field with "New Title"
     And I fill in URL Slug field with "new-landing-page"
     And I save and close form
     Then I should see "Draft has been saved" flash message
