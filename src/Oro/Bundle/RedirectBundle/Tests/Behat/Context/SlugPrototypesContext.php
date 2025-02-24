@@ -27,6 +27,7 @@ class SlugPrototypesContext extends OroFeatureContext implements OroPageObjectAw
      */
     public function fillSlugPrototypesFieldFilledWithValue($value)
     {
+        $this->waitForAjax();
         $slugPrototypesField = $this->createElement('SlugPrototypesField');
 
         $slugPrototypesField->setValue($value);
