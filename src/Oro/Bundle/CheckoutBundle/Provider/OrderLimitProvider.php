@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider;
 
+use Brick\Math\BigDecimal;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
@@ -33,9 +34,12 @@ class OrderLimitProvider implements OrderLimitProviderInterface
             return true;
         }
 
-        $orderAmount = $this->subtotalProvider->getSubtotal($entity)->getAmount();
+        $minimumOrderAmount = BigDecimal::of($minimumOrderAmount);
+        $orderAmount = BigDecimal::of(
+            $this->subtotalProvider->getSubtotal($entity)->getAmount()
+        );
 
-        return $orderAmount > $minimumOrderAmount;
+        return $orderAmount->isGreaterThanOrEqualTo($minimumOrderAmount);
     }
 
     #[\Override]
@@ -51,8 +55,11 @@ class OrderLimitProvider implements OrderLimitProviderInterface
             return true;
         }
 
-        $orderAmount = $this->subtotalProvider->getSubtotal($entity)->getAmount();
+        $maximumOrderAmount = BigDecimal::of($maximumOrderAmount);
+        $orderAmount = BigDecimal::of(
+            $this->subtotalProvider->getSubtotal($entity)->getAmount()
+        );
 
-        return $orderAmount < $maximumOrderAmount;
+        return $orderAmount->isLessThanOrEqualTo($maximumOrderAmount);
     }
 }

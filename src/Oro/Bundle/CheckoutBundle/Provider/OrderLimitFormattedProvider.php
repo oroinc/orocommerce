@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Provider;
 
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
@@ -18,7 +19,8 @@ class OrderLimitFormattedProvider implements OrderLimitFormattedProviderInterfac
         private OrderLimitConfigProvider $orderLimitConfigProvider,
         private SubtotalProviderInterface $subtotalProvider,
         private UserCurrencyManager $userCurrencyManager,
-        private NumberFormatter $numberFormatter
+        private NumberFormatter $numberFormatter,
+        private RoundingServiceInterface $priceRoundingService
     ) {
     }
 
@@ -54,7 +56,9 @@ class OrderLimitFormattedProvider implements OrderLimitFormattedProviderInterfac
             return '';
         }
 
-        return $this->numberFormatter->formatCurrency($minimumOrderAmount - $orderAmount);
+        return $this->numberFormatter->formatCurrency(
+            $this->priceRoundingService->round($minimumOrderAmount - $orderAmount)
+        );
     }
 
     #[\Override]
@@ -89,6 +93,8 @@ class OrderLimitFormattedProvider implements OrderLimitFormattedProviderInterfac
             return '';
         }
 
-        return $this->numberFormatter->formatCurrency($orderAmount - $maximumOrderAmount);
+        return $this->numberFormatter->formatCurrency(
+            $this->priceRoundingService->round($orderAmount - $maximumOrderAmount)
+        );
     }
 }

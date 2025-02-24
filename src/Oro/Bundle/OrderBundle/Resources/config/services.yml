@@ -807,6 +807,7 @@ services:
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item'
             - '@oro_pricing.user_currency_manager'
             - '@oro_locale.formatter.number'
+            - '@oro_currency.rounding.price_rounding_service'
         public: true
 
     oro_order.duplicator.order_duplicator:

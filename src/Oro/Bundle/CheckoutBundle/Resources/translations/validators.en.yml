@@ -55,3 +55,7 @@ oro:
                     message: Please enter correct billing address.
                 invalid_shipping_address:
                     message: Please enter correct shipping address.
+
+        system_configuration:
+            order_limits:
+                message: 'Only positive numeric values are allowed'
