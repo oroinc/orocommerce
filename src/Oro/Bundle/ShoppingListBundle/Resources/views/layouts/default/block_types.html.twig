@@ -14,30 +14,23 @@
 
     <div {{ block('block_attributes') }}>
         {% set isOpen = (open == 1 or open == 'true') ? 'true' : 'false' %}
-        {% set buttonTrigger %}
-            <button class="btn btn--circle btn--size-small {{ "#{class_prefix ?: 'summary-collapse'}__toggle" }} {{ open ? '' : 'collapsed' }}"
-                    type="button"
-                    data-toggle="collapse"
-                    data-target="#{{ collapseId }}"
-                    aria-expanded="{{ isOpen }}"
-                    aria-controls="{{ collapseId }}"
-                    aria-label="{{ 'oro.frontend.shoppinglist.summary_block.aria_label'|trans }}"
-            >
-                {{ renderIcon.icon({name: 'chevron-up'}) }}
-            </button>
-        {% endset %}
-
-        {% if tooltip %}
-            <div class="summary-collapse__trigger-tooltip"
+        <button class="btn btn--circle btn--size-small {{ "#{class_prefix ?: 'summary-collapse'}__toggle" }} {{ open ? '' : 'collapsed' }}"
+            type="button"
+            data-toggle="collapse"
+            data-target="#{{ collapseId }}"
+            aria-expanded="{{ isOpen }}"
+            aria-controls="{{ collapseId }}"
+            aria-label="{{ 'oro.frontend.shoppinglist.summary_block.aria_label'|trans }}"
+        >
+        {% if not isMobileVersion() and tooltip is defined and tooltip|length %}
+            <span class="summary-collapse__tooltip"
                  data-toggle="tooltip"
+                  data-trigger="hover"
                  data-placement="{{ tooltipPlacement|default('top') }}"
-                 title="{{ tooltipLabel|trans }}"
-            >
-                {{ buttonTrigger|raw }}
-            </div>
-        {% else %}
-            {{ buttonTrigger|raw }}
+                 title="{{ tooltip|trans }}"></span>
         {% endif %}
+            {{ renderIcon.icon({name: 'chevron-up'}) }}
+        </button>
         <div id="{{ collapseId }}" class="{{ "#{class_prefix ?: 'summary-collapse'}-content" }} {{ open ? 'show' : '' }}">
             {{ block_widget(block) }}
         </div>

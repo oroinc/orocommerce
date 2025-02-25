@@ -23,18 +23,16 @@
     {% for key, item in tabbedContentItems %}
         {% set itemId = 'content-widget-item-'|uniqid %}
         <div class="accordion-group__item">
-            <h4>
-                <button class="accordion-group__trigger {{ key != 0 ? 'collapsed' : '' }}"
-                        type="button"
-                        data-toggle="collapse"
-                        data-target="#{{ itemId }}"
-                        aria-expanded="{{ key == 0 ? 'true' : 'false' }}"
-                        aria-controls="{{ itemId }}"
-                >
-                    {{ renderIcon.icon({name: 'chevron-down'}) }}
-                    <span class="accordion-group__trigger-text">{{ item.title }}</span>
-                </button>
-            </h4>
+            <button class="accordion-group__trigger {{ key != 0 ? 'collapsed' : '' }}"
+                    type="button"
+                    data-toggle="collapse"
+                    data-target="#{{ itemId }}"
+                    aria-expanded="{{ key == 0 ? 'true' : 'false' }}"
+                    aria-controls="{{ itemId }}"
+            >
+                {{ renderIcon.icon({name: 'chevron-down'}) }}
+                <span class="accordion-group__trigger-text">{{ item.title }}</span>
+            </button>
 
             <div class="collapse {{ key == 0 ? 'show' : '' }}" id="{{ itemId }}" data-parent="#{{ parentId }}">
                 {%- import '@OroCMS/macros.html.twig' as CMS -%}

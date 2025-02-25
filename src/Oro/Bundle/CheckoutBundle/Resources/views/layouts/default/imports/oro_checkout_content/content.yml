@@ -196,9 +196,7 @@ layout:
                 __checkout_order_summary_totals_main:
                     blockType: summary_collapse
                     options:
-                        tooltip: true
-                        vars:
-                            tooltipLabel: oro.checkout.frontend.tooltip_trigger.totals.label
+                        tooltip: oro.checkout.frontend.tooltip_trigger.totals.label
                 __checkout_order_summary_wrapper:
                     blockType: container
                 __checkout_order_summary_inner:

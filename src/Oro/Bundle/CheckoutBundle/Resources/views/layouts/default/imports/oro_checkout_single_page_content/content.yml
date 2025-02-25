@@ -89,7 +89,7 @@ layout:
                     blockType: container
                     options:
                         vars:
-                            tooltipLabel: oro.checkout.frontend.tooltip_trigger.totals.label
+                            tooltip: oro.checkout.frontend.tooltip_trigger.totals.label
 
                 __checkout_order_footer_col_first:
                     blockType: container

@@ -112,7 +112,7 @@ services:
                     -
                         alwaysShow: ~
                         open: {default: false}
-                        tooltip: {default: false}
+                        tooltip: {default: ''}
             - [setName, ['summary_collapse']]
         tags:
              - { name: layout.block_type, alias: summary_collapse }
