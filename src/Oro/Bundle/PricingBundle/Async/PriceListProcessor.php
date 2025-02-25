@@ -75,9 +75,8 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
                     $cpl2plRepository = $this->doctrine->getRepository(CombinedPriceListToPriceList::class);
                     $allProducts = $body['product'];
                     $activeCpls = $this->getActiveCPlsByPls($cpl2plRepository, $allProducts);
-                    $activeCplIds = array_map(fn (CombinedPriceList $cpl) => $cpl->getId(), $activeCpls);
 
-                    $this->schedulePostCplJobs($job, $activeCplIds);
+                    $this->schedulePostCplJobs($job);
                     $this->addCplBuildActivity($job, $activeCpls);
 
                     foreach ($activeCpls as $cpl) {
@@ -119,12 +118,12 @@ class PriceListProcessor implements MessageProcessorInterface, TopicSubscriberIn
         }
     }
 
-    private function schedulePostCplJobs(Job $job, array $cpls = []): void
+    private function schedulePostCplJobs(Job $job): void
     {
         $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
         $context->addDependentJob(
             RunCombinedPriceListPostProcessingStepsTopic::getName(),
-            ['relatedJobId' => $job->getRootJob()->getId(), 'cpls' => $cpls]
+            ['relatedJobId' => $job->getRootJob()->getId()]
         );
         $this->dependentJob->saveDependentJob($context);
     }

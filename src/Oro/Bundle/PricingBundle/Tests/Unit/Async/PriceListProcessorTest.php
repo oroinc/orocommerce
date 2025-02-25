@@ -193,7 +193,7 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('addDependentJob')
             ->with(
                 RunCombinedPriceListPostProcessingStepsTopic::getName(),
-                ['relatedJobId' => 10, 'cpls' => [$cpl1->getId()]]
+                ['relatedJobId' => 10]
             );
         $this->dependentJob->expects($this->once())
             ->method('createDependentJobContext')
@@ -280,7 +280,7 @@ class PriceListProcessorTest extends \PHPUnit\Framework\TestCase
             ->method('addDependentJob')
             ->with(
                 RunCombinedPriceListPostProcessingStepsTopic::getName(),
-                ['relatedJobId' => 10, 'cpls' => [10]]
+                ['relatedJobId' => 10]
             );
         $this->dependentJob->expects($this->once())
             ->method('createDependentJobContext')

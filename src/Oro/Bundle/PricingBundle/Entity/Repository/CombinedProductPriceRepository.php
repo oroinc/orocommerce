@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
@@ -170,7 +169,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
         $qb->getQuery()->execute();
     }
 
-    public function deleteDuplicatePrices(array $cpls = []): int
+    public function deleteDuplicatePrices(): int
     {
         $delete = <<<SQL
             DELETE FROM oro_price_product_combined cpp1 
@@ -182,16 +181,16 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 AND cpp1.value = cpp2.value
                 AND cpp1.currency = cpp2.currency
                 AND cpp1.quantity = cpp2.quantity
-                AND cpp1.unit_code = cpp2.unit_code %s
+                AND cpp1.unit_code = cpp2.unit_code
             RETURNING cpp1.id
         SQL;
 
         $sql = "WITH deleted_rows AS ($delete) SELECT COUNT(*) FROM deleted_rows";
 
-        return $this->executeDuplicatePricesQuery($sql, $cpls);
+        return $this->executeDuplicatePricesQuery($sql);
     }
 
-    public function hasDuplicatePrices(array $cpls = []): bool
+    public function hasDuplicatePrices(): bool
     {
         $sql = <<<SQL
             SELECT 1
@@ -203,24 +202,17 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
                 AND cpp1.value = cpp2.value
                 AND cpp1.currency = cpp2.currency
                 AND cpp1.quantity = cpp2.quantity
-                AND cpp1.unit_code = cpp2.unit_code %s
+                AND cpp1.unit_code = cpp2.unit_code
             LIMIT 1
         SQL;
 
-        return (bool) $this->executeDuplicatePricesQuery($sql, $cpls);
+        return (bool) $this->executeDuplicatePricesQuery($sql);
     }
 
-    private function executeDuplicatePricesQuery(string $sql, array $cpls = []): int
+    private function executeDuplicatePricesQuery(string $sql): int
     {
         $connection = $this->_em->getConnection();
         $parameters = $types = [];
-        if ($cpls) {
-            $sql = sprintf($sql, 'AND cpp1.combined_price_list_id IN (:combinedPriceLists)');
-            $parameters = ['combinedPriceLists' => $cpls];
-            $types = ['combinedPriceLists' => Connection::PARAM_INT_ARRAY];
-        } else {
-            $sql = sprintf($sql, '');
-        }
 
         return (int)$connection->executeQuery($sql, $parameters, $types)->fetchOne();
     }

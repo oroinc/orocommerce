@@ -85,12 +85,8 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
                 $message,
                 function (JobRunner $jobRunner, Job $job) use ($priceLists, $version) {
                     $combinedPriceLists = $this->getCombinedPriceListsByPriceList($priceLists);
-                    $combinedPriceListIds = array_map(
-                        fn (CombinedPriceList $cpl) => $cpl->getId(),
-                        $combinedPriceLists
-                    );
 
-                    $this->schedulePostCplJobs($job, $combinedPriceListIds);
+                    $this->schedulePostCplJobs($job);
                     $this->addCplBuildActivity($job, $combinedPriceLists);
 
                     foreach ($combinedPriceLists as $combinedPriceList) {
@@ -127,12 +123,12 @@ class VersionedPriceListProcessor implements MessageProcessorInterface, TopicSub
         }
     }
 
-    private function schedulePostCplJobs(Job $job, array $cpls = []): void
+    private function schedulePostCplJobs(Job $job): void
     {
         $context = $this->dependentJob->createDependentJobContext($job->getRootJob());
         $context->addDependentJob(
             RunCombinedPriceListPostProcessingStepsTopic::getName(),
-            ['relatedJobId' => $job->getRootJob()->getId(), 'cpls' => $cpls]
+            ['relatedJobId' => $job->getRootJob()->getId()]
         );
         $this->dependentJob->saveDependentJob($context);
     }

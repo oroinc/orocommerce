@@ -59,12 +59,11 @@ class CombinedPriceListGarbageCollector
         return $this;
     }
 
-    public function cleanCombinedPriceLists(array $cpls = []): void
+    public function cleanCombinedPriceLists(): void
     {
         $this->deleteInvalidRelations();
         $this->cleanActivationRules();
         $this->scheduleUnusedPriceListsRemoval();
-        $this->removeDuplicatePrices($cpls);
     }
 
     private function deleteInvalidRelations(): void
@@ -163,18 +162,25 @@ class CombinedPriceListGarbageCollector
         );
     }
 
-    private function removeDuplicatePrices(array $cpls = []): void
+    public function removeDuplicatePrices(): void
     {
         /** @var CombinedProductPriceRepository $repository */
         $repository = $this->registry->getRepository(CombinedProductPrice::class);
-        if ($repository->hasDuplicatePrices($cpls)) {
-            $start = microtime(true);
-            $removedRows = $repository->deleteDuplicatePrices($cpls);
-            $end = microtime(true);
-            if ($removedRows) {
-                $this->logDuplicatePrices($end - $start, $removedRows);
-            }
+
+        $start = microtime(true);
+        $removedRows = $repository->deleteDuplicatePrices();
+        $end = microtime(true);
+        if ($removedRows) {
+            $this->logDuplicatePrices($end - $start, $removedRows);
         }
+    }
+
+    public function hasDuplicatePrices(): bool
+    {
+        /** @var CombinedProductPriceRepository $repository */
+        $repository = $this->registry->getRepository(CombinedProductPrice::class);
+
+        return $repository->hasDuplicatePrices();
     }
 
     private function logDuplicatePrices(float $time, int $removedRows): void

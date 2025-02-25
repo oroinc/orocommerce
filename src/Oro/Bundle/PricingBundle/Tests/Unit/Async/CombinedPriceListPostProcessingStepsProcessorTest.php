@@ -49,10 +49,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn([
-                'relatedJobId' => $jobId,
-                'cpls' => [1]
-            ]);
+            ->willReturn(['relatedJobId' => $jobId]);
 
         $this->triggerHandler->expects($this->once())
             ->method('startCollect')
@@ -62,8 +59,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
 
         $this->garbageCollector
             ->expects($this->once())
-            ->method('cleanCombinedPriceLists')
-            ->with([1]);
+            ->method('cleanCombinedPriceLists');
 
         $this->producer->expects($this->once())
             ->method('send')
@@ -87,10 +83,7 @@ class CombinedPriceListPostProcessingStepsProcessorTest extends TestCase
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn([
-                'relatedJobId' => $jobId,
-                'cpls' => [1]
-            ]);
+            ->willReturn(['relatedJobId' => $jobId]);
 
         $e = new \Exception('Cpl GC error');
 
