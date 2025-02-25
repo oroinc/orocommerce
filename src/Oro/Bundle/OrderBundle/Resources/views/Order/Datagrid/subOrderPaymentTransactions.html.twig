@@ -5,7 +5,7 @@
         <ul class="nav nav-tabs" role="tablist">
             {% for subOrder in entity.subOrders %}
                 {% set subOrderId = subOrder.id %}
-                <li class="nav-item">
+                <li class="nav-item" role="presentation">
                     <a id="sub-order-{{ subOrderId }}-tab"
                         href="#suborder{{ subOrderId }}" class="nav-link{% if subOrderId == entity.subOrders|first.id %} active{% endif %}"
                         data-toggle="tab"

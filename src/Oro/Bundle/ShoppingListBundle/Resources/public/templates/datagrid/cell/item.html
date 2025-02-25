@@ -2,6 +2,10 @@
 <% let oroshoppinglist = _.macros('oroshoppinglist') %>
 <% productId = typeof productId !== 'undefined' ? productId : null %>
 <% variantId = typeof variantId !== 'undefined' ? variantId : null %>
+<% let imageAlt = _.__('oro.frontend.shoppinglist.lineitem.image.alt', {
+    name: name,
+    sku: sku ?? ''
+}) %>
 
 <div class="product-item grid-line-items">
     <%= oroshoppinglist.renderProductItemImage({
@@ -10,7 +14,7 @@
         placeholder: _metadata.image_placeholder,
         productId: variantId ? variantId : productId,
         title: sku,
-        alt: name,
+        alt: imageAlt,
         isConfigurable: obj.isConfigurable,
         _cid: _cid
     }) %>

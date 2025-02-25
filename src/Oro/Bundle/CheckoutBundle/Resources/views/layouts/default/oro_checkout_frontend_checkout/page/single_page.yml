@@ -13,6 +13,11 @@ layout:
         - '@setFormTheme':
             themes: '@OroCheckout/layouts/default/oro_checkout_frontend_checkout/templates/address_validation/single_page_address_validation_fields.html.twig'
 
+        - '@setOption':
+              id: page_title
+              optionName: tagName
+              optionValue: 'h2'
+
         - '@move':
             id: coupon_form_container
             parentId: checkout_order_summary_inner

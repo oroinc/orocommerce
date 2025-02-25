@@ -410,6 +410,7 @@
 
 {% block __oro_checkout_single_page_content__checkout_order_footer_widget %}
     {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
     {% set collapseId = 'checkout-collapse-'|uniqid %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " checkout__footer",
@@ -431,7 +432,15 @@
                 data-validation-ignore-onblur=""
                 aria-expanded="{{ isMobileVersion() ? 'false' : 'true' }}"
                 aria-controls="{{ collapseId }}"
+                aria-label="{{ 'oro.checkout.frontend.checkout.summary_block.aria_label'|trans }}"
         >
+        {% if not isMobileVersion() and tooltip is defined and tooltip|length %}
+            <span class="summary-collapse__tooltip"
+                  data-toggle="tooltip"
+                  data-trigger="hover"
+                  data-placement="{{ tooltipPlacement|default('top') }}"
+                  title="{{ tooltip|trans }}"></span>
+        {% endif %}
             {{ renderIcon.icon({name: 'chevron-up'}) }}
         </button>
         <div id="{{ collapseId }}" class="checkout__footer-collapse summary-collapse-content {{ isMobileVersion() ? '' : 'show' }}">
@@ -439,7 +448,6 @@
         </div>
     </div>
 {% endblock %}
-
 
 {% block __oro_checkout_single_page_content__checkout_container_widget %}
     {% set attr = layout_attr_defaults(attr, {

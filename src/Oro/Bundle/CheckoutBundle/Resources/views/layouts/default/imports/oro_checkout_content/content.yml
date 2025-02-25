@@ -38,6 +38,14 @@ layout:
             id: checkout_order_summary_line_items_collapse_toggle
             optionName: vars.title
             optionValue: oro.checkout.summary_item_title
+        - '@setOption':
+            id: checkout_order_summary_line_items_collapse_header
+            optionName: vars.tooltipLabel
+            optionValue: oro.checkout.frontend.tooltip_trigger.products.label
+        - '@setOption':
+            id: checkout_order_summary_line_items_collapse_header
+            optionName: vars.tooltipPlacement
+            optionValue: 'top-end'
         - '@add':
             id: order_taxes_template
             blockType: block
@@ -187,6 +195,8 @@ layout:
 
                 __checkout_order_summary_totals_main:
                     blockType: summary_collapse
+                    options:
+                        tooltip: oro.checkout.frontend.tooltip_trigger.totals.label
                 __checkout_order_summary_wrapper:
                     blockType: container
                 __checkout_order_summary_inner:

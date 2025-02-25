@@ -2,7 +2,7 @@
     {% set attr = attr|merge({
         class: attr.class|default('') ~ "customer-line-items__title"
     }) %}
-    <h3{{ block('block_attributes') }}>
+    <h2{{ block('block_attributes') }}>
         {{- block_widget(block) -}}
-    </h3>
+    </h2>
 {% endblock %}

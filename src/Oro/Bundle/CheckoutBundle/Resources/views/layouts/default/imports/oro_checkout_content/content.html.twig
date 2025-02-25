@@ -108,7 +108,7 @@
 
 {% block __oro_checkout_content__checkout_information_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " checkout__title"
+        '~class': " h3 checkout__title"
     }) %}
 
     {% if hideOnDesktop %}
@@ -117,10 +117,10 @@
         }) %}
     {% endif %}
 
-    <h3 {{ block('block_attributes') }}>
+    <h2 {{ block('block_attributes') }}>
         <span class="checkout__title-text">{{ workflowStep.label|trans({},'workflows') }}</span>
         {{ block_widget(block) }}
-    </h3>
+    </h2>
 {% endblock %}
 
 {% block __oro_checkout_content__checkout_information_body_widget %}
@@ -230,7 +230,8 @@
     {% set editLink = workflowItem.data.get('edit_order_link') %}
     {% set attr = layout_attr_defaults(attr, {
         'href': editLink,
-        '~class': " btn btn--flat checkout-order-summary__edit-link"
+        '~class': " btn btn--flat checkout-order-summary__edit-link",
+        'aria-label': 'oro.checkout.order_summary.edit_order.aria_label'
     }) %}
     {% if editLink %}
         <% if (toolbarPosition === 'top') { %>
@@ -295,12 +296,12 @@
 
 {% block __oro_checkout_content__checkout_order_summary_notes_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' shopping-list-notes__title'
+        '~class': ' h5 shopping-list-notes__title'
     }) %}
     {% if notes is not null %}
-        <h5 {{ block('block_attributes') }}>
+        <p {{ block('block_attributes') }}>
             {{- 'oro.checkout.order_summary.notes'|trans -}}
-        </h5>
+        </p>
     {% endif %}
 {% endblock %}
 

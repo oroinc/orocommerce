@@ -1,4 +1,8 @@
 <label class="checkbox-label">
     <input type="checkbox" data-role="select-row-cell"<% if (checked) { %> checked="checked"<% } %>>
-    <% if (!_.isUndefined(obj.text)) { %><%- text %><% } %>
+    <% if (_.isUndefined(obj.text)) { %>
+        <%- text %>
+    <% } else { %>
+        <span class="sr-only"><%- _.__('oro.datagrid.action.select_row') %></span>
+    <% } %>
 </label>

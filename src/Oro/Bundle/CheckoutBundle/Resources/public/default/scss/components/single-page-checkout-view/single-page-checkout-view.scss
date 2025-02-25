@@ -112,12 +112,6 @@
             &:not(.collapsed) {
                 transform: rotate(180deg);
             }
-
-            &:before {
-                content: '';
-                position: absolute;
-                inset: -#{spacing('sm')};
-            }
         }
     }
 

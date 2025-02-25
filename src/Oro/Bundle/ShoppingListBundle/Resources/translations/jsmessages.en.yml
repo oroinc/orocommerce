@@ -118,6 +118,7 @@ oro:
                     edit_note.label: Save Note
                     notes.success: Line item note has been successfully updated
                 sku.label: 'QTY'
+                image.alt: '{{ name }} product {{ sku }}'
 
             inline_editing:
                 quantity:

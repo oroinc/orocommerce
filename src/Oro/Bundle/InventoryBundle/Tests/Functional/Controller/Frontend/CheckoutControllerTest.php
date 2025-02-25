@@ -26,8 +26,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     use ConfigManagerAwareTestTrait;
 
     private const CONTINUE_BUTTON = "//button[contains(text(), 'Continue')]";
-    private const CHECKOUT_STEP_LABEL2 = "//h5[text()[contains(.,'%s')]]";
-    private const CHECKOUT_STEP_LABEL = "//h5[contains(@class, 'checkout-navigation__title--current')]";
+    private const CHECKOUT_STEP_LABEL2 = "//p[text()[contains(.,'%s')]]";
+    private const CHECKOUT_STEP_LABEL = "//p[contains(@class, 'checkout-navigation__title--current')]";
     private const MIN_ERROR_MESSAGE = 'oro.inventory.product.error.quantity_below_min_limit';
     private const MAX_ERROR_MESSAGE = 'oro.inventory.product.error.quantity_over_max_limit';
 

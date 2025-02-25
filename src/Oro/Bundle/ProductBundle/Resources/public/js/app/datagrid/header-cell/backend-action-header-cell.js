@@ -206,6 +206,13 @@ define(function(require, exports, module) {
             }
         },
 
+        _attributes() {
+            return {
+                'aria-colindex': null,
+                'aria-label': null
+            };
+        },
+
         _renderSelectedItemsView(selectState) {
             this.$('.product-selected-counter').text(
                 `${__('oro.product.frontend.actions_panel.selected_view', {count: selectState.get('rows').length})}`
