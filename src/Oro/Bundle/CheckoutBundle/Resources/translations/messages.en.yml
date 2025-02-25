@@ -501,7 +501,8 @@ oro:
                     title: 'General Options'
                 multishipping_line_items_grouping_options.title: 'Line Items Grouping Options'
                 multishipping_order_history_options.title: 'Order History Options'
-                order_limits.title: 'Order Limits'
+                order_limits:
+                    title: 'Order Limits'
                 items.label: '{0} No Items|{1} %count% Item|]1,Inf[ %count% Items'
 
         privilege:

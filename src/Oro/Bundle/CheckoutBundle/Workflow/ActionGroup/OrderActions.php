@@ -90,7 +90,7 @@ class OrderActions implements OrderActionsInterface
             'paymentTerm' => $paymentTerm,
             'lineItems' => $orderLineItems
         ];
-        $order = $this->mapper->map($checkout, $additionalData);
+        $order = $checkout->getOrder() ?? $this->mapper->map($checkout, $additionalData);
         $this->paymentMethodsProvider->storePaymentMethodsToEntity($order, [$checkout->getPaymentMethod()]);
 
         // Fill totals

@@ -834,6 +834,20 @@ services:
             - { name: kernel.event_listener, event: security.interactive_login, method: onInteractiveLogin }
             - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\LoginSuccessEvent, method: onCheckoutLogin }
 
+    oro_checkout.event_listener.login_on_checkout_order_limit:
+        class: Oro\Bundle\CheckoutBundle\EventListener\LoginOnCheckoutOrderLimitListener
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_checkout.manager'
+            - '@router'
+            - '@oro_checkout.provider.checkout_id_by_target_path_request'
+            - '@oro_shopping_list.provider.order_limit'
+            - '@doctrine'
+        lazy: true
+        tags:
+            # this should run before the oro_checkout.event_listener.login_on_checkout listener to redirect back to shopping list instead of checkout
+            - { name: kernel.event_listener, event: Symfony\Component\Security\Http\Event\LoginSuccessEvent, method: onCheckoutLogin, priority: 100 }
+
     oro_checkout.event_listener.remove_duplicate_checkout:
         class: 'Oro\Bundle\CheckoutBundle\EventListener\RemoveDuplicateCheckoutOnLoginListener'
         arguments:
@@ -1002,6 +1016,25 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-checkout-line-items-grid, method: onLineItemData, priority: -10 }
             - { name: kernel.event_listener, event: oro_product.datagrid_line_items_data.frontend-single-page-checkout-line-items-grid, method: onLineItemData, priority: -10 }
+
+    oro_checkout.listener.remove_order_after_invalid_payment:
+        class: Oro\Bundle\CheckoutBundle\EventListener\RemoveCheckoutOrderAfterInvalidPaymentListener
+        arguments:
+            - '@doctrine'
+        calls:
+            - ['addTransitionName', ['create_order']]
+            - ['addTransitionName', ['place_order']]
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.transition_request.before, method: onBeforeOrderCreate }
+
+    oro_checkout.listener.checkout_transition_purchase:
+        class: Oro\Bundle\CheckoutBundle\EventListener\CheckoutTransitionPurchase
+        arguments:
+            - '@oro_workflow.manager'
+            - '@security.token_storage'
+            - 'verify_payment'
+        tags:
+            - { name: kernel.event_listener, event: oro_checkout.transition_request.after, method: onAfter, priority: -10 }
 
     oro_checkout.form.data_transformer.order_address_to_address_identifier:
         class: 'Oro\Bundle\CheckoutBundle\Form\DataTransformer\OrderAddressToAddressIdentifierViewTransformer'

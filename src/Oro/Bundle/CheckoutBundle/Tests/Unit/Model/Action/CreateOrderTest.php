@@ -139,4 +139,43 @@ class CreateOrderTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals($expected, $context['order']);
     }
+
+    public function testExecuteWithOrder(): void
+    {
+        $expected = new Order();
+        $checkout = new Checkout();
+        $checkout->setOrder($expected);
+        $checkout->setPaymentMethod('pm1');
+        $data = [
+            'lineItems' => new ArrayCollection([new PropertyPath('lineItems')]),
+        ];
+        $context = new ActionData(
+            [
+                'checkout' => $checkout,
+                'data' => $data,
+                'array_value' => [
+                    'array' => 'value',
+                ],
+            ]
+        );
+
+        $this->action->initialize(
+            [
+                CreateOrder::OPTION_KEY_CHECKOUT => new PropertyPath('checkout'),
+                CreateOrder::OPTION_KEY_ATTRIBUTE => new PropertyPath('order'),
+                CreateOrder::OPTION_KEY_DATA => $data,
+            ]
+        );
+
+        $this->mapper->expects($this->never())
+            ->method('map');
+
+        $this->paymentMethodsProvider->expects($this->once())
+            ->method('storePaymentMethodsToEntity')
+            ->with($expected, ['pm1']);
+
+        $this->action->execute($context);
+
+        $this->assertEquals($expected, $context['order']);
+    }
 }

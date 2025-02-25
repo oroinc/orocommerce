@@ -120,7 +120,7 @@
             "Oro\\Component\\Website\\": "src/Oro/Component/Website"
         },
         "exclude-from-classmap": [
-            "/Tests/"
+            "**/Tests/"
         ]
     },
     "config": {

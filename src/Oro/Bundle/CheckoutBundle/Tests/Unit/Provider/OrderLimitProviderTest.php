@@ -83,6 +83,12 @@ class OrderLimitProviderTest extends TestCase
                 'expected' => true,
             ],
             [
+                'userCurrency' => 'USD',
+                'minimumOrderAmount' => 1.25,
+                'orderAmount' => 1.25,
+                'expected' => true,
+            ],
+            [
                 'userCurrency' => null,
                 'minimumOrderAmount' => 1.25,
                 'orderAmount' => 10.50,
@@ -152,6 +158,12 @@ class OrderLimitProviderTest extends TestCase
                 'userCurrency' => 'USD',
                 'maximumOrderAmount' => 100.25,
                 'orderAmount' => 10.50,
+                'expected' => true,
+            ],
+            [
+                'userCurrency' => 'USD',
+                'maximumOrderAmount' => 100.25,
+                'orderAmount' => 100.25,
                 'expected' => true,
             ],
             [

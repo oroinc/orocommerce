@@ -534,12 +534,12 @@ oro_behat_extension:
 
     Minimum Order Amount USD Config Field:
       selector:
-        locator: '//*[@data-ftid="checkout_oro_checkout___minimum_order_amount_value"]//span[contains(text(),"USD")]/../input'
+        locator: '//*[@data-ftid="checkout_oro_checkout___minimum_order_amount_value"]//span[contains(text(),"USD")]/..//input'
         type: 'xpath'
 
     Maximum Order Amount USD Config Field:
       selector:
-        locator: '//*[@data-ftid="checkout_oro_checkout___maximum_order_amount_value"]//span[contains(text(),"USD")]/../input'
+        locator: '//*[@data-ftid="checkout_oro_checkout___maximum_order_amount_value"]//span[contains(text(),"USD")]/..//input'
         type: 'xpath'
 
     Create Order From Shopping List Button:

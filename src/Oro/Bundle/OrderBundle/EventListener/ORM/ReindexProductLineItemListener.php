@@ -74,7 +74,7 @@ class ReindexProductLineItemListener
 
     private function isReindexAllowed(OrderLineItem $lineItem): bool
     {
-        $website = $lineItem->getOrder()->getWebsite();
+        $website = $lineItem->getOrder()?->getWebsite();
         if (null === $website) {
             return false;
         }

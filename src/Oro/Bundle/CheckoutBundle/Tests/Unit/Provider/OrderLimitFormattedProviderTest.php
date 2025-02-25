@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CheckoutBundle\Provider\OrderLimitConfigProvider;
 use Oro\Bundle\CheckoutBundle\Provider\OrderLimitFormattedProvider;
+use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -19,6 +20,7 @@ class OrderLimitFormattedProviderTest extends TestCase
     private UserCurrencyManager|MockObject $userCurrencyManager;
     private NumberFormatter|MockObject $numberFormatter;
     private OrderLimitFormattedProvider $provider;
+    private RoundingServiceInterface $priceRoundingService;
 
     protected function setUp(): void
     {
@@ -26,12 +28,14 @@ class OrderLimitFormattedProviderTest extends TestCase
         $this->subtotalProvider = $this->createMock(SubtotalProviderInterface::class);
         $this->userCurrencyManager = $this->createMock(UserCurrencyManager::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
+        $this->priceRoundingService = $this->createMock(RoundingServiceInterface::class);
 
         $this->provider = new OrderLimitFormattedProvider(
             $this->orderLimitConfigProvider,
             $this->subtotalProvider,
             $this->userCurrencyManager,
-            $this->numberFormatter
+            $this->numberFormatter,
+            $this->priceRoundingService
         );
     }
 
@@ -113,6 +117,10 @@ class OrderLimitFormattedProviderTest extends TestCase
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
+        $this->priceRoundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(fn ($amount) => round($amount, 2));
+
         if (null !== $expectedFloat) {
             $this->numberFormatter->expects($this->once())
                 ->method('formatCurrency')
@@ -163,6 +171,13 @@ class OrderLimitFormattedProviderTest extends TestCase
                 'orderAmount' => 0.50,
                 'expectedFloat' => 0.75,
                 'expectedString' => '$0.75',
+            ],
+            [
+                'userCurrency' => 'USD',
+                'minimumOrderAmount' => 1003.80,
+                'orderAmount' => 1000.45,
+                'expectedFloat' => 3.35,
+                'expectedString' => '$3.35',
             ],
             [
                 'userCurrency' => 'USD',
@@ -251,6 +266,10 @@ class OrderLimitFormattedProviderTest extends TestCase
             ->method('getSubtotal')
             ->willReturn($subtotal);
 
+        $this->priceRoundingService->expects($this->any())
+            ->method('round')
+            ->willReturnCallback(fn ($amount) => round($amount, 2));
+
         if (null !== $expectedFloat) {
             $this->numberFormatter->expects($this->once())
                 ->method('formatCurrency')
@@ -294,6 +313,13 @@ class OrderLimitFormattedProviderTest extends TestCase
                 'orderAmount' => 10.50,
                 'expectedFloat' => 9.25,
                 'expectedString' => '$9.25',
+            ],
+            [
+                'userCurrency' => 'USD',
+                'maximumOrderAmount' => 1000.45,
+                'orderAmount' => 1003.80,
+                'expectedFloat' => 3.35,
+                'expectedString' => '$3.35',
             ],
             [
                 'userCurrency' => 'USD',

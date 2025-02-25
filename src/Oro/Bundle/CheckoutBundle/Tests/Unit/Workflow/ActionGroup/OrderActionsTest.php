@@ -135,6 +135,38 @@ class OrderActionsTest extends TestCase
         $this->assertInstanceOf(Order::class, $result);
     }
 
+    public function testCreateOrderByCheckoutWithOrder(): void
+    {
+        $order = new Order();
+        $checkout = new Checkout();
+        $checkout->setOrder($order);
+        $billingAddress = $this->getEntity(OrderAddress::class, ['id' => 1]);
+        $billingAddressCopy = $this->createMock(OrderAddress::class);
+        $shippingAddress = $this->getEntity(OrderAddress::class, ['id' => 2]);
+        $shippingAddressCopy = $this->createMock(OrderAddress::class);
+        $customer = $this->createMock(Customer::class);
+
+        $customerUser = $this->createMock(CustomerUser::class);
+        $customerUser->expects($this->any())
+            ->method('getCustomer')
+            ->willReturn($customer);
+
+        $this->prepareCheckout($checkout, $billingAddress, $shippingAddress, $customerUser);
+
+        $this->assertCreateOrderByCheckoutWithOrderCalls(
+            $billingAddress,
+            $shippingAddress,
+            $billingAddressCopy,
+            $shippingAddressCopy,
+            $checkout,
+            $order
+        );
+
+        $result = $this->orderActions->createOrderByCheckout($checkout, $billingAddress, $shippingAddress);
+
+        $this->assertInstanceOf(Order::class, $result);
+    }
+
     public function testSendConfirmationEmailWithImmediateEmail(): void
     {
         $user = new User();
@@ -260,6 +292,41 @@ class OrderActionsTest extends TestCase
                 ]
             )
             ->willReturn($order);
+
+        $this->paymentMethodsProvider->expects($this->once())
+            ->method('storePaymentMethodsToEntity')
+            ->with($order, ['term']);
+        $this->totalHelper->expects($this->once())
+            ->method('fill')
+            ->with($order);
+    }
+
+    private function assertCreateOrderByCheckoutWithOrderCalls(
+        OrderAddress $billingAddress,
+        OrderAddress $shippingAddress,
+        OrderAddress $billingAddressCopy,
+        OrderAddress $shippingAddressCopy,
+        Checkout $checkout,
+        Order $order
+    ): void {
+        $this->addressActions->expects($this->exactly(2))
+            ->method('duplicateOrderAddress')
+            ->withConsecutive([$billingAddress], [$shippingAddress])
+            ->willReturnOnConsecutiveCalls($billingAddressCopy, $shippingAddressCopy);
+
+        $this->paymentTermProvider->expects($this->once())
+            ->method('getCurrentPaymentTerm')
+            ->willReturn('payment_term');
+
+        $orderLineItems = new ArrayCollection([$this->createMock(OrderLineItem::class)]);
+        $this->checkoutLineItemsManager->expects($this->once())
+            ->method('getData')
+            ->with($checkout)
+            ->willReturn($orderLineItems);
+
+        $this->mapper->expects($this->never())
+            ->method('map');
+
         $this->paymentMethodsProvider->expects($this->once())
             ->method('storePaymentMethodsToEntity')
             ->with($order, ['term']);

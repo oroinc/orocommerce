@@ -868,6 +868,7 @@ services:
             - '@oro_pricing.subtotal_processor.provider.subtotal_line_item_not_priced'
             - '@oro_pricing.user_currency_manager'
             - '@oro_locale.formatter.number'
+            - '@oro_currency.rounding.price_rounding_service'
         public: true
 
     oro_shopping_list.layout.data_provider.order_limit:
