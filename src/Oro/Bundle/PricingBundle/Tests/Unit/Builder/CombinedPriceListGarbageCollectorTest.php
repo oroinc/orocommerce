@@ -64,40 +64,14 @@ class CombinedPriceListGarbageCollectorTest extends \PHPUnit\Framework\TestCase
         $this->assertConfigManagerCalls();
         [$combinedProductPriceRepository] = $this->assertRepositories();
         $combinedProductPriceRepository
-            ->expects($this->once())
+            ->expects($this->never())
             ->method('hasDuplicatePrices')
             ->willReturn(false);
         $combinedProductPriceRepository
             ->expects($this->never())
             ->method('deleteDuplicatePrices');
 
-        $this->logger
-            ->expects($this->never())
-            ->method('log');
-
-        $this->garbageCollector->cleanCombinedPriceLists([1]);
-    }
-
-    public function testCleanCombinedPriceListsWithLog(): void
-    {
-        [$combinedProductPriceRepository] = $this->assertRepositories();
-        $this->assertConfigManagerCalls();
-
-        $combinedProductPriceRepository
-            ->expects($this->any())
-            ->method('hasDuplicatePrices')
-            ->willReturn(true);
-        $combinedProductPriceRepository
-            ->expects($this->any())
-            ->method('deleteDuplicatePrices')
-            ->with([1])
-            ->willReturn(5);
-
-        $this->logger
-            ->expects($this->once())
-            ->method('log');
-
-        $this->garbageCollector->cleanCombinedPriceLists([1]);
+        $this->garbageCollector->cleanCombinedPriceLists();
     }
 
     private function assertRepositories(): array

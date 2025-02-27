@@ -41,6 +41,12 @@ services:
         tags:
             - { name: console.command }
 
+    Oro\Bundle\PricingBundle\Command\RemoveDuplicatePricesCommand:
+        arguments:
+            - '@oro_pricing.builder.combined_price_list_garbage_collector'
+        tags:
+            - { name: console.command }
+
     Oro\Bundle\PricingBundle\Command\SwitchPricingStorageCommand:
         arguments:
             - '@oro_config.global'
