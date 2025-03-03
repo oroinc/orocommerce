@@ -12,100 +12,124 @@ use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ShoppingListBundle\Entity\EntityListener\LineItem\RemoveParentProductsFromShoppingListLineItemListener;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\TestCase;
 
 class RemoveParentProductsFromShoppingListLineItemListenerTest extends TestCase
 {
-    use EntityTrait;
+    private RemoveParentProductsFromShoppingListLineItemListener $listener;
+
+    #[\Override]
+    protected function setUp(): void
+    {
+        $this->listener = new RemoveParentProductsFromShoppingListLineItemListener();
+    }
+
+    private function getShoppingList(int $id, array $lineItems): ShoppingList
+    {
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, $id);
+        foreach ($lineItems as $lineItem) {
+            $shoppingList->addLineItem($lineItem);
+        }
+
+        return $shoppingList;
+    }
+
+    private function getLineItem(int $id): LineItem
+    {
+        $lineItem = new LineItem();
+        ReflectionUtil::setId($lineItem, $id);
+
+        return $lineItem;
+    }
+
+    private function getProduct(int $id, string $type): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+        $product->setType($type);
+
+        return $product;
+    }
+
+    private function getProductUnit(string $code): ProductUnit
+    {
+        $productUnit = new ProductUnit();
+        $productUnit->setCode($code);
+
+        return $productUnit;
+    }
 
     public function testPrePersist(): void
     {
-        $configurableLineItems = [
-            $this->getEntity(LineItem::class, ['id' => 1]),
-            $this->getEntity(LineItem::class, ['id' => 2]),
+        $lineItems = [
+            $this->getLineItem(1),
+            $this->getLineItem(2)
         ];
+        $shoppingList = $this->getShoppingList(1, $lineItems);
 
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $shoppingList
-            ->addLineItem($configurableLineItems[0])
-            ->addLineItem($configurableLineItems[1]);
-
-        $unit = (new ProductUnit())->setCode('item');
+        $productUnit = $this->getProductUnit('item');
 
         $parentProducts = [
-            $this->getEntity(Product::class, ['id' => 100, 'type' => Product::TYPE_CONFIGURABLE]),
-            $this->getEntity(Product::class, ['id' => 200, 'type' => Product::TYPE_CONFIGURABLE]),
+            $this->getProduct(100, Product::TYPE_CONFIGURABLE),
+            $this->getProduct(200, Product::TYPE_CONFIGURABLE)
         ];
 
-        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);
-        $product
-            ->addParentVariantLink(new ProductVariantLink($parentProducts[0], $product))
-            ->addParentVariantLink(new ProductVariantLink($parentProducts[1], $product));
+        $product = $this->getProduct(1, Product::TYPE_SIMPLE);
+        $product->addParentVariantLink(new ProductVariantLink($parentProducts[0], $product));
+        $product->addParentVariantLink(new ProductVariantLink($parentProducts[1], $product));
 
-        $lineItem = $this->getEntity(LineItem::class, ['id' => 11]);
-        $lineItem
-            ->setShoppingList($shoppingList)
-            ->setProduct($product)
-            ->setParentProduct($parentProducts[0])
-            ->setUnit($unit);
+        $lineItem = $this->getLineItem(11);
+        $lineItem->setShoppingList($shoppingList);
+        $lineItem->setProduct($product);
+        $lineItem->setParentProduct($parentProducts[0]);
+        $lineItem->setUnit($productUnit);
 
         $repository = $this->createMock(EntityRepository::class);
-        $repository
-            ->expects(self::once())
+        $repository->expects(self::once())
             ->method('findBy')
             ->with([
                 'shoppingList' => $shoppingList->getId(),
-                'unit' => $unit,
+                'unit' => $productUnit,
                 'product' => $parentProducts[0]->getId(),
             ])
-            ->willReturn([$configurableLineItems[0]]);
+            ->willReturn([$lineItems[0]]);
 
         $entityManager = $this->createMock(EntityManager::class);
-        $entityManager
-            ->expects(self::once())
+        $entityManager->expects(self::once())
             ->method('getRepository')
             ->with(LineItem::class)
             ->willReturn($repository);
 
         $event = $this->createMock(LifecycleEventArgs::class);
-        $event
-            ->expects(self::once())
+        $event->expects(self::once())
             ->method('getObjectManager')
             ->willReturn($entityManager);
 
-        (new RemoveParentProductsFromShoppingListLineItemListener())->prePersist($lineItem, $event);
+        $this->listener->prePersist($lineItem, $event);
 
-        self::assertEquals(new ArrayCollection([1 => $configurableLineItems[1]]), $shoppingList->getLineItems());
+        self::assertEquals(new ArrayCollection([1 => $lineItems[1]]), $shoppingList->getLineItems());
     }
 
     public function testPrePersistWhenNoParentProduct(): void
     {
         $lineItems = [
-            $this->getEntity(LineItem::class, ['id' => 1]),
-            $this->getEntity(LineItem::class, ['id' => 2]),
+            $this->getLineItem(1),
+            $this->getLineItem(2)
         ];
+        $shoppingList = $this->getShoppingList(1, $lineItems);
 
-        $shoppingList = $this->getEntity(ShoppingList::class, ['id' => 1]);
-        $shoppingList
-            ->addLineItem($lineItems[0])
-            ->addLineItem($lineItems[1]);
-
-        $unit = (new ProductUnit())->setCode('item');
-        $product = $this->getEntity(Product::class, ['id' => 1, 'type' => Product::TYPE_SIMPLE]);
-
-        $lineItem = $this->getEntity(LineItem::class, ['id' => 11]);
-        $lineItem
-            ->setShoppingList($shoppingList)
-            ->setProduct($product)
-            ->setUnit($unit);
+        $lineItem = $this->getLineItem(11);
+        $lineItem->setShoppingList($shoppingList);
+        $lineItem->setProduct($this->getProduct(1, Product::TYPE_SIMPLE));
+        $lineItem->setUnit($this->getProductUnit('item'));
 
         $event = $this->createMock(LifecycleEventArgs::class);
-        $event
-            ->expects(self::never())
+        $event->expects(self::never())
             ->method(self::anything());
 
-        (new RemoveParentProductsFromShoppingListLineItemListener())->prePersist($lineItem, $event);
+        $this->listener->prePersist($lineItem, $event);
 
         self::assertEquals(new ArrayCollection($lineItems), $shoppingList->getLineItems());
     }

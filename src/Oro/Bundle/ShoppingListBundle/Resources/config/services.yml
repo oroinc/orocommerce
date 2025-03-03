@@ -29,7 +29,6 @@ services:
             - '@security.token_storage'
             - '@oro_website.manager'
             - '@translator'
-            - '@oro_config.manager'
         tags:
             - { name: oro_featuretogle.feature, feature: 'guest_shopping_list' }
 
@@ -72,7 +71,6 @@ services:
         arguments:
             - "@oro_security.acl_helper"
             - "@doctrine"
-            - "@oro_entity_config.provider.ownership"
 
     oro_shopping_list.placeholder.filter:
         class: 'Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'

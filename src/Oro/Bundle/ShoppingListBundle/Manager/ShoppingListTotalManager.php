@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
-use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -17,10 +15,8 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
  */
 class ShoppingListTotalManager
 {
-    private ?EntityManagerInterface $em = null;
-
     public function __construct(
-        private ManagerRegistry $managerRegistry,
+        private ManagerRegistry $doctrine,
         private LineItemNotPricedSubtotalProvider $lineItemNotPricedSubtotalProvider,
         private UserCurrencyManager $currencyManager,
         private CustomerUserProvider $customerUserProvider
@@ -28,14 +24,16 @@ class ShoppingListTotalManager
     }
 
     /**
-     * @var ShoppingList[] $shoppingLists
-     *
      * Sets Shopping Lists Subtotal for a shopping list owner.
+     *
+     * @var ShoppingList[] $shoppingLists
+     * @var bool           $doFlush
      *
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     public function setSubtotals(array $shoppingLists, bool $doFlush = true): void
     {
+        $entityManager = $this->doctrine->getManagerForClass(ShoppingListTotal::class);
         $currency = $this->currencyManager->getUserCurrency();
         $customerUser = $this->customerUserProvider->getLoggedUser(true);
 
@@ -60,19 +58,21 @@ class ShoppingListTotalManager
             if (!$shoppingListTotal) {
                 $shoppingListTotal = new ShoppingListTotal($shoppingList, $currency);
                 $shoppingList->addTotal($shoppingListTotal);
-                $this->getEntityManager()->persist($shoppingListTotal);
+                $entityManager->persist($shoppingListTotal);
             }
 
             if (!$shoppingListTotal->isValid() && $isShoppingListOwner) {
-                $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $currency);
-                $shoppingListTotal->setSubtotal($subtotal)->setValid(true);
+                $shoppingListTotal->setSubtotal(
+                    $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $currency)
+                );
+                $shoppingListTotal->setValid(true);
             }
 
             $shoppingList->setSubtotal($shoppingListTotal->getSubtotal());
         }
 
         if ($doFlush) {
-            $this->getEntityManager()->flush();
+            $entityManager->flush();
         }
     }
 
@@ -89,20 +89,26 @@ class ShoppingListTotalManager
             return;
         }
 
-        $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $currency);
-
         $shoppingListTotal = $shoppingListTotal ?? new ShoppingListTotal($shoppingList, $currency);
-        $shoppingListTotal->setCustomerUser($customerUser)->setSubtotal($subtotal)->setValid(true);
+        $shoppingListTotal->setCustomerUser($customerUser);
+        $shoppingListTotal->setSubtotal(
+            $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $currency)
+        );
+        $shoppingListTotal->setValid(true);
 
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->doctrine->getManagerForClass(ShoppingListTotal::class);
         $entityManager->persist($shoppingListTotal);
         $entityManager->flush($shoppingListTotal);
     }
 
     public function recalculateTotals(ShoppingList $shoppingList, bool $doFlush): void
     {
-        $enabledCurrencies = $this->currencyManager->getAvailableCurrencies();
-        $this->getTotalsForCurrencies($shoppingList, $enabledCurrencies, true, $doFlush);
+        $this->getTotalsForCurrencies(
+            $shoppingList,
+            $this->currencyManager->getAvailableCurrencies(),
+            true,
+            $doFlush
+        );
     }
 
     /**
@@ -110,9 +116,10 @@ class ShoppingListTotalManager
      */
     public function invalidateAndRecalculateTotals(ShoppingList $shoppingList, bool $doFlush): void
     {
+        $entityManager = $this->doctrine->getManagerForClass(ShoppingListTotal::class);
         foreach ($shoppingList->getTotals() as $shoppingListTotal) {
             $shoppingListTotal->setValid(false);
-            $this->getEntityManager()->persist($shoppingListTotal);
+            $entityManager->persist($shoppingListTotal);
         }
 
         $this->recalculateTotals($shoppingList, $doFlush);
@@ -151,28 +158,27 @@ class ShoppingListTotalManager
             }
 
             if ($recalculate || !$eachShoppingListTotal->isValid()) {
-                $subtotal = $this->lineItemNotPricedSubtotalProvider
-                    ->getSubtotalByCurrency($shoppingList, $eachCurrency);
-
-                $eachShoppingListTotal
-                    ->setSubtotal($subtotal)
-                    ->setValid(true);
+                $eachShoppingListTotal->setSubtotal(
+                    $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $eachCurrency)
+                );
+                $eachShoppingListTotal->setValid(true);
             }
 
             $shoppingListTotals[$eachCurrency] = $eachShoppingListTotal;
             unset($currencies[$eachCurrency]);
         }
 
-        $entityManager = $this->getEntityManager();
+        $entityManager = $this->doctrine->getManagerForClass(ShoppingListTotal::class);
         $isShoppingListManaged = $entityManager->contains($shoppingList);
 
         foreach ($currencies as $eachCurrency => $i) {
-            $subtotal = $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $eachCurrency);
-
-            $shoppingListTotals[$eachCurrency] = (new ShoppingListTotal($shoppingList, $eachCurrency))
-                ->setCustomerUser($customerUser ?? $assignedCustomerUser)
-                ->setSubtotal($subtotal)
-                ->setValid(true);
+            $shoppingListTotal = new ShoppingListTotal($shoppingList, $eachCurrency);
+            $shoppingListTotal->setCustomerUser($customerUser ?? $assignedCustomerUser);
+            $shoppingListTotal->setSubtotal(
+                $this->lineItemNotPricedSubtotalProvider->getSubtotalByCurrency($shoppingList, $eachCurrency)
+            );
+            $shoppingListTotal->setValid(true);
+            $shoppingListTotals[$eachCurrency] = $shoppingListTotal;
 
             $shoppingList->addTotal($shoppingListTotals[$eachCurrency]);
 
@@ -188,14 +194,5 @@ class ShoppingListTotalManager
         }
 
         return $shoppingListTotals;
-    }
-
-    protected function getEntityManager(): ObjectManager
-    {
-        if (!$this->em) {
-            $this->em = $this->managerRegistry->getManagerForClass(ShoppingListTotal::class);
-        }
-
-        return $this->em;
     }
 }

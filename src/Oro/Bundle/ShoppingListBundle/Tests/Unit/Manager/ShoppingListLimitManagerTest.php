@@ -12,32 +12,25 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListLimitManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
+class ShoppingListLimitManagerTest extends TestCase
 {
     private const USER_ID = 777;
     private const ORGANIZATION_ID = 555;
     private const WEBSITE_ID = 888;
 
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenStorage;
-
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteManager;
-
-    /** @var ShoppingListLimitManager */
-    private $shoppingListLimitManager;
+    private ConfigManager&MockObject $configManager;
+    private TokenStorageInterface&MockObject $tokenStorage;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private WebsiteManager&MockObject $websiteManager;
+    private ShoppingListLimitManager $shoppingListLimitManager;
 
     #[\Override]
     protected function setUp(): void
@@ -84,49 +77,49 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
     private function expectsGetUser(?CustomerUser $user, int $getUserCallCount = 1): void
     {
         $token = $this->createMock(TokenInterface::class);
-        $token->expects($this->exactly($getUserCallCount))
+        $token->expects(self::exactly($getUserCallCount))
             ->method('getUser')
             ->willReturn($user);
 
-        $this->tokenStorage->expects($this->exactly($getUserCallCount))
+        $this->tokenStorage->expects(self::exactly($getUserCallCount))
             ->method('getToken')
             ->willReturn($token);
     }
 
     private function expectsCountUserShoppingLists(Website $website, int $count): void
     {
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
         $repository = $this->createMock(ShoppingListRepository::class);
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(ShoppingList::class)
             ->willReturn($repository);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('countUserShoppingLists')
             ->with(self::USER_ID, self::ORGANIZATION_ID, $website)
             ->willReturn($count);
     }
 
-    public function testIsReachedLimitForNotLoggedUser()
+    public function testIsReachedLimitForNotLoggedUser(): void
     {
         $this->expectsGetUser(null);
 
-        $this->assertTrue($this->shoppingListLimitManager->isReachedLimit());
+        self::assertTrue($this->shoppingListLimitManager->isReachedLimit());
     }
 
     /**
      * @dataProvider limitDataProvider
      */
-    public function testIsReachedLimit(int $limit, int $count, bool $expected)
+    public function testIsReachedLimit(int $limit, int $count, bool $expected): void
     {
         $user = $this->getCustomerUser();
 
         $this->expectsGetUser($user);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
             ->willReturn($limit);
@@ -135,26 +128,26 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
             $this->expectsCountUserShoppingLists($user->getWebsite(), $count);
         }
 
-        $this->assertSame(!$expected, $this->shoppingListLimitManager->isReachedLimit());
+        self::assertSame(!$expected, $this->shoppingListLimitManager->isReachedLimit());
     }
 
-    public function testIsCreateEnabledForNotLoggedUser()
+    public function testIsCreateEnabledForNotLoggedUser(): void
     {
         $this->expectsGetUser(null);
 
-        $this->assertFalse($this->shoppingListLimitManager->isCreateEnabled());
+        self::assertFalse($this->shoppingListLimitManager->isCreateEnabled());
     }
 
     /**
      * @dataProvider limitDataProvider
      */
-    public function testIsCreateEnabled(int $limit, int $count, bool $expected)
+    public function testIsCreateEnabled(int $limit, int $count, bool $expected): void
     {
         $user = $this->getCustomerUser();
 
         $this->expectsGetUser($user, 2);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
             ->willReturn($limit);
@@ -163,9 +156,9 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
             $this->expectsCountUserShoppingLists($user->getWebsite(), $count);
         }
 
-        $this->assertSame($expected, $this->shoppingListLimitManager->isCreateEnabled());
+        self::assertSame($expected, $this->shoppingListLimitManager->isCreateEnabled());
         // Check internal cache
-        $this->assertSame($expected, $this->shoppingListLimitManager->isCreateEnabled());
+        self::assertSame($expected, $this->shoppingListLimitManager->isCreateEnabled());
     }
 
     public function limitDataProvider(): array
@@ -174,59 +167,59 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
             'without limit' => [
                 'limit' => 0,
                 'count' => 5,
-                'expected' => true,
+                'expected' => true
             ],
             'with not reached limit' => [
                 'limit' => 5,
                 'count' => 4,
-                'expected' => true,
+                'expected' => true
             ],
             'with reached limit' => [
                 'limit' => 5,
                 'count' => 5,
-                'expected' => false,
-            ],
+                'expected' => false
+            ]
         ];
     }
 
-    public function testIsCreateEnabledForCustomerUserWhenLimitNotSet()
+    public function testIsCreateEnabledForCustomerUserWhenLimitNotSet(): void
     {
         $user = $this->getCustomerUser();
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit', false, false, $user->getWebsite())
             ->willReturn(0);
 
-        $this->assertTrue($this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+        self::assertTrue($this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
     }
 
     /**
      * @dataProvider isCreateEnabledForUserDataProvider
      */
-    public function testIsCreateEnabledForCustomerUser(int $actualShoppingListCount, bool $result)
+    public function testIsCreateEnabledForCustomerUser(int $actualShoppingListCount, bool $result): void
     {
         $user = $this->getCustomerUser();
         $website = $user->getWebsite();
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit', false, false, $website)
             ->willReturn(5);
 
         $repository = $this->createMock(ShoppingListRepository::class);
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(ShoppingList::class)
             ->willReturn($repository);
-        $repository->expects($this->once())
+        $repository->expects(self::once())
             ->method('countUserShoppingLists')
             ->with(self::USER_ID, self::ORGANIZATION_ID)
             ->willReturn($actualShoppingListCount);
 
-        $this->assertSame($result, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+        self::assertSame($result, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
         // Check internal cache
-        $this->assertSame($result, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
+        self::assertSame($result, $this->shoppingListLimitManager->isCreateEnabledForCustomerUser($user));
     }
 
     public function isCreateEnabledForUserDataProvider(): array
@@ -234,68 +227,68 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
         return [
             'shopping list limit set' => [
                 'actualShoppingListCount' => 4,
-                'result' => true,
+                'result' => true
             ],
             'shopping list limit reached' => [
                 'actualShoppingListCount' => 5,
-                'result' => false,
-            ],
+                'result' => false
+            ]
         ];
     }
 
-    public function testIsOnlyOneEnabledForNotLoggedUser()
+    public function testIsOnlyOneEnabledForNotLoggedUser(): void
     {
         $this->expectsGetUser(null);
 
-        $this->assertTrue($this->shoppingListLimitManager->isOnlyOneEnabled());
+        self::assertTrue($this->shoppingListLimitManager->isOnlyOneEnabled());
     }
 
-    public function testIsOnlyOneEnabledWhenLimitNotSet()
+    public function testIsOnlyOneEnabledWhenLimitNotSet(): void
     {
         $user = $this->getCustomerUser();
 
         $this->expectsGetUser($user);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
             ->willReturn(0);
 
-        $this->assertFalse($this->shoppingListLimitManager->isOnlyOneEnabled());
+        self::assertFalse($this->shoppingListLimitManager->isOnlyOneEnabled());
     }
 
-    public function testIsOnlyOneEnabled()
+    public function testIsOnlyOneEnabled(): void
     {
         $user = $this->getCustomerUser();
 
         $this->expectsGetUser($user, 2);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
             ->willReturn(1);
 
         $this->expectsCountUserShoppingLists($user->getWebsite(), 2);
 
-        $this->assertFalse($this->shoppingListLimitManager->isOnlyOneEnabled());
+        self::assertFalse($this->shoppingListLimitManager->isOnlyOneEnabled());
         // Check internal cache
-        $this->assertFalse($this->shoppingListLimitManager->isOnlyOneEnabled());
+        self::assertFalse($this->shoppingListLimitManager->isOnlyOneEnabled());
     }
 
-    public function testIsOnlyOneEnabledWhenLimitAndNumberOfExistingShoppingListsEqualToOne()
+    public function testIsOnlyOneEnabledWhenLimitAndNumberOfExistingShoppingListsEqualToOne(): void
     {
         $user = $this->getCustomerUser();
 
         $this->expectsGetUser($user);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
             ->willReturn(1);
 
         $this->expectsCountUserShoppingLists($user->getWebsite(), 1);
 
-        $this->assertTrue($this->shoppingListLimitManager->isOnlyOneEnabled());
+        self::assertTrue($this->shoppingListLimitManager->isOnlyOneEnabled());
     }
 
     public function testIsOnlyOneEnabledWhenConfigReturnsString(): void
@@ -304,27 +297,27 @@ class ShoppingListLimitManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->expectsGetUser($user);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
             ->willReturn('1');
 
         $this->expectsCountUserShoppingLists($user->getWebsite(), 1);
 
-        $this->assertTrue($this->shoppingListLimitManager->isOnlyOneEnabled());
+        self::assertTrue($this->shoppingListLimitManager->isOnlyOneEnabled());
     }
 
-    public function testGetShoppingListLimitForUser()
+    public function testGetShoppingListLimitForUser(): void
     {
         $user = $this->getCustomerUser();
 
         $this->expectsGetUser($user);
 
-        $this->configManager->expects($this->once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.shopping_list_limit')
             ->willReturn(2);
 
-        $this->assertSame(2, $this->shoppingListLimitManager->getShoppingListLimitForUser());
+        self::assertSame(2, $this->shoppingListLimitManager->getShoppingListLimitForUser());
     }
 }

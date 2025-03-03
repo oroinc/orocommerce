@@ -19,26 +19,15 @@ use Symfony\Component\PropertyAccess\PropertyAccessorInterface;
  */
 class MatrixGridOrderManager
 {
-    private PropertyAccessorInterface $propertyAccessor;
-    private ProductVariantAvailabilityProvider $variantAvailability;
-    private EmptyMatrixGridInterface $emptyMatrixGridManager;
-    private ManagerRegistry $doctrine;
-
-    /**
-     * @var array|MatrixCollection[]
-     */
+    /** @var MatrixCollection[] */
     private array $collectionCache = [];
 
     public function __construct(
-        PropertyAccessorInterface $propertyAccessor,
-        ProductVariantAvailabilityProvider $variantAvailability,
-        EmptyMatrixGridInterface $emptyMatrixGridManager,
-        ManagerRegistry $doctrine
+        private PropertyAccessorInterface $propertyAccessor,
+        private ProductVariantAvailabilityProvider $variantAvailability,
+        private EmptyMatrixGridInterface $emptyMatrixGridManager,
+        private ManagerRegistry $doctrine
     ) {
-        $this->propertyAccessor = $propertyAccessor;
-        $this->variantAvailability = $variantAvailability;
-        $this->emptyMatrixGridManager = $emptyMatrixGridManager;
-        $this->doctrine = $doctrine;
     }
 
     /**
@@ -106,15 +95,11 @@ class MatrixGridOrderManager
         return $this->collectionCache[$product->getId()][$shoppingListId] = $collection;
     }
 
-    /**
-     * @param Product $product
-     * @param ProductUnit $unit
-     * @param ShoppingList $shoppingList
-     *
-     * @return MatrixCollection
-     */
-    public function getMatrixCollectionForUnit(Product $product, ProductUnit $unit, ShoppingList $shoppingList)
-    {
+    public function getMatrixCollectionForUnit(
+        Product $product,
+        ProductUnit $unit,
+        ShoppingList $shoppingList
+    ): MatrixCollection {
         $shoppingListId = $shoppingList->getId();
         $unitCode = $unit->getCode();
         if (isset($this->collectionCache[$product->getId()][$unitCode][$shoppingListId])) {
@@ -167,12 +152,11 @@ class MatrixGridOrderManager
     }
 
     /**
-     * Get variant fields with values for product
+     * Gets variant fields with values for the given product.
      *
-     * @param Product $product
-     * @return array ex.: [['name' => 'color', 'values' => [['value' => 'red', 'label' => 'Red'], ...]], ...]
+     * @return array [['name' => 'color', 'values' => [['value' => 'red', 'label' => 'Red'], ...]], ...]
      */
-    private function getVariantFields(Product $product)
+    private function getVariantFields(Product $product): array
     {
         $variantFields = [];
 
@@ -198,15 +182,11 @@ class MatrixGridOrderManager
     }
 
     /**
-     * Get all available variants for product grouped by variant field[s] value[s]
+     * Gets all available variants for product grouped by variant field[s] value[s].
      *
-     * @param Product $product
-     * @param array $variantFields
-     * @param ProductUnit|null $unit
-     * @return array ex.: ['red' => ['xxl' => ['product' => object(Product)#1], ...], ...]
-     * @throws \InvalidArgumentException
+     * @return array ['red' => ['xxl' => ['product' => object(Product)#1], ...], ...]
      */
-    private function getAvailableVariants(Product $product, array $variantFields, ?ProductUnit $unit = null)
+    private function getAvailableVariants(Product $product, array $variantFields, ?ProductUnit $unit = null): array
     {
         if (!$unit) {
             $unit = $product->getPrimaryUnitPrecision()->getUnit();
@@ -250,16 +230,15 @@ class MatrixGridOrderManager
     }
 
     /**
-     * @param MatrixCollection $collection
-     * @param Product          $product
-     * @param array            $requiredCollection Matrix collection from a request
-     *
-     * @return array|LineItem[]
+     * @return LineItem[]
      */
-    public function convertMatrixIntoLineItems(MatrixCollection $collection, Product $product, $requiredCollection)
-    {
+    public function convertMatrixIntoLineItems(
+        MatrixCollection $collection,
+        Product $product,
+        array $requiredCollection
+    ): array {
         $lineItems = [];
-        $rowIds    = [];
+        $rowIds = [];
 
         // For partial operations, we must use required rows only
         if (isset($requiredCollection['rows'])) {
@@ -268,7 +247,7 @@ class MatrixGridOrderManager
 
         /** @var MatrixCollectionRow $row */
         foreach ($collection->rows as $rowIndex => $row) {
-            if (in_array($rowIndex, $rowIds, true)) {
+            if (\in_array($rowIndex, $rowIds, true)) {
                 /** @var MatrixCollectionColumn $column */
                 foreach ($row->columns as $column) {
                     if ($column->product) {
@@ -291,16 +270,13 @@ class MatrixGridOrderManager
     }
 
     /**
-     * Get MatrixCollectionColumn's quantity by shopping list line items
-     *
-     * @param ProductUnit       $productUnit
-     * @param Product           $cellProduct
-     * @param ShoppingList|null $shoppingList
-     *
-     * @return float|null
+     * Gets MatrixCollectionColumn's quantity by shopping list line items.
      */
-    private function getQuantity(ProductUnit $productUnit, Product $cellProduct, ?ShoppingList $shoppingList = null)
-    {
+    private function getQuantity(
+        ProductUnit $productUnit,
+        Product $cellProduct,
+        ?ShoppingList $shoppingList = null
+    ): ?float {
         if (!$shoppingList) {
             return null;
         }
@@ -323,10 +299,10 @@ class MatrixGridOrderManager
 
     /**
      * @param ShoppingList $shoppingList
-     * @param Product $product
-     * @param LineItem[] $lineItems
+     * @param Product      $product
+     * @param LineItem[]   $lineItems
      */
-    public function addEmptyMatrixIfAllowed(ShoppingList $shoppingList, Product $product, array $lineItems)
+    public function addEmptyMatrixIfAllowed(ShoppingList $shoppingList, Product $product, array $lineItems): void
     {
         if ($this->emptyMatrixGridManager->isAddEmptyMatrixAllowed($lineItems)) {
             $this->emptyMatrixGridManager->addEmptyMatrix($shoppingList, $product);

@@ -9,16 +9,15 @@ use Psr\Cache\CacheItemPoolInterface;
  */
 class CurrentShoppingListStorage
 {
-    private CacheItemPoolInterface $cache;
-
-    public function __construct(CacheItemPoolInterface $cache)
-    {
-        $this->cache = $cache;
+    public function __construct(
+        private CacheItemPoolInterface $cache
+    ) {
     }
 
     public function get(int $customerUserId): ?int
     {
         $cacheItem = $this->cache->getItem((string) $customerUserId);
+
         return $cacheItem->isHit() ? $cacheItem->get() : null;
     }
 

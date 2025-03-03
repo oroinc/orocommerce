@@ -17,8 +17,7 @@ use PHPUnit\Framework\TestCase;
 
 class ProductKitItemLineItemFactoryTest extends TestCase
 {
-    private ProductKitItemProductsProvider|MockObject $kitItemProductsProvider;
-
+    private ProductKitItemProductsProvider&MockObject $kitItemProductsProvider;
     private ProductKitItemLineItemFactory $factory;
 
     #[\Override]
@@ -34,8 +33,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
         $kitItem = (new ProductKitItem())
             ->setOptional(true);
 
-        $this->kitItemProductsProvider
-            ->expects(self::never())
+        $this->kitItemProductsProvider->expects(self::never())
             ->method('getFirstAvailableProduct');
 
         $kitItemLineItem = (new ProductKitItemLineItem())
@@ -50,8 +48,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
         $kitItem = (new ProductKitItem())
             ->setOptional(false);
 
-        $this->kitItemProductsProvider
-            ->expects(self::once())
+        $this->kitItemProductsProvider->expects(self::once())
             ->method('getFirstAvailableProduct')
             ->with($kitItem)
             ->willReturn(null);
@@ -78,8 +75,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
             ->setSortOrder(11)
             ->setOptional(true);
 
-        $this->kitItemProductsProvider
-            ->expects(self::never())
+        $this->kitItemProductsProvider->expects(self::never())
             ->method('getFirstAvailableProduct');
 
         $expected
@@ -183,7 +179,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
             ->setId(442)
             ->addUnitPrecision($firstProductUnitPrecision);
 
-        $this->kitItemProductsProvider
+        $this->kitItemProductsProvider->expects(self::any())
             ->method('getFirstAvailableProduct')
             ->with($kitItem)
             ->willReturn($firstProduct);
@@ -223,7 +219,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
                 'productUnit' => null,
                 'quantity' => null,
                 'expected' => (new ProductKitItemLineItem())
-                    ->setProduct($product),
+                    ->setProduct($product)
             ],
             'with explicit product unit' => [
                 'product' => $product,
@@ -232,7 +228,7 @@ class ProductKitItemLineItemFactoryTest extends TestCase
                 'expected' => (new ProductKitItemLineItem())
                     ->setProduct($product)
                     ->setUnit($productUnit)
-                    ->setQuantity(1.0),
+                    ->setQuantity(1.0)
             ],
             'with explicit quantity' => [
                 'product' => $product,
@@ -241,8 +237,8 @@ class ProductKitItemLineItemFactoryTest extends TestCase
                 'expected' => (new ProductKitItemLineItem())
                     ->setProduct($product)
                     ->setUnit($productUnit)
-                    ->setQuantity(12.345),
-            ],
+                    ->setQuantity(12.345)
+            ]
         ];
     }
 

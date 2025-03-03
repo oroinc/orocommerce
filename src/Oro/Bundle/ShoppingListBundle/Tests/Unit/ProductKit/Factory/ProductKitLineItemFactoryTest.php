@@ -21,10 +21,8 @@ use PHPUnit\Framework\TestCase;
 
 class ProductKitLineItemFactoryTest extends TestCase
 {
-    private ProductKitItemsProvider|MockObject $productKitItemsProvider;
-
-    private ProductKitItemLineItemFactory|MockObject $kitItemLineItemFactory;
-
+    private ProductKitItemsProvider&MockObject $productKitItemsProvider;
+    private ProductKitItemLineItemFactory&MockObject $kitItemLineItemFactory;
     private ProductKitLineItemFactory $factory;
 
     #[\Override]
@@ -40,8 +38,7 @@ class ProductKitLineItemFactoryTest extends TestCase
     {
         $product = new ProductStub();
 
-        $this->productKitItemsProvider
-            ->expects(self::once())
+        $this->productKitItemsProvider->expects(self::once())
             ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
@@ -59,8 +56,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $unitPrecision = (new ProductUnitPrecision())->setUnit($productUnitItem)->setPrecision(2);
         $product->setPrimaryUnitPrecision($unitPrecision);
 
-        $this->productKitItemsProvider
-            ->expects(self::once())
+        $this->productKitItemsProvider->expects(self::once())
             ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
@@ -78,8 +74,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $product = new ProductStub();
         $productUnitItem = (new ProductUnit())->setCode('item');
 
-        $this->productKitItemsProvider
-            ->expects(self::once())
+        $this->productKitItemsProvider->expects(self::once())
             ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
@@ -97,8 +92,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $productUnitItem = (new ProductUnit())->setCode('item');
         $quantity = 11;
 
-        $this->productKitItemsProvider
-            ->expects(self::once())
+        $this->productKitItemsProvider->expects(self::once())
             ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
@@ -122,8 +116,7 @@ class ProductKitLineItemFactoryTest extends TestCase
             ->setCustomerUser($customerUser)
             ->setOrganization($organization);
 
-        $this->productKitItemsProvider
-            ->expects(self::once())
+        $this->productKitItemsProvider->expects(self::once())
             ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([]);
@@ -155,8 +148,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $kitItem1 = new ProductKitItemStub(1);
         $kitItem2 = new ProductKitItemStub(2);
 
-        $this->productKitItemsProvider
-            ->expects(self::once())
+        $this->productKitItemsProvider->expects(self::once())
             ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([$kitItem1, $kitItem2]);
@@ -166,8 +158,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $kitItemLineItem2 = (new ProductKitItemLineItem())
             ->setKitItem($kitItem2);
 
-        $this->kitItemLineItemFactory
-            ->expects(self::exactly(2))
+        $this->kitItemLineItemFactory->expects(self::exactly(2))
             ->method('createKitItemLineItem')
             ->withConsecutive([$kitItem1], [$kitItem2])
             ->willReturnOnConsecutiveCalls($kitItemLineItem1, $kitItemLineItem2);
@@ -194,8 +185,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $kitItem1 = new ProductKitItemStub(1);
         $kitItem2 = new ProductKitItemStub(2);
 
-        $this->productKitItemsProvider
-            ->expects(self::once())
+        $this->productKitItemsProvider->expects(self::once())
             ->method('getAvailableKitItems')
             ->with($product)
             ->willReturn([$kitItem1, $kitItem2]);
@@ -205,8 +195,7 @@ class ProductKitLineItemFactoryTest extends TestCase
         $kitItemLineItem2 = (new ProductKitItemLineItem())
             ->setKitItem($kitItem2);
 
-        $this->kitItemLineItemFactory
-            ->expects(self::once())
+        $this->kitItemLineItemFactory->expects(self::once())
             ->method('createKitItemLineItem')
             ->with($kitItem2)
             ->willReturn($kitItemLineItem2);

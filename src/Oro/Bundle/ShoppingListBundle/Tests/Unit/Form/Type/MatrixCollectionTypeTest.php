@@ -16,84 +16,23 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitProvider
      */
-    public function testSubmit(MatrixCollection $defaultData, array $submittedData, MatrixCollection $expectedData)
-    {
+    public function testSubmit(
+        MatrixCollection $defaultData,
+        array $submittedData,
+        MatrixCollection $expectedData
+    ): void {
         $form = $this->factory->create(MatrixCollectionType::class, $defaultData);
         $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertTrue($form->isSynchronized());
-        $this->assertEquals($expectedData, $form->getData());
-    }
-
-    public function submitProvider(): array
-    {
-        return [
-            'with quantities' => [
-                'defaultData' => $this->createCollection(),
-                'submittedData' => [
-                    'rows' => [
-                        [
-                            'columns' => [
-                                [
-                                    'quantity' => 3,
-                                ],
-                                [
-                                    'quantity' => 7,
-                                ],
-                            ]
-                        ],
-                        [
-                            'columns' => [
-                                [],
-                                [
-                                    'quantity' => 5,
-                                ],
-                            ]
-                        ],
-                    ],
-                ],
-                'expectedData' => $this->createCollection(true),
-            ],
-            'empty data' => [
-                'defaultData' => $this->createCollection(),
-                'submittedData' => [],
-                'expectedData' => $this->createCollection(),
-            ],
-        ];
-    }
-
-    public function testBuildView()
-    {
-        $expectedQtys = [3, 12];
-        $collection = $this->createCollection(true);
-        $form = $this->factory->create(MatrixCollectionType::class, $collection);
-        $view = $form->createView();
-
-        $this->assertEquals($expectedQtys, $view->vars['columnsQty']);
-    }
-
-    public function testConfigureOptions()
-    {
-        $resolver = $this->createMock(OptionsResolver::class);
-        $resolver->expects($this->once())
-            ->method('setDefaults')
-            ->with($this->isType('array'))
-            ->willReturnCallback(function (array $options) use ($resolver) {
-                $this->assertArrayHasKey('data_class', $options);
-                $this->assertEquals(MatrixCollection::class, $options['data_class']);
-
-                return $resolver;
-            });
-
-        $type = new MatrixCollectionType();
-        $type->configureOptions($resolver);
+        self::assertTrue($form->isValid());
+        self::assertTrue($form->isSynchronized());
+        self::assertEquals($expectedData, $form->getData());
     }
 
     private function createCollection(bool $withQuantities = false): MatrixCollection
     {
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
-        $simpleProductSmallGreen = (new ProductWithSizeAndColor())->setSize('s')->setColor('green');
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
+        $simpleProductSmallRed = $this->getProductWithSizeAndColor('s', 'red');
+        $simpleProductSmallGreen = $this->getProductWithSizeAndColor('s', 'green');
+        $simpleProductMediumGreen = $this->getProductWithSizeAndColor('m', 'green');
 
         $columnSmallRed = new MatrixCollectionColumn();
         $columnSmallGreen = new MatrixCollectionColumn();
@@ -127,5 +66,71 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
         $collection->rows = [$rowSmall, $rowMedium];
 
         return $collection;
+    }
+
+    private function getProductWithSizeAndColor(string $size, string $color): ProductWithSizeAndColor
+    {
+        $productWithSizeAndColor = new ProductWithSizeAndColor();
+        $productWithSizeAndColor->setSize($size);
+        $productWithSizeAndColor->setColor($color);
+
+        return $productWithSizeAndColor;
+    }
+
+    public function submitProvider(): array
+    {
+        return [
+            'with quantities' => [
+                'defaultData' => $this->createCollection(),
+                'submittedData' => [
+                    'rows' => [
+                        [
+                            'columns' => [
+                                ['quantity' => 3],
+                                ['quantity' => 7]
+                            ]
+                        ],
+                        [
+                            'columns' => [
+                                [],
+                                ['quantity' => 5]
+                            ]
+                        ]
+                    ]
+                ],
+                'expectedData' => $this->createCollection(true)
+            ],
+            'empty data' => [
+                'defaultData' => $this->createCollection(),
+                'submittedData' => [],
+                'expectedData' => $this->createCollection()
+            ]
+        ];
+    }
+
+    public function testBuildView(): void
+    {
+        $collection = $this->createCollection(true);
+        $form = $this->factory->create(MatrixCollectionType::class, $collection);
+        $view = $form->createView();
+
+        self::assertEquals([3, 12], $view->vars['columnsQty']);
+    }
+
+    public function testConfigureOptions(): void
+    {
+        $resolver = $this->createMock(OptionsResolver::class);
+        $resolver->expects(self::once())
+            ->method('setDefaults')
+            ->with(self::isType('array'))
+            ->willReturnCallback(function (array $options) use ($resolver) {
+                self::assertArrayHasKey('data_class', $options);
+                self::assertEquals(MatrixCollection::class, $options['data_class']);
+
+                return $resolver;
+            });
+
+        $type = new MatrixCollectionType();
+        $type->configureOptions($resolver);
     }
 }

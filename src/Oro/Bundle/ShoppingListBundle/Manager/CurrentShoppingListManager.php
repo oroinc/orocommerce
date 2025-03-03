@@ -17,53 +17,18 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class CurrentShoppingListManager
 {
-    /** @var ShoppingListManager */
-    private $shoppingListManager;
-
-    /** @var GuestShoppingListManager */
-    private $guestShoppingListManager;
-
-    /** @var CurrentShoppingListStorage */
-    private $currentShoppingListStorage;
-
-    /** @var ManagerRegistry */
-    private $doctrine;
-
-    /** @var AclHelper */
-    private $aclHelper;
-
-    /** @var TokenAccessorInterface */
-    private $tokenAccessor;
-
-    /** @var ConfigManager */
-    private $configManager;
-
     public function __construct(
-        ShoppingListManager $shoppingListManager,
-        GuestShoppingListManager $guestShoppingListManager,
-        CurrentShoppingListStorage $currentShoppingListStorage,
-        ManagerRegistry $doctrine,
-        AclHelper $aclHelper,
-        TokenAccessorInterface $tokenAccessor,
-        ConfigManager $configManager
+        private ShoppingListManager $shoppingListManager,
+        private GuestShoppingListManager $guestShoppingListManager,
+        private CurrentShoppingListStorage $currentShoppingListStorage,
+        private ManagerRegistry $doctrine,
+        private AclHelper $aclHelper,
+        private TokenAccessorInterface $tokenAccessor,
+        private ConfigManager $configManager
     ) {
-        $this->shoppingListManager = $shoppingListManager;
-        $this->guestShoppingListManager = $guestShoppingListManager;
-        $this->currentShoppingListStorage = $currentShoppingListStorage;
-        $this->doctrine = $doctrine;
-        $this->aclHelper = $aclHelper;
-        $this->tokenAccessor = $tokenAccessor;
-        $this->configManager = $configManager;
     }
 
-    /**
-     * Creates current shopping list
-     *
-     * @param string $label
-     *
-     * @return ShoppingList
-     */
-    public function createCurrent($label = '')
+    public function createCurrent(?string $label = ''): ShoppingList
     {
         $shoppingList = $this->shoppingListManager->create(true, $label);
         $this->setCurrent($this->getCustomerUser(), $shoppingList);
@@ -71,7 +36,7 @@ class CurrentShoppingListManager
         return $shoppingList;
     }
 
-    public function setCurrent(CustomerUser $customerUser, ShoppingList $shoppingList)
+    public function setCurrent(CustomerUser $customerUser, ShoppingList $shoppingList): void
     {
         $customerUserId = $customerUser->getId();
         if (!$customerUserId) {
@@ -86,13 +51,7 @@ class CurrentShoppingListManager
         $shoppingList->setCurrent(true);
     }
 
-    /**
-     * @param bool   $create
-     * @param string $label
-     *
-     * @return ShoppingList|null
-     */
-    public function getCurrent($create = false, $label = '')
+    public function getCurrent(bool $create = false, ?string $label = ''): ?ShoppingList
     {
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
             if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
@@ -107,13 +66,11 @@ class CurrentShoppingListManager
         return $this->getCurrentShoppingList($create, $label);
     }
 
-    /**
-     * @param int $shoppingListId
-     *
-     * @return ShoppingList|null
-     */
-    public function getForCurrentUser($shoppingListId = null, $create = false, $label = '')
-    {
+    public function getForCurrentUser(
+        ?int $shoppingListId = null,
+        bool $create = false,
+        ?string $label = ''
+    ): ?ShoppingList {
         if ($this->tokenAccessor->getToken() instanceof AnonymousCustomerUserToken) {
             if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
                 return $this->guestShoppingListManager->createAndGetShoppingListForCustomerVisitor();
@@ -139,11 +96,9 @@ class CurrentShoppingListManager
     }
 
     /**
-     * @param array $sortCriteria
-     *
      * @return ShoppingList[]
      */
-    public function getShoppingListsWithCurrentFirst(array $sortCriteria = [])
+    public function getShoppingListsWithCurrentFirst(array $sortCriteria = []): array
     {
         if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
             return $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
@@ -162,9 +117,6 @@ class CurrentShoppingListManager
     }
 
     /**
-     * @param int $customerUserId
-     * @param array $sortCriteria
-     *
      * @return ShoppingList[]
      */
     public function getShoppingListsForCustomerUserWithCurrentFirst(
@@ -194,11 +146,9 @@ class CurrentShoppingListManager
     }
 
     /**
-     * @param array $sortCriteria
-     *
      * @return ShoppingList[]
      */
-    public function getShoppingLists(array $sortCriteria = [])
+    public function getShoppingLists(array $sortCriteria = []): array
     {
         if ($this->guestShoppingListManager->isGuestShoppingListAvailable()) {
             return $this->guestShoppingListManager->getShoppingListsForCustomerVisitor();
@@ -209,9 +159,6 @@ class CurrentShoppingListManager
     }
 
     /**
-     * @param CustomerUser $customerUser
-     * @param array $sortCriteria
-     *
      * @return ShoppingList[]
      */
     public function getShoppingListsByCustomerUser(CustomerUser $customerUser, array $sortCriteria = []): array
@@ -224,10 +171,7 @@ class CurrentShoppingListManager
             ->findByCustomerUserId($customerUser->getId(), $this->aclHelper, $sortCriteria);
     }
 
-    /**
-     * @return bool
-     */
-    public function isCurrentShoppingListEmpty()
+    public function isCurrentShoppingListEmpty(): bool
     {
         $currentShoppingList = $this->getCurrent();
 
@@ -236,13 +180,7 @@ class CurrentShoppingListManager
             || $currentShoppingList->getLineItems()->count() === 0;
     }
 
-    /**
-     * @param bool   $create
-     * @param string $label
-     *
-     * @return ShoppingList|null
-     */
-    private function getCurrentShoppingList($create = false, $label = '')
+    private function getCurrentShoppingList(bool $create = false, ?string $label = ''): ?ShoppingList
     {
         $shoppingList = null;
 
@@ -271,24 +209,16 @@ class CurrentShoppingListManager
         return $shoppingList;
     }
 
-    /**
-     * @return CustomerUser|null
-     */
-    private function getCustomerUser()
+    private function getCustomerUser(): ?CustomerUser
     {
         $user = $this->tokenAccessor->getUser();
 
         return $user instanceof CustomerUser ? $user : null;
     }
 
-    /**
-     * @return ShoppingListRepository
-     */
-    private function getShoppingListRepository()
+    private function getShoppingListRepository(): ShoppingListRepository
     {
-        return $this->doctrine
-            ->getManagerForClass(ShoppingList::class)
-            ->getRepository(ShoppingList::class);
+        return $this->doctrine->getRepository(ShoppingList::class);
     }
 
     private function isShowAllInShoppingListWidget(): bool
@@ -298,7 +228,7 @@ class CurrentShoppingListManager
 
     private function shoppingListAvailableForCurrentUser(?ShoppingList $shoppingList): bool
     {
-        if (is_null($shoppingList)) {
+        if (null === $shoppingList) {
             return false;
         }
 

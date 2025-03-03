@@ -18,24 +18,16 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
  */
 class ShoppingListLimitManager
 {
-    private ConfigManager $configManager;
-    private TokenStorageInterface $tokenStorage;
-    private DoctrineHelper $doctrineHelper;
-    private WebsiteManager $websiteManager;
     private ?bool $isCreateEnabled = null;
     private ?bool $isCreateEnabledForCustomerUser = null;
     private ?bool $isOnlyOneEnabled = null;
 
     public function __construct(
-        ConfigManager $configManager,
-        TokenStorageInterface $tokenStorage,
-        DoctrineHelper $doctrineHelper,
-        WebsiteManager $websiteManager
+        private ConfigManager $configManager,
+        private TokenStorageInterface $tokenStorage,
+        private DoctrineHelper $doctrineHelper,
+        private WebsiteManager $websiteManager
     ) {
-        $this->configManager = $configManager;
-        $this->tokenStorage = $tokenStorage;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->websiteManager = $websiteManager;
     }
 
     public function resetState(): void

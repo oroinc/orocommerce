@@ -19,35 +19,25 @@ use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithInSaleAndDiscount;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
+class MatrixGridOrderManagerTest extends TestCase
 {
-    /** @var ProductVariantAvailabilityProvider|\PHPUnit\Framework\MockObject\MockObject */
-    private $variantAvailability;
-
-    /** @var EmptyMatrixGridInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $emptyMatrixGridManager;
-
-    /** @var MatrixGridOrderManager */
-    private $manager;
-
-    /** @var ProductUnitRepository|\PHPUnit\Framework\MockObject\MockObject */
-    private $productUnitRepository;
+    private ProductVariantAvailabilityProvider&MockObject $variantAvailability;
+    private EmptyMatrixGridInterface&MockObject $emptyMatrixGridManager;
+    private ProductUnitRepository&MockObject $productUnitRepository;
+    private MatrixGridOrderManager $manager;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->variantAvailability = $this->createMock(ProductVariantAvailabilityProvider::class);
         $this->emptyMatrixGridManager = $this->createMock(EmptyMatrixGridInterface::class);
-
         $this->productUnitRepository = $this->createMock(ProductUnitRepository::class);
 
-        /**
-         * @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject $doctrine
-         */
         $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine
-            ->expects($this->any())
+        $doctrine->expects(self::any())
             ->method('getRepository')
             ->with(ProductUnit::class)
             ->willReturn($this->productUnitRepository);
@@ -78,6 +68,14 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         }
 
         return $productUnit;
+    }
+
+    private function getProductUnitPrecision(ProductUnit $productUnit): ProductUnitPrecision
+    {
+        $productUnitPrecision = new ProductUnitPrecision();
+        $productUnitPrecision->setUnit($productUnit);
+
+        return $productUnitPrecision;
     }
 
     private function getShoppingList(array $lineItems = []): ShoppingList
@@ -117,40 +115,59 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         return $lineItem;
     }
 
+    private function getProductWithSizeAndColor(int $id, string $size, ?string $color): ProductWithSizeAndColor
+    {
+        $productWithSizeAndColor = new ProductWithSizeAndColor();
+        $productWithSizeAndColor->setId($id);
+        $productWithSizeAndColor->setSize($size);
+        if (null !== $color) {
+            $productWithSizeAndColor->setColor($color);
+        }
+
+        return $productWithSizeAndColor;
+    }
+
+    private function getProductWithInSaleAndDiscount(
+        int $id,
+        bool $discount,
+        bool $inSale
+    ): ProductWithInSaleAndDiscount {
+        $productWithInSaleAndDiscount = new ProductWithInSaleAndDiscount();
+        $productWithInSaleAndDiscount->setId($id);
+        $productWithInSaleAndDiscount->setDiscount($discount);
+        $productWithInSaleAndDiscount->setInSale($inSale);
+
+        return $productWithInSaleAndDiscount;
+    }
+
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGetMatrixCollection()
+    public function testGetMatrixCollection(): void
     {
         $product = $this->getProduct(1);
         $productUnit = $this->getProductUnit();
-        $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
+        $productUnitPrecision = $this->getProductUnitPrecision($productUnit);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([
-                'size' => [
-                    's' => true,
-                    'm' => true,
-                ],
-                'color' => [
-                    'red' => true,
-                    'green' => true,
-                ],
+                'size' => ['s' => true, 'm' => true],
+                'color' => ['red' => true, 'green' => true]
             ]);
-        $this->variantAvailability->expects($this->exactly(2))
+        $this->variantAvailability->expects(self::exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
                 ['size', ['s' => 'Small', 'm' => 'Medium']],
                 ['color', ['red' => 'Red', 'green' => 'Green']]
             ]);
 
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(2);
-        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);
-        $simpleProductMediumNoColor = (new ProductWithSizeAndColor())->setSize('m')->setId(4);
+        $simpleProductSmallRed = $this->getProductWithSizeAndColor(1, 's', 'red');
+        $simpleProductMediumGreen = $this->getProductWithSizeAndColor(2, 'm', 'green');
+        $simpleProductMediumRed = $this->getProductWithSizeAndColor(3, 'm', 'green');
+        $simpleProductMediumNoColor = $this->getProductWithSizeAndColor(4, 'm', null);
 
         $productVariant = [
             $simpleProductSmallRed,
@@ -158,8 +175,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             $simpleProductMediumRed,
             $simpleProductMediumNoColor
         ];
-        $this->productUnitRepository
-            ->expects($this->once())
+        $this->productUnitRepository->expects(self::once())
             ->method('getProductIdsSupportUnit')
             ->with($productVariant, $productUnit)
             ->willReturn([1,2,4]);
@@ -168,12 +184,12 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $simpleProductMediumGreen->addUnitPrecision($productUnitPrecision);
         $simpleProductMediumNoColor->addUnitPrecision($productUnitPrecision);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($productVariant);
 
-        $this->variantAvailability->expects($this->exactly(6))
+        $this->variantAvailability->expects(self::exactly(6))
             ->method('getVariantFieldScalarValue')
             ->willReturnMap([
                 [$simpleProductSmallRed, 'size', 's'],
@@ -213,7 +229,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $expectedCollection->rows = [$rowSmall, $rowMedium];
         $expectedCollection->columns = [
             ['value' => 'red', 'label' => 'Red'],
-            ['value' => 'green', 'label' => 'Green'],
+            ['value' => 'green', 'label' => 'Green']
         ];
 
         $shoppingList = $this->getShoppingList([
@@ -221,50 +237,42 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             $this->getLineItem(null, $simpleProductMediumGreen, 2, null, $product)
         ]);
 
-        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
+        self::assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
     }
 
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGetMatrixCollectionForUnit()
+    public function testGetMatrixCollectionForUnit(): void
     {
         $product = $this->getProduct(1);
         $productUnit = $this->getProductUnit('item');
-        $productUnitPrecision = new ProductUnitPrecision();
-        $productUnitPrecision->setUnit($productUnit);
+        $productUnitPrecision = $this->getProductUnitPrecision($productUnit);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([
-                'size' => [
-                    's' => true,
-                    'm' => true,
-                ],
-                'color' => [
-                    'red' => true,
-                    'green' => true,
-                ],
+                'size' => ['s' => true, 'm' => true],
+                'color' => ['red' => true, 'green' => true]
             ]);
-        $this->variantAvailability->expects($this->exactly(2))
+        $this->variantAvailability->expects(self::exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
                 ['size', ['s' => 'Small' , 'm' => 'Medium']],
                 ['color', ['red' => 'Red', 'green' => 'Green']]
             ]);
 
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(1);
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(2);
-        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);
+        $simpleProductSmallRed = $this->getProductWithSizeAndColor(1, 's', 'red');
+        $simpleProductMediumGreen = $this->getProductWithSizeAndColor(2, 'm', 'green');
+        $simpleProductMediumRed = $this->getProductWithSizeAndColor(3, 'm', 'green');
 
         $productVariant = [
             $simpleProductSmallRed,
             $simpleProductMediumGreen,
             $simpleProductMediumRed
         ];
-        $this->productUnitRepository
-            ->expects($this->once())
+        $this->productUnitRepository->expects(self::once())
             ->method('getProductIdsSupportUnit')
             ->with($productVariant, $productUnit)
             ->willReturn([1,2]);
@@ -272,18 +280,18 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $simpleProductSmallRed->addUnitPrecision($productUnitPrecision);
         $simpleProductMediumGreen->addUnitPrecision($productUnitPrecision);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($productVariant);
 
-        $this->variantAvailability->expects($this->exactly(4))
+        $this->variantAvailability->expects(self::exactly(4))
             ->method('getVariantFieldScalarValue')
             ->willReturnMap([
                 [$simpleProductSmallRed, 'size', 's'],
                 [$simpleProductSmallRed, 'color', 'red'],
                 [$simpleProductMediumGreen, 'size', 'm'],
-                [$simpleProductMediumGreen, 'color', 'green'],
+                [$simpleProductMediumGreen, 'color', 'green']
             ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
@@ -318,7 +326,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $expectedCollection->rows = [$rowSmall, $rowMedium];
         $expectedCollection->columns = [
             ['value' => 'red', 'label' => 'Red'],
-            ['value' => 'green', 'label' => 'Green'],
+            ['value' => 'green', 'label' => 'Green']
         ];
         $expectedCollection->dimensions = 2;
 
@@ -328,31 +336,31 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             $this->getLineItem(null, $simpleProductMediumGreen, 4, $productUnit3, $product)
         ]);
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedCollection,
             $this->manager->getMatrixCollectionForUnit($product, $productUnit, $shoppingList)
         );
     }
 
-    public function testGetMatrixCollectionNoVariantFields()
+    public function testGetMatrixCollectionNoVariantFields(): void
     {
         $product = $this->getProduct(1);
         $productUnit = $this->getProductUnit();
-        $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
+        $productUnitPrecision = $this->getProductUnitPrecision($productUnit);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([]);
 
-        $this->variantAvailability->expects($this->never())
+        $this->variantAvailability->expects(self::never())
             ->method('getVariantFieldValues');
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn([]);
-        $this->variantAvailability->expects($this->never())
+        $this->variantAvailability->expects(self::never())
             ->method('getVariantFieldScalarValue');
 
         $expectedCollection = new MatrixCollection();
@@ -360,27 +368,27 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
 
         $shoppingList = $this->getShoppingList();
 
-        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
+        self::assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
     }
 
     public function testGetMatrixCollectionForUnitNoVariantFields(): void
     {
         $product = $this->getProduct(1);
         $productUnit = $this->getProductUnit();
-        $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
+        $productUnitPrecision = $this->getProductUnitPrecision($productUnit);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([]);
-        $this->variantAvailability->expects($this->never())
+        $this->variantAvailability->expects(self::never())
             ->method('getVariantFieldValues');
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn([]);
-        $this->variantAvailability->expects($this->never())
+        $this->variantAvailability->expects(self::never())
             ->method('getVariantFieldScalarValue');
 
         $expectedCollection = new MatrixCollection();
@@ -388,49 +396,43 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
 
         $shoppingList = $this->getShoppingList();
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedCollection,
             $this->manager->getMatrixCollectionForUnit($product, $productUnit, $shoppingList)
         );
     }
 
-    public function testGetMatrixCollectionWithBoolean()
+    public function testGetMatrixCollectionWithBoolean(): void
     {
         $product = $this->getProduct();
         $productUnit = $this->getProductUnit();
-        $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
+        $productUnitPrecision = $this->getProductUnitPrecision($productUnit);
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([
                 'discount' => [true => true, false => true],
-                'inSale' => [true => true, false => true],
+                'inSale' => [true => true, false => true]
             ]);
-        $this->variantAvailability->expects($this->exactly(2))
+        $this->variantAvailability->expects(self::exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
                 ['discount', [1 => 'Yes', 0 => 'No']],
                 ['inSale', [1 => 'Yes', 0 => 'No']]
             ]);
 
-        $simpleProductNoDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)
-            ->setInSale(false)
-            ->setId(1);
-        $simpleProductNoDiscountInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)
-            ->setInSale(true)
-            ->setId(2);
-        $simpleProductDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(true)
-            ->setInSale(false)
-            ->setId(3);
+        $simpleProductNoDiscountNotInSale = $this->getProductWithInSaleAndDiscount(1, false, false);
+        $simpleProductNoDiscountInSale = $this->getProductWithInSaleAndDiscount(2, false, true);
+        $simpleProductDiscountNotInSale = $this->getProductWithInSaleAndDiscount(3, true, false);
 
         $productVariant = [
             $simpleProductNoDiscountNotInSale,
             $simpleProductNoDiscountInSale,
             $simpleProductDiscountNotInSale
         ];
-        $this->productUnitRepository->expects($this->once())
+        $this->productUnitRepository->expects(self::once())
             ->method('getProductIdsSupportUnit')
             ->with($productVariant, $productUnit)
             ->willReturn([1,2]);
@@ -438,17 +440,17 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $simpleProductNoDiscountNotInSale->addUnitPrecision($productUnitPrecision);
         $simpleProductNoDiscountInSale->addUnitPrecision($productUnitPrecision);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($productVariant);
-        $this->variantAvailability->expects($this->exactly(4))
+        $this->variantAvailability->expects(self::exactly(4))
             ->method('getVariantFieldScalarValue')
             ->willReturnMap([
                 [$simpleProductNoDiscountNotInSale, 'discount', true],
                 [$simpleProductNoDiscountNotInSale, 'inSale', true],
                 [$simpleProductNoDiscountInSale, 'discount', false],
-                [$simpleProductNoDiscountInSale, 'inSale', false],
+                [$simpleProductNoDiscountInSale, 'inSale', false]
             ]);
 
         $columnDiscountInSale = new MatrixCollectionColumn();
@@ -483,21 +485,21 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $expectedCollection->rows = [$rowYes, $rowNo];
         $expectedCollection->columns = [
             ['value' => 1, 'label' => 'Yes'],
-            ['value' => 0, 'label' => 'No'],
+            ['value' => 0, 'label' => 'No']
         ];
 
-        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
+        self::assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
     }
 
     /**
      * @dataProvider getProviderForConvertMatrixIntoLineItems
      */
-    public function testConvertMatrixIntoLineItems(array $requiredCollection, array $expectedLineItems)
+    public function testConvertMatrixIntoLineItems(array $requiredCollection, array $expectedLineItems): void
     {
         $productUnit = $this->getProductUnit();
 
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
+        $simpleProductSmallRed = $this->getProductWithSizeAndColor(1, 's', 'red');
+        $simpleProductMediumGreen = $this->getProductWithSizeAndColor(2, 'm', 'green');
 
         $columnSmallRed = new MatrixCollectionColumn();
         $columnSmallGreen = new MatrixCollectionColumn();
@@ -524,7 +526,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $product = $this->getProduct();
         $product->setType(Product::TYPE_CONFIGURABLE);
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedLineItems,
             $this->manager->convertMatrixIntoLineItems($collection, $product, $requiredCollection)
         );
@@ -534,8 +536,8 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
     {
         $productUnit = $this->getProductUnit();
 
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
+        $simpleProductSmallRed = $this->getProductWithSizeAndColor(1, 's', 'red');
+        $simpleProductMediumGreen = $this->getProductWithSizeAndColor(2, 'm', 'green');
 
         $product = $this->getProduct();
         $product->setType(Product::TYPE_CONFIGURABLE);
@@ -583,44 +585,37 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testGetMatrixCollectionCheckQtyForDifferentUnits()
+    public function testGetMatrixCollectionCheckQtyForDifferentUnits(): void
     {
         $product = $this->getProduct(1);
         $productUnitEach = $this->getProductUnit('each');
         $productUnitItem = $this->getProductUnit('item');
 
-        $productUnitPrecisionEach = (new ProductUnitPrecision())->setUnit($productUnitEach);
-        $productUnitPrecisionItem = (new ProductUnitPrecision())->setUnit($productUnitItem);
+        $productUnitPrecisionEach = $this->getProductUnitPrecision($productUnitEach);
+        $productUnitPrecisionItem = $this->getProductUnitPrecision($productUnitItem);
 
         $product->setPrimaryUnitPrecision($productUnitPrecisionEach);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([
-                'size' => [
-                    's' => true,
-                    'm' => true,
-                ],
-                'color' => [
-                    'red' => true,
-                    'green' => true,
-                ],
+                'size' => ['s' => true, 'm' => true],
+                'color' => ['red' => true, 'green' => true]
             ]);
-        $this->variantAvailability->expects($this->exactly(2))
+        $this->variantAvailability->expects(self::exactly(2))
             ->method('getVariantFieldValues')
             ->willReturnMap([
                 ['size', ['s' => 'Small', 'm' => 'Medium']],
                 ['color', ['red' => 'Red', 'green' => 'Green']]
             ]);
 
-        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red')->setId(2);
-        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green')->setId(3);
-        $simpleProductMediumRed = (new ProductWithSizeAndColor())->setSize('m')->setColor('red')->setId(4);
+        $simpleProductSmallRed = $this->getProductWithSizeAndColor(2, 's', 'red');
+        $simpleProductMediumGreen = $this->getProductWithSizeAndColor(3, 'm', 'green');
+        $simpleProductMediumRed = $this->getProductWithSizeAndColor(4, 'm', 'red');
 
         $productVariant = [$simpleProductSmallRed, $simpleProductMediumGreen, $simpleProductMediumRed];
-        $this->productUnitRepository
-            ->expects($this->once())
+        $this->productUnitRepository->expects(self::once())
             ->method('getProductIdsSupportUnit')
             ->with($productVariant, $productUnitEach)
             ->willReturn([2,4]);
@@ -629,17 +624,17 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $simpleProductMediumRed->addUnitPrecision($productUnitPrecisionEach);
         $simpleProductMediumGreen->addUnitPrecision($productUnitPrecisionItem);
 
-        $this->variantAvailability->expects($this->once())
+        $this->variantAvailability->expects(self::once())
             ->method('getSimpleProductsByVariantFields')
             ->with($product)
             ->willReturn($productVariant);
-        $this->variantAvailability->expects($this->exactly(4))
+        $this->variantAvailability->expects(self::exactly(4))
             ->method('getVariantFieldScalarValue')
             ->willReturnMap([
                 [$simpleProductSmallRed, 'size', 's'],
                 [$simpleProductSmallRed, 'color', 'red'],
                 [$simpleProductMediumRed, 'size', 'm'],
-                [$simpleProductMediumRed, 'color', 'red'],
+                [$simpleProductMediumRed, 'color', 'red']
             ]);
 
         $columnSmallRed = new MatrixCollectionColumn();
@@ -671,7 +666,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
         $expectedCollection->rows = [$rowSmall, $rowMedium];
         $expectedCollection->columns = [
             ['value' => 'red', 'label' => 'Red'],
-            ['value' => 'green', 'label' => 'Green'],
+            ['value' => 'green', 'label' => 'Green']
         ];
 
         $shoppingList = $this->getShoppingList([
@@ -680,39 +675,39 @@ class MatrixGridOrderManagerTest extends \PHPUnit\Framework\TestCase
             $this->getLineItem(null, $simpleProductMediumRed, 3, $productUnitEach, $product)
         ]);
 
-        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
+        self::assertEquals($expectedCollection, $this->manager->getMatrixCollection($product, $shoppingList));
     }
 
-    public function testAddEmptyMatrixIfAllowed()
+    public function testAddEmptyMatrixIfAllowed(): void
     {
         $shoppingList = new ShoppingList();
         $product = $this->getProduct(1);
         $lineItems = [$this->getLineItem(1), $this->getLineItem(2)];
 
-        $this->emptyMatrixGridManager->expects($this->once())
+        $this->emptyMatrixGridManager->expects(self::once())
             ->method('isAddEmptyMatrixAllowed')
             ->with($lineItems)
             ->willReturn(true);
 
-        $this->emptyMatrixGridManager->expects($this->once())
+        $this->emptyMatrixGridManager->expects(self::once())
             ->method('addEmptyMatrix')
             ->with($shoppingList, $product);
 
         $this->manager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);
     }
 
-    public function testAddEmptyMatrixIfNotAllowed()
+    public function testAddEmptyMatrixIfNotAllowed(): void
     {
         $shoppingList = new ShoppingList();
         $product = $this->getProduct(1);
         $lineItems = [$this->getLineItem(1), $this->getLineItem(2)];
 
-        $this->emptyMatrixGridManager->expects($this->once())
+        $this->emptyMatrixGridManager->expects(self::once())
             ->method('isAddEmptyMatrixAllowed')
             ->with($lineItems)
             ->willReturn(false);
 
-        $this->emptyMatrixGridManager->expects($this->never())
+        $this->emptyMatrixGridManager->expects(self::never())
             ->method('addEmptyMatrix');
 
         $this->manager->addEmptyMatrixIfAllowed($shoppingList, $product, $lineItems);

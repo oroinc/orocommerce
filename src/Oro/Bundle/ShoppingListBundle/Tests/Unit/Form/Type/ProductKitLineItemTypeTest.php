@@ -32,20 +32,13 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
     use QuantityTypeTrait;
     use ProductKitItemLineItemTypeTrait;
 
-    private FrontendProductPricesDataProvider|MockObject $frontendProductPricesDataProvider;
-
-    private SubtotalProviderInterface|MockObject $lineItemNotPricedSubtotalProvider;
-
+    private FrontendProductPricesDataProvider&MockObject $frontendProductPricesDataProvider;
+    private SubtotalProviderInterface&MockObject $lineItemNotPricedSubtotalProvider;
     private ProductKitLineItemType $type;
-
     private Product $productKit;
-
     private Product $kitItemProduct1;
-
     private Product $kitItemProduct2;
-
     private ProductUnit $productUnitItem;
-
     private ProductUnit $productUnitEach;
 
     #[\Override]
@@ -82,11 +75,46 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
                     QuantityType::class => $this->getQuantityType(),
                     ProductUnitSelectionType::class => new ProductUnitSelectionTypeStub(
                         ['item' => $this->productUnitItem, 'each' => $this->productUnitEach]
-                    ),
+                    )
                 ],
                 []
-            ),
+            )
         ];
+    }
+
+    private function getProductKitItem(array $kitItemProducts): ProductKitItem
+    {
+        $productKitItem = new ProductKitItem();
+        foreach ($kitItemProducts as $kitItemProduct) {
+            $productKitItem->addKitItemProduct($kitItemProduct);
+        }
+
+        return $productKitItem;
+    }
+
+    private function getProductKitItemProduct(Product $product): ProductKitItemProduct
+    {
+        $kitItemProduct = new ProductKitItemProduct();
+        $kitItemProduct->setProduct($product);
+
+        return $kitItemProduct;
+    }
+
+    private function getProductKitItemLineItem(
+        ProductKitItem $kitItem,
+        ?Product $product = null,
+        ?int $sortOrder = null
+    ): ProductKitItemLineItem {
+        $kitItemLineItem = new ProductKitItemLineItem();
+        $kitItemLineItem->setKitItem($kitItem);
+        if (null !== $product) {
+            $kitItemLineItem->setProduct($product);
+        }
+        if (null !== $sortOrder) {
+            $kitItemLineItem->setSortOrder($sortOrder);
+        }
+
+        return $kitItemLineItem;
     }
 
     public function testBuildFormWhenNoLineItem(): void
@@ -121,33 +149,30 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormWhenHasLineItem(): void
     {
-        $kitItem = (new ProductKitItem())
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1))
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct2));
-        $kitItemLineItem = (new ProductKitItemLineItem())
-            ->setProduct($this->kitItemProduct1)
-            ->setKitItem($kitItem);
-        $lineItem = (new LineItem())
-            ->setProduct($this->productKit)
-            ->setQuantity(42.1)
-            ->setUnit($this->productUnitItem)
-            ->addKitItemLineItem($kitItemLineItem)
-            ->setNotes('sample notes');
+        $kitItem = $this->getProductKitItem([
+            $this->getProductKitItemProduct($this->kitItemProduct1),
+            $this->getProductKitItemProduct($this->kitItemProduct2)
+        ]);
+        $kitItemLineItem = $this->getProductKitItemLineItem($kitItem, $this->kitItemProduct1);
+        $lineItem = new LineItem();
+        $lineItem->setProduct($this->productKit);
+        $lineItem->setQuantity(42.1);
+        $lineItem->setUnit($this->productUnitItem);
+        $lineItem->addKitItemLineItem($kitItemLineItem);
+        $lineItem->setNotes('sample notes');
 
         $productPrices = [
             $this->productKit->getId() => ['sample_key1' => 'sample_value1'],
             $this->kitItemProduct1->getId() => ['sample_key2' => 'sample_value2'],
-            $this->kitItemProduct2->getId() => ['sample_key3' => 'sample_value3'],
+            $this->kitItemProduct2->getId() => ['sample_key3' => 'sample_value3']
         ];
-        $this->frontendProductPricesDataProvider
-            ->expects(self::once())
+        $this->frontendProductPricesDataProvider->expects(self::once())
             ->method('getAllPricesForProducts')
             ->with([$this->productKit, $this->kitItemProduct1, $this->kitItemProduct2])
             ->willReturn($productPrices);
 
         $subtotal = new Subtotal();
-        $this->lineItemNotPricedSubtotalProvider
-            ->expects(self::once())
+        $this->lineItemNotPricedSubtotalProvider->expects(self::once())
             ->method('getSubtotal')
             ->with((new ProductLineItemsHolderDTO())->setLineItems(new ArrayCollection([$lineItem])))
             ->willReturn($subtotal);
@@ -183,34 +208,31 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
     public function testBuildFormSortedKitItems(): void
     {
-        $kitItem1 = (new ProductKitItem())
-            ->setSortOrder(3)
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1))
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct2));
-        $kitItem2 = (new ProductKitItem())
-            ->setSortOrder(2)
-            ->setOptional(true)
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1));
-        $kitItemLineItem1 = (new ProductKitItemLineItem())
-            ->setProduct($this->kitItemProduct1)
-            ->setSortOrder(1)
-            ->setKitItem($kitItem1);
-        $kitItemLineItem2 = (new ProductKitItemLineItem())
-            ->setKitItem($kitItem2);
-        $lineItem = (new LineItem())
-            ->setProduct($this->productKit)
-            ->setQuantity(42.1)
-            ->setUnit($this->productUnitItem)
-            ->addKitItemLineItem($kitItemLineItem1)
-            ->addKitItemLineItem($kitItemLineItem2);
+        $kitItem1 = $this->getProductKitItem([
+            $this->getProductKitItemProduct($this->kitItemProduct1),
+            $this->getProductKitItemProduct($this->kitItemProduct2)
+        ]);
+        $kitItem1->setSortOrder(3);
+        $kitItem2 = $this->getProductKitItem([
+            $this->getProductKitItemProduct($this->kitItemProduct1)
+        ]);
+        $kitItem2->setSortOrder(2);
+        $kitItem2->setOptional(true);
+        $kitItemLineItem1 = $this->getProductKitItemLineItem($kitItem1, $this->kitItemProduct1, 1);
+        $kitItemLineItem2 = $this->getProductKitItemLineItem($kitItem2);
+        $lineItem = new LineItem();
+        $lineItem->setProduct($this->productKit);
+        $lineItem->setQuantity(42.1);
+        $lineItem->setUnit($this->productUnitItem);
+        $lineItem->addKitItemLineItem($kitItemLineItem1);
+        $lineItem->addKitItemLineItem($kitItemLineItem2);
 
         $productPrices = [
             $this->productKit->getId() => ['sample_key1' => 'sample_value1'],
             $this->kitItemProduct1->getId() => ['sample_key2' => 'sample_value2'],
-            $this->kitItemProduct2->getId() => ['sample_key3' => 'sample_value3'],
+            $this->kitItemProduct2->getId() => ['sample_key3' => 'sample_value3']
         ];
-        $this->frontendProductPricesDataProvider
-            ->expects(self::once())
+        $this->frontendProductPricesDataProvider->expects(self::once())
             ->method('getAllPricesForProducts')
             ->with([$this->productKit, $this->kitItemProduct1, $this->kitItemProduct2, $this->kitItemProduct1])
             ->willReturn($productPrices);
@@ -232,17 +254,16 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
     public function testSubmitWhenHasLineItem(): void
     {
-        $kitItem = (new ProductKitItem())
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1))
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct2));
-        $kitItemLineItem = (new ProductKitItemLineItem())
-            ->setProduct($this->kitItemProduct1)
-            ->setKitItem($kitItem);
-        $lineItem = (new LineItem())
-            ->setProduct($this->productKit)
-            ->setQuantity(42.1)
-            ->setUnit($this->productUnitItem)
-            ->addKitItemLineItem($kitItemLineItem);
+        $kitItem = $this->getProductKitItem([
+            $this->getProductKitItemProduct($this->kitItemProduct1),
+            $this->getProductKitItemProduct($this->kitItemProduct2)
+        ]);
+        $kitItemLineItem = $this->getProductKitItemLineItem($kitItem, $this->kitItemProduct1);
+        $lineItem = new LineItem();
+        $lineItem->setProduct($this->productKit);
+        $lineItem->setQuantity(42.1);
+        $lineItem->setUnit($this->productUnitItem);
+        $lineItem->addKitItemLineItem($kitItemLineItem);
 
         $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
 
@@ -252,7 +273,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
                 'quantity' => 42.2,
                 'unit' => 'each',
                 'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]],
-                'notes' => $notes,
+                'notes' => $notes
             ]
         );
 
@@ -267,23 +288,22 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
 
     public function testSubmitWhenHasLineItemWithOptionalKitItem(): void
     {
-        $kitItem1 = (new ProductKitItem())
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1))
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct2));
-        $kitItem2 = (new ProductKitItem())
-            ->setOptional(true)
-            ->addKitItemProduct((new ProductKitItemProduct())->setProduct($this->kitItemProduct1));
-        $kitItemLineItem1 = (new ProductKitItemLineItem())
-            ->setProduct($this->kitItemProduct1)
-            ->setKitItem($kitItem1);
-        $kitItemLineItem2 = (new ProductKitItemLineItem())
-            ->setKitItem($kitItem2);
-        $lineItem = (new LineItem())
-            ->setProduct($this->productKit)
-            ->setQuantity(42.1)
-            ->setUnit($this->productUnitItem)
-            ->addKitItemLineItem($kitItemLineItem1)
-            ->addKitItemLineItem($kitItemLineItem2);
+        $kitItem1 = $this->getProductKitItem([
+            $this->getProductKitItemProduct($this->kitItemProduct1),
+            $this->getProductKitItemProduct($this->kitItemProduct2)
+        ]);
+        $kitItem2 = $this->getProductKitItem([
+            $this->getProductKitItemProduct($this->kitItemProduct1)
+        ]);
+        $kitItem2->setOptional(true);
+        $kitItemLineItem1 = $this->getProductKitItemLineItem($kitItem1, $this->kitItemProduct1);
+        $kitItemLineItem2 = $this->getProductKitItemLineItem($kitItem2);
+        $lineItem = new LineItem();
+        $lineItem->setProduct($this->productKit);
+        $lineItem->setQuantity(42.1);
+        $lineItem->setUnit($this->productUnitItem);
+        $lineItem->addKitItemLineItem($kitItemLineItem1);
+        $lineItem->addKitItemLineItem($kitItemLineItem2);
 
         $form = $this->factory->create(ProductKitLineItemType::class, $lineItem);
 
@@ -291,7 +311,7 @@ class ProductKitLineItemTypeTest extends FormIntegrationTestCase
             [
                 'quantity' => 42.2,
                 'unit' => 'each',
-                'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]],
+                'kitItemLineItems' => [['product' => $this->kitItemProduct2->getId(), 'quantity' => 10.10]]
             ]
         );
 

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -15,7 +14,7 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\VisibilityBundle\Provider\ResolvedProductVisibilityProvider;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -26,22 +25,13 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
  */
 class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 {
-    use EntityTrait;
-
-    private ManagerRegistry|MockObject $registry;
-
-    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
-
-    private ResolvedProductVisibilityProvider|MockObject $resolvedProductVisibilityProvider;
-
-    private ObjectManager|MockObject $lineItemManager;
-
-    private ShoppingListRepository|MockObject $shoppingListRepository;
-
-    private LineItemRepository|MockObject $lineItemRepository;
-
+    private ManagerRegistry&MockObject $registry;
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
+    private ResolvedProductVisibilityProvider&MockObject $resolvedProductVisibilityProvider;
+    private ObjectManager&MockObject $lineItemManager;
+    private ShoppingListRepository&MockObject $shoppingListRepository;
+    private LineItemRepository&MockObject $lineItemRepository;
     private ParameterBag $parameters;
-
     private FrontendLineItemsGridVisibilityExtension $extension;
 
     #[\Override]
@@ -72,18 +62,72 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
             ]);
     }
 
+    private function createShoppingList(): array
+    {
+        $product1 = new Product();
+        ReflectionUtil::setId($product1, 1001);
+        $product1->setSku('PRODUCT_SKU1');
+        $product1->setStatus(Product::STATUS_ENABLED);
+
+        $product2 = new Product();
+        ReflectionUtil::setId($product2, 2002);
+        $product2->setSku('PRODUCT_SKU2');
+        $product2->setStatus(Product::STATUS_ENABLED);
+
+        $lineItem1 = new LineItem();
+        $lineItem1->setProduct($product1);
+        $lineItem2 = new LineItem();
+        $lineItem2->setProduct($product2);
+        $shoppingList = new ShoppingList();
+        $shoppingList->addLineItem($lineItem1);
+        $shoppingList->addLineItem($lineItem2);
+
+        $this->lineItemRepository->expects(self::once())
+            ->method('getItemsWithProductByShoppingList')
+            ->with($shoppingList)
+            ->willReturn([$lineItem1, $lineItem2]);
+
+        return [$shoppingList, $product1, $product2];
+    }
+
+    private function expectFindShoppingList(int $shoppingListId, ?ShoppingList $shoppingList): void
+    {
+        $this->shoppingListRepository->expects(self::once())
+            ->method('find')
+            ->with($shoppingListId)
+            ->willReturn($shoppingList);
+    }
+
+    private static function getDefaultDatagridConfigs(): array
+    {
+        return [
+            'options' => [
+                'toolbarOptions' => [
+                    'pageSize' => [
+                        'items' => [10, 25, 50, 100]
+                    ]
+                ]
+            ],
+            'mass_actions' => [
+                'move' => [
+                    'label' => 'move.label'
+                ]
+            ]
+        ];
+    }
+
     public function testIsApplicable(): void
     {
         $config = DatagridConfiguration::create(['name' => 'frontend-customer-user-shopping-list-grid']);
 
-        $this->assertTrue($this->extension->isApplicable($config));
+        self::assertTrue($this->extension->isApplicable($config));
     }
 
     public function testIsNotApplicable(): void
     {
         $config = DatagridConfiguration::create(['name' => 'shopping-list-line-items-grid']);
 
-        $this->assertFalse($this->extension->isApplicable($config));
+        self::assertFalse($this->extension->isApplicable($config));
     }
 
     public function testProcessConfigsWithoutShoppingListId(): void
@@ -97,14 +141,14 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
         $config = DatagridConfiguration::create(self::getDefaultDatagridConfigs());
         $this->extension->processConfigs($config);
-        $this->assertEquals(self::getDefaultDatagridConfigs(), $config->toArray());
+        self::assertEquals(self::getDefaultDatagridConfigs(), $config->toArray());
     }
 
     public function testProcessConfigsWithoutShoppingList(): void
     {
         $shoppingListId = 42;
         $this->parameters->set('shopping_list_id', $shoppingListId);
-        $this->findShoppingList($shoppingListId, null);
+        $this->expectFindShoppingList($shoppingListId, null);
 
         $this->resolvedProductVisibilityProvider->expects(self::never())
             ->method('prefetch');
@@ -113,7 +157,7 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
         $config = DatagridConfiguration::create(self::getDefaultDatagridConfigs());
         $this->extension->processConfigs($config);
-        $this->assertEquals(self::getDefaultDatagridConfigs(), $config->toArray());
+        self::assertEquals(self::getDefaultDatagridConfigs(), $config->toArray());
     }
 
     public function testProcessConfigs(): void
@@ -121,9 +165,9 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
         $shoppingListId = 42;
         $this->parameters->set('shopping_list_id', $shoppingListId);
         [$shoppingList, $product1, $product2] = $this->createShoppingList();
-        $this->findShoppingList($shoppingListId, $shoppingList);
+        $this->expectFindShoppingList($shoppingListId, $shoppingList);
 
-        $this->resolvedProductVisibilityProvider->expects($this->once())
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product1->getId(), $product2->getId()]);
         $this->registry->expects(self::once())
@@ -138,7 +182,7 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
         $this->extension->processConfigs($config);
 
-        $this->assertEquals(self::getDefaultDatagridConfigs(), $config->toArray());
+        self::assertEquals(self::getDefaultDatagridConfigs(), $config->toArray());
     }
 
     public function testProcessConfigsWithInvisibleItems(): void
@@ -147,8 +191,8 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
         $this->parameters->set('shopping_list_id', $shoppingListId);
         [$shoppingList, $product1, $product2] = $this->createShoppingList();
 
-        $this->findShoppingList($shoppingListId, $shoppingList);
-        $this->resolvedProductVisibilityProvider->expects($this->once())
+        $this->expectFindShoppingList($shoppingListId, $shoppingList);
+        $this->resolvedProductVisibilityProvider->expects(self::once())
             ->method('prefetch')
             ->with([$product1->getId(), $product2->getId()]);
         $this->registry->expects(self::once())
@@ -167,7 +211,7 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
         $expectedConfig = self::getDefaultDatagridConfigs();
         $expectedConfig['options']['hiddenLineItems'] = ['PRODUCT_SKU2'];
-        $this->assertEquals($expectedConfig, $config->toArray());
+        self::assertEquals($expectedConfig, $config->toArray());
     }
 
     public function testVisitResult(): void
@@ -181,62 +225,9 @@ class FrontendLineItemsGridVisibilityExtensionTest extends TestCase
 
         $this->extension->visitResult($config, $data);
 
-        $this->assertSame(
+        self::assertSame(
             $config->offsetGetByPath(FrontendLineItemsGridVisibilityExtension::HIDDEN_LINE_ITEMS_OPTION),
             $data->offsetGetByPath(FrontendLineItemsGridVisibilityExtension::HIDDEN_LINE_ITEMS_OPTION)
         );
-    }
-
-    private function createShoppingList(): array
-    {
-        $product1 = $this->getEntity(
-            Product::class,
-            ['id' => 1001, 'skuUppercase' => 'PRODUCT_SKU1', 'status' => Product::STATUS_ENABLED]
-        );
-        $product2 = $this->getEntity(
-            Product::class,
-            ['id' => 2002, 'skuUppercase' => 'PRODUCT_SKU2', 'status' => Product::STATUS_ENABLED]
-        );
-
-        $lineItem1 = $this->getEntity(LineItem::class, ['product' => $product1]);
-        $lineItem2 = $this->getEntity(LineItem::class, ['product' => $product2]);
-        $shoppingList = $this->getEntity(
-            ShoppingList::class,
-            ['lineItems' => new ArrayCollection([$lineItem1, $lineItem2])]
-        );
-
-        $this->lineItemRepository
-            ->expects(self::once())
-            ->method('getItemsWithProductByShoppingList')
-            ->with($shoppingList)
-            ->willReturn([$lineItem1, $lineItem2]);
-
-        return [$shoppingList, $product1, $product2];
-    }
-
-    private function findShoppingList(int $shoppingListId, ?ShoppingList $shoppingList): void
-    {
-        $this->shoppingListRepository->expects(self::once())
-            ->method('find')
-            ->with($shoppingListId)
-            ->willReturn($shoppingList);
-    }
-
-    private static function getDefaultDatagridConfigs(): array
-    {
-        return [
-            'options' => [
-                'toolbarOptions' => [
-                    'pageSize' => [
-                        'items' => [10, 25, 50, 100],
-                    ],
-                ],
-            ],
-            'mass_actions' => [
-                'move' => [
-                    'label' => 'move.label',
-                ],
-            ],
-        ];
     }
 }

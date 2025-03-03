@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -27,62 +26,24 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class ShoppingListManager
 {
-    private ManagerRegistry $doctrine;
-
-    private TokenAccessorInterface $tokenAccessor;
-
-    private TranslatorInterface $translator;
-
-    private QuantityRoundingService $rounding;
-
-    private WebsiteManager $websiteManager;
-
-    private ShoppingListTotalManager $totalManager;
-
-    private ProductVariantAvailabilityProvider $productVariantProvider;
-
-    private ConfigManager $configManager;
-
-    private EntityDeleteHandlerRegistry $deleteHandlerRegistry;
-
-    private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator;
-
     /**
      * @SuppressWarnings(PHPMD.ExcessiveParameterList)
      */
     public function __construct(
-        ManagerRegistry $doctrine,
-        TokenAccessorInterface $tokenAccessor,
-        TranslatorInterface $translator,
-        QuantityRoundingService $rounding,
-        WebsiteManager $websiteManager,
-        ShoppingListTotalManager $totalManager,
-        ProductVariantAvailabilityProvider $productVariantProvider,
-        ConfigManager $configManager,
-        EntityDeleteHandlerRegistry $deleteHandlerRegistry,
-        LineItemChecksumGeneratorInterface $lineItemChecksumGenerator
+        private ManagerRegistry $doctrine,
+        private TokenAccessorInterface $tokenAccessor,
+        private TranslatorInterface $translator,
+        private QuantityRoundingService $rounding,
+        private WebsiteManager $websiteManager,
+        private ShoppingListTotalManager $totalManager,
+        private ProductVariantAvailabilityProvider $productVariantProvider,
+        private ConfigManager $configManager,
+        private EntityDeleteHandlerRegistry $deleteHandlerRegistry,
+        private LineItemChecksumGeneratorInterface $lineItemChecksumGenerator
     ) {
-        $this->doctrine = $doctrine;
-        $this->tokenAccessor = $tokenAccessor;
-        $this->translator = $translator;
-        $this->rounding = $rounding;
-        $this->websiteManager = $websiteManager;
-        $this->totalManager = $totalManager;
-        $this->productVariantProvider = $productVariantProvider;
-        $this->configManager = $configManager;
-        $this->deleteHandlerRegistry = $deleteHandlerRegistry;
-        $this->lineItemChecksumGenerator = $lineItemChecksumGenerator;
     }
 
-    /**
-     * Creates new shopping list
-     *
-     * @param bool $flush
-     * @param string $label
-     * @param CustomerUser|null $customerUser
-     * @return ShoppingList
-     */
-    public function create($flush = false, $label = '', ?CustomerUser $customerUser = null)
+    public function create(bool $flush = false, string $label = '', ?CustomerUser $customerUser = null): ShoppingList
     {
         if (!$customerUser) {
             $customerUser = $this->getCustomerUser();
@@ -109,21 +70,18 @@ class ShoppingListManager
         return $shoppingList;
     }
 
-    /**
-     * @param LineItem     $lineItem
-     * @param ShoppingList $shoppingList
-     * @param bool         $flush
-     * @param bool         $concatNotes
-     */
-    public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
-    {
+    public function addLineItem(
+        LineItem $lineItem,
+        ShoppingList $shoppingList,
+        bool $flush = true,
+        bool $concatNotes = false
+    ): void {
         $func = function (LineItem $duplicate) use ($lineItem, $concatNotes) {
             $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
         };
 
-        $this
-            ->prepareLineItem($lineItem, $shoppingList)
-            ->handleLineItem($lineItem, $shoppingList, $func);
+        $this->prepareLineItem($lineItem, $shoppingList);
+        $this->handleLineItem($lineItem, $shoppingList, $func);
 
         $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
 
@@ -176,7 +134,7 @@ class ShoppingListManager
         }
     }
 
-    public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList, bool $flush = true)
+    public function updateLineItem(LineItem $lineItem, ShoppingList $shoppingList, bool $flush = true): void
     {
         $func = function (LineItem $duplicate) use ($lineItem) {
             if ($lineItem->getQuantity() > 0) {
@@ -186,9 +144,8 @@ class ShoppingListManager
             }
         };
 
-        $this
-            ->prepareLineItem($lineItem, $shoppingList)
-            ->handleLineItem($lineItem, $shoppingList, $func);
+        $this->prepareLineItem($lineItem, $shoppingList);
+        $this->handleLineItem($lineItem, $shoppingList, $func);
 
         $this->totalManager->invalidateAndRecalculateTotals($shoppingList, false);
         if ($flush) {
@@ -209,13 +166,9 @@ class ShoppingListManager
     }
 
     /**
-     * @param ShoppingList $shoppingList
-     * @param Product      $product
-     * @param bool         $flush
-     *
      * @return int Number of removed line items
      */
-    public function removeProduct(ShoppingList $shoppingList, Product $product, $flush = true)
+    public function removeProduct(ShoppingList $shoppingList, Product $product, bool $flush = true): int
     {
         $products = [];
         if ($product->isConfigurable()) {
@@ -227,15 +180,12 @@ class ShoppingListManager
             ->getItemsByShoppingListAndProducts($shoppingList, $products);
         $this->deleteLineItems($lineItems, $flush);
 
-        return count($lineItems);
+        return \count($lineItems);
     }
 
     /**
      * Removes the given line item. In case if line item is the part of matrix representation - removes all
      * line items of the product from the given line item.
-     *
-     * @param LineItem $lineItem
-     * @param bool     $removeOnlyCurrentItem
      *
      * @return int Number of deleted line items
      */
@@ -254,23 +204,18 @@ class ShoppingListManager
     }
 
     /**
-     * @param array        $lineItems
-     * @param ShoppingList $shoppingList
-     * @param int          $batchSize
-     *
-     * @return int
+     * @return int Number of line items
      */
-    public function bulkAddLineItems(array $lineItems, ShoppingList $shoppingList, $batchSize)
+    public function bulkAddLineItems(array $lineItems, ShoppingList $shoppingList, int $batchSize): int
     {
-        $lineItemsCount = count($lineItems);
+        $lineItemsCount = \count($lineItems);
         for ($iteration = 1; $iteration <= $lineItemsCount; $iteration++) {
             $lineItem = $lineItems[$iteration - 1];
 
-            $this
-                ->prepareLineItem($lineItem, $shoppingList)
-                ->handleLineItem($lineItem, $shoppingList, function (LineItem $duplicate) use ($lineItem) {
-                    $this->mergeLineItems($lineItem, $duplicate, false);
-                });
+            $this->prepareLineItem($lineItem, $shoppingList);
+            $this->handleLineItem($lineItem, $shoppingList, function (LineItem $duplicate) use ($lineItem) {
+                $this->mergeLineItems($lineItem, $duplicate, false);
+            });
 
             if ($lineItemsCount === $iteration) {
                 // Recalculates totals on last iteration.
@@ -286,13 +231,7 @@ class ShoppingListManager
         return $lineItemsCount;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     * @param string       $label
-     *
-     * @return ShoppingList
-     */
-    public function edit($shoppingList, $label = '')
+    public function edit(ShoppingList $shoppingList, string $label = ''): ShoppingList
     {
         $customerUser = $this->getCustomerUser();
         if (null !== $customerUser) {
@@ -309,10 +248,7 @@ class ShoppingListManager
         return $shoppingList;
     }
 
-    /**
-     * @param ShoppingList $shoppingList
-     */
-    public function removeLineItems($shoppingList)
+    public function removeLineItems(ShoppingList $shoppingList): void
     {
         $this->deleteLineItems($shoppingList->getLineItems()->toArray());
     }
@@ -321,7 +257,7 @@ class ShoppingListManager
      * Removes shopping list line items containing products with unavailable inventory statuses.
      * Recalculates subtotals if line items were removed.
      */
-    public function actualizeLineItems(ShoppingList $shoppingList)
+    public function actualizeLineItems(ShoppingList $shoppingList): void
     {
         /** @var LineItemRepository $repository */
         $repository = $this->doctrine
@@ -334,12 +270,7 @@ class ShoppingListManager
         }
     }
 
-    /**
-     * @param LineItem $lineItem
-     * @param LineItem $duplicate
-     * @param bool     $concatNotes
-     */
-    private function mergeLineItems(LineItem $lineItem, LineItem $duplicate, $concatNotes)
+    private function mergeLineItems(LineItem $lineItem, LineItem $duplicate, bool $concatNotes): void
     {
         $quantity = $this->rounding->roundQuantity(
             $duplicate->getQuantity() + $lineItem->getQuantity(),
@@ -357,7 +288,7 @@ class ShoppingListManager
     /**
      * Set new quantity for $duplicate line item based on quantity value from $lineItem
      */
-    private function updateLineItemQuantity(LineItem $lineItem, LineItem $duplicate)
+    private function updateLineItemQuantity(LineItem $lineItem, LineItem $duplicate): void
     {
         $quantity = $lineItem->getQuantity();
         if ($lineItem->getProduct()?->isKit()) {
@@ -371,13 +302,7 @@ class ShoppingListManager
         $duplicate->setQuantity($quantity);
     }
 
-    /**
-     * @param LineItem     $lineItem
-     * @param ShoppingList $shoppingList
-     *
-     * @return ShoppingListManager
-     */
-    private function prepareLineItem(LineItem $lineItem, ShoppingList $shoppingList)
+    private function prepareLineItem(LineItem $lineItem, ShoppingList $shoppingList): void
     {
         if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
@@ -390,18 +315,9 @@ class ShoppingListManager
         if ($checksum !== null) {
             $lineItem->setChecksum($checksum);
         }
-
-        return $this;
     }
 
-    /**
-     * @param LineItem     $lineItem
-     * @param ShoppingList $shoppingList
-     * @param \Closure     $func
-     *
-     * @return ShoppingListManager
-     */
-    private function handleLineItem(LineItem $lineItem, ShoppingList $shoppingList, \Closure $func)
+    private function handleLineItem(LineItem $lineItem, ShoppingList $shoppingList, \Closure $func): void
     {
         $em = $this->getEntityManager();
         $duplicate = $this->getLineItemRepository($em)->findDuplicateInShoppingList($lineItem, $shoppingList);
@@ -415,15 +331,9 @@ class ShoppingListManager
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
         }
-
-        return $this;
     }
 
-    /**
-     * @param LineItem[] $lineItems
-     * @param bool       $flush
-     */
-    private function deleteLineItems(array $lineItems, bool $flush = true)
+    private function deleteLineItems(array $lineItems, bool $flush = true): void
     {
         if (!$lineItems) {
             return;
@@ -439,10 +349,7 @@ class ShoppingListManager
         }
     }
 
-    /**
-     * @return CustomerUser|null
-     */
-    private function getCustomerUser()
+    private function getCustomerUser(): ?CustomerUser
     {
         $user = $this->tokenAccessor->getUser();
 
@@ -451,20 +358,12 @@ class ShoppingListManager
             : null;
     }
 
-    /**
-     * @return EntityManager
-     */
-    private function getEntityManager()
+    private function getEntityManager(): EntityManagerInterface
     {
         return $this->doctrine->getManagerForClass(ShoppingList::class);
     }
 
-    /**
-     * @param EntityManagerInterface $em
-     *
-     * @return LineItemRepository
-     */
-    private function getLineItemRepository(EntityManagerInterface $em)
+    private function getLineItemRepository(EntityManagerInterface $em): LineItemRepository
     {
         return $em->getRepository(LineItem::class);
     }

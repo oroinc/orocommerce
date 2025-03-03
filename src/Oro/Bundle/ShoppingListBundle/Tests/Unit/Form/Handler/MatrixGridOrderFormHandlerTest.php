@@ -12,25 +12,18 @@ use Oro\Bundle\ShoppingListBundle\Form\Handler\MatrixGridOrderFormHandler;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
+class MatrixGridOrderFormHandlerTest extends TestCase
 {
-    /** @var EventDispatcher|\PHPUnit\Framework\MockObject\MockObject */
-    private $eventDispatcher;
-
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var MatrixGridOrderManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $matrixGridOrderManager;
-
-    /** @var ShoppingListManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $shoppingListManager;
-
-    /** @var MatrixGridOrderFormHandler */
-    private $matrixGridOrderFormHandler;
+    private EventDispatcher&MockObject $eventDispatcher;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private MatrixGridOrderManager&MockObject $matrixGridOrderManager;
+    private ShoppingListManager&MockObject $shoppingListManager;
+    private MatrixGridOrderFormHandler $matrixGridOrderFormHandler;
 
     #[\Override]
     protected function setUp(): void
@@ -50,7 +43,6 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessWithoutShoppingList(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $request = new Request();
         $request->setMethod(Request::METHOD_POST);
@@ -59,12 +51,11 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
         $collection->product = new Product();
         $result = $this->matrixGridOrderFormHandler->process($collection, $form, $request);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 
     public function testProcessWithoutProduct(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $request = new Request();
         $request->setMethod(Request::METHOD_POST);
@@ -73,12 +64,11 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
         $collection->shoppingList = new ShoppingList();
         $result = $this->matrixGridOrderFormHandler->process($collection, $form, $request);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 
     public function testProcessInvalidData(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $request = new Request();
         $request->setMethod(Request::METHOD_POST);
@@ -93,7 +83,6 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function testProcessFormProcessMethodNotPost(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $request = new Request();
         $request->setMethod(Request::METHOD_GET);
@@ -103,20 +92,18 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
         $data->shoppingList = new ShoppingList();
 
         $event = new FormProcessEvent($form, $data);
-        $this->eventDispatcher
-            ->expects($this->once())
+        $this->eventDispatcher->expects(self::once())
             ->method('dispatch')
             ->with($event, Events::BEFORE_FORM_DATA_SET)
             ->willReturn($event);
 
         $result = $this->matrixGridOrderFormHandler->process($data, $form, $request);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 
     public function testProcessFormProcessInterruptedBeforeFormSubmit(): void
     {
-        /** @var FormInterface|\PHPUnit\Framework\MockObject\MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $request = new Request();
         $request->setMethod(Request::METHOD_POST);
@@ -127,8 +114,7 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
 
         $event1 = new FormProcessEvent($form, $data);
         $event2 = new FormProcessEvent($form, $data);
-        $this->eventDispatcher
-            ->expects($this->exactly(2))
+        $this->eventDispatcher->expects(self::exactly(2))
             ->method('dispatch')
             ->withConsecutive(
                 [$event1, Events::BEFORE_FORM_DATA_SET],
@@ -145,6 +131,6 @@ class MatrixGridOrderFormHandlerTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->matrixGridOrderFormHandler->process($data, $form, $request);
 
-        $this->assertFalse($result);
+        self::assertFalse($result);
     }
 }

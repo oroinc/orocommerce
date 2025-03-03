@@ -7,57 +7,33 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductWithSizeAndColor extends Product
 {
-    /**
-     * @var string
-     */
-    private $size;
+    private ?string $size = null;
+    private ?string $color = null;
+    private ?ProductUnitPrecision $precision = null;
 
-    /**
-     * @var string
-     */
-    private $color;
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
 
-    /**
-     * @var ProductUnitPrecision
-     */
-    private $precision;
-
-    /**
-     * @return string
-     */
-    public function getSize()
+    public function getSize(): ?string
     {
         return $this->size;
     }
 
-    /**
-     * @param string $size
-     * @return ProductWithSizeAndColor
-     */
-    public function setSize($size)
+    public function setSize(?string $size): void
     {
         $this->size = $size;
-
-        return $this;
     }
 
-    /**
-     * @return string
-     */
-    public function getColor()
+    public function getColor(): ?string
     {
         return $this->color;
     }
 
-    /**
-     * @param string $color
-     * @return ProductWithSizeAndColor
-     */
-    public function setColor($color)
+    public function setColor(?string $color): void
     {
         $this->color = $color;
-
-        return $this;
     }
 
     #[\Override]
@@ -66,27 +42,8 @@ class ProductWithSizeAndColor extends Product
         return $this->precision;
     }
 
-    /**
-     * @param ProductUnitPrecision $precision
-     *
-     * @return ProductWithSizeAndColor
-     */
-    public function setUnitPrecision($precision)
+    public function setUnitPrecision(?ProductUnitPrecision $precision): void
     {
         $this->precision = $precision;
-
-        return $this;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return ProductWithSizeAndColor
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
     }
 }

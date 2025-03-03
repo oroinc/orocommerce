@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Manager;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -20,43 +19,17 @@ class GuestShoppingListManager
 {
     use FeatureCheckerHolderTrait;
 
-    /** @var DoctrineHelper */
-    private $doctrineHelper;
-
-    /** @var TokenStorageInterface */
-    private $tokenStorage;
-
-    /** @var WebsiteManager */
-    private $websiteManager;
-
-    /** @var TranslatorInterface */
-    private $translator;
-
-    /** @var ConfigManager */
-    private $configManager;
-
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        TokenStorageInterface $tokenStorage,
-        WebsiteManager $websiteManager,
-        TranslatorInterface $translator,
-        ConfigManager $configManager
+        private DoctrineHelper $doctrineHelper,
+        private TokenStorageInterface $tokenStorage,
+        private WebsiteManager $websiteManager,
+        private TranslatorInterface $translator
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->tokenStorage = $tokenStorage;
-        $this->websiteManager = $websiteManager;
-        $this->translator = $translator;
-        $this->configManager = $configManager;
     }
 
-    /**
-     * @param int|null $userId
-     * @return null|object
-     */
-    public function getDefaultUser($userId)
+    public function getDefaultUser(?int $userId): ?User
     {
         $userRepository = $this->doctrineHelper->getEntityRepository(User::class);
-
         if ($userId) {
             return $userRepository->find($userId);
         }
@@ -64,10 +37,7 @@ class GuestShoppingListManager
         return $userRepository->findOneBy([], ['id' => 'ASC']);
     }
 
-    /**
-     * @return bool
-     */
-    public function isGuestShoppingListAvailable()
+    public function isGuestShoppingListAvailable(): bool
     {
         return $this->tokenStorage->getToken() instanceof AnonymousCustomerUserToken && $this->isFeaturesEnabled();
     }
@@ -93,7 +63,8 @@ class GuestShoppingListManager
         /** @var ShoppingList[] $shoppingLists */
         $shoppingLists = $customerVisitor->getShoppingLists();
         foreach ($shoppingLists as $shoppingList) {
-            if (!$website = $shoppingList->getWebsite()) {
+            $website = $shoppingList->getWebsite();
+            if (!$website) {
                 continue;
             }
 
@@ -105,28 +76,19 @@ class GuestShoppingListManager
         return null;
     }
 
-    /**
-     * @return ShoppingList|null
-     */
-    public function getShoppingListForCustomerVisitor()
+    public function getShoppingListForCustomerVisitor(): ?ShoppingList
     {
         return $this->findExistingShoppingListForCustomerVisitor();
     }
 
-    /**
-     * @return ShoppingList
-     */
-    public function createAndGetShoppingListForCustomerVisitor()
+    public function createAndGetShoppingListForCustomerVisitor(): ShoppingList
     {
         $shoppingList = $this->getShoppingListForCustomerVisitor();
 
         return $shoppingList ?: $this->createShoppingListForCustomerVisitor();
     }
 
-    /**
-     * @return ShoppingList
-     */
-    public function createShoppingListForCustomerVisitor()
+    public function createShoppingListForCustomerVisitor(): ShoppingList
     {
         $token = $this->tokenStorage->getToken();
 
@@ -159,12 +121,11 @@ class GuestShoppingListManager
     }
 
     /**
-     * @return array
+     * @return ShoppingList[]
      */
-    public function getShoppingListsForCustomerVisitor()
+    public function getShoppingListsForCustomerVisitor(): array
     {
         $guestShoppingList = $this->getShoppingListForCustomerVisitor();
-
         if ($guestShoppingList === null) {
             return [];
         }

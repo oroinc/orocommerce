@@ -19,29 +19,11 @@ use Oro\Bundle\ShoppingListBundle\LineItem\Factory\LineItemByShoppingListAndProd
  */
 class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 {
-    /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var LineItemByShoppingListAndProductFactoryInterface
-     */
-    private $lineItemFactory;
-
-    /**
-     * @var ConfigManager
-     */
-    private $configManager;
-
     public function __construct(
-        DoctrineHelper $doctrineHelper,
-        LineItemByShoppingListAndProductFactoryInterface $lineItemFactory,
-        ConfigManager $configManager
+        private DoctrineHelper $doctrineHelper,
+        private LineItemByShoppingListAndProductFactoryInterface $lineItemFactory,
+        private ConfigManager $configManager
     ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->lineItemFactory = $lineItemFactory;
-        $this->configManager = $configManager;
     }
 
     #[\Override]
@@ -96,6 +78,7 @@ class EmptyMatrixGridManager implements EmptyMatrixGridInterface
 
     /**
      * @param LineItem[] $lineItems
+     *
      * @return bool
      */
     private function lineItemQuantitiesAreEmpty(array $lineItems): bool

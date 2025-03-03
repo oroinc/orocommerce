@@ -6,7 +6,6 @@ use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\AccessRule\AclAccessRule;
 use Oro\Bundle\SecurityBundle\AccessRule\AvailableOwnerAccessRule;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -18,38 +17,18 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
  */
 class ShoppingListOwnerManager
 {
-    /**
-     * @var AclHelper
-     */
-    protected $aclHelper;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
-     * @var ConfigProvider
-     */
-    protected $configProvider;
-
-    public function __construct(AclHelper $aclHelper, ManagerRegistry $registry, ConfigProvider $configProvider)
-    {
-        $this->aclHelper = $aclHelper;
-        $this->registry = $registry;
-        $this->configProvider = $configProvider;
+    public function __construct(
+        private AclHelper $aclHelper,
+        private ManagerRegistry $doctrine
+    ) {
     }
 
-    /**
-     * @param int $ownerId
-     * @param ShoppingList $shoppingList
-     */
-    public function setOwner($ownerId, ShoppingList $shoppingList)
+    public function setOwner(int $ownerId, ShoppingList $shoppingList): void
     {
         /** @var CustomerUser $user */
-        $user = $this->registry->getRepository(CustomerUser::class)->find($ownerId);
+        $user = $this->doctrine->getRepository(CustomerUser::class)->find($ownerId);
         if (null === $user) {
-            throw new \InvalidArgumentException(sprintf("User with id=%s not exists", $ownerId));
+            throw new \InvalidArgumentException(\sprintf('User with id=%s not exists', $ownerId));
         }
         if ($user === $shoppingList->getCustomerUser()) {
             return;
@@ -58,20 +37,16 @@ class ShoppingListOwnerManager
             $this->assignLineItems($shoppingList, $user);
             $shoppingList->setCustomerUser($user);
 
-            $this->registry->getManagerForClass(ShoppingList::class)->flush();
+            $this->doctrine->getManagerForClass(ShoppingList::class)->flush();
         } else {
             throw new AccessDeniedException();
         }
     }
 
-    /**
-     * @param int $id
-     * @return boolean
-     */
-    protected function isUserAssignable($id)
+    private function isUserAssignable(int $id): bool
     {
         /** @var EntityRepository $repository */
-        $repository = $this->registry->getRepository(CustomerUser::class);
+        $repository = $this->doctrine->getRepository(CustomerUser::class);
         $qb = $repository
             ->createQueryBuilder('user')
             ->select('user.id')

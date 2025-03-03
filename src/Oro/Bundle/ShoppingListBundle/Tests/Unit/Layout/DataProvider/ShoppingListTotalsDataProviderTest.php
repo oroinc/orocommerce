@@ -5,14 +5,13 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ShoppingListTotalsDataProvider;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class ShoppingListTotalsDataProviderTest extends \PHPUnit\Framework\TestCase
+class ShoppingListTotalsDataProviderTest extends TestCase
 {
-    /** @var TotalProcessorProvider */
-    private $totalProcessorProvider;
-
-    /** @var ShoppingListTotalsDataProvider */
-    private $provider;
+    private TotalProcessorProvider&MockObject $totalProcessorProvider;
+    private ShoppingListTotalsDataProvider $provider;
 
     #[\Override]
     protected function setUp(): void
@@ -27,12 +26,11 @@ class ShoppingListTotalsDataProviderTest extends \PHPUnit\Framework\TestCase
         $shoppingList = $this->createMock(ShoppingList::class);
         $totals = ['sample-totals'];
 
-        $this->totalProcessorProvider
-            ->expects($this->once())
+        $this->totalProcessorProvider->expects(self::once())
             ->method('getTotalWithSubtotalsAsArray')
             ->with($shoppingList)
             ->willReturn($totals);
 
-        $this->assertEquals($totals, $this->provider->getTotalWithSubtotalsAsArray($shoppingList));
+        self::assertEquals($totals, $this->provider->getTotalWithSubtotalsAsArray($shoppingList));
     }
 }

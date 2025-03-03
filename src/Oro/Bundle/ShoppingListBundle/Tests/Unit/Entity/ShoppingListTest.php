@@ -12,15 +12,14 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\ShoppingListStub;
 use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShoppingListTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTestCaseTrait;
-    use EntityTrait;
 
-    public function testProperties()
+    public function testProperties(): void
     {
         $now = new \DateTime('now');
         $properties = [
@@ -36,67 +35,62 @@ class ShoppingListTest extends \PHPUnit\Framework\TestCase
             ['updatedAt', $now, false],
         ];
 
-        $this->assertPropertyAccessors(new ShoppingList(), $properties);
-        $this->assertPropertyCollections(new ShoppingList(), [
+        self::assertPropertyAccessors(new ShoppingList(), $properties);
+        self::assertPropertyCollections(new ShoppingList(), [
             ['lineItems', new LineItem()]
         ]);
 
         $label = 'label-test-775';
         $shoppingList = new ShoppingList();
         $shoppingList->setLabel($label);
-        $this->assertEquals($label, $shoppingList);
+        self::assertEquals($label, $shoppingList);
     }
 
-    public function testPrePersist()
+    public function testPrePersist(): void
     {
         $shoppingList = new ShoppingList();
         $shoppingList->prePersist();
-        $this->assertInstanceOf('\DateTime', $shoppingList->getCreatedAt());
-        $this->assertInstanceOf('\DateTime', $shoppingList->getUpdatedAt());
+        self::assertInstanceOf(\DateTime::class, $shoppingList->getCreatedAt());
+        self::assertInstanceOf(\DateTime::class, $shoppingList->getUpdatedAt());
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $shoppingList = new ShoppingList();
         $shoppingList->preUpdate();
-        $this->assertInstanceOf('\DateTime', $shoppingList->getUpdatedAt());
+        self::assertInstanceOf(\DateTime::class, $shoppingList->getUpdatedAt());
     }
 
-    public function testSourceDocument()
+    public function testSourceDocument(): void
     {
-        $shoppingList = $this->getEntity(
-            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
-            [
-                'id' => 1,
-                'label' => 'TEST'
-            ]
-        );
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, 1);
+        $shoppingList->setLabel('TEST');
 
-        $this->assertSame($shoppingList, $shoppingList->getSourceDocument());
-        $this->assertEquals('TEST', $shoppingList->getSourceDocumentIdentifier());
+        self::assertSame($shoppingList, $shoppingList->getSourceDocument());
+        self::assertEquals('TEST', $shoppingList->getSourceDocumentIdentifier());
     }
 
-    public function testGetVisitor()
+    public function testGetVisitor(): void
     {
         $visitor = new CustomerVisitor();
 
         $shoppingList = new ShoppingListStub();
         $shoppingList->addVisitor($visitor);
 
-        $this->assertSame($visitor, $shoppingList->getVisitor());
+        self::assertSame($visitor, $shoppingList->getVisitor());
     }
 
-    public function testJsonSerialize()
+    public function testJsonSerialize(): void
     {
-        $shoppingList = $this->getEntity(
-            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
-            [
-                'id' => 1,
-                'label' => 'TEST'
-            ]
-        );
+        $shoppingList = new ShoppingList();
+        ReflectionUtil::setId($shoppingList, 1);
+        $shoppingList->setLabel('TEST');
 
-        $this->assertEquals('{"id":1,"label":"TEST","is_current":false}', json_encode($shoppingList));
+        self::assertEquals(
+            '{"id":1,"label":"TEST","is_current":false}',
+            json_encode($shoppingList, JSON_THROW_ON_ERROR)
+        );
     }
 
     public function testTotalsAccessors(): void
@@ -105,10 +99,10 @@ class ShoppingListTest extends \PHPUnit\Framework\TestCase
         $currency = 'USD';
         $total = new ShoppingListTotal($shoppingList, $currency);
 
-        $this->assertCount(0, $shoppingList->getTotals());
+        self::assertCount(0, $shoppingList->getTotals());
         $shoppingList->addTotal($total);
-        $this->assertSame($total, $shoppingList->getTotals()->get($currency));
+        self::assertSame($total, $shoppingList->getTotals()->get($currency));
         $shoppingList->removeTotal($total);
-        $this->assertCount(0, $shoppingList->getTotals());
+        self::assertCount(0, $shoppingList->getTotals());
     }
 }

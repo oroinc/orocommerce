@@ -33,40 +33,16 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
  */
 class AjaxProductKitLineItemController extends AbstractLineItemController
 {
-    private ProductKitAvailabilityChecker $productKitAvailabilityChecker;
-
-    private CurrentShoppingListManager $currentShoppingListManager;
-
-    private ShoppingListManager $shoppingListManager;
-
-    private ProductKitLineItemFactory $productKitLineItemFactory;
-
-    private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider;
-
-    private ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory;
-
-    private ManagerRegistry $managerRegistry;
-
-    private ValidatorInterface $validator;
-
     public function __construct(
-        ProductKitAvailabilityChecker $productKitAvailabilityChecker,
-        CurrentShoppingListManager $currentShoppingListManager,
-        ShoppingListManager $shoppingListManager,
-        ProductKitLineItemFactory $productKitLineItemFactory,
-        SubtotalProviderInterface $lineItemNotPricedSubtotalProvider,
-        ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory,
-        ManagerRegistry $managerRegistry,
-        ValidatorInterface $validator
+        private ProductKitAvailabilityChecker $productKitAvailabilityChecker,
+        private CurrentShoppingListManager $currentShoppingListManager,
+        private ShoppingListManager $shoppingListManager,
+        private ProductKitLineItemFactory $productKitLineItemFactory,
+        private SubtotalProviderInterface $lineItemNotPricedSubtotalProvider,
+        private ProductLineItemsHolderFactoryInterface $lineItemsHolderFactory,
+        private ManagerRegistry $managerRegistry,
+        private ValidatorInterface $validator
     ) {
-        $this->productKitAvailabilityChecker = $productKitAvailabilityChecker;
-        $this->currentShoppingListManager = $currentShoppingListManager;
-        $this->shoppingListManager = $shoppingListManager;
-        $this->productKitLineItemFactory = $productKitLineItemFactory;
-        $this->lineItemNotPricedSubtotalProvider = $lineItemNotPricedSubtotalProvider;
-        $this->lineItemsHolderFactory = $lineItemsHolderFactory;
-        $this->managerRegistry = $managerRegistry;
-        $this->validator = $validator;
     }
 
     #[Route(
@@ -80,9 +56,9 @@ class AjaxProductKitLineItemController extends AbstractLineItemController
     #[AclAncestor('oro_product_frontend_view')]
     public function createAction(Product $product, Request $request): Response|array
     {
-        /** @var ShoppingList|null $shoppingList */
-        $shoppingList = $this->currentShoppingListManager
-            ->getForCurrentUser((int)$request->get('shoppingListId'), true);
+        $shoppingListId = $request->get('shoppingListId');
+        $shoppingListId = $shoppingListId ? (int)$shoppingListId : null;
+        $shoppingList = $this->currentShoppingListManager->getForCurrentUser($shoppingListId, true);
         $productKitLineItem = $this->productKitLineItemFactory->createProductKitLineItem(
             $product,
             null,

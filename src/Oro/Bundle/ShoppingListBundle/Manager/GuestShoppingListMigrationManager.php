@@ -42,9 +42,9 @@ class GuestShoppingListMigrationManager
     ): int {
         if ($this->shoppingListLimitManager->isCreateEnabled()) {
             return $this->moveShoppingListToCustomerUser($visitor, $customerUser, $shoppingList);
-        } else {
-            return $this->mergeShoppingListWithCurrent($shoppingList);
         }
+
+        return $this->mergeShoppingListWithCurrent($shoppingList);
     }
 
     /**

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -31,14 +30,14 @@ use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
  */
 class CurrentShoppingListManagerTest extends TestCase
 {
-    private ShoppingListManager|MockObject $shoppingListManager;
-    private GuestShoppingListManager|MockObject $guestShoppingListManager;
-    private CacheItemPoolInterface|MockObject $cache;
-    private CacheItemInterface|MockObject $cacheItem;
-    private AclHelper|MockObject $aclHelper;
-    private TokenAccessorInterface|MockObject $tokenAccessor;
-    private ShoppingListRepository|MockObject $shoppingListRepository;
-    private ConfigManager|MockObject $configManager;
+    private ShoppingListManager&MockObject $shoppingListManager;
+    private GuestShoppingListManager&MockObject $guestShoppingListManager;
+    private CacheItemPoolInterface&MockObject $cache;
+    private CacheItemInterface&MockObject $cacheItem;
+    private AclHelper&MockObject $aclHelper;
+    private TokenAccessorInterface&MockObject $tokenAccessor;
+    private ShoppingListRepository&MockObject $shoppingListRepository;
+    private ConfigManager&MockObject $configManager;
     private CurrentShoppingListManager $currentShoppingListManager;
 
     #[\Override]
@@ -53,17 +52,11 @@ class CurrentShoppingListManagerTest extends TestCase
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->shoppingListRepository = $this->createMock(ShoppingListRepository::class);
 
-        $shoppingListEntityManager = $this->createMock(EntityManagerInterface::class);
-        $shoppingListEntityManager->expects(self::any())
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
             ->method('getRepository')
             ->with(ShoppingList::class)
             ->willReturn($this->shoppingListRepository);
-
-        $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects(self::any())
-            ->method('getManagerForClass')
-            ->with(ShoppingList::class)
-            ->willReturn($shoppingListEntityManager);
 
         $this->currentShoppingListManager = new CurrentShoppingListManager(
             $this->shoppingListManager,
@@ -179,8 +172,7 @@ class CurrentShoppingListManagerTest extends TestCase
     private function expectGetGuestShoppingList(?ShoppingList $shoppingList): void
     {
         $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -197,8 +189,7 @@ class CurrentShoppingListManagerTest extends TestCase
     private function expectCreateGuestShoppingList(ShoppingList $shoppingList): void
     {
         $token = $this->createMock(AnonymousCustomerUserToken::class);
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -215,13 +206,12 @@ class CurrentShoppingListManagerTest extends TestCase
     private function expectNoGuestShoppingList(string $tokenClass = UsernamePasswordToken::class): void
     {
         $token = $this->createMock($tokenClass);
-        $this->tokenAccessor
-            ->expects(self::once())
+        $this->tokenAccessor->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->guestShoppingListManager
-            ->expects(self::exactly((int)($tokenClass === AnonymousCustomerUserToken::class)))
+        $isAnonymousCustomerUserToken = AnonymousCustomerUserToken::class === $tokenClass;
+        $this->guestShoppingListManager->expects($isAnonymousCustomerUserToken ? self::once() : self::never())
             ->method('isGuestShoppingListAvailable')
             ->willReturn(false);
         $this->guestShoppingListManager->expects(self::never())
@@ -257,7 +247,7 @@ class CurrentShoppingListManagerTest extends TestCase
     {
         return [
             'without label' => [],
-            'with label'    => ['label' => 'test label']
+            'with label' => ['label' => 'test label']
         ];
     }
 

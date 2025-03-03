@@ -30,15 +30,11 @@ class LineItemHandlerTest extends TestCase
     private const CONSTRAINT_TEMPLATE_2 = 'error_template_2';
     private const CONSTRAINT_PARAMS_2 = ['parameter2' => '2'];
 
-    private FormInterface|MockObject $form;
-
-    private ManagerRegistry|MockObject $doctrine;
-
-    private ShoppingListManager|MockObject $shoppingListManager;
-
-    private CurrentShoppingListManager|MockObject $currentShoppingListManager;
-
-    private ValidatorInterface|MockObject $validator;
+    private FormInterface&MockObject $form;
+    private ManagerRegistry&MockObject $doctrine;
+    private ShoppingListManager&MockObject $shoppingListManager;
+    private CurrentShoppingListManager&MockObject $currentShoppingListManager;
+    private ValidatorInterface&MockObject $validator;
 
     #[\Override]
     protected function setUp(): void
@@ -64,6 +60,45 @@ class LineItemHandlerTest extends TestCase
             $this->currentShoppingListManager,
             $this->validator
         );
+    }
+
+    private function getConstraintViolationList(): ConstraintViolationList
+    {
+        return new ConstraintViolationList([
+            new ConstraintViolation(
+                self::CONSTRAINT_ERROR_1,
+                self::CONSTRAINT_TEMPLATE_1,
+                self::CONSTRAINT_PARAMS_1,
+                null,
+                '',
+                null
+            ),
+            new ConstraintViolation(
+                self::CONSTRAINT_ERROR_2,
+                self::CONSTRAINT_TEMPLATE_2,
+                self::CONSTRAINT_PARAMS_2,
+                null,
+                '',
+                null
+            )
+        ]);
+    }
+
+    private function getShoppingList(): ShoppingList
+    {
+        $shoppingList = $this->createMock(ShoppingList::class);
+        $shoppingList->expects(self::once())
+            ->method('getId')
+            ->willReturn(777);
+
+        return $shoppingList;
+    }
+
+    private function getLineItem(ShoppingList $shoppingList, ?int $id = null): LineItem
+    {
+        return (new LineItemStub())
+            ->setId($id)
+            ->setShoppingList($shoppingList);
     }
 
     public function testProcessWrongMethod(): void
@@ -140,8 +175,7 @@ class LineItemHandlerTest extends TestCase
 
         $this->shoppingListManager->expects(self::once())
             ->method('addLineItem')
-            ->with($lineItem, $lineItem->getShoppingList(), false, true)
-            ->willReturn($shoppingList);
+            ->with($lineItem, $lineItem->getShoppingList(), false, true);
 
         $this->currentShoppingListManager->expects(self::once())
             ->method('createCurrent')
@@ -192,7 +226,7 @@ class LineItemHandlerTest extends TestCase
         $this->validator->expects(self::once())
             ->method('validate')
             ->with($shoppingList)
-            ->willReturn($this->createConstraintViolationList());
+            ->willReturn($this->getConstraintViolationList());
 
         $this->form->expects(self::exactly(2))
             ->method('addError')
@@ -212,49 +246,5 @@ class LineItemHandlerTest extends TestCase
         $request = Request::create('/', 'PUT', [FrontendLineItemType::NAME => ['shoppingListLabel' => 'label']]);
 
         self::assertFalse($this->getLineItemHandler($request)->process($lineItem));
-    }
-
-    private function createConstraintViolationList(): ConstraintViolationList
-    {
-        $constraintViolations = [
-            new ConstraintViolation(
-                self::CONSTRAINT_ERROR_1,
-                self::CONSTRAINT_TEMPLATE_1,
-                self::CONSTRAINT_PARAMS_1,
-                null,
-                '',
-                null
-            ),
-            new ConstraintViolation(
-                self::CONSTRAINT_ERROR_2,
-                self::CONSTRAINT_TEMPLATE_2,
-                self::CONSTRAINT_PARAMS_2,
-                null,
-                '',
-                null
-            ),
-        ];
-
-        return new ConstraintViolationList($constraintViolations);
-    }
-
-    /**
-     * @return ShoppingList|MockObject
-     */
-    private function getShoppingList()
-    {
-        $shoppingList = $this->createMock(ShoppingList::class);
-        $shoppingList->expects(self::once())
-            ->method('getId')
-            ->willReturn(777);
-
-        return $shoppingList;
-    }
-
-    private function getLineItem(ShoppingList $shoppingList, ?int $id = null): LineItem
-    {
-        return (new LineItemStub())
-            ->setId($id)
-            ->setShoppingList($shoppingList);
     }
 }

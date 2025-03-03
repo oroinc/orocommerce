@@ -7,20 +7,14 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductWithInSaleAndDiscount extends Product
 {
-    /**
-     * @var bool
-     */
-    private $inSale = false;
+    private bool $inSale = false;
+    private bool $discount = false;
+    private ?ProductUnitPrecision $precision = null;
 
-    /**
-     * @var bool
-     */
-    private $discount = false;
-
-    /**
-     * @var ProductUnitPrecision
-     */
-    private $precision;
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
 
     #[\Override]
     public function getUnitPrecision($unitCode)
@@ -28,64 +22,28 @@ class ProductWithInSaleAndDiscount extends Product
         return $this->precision;
     }
 
-    /**
-     * @param ProductUnitPrecision $precision
-     * @return $this
-     */
-    public function setUnitPrecision($precision)
+    public function setUnitPrecision(?ProductUnitPrecision $precision): void
     {
         $this->precision = $precision;
-
-        return $this;
     }
 
-    /**
-     * @return bool
-     */
-    public function isInSale()
+    public function isInSale(): bool
     {
         return $this->inSale;
     }
 
-    /**
-     * @param bool $inSale
-     * @return $this
-     */
-    public function setInSale($inSale)
+    public function setInSale(bool $inSale): void
     {
-        $this->inSale = (bool)$inSale;
-
-        return $this;
+        $this->inSale = $inSale;
     }
 
-    /**
-     * @return bool
-     */
-    public function isDiscount()
+    public function isDiscount(): bool
     {
         return $this->discount;
     }
 
-    /**
-     * @param bool $discount
-     * @return $this
-     */
-    public function setDiscount($discount)
+    public function setDiscount(bool $discount): void
     {
-        $this->discount = (bool)$discount;
-
-        return $this;
-    }
-
-    /**
-     * @param int $id
-     *
-     * @return ProductWithInSaleAndDiscount
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-
-        return $this;
+        $this->discount = $discount;
     }
 }

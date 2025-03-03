@@ -18,8 +18,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
 class LineItemsActionsOnResultAfterListenerTest extends TestCase
 {
-    private AuthorizationCheckerInterface|MockObject $authorizationChecker;
-
+    private AuthorizationCheckerInterface&MockObject $authorizationChecker;
     private LineItemsActionsOnResultAfterListener $listener;
 
     #[\Override]
@@ -30,16 +29,24 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
         $this->listener = new LineItemsActionsOnResultAfterListener($this->authorizationChecker);
     }
 
+    private function getDatagrid(array $parameters = []): Datagrid
+    {
+        return new Datagrid(
+            'test-grid',
+            DatagridConfiguration::create([]),
+            new ParameterBag($parameters)
+        );
+    }
+
     public function testOnResultAfterWhenNoRecords(): void
     {
-        $this->authorizationChecker
-            ->expects($this->never())
+        $this->authorizationChecker->expects(self::never())
             ->method('isGranted');
 
         $event = new OrmResultAfter($this->getDatagrid(), [], $this->createMock(AbstractQuery::class));
         $this->listener->onResultAfter($event);
 
-        $this->assertCount(0, $event->getRecords());
+        self::assertCount(0, $event->getRecords());
     }
 
     /**
@@ -50,23 +57,20 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
         ResultRecordInterface $expectedRecord
     ): void {
         $event = $this->createMock(OrmResultAfter::class);
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getDatagrid')
             ->willReturn($this->getDatagrid());
 
-        $this->authorizationChecker
-            ->expects($this->never())
+        $this->authorizationChecker->expects(self::never())
             ->method('isGranted');
 
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getRecords')
             ->willReturn([$record]);
 
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals($expectedRecord, $record);
+        self::assertEquals($expectedRecord, $record);
     }
 
     /**
@@ -78,44 +82,38 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
     ): void {
         $shoppingListId = 1;
         $event = $this->createMock(OrmResultAfter::class);
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getDatagrid')
             ->willReturn($this->getDatagrid(['shopping_list_id' => $shoppingListId]));
 
         $query = $this->createMock(AbstractQuery::class);
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getQuery')
             ->willReturn($query);
 
         $entityManager = $this->createMock(EntityManager::class);
-        $query
-            ->expects($this->once())
+        $query->expects(self::once())
             ->method('getEntityManager')
             ->willReturn($entityManager);
 
         $shoppingList = $this->createMock(ShoppingList::class);
-        $entityManager
-            ->expects($this->once())
+        $entityManager->expects(self::once())
             ->method('find')
             ->with(ShoppingList::class, $shoppingListId)
             ->willReturn($shoppingList);
 
-        $this->authorizationChecker
-            ->expects($this->once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with('oro_shopping_list_frontend_update', $shoppingList)
             ->willReturn(false);
 
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getRecords')
             ->willReturn([$record]);
 
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals($expectedRecord, $record);
+        self::assertEquals($expectedRecord, $record);
     }
 
     /**
@@ -134,10 +132,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
+                )
             ],
             'simple row without notes' => [
                 'record' => new ResultRecord(['sample_key' => 'sample value']),
@@ -149,10 +147,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable row with subdata with notes' => [
                 'record' => new ResultRecord(['isConfigurable' => true, 'subData' => [['notes' => 'sample notes']]]),
@@ -167,19 +165,19 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false,
-                                ],
-                            ],
+                                    'delete' => false
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable row with subdata without notes' => [
                 'record' => new ResultRecord(
@@ -196,19 +194,19 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false,
-                                ],
-                            ],
+                                    'delete' => false
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable without subdata' => [
                 'record' => new ResultRecord(['isConfigurable' => true]),
@@ -221,10 +219,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable with matrix form available' => [
                 'record' => new ResultRecord(['isConfigurable' => true, 'isMatrixFormAvailable' => true]),
@@ -238,10 +236,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
+                )
             ],
             'kit with subdata with notes' => [
                 'record' => new ResultRecord(['isKit' => true, 'subData' => [['notes' => 'sample notes']]]),
@@ -256,19 +254,19 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false,
-                                ],
-                            ],
+                                    'delete' => false
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
+                )
             ],
             'kit with subdata without notes' => [
                 'record' => new ResultRecord(
@@ -285,20 +283,20 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false,
-                                ],
-                            ],
+                                    'delete' => false
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => false,
-                        ],
+                            'delete' => false
+                        ]
                     ]
-                ),
-            ],
+                )
+            ]
         ];
     }
 
@@ -311,44 +309,38 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
     ): void {
         $shoppingListId = 1;
         $event = $this->createMock(OrmResultAfter::class);
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getDatagrid')
             ->willReturn($this->getDatagrid(['shopping_list_id' => $shoppingListId]));
 
         $query = $this->createMock(AbstractQuery::class);
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getQuery')
             ->willReturn($query);
 
         $entityManager = $this->createMock(EntityManager::class);
-        $query
-            ->expects($this->once())
+        $query->expects(self::once())
             ->method('getEntityManager')
             ->willReturn($entityManager);
 
         $shoppingList = $this->createMock(ShoppingList::class);
-        $entityManager
-            ->expects($this->once())
+        $entityManager->expects(self::once())
             ->method('find')
             ->with(ShoppingList::class, $shoppingListId)
             ->willReturn($shoppingList);
 
-        $this->authorizationChecker
-            ->expects($this->once())
+        $this->authorizationChecker->expects(self::once())
             ->method('isGranted')
             ->with('oro_shopping_list_frontend_update', $shoppingList)
             ->willReturn(true);
 
-        $event
-            ->expects($this->once())
+        $event->expects(self::once())
             ->method('getRecords')
             ->willReturn([$record]);
 
         $this->listener->onResultAfter($event);
 
-        $this->assertEquals($expectedRecord, $record);
+        self::assertEquals($expectedRecord, $record);
     }
 
     /**
@@ -367,10 +359,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
+                )
             ],
             'simple row without notes' => [
                 'record' => new ResultRecord(['sample_key' => 'sample value']),
@@ -382,10 +374,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable row with subdata with notes' => [
                 'record' => new ResultRecord(['isConfigurable' => true, 'subData' => [['notes' => 'sample notes']]]),
@@ -400,19 +392,19 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => true,
-                                ],
-                            ],
+                                    'delete' => true
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable row with subdata without notes' => [
                 'record' => new ResultRecord(
@@ -429,19 +421,19 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => true,
-                                ],
-                            ],
+                                    'delete' => true
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => false,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable without subdata' => [
                 'record' => new ResultRecord(['isConfigurable' => true]),
@@ -454,10 +446,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => false,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
+                )
             ],
             'configurable with matrix form available' => [
                 'record' => new ResultRecord(['isConfigurable' => true, 'isMatrixFormAvailable' => true]),
@@ -471,10 +463,10 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                             'edit_notes' => false,
                             'update_configurable' => true,
                             'update_product_kit_line_item' => false,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
+                )
             ],
             'kit with subdata with notes' => [
                 'record' => new ResultRecord(['isKit' => true, 'subData' => [['notes' => 'sample notes']]]),
@@ -489,19 +481,19 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false,
-                                ],
-                            ],
+                                    'delete' => false
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => true,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => true,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
+                )
             ],
             'kit with subdata without notes' => [
                 'record' => new ResultRecord(
@@ -518,29 +510,20 @@ class LineItemsActionsOnResultAfterListenerTest extends TestCase
                                     'edit_notes' => false,
                                     'update_configurable' => false,
                                     'update_product_kit_line_item' => false,
-                                    'delete' => false,
-                                ],
-                            ],
+                                    'delete' => false
+                                ]
+                            ]
                         ],
                         'action_configuration' => [
                             'add_notes' => true,
                             'edit_notes' => false,
                             'update_configurable' => false,
                             'update_product_kit_line_item' => true,
-                            'delete' => true,
-                        ],
+                            'delete' => true
+                        ]
                     ]
-                ),
-            ],
+                )
+            ]
         ];
-    }
-
-    private function getDatagrid(array $parameters = []): Datagrid
-    {
-        return new Datagrid(
-            'test-grid',
-            DatagridConfiguration::create([]),
-            new ParameterBag($parameters)
-        );
     }
 }

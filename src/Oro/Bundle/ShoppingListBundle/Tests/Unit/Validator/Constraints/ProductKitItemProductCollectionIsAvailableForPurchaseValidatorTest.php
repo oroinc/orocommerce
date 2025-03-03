@@ -19,9 +19,8 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class ProductKitItemProductCollectionIsAvailableForPurchaseValidatorTest extends ConstraintValidatorTestCase
 {
-    private LocalizationHelper|MockObject $localizationHelper;
-
-    private TranslationMessageSanitizerInterface|MockObject $translationMessageSanitizer;
+    private LocalizationHelper&MockObject $localizationHelper;
+    private TranslationMessageSanitizerInterface&MockObject $translationMessageSanitizer;
 
     #[\Override]
     protected function setUp(): void
@@ -106,13 +105,11 @@ class ProductKitItemProductCollectionIsAvailableForPurchaseValidatorTest extends
             $this->expectedViolations[] = $violationList2;
         }, $this, ConstraintValidatorTestCase::class))();
 
-        $this->localizationHelper
-            ->expects(self::any())
+        $this->localizationHelper->expects(self::any())
             ->method('getLocalizedValue')
             ->willReturnCallback(static fn (iterable $values) => $values[0]->getString());
 
-        $this->translationMessageSanitizer
-            ->expects(self::once())
+        $this->translationMessageSanitizer->expects(self::once())
             ->method('sanitizeMessage')
             ->with($kitItemLabel)
             ->willReturn($kitItemLabel . '_sanitized');

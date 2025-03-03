@@ -21,9 +21,7 @@ class DatagridLineItemsDataListenerTest extends TestCase
     public function testOnLineItemDataWhenNoLineItems(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-
-        $event
-            ->expects(self::never())
+        $event->expects(self::never())
             ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
@@ -32,14 +30,10 @@ class DatagridLineItemsDataListenerTest extends TestCase
     public function testOnLineItemDataWhenNotLineItem(): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-
-        $event
-            ->expects(self::once())
+        $event->expects(self::once())
             ->method('getLineItems')
             ->willReturn([new \stdClass()]);
-
-        $event
-            ->expects(self::never())
+        $event->expects(self::never())
             ->method('addDataForLineItem');
 
         $this->listener->onLineItemData($event);
@@ -51,13 +45,10 @@ class DatagridLineItemsDataListenerTest extends TestCase
     public function testOnLineItemData(LineItem $lineItem, array $expectedArgs): void
     {
         $event = $this->createMock(DatagridLineItemsDataEvent::class);
-        $event
-            ->expects(self::once())
+        $event->expects(self::once())
             ->method('getLineItems')
             ->willReturn([$lineItem]);
-
-        $event
-            ->expects(self::once())
+        $event->expects(self::once())
             ->method('addDataForLineItem')
             ->with(...$expectedArgs);
 
@@ -72,11 +63,11 @@ class DatagridLineItemsDataListenerTest extends TestCase
         return [
             [
                 'lineItem' => (new LineItemStub())->setId($lineItemId)->setNotes($notes),
-                'expectedArgs' => [$lineItemId, ['notes' => $notes]],
+                'expectedArgs' => [$lineItemId, ['notes' => $notes]]
             ],
             [
                 'lineItem' => (new LineItemStub())->setId($lineItemId),
-                'expectedArgs' => [$lineItemId, ['notes' => '']],
+                'expectedArgs' => [$lineItemId, ['notes' => '']]
             ],
         ];
     }

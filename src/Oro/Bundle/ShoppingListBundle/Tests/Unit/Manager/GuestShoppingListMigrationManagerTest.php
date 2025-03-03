@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -66,10 +66,10 @@ final class GuestShoppingListMigrationManagerTest extends TestCase
         $visitor = new CustomerVisitorStub();
         $visitor->addShoppingList($shoppingList);
 
-        $customerVisitorEntityManager = $this->createMock(EntityManager::class);
+        $customerVisitorEntityManager = $this->createMock(EntityManagerInterface::class);
         $customerVisitorEntityManager->expects(self::once())
             ->method('flush');
-        $shoppingListEntityManager = $this->createMock(EntityManager::class);
+        $shoppingListEntityManager = $this->createMock(EntityManagerInterface::class);
         $shoppingListEntityManager->expects(self::once())
             ->method('flush');
         $this->doctrineHelper->expects(self::exactly(2))
@@ -81,8 +81,7 @@ final class GuestShoppingListMigrationManagerTest extends TestCase
 
         $this->currentShoppingListManager->expects(self::once())
             ->method('setCurrent')
-            ->with($customerUser, $shoppingList)
-            ->willReturn(true);
+            ->with($customerUser, $shoppingList);
 
         $this->eventDispatcher->expects(self::exactly(2))
             ->method('hasListeners')
@@ -129,7 +128,7 @@ final class GuestShoppingListMigrationManagerTest extends TestCase
         $shoppingListItem = new LineItem();
         $shoppingList->addLineItem($shoppingListItem);
 
-        $shoppingListEntityManager = $this->createMock(EntityManager::class);
+        $shoppingListEntityManager = $this->createMock(EntityManagerInterface::class);
         $shoppingListEntityManager->expects(self::once())
             ->method('remove')
             ->with($shoppingList);
@@ -185,7 +184,7 @@ final class GuestShoppingListMigrationManagerTest extends TestCase
         $this->eventDispatcher->expects(self::never())
             ->method('dispatch');
 
-        $shoppingListEntityManager = $this->createMock(EntityManager::class);
+        $shoppingListEntityManager = $this->createMock(EntityManagerInterface::class);
         $shoppingListEntityManager->expects(self::once())
             ->method('remove')
             ->with($shoppingList);

@@ -22,10 +22,8 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends ConstraintValidatorTestCase
 {
-    private TranslationMessageSanitizerInterface|MockObject $translationMessageSanitizer;
-
-    private ValidatorInterface|MockObject $validatorComponent;
-
+    private TranslationMessageSanitizerInterface&MockObject $translationMessageSanitizer;
+    private ValidatorInterface&MockObject $validatorComponent;
     private array $validationGroups = [];
 
     #[\Override]
@@ -107,8 +105,7 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
         $kitItem2 = new ProductKitItem();
         $value = [$kitItem1, $kitItem2];
 
-        $this->validatorComponent
-            ->expects(self::exactly(2))
+        $this->validatorComponent->expects(self::exactly(2))
             ->method('validate')
             ->withConsecutive(
                 [$kitItem1, null, $this->validationGroups],
@@ -130,8 +127,7 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
             ->setOptional(true);
         $value = [$kitItem1, $kitItem2];
 
-        $this->validatorComponent
-            ->expects(self::exactly(2))
+        $this->validatorComponent->expects(self::exactly(2))
             ->method('validate')
             ->withConsecutive(
                 [$kitItem1, null, $this->validationGroups],
@@ -171,8 +167,7 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
         $violation2 = new ConstraintViolation('sample_error2', null, [], $kitItem1, null, $kitItem1);
         $violationList = new ConstraintViolationList([$violation1, $violation2]);
 
-        $this->validatorComponent
-            ->expects(self::exactly(3))
+        $this->validatorComponent->expects(self::exactly(3))
             ->method('validate')
             ->withConsecutive(
                 [$kitItem1, null, $this->validationGroups],
@@ -184,8 +179,7 @@ class ProductKitItemCollectionIsAvailableForPurchaseValidatorTest extends Constr
                 new ConstraintViolationList(),
             );
 
-        $this->translationMessageSanitizer
-            ->expects(self::exactly(3))
+        $this->translationMessageSanitizer->expects(self::exactly(3))
             ->method('sanitizeMessage')
             ->willReturnCallback(static fn (string $message) => $message . '_sanitized');
 

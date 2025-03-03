@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Security\Token\AnonymousCustomerUserToken;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -16,7 +15,9 @@ use Oro\Bundle\ShoppingListBundle\Tests\Unit\Entity\Stub\CustomerVisitorStub;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -24,30 +25,14 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
+class GuestShoppingListManagerTest extends TestCase
 {
-    use EntityTrait;
-
-    /** @var DoctrineHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $doctrineHelper;
-
-    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $tokenStorage;
-
-    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $websiteManager;
-
-    /** @var TranslatorInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $translator;
-
-    /** @var FeatureChecker|\PHPUnit\Framework\MockObject\MockObject */
-    private $featureChecker;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private $configManager;
-
-    /** @var GuestShoppingListManager */
-    private $guestShoppingListManager;
+    private DoctrineHelper&MockObject $doctrineHelper;
+    private TokenStorageInterface&MockObject $tokenStorage;
+    private WebsiteManager&MockObject $websiteManager;
+    private TranslatorInterface&MockObject $translator;
+    private FeatureChecker&MockObject $featureChecker;
+    private GuestShoppingListManager $guestShoppingListManager;
 
     #[\Override]
     protected function setUp(): void
@@ -57,70 +42,92 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
         $this->featureChecker = $this->createMock(FeatureChecker::class);
-        $this->configManager = $this->createMock(ConfigManager::class);
 
         $this->guestShoppingListManager = new GuestShoppingListManager(
             $this->doctrineHelper,
             $this->tokenStorage,
             $this->websiteManager,
-            $this->translator,
-            $this->configManager
+            $this->translator
         );
         $this->guestShoppingListManager->setFeatureChecker($this->featureChecker);
         $this->guestShoppingListManager->addFeature('guest_shopping_list');
     }
 
-    public function testGetDefaultUserWithId()
+    private function getWebsite(int $id, Organization $organization): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+        $website->setOrganization($organization);
+
+        return $website;
+    }
+
+    private function getShoppingList(?int $id, Website $website, Organization $organization): ShoppingList
+    {
+        $shoppingList = new ShoppingList();
+        if (null !== $id) {
+            ReflectionUtil::setId($shoppingList, $id);
+        }
+        $shoppingList->setWebsite($website);
+        $shoppingList->setOrganization($organization);
+
+        return $shoppingList;
+    }
+
+    public function testGetDefaultUserWithId(): void
     {
         $user = new User();
 
         $userRepository = $this->createMock(EntityRepository::class);
-        $userRepository->expects($this->once())
+        $userRepository->expects(self::once())
             ->method('find')
             ->with(1)
             ->willReturn($user);
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(User::class)
             ->willReturn($userRepository);
 
-        $this->assertSame($user, $this->guestShoppingListManager->getDefaultUser(1));
+        self::assertSame($user, $this->guestShoppingListManager->getDefaultUser(1));
     }
 
-    public function testGetDefaultUserWithNull()
+    public function testGetDefaultUserWithNull(): void
     {
         $user = new User();
 
         $userRepository = $this->createMock(EntityRepository::class);
-        $userRepository->expects($this->once())
+        $userRepository->expects(self::once())
             ->method('findOneBy')
             ->with([], ['id' => 'ASC'])
             ->willReturn($user);
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects(self::once())
             ->method('getEntityRepository')
             ->with(User::class)
             ->willReturn($userRepository);
 
-        $this->assertSame($user, $this->guestShoppingListManager->getDefaultUser(null));
+        self::assertSame($user, $this->guestShoppingListManager->getDefaultUser(null));
     }
 
     /**
      * @dataProvider availableDataProvider
      */
-    public function testIsGuestShoppingListAvailable(string $tokenClass, bool $isFeatureEnabled, bool $expectedResult)
-    {
-        $this->tokenStorage->expects($this->once())
+    public function testIsGuestShoppingListAvailable(
+        string $tokenClass,
+        bool $isFeatureEnabled,
+        bool $expectedResult
+    ): void {
+        $this->tokenStorage->expects(self::once())
             ->method('getToken')
             ->willReturn($this->createMock($tokenClass));
 
-        $this->featureChecker->expects($this->any())
+        $this->featureChecker->expects(self::any())
             ->method('isFeatureEnabled')
             ->with('guest_shopping_list')
             ->willReturn($isFeatureEnabled);
 
-        $this->assertEquals($expectedResult, $this->guestShoppingListManager->isGuestShoppingListAvailable());
+        self::assertEquals($expectedResult, $this->guestShoppingListManager->isGuestShoppingListAvailable());
     }
 
     /**
@@ -130,31 +137,31 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         Website $currentWebsite,
         CustomerVisitorStub $customerVisitor,
         array $expectedShoppingList
-    ) {
+    ): void {
         $token = new AnonymousCustomerUserToken($customerVisitor, []);
 
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($currentWebsite);
 
-        $this->tokenStorage->expects($this->once())
+        $this->tokenStorage->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $em = $this->createMock(EntityManager::class);
-        $this->doctrineHelper->expects($this->any())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityManager')
             ->willReturn($em);
 
-        $this->assertEquals(
+        self::assertEquals(
             $expectedShoppingList,
             $this->guestShoppingListManager->getShoppingListsForCustomerVisitor()
         );
     }
 
-    public function testGetShoppingListForCustomerVisitorInValidToken()
+    public function testGetShoppingListForCustomerVisitorInValidToken(): void
     {
-        $this->tokenStorage->expects($this->once())
+        $this->tokenStorage->expects(self::once())
             ->method('getToken')
             ->willReturn($this->createMock(TokenInterface::class));
 
@@ -166,10 +173,10 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->guestShoppingListManager->getShoppingListForCustomerVisitor();
     }
 
-    public function testGetShoppingListForCustomerVisitorEmptyVisitor()
+    public function testGetShoppingListForCustomerVisitorEmptyVisitor(): void
     {
         $token = new AnonymousCustomerUserToken(new CustomerVisitor());
-        $this->tokenStorage->expects($this->once())
+        $this->tokenStorage->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
@@ -179,14 +186,14 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $this->guestShoppingListManager->getShoppingListForCustomerVisitor();
     }
 
-    public function testGetShoppingListForCustomerVisitorEmptyWebsite()
+    public function testGetShoppingListForCustomerVisitorEmptyWebsite(): void
     {
         $token = new AnonymousCustomerUserToken(new CustomerVisitor());
-        $this->tokenStorage->expects($this->once())
+        $this->tokenStorage->expects(self::once())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->websiteManager->expects($this->once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn(null);
 
@@ -202,18 +209,18 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             'not valid token' => [
                 'tokenClass' => TokenInterface::class,
                 'isFeatureEnabled' => true,
-                'expectedResult' => false,
+                'expectedResult' => false
             ],
             'feature disabled' => [
                 'tokenClass' => AnonymousCustomerUserToken::class,
                 'isFeatureEnabled' => false,
-                'expectedResult' => false,
+                'expectedResult' => false
             ],
             'valid token and enabled feature' => [
                 'tokenClass' => AnonymousCustomerUserToken::class,
                 'isFeatureEnabled' => true,
-                'expectedResult' => true,
-            ],
+                'expectedResult' => true
+            ]
         ];
     }
 
@@ -223,37 +230,13 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
 
         $organization = new Organization();
 
-        $website1 = $this->getEntity(Website::class, [
-            'id' => 1,
-            'organization' => $organization
-        ]);
-        $website2 = $this->getEntity(Website::class, [
-            'id' => 2,
-            'organization' => $organization
-        ]);
+        $website1 = $this->getWebsite(1, $organization);
+        $website2 = $this->getWebsite(2, $organization);
 
-        /** @var ShoppingList $shoppingList1 */
-        $shoppingList1 = $this->getEntity(ShoppingList::class, [
-            'id' => 25,
-            'website' => $website1,
-            'organization' => $organization
-        ]);
-        $expectedShoppingList1 = $this->getEntity(ShoppingList::class, [
-            'id' => 25,
-            'website' => $website1,
-            'organization' => $organization
-        ]);
-        /** @var ShoppingList $shoppingList2 */
-        $shoppingList2 = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'website' => $website2,
-            'organization' => $organization
-        ]);
-        $expectedShoppingList2 = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'website' => $website2,
-            'organization' => $organization
-        ]);
+        $shoppingList1 = $this->getShoppingList(25, $website1, $organization);
+        $expectedShoppingList1 = $this->getShoppingList(25, $website1, $organization);
+        $shoppingList2 = $this->getShoppingList(31, $website2, $organization);
+        $expectedShoppingList2 = $this->getShoppingList(31, $website2, $organization);
 
         $customerVisitorWithFewShoppingLists->addShoppingList($shoppingList1);
         $customerVisitorWithFewShoppingLists->addShoppingList($shoppingList2);
@@ -265,18 +248,18 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             'customer visitor has few shopping list' => [
                 'currentWebsite' => $website1,
                 'customerVisitor' => $customerVisitorWithFewShoppingLists,
-                'expectedShoppingList' => [$expectedShoppingList1->setCurrent(true)],
+                'expectedShoppingList' => [$expectedShoppingList1->setCurrent(true)]
             ],
             'customer visitor has one shopping list' => [
                 'currentWebsite' => $website2,
                 'customerVisitor' => $customerVisitorWithOneShoppingList,
-                'expectedShoppingList' => [$expectedShoppingList2->setCurrent(true)],
+                'expectedShoppingList' => [$expectedShoppingList2->setCurrent(true)]
             ],
             'customer visitor does not have shopping list' => [
                 'currentWebsiteId' => $website1,
                 'customerVisitor' => new CustomerVisitorStub(),
-                'expectedShoppingList' => [],
-            ],
+                'expectedShoppingList' => []
+            ]
         ];
     }
 
@@ -287,29 +270,29 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         Website $currentWebsite,
         CustomerVisitorStub $customerVisitor,
         ShoppingList $expectedShoppingList
-    ) {
+    ): void {
         $token = new AnonymousCustomerUserToken($customerVisitor);
 
-        $this->websiteManager->expects($this->atLeastOnce())
+        $this->websiteManager->expects(self::atLeastOnce())
             ->method('getCurrentWebsite')
             ->willReturn($currentWebsite);
 
-        $this->tokenStorage->expects($this->atLeastOnce())
+        $this->tokenStorage->expects(self::atLeastOnce())
             ->method('getToken')
             ->willReturn($token);
 
-        $this->translator->expects($this->any())
+        $this->translator->expects(self::any())
             ->method('trans')
             ->with('oro.shoppinglist.default.label')
             ->willReturn('Shopping List Label');
 
-        $em = $this->createMock(EntityManager::class);
-        $this->doctrineHelper->expects($this->any())
+        $em = $this->createMock(EntityManagerInterface::class);
+        $this->doctrineHelper->expects(self::any())
             ->method('getEntityManager')
             ->willReturn($em);
         $actual = $this->guestShoppingListManager->createAndGetShoppingListForCustomerVisitor();
 
-        $this->assertEquals($expectedShoppingList, $actual);
+        self::assertEquals($expectedShoppingList, $actual);
     }
 
     public function createGuestShoppingListDataProvider(): array
@@ -317,28 +300,15 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
         $customerVisitor = new CustomerVisitorStub();
 
         $organization = new Organization();
-        $website = $this->getEntity(Website::class, [
-            'id' => 1,
-            'organization' => $organization
-        ]);
+        $website = $this->getWebsite(1, $organization);
 
-        /** @var ShoppingList $shoppingList1 */
-        $shoppingList1 = $this->getEntity(ShoppingList::class, [
-            'id' => 25,
-            'website' => $website,
-            'organization' => $organization
-        ]);
-        $expectedShoppingList = $this->getEntity(ShoppingList::class, [
-            'id' => 25,
-            'website' => $website,
-            'organization' => $organization
-        ]);
-        /** @var ShoppingList $shoppingList2 */
-        $shoppingList2 = $this->getEntity(ShoppingList::class, [
-            'id' => 31,
-            'website' => $website,
-            'organization' => $organization
-        ]);
+        $shoppingList1 = $this->getShoppingList(25, $website, $organization);
+        $expectedShoppingList = $this->getShoppingList(25, $website, $organization);
+        $expectedShoppingList->setCurrent(true);
+        $shoppingList2 = $this->getShoppingList(31, $website, $organization);
+        $expectedShoppingList2 = $this->getShoppingList(null, $website, $organization);
+        $expectedShoppingList2->setCurrent(true);
+        $expectedShoppingList2->setLabel('Shopping List Label');
 
         $customerVisitor->addShoppingList($shoppingList1);
         $customerVisitor->addShoppingList($shoppingList2);
@@ -347,19 +317,13 @@ class GuestShoppingListManagerTest extends \PHPUnit\Framework\TestCase
             'shopping lists exist' => [
                 'currentWebsite' => $website,
                 'customerVisitor' => $customerVisitor,
-                'expectedShoppingList' => $expectedShoppingList->setCurrent(true),
+                'expectedShoppingList' => $expectedShoppingList
             ],
             'shopping list doesn\'t exist' => [
                 'currentWebsite' => $website,
                 'customerVisitor' => new CustomerVisitorStub(),
-                'expectedShoppingList' => $this->getEntity(ShoppingList::class, [
-                    'id' => null,
-                    'label' => 'Shopping List Label',
-                    'website' => $website,
-                    'current' => true,
-                    'organization' => $organization,
-                ]),
-            ],
+                'expectedShoppingList' => $expectedShoppingList2
+            ]
         ];
     }
 }
