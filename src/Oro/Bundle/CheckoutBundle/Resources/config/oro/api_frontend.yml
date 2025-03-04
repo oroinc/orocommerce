@@ -26,7 +26,6 @@ api:
         Oro\Bundle\CheckoutBundle\Entity\Checkout:
             documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout.md'
             disable_meta_properties: [ title ]
-            exclusion_policy: none
             fields:
                 createdAt:
                     form_options:
@@ -244,11 +243,16 @@ api:
                     exclude: true
                 priceType:
                     exclude: true
+                value:
+                    exclude: true
                 price:
-                    property_path: value
+                    data_type: money
+                    property_path: _
                     form_options:
                         mapped: false
                 currency:
+                    data_type: string
+                    property_path: _
                     form_options:
                         mapped: false
                 productUnitCode:
@@ -296,11 +300,16 @@ api:
             documentation_resource: '@OroCheckoutBundle/Resources/doc/api_frontend/checkout_product_kit_item_line_item.md'
             disable_meta_properties: [ title ]
             fields:
+                value:
+                    exclude: true
                 price:
-                    property_path: value
+                    data_type: money
+                    property_path: _
                     form_options:
                         mapped: false
                 currency:
+                    data_type: string
+                    property_path: _
                     form_options:
                         mapped: false
             actions:

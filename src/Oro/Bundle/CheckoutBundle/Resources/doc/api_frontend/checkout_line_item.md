@@ -22,6 +22,41 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "checkoutlineitems",
+    "attributes": {
+      "quantity": 10
+    },
+    "relationships": {
+      "checkout": {
+        "data": {
+          "type": "checkouts",
+          "id": "1"
+        }
+      },
+      "product": {
+        "data": {
+          "type": "products",
+          "id": "2"
+        }
+      },
+      "productUnit": {
+        "data": {
+          "type": "productunits",
+          "id": "item"
+        }
+      }
+    }
+  }
+}
+```
+{@/request}
+
 ### update
 
 Edit a specific checkout line item record.
@@ -29,6 +64,30 @@ Edit a specific checkout line item record.
 The updated record is returned in the response.
 
 {@inheritdoc}
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "checkoutlineitems",
+    "id": "1",
+    "attributes": {
+      "quantity": 10
+    },
+    "relationships": {
+      "productUnit": {
+        "data": {
+          "type": "productunits",
+          "id": "item"
+        }
+      }
+    }
+  }
+}
+```
+{@/request}
 
 ### delete
 
@@ -46,6 +105,8 @@ Delete a collection of checkout line item records.
 
 ### price
 
+Price for a product unit that is used in this checkout.
+
 #### create, update
 
 {@inheritdoc}
@@ -53,6 +114,8 @@ Delete a collection of checkout line item records.
 **The read-only field. A passed value will be ignored.**
 
 ### currency
+
+A currency for a product price.
 
 #### create, update
 

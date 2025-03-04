@@ -74,8 +74,8 @@ class LoadGuestCheckoutData extends AbstractLoadCheckoutData
                         ]
                     ],
                     [
-                        'product' => LoadProductKitData::PRODUCT_KIT_1,
-                        'kitItems' => ['product-kit-1-kit-item-0']
+                        'product' => LoadProductKitData::PRODUCT_KIT_2,
+                        'kitItems' => ['product-kit-2-kit-item-0']
                     ],
                     ['product' => LoadProductData::PRODUCT_4]
                 ],

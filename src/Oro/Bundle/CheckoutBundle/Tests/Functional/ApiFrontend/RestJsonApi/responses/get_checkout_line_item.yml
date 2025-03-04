@@ -5,8 +5,8 @@ data:
         productSku: product-1
         freeFormProduct: null
         quantity: 1
-        price: null
-        currency: null
+        price: '100.5000'
+        currency: USD
         comment: null
         priceFixed: false
         shippingMethod: null

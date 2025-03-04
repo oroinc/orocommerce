@@ -28,8 +28,94 @@ Example:
 ```JSON
 {
   "data": {
-    "type": "checkouts"
-  }
+    "type": "checkouts",
+    "attributes": {
+      "poNumber": "PO01"
+    },
+    "relationships": {
+      "lineItems": {
+        "data": [
+          {
+            "type": "checkoutlineitems",
+            "id": "line_item_1"
+          }
+        ]
+      },
+      "billingAddress": {
+        "data": {
+          "type": "checkoutaddresses",
+          "id": "billing_address"
+        }
+      },
+      "shippingAddress": {
+        "data": {
+          "type": "checkoutaddresses",
+          "id": "shipping_address"
+        }
+      }
+    }
+  },
+  "included": [
+    {
+      "type": "checkoutlineitems",
+      "id": "line_item_1",
+      "attributes": {
+        "quantity": 1
+      },
+      "relationships": {
+        "product": {
+          "data": {
+            "type": "products",
+            "id": "45"
+          }
+        },
+        "productUnit": {
+          "data": {
+            "type": "productunits",
+            "id": "set"
+          }
+        }
+      }
+    },
+    {
+      "type": "checkoutaddresses",
+      "id": "billing_address",
+      "relationships": {
+        "customerUserAddress": {
+          "data": {
+            "type": "customeruseraddresses",
+            "id": "1"
+          }
+        }
+      }
+    },
+    {
+      "type": "checkoutaddresses",
+      "id": "shipping_address",
+      "attributes": {
+        "label": "Primary address",
+        "street": "801 Scenic Hwy",
+        "city": "Haines City",
+        "postalCode": "33844",
+        "firstName": "Amanda",
+        "lastName": "Cole"
+      },
+      "relationships": {
+        "country": {
+          "data": {
+            "type": "countries",
+            "id": "US"
+          }
+        },
+        "region": {
+          "data": {
+            "type": "regions",
+            "id": "US-FL"
+          }
+        }
+      }
+    }
+  ]
 }
 ```
 {@/request}

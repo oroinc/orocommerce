@@ -88,7 +88,6 @@ class CheckoutProductKitItemForBuyerTest extends FrontendRestJsonApiTestCase
 
     public function testCreate(): void
     {
-        $this->markTestSkipped('BB-25046');
         $data = $this->getRequestData(
             '../../ApiFrontend/RestJsonApi/requests/create_checkout_kit_item_line_item_min.yml'
         );

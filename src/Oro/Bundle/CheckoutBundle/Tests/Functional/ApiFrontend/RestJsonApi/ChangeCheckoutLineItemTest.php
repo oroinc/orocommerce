@@ -2,14 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCheckoutData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -38,25 +35,13 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
         return $checksum;
     }
 
-    private function assertCheckoutTotal(
-        Checkout $checkout,
-        float $total,
-        string $currency
-    ): void {
-        /** @var ShoppingListTotal[] $totals */
-        $totals = $this->getEntityManager()
-            ->getRepository(CheckoutSubtotal::class)
-            ->findBy(['checkout' => $checkout]);
-        self::assertCount(1, $totals);
-        $totalEntity = $totals[0];
-        self::assertEquals($total, $totalEntity->getSubtotal()->getAmount());
-        self::assertEquals($currency, $totalEntity->getCurrency());
-    }
-
     public function testCreateWithRequiredDataOnly(): void
     {
         $data = $this->getRequestData('create_checkout_line_item_min.yml');
-        $response = $this->post(['entity' => 'checkoutlineitems'], $data);
+        $response = $this->post(
+            ['entity' => 'checkoutlineitems'],
+            array_merge(['filters' => 'include=checkout&fields[checkouts]=totalValue,totals'], $data)
+        );
 
         $lineItemId = $this->getResourceId($response);
         /** @var CheckoutLineItem $lineItem */
@@ -64,7 +49,27 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
         $expectedChecksum = $this->generateLineItemChecksum($lineItem);
         $expectedData = $data;
         $expectedData['data']['id'] = $lineItemId;
+        $expectedData['data']['attributes']['priceFixed'] = false;
+        $expectedData['data']['attributes']['price'] = '100.5000';
+        $expectedData['data']['attributes']['currency'] = 'USD';
+        $expectedData['data']['attributes']['shippingMethod'] = null;
+        $expectedData['data']['attributes']['shippingMethodType'] = null;
+        $expectedData['data']['attributes']['shippingEstimateAmount'] = null;
         $expectedData['data']['attributes']['checksum'] = $expectedChecksum;
+        $expectedData['data']['relationships']['group']['data'] = null;
+        $expectedData['included'] = [
+            [
+                'type' => 'checkouts',
+                'id' => '<toString(@checkout.open->id)>',
+                'attributes' => [
+                    'totalValue' => '111.4000',
+                    'totals' => [
+                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '121.4000'],
+                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-10.0000']
+                    ]
+                ]
+            ]
+        ];
         $this->assertResponseContains($expectedData, $response);
         self::assertEquals($expectedChecksum, $lineItem->getChecksum());
     }
@@ -107,6 +112,8 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
         $lineItem = $this->getEntityManager()->find(CheckoutLineItem::class, $lineItemId);
         $expectedChecksum = $this->generateLineItemChecksum($lineItem);
         $expectedData = $data;
+        $expectedData['data']['attributes']['price'] = '100.5000';
+        $expectedData['data']['attributes']['currency'] = 'USD';
         $expectedData['data']['attributes']['checksum'] = $expectedChecksum;
         $expectedData['included'][] = [
             'type' => 'checkouts',
@@ -121,7 +128,6 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
         ];
         $this->assertResponseContains($expectedData, $response);
         self::assertSame(5.0, $lineItem->getQuantity());
-        $this->assertCheckoutTotal($lineItem->getCheckout(), 736.49, 'USD');
         self::assertEquals($expectedChecksum, $lineItem->getChecksum());
     }
 
@@ -160,7 +166,6 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
         ];
         $this->assertResponseContains($expectedData, $response);
         self::assertSame(5.0, $lineItem->getQuantity());
-        $this->assertCheckoutTotal($lineItem->getCheckout(), 736.49, 'USD');
         self::assertEquals($expectedChecksum, $lineItem->getChecksum());
     }
 
@@ -242,10 +247,10 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
             'type' => 'checkouts',
             'id' => '<toString(@checkout.in_progress->id)>',
             'attributes' => [
-                'totalValue' => '288.7900',
+                'totalValue' => '198.3400',
                 'totals' => [
-                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '331.9900'],
-                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-43.2000']
+                    ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '231.4900'],
+                    ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-33.1500']
                 ]
             ]
         ];
@@ -253,9 +258,8 @@ class ChangeCheckoutLineItemTest extends FrontendRestJsonApiTestCase
 
         /** @var CheckoutLineItem $lineItem */
         $lineItem = $this->getEntityManager()->find(CheckoutLineItem::class, $lineItemId);
-        self::assertEquals(100.5, $lineItem->getValue());
-        self::assertEquals('USD', $lineItem->getCurrency());
-        $this->assertCheckoutTotal($lineItem->getCheckout(), 334.49, 'USD');
+        self::assertNull($lineItem->getValue());
+        self::assertNull($lineItem->getCurrency());
     }
 
     public function testDelete(): void

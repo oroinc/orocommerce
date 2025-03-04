@@ -206,4 +206,17 @@ class LineItemSubtotalProviderTest extends \PHPUnit\Framework\TestCase
 
         self::assertEquals(21.00, $this->provider->getRowTotal($lineItem, 'USD'));
     }
+
+    public function testGetRowTotalWhenPriceValueIsNull(): void
+    {
+        $lineItem = new LineItemStub();
+        $lineItem->setPrice(Price::create(null, 'USD'));
+        $lineItem->setQuantity(2);
+        $this->roundingService->expects(self::once())
+            ->method('round')
+            ->with(0.0)
+            ->willReturn(0.0);
+
+        self::assertSame(0.0, $this->provider->getRowTotal($lineItem, 'USD'));
+    }
 }

@@ -2,13 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem;
-use Oro\Bundle\CheckoutBundle\Entity\CheckoutSubtotal;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadCheckoutData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\ApiFrontend\FrontendRestJsonApiTestCase;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -27,34 +24,27 @@ class ChangeCheckoutProductKitItemTest extends FrontendRestJsonApiTestCase
         ]);
     }
 
-    private function assertCheckoutTotal(
-        Checkout $checkout,
-        float $total,
-        string $currency
-    ): void {
-        /** @var ShoppingListTotal[] $totals */
-        $totals = $this->getEntityManager()
-            ->getRepository(CheckoutSubtotal::class)
-            ->findBy(['checkout' => $checkout]);
-        self::assertCount(1, $totals);
-        $totalEntity = $totals[0];
-        self::assertEquals($total, $totalEntity->getSubtotal()->getAmount());
-        self::assertEquals($currency, $totalEntity->getCurrency());
-    }
-
     public function testCreateWithRequiredDataOnly(): void
     {
-        $this->markTestSkipped('BB-25046');
         $data = $this->getRequestData('create_checkout_kit_item_line_item_min.yml');
-        $response = $this->post(['entity' => 'checkoutproductkititemlineitems'], $data);
-
-        $kitItemId = $this->getResourceId($response);
+        $response = $this->post(
+            ['entity' => 'checkoutproductkititemlineitems'],
+            array_merge(['filters' => 'include=lineItem.checkout&fields[checkouts]=totalValue,totals'], $data)
+        );
         $expectedData = $data;
-        $expectedData['data']['id'] = $kitItemId;
-        $expectedData['data']['attributes']['sortOrder'] = 0;
-        $expectedData['data']['attributes']['price'] = null;
-        $expectedData['data']['attributes']['currency'] = null;
-        $expectedData['data']['attributes']['priceFixed'] = false;
+        $expectedData['included'] = [
+            [
+                'type' => 'checkouts',
+                'id' => '<toString(@checkout.in_progress->id)>',
+                'attributes' => [
+                    'totalValue' => '300.1200',
+                    'totals' => [
+                        ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '344.5800'],
+                        ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-44.4600']
+                    ]
+                ]
+            ]
+        ];
         $this->assertResponseContains($expectedData, $response);
     }
 
@@ -91,7 +81,6 @@ class ChangeCheckoutProductKitItemTest extends FrontendRestJsonApiTestCase
         ];
         $this->assertResponseContains($expectedData, $response);
         self::assertSame(2.0, $kitItem->getQuantity());
-        $this->assertCheckoutTotal($kitItem->getLineItem()->getCheckout(), 450.39, 'USD');
     }
 
     public function testUpdateFromAnotherCustomerUser(): void
@@ -127,7 +116,6 @@ class ChangeCheckoutProductKitItemTest extends FrontendRestJsonApiTestCase
         ];
         $this->assertResponseContains($expectedData, $response);
         self::assertSame(2.0, $kitItem->getQuantity());
-        $this->assertCheckoutTotal($kitItem->getLineItem()->getCheckout(), 450.39, 'USD');
     }
 
     public function testTryToUpdateFromAnotherDepartment(): void

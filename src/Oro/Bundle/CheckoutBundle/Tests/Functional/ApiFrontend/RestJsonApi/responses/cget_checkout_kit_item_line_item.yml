@@ -5,8 +5,8 @@ data:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: null
-            currency: null
+            price: '115.9000'
+            currency: USD
             priceFixed: false
         relationships:
             lineItem:
@@ -31,8 +31,8 @@ data:
         attributes:
             quantity: 1
             sortOrder: 2
-            price: null
-            currency: null
+            price: '12.5900'
+            currency: USD
             priceFixed: false
         relationships:
             lineItem:
@@ -57,8 +57,8 @@ data:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             priceFixed: false
         relationships:
             lineItem:
@@ -83,8 +83,8 @@ data:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: null
-            currency: null
+            price: '115.9000'
+            currency: USD
             priceFixed: false
         relationships:
             lineItem:
@@ -109,8 +109,8 @@ data:
         attributes:
             quantity: 1
             sortOrder: 2
-            price: null
-            currency: null
+            price: '12.5900'
+            currency: USD
             priceFixed: false
         relationships:
             lineItem:
@@ -135,8 +135,8 @@ data:
         attributes:
             quantity: 1
             sortOrder: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             priceFixed: false
         relationships:
             lineItem:

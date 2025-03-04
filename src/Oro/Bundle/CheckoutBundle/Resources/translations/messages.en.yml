@@ -185,31 +185,31 @@ oro:
             id.label: ID
             line_item:
                 label: Checkout Line Item
-                description: The related checkout line item
+                description: The related checkout line item.
             kit_item:
                 label: Product Kit Item
-                description: The related product kit item
+                description: The related product kit item.
             product:
                 label: Product
-                description: The kit item product to be purchased
+                description: The kit item product to be purchased.
             quantity:
                 label: Quantity
-                description: The quantity of product kit item units to be purchased
+                description: The quantity of product kit item units to be purchased.
                 aria_label: Product Kit Item Quantity
             product_unit:
                 label: Unit of Quantity
-                description: The unit of quantity of the kit item product to be purchased in
+                description: The unit of quantity of the kit item product to be purchased in.
             sort_order:
                 label: Sort Order
-                description: Used to sort kit item line item products when displaying
+                description: Used to sort kit item line item products when displaying.
             price:
                 label: Price
             value:
                 label: Price Value
-                description: Price for a product kit item line item product unit
+                description: Price for a product kit item line item product unit.
             currency:
                 label: Price Currency
-                description: A currency for a product kit item line item price
+                description: A currency for a product kit item line item price.
             price_fixed:
                 label: Contain Fixed Price
                 description: Indicates whether a product price is fixed.

@@ -4,8 +4,8 @@ data:
     attributes:
         quantity: 1
         priceFixed: false
-        price: null
-        currency: null
+        price: '115.9000'
+        currency: USD
         sortOrder: 1
     relationships:
         lineItem:

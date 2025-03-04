@@ -22,6 +22,48 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "checkoutproductkititemlineitems",
+    "attributes": {
+      "quantity": 3,
+      "sortOrder": 1
+    },
+    "relationships": {
+      "lineItem": {
+        "data": {
+          "type": "checkoutlineitems",
+          "id": "1"
+        }
+      },
+      "kitItem": {
+        "data": {
+          "type": "productkititems",
+          "id": "2"
+        }
+      },
+      "product": {
+        "data": {
+          "type": "products",
+          "id": "3"
+        }
+      },
+      "productUnit": {
+        "data": {
+          "type": "productunits",
+          "id": "item"
+        }
+      }
+    }
+  }
+}
+```
+{@/request}
+
 ### update
 
 Edit a specific checkout product kit item line item record.
@@ -29,6 +71,30 @@ Edit a specific checkout product kit item line item record.
 The updated record is returned in the response.
 
 {@inheritdoc}
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "checkoutproductkititemlineitems",
+    "id": "1",
+    "attributes": {
+      "quantity": 3
+    },
+    "relationships": {
+      "productUnit": {
+        "data": {
+          "type": "productunits",
+          "id": "item"
+        }
+      }
+    }
+  }
+}
+```
+{@/request}
 
 ### delete
 
@@ -46,6 +112,8 @@ Delete a collection of checkout product kit item line item records.
 
 ### price
 
+Price for a product kit item line item product unit.
+
 #### create, update
 
 {@inheritdoc}
@@ -53,6 +121,8 @@ Delete a collection of checkout product kit item line item records.
 **The read-only field. A passed value will be ignored.**
 
 ### currency
+
+A currency for a product kit item line item price.
 
 #### create, update
 

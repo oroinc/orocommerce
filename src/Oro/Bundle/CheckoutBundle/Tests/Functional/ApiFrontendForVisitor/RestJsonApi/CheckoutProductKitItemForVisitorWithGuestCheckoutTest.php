@@ -149,7 +149,6 @@ class CheckoutProductKitItemForVisitorWithGuestCheckoutTest extends FrontendRest
 
     public function testCreate(): void
     {
-        $this->markTestSkipped('BB-25046');
         $data = [
             'data' => [
                 'type' => 'checkoutproductkititemlineitems',
@@ -160,19 +159,19 @@ class CheckoutProductKitItemForVisitorWithGuestCheckoutTest extends FrontendRest
                     'lineItem' => [
                         'data' => [
                             'type' => 'checkoutlineitems',
-                            'id' => '<toString(@checkout.in_progress.line_item.2->id)>'
+                            'id' => '<toString(@checkout.in_progress.line_item.3->id)>'
                         ]
                     ],
                     'kitItem' => [
                         'data' => [
                             'type' => 'productkititems',
-                            'id' => '<toString(@product-kit-3-kit-item-0->id)>'
+                            'id' => '<toString(@product-kit-2-kit-item-1->id)>'
                         ]
                     ],
                     'product' => [
                         'data' => [
                             'type' => 'products',
-                            'id' => '<toString(@product-1->id)>'
+                            'id' => '<toString(@product-3->id)>'
                         ]
                     ],
                     'productUnit' => [
@@ -190,7 +189,6 @@ class CheckoutProductKitItemForVisitorWithGuestCheckoutTest extends FrontendRest
 
     public function testTryToCreateForUnaccessibleCheckout(): void
     {
-        $this->markTestSkipped('BB-25046');
         $response = $this->post(
             ['entity' => 'checkoutproductkititemlineitems'],
             [
@@ -203,19 +201,19 @@ class CheckoutProductKitItemForVisitorWithGuestCheckoutTest extends FrontendRest
                         'lineItem' => [
                             'data' => [
                                 'type' => 'checkoutlineitems',
-                                'id' => '<toString(@checkout.unaccessible.line_item.2->id)>'
+                                'id' => '<toString(@checkout.unaccessible.line_item.3->id)>'
                             ]
                         ],
                         'kitItem' => [
                             'data' => [
                                 'type' => 'productkititems',
-                                'id' => '<toString(@product-kit-3-kit-item-0->id)>'
+                                'id' => '<toString(@product-kit-2-kit-item-1->id)>'
                             ]
                         ],
                         'product' => [
                             'data' => [
                                 'type' => 'products',
-                                'id' => '<toString(@product-1->id)>'
+                                'id' => '<toString(@product-3->id)>'
                             ]
                         ],
                         'productUnit' => [

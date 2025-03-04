@@ -6,15 +6,15 @@ data:
         lineItem:
             data:
                 type: checkoutlineitems
-                id: '<toString(@checkout.in_progress.line_item.2->id)>'
+                id: '<toString(@checkout.in_progress.line_item.3->id)>'
         kitItem:
             data:
                 type: productkititems
-                id: '<toString(@product-kit-3-kit-item-0->id)>'
+                id: '<toString(@product-kit-2-kit-item-1->id)>'
         product:
             data:
                 type: products
-                id: '<toString(@product-1->id)>'
+                id: '<toString(@product-3->id)>'
         productUnit:
             data:
                 type: productunits

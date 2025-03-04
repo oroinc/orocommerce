@@ -45,13 +45,13 @@ Example:
       "product": {
         "data": {
           "type": "products",
-          "id": "23"
+          "id": "2"
         }
       },
       "unit": {
         "data": {
           "type": "productunits",
-          "id": "piece"
+          "id": "item"
         }
       }
     }
@@ -83,7 +83,7 @@ Example:
       "unit": {
         "data": {
           "type": "productunits",
-          "id": "piece"
+          "id": "item"
         }
       }
     }

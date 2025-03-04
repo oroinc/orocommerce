@@ -6,8 +6,8 @@ data:
             productSku: product-1
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -72,8 +72,8 @@ data:
             productSku: product-2
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '20.9000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -105,8 +105,8 @@ data:
             productSku: product-1
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -138,8 +138,8 @@ data:
             productSku: product-kit-3
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '130.9900'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -177,10 +177,12 @@ data:
             productSku: product-kit-2
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             comment: null
             priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
             shippingEstimateAmount: null
         relationships:
             checkout:
@@ -211,8 +213,8 @@ data:
             productSku: product-1
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -244,8 +246,8 @@ data:
             productSku: product-kit-3
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '130.9900'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -274,5 +276,74 @@ data:
                     -
                         type: checkoutproductkititemlineitems
                         id: '<toString(@checkout.another_customer_user.line_item.2.kit_item.2->id)>'
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.completed.line_item.1->id)>'
+        attributes:
+            productSku: product-1
+            freeFormProduct: null
+            quantity: 1
+            price: '100.5000'
+            currency: USD
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.completed->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data: []
+            group:
+                data: null
+    -
+        type: checkoutlineitems
+        id: '<toString(@checkout.completed.line_item.2->id)>'
+        attributes:
+            productSku: product-kit-3
+            freeFormProduct: null
+            quantity: 1
+            price: '115.9000'
+            currency: USD
+            comment: null
+            priceFixed: false
+            shippingMethod: null
+            shippingMethodType: null
+            shippingEstimateAmount: null
+        relationships:
+            checkout:
+                data:
+                    type: checkouts
+                    id: '<toString(@checkout.completed->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-kit-3->id)>'
+            parentProduct:
+                data: null
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.milliliter->code)>'
+            kitItemLineItems:
+                data:
+                    -
+                        type: checkoutproductkititemlineitems
+                        id: '<toString(@checkout.completed.line_item.2.kit_item.1->id)>'
             group:
                 data: null

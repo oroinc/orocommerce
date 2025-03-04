@@ -41,7 +41,7 @@ included:
         attributes:
             label: Address
             street: Street
-            city: Los Angeles
+            city: 'Los Angeles'
             postalCode: '90001'
             organization: Acme
             firstName: John
@@ -62,7 +62,7 @@ included:
         attributes:
             label: Address
             street: Street
-            city: Los Angeles
+            city: 'Los Angeles'
             postalCode: '90001'
             organization: Acme
             firstName: John

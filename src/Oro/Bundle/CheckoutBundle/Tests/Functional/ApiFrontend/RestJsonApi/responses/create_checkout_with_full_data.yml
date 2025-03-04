@@ -2,15 +2,17 @@ data:
     type: checkouts
     id: 'new'
     attributes:
-        poNumber: PO001
+        poNumber: 'PO001'
+        shippingType: checkout
         shippingMethod: '@checkout.completed->shippingMethod'
         shippingMethodType: primary
+        shippingEstimateAmount: '10.0000'
         paymentMethod: '@checkout.completed->paymentMethod'
         shipUntil: '2050-01-11'
+        shipToBillingAddress: false
         customerNotes: 'Customer notes'
         currency: USD
         completed: false
-        shipToBillingAddress: false
         totalValue: '100.5000'
         totals:
             -
@@ -59,7 +61,6 @@ included:
         meta:
             includeId: billing_address
         attributes:
-            phone: 123-456
             label: Address
             street: Street
             street2: null
@@ -72,6 +73,7 @@ included:
             middleName: null
             lastName: Doe
             nameSuffix: null
+            phone: 123-456
         relationships:
             customerAddress:
                 data: null
@@ -91,7 +93,6 @@ included:
         meta:
             includeId: shipping_address
         attributes:
-            phone: 123-456
             label: Address
             street: Street
             street2: null
@@ -104,6 +105,7 @@ included:
             middleName: null
             lastName: Doe
             nameSuffix: null
+            phone: 123-456
         relationships:
             customerAddress:
                 data: null
@@ -123,13 +125,13 @@ included:
         meta:
             includeId: lineitem1
         attributes:
-            productSku: product-1
+            productSku: 'product-1'
             freeFormProduct: null
             quantity: 1
+            priceFixed: false
             price: '100.5000'
             currency: USD
             comment: null
-            priceFixed: false
             shippingEstimateAmount: null
         relationships:
             checkout:

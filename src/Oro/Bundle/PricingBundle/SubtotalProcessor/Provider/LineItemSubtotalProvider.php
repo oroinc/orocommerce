@@ -93,11 +93,10 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
     protected function getRecalculatedSubtotalAmount($entity)
     {
         $subtotalAmount = BigDecimal::of(0);
-        $baseCurrency   = $this->getBaseCurrency($entity);
+        $baseCurrency = $this->getBaseCurrency($entity);
         foreach ($entity->getLineItems() as $lineItem) {
             if ($lineItem instanceof PriceAwareInterface && $lineItem->getPrice() instanceof Price) {
-                $rowTotal = $this->getRowTotal($lineItem, $baseCurrency);
-                $subtotalAmount = $subtotalAmount->plus($rowTotal);
+                $subtotalAmount = $subtotalAmount->plus($this->getRowTotal($lineItem, $baseCurrency));
             }
         }
 
@@ -115,7 +114,7 @@ class LineItemSubtotalProvider extends AbstractSubtotalProvider implements
             return 0;
         }
 
-        $rowTotal = $lineItem->getPrice()->getValue();
+        $rowTotal = $lineItem->getPrice()->getValue() ?? 0.0;
         $rowCurrency = $lineItem->getPrice()->getCurrency();
 
         if ($lineItem instanceof QuantityAwareInterface) {

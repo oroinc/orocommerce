@@ -47,6 +47,56 @@ class CheckoutTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_checkout.yml', $response);
     }
 
+    public function testGetWithTotalsOnly(): void
+    {
+        $response = $this->get(
+            ['entity' => 'checkouts', 'id' => '<toString(@checkout.completed->id)>'],
+            ['fields[checkouts]' => 'totalValue,totals']
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'checkouts',
+                    'id' => '<toString(@checkout.completed->id)>',
+                    'attributes' => [
+                        'totalValue' => '90.4500',
+                        'totals' => [
+                            ['subtotalType' => 'subtotal', 'description' => 'Subtotal', 'amount' => '100.5000'],
+                            ['subtotalType' => 'discount', 'description' => 'Discount', 'amount' => '-20.0500'],
+                            ['subtotalType' => 'shipping_cost', 'description' => 'Shipping', 'amount' => '10.0000']
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetWithCouponsOnly(): void
+    {
+        $response = $this->get(
+            ['entity' => 'checkouts', 'id' => '<toString(@checkout.completed->id)>'],
+            ['fields[checkouts]' => 'coupons']
+        );
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'checkouts',
+                    'id' => '<toString(@checkout.completed->id)>',
+                    'attributes' => [
+                        'coupons' => [
+                            [
+                                'couponCode' => 'coupon_with_promo_and_valid_from_and_until',
+                                'description' => 'Order percent promotion name'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testGetFromAnotherCustomerUser(): void
     {
         $response = $this->get(['entity' => 'checkouts', 'id' => '<toString(@checkout.another_customer_user->id)>']);

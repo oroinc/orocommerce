@@ -82,7 +82,13 @@ class ComputeCheckoutTotals implements ProcessorInterface
         $allTotals = [];
         /** @var Checkout[] $checkouts */
         $checkouts = $this->doctrineHelper->createQueryBuilder(Checkout::class, 'c')
-            ->andWhere('c.id IN (:ids)')
+            ->select('c, li, p, kli, klik, klip')
+            ->leftJoin('c.lineItems', 'li')
+            ->leftJoin('li.product', 'p')
+            ->leftJoin('li.kitItemLineItems', 'kli')
+            ->leftJoin('kli.kitItem', 'klik')
+            ->leftJoin('kli.product', 'klip')
+            ->where('c.id IN (:ids)')
             ->setParameter('ids', $checkoutIds)
             ->getQuery()
             ->setHint(Query::HINT_REFRESH, true)

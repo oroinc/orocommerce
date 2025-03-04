@@ -61,7 +61,11 @@ class ComputeCheckoutCoupons implements ProcessorInterface
     {
         /** @var Checkout[] $checkouts */
         $checkouts = $this->doctrineHelper->createQueryBuilder(Checkout::class, 'c')
-            ->andWhere('c.id IN (:ids)')
+            ->select('c, ac, li, p')
+            ->leftJoin('c.appliedCoupons', 'ac')
+            ->leftJoin('c.lineItems', 'li')
+            ->leftJoin('li.product', 'p')
+            ->where('c.id IN (:ids)')
             ->setParameter('ids', array_keys($dataMap))
             ->getQuery()
             ->setHint(Query::HINT_REFRESH, true)

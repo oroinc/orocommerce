@@ -36,7 +36,7 @@ Example:
       "lineItem": {
         "data": {
           "type": "shoppinglistitems",
-          "id": "27"
+          "id": "1"
         }
       },
       "kitItem": {
@@ -48,7 +48,7 @@ Example:
       "product": {
         "data": {
           "type": "products",
-          "id": "8"
+          "id": "3"
         }
       },
       "unit": {
@@ -78,32 +78,11 @@ Example:
 {
   "data": {
     "type": "shoppinglistkititems",
-    "id": "7",
+    "id": "1",
     "attributes": {
-      "quantity": 3,
-      "sortOrder": 1,
-      "currency": "USD",
-      "value": "13.59"
+      "quantity": 3
     },
     "relationships": {
-      "lineItem": {
-        "data": {
-          "type": "shoppinglistitems",
-          "id": "27"
-        }
-      },
-      "kitItem": {
-        "data": {
-          "type": "productkititems",
-          "id": "2"
-        }
-      },
-      "product": {
-        "data": {
-          "type": "products",
-          "id": "8"
-        }
-      },
       "unit": {
         "data": {
           "type": "productunits",

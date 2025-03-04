@@ -279,6 +279,26 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout }
 
+    oro_checkout.api.compute_shopping_list_line_item_price:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutLineItemPrice
+        arguments:
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_api.value_transformer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
+
+    oro_checkout.api.compute_shopping_list_product_kit_item_line_item_price:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutProductKitItemLineItemPrice
+        arguments:
+            - '@oro_pricing.provider.product_line_item_price'
+            - '@oro_pricing.model.product_price_scope_criteria_factory'
+            - '@oro_api.value_transformer'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: customize_loaded_data, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem }
+
     oro_checkout.api.compute_checkout_line_item_shipping_method:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\ComputeCheckoutShippingMethod
         arguments:
@@ -399,12 +419,6 @@ services:
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -100 }
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: -100 }
             - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: -100 }
-
-    oro_checkout.api.update_price_by_value_and_currency:
-        class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
-        tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem }
-            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem }
 
     oro_checkout.api.set_checkout_line_item_checksum:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\SetCheckoutLineItemChecksum
@@ -552,19 +566,3 @@ services:
             - 'Use API resource to create or update a checkout. A checkout address can be created only together with a checkout.'
         tags:
             - { name: oro.api.processor, action: create, group: resource_check, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Api\Model\CheckoutAddress, mainRequest: true, priority: 3 }
-
-    oro_checkout.api.fill_checkout_line_item_price:
-        class: Oro\Bundle\CheckoutBundle\Api\Processor\FillCheckoutLineItemPrice
-        arguments:
-            - '@oro_pricing.provider.product_line_item_price'
-            - '@oro_pricing.model.product_price_scope_criteria_factory'
-        tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem, priority: -20 }
-
-    oro_checkout.api.fill_checkout_product_kit_item_line_item_price:
-        class: Oro\Bundle\CheckoutBundle\Api\Processor\FillCheckoutProductKitItemLineItemPrice
-        arguments:
-            - '@oro_pricing.provider.product_line_item_price'
-            - '@oro_pricing.model.product_price_scope_criteria_factory'
-        tags:
-            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\CheckoutProductKitItemLineItem, priority: -20 }

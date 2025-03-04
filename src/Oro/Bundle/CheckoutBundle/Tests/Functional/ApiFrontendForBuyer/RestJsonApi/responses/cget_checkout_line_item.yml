@@ -6,8 +6,8 @@ data:
             productSku: product-1
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -72,8 +72,8 @@ data:
             productSku: product-2
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '20.9000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -105,8 +105,8 @@ data:
             productSku: product-1
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -138,8 +138,8 @@ data:
             productSku: product-kit-3
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '130.9900'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
@@ -177,8 +177,8 @@ data:
             productSku: product-kit-2
             freeFormProduct: null
             quantity: 1
-            price: null
-            currency: null
+            price: '100.5000'
+            currency: USD
             comment: null
             priceFixed: false
             shippingMethod: null
