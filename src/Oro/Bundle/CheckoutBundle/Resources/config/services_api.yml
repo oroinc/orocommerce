@@ -381,6 +381,14 @@ services:
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 20 }
 
+    oro_checkout.api.set_currency_to_checkout:
+        class: Oro\Bundle\CurrencyBundle\Api\Processor\SetCurrency
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_locale.settings'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: 15 }
+
     oro_checkout.api.set_customer_to_checkout:
         class: Oro\Bundle\CustomerBundle\Api\Processor\SetCustomer
         arguments:

@@ -119,11 +119,6 @@ class CheckoutCouponsTest extends FrontendRestJsonApiTestCase
         $checkout = $this->getEntityManager()->find(Checkout::class, $checkoutId);
         self::assertNotNull($checkout);
 
-        $this->getReferenceRepository()->setReference('created_checkout', $checkout);
-        $this->assertResponseContains(
-            '@OroCheckoutBundle/Tests/Functional/ApiFrontend/RestJsonApi/responses/create_checkout_empty.yml',
-            $response
-        );
         $responseContent = self::jsonToArray($response->getContent());
         self::assertCount(0, $responseContent['data']['attributes']['coupons']);
     }

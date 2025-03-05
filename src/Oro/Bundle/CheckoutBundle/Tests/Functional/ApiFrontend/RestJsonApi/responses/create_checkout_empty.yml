@@ -4,19 +4,23 @@ data:
     attributes:
         poNumber: null
         shippingType: checkout
-        shippingMethod: null
-        shippingMethodType: null
-        shippingEstimateAmount: null
+        shippingMethod: '@checkout.completed->shippingMethod'
+        shippingMethodType: primary
+        shippingEstimateAmount: '10.0000'
         paymentMethod: null
         shipUntil: null
         shipToBillingAddress: false
         customerNotes: null
-        currency: null
+        currency: USD
         completed: false
         createdAt: '@created_checkout->createdAt->format("Y-m-d\TH:i:s\Z")'
         updatedAt: '@created_checkout->updatedAt->format("Y-m-d\TH:i:s\Z")'
-        totalValue: null
-        totals: []
+        totalValue: '10.0000'
+        totals:
+            -
+                subtotalType: shipping_cost
+                description: Shipping
+                amount: '10.0000'
         coupons: []
     relationships:
         lineItems:

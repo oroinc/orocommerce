@@ -24,6 +24,18 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
                     - checkout_validity
                     - checkout_order_create_checks
     properties:
+        poNumber:
+            -   Length:
+                    max: 255
+                    groups:
+                        - checkout_validity
+        currency:
+            -   NotBlank:
+                    groups:
+                        - checkout_validity
+            -   Currency:
+                    groups:
+                        - checkout_validity
         shippingAddress:
             -   Oro\Bundle\CheckoutBundle\Validator\Constraints\NotEmptyShippingAddress:
                     message: oro.checkout.workflow.condition.invalid_shipping_address.message
