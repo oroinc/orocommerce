@@ -54,7 +54,7 @@ Feature: Order promotions
 
   Scenario: Add coupon if line items changed
     Given I fill "Order Form" with:
-      | Product | Product1 |
+      | Product | Product2 |
       | Price   | 30       |
     Given I click "Add Coupon Code"
     And type "orderLineItemCoupon" in "Coupon Code"

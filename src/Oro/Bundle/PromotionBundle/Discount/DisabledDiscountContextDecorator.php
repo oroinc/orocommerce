@@ -61,9 +61,11 @@ class DisabledDiscountContextDecorator implements DiscountContextInterface
      */
     public function getLineItems(): array
     {
-        $lineItems = [];
-        foreach ($this->context->getLineItems() as $lineItem) {
-            $lineItems[] = new DisabledDiscountLineItemDecorator($lineItem);
+        $lineItems = $this->context->getLineItems();
+        foreach ($lineItems as $key => $lineItem) {
+            if (!$lineItem instanceof DisabledDiscountLineItemDecorator) {
+                $lineItems[$key] = new DisabledDiscountLineItemDecorator($lineItem);
+            }
         }
 
         return $lineItems;

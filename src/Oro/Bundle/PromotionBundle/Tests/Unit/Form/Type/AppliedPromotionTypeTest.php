@@ -13,6 +13,7 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create(AppliedPromotionType::class);
 
         $this->assertTrue($form->has('active'));
+        $this->assertTrue($form->has('removed'));
         $this->assertTrue($form->has('sourcePromotionId'));
     }
 
@@ -43,6 +44,16 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
                 'expectedData' => (new AppliedPromotion())
                     ->setActive(true),
             ],
+            'new data with removed' => [
+                'defaultData' => new AppliedPromotion(),
+                'submittedData' => [
+                    'active' => '1',
+                    'removed' => '1',
+                ],
+                'expectedData' => (new AppliedPromotion())
+                    ->setActive(true)
+                    ->setRemoved(true),
+            ],
             'update data' => [
                 'defaultData' => (new AppliedPromotion())
                     ->setActive(true),
@@ -51,6 +62,17 @@ class AppliedPromotionTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => (new AppliedPromotion())
                     ->setActive(false),
+            ],
+            'update data with removed' => [
+                'defaultData' => (new AppliedPromotion())
+                    ->setActive(true),
+                'submittedData' => [
+                    'active' => '0',
+                    'removed' => '1',
+                ],
+                'expectedData' => (new AppliedPromotion())
+                    ->setActive(false)
+                    ->setRemoved(true),
             ]
         ];
     }
