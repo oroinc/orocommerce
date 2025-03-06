@@ -96,6 +96,7 @@ class PromotionExtension extends AbstractExtension implements ServiceSubscriberI
                 'couponCode' => $couponCode,
                 'promotionName' => $appliedPromotion->getPromotionName(),
                 'active' => $appliedPromotion->isActive(),
+                'removed' => $appliedPromotion->isRemoved(),
                 'amount' => 0,
                 'type' => $appliedPromotion->getType(),
                 'sourcePromotionId' => $appliedPromotion->getSourcePromotionId(),

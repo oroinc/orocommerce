@@ -279,6 +279,8 @@ oro:
             entity_plural_label: Applied Promotions
             entity_grid_all_view_label: All %entity_plural_label%
             id.label: ID
+            removed:
+                label: Removed
             active:
                 label: Active
                 active: Active
