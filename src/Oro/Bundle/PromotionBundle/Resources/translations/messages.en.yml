@@ -283,6 +283,8 @@ oro:
                 label: Active
                 active: Active
                 inactive: Inactive
+            removed:
+                label: Removed
             applied_coupon.label: Applied Coupon
             type.label: Type
             promotion.label: Promotion

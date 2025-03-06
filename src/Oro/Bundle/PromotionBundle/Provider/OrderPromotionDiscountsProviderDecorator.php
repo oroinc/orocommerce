@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
-use Oro\Bundle\PromotionBundle\Discount\DiscountInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
 /**
- * Blocks the automatic addition of discounts to the order if at least one item in the order has not been changed.
+ * Decorator that disable discounts by removed promotions to correct recalculation order discounts on backend
  */
 class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProviderInterface
 {
@@ -21,78 +19,44 @@ class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProv
     ) {
     }
 
-    /**
-     * @param object $sourceEntity
-     * @param DiscountContextInterface $context
-     *
-     * @return array
-     */
     public function getDiscounts($sourceEntity, DiscountContextInterface $context): array
     {
         $discounts = $this->baseDiscountsProvider->getDiscounts($sourceEntity, $context);
 
-        if ($this->isSupport($sourceEntity)) {
-            $appliedPromotionsIds = array_map(
-                fn (AppliedPromotion $promotion) => $promotion->getSourcePromotionId(),
-                $sourceEntity->getAppliedPromotions()->toArray()
-            );
+        if ($this->isSupportedOrder($sourceEntity)) {
+            $appliedPromotions = $this->getOrderAppliedPromotionRemovedMap($sourceEntity);
 
-            $discounts = array_filter(
-                $discounts,
-                function (DiscountInterface $discount) use ($appliedPromotionsIds) {
-                    // Coupons are not added automatically, so you don't need to filter them.
-                    if (!$discount->getPromotion()->isUseCoupons()) {
-                        return in_array($discount->getPromotion()->getId(), $appliedPromotionsIds);
-                    }
+            foreach ($discounts as $key => $discount) {
+                $promotionId = $discount->getPromotion()->getId();
+                $exists = array_key_exists($discount->getPromotion()->getId(), $appliedPromotions);
 
-                    return true;
+                if ($exists && $appliedPromotions[$promotionId] === true) {
+                    $discounts[$key] = new DisabledDiscountDecorator($discount);
                 }
-            );
+            }
         }
 
         return $discounts;
     }
 
-    /**
-     * @param object $sourceEntity
-     *
-     * @return bool
-     */
-    private function isSupport($sourceEntity): bool
+    private function getOrderAppliedPromotionRemovedMap(Order $order): array
     {
-        /** @var Order $sourceEntity */
-        if ($this->isOrder($sourceEntity)) {
-            /** @var PersistentCollection $lineItems */
-            $lineItems = $sourceEntity->getLineItems();
-
-            /**
-             * @var OrderLineItem $lineItem
-             *
-             * Need in case a new product has not been added but an existing one has been changed.
-             */
-            foreach ($lineItems as $lineItem) {
-                if ($lineItem->getProduct() && $lineItem->getProductSku() !== $lineItem->getProduct()->getSku()) {
-                    return false;
-                }
-            }
-
-            // Need in case a new product is added to the order.
-            return !$lineItems->isDirty();
+        $appliedPromotions = $order->getAppliedPromotions()->toArray();
+        $appliedPromotionsMap = [];
+        /** @var AppliedPromotion $appliedPromotion */
+        foreach ($appliedPromotions as $appliedPromotion) {
+            $appliedPromotionsMap[$appliedPromotion->getSourcePromotionId()] = $appliedPromotion->isRemoved();
         }
 
-        return false;
+        return $appliedPromotionsMap;
     }
 
-    /**
-     * @param object $sourceEntity
-     *
-     * @return bool
-     */
-    private function isOrder($sourceEntity): bool
+    private function isSupportedOrder(object $sourceEntity): bool
     {
-        return
-            $sourceEntity instanceof Order
-            && $this->promotionAwareHelper->isPromotionAware($sourceEntity)
-            && $sourceEntity->getId();
+        if (!$sourceEntity instanceof Order || !$this->promotionAwareHelper->isPromotionAware($sourceEntity)) {
+            return false;
+        }
+
+        return true;
     }
 }

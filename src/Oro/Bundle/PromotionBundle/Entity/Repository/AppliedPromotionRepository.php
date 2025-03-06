@@ -6,6 +6,9 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 
+/**
+ * Repository for Applied Promotions
+ */
 class AppliedPromotionRepository extends EntityRepository
 {
     /**
@@ -27,6 +30,7 @@ class AppliedPromotionRepository extends EntityRepository
                 'appliedPromotion.promotionName',
                 'appliedPromotion.sourcePromotionId',
                 'appliedPromotion.active AS active',
+                'appliedPromotion.removed AS removed',
                 'appliedPromotion.type',
                 'appliedCoupon.couponCode',
                 'appliedDiscounts.currency AS currency',
@@ -40,6 +44,7 @@ class AppliedPromotionRepository extends EntityRepository
                 'appliedPromotion.promotionName',
                 'appliedPromotion.sourcePromotionId',
                 'appliedPromotion.active',
+                'appliedPromotion.removed',
                 'appliedPromotion.type',
                 'appliedCoupon.couponCode',
                 'appliedDiscounts.currency'

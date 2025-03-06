@@ -800,9 +800,9 @@ class PromotionExecutorTest extends FrontendWebTestCase
                 'strategy' => 'apply_all',
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
-                    'subtotalDiscountTotal' => 0.00,
+                    'subtotalDiscountTotal' => 10.0,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 0.00,
+                    'discountAmount' => 10.0,
                 ]
             ],
         ];
@@ -893,9 +893,9 @@ class PromotionExecutorTest extends FrontendWebTestCase
                 ],
                 'expected' => [
                     'totalLineItemsDiscount' => 0.0,
-                    'subtotalDiscountTotal' => 0.0,
+                    'subtotalDiscountTotal' => 10.55,
                     'shippingDiscountTotal' => 0.0,
-                    'discountAmount' => 0.0,
+                    'discountAmount' => 10.55,
                 ]
             ],
             'test applied promotion with expression that matches order' => [

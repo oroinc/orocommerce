@@ -166,6 +166,7 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 5,
                 'sourceCouponId' => null,
+                'removed' => false,
             ],
             [
                 'id' => 6,
@@ -176,7 +177,8 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
                 'currency' => self::CURRENCY_CODE,
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 6,
-                'sourceCouponId' => 7
+                'sourceCouponId' => 7,
+                'removed' => false,
             ]
         ];
 
@@ -219,6 +221,7 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 5,
                 'sourceCouponId' => null,
+                'removed' => false,
             ],
         ];
 
@@ -282,7 +285,8 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
                 'currency' => self::CURRENCY_CODE,
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 6,
-                'sourceCouponId' => null
+                'sourceCouponId' => null,
+                'removed' => false,
             ],
             [
                 'id' => 5,
@@ -294,6 +298,7 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 5,
                 'sourceCouponId' => null,
+                'removed' => false,
             ],
             [
                 'id' => null,
@@ -305,6 +310,7 @@ class PromotionExtensionTest extends \PHPUnit\Framework\TestCase
                 'type' => self::DISCOUNT_TYPE,
                 'sourcePromotionId' => 10,
                 'sourceCouponId' => null,
+                'removed' => false,
             ],
         ];
 

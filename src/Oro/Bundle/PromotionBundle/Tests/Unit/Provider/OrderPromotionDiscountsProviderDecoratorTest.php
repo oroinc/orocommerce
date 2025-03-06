@@ -9,7 +9,9 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContext;
+use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
@@ -17,6 +19,7 @@ use Oro\Bundle\PromotionBundle\Provider\OrderPromotionDiscountsProviderDecorator
 use Oro\Bundle\PromotionBundle\Provider\PromotionDiscountsProviderInterface;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
+use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
@@ -42,28 +45,6 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
             $this->discountsProvider,
             $this->promotionAwareHelper
         );
-    }
-
-    /**
-     * Check whether non applied discounts are filtered.
-     */
-    public function testGetDiscountsWithItemsNotChanged(): void
-    {
-        /** @var Product $product */
-        $product = $this->getEntity(Product::class, ['id' => 1, 'sku' => 'product_1']);
-        $lineItem = $this->getEntity(OrderLineItem::class, ['product' => $product, 'productSku' => $product->getSku()]);
-        $lineItems = $this->getPersistentCollection([$lineItem]);
-        $appliedPromotion = $this->getEntity(AppliedPromotion::class, ['sourcePromotionId' => 2]);
-        $appliedPromotions = $this->getPersistentCollection([$appliedPromotion]);
-
-        $order = $this->getOrder($lineItems, $appliedPromotions);
-        $promotion = $this->getEntity(Promotion::class, ['id' => 1]);
-        $discount = $this->getEntity(DiscountStub::class, ['promotion' => $promotion]);
-        $this->assertDiscountProvider([$discount]);
-
-        $this->promotionAwareHelper->expects($this->any())->method('isPromotionAware')->willReturn(true);
-        $discounts = $this->orderPromotionDiscountsProviderDecorator->getDiscounts($order, new DiscountContext());
-        $this->assertEmpty($discounts);
     }
 
     /**
@@ -108,6 +89,33 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
 
         $discounts = $this->orderPromotionDiscountsProviderDecorator->getDiscounts($order, new DiscountContext());
         $this->assertEquals([$discount], $discounts);
+    }
+
+    public function testThatDiscountsShouldFilteredWhenAppliedPromotionIsRemoved(): void
+    {
+        $removedAppliedPromotion = $this->getAppliedPromotion(1)->setRemoved(true);
+        $lineItems = $this->getPersistentCollection([]);
+        $lineItems->add($this->getOrderLineItem($this->getProduct(1, 'product_1')));
+        $sourceEntity = $this->getOrder(
+            $lineItems,
+            $this->getPersistentCollection([$removedAppliedPromotion])
+        );
+        $context = $this->createMock(DiscountContextInterface::class);
+        $discount = $this->getDiscount($this->getPromotion(1));
+
+        $this->discountsProvider->expects(self::once())
+            ->method('getDiscounts')
+            ->with(self::identicalTo($sourceEntity), self::identicalTo($context))
+            ->willReturn([$discount]);
+
+        $this->promotionAwareHelper->expects(self::once())
+            ->method('isPromotionAware')
+            ->willReturn(true);
+
+        self::assertEquals(
+            [new DisabledDiscountDecorator($discount)],
+            $this->orderPromotionDiscountsProviderDecorator->getDiscounts($sourceEntity, $context)
+        );
     }
 
     /**
@@ -163,5 +171,48 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
             ->willReturn($uow);
 
         return $em;
+    }
+
+    private function getProduct(int $id, string $sku): Product
+    {
+        $product = new Product();
+        ReflectionUtil::setId($product, $id);
+        $product->setSku($sku);
+
+        return $product;
+    }
+
+    private function getOrderLineItem(Product $product, ?string $productSku = null): OrderLineItem
+    {
+        $lineItem = new OrderLineItem();
+        $lineItem->setProduct($product);
+        $lineItem->setProductSku($productSku ?? $product->getSku());
+
+        return $lineItem;
+    }
+
+    private function getPromotion(int $id, bool $useCoupons = false): Promotion
+    {
+        $promotion = new Promotion();
+        ReflectionUtil::setId($promotion, $id);
+        $promotion->setUseCoupons($useCoupons);
+
+        return $promotion;
+    }
+
+    private function getAppliedPromotion(int $sourcePromotionId): AppliedPromotion
+    {
+        $appliedPromotion = new AppliedPromotion();
+        $appliedPromotion->setSourcePromotionId($sourcePromotionId);
+
+        return $appliedPromotion;
+    }
+
+    private function getDiscount(Promotion $promotion): DiscountStub
+    {
+        $discount = new DiscountStub();
+        $discount->setPromotion($promotion);
+
+        return $discount;
     }
 }

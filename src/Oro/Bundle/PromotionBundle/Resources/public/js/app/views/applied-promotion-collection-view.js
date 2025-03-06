@@ -19,6 +19,7 @@ define(function(require) {
                 appliedPromotionElement: '[data-role="applied-promotion-element"]',
                 appliedPromotionTableRow: '[data-role="applied-discount-table-row"]',
                 appliedPromotionActiveField: '[data-role="applied-promotion-active"]',
+                appliedPromotionRemovedField: '[data-role="applied-promotion-removed"]',
                 changeActiveButton: '[data-role="applied-promotion-change-active-button"]',
                 removeButton: '[data-role="applied-promotion-remove-button"]'
             }
@@ -27,7 +28,8 @@ define(function(require) {
         listen: {
             'entry-point:order:load:before mediator': 'showLoadingMask',
             'entry-point:order:load mediator': 'refreshCollectionBlock',
-            'entry-point:order:load:after mediator': 'hideLoadingMask'
+            'entry-point:order:load:after mediator': 'hideLoadingMask',
+            'customer-customer-user:change mediator': 'customerChanged'
         },
 
         /**
@@ -81,12 +83,19 @@ define(function(require) {
 
             this.$(this.options.selectors.appliedPromotionElement).each(function() {
                 if ($(this).data(self.options.sourcePromotionIdDataAttribute) === sourcePromotionId) {
-                    $(this).remove();
+                    $(this).find(self.options.selectors.appliedPromotionRemovedField).val(1);
                     mediator.trigger('applied-coupon:remove', sourceCouponId);
                 }
             });
 
             mediator.trigger('entry-point:order:trigger');
+        },
+
+        customerChanged: function() {
+            const self = this;
+            this.$(this.options.selectors.appliedPromotionElement).each(function() {
+                $(this).find(self.options.selectors.appliedPromotionRemovedField).val(0);
+            });
         },
 
         /**

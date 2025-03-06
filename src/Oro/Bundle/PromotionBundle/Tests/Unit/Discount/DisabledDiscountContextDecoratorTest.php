@@ -91,6 +91,24 @@ class DisabledDiscountContextDecoratorTest extends \PHPUnit\Framework\TestCase
         static::assertEquals([new DisabledDiscountLineItemDecorator($lineItem)], $this->decorator->getLineItems());
     }
 
+    public function testGetLineItemsWithDisabledDiscountLineItemDecoratorItems()
+    {
+        [$lineItem1, $lineItem2] = [
+            new DiscountLineItem(),
+            new DisabledDiscountLineItemDecorator(new DiscountLineItem())
+        ];
+
+        $this->discountContext
+            ->expects($this->once())
+            ->method('getLineItems')
+            ->willReturn([$lineItem1, $lineItem2]);
+
+        static::assertEquals(
+            [new DisabledDiscountLineItemDecorator($lineItem1), $lineItem2],
+            $this->decorator->getLineItems()
+        );
+    }
+
     public function testSetLineItems()
     {
         $lineItems = [new DiscountLineItem()];
