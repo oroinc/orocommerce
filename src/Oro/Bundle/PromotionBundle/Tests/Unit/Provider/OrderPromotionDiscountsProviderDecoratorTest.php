@@ -9,6 +9,7 @@ use Doctrine\ORM\PersistentCollection;
 use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
 use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Entity\Promotion;
@@ -19,17 +20,16 @@ use Oro\Bundle\PromotionBundle\Tests\Unit\Discount\Stub\DiscountStub;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Checkout;
 use Oro\Bundle\PromotionBundle\Tests\Unit\Entity\Stub\Order;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\TestCase
+class OrderPromotionDiscountsProviderDecoratorTest extends TestCase
 {
-    /** @var PromotionDiscountsProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $baseDiscountsProvider;
+    private PromotionDiscountsProviderInterface|MockObject $baseDiscountsProvider;
 
-    /** @var PromotionAwareEntityHelper|\PHPUnit\Framework\MockObject\MockObject */
-    private $promotionAwareHelper;
+    private PromotionAwareEntityHelper|MockObject $promotionAwareHelper;
 
-    /** @var OrderPromotionDiscountsProviderDecorator */
-    private $discountsProvider;
+    private OrderPromotionDiscountsProviderDecorator $discountsProvider;
 
     #[\Override]
     protected function setUp(): void
@@ -131,47 +131,31 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
         self::assertSame($discounts, $this->discountsProvider->getDiscounts($sourceEntity, $context));
     }
 
-    public function testGetDiscountsShouldNotDoFiltrationWhenNewProductIsAddedToOrder(): void
+    public function testThatDiscountsShouldFilteredWhenAppliedPromotionIsRemoved(): void
     {
+        $removedApliedPromotion = $this->getAppliedPromotion(1)->setRemoved(true);
         $lineItems = $this->getPersistentCollection([]);
         $lineItems->add($this->getOrderLineItem($this->getProduct('product_1')));
         $sourceEntity = $this->getOrder(
             $lineItems,
-            $this->getPersistentCollection([$this->getAppliedPromotion(2)])
+            $this->getPersistentCollection([$removedApliedPromotion])
         );
         $context = $this->createMock(DiscountContextInterface::class);
-        $discounts = [$this->getDiscount($this->getPromotion(1))];
+        $discount = $this->getDiscount($this->getPromotion(1));
 
         $this->baseDiscountsProvider->expects(self::once())
             ->method('getDiscounts')
             ->with(self::identicalTo($sourceEntity), self::identicalTo($context))
-            ->willReturn($discounts);
+            ->willReturn([$discount]);
 
         $this->promotionAwareHelper->expects(self::once())
             ->method('isPromotionAware')
             ->willReturn(true);
 
-        self::assertSame($discounts, $this->discountsProvider->getDiscounts($sourceEntity, $context));
-    }
-
-    public function testGetDiscountsShouldFilterOutNonAppliedDiscounts(): void
-    {
-        $sourceEntity = $this->getOrder(
-            $this->getPersistentCollection([$this->getOrderLineItem($this->getProduct('product_1'))]),
-            $this->getPersistentCollection([$this->getAppliedPromotion(2)])
+        self::assertEquals(
+            [new DisabledDiscountDecorator($discount)],
+            $this->discountsProvider->getDiscounts($sourceEntity, $context)
         );
-        $context = $this->createMock(DiscountContextInterface::class);
-
-        $this->baseDiscountsProvider->expects(self::once())
-            ->method('getDiscounts')
-            ->with(self::identicalTo($sourceEntity), self::identicalTo($context))
-            ->willReturn([$this->getDiscount($this->getPromotion(1))]);
-
-        $this->promotionAwareHelper->expects(self::once())
-            ->method('isPromotionAware')
-            ->willReturn(true);
-
-        self::assertSame([], $this->discountsProvider->getDiscounts($sourceEntity, $context));
     }
 
     public function testGetDiscountsForAppliedDiscounts(): void
@@ -243,18 +227,19 @@ class OrderPromotionDiscountsProviderDecoratorTest extends \PHPUnit\Framework\Te
             $this->getPersistentCollection([$this->getOrderLineItem($this->getProduct('product_1'))]),
             $this->getPersistentCollection([])
         );
+        $discounts = [$this->getDiscount($this->getPromotion(1))];
         $context = $this->createMock(DiscountContextInterface::class);
 
         $this->baseDiscountsProvider->expects(self::once())
             ->method('getDiscounts')
             ->with(self::identicalTo($sourceEntity), self::identicalTo($context))
-            ->willReturn([$this->getDiscount($this->getPromotion(1))]);
+            ->willReturn($discounts);
 
         $this->promotionAwareHelper->expects(self::once())
             ->method('isPromotionAware')
             ->willReturn(true);
 
-        self::assertSame([], $this->discountsProvider->getDiscounts($sourceEntity, $context));
+        self::assertSame($discounts, $this->discountsProvider->getDiscounts($sourceEntity, $context));
     }
 
     public function testGetDiscountsForNotOrder(): void

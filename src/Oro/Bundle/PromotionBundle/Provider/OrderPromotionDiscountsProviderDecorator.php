@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\PromotionBundle\Provider;
 
-use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\PromotionBundle\Discount\DisabledDiscountDecorator;
 use Oro\Bundle\PromotionBundle\Discount\DiscountContextInterface;
+use Oro\Bundle\PromotionBundle\Entity\AppliedPromotion;
 use Oro\Bundle\PromotionBundle\Model\PromotionAwareEntityHelper;
 
 /**
- * Blocks the automatic addition of discounts to the order if at least one item in the order has not been changed.
+ * Decorator that disable discounts by removed promotions to correct recalculation order discounts on backend
  */
 class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProviderInterface
 {
@@ -23,52 +23,41 @@ class OrderPromotionDiscountsProviderDecorator implements PromotionDiscountsProv
     public function getDiscounts(object $sourceEntity, DiscountContextInterface $context): array
     {
         $discounts = $this->baseDiscountsProvider->getDiscounts($sourceEntity, $context);
-        if ($sourceEntity instanceof Order && $this->isSupportedOrder($sourceEntity)) {
-            $appliedPromotionsIds = $this->getAppliedPromotionsIds($sourceEntity);
-            $filteredDiscounts = [];
-            foreach ($discounts as $discount) {
-                $promotion = $discount->getPromotion();
-                // coupons are not added automatically, so such discounts should not be filtered out
-                if ($promotion->isUseCoupons() || isset($appliedPromotionsIds[$promotion->getId()])) {
-                    $filteredDiscounts[] = $discount;
+
+        if ($this->isSupportedOrder($sourceEntity)) {
+            $appliedPromotions = $this->getOrderAppliedPromotionRemovedMap($sourceEntity);
+
+            foreach ($discounts as $key => $discount) {
+                $promotionId = $discount->getPromotion()->getId();
+                $exists = array_key_exists($discount->getPromotion()->getId(), $appliedPromotions);
+
+                if ($exists && $appliedPromotions[$promotionId] === true) {
+                    $discounts[$key] = new DisabledDiscountDecorator($discount);
                 }
             }
-
-            return $filteredDiscounts;
         }
 
         return $discounts;
     }
 
-    private function isSupportedOrder(Order $sourceEntity): bool
+    private function getOrderAppliedPromotionRemovedMap(Order $order): array
     {
-        if (!$sourceEntity->getId() || !$this->promotionAwareHelper->isPromotionAware($sourceEntity)) {
+        $appliedPromotions = $order->getAppliedPromotions()->toArray();
+        $appliedPromotionsMap = [];
+        /** @var AppliedPromotion $appliedPromotion */
+        foreach ($appliedPromotions as $appliedPromotion) {
+            $appliedPromotionsMap[$appliedPromotion->getSourcePromotionId()] = $appliedPromotion->isRemoved();
+        }
+
+        return $appliedPromotionsMap;
+    }
+
+    private function isSupportedOrder(object $sourceEntity): bool
+    {
+        if (!$sourceEntity instanceof Order || !$this->promotionAwareHelper->isPromotionAware($sourceEntity)) {
             return false;
         }
 
-        /** @var PersistentCollection $lineItems */
-        $lineItems = $sourceEntity->getLineItems();
-
-        // Need in case a new product has not been added but an existing one has been changed.
-        /** @var OrderLineItem $lineItem */
-        foreach ($lineItems as $lineItem) {
-            if ($lineItem->getProduct() && $lineItem->getProductSku() !== $lineItem->getProduct()->getSku()) {
-                return false;
-            }
-        }
-
-        // Need in case a new product is added to the order.
-        return !$lineItems->isDirty();
-    }
-
-    private function getAppliedPromotionsIds(Order $sourceEntity): array
-    {
-        $appliedPromotionsIds = [];
-        $appliedPromotions = $sourceEntity->getAppliedPromotions()->toArray();
-        foreach ($appliedPromotions as $appliedPromotion) {
-            $appliedPromotionsIds[$appliedPromotion->getSourcePromotionId()] = true;
-        }
-
-        return $appliedPromotionsIds;
+        return true;
     }
 }

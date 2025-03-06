@@ -8,6 +8,9 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Form type for AppliedPromotion
+ */
 class AppliedPromotionType extends AbstractType
 {
     const NAME = 'oro_promotion_applied_promotion';
@@ -16,6 +19,7 @@ class AppliedPromotionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('active', HiddenType::class);
+        $builder->add('removed', HiddenType::class, ['empty_data' => '0']);
         $builder->add('sourcePromotionId', HiddenType::class);
     }
 

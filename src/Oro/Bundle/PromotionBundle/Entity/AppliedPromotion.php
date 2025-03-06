@@ -39,6 +39,9 @@ class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
     #[ORM\Column(name: 'active', type: Types::BOOLEAN, options: ['default' => true])]
     protected ?bool $active = true;
 
+    #[ORM\Column(name: 'removed', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $removed = false;
+
     #[ORM\OneToOne(mappedBy: 'appliedPromotion', targetEntity: AppliedCoupon::class, cascade: ['all'])]
     protected ?AppliedCoupon $appliedCoupon = null;
 
@@ -246,6 +249,18 @@ class AppliedPromotion implements DatesAwareInterface, ExtendEntityInterface
         if ($this->appliedDiscounts->contains($appliedDiscount)) {
             $this->appliedDiscounts->removeElement($appliedDiscount);
         }
+
+        return $this;
+    }
+
+    public function isRemoved(): bool
+    {
+        return (bool)$this->removed;
+    }
+
+    public function setRemoved(?bool $removed): self
+    {
+        $this->removed = (bool)$removed;
 
         return $this;
     }

@@ -1,0 +1,104 @@
+include:
+    - '@OroCustomerBundle:CustomerFixture.yml'
+
+Oro\Bundle\ProductBundle\Entity\ProductName:
+    product1Label:
+        string: 'Product1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    orderTotalPromotionLabel:
+        string: 'Order Total By Customer Name Promotion'
+
+Oro\Bundle\SegmentBundle\Entity\Segment:
+    orderPromotionSegment:
+        name: 'All Products'
+        type: '@segment_dynamic_type'
+        entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
+        definition: <('{"filters":[[{"columnName":"id","criterion":{"filter":"number","data":{"value":0,"type":"2"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        organization: '@organization'
+        owner: '@business_unit'
+
+Oro\Bundle\RuleBundle\Entity\Rule:
+    orderTotalCustomerPromotionRule:
+        enabled: true
+        sortOrder: 1
+        name: 'Order Total Customer Name Promotion Rule'
+        expression: 'customer.name = "WithCustomerUser"'
+
+Oro\Bundle\PromotionBundle\Entity\DiscountConfiguration:
+    orderTotalPromotionConfiguration:
+        type: 'order'
+        options:
+            discount_type: 'amount'
+            discount_value: 1
+            discount_currency: 'USD'
+
+Oro\Bundle\PromotionBundle\Entity\Promotion:
+    orderTotalPromotion:
+        __calls:
+            - addLabel: ['@orderTotalPromotionLabel']
+            - addScope: ['@default_scope']
+        productsSegment: '@orderPromotionSegment'
+        rule: '@orderTotalCustomerPromotionRule'
+        discountConfiguration: '@orderTotalPromotionConfiguration'
+        organization: '@organization'
+        owner: '@admin'
+        useCoupons: false
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    productPrecision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'Product1'
+        organization: '@organization'
+        owner: '@business_unit'
+        primaryUnitPrecision: '@productPrecision1'
+        __calls:
+            - addName: ['@product1Label']
+        inventoryStatus: '@enumInventoryStatuses'
+        attributeFamily: '@defaultProductFamily'
+        status: 'enabled'
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@test1'
+        identifier: 'Order'
+        website: '@website1'
+        currency: USD
+        poNumber: 'ORD1'
+
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price:
+        value: 50
+        currency: USD
+
+Oro\Bundle\PricingBundle\Entity\ProductPrice:
+    productPrice1:
+        pricelist: '@defaultPriceList'
+        product: '@product1'
+        productSku: 'Product1'
+        quantity: 1
+        unit: '@item'
+        value: 50
+        currency: 'USD'
+
+Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
+    priceRelation1:
+        product: '@product1'
+        priceList: '@defaultPriceList'
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    orderLineItem:
+        product: '@product1'
+        price: '@price'
+        quantity: 1
+        productUnit: '@item'
+        productUnitCode: item
+        __calls:
+            -  addOrder: [ '@order' ]
