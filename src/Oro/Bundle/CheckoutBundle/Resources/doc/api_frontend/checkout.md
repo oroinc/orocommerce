@@ -20,6 +20,8 @@ Create a new checkout record.
 
 The created record is returned in the response.
 
+Follow the [Storefront Checkout API Guide](https://doc.oroinc.com/api/checkout-api/) for more details about the checkout process using the API.
+
 {@inheritdoc}
 
 {@request:json_api}
@@ -127,6 +129,8 @@ To create a checkout based on an existing shopping list or an existing order use
 Edit a specific checkout record.
 
 The updated record is returned in the response.
+
+Follow the [Storefront Checkout API Guide](https://doc.oroinc.com/api/checkout-api/) for more details about the checkout process using the API.
 
 {@inheritdoc}
 

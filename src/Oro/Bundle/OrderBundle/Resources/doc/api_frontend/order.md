@@ -521,6 +521,8 @@ In case a checkout record already exists for the order, it will be returned inst
 
 Use the **actualize** option when you need to update already existing checkout record according to the latest changes in the order.
 
+Follow the [Storefront Checkout API Guide](https://doc.oroinc.com/api/checkout-api/) for more details about the checkout process using the API.
+
 {@request:json_api}
 Example:
 
