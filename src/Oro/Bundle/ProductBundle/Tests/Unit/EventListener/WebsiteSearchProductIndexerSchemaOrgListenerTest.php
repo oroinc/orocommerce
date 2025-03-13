@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -19,22 +19,16 @@ use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderValue;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 
-class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framework\TestCase
+class WebsiteSearchProductIndexerSchemaOrgListenerTest extends TestCase
 {
-    private WebsiteContextManager|\PHPUnit\Framework\MockObject\MockObject $websiteContextManager;
-
-    private AbstractWebsiteLocalizationProvider|\PHPUnit\Framework\MockObject\MockObject $websiteLocalizationProvider;
-
-    private SchemaOrgProductDescriptionProviderInterface|\PHPUnit\Framework\MockObject\MockObject
-        $schemaOrgProductDescriptionProvider;
-
-    private WebsiteRepository|\PHPUnit\Framework\MockObject\MockObject $websiteRepository;
-
+    private WebsiteContextManager&MockObject $websiteContextManager;
+    private AbstractWebsiteLocalizationProvider&MockObject $websiteLocalizationProvider;
+    private SchemaOrgProductDescriptionProviderInterface&MockObject $schemaOrgProductDescriptionProvider;
+    private WebsiteRepository&MockObject $websiteRepository;
     private WebsiteSearchProductIndexerSchemaOrgListener $listener;
-
-    private Brand $brand;
 
     #[\Override]
     protected function setUp(): void
@@ -44,34 +38,44 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
         $this->schemaOrgProductDescriptionProvider = $this->createMock(
             SchemaOrgProductDescriptionProviderInterface::class
         );
-        $managerRegistry = $this->createMock(ManagerRegistry::class);
-
         $this->websiteRepository = $this->createMock(WebsiteRepository::class);
-        $managerRegistry
-            ->expects(self::any())
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects(self::any())
             ->method('getRepository')
             ->with(Website::class)
             ->willReturn($this->websiteRepository);
-
-        $this->brand = new Brand();
 
         $this->listener = new WebsiteSearchProductIndexerSchemaOrgListener(
             $this->websiteLocalizationProvider,
             $this->websiteContextManager,
             $this->schemaOrgProductDescriptionProvider,
-            $managerRegistry
+            $doctrine
         );
     }
 
-    /**
-     * @dataProvider listenerDataProvider
-     */
-    public function testOnWebsiteSearchIndexProductClass(
-        Product $product,
-        Localization $localization,
-        Website $website,
-        array $context,
-    ): void {
+    private function getWebsite(): Website
+    {
+        $website = new WebsiteStub(1);
+        $website->setOrganization(new Organization());
+
+        return $website;
+    }
+
+    private function getBrand(): Brand
+    {
+        $brand = new Brand();
+        $brand->setDefaultName('test_brand');
+        return $brand;
+    }
+
+    public function testOnWebsiteSearchIndexProductClass(): void
+    {
+        $product = (new ProductStub())->setBrand($this->getBrand());
+        $localization = new LocalizationStub(1);
+        $website = $this->getWebsite();
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']];
+
         $this->websiteContextManager->expects(self::once())
             ->method('getWebsite')
             ->with($context)
@@ -91,37 +95,34 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
         $this->listener->onWebsiteSearchIndex($event);
 
         self::assertEquals([
-            "schema_org_description_LOCALIZATION_ID" => [
+            'schema_org_description_LOCALIZATION_ID' => [
                 [
-                    "value" => new PlaceholderValue("test_description", [LocalizationIdPlaceholder::NAME => 1]),
-                    "all_text" => false,
-                ],
+                    'value' => new PlaceholderValue('test_description', [LocalizationIdPlaceholder::NAME => 1]),
+                    'all_text' => false
+                ]
             ],
-            "schema_org_brand_name_LOCALIZATION_ID" => [
+            'schema_org_brand_name_LOCALIZATION_ID' => [
                 [
-                    "value" => new PlaceholderValue("test_brand", [LocalizationIdPlaceholder::NAME => 1]),
-                    "all_text" => false,
-                ],
+                    'value' => new PlaceholderValue('test_brand', [LocalizationIdPlaceholder::NAME => 1]),
+                    'all_text' => false
+                ]
             ],
         ], current($event->getEntitiesData()));
     }
 
-    /**
-     * @dataProvider listenerDataProvider
-     */
-    public function testOnWebsiteSearchIndexProductClassWhenWebsiteNotExists(
-        Product $product,
-        Localization $localization,
-        Website $website,
-        array $context,
-    ): void {
+    public function testOnWebsiteSearchIndexProductClassWhenWebsiteNotExists(): void
+    {
+        $product = (new ProductStub())->setBrand($this->getBrand());
+        $localization = new LocalizationStub(1);
+        $website = $this->getWebsite();
+        $context = [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']];
+
         $this->websiteContextManager->expects(self::once())
             ->method('getWebsite')
             ->with($context)
             ->willReturn(null);
 
-        $this->websiteRepository
-            ->expects(self::once())
+        $this->websiteRepository->expects(self::once())
             ->method('getDefaultWebsite')
             ->willReturn($this->getWebsite());
 
@@ -139,46 +140,18 @@ class WebsiteSearchProductIndexerSchemaOrgListenerTest extends \PHPUnit\Framewor
         $this->listener->onWebsiteSearchIndex($event);
 
         self::assertEquals([
-            "schema_org_description_LOCALIZATION_ID" => [
+            'schema_org_description_LOCALIZATION_ID' => [
                 [
-                    "value" => new PlaceholderValue("test_description", [LocalizationIdPlaceholder::NAME => 1]),
-                    "all_text" => false,
-                ],
+                    'value' => new PlaceholderValue('test_description', [LocalizationIdPlaceholder::NAME => 1]),
+                    'all_text' => false
+                ]
             ],
-            "schema_org_brand_name_LOCALIZATION_ID" => [
+            'schema_org_brand_name_LOCALIZATION_ID' => [
                 [
-                    "value" => new PlaceholderValue("test_brand", [LocalizationIdPlaceholder::NAME => 1]),
-                    "all_text" => false,
-                ],
+                    'value' => new PlaceholderValue('test_brand', [LocalizationIdPlaceholder::NAME => 1]),
+                    'all_text' => false
+                ]
             ],
         ], current($event->getEntitiesData()));
-    }
-
-    public function listenerDataProvider(): array
-    {
-        return [
-            'pass' => [
-                'product' => (new ProductStub())->setBrand($this->getBrand()),
-                'localization' => new LocalizationStub(1),
-                'website' => $this->getWebsite(),
-                'context' => [AbstractIndexer::CONTEXT_FIELD_GROUPS => ['main']],
-            ],
-        ];
-    }
-
-    private function getWebsite(): Website
-    {
-        $organization = new Organization();
-        $website = new WebsiteStub(1);
-        $website->setOrganization($organization);
-
-        return $website;
-    }
-
-    private function getBrand(): Brand
-    {
-        $brand = new Brand();
-        $brand->setDefaultName('test_brand');
-        return $brand;
     }
 }

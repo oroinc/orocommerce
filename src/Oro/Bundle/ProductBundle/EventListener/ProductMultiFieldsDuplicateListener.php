@@ -4,12 +4,12 @@ namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\AttachmentBundle\Entity\FileItem;
 use Oro\Bundle\AttachmentBundle\Helper\FieldConfigHelper;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * Responsible for duplicate fields of the "multiple" type.
@@ -18,7 +18,7 @@ class ProductMultiFieldsDuplicateListener
 {
     public function __construct(
         private ConfigProvider $configProvider,
-        private ManagerRegistry $managerRegistry
+        private ManagerRegistry $doctrine
     ) {
     }
 
@@ -38,8 +38,8 @@ class ProductMultiFieldsDuplicateListener
             $this->cloneFiles($product, $config->getFieldName());
         }
 
-        $this->managerRegistry->getManager()->persist($product);
-        $this->managerRegistry->getManager()->flush();
+        $this->doctrine->getManager()->persist($product);
+        $this->doctrine->getManager()->flush();
     }
 
     private function cloneFiles(Product $product, string $fieldName): void

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\EventListener\ORM;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -14,7 +15,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class PaymentStatusListenerTest extends WebTestCase
 {
@@ -25,18 +25,16 @@ class PaymentStatusListenerTest extends WebTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
+        $this->initClient([], self::generateBasicAuthHeader());
 
-        $this->managerRegistry = $this->getContainer()->get('doctrine');
-        $this->paymentStatusProvider = $this->getContainer()->get('oro_payment.provider.payment_status');
-        $this->paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
+        $this->managerRegistry = self::getContainer()->get('doctrine');
+        $this->paymentStatusProvider = self::getContainer()->get('oro_payment.provider.payment_status');
+        $this->paymentTransactionProvider = self::getContainer()->get('oro_payment.provider.payment_transaction');
 
-        $this->loadFixtures([
-            LoadCustomerUserData::class
-        ]);
+        $this->loadFixtures([LoadCustomerUserData::class]);
     }
 
-    public function testPreUpdate()
+    public function testPreUpdate(): void
     {
         $subOrder1 = $this->prepareOrderObject(50, '#42-1');
         $subOrder2 = $this->prepareOrderObject(50, '#42-2');
@@ -49,29 +47,29 @@ class PaymentStatusListenerTest extends WebTestCase
         $em->persist($order);
         $em->flush();
 
-        $paymentTransaction1 = $this->addPaymnentTransaction($subOrder1, PaymentMethodInterface::AUTHORIZE, true);
-        $paymentTransaction2 = $this->addPaymnentTransaction($subOrder2, PaymentMethodInterface::AUTHORIZE, false);
+        $paymentTransaction1 = $this->addPaymentTransaction($subOrder1, PaymentMethodInterface::AUTHORIZE, true);
+        $paymentTransaction2 = $this->addPaymentTransaction($subOrder2, PaymentMethodInterface::AUTHORIZE, false);
         $em->persist($paymentTransaction1);
         $em->persist($paymentTransaction2);
         $em->flush();
 
-        $this->assertEquals(
+        self::assertEquals(
             PaymentStatusProvider::AUTHORIZED,
             $this->paymentStatusProvider->getPaymentStatus($subOrder1)
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             PaymentStatusProvider::PENDING,
             $this->paymentStatusProvider->getPaymentStatus($subOrder2)
         );
 
-        $this->assertEquals(
+        self::assertEquals(
             PaymentStatusProvider::AUTHORIZED_PARTIALLY,
             $this->paymentStatusProvider->getPaymentStatus($order)
         );
     }
 
-    protected function prepareOrderObject(float $total, string $poNumber): Order
+    private function prepareOrderObject(float $total, string $poNumber): Order
     {
         /** @var User $user */
         $user = $this->getReference(LoadUser::USER);
@@ -96,7 +94,7 @@ class PaymentStatusListenerTest extends WebTestCase
         return $order;
     }
 
-    private function addPaymnentTransaction(
+    private function addPaymentTransaction(
         Order $order,
         string $transactionType,
         bool $transactionStatus

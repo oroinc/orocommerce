@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\ActionGroup;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ActionBundle\Model\ActionExecutor;
 use Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterInterface;
 use Oro\Bundle\CheckoutBundle\Action\MultiShipping\DefaultMultiShippingGroupMethodSetterInterface;
@@ -17,22 +18,21 @@ use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\ShippingMethodActions;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\UpdateShippingPriceInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ShippingMethodActionsTest extends TestCase
 {
-    private ConfigProvider|MockObject $configProvider;
-    private ActionExecutor|MockObject $actionExecutor;
-    private DefaultShippingMethodSetterInterface|MockObject $defaultShippingMethodSetter;
-    private DefaultMultiShippingMethodSetterInterface|MockObject $defaultMultiShippingMethodSetter;
-    private DefaultMultiShippingGroupMethodSetterInterface|MockObject $defaultMultiShippingGroupMethodSetter;
-    private CheckoutLineItemsShippingManagerInterface|MockObject $checkoutLineItemsShipping;
-    private CheckoutLineItemGroupsShippingManagerInterface|MockObject $checkoutLineItemGroupsShipping;
-    private UpdateShippingPriceInterface|MockObject $updateShippingPrice;
-    private ManagerRegistry|MockObject $doctrine;
+    private ConfigProvider&MockObject $configProvider;
+    private ActionExecutor&MockObject $actionExecutor;
+    private DefaultShippingMethodSetterInterface&MockObject $defaultShippingMethodSetter;
+    private DefaultMultiShippingMethodSetterInterface&MockObject $defaultMultiShippingMethodSetter;
+    private DefaultMultiShippingGroupMethodSetterInterface&MockObject $defaultMultiShippingGroupMethodSetter;
+    private CheckoutLineItemsShippingManagerInterface&MockObject $checkoutLineItemsShipping;
+    private CheckoutLineItemGroupsShippingManagerInterface&MockObject $checkoutLineItemGroupsShipping;
+    private UpdateShippingPriceInterface&MockObject $updateShippingPrice;
+    private ManagerRegistry&MockObject $doctrine;
     private ShippingMethodActions $shippingMethodActions;
 
     #[\Override]
