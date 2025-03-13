@@ -1,6 +1,6 @@
 <% let oroui = _.macros('oroui') %>
 <%
-function highlightWords(inputString, value) {
+const highlightWords = function(inputString, value) {
     if (!!inputString && _.isString(inputString)) {
         const highlightPattern = '<u class="search-autocomplete__highlight">$&</u>',
             inputWords = _.escape(inputString.trim()).split(' '),
@@ -17,7 +17,7 @@ function highlightWords(inputString, value) {
 %>
 <%
     <!-- Align syntax, symbol and html entity to symbol (& and &amp; to &)-->
-    function decodeHTMLEntities(text) {
+    const decodeHTMLEntities = function(text) {
         var textArea = document.createElement('textarea');
         textArea.innerHTML = text;
 
@@ -25,7 +25,7 @@ function highlightWords(inputString, value) {
     }
 %>
 <%
-    function getValueFromTag(text) {
+    const getValueFromTag = function(text) {
         const parser = new DOMParser(),
             element = parser.parseFromString(text, 'text/html'),
             ulElement = element.querySelector('u');
@@ -34,7 +34,7 @@ function highlightWords(inputString, value) {
     }
 %>
 <%
-function inventoryStatusToLabelClass(inventoryStatus) {
+const inventoryStatusToLabelClass = function(inventoryStatus) {
     switch(inventoryStatus) {
         case 'out_of_stock': return 'status-label--destructive'; break;
         case 'in_stock': return 'status-label--success'; break;
