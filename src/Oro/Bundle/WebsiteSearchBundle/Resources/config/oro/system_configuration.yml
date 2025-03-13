@@ -17,6 +17,8 @@ system_configuration:
             options:
                 label: oro.websitesearch.feature.website_search_history.label
                 tooltip: oro.websitesearch.feature.website_search_history.description
+                attr:
+                    'data-dependee-id': 'enable_global_search_history_feature'
 
         oro_website_search.enable_global_search_history_tracking:
             data_type: boolean
@@ -25,6 +27,10 @@ system_configuration:
             options:
                 label: oro.websitesearch.feature.website_search_history_tracking.label
                 tooltip: oro.websitesearch.feature.website_search_history_tracking.description
+                attr:
+                    'data-page-component-module': 'orosale/js/app/components/dependent-field-component'
+                    'data-depend-on': 'enable_global_search_history_feature'
+                    'data-show-if': 'checked'
 
     tree:
         system_configuration:

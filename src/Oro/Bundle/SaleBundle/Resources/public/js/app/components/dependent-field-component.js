@@ -43,7 +43,10 @@ define(function(require) {
         options: {
             selectors: {
                 rowContainer: '.control-group'
-            }
+            },
+            groupContainerSelector: '.control-group-wrapper',
+            dependentContainerClass: 'dependent-fields-container',
+            rowClassName: 'dependent-field'
         },
 
         /**
@@ -78,9 +81,14 @@ define(function(require) {
             this.$form = this.$el.closest('form');
             this.$dependee = this.$form.find('[data-dependee-id="' + this.$el.data('dependOn') + '"]');
 
-            this.updateDependentFields = this.updateDependentFields.bind(this);
-            this.updateDependentFields();
-            this.$dependee.on('change', this.updateDependentFields);
+            if (this.$dependee.length) {
+                this.updateDependentFields = this.updateDependentFields.bind(this);
+                this.updateDependentFields();
+                this.$dependee.on('change', this.updateDependentFields);
+            }
+
+            this.$el.closest(this.options.groupContainerSelector).addClass(this.options.dependentContainerClass);
+            this.$el.closest(this.options.selectors.rowContainer).addClass(this.options.rowClassName);
 
             this.$el.inputWidget('create');
         },
@@ -93,6 +101,8 @@ define(function(require) {
                 return;
             }
 
+            this.$el.closest(this.options.groupContainerSelector).removeClass(this.options.dependentContainerClass);
+            this.$el.closest(this.options.selectors.rowContainer).removeClass(this.options.rowClassName);
             this.$el.off('change', this.updateDependentFields);
 
             DependentFieldComponent.__super__.dispose.call(this);
