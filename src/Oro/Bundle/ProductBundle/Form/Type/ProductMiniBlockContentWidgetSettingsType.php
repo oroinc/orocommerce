@@ -19,19 +19,14 @@ use Symfony\Component\Validator\Constraints\Type;
  */
 class ProductMiniBlockContentWidgetSettingsType extends AbstractType
 {
-    /** @var ManagerRegistry */
-    private $registry;
-
-    public function __construct(ManagerRegistry $registry)
-    {
-        $this->registry = $registry;
+    public function __construct(
+        private ManagerRegistry $doctrine
+    ) {
     }
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $manager = $this->registry->getManagerForClass(Product::class);
-
         $builder->add(
             'product',
             ProductSelectType::class,
@@ -49,14 +44,12 @@ class ProductMiniBlockContentWidgetSettingsType extends AbstractType
                     new NotBlank(),
                 ],
                 'transformer' => new CallbackTransformer(
-                    static function ($data) use ($manager) {
-                        if (!is_object($data)) {
+                    function ($data) {
+                        if (!\is_object($data)) {
                             return $data;
                         }
 
-                        $transformer = new EntityToIdTransformer($manager, Product::class);
-
-                        return $transformer->transform($data);
+                        return (new EntityToIdTransformer($this->doctrine, Product::class))->transform($data);
                     },
                     static function ($data) {
                         return $data;
@@ -73,8 +66,8 @@ class ProductMiniBlockContentWidgetSettingsType extends AbstractType
                 'required' => false,
                 'block' => 'options',
                 'constraints' => [
-                    new Type('boolean'),
-                ],
+                    new Type('boolean')
+                ]
             ]
         );
 
@@ -86,27 +79,26 @@ class ProductMiniBlockContentWidgetSettingsType extends AbstractType
                 'required' => false,
                 'block' => 'options',
                 'constraints' => [
-                    new Type('boolean'),
-                ],
+                    new Type('boolean')
+                ]
             ]
         );
 
         $builder->addEventListener(
             FormEvents::PRE_SET_DATA,
-            static function (FormEvent $event) use ($manager) {
+            function (FormEvent $event) {
                 $data = $event->getData();
 
                 $productId = $data['product'] ?? null;
                 if ($productId) {
-                    $data['product'] = $manager->getRepository(Product::class)
-                        ->find($data['product']);
+                    $data['product'] = $this->doctrine->getRepository(Product::class)->find($data['product']);
                 }
 
-                if (!is_array($data) || !array_key_exists('show_add_button', $data)) {
+                if (!\is_array($data) || !\array_key_exists('show_add_button', $data)) {
                     $data['show_add_button'] = true;
                 }
 
-                if (!is_array($data) || !array_key_exists('show_prices', $data)) {
+                if (!\is_array($data) || !\array_key_exists('show_prices', $data)) {
                     $data['show_prices'] = true;
                 }
 

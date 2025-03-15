@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Mapping\ClassMetadataFactory;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
@@ -18,7 +17,6 @@ use Oro\Bundle\FormBundle\Form\Type\OroJquerySelect2HiddenType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductMiniBlockContentWidgetSettingsType;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
@@ -26,14 +24,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestCase
 {
-    use EntityTrait;
-
-    #[\Override]
-    protected function setUp(): void
-    {
-        parent::setUp();
-    }
-
     public function testSubmit(): void
     {
         $submittedData = [
@@ -56,14 +46,10 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
     #[\Override]
     protected function getExtensions(): array
     {
-        $entityManager = $this->createMock(EntityManager::class);
-        $metadataFactory = $this->createMock(ClassMetadataFactory::class);
-        $entityManager->expects($this->any())
-            ->method('getMetadataFactory')
-            ->willReturn($metadataFactory);
-        $metadataFactory->expects($this->any())
-            ->method('hasMetadataFor')
-            ->willReturn(true);
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($this->createMock(EntityManagerInterface::class));
 
         $configManager = $this->createMock(ConfigManager::class);
         $configManager->expects($this->any())
@@ -93,18 +79,18 @@ class ProductMiniBlockContentWidgetSettingsTypeTest extends FormIntegrationTestC
             new PreloadedExtension(
                 [
                     ProductMiniBlockContentWidgetSettingsType::class => new ProductMiniBlockContentWidgetSettingsType(
-                        $this->createMock(ManagerRegistry::class)
+                        $doctrine
                     ),
                     ProductSelectType::class => new ProductSelectType($this->createMock(TranslatorInterface::class)),
                     OroEntitySelectOrCreateInlineType::class => new OroEntitySelectOrCreateInlineType(
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $configManager,
-                        $entityManager,
+                        $doctrine,
                         $searchRegistry
                     ),
                     OroJquerySelect2HiddenType::class => new OroJquerySelect2HiddenType(
-                        $this->createMock(EntityManager::class),
+                        $doctrine,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     )

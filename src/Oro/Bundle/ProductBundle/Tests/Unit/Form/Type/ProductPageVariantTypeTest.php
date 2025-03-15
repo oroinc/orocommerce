@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureChecker;
@@ -28,10 +29,15 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
         $classMetadata = new ClassMetadata(Product::class);
         $classMetadata->setIdentifier(['id']);
 
-        $entityManager = $this->createMock(EntityManager::class);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects(self::any())
             ->method('getClassMetadata')
             ->willReturn($classMetadata);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
 
         $handler = $this->createMock(SearchHandlerInterface::class);
         $handler->expects(self::any())
@@ -54,11 +60,11 @@ class ProductPageVariantTypeTest extends FormIntegrationTestCase
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
-                        $entityManager,
+                        $doctrine,
                         $searchRegistry
                     ),
                     new OroJquerySelect2HiddenType(
-                        $entityManager,
+                        $doctrine,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     )

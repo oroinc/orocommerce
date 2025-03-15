@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
@@ -29,6 +28,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 use Oro\Component\Testing\Unit\Form\Extension\Stub\FormTypeValidatorExtensionStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 
@@ -36,27 +36,24 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
 {
     use QuantityTypeTrait;
 
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private $registry;
-
-    /** @var ProductPriceCollectionType */
-    private $formType;
+    private ManagerRegistry&MockObject $doctrine;
+    private ProductPriceCollectionType $formType;
 
     #[\Override]
     protected function setUp(): void
     {
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $this->formType = new ProductPriceCollectionType($this->registry);
+        $this->formType = new ProductPriceCollectionType($this->doctrine);
         $this->formType->setDataClass(ProductPrice::class);
         $this->formType->setPriceListClass(PriceList::class);
+
         parent::setUp();
     }
 
     #[\Override]
     protected function getExtensions(): array
     {
-        $entityManager = $this->createMock(EntityManager::class);
         $searchRegistry = $this->createMock(SearchRegistry::class);
 
         $priceType = new PriceType();
@@ -73,14 +70,14 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
-                        $entityManager,
+                        $this->doctrine,
                         $searchRegistry
                     ),
                     ProductPriceUnitSelectorType::class => new ProductUnitSelectionTypeStub(
                         $this->prepareProductUnitSelectionChoices(['item', 'set'])
                     ),
                     new OroJquerySelect2HiddenType(
-                        $entityManager,
+                        $this->doctrine,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     ),
@@ -127,7 +124,7 @@ class ProductPriceCollectionTypeTest extends FormIntegrationTestCase
             ->method('getCurrenciesIndexedByPricelistIds')
             ->willReturn($currencies);
 
-        $this->registry->expects($this->once())
+        $this->doctrine->expects($this->once())
             ->method('getRepository')
             ->with(PriceList::class)
             ->willReturn($repository);

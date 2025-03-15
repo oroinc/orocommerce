@@ -329,9 +329,9 @@ services:
     oro_product.form.data_transformer.product_to_id:
         class: Oro\Bundle\FormBundle\Form\DataTransformer\EntityToIdTransformer
         arguments:
-            - '@doctrine.orm.entity_manager'
-            - 'Oro\Bundle\ProductBundle\Entity\Product'
-            - 'id'
+            - '@doctrine'
+            - Oro\Bundle\ProductBundle\Entity\Product
+            - id
 
     oro_product.form.extension.product_type:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ProductBrandExtension'

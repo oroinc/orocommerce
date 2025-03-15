@@ -167,6 +167,6 @@ services:
     oro_cms.form.content_block_transformer:
         class: Oro\Bundle\FormBundle\Form\DataTransformer\EntityToIdTransformer
         arguments:
-            - '@doctrine.orm.entity_manager'
+            - '@doctrine'
             - Oro\Bundle\CMSBundle\Entity\ContentBlock
             - id

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
-use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumChoiceType;
@@ -19,21 +18,17 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ProductInventoryStatusSelectType extends AbstractType
 {
-    public const NAME = 'oro_product_inventory_status_select';
-    public const PROD_INVENTORY_STATUS_ENUM_CODE = 'prod_inventory_status';
-
-    public function __construct(private ManagerRegistry $registry)
-    {
+    public function __construct(
+        private ManagerRegistry $doctrine
+    ) {
     }
 
     #[\Override]
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass(EnumOption::class);
-
-        $entitiesToIdsTransformer = new EntitiesToIdsTransformer($em, EnumOption::class);
-        $builder->addModelTransformer(new ReversedTransformer($entitiesToIdsTransformer));
+        $builder->addModelTransformer(
+            new ReversedTransformer(new EntitiesToIdsTransformer($this->doctrine, EnumOption::class))
+        );
     }
 
     #[\Override]
@@ -41,7 +36,7 @@ class ProductInventoryStatusSelectType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'enum_code' => self::PROD_INVENTORY_STATUS_ENUM_CODE,
+                'enum_code' => 'prod_inventory_status',
                 'multiple' => true
             ]
         );
@@ -53,14 +48,9 @@ class ProductInventoryStatusSelectType extends AbstractType
         return EnumChoiceType::class;
     }
 
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
     #[\Override]
     public function getBlockPrefix(): string
     {
-        return static::NAME;
+        return 'oro_product_inventory_status_select';
     }
 }

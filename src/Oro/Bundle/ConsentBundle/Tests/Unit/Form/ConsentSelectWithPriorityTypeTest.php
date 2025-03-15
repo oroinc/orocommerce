@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\ConsentBundle\Tests\Unit\Form;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConsentBundle\Entity\Consent;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectType;
 use Oro\Bundle\ConsentBundle\Form\Type\ConsentSelectWithPriorityType;
@@ -53,14 +54,19 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
             ->method('getSingleIdentifierFieldName')
             ->willReturn('id');
 
-        $entityManager = $this->createMock(EntityManager::class);
-        $entityManager->expects($this->any())
-            ->method('getRepository')
-            ->with(Consent::class)
-            ->willReturn($repository);
+        $entityManager = $this->createMock(EntityManagerInterface::class);
         $entityManager->expects($this->any())
             ->method('getClassMetadata')
             ->willReturn($metadata);
+
+        $doctrine = $this->createMock(ManagerRegistry::class);
+        $doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->willReturn($entityManager);
+        $doctrine->expects($this->any())
+            ->method('getRepository')
+            ->with(Consent::class)
+            ->willReturn($repository);
 
         $searchHandler = $this->createMock(SearchHandlerInterface::class);
         $searchHandler->expects($this->any())
@@ -82,11 +88,11 @@ class ConsentSelectWithPriorityTypeTest extends FormIntegrationTestCase
                         $this->createMock(AuthorizationCheckerInterface::class),
                         $this->createMock(FeatureChecker::class),
                         $this->createMock(ConfigManager::class),
-                        $entityManager,
+                        $doctrine,
                         $searchRegistry
                     ),
                     new OroJquerySelect2HiddenType(
-                        $entityManager,
+                        $doctrine,
                         $searchRegistry,
                         $this->createMock(ConfigProvider::class)
                     ),
