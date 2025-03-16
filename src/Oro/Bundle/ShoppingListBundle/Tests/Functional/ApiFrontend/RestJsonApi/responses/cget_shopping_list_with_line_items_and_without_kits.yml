@@ -58,9 +58,6 @@ included:
             quantity: 5
             currency: USD
             value: '1.2300'
-        relationships:
-            kitItems:
-                data: []
     -
         type: shoppinglistitems
         id: '<toString(@line_item2->id)>'
@@ -68,9 +65,6 @@ included:
             quantity: 10
             currency: USD
             value: '2.3400'
-        relationships:
-            kitItems:
-                data: []
     -
         type: shoppinglistitems
         id: '<toString(@kit_line_item1->id)>'
@@ -78,15 +72,13 @@ included:
             quantity: 2
             currency: USD
             value: '14.8000'
-        relationships:
-            kitItems:
-                data:
-                    -
-                        type: shoppinglistkititems
-                        id: '<toString(@product_kit_item1_line_item1->id)>'
-                    -
-                        type: shoppinglistkititems
-                        id: '<toString(@product_kit_item1_line_item2->id)>'
+    -
+        type: shoppinglistitems
+        id: '<toString(@kit_line_item2->id)>'
+        attributes:
+            quantity: 2
+            currency: USD
+            value: '14.8000'
     -
         type: shoppinglistitems
         id: '<toString(@line_item3->id)>'
@@ -94,9 +86,6 @@ included:
             quantity: 20
             currency: USD
             value: '1.0100'
-        relationships:
-            kitItems:
-                data: []
     -
         type: shoppinglistitems
         id: '<toString(@line_item6->id)>'
@@ -104,6 +93,3 @@ included:
             quantity: 1
             currency: USD
             value: '1.2300'
-        relationships:
-            kitItems:
-                data: []

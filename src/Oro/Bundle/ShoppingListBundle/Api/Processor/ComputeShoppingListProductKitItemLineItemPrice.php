@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Api\Processor;
 
+use Doctrine\ORM\Query;
 use Oro\Bundle\ApiBundle\Processor\CustomizeLoadedData\CustomizeLoadedDataContext;
 use Oro\Bundle\ApiBundle\Request\ValueTransformer;
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
@@ -93,12 +94,20 @@ class ComputeShoppingListProductKitItemLineItemPrice implements ProcessorInterfa
 
     private function getLineItem(int $kitItemLineItemId): ?LineItem
     {
-        $em = $this->doctrineHelper->getEntityManagerForClass(ProductKitItemLineItem::class);
         /** @var ProductKitItemLineItem|null $kitItemLineItem */
-        $kitItemLineItem = $em->getReference(ProductKitItemLineItem::class, $kitItemLineItemId);
-        if (null !== $kitItemLineItem) {
-            $em->refresh($kitItemLineItem);
-        }
+        $kitItemLineItem = $this->doctrineHelper->createQueryBuilder(ProductKitItemLineItem::class, 'kli')
+            ->select('kli, li, sl, p, pu, ki, kii')
+            ->leftJoin('kli.lineItem', 'li')
+            ->leftJoin('li.shoppingList', 'sl')
+            ->leftJoin('li.product', 'p')
+            ->leftJoin('li.unit', 'pu')
+            ->leftJoin('li.kitItemLineItems', 'ki')
+            ->leftJoin('ki.kitItem', 'kii')
+            ->where('kli.id = :id')
+            ->setParameter('id', $kitItemLineItemId)
+            ->getQuery()
+            ->setHint(Query::HINT_REFRESH, true)
+            ->getOneOrNullResult();
 
         return $kitItemLineItem?->getLineItem();
     }
