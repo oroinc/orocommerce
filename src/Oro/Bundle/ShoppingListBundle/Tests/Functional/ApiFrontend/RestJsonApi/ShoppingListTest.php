@@ -24,6 +24,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
     /** @var int|null */
     private $originalShoppingListLimit;
 
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -44,6 +45,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->originalShoppingListLimit = $this->getShoppingListLimit();
     }
 
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -57,20 +59,14 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->originalShoppingListLimit = null;
     }
 
-    /**
-     * @return int
-     */
-    private function getShoppingListLimit()
+    private function getShoppingListLimit(): int
     {
-        return $this->getConfigManager()->get('oro_shopping_list.shopping_list_limit');
+        return self::getConfigManager()->get('oro_shopping_list.shopping_list_limit');
     }
 
-    /**
-     * @param int $limit
-     */
-    private function setShoppingListLimit($limit)
+    private function setShoppingListLimit(int $limit): void
     {
-        $configManager = $this->getConfigManager();
+        $configManager = self::getConfigManager();
         $configManager->set('oro_shopping_list.shopping_list_limit', $limit);
         $configManager->flush();
     }
@@ -87,8 +83,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         int $customerId,
         int $customerUserId,
         int $websiteId,
-        string $notes = null
-    ) {
+        ?string $notes = null
+    ): void {
         self::assertEquals($organizationId, $shoppingList->getOrganization()->getId());
         self::assertEquals($userId, $shoppingList->getOwner()->getId());
         self::assertEquals($customerUserId, $shoppingList->getCustomerUser()->getId());
@@ -113,9 +109,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         float $quantity,
         string $productUnitCode,
         int $productId,
-        string $notes = null,
-        int $parentProductId = null
-    ) {
+        ?string $notes = null,
+        ?int $parentProductId = null
+    ): void {
         self::assertEquals($organizationId, $lineItem->getOrganization()->getId());
         self::assertEquals($userId, $lineItem->getOwner()->getId());
         self::assertEquals($customerUserId, $lineItem->getCustomerUser()->getId());
@@ -139,7 +135,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         ShoppingList $shoppingList,
         float $total,
         string $currency
-    ) {
+    ): void {
         $totalEntity = $this->getShoppingListTotal($shoppingList->getId());
         self::assertEquals($total, $totalEntity->getSubtotal()->getAmount());
         self::assertEquals($currency, $totalEntity->getCurrency());
@@ -171,31 +167,57 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         return $lineItem;
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
         $response = $this->cget(['entity' => 'shoppinglists'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_shopping_list.yml', $response);
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testGetListWithIncludeAndFieldset()
+    public function testGetListWithLineItemsAndKits(): void
     {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
         $response = $this->cget(
             ['entity' => 'shoppinglists'],
             [
-                'include' => 'items.items.kitItems',
+                'include' => 'items,items.kitItems',
                 'fields[shoppinglists]' => 'name,currency,total,subTotal,items',
                 'fields[shoppinglistitems]' => 'currency,value,quantity,kitItems',
+                'fields[shoppinglistkititems]' => 'currency,value,quantity'
             ],
             ['HTTP_X-Include' => 'totalCount']
         );
 
-        $this->assertResponseContains('cget_shopping_list_include_fieldset.yml', $response);
+        $this->assertResponseContains('cget_shopping_list_with_line_items_and_kits.yml', $response);
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testGetListWithDefaultShoppingList()
+    public function testGetListWithLineItemsAndWithoutKits(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->cget(
+            ['entity' => 'shoppinglists'],
+            [
+                'include' => 'items,items.kitItems',
+                'fields[shoppinglists]' => 'name,currency,total,subTotal,items',
+                'fields[shoppinglistitems]' => 'currency,value,quantity'
+            ],
+            ['HTTP_X-Include' => 'totalCount']
+        );
+
+        $this->assertResponseContains('cget_shopping_list_with_line_items_and_without_kits.yml', $response);
+        self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
+    }
+
+    public function testGetListWithDefaultShoppingList(): void
     {
         $this->getCurrentShoppingListStorage()->set(
             $this->getReference('customer_user')->getId(),
@@ -210,7 +232,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($expectedContent, $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $response = $this->get(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>']
@@ -219,7 +241,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_shopping_list.yml', $response);
     }
 
-    public function testGetForDefaultShoppingList()
+    public function testGetForDefaultShoppingList(): void
     {
         $this->getCurrentShoppingListStorage()->set(
             $this->getReference('customer_user')->getId(),
@@ -235,7 +257,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($expectedContent, $response);
     }
 
-    public function testTryToGetByDefaultIdentifierWhenNoDefaultShoppingList()
+    public function testTryToGetByDefaultIdentifierWhenNoDefaultShoppingList(): void
     {
         $response = $this->get(
             ['entity' => 'shoppinglists', 'id' => 'default']
@@ -248,15 +270,15 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                     'id' => '<toString(@shopping_list5->id)>',
                     'attributes' => [
                         'name' => 'Shopping List 5',
-                        'default' => true,
-                    ],
-                ],
+                        'default' => true
+                    ]
+                ]
             ],
             $response
         );
     }
 
-    public function testGetByDefaultIdentifierWhenDefaultShoppingListExists()
+    public function testGetByDefaultIdentifierWhenDefaultShoppingListExists(): void
     {
         $this->getCurrentShoppingListStorage()->set(
             $this->getReference('customer_user')->getId(),
@@ -272,7 +294,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($expectedContent, $response);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $shoppingListId = $this->getReference('shopping_list1')->getId();
         $data = [
@@ -280,9 +302,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'type' => 'shoppinglists',
                 'id' => (string)$shoppingListId,
                 'attributes' => [
-                    'name' => 'Updated Shopping List',
-                ],
-            ],
+                    'name' => 'Updated Shopping List'
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -293,14 +315,12 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
         self::assertEquals('Updated Shopping List', $shoppingList->getLabel());
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -320,9 +340,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
         self::assertShoppingList(
             $shoppingList,
@@ -350,7 +368,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateWithMinimalAssociations()
+    public function testCreateWithMinimalAssociations(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -370,9 +388,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertShoppingList(
             $shoppingList,
             $organizationId,
@@ -397,7 +413,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateWhenLineItemsAssociatedWithShoppingListButShoppingListIsNotAssociatedWithLineItems()
+    public function testCreateWhenLineItemsAssociatedWithShoppingListButShoppingListIsNotAssociatedWithLineItems(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -417,9 +433,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
         self::assertShoppingList(
             $shoppingList,
@@ -445,7 +459,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateEmpty()
+    public function testCreateEmpty(): void
     {
         $organizationId = $this->getReference('organization')->getId();
         $userId = $this->getReference('user')->getId();
@@ -456,9 +470,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             'data' => [
                 'type' => 'shoppinglists',
                 'attributes' => [
-                    'name' => 'New Shopping List',
-                ],
-            ],
+                    'name' => 'New Shopping List'
+                ]
+            ]
         ];
 
         $response = $this->post(
@@ -472,9 +486,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
         self::assertShoppingList(
             $shoppingList,
@@ -488,7 +500,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertCount(0, $shoppingList->getLineItems());
     }
 
-    public function testTryToCreateWhenShoppingListLimitExceeded()
+    public function testTryToCreateWhenShoppingListLimitExceeded(): void
     {
         $this->setShoppingListLimit(2);
 
@@ -502,13 +514,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title' => 'create shopping list constraint',
-                'detail' => 'It is not allowed to create a new shopping list.',
+                'detail' => 'It is not allowed to create a new shopping list.'
             ],
             $response
         );
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
         $shoppingListId = $this->getReference('shopping_list1')->getId();
         $totalId = $this->getShoppingListTotal($shoppingListId)->getId();
@@ -520,25 +532,19 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertTrue(null === $shoppingList);
-        $shoppingListTotal = $this->getEntityManager()
-            ->getRepository(ShoppingListTotal::class)
-            ->find($totalId);
+        $shoppingListTotal = $this->getEntityManager()->find(ShoppingListTotal::class, $totalId);
         self::assertTrue(null === $shoppingListTotal);
 
         $deletedLineItemIds = ['line_item1' => $lineItem1Id, 'line_item2' => $lineItem2Id];
         foreach ($deletedLineItemIds as $deletedLineItemReference => $deletedLineItemId) {
-            $deletedLineItem = $this->getEntityManager()
-                ->getRepository(LineItem::class)
-                ->find($deletedLineItemId);
+            $deletedLineItem = $this->getEntityManager()->find(LineItem::class, $deletedLineItemId);
             self::assertTrue(null === $deletedLineItem, $deletedLineItemReference);
         }
     }
 
-    public function testDeleteList()
+    public function testDeleteList(): void
     {
         $shoppingListId = $this->getReference('shopping_list2')->getId();
         $totalId = $this->getShoppingListTotal($shoppingListId)->getId();
@@ -550,22 +556,16 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertTrue(null === $shoppingList);
-        $shoppingListTotal = $this->getEntityManager()
-            ->getRepository(ShoppingListTotal::class)
-            ->find($totalId);
+        $shoppingListTotal = $this->getEntityManager()->find(ShoppingListTotal::class, $totalId);
         self::assertTrue(null === $shoppingListTotal);
 
-        $deletedLineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItem3Id);
+        $deletedLineItem = $this->getEntityManager()->find(LineItem::class, $lineItem3Id);
         self::assertTrue(null === $deletedLineItem);
     }
 
-    public function testUpdateListOfItems()
+    public function testUpdateListOfItems(): void
     {
         $shoppingListId = $this->getReference('shopping_list1')->getId();
         $lineItem1Id = $this->getReference('line_item1')->getId();
@@ -577,11 +577,11 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'relationships' => [
                     'items' => [
                         'data' => [
-                            ['type' => 'shoppinglistitems', 'id' => (string)$lineItem1Id],
-                        ],
-                    ],
-                ],
-            ],
+                            ['type' => 'shoppinglistitems', 'id' => (string)$lineItem1Id]
+                        ]
+                    ]
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -595,9 +595,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
         $this->assertShoppingListTotal($shoppingList, 6.15, 'USD');
         self::assertCount(1, $shoppingList->getLineItems());
@@ -605,13 +603,11 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $lineItem = $shoppingList->getLineItems()->first();
         self::assertEquals($lineItem1Id, $lineItem->getId());
 
-        $deletedLineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find($lineItem2Id);
+        $deletedLineItem = $this->getEntityManager()->find(LineItem::class, $lineItem2Id);
         self::assertTrue(null === $deletedLineItem);
     }
 
-    public function testCreateAndSetDefaultShoppingListWhenNoDefaultShoppingList()
+    public function testCreateAndSetDefaultShoppingListWhenNoDefaultShoppingList(): void
     {
         $data = $this->getRequestData('create_shopping_list_min.yml');
         $data['data']['attributes']['default'] = true;
@@ -633,7 +629,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateAndSetDefaultShoppingListWhenDefaultShoppingListExists()
+    public function testCreateAndSetDefaultShoppingListWhenDefaultShoppingListExists(): void
     {
         $this->getCurrentShoppingListStorage()->set(
             $this->getReference('customer_user')->getId(),
@@ -660,7 +656,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateAndResetDefaultShoppingListWhenNoDefaultShoppingList()
+    public function testCreateAndResetDefaultShoppingListWhenNoDefaultShoppingList(): void
     {
         $data = $this->getRequestData('create_shopping_list_min.yml');
         $data['data']['attributes']['default'] = false;
@@ -680,7 +676,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateAndResetDefaultShoppingListWhenDefaultShoppingListExists()
+    public function testCreateAndResetDefaultShoppingListWhenDefaultShoppingListExists(): void
     {
         $existingCurrentShoppingListId = $this->getReference('shopping_list1')->getId();
         $this->getCurrentShoppingListStorage()->set(
@@ -707,7 +703,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testCreateLineItemTogetherWithShoppingListSetDefaultShoppingList()
+    public function testCreateLineItemTogetherWithShoppingListSetDefaultShoppingList(): void
     {
         $data = $this->getRequestData('create_line_item_with_shopping_list.yml');
         $data['included'][0]['attributes']['default'] = true;
@@ -730,7 +726,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testUpdateAndSetDefaultShoppingListWhenNoDefaultShoppingList()
+    public function testUpdateAndSetDefaultShoppingListWhenNoDefaultShoppingList(): void
     {
         $shoppingListId = $this->getReference('shopping_list1')->getId();
         $data = [
@@ -738,9 +734,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'type' => 'shoppinglists',
                 'id' => (string)$shoppingListId,
                 'attributes' => [
-                    'default' => true,
-                ],
-            ],
+                    'default' => true
+                ]
+            ]
         ];
         $response = $this->patch(
             ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId],
@@ -757,7 +753,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testUpdateAndSetDefaultShoppingListWhenDefaultShoppingListExists()
+    public function testUpdateAndSetDefaultShoppingListWhenDefaultShoppingListExists(): void
     {
         $this->getCurrentShoppingListStorage()->set(
             $this->getReference('customer_user')->getId(),
@@ -770,9 +766,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'type' => 'shoppinglists',
                 'id' => (string)$shoppingListId,
                 'attributes' => [
-                    'default' => true,
-                ],
-            ],
+                    'default' => true
+                ]
+            ]
         ];
         $response = $this->patch(
             ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId],
@@ -789,7 +785,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testUpdateAndResetDefaultShoppingListWhenNoDefaultShoppingList()
+    public function testUpdateAndResetDefaultShoppingListWhenNoDefaultShoppingList(): void
     {
         $shoppingListId = $this->getReference('shopping_list1')->getId();
         $data = [
@@ -797,9 +793,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'type' => 'shoppinglists',
                 'id' => (string)$shoppingListId,
                 'attributes' => [
-                    'default' => false,
-                ],
-            ],
+                    'default' => false
+                ]
+            ]
         ];
         $response = $this->patch(
             ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId],
@@ -815,7 +811,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testUpdateAndResetDefaultShoppingListWhenDefaultShoppingListExists()
+    public function testUpdateAndResetDefaultShoppingListWhenDefaultShoppingListExists(): void
     {
         $existingCurrentShoppingListId = $this->getReference('shopping_list1')->getId();
         $this->getCurrentShoppingListStorage()->set(
@@ -829,9 +825,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'type' => 'shoppinglists',
                 'id' => (string)$shoppingListId,
                 'attributes' => [
-                    'default' => false,
-                ],
-            ],
+                    'default' => false
+                ]
+            ]
         ];
         $response = $this->patch(
             ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId],
@@ -848,7 +844,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testUpdateAndResetDefaultShoppingListWhenThisShoppingListIsDefault()
+    public function testUpdateAndResetDefaultShoppingListWhenThisShoppingListIsDefault(): void
     {
         $shoppingListId = $this->getReference('shopping_list5')->getId();
         $this->getCurrentShoppingListStorage()->set(
@@ -881,7 +877,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetFromAnotherWebsite()
+    public function testTryToGetFromAnotherWebsite(): void
     {
         $response = $this->get(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list3->id)>'],
@@ -897,7 +893,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToUpdateFromAnotherWebsite()
+    public function testTryToUpdateFromAnotherWebsite(): void
     {
         $shoppingListId = $this->getReference('shopping_list3')->getId();
         $data = [
@@ -905,9 +901,9 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'type' => 'shoppinglists',
                 'id' => (string)$shoppingListId,
                 'attributes' => [
-                    'name' => 'Updated Shopping List',
-                ],
-            ],
+                    'name' => 'Updated Shopping List'
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -924,7 +920,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToDeleteFromAnotherWebsite()
+    public function testTryToDeleteFromAnotherWebsite(): void
     {
         $shoppingListId = $this->getReference('shopping_list3')->getId();
 
@@ -942,7 +938,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToDeleteListFromAnotherWebsite()
+    public function testTryToDeleteListFromAnotherWebsite(): void
     {
         $shoppingListId = $this->getReference('shopping_list3')->getId();
 
@@ -952,22 +948,20 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertNotNull($shoppingList);
     }
 
-    public function testTryToSetEmptyName()
+    public function testTryToSetEmptyName(): void
     {
         $data = [
             'data' => [
                 'type' => 'shoppinglists',
                 'id' => '<toString(@shopping_list1->id)>',
                 'attributes' => [
-                    'name' => '',
-                ],
-            ],
+                    'name' => ''
+                ]
+            ]
         ];
 
         $response = $this->patch(
@@ -981,40 +975,32 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
-                'source' => ['pointer' => '/data/attributes/name'],
+                'source' => ['pointer' => '/data/attributes/name']
             ],
             $response
         );
     }
 
-    public function testTryToCreateWithoutRequiredFields()
+    public function testTryToCreateWithoutRequiredFields(): void
     {
-        $data = [
-            'data' => [
-                'type' => 'shoppinglists',
-            ],
-        ];
-
         $response = $this->post(
             ['entity' => 'shoppinglists'],
-            $data,
+            ['data' => ['type' => 'shoppinglists']],
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/attributes/name'],
-                ],
+                'title' => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/attributes/name']
             ],
             $response
         );
     }
 
-    public function testAddToCartForNewListItem()
+    public function testAddToCartForNewListItem(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -1035,9 +1021,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(4, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
@@ -1054,7 +1038,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($shoppingList, 169.05, 'USD');
     }
 
-    public function testAddToCartForExistingListItem()
+    public function testAddToCartForExistingListItem(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -1076,9 +1060,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(3, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, $lineItemId);
         self::assertLineItem(
@@ -1095,7 +1077,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($shoppingList, 68.15, 'USD');
     }
 
-    public function testAddToCartWithShoppingListInRequestData()
+    public function testAddToCartWithShoppingListInRequestData(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -1137,7 +1119,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($shoppingList, 169.05, 'USD');
     }
 
-    public function testAddToCartForNewListItemForDefaultShoppingList()
+    public function testAddToCartForNewListItemForDefaultShoppingList(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -1157,9 +1139,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(4, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
@@ -1176,7 +1156,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($shoppingList, 169.05, 'USD');
     }
 
-    public function testAddToCartForNewListItemForDefaultShoppingListWhenNoDefaultShoppingList()
+    public function testAddToCartForNewListItemForDefaultShoppingListWhenNoDefaultShoppingList(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -1194,9 +1174,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getEntityManager()
-            ->getRepository(ShoppingList::class)
-            ->find($shoppingListId);
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
         self::assertCount(2, $shoppingList->getLineItems());
         $lineItem = $this->getLineItemById($shoppingList, (int)$responseContent['data'][0]['id']);
         self::assertLineItem(
@@ -1213,7 +1191,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($shoppingList, 111.13, 'USD');
     }
 
-    public function testTryToAddToCartWithId()
+    public function testTryToAddToCartWithId(): void
     {
         $response = $this->postSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1232,7 +1210,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToAddToCartForNewListItemWithWrongProductUnit()
+    public function testTryToAddToCartForNewListItemWithWrongProductUnit(): void
     {
         $shoppingListId = $this->getReference('shopping_list1')->getId();
 
@@ -1247,13 +1225,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'product unit exists constraint',
                 'detail' => 'The product unit does not exist for the product.',
-                'source' => ['pointer' => '/data/0/relationships/unit/data'],
+                'source' => ['pointer' => '/data/0/relationships/unit/data']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartForNewListItemNotSellProductProductUnit()
+    public function testTryToAddToCartForNewListItemNotSellProductProductUnit(): void
     {
         $shoppingListId = $this->getReference('shopping_list1')->getId();
 
@@ -1264,19 +1242,17 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'product unit exists constraint',
-                    'detail' => 'The product unit does not exist for the product.',
-                    'source' => ['pointer' => '/data/0/relationships/unit/data'],
-                ],
+                'title' => 'product unit exists constraint',
+                'detail' => 'The product unit does not exist for the product.',
+                'source' => ['pointer' => '/data/0/relationships/unit/data']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithoutUnit()
+    public function testTryToAddToCartWithoutUnit(): void
     {
         $response = $this->postSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1289,13 +1265,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'not blank constraint',
                 'detail' => 'This value should not be blank.',
-                'source' => ['pointer' => '/data/0/relationships/unit/data'],
+                'source' => ['pointer' => '/data/0/relationships/unit/data']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithInvalidQuantityForNewListItem()
+    public function testTryToAddToCartWithInvalidQuantityForNewListItem(): void
     {
         $response = $this->postSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1308,13 +1284,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'form constraint',
                 'detail' => 'Please enter a number.',
-                'source' => ['pointer' => '/data/0/attributes/quantity'],
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithInvalidQuantityForExistingListItem()
+    public function testTryToAddToCartWithInvalidQuantityForExistingListItem(): void
     {
         $response = $this->postSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1327,13 +1303,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'form constraint',
                 'detail' => 'Please enter a number.',
-                'source' => ['pointer' => '/data/0/attributes/quantity'],
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithInvalidQuantityBecauseOfProductPrecisionForNewListItem()
+    public function testTryToAddToCartWithInvalidQuantityBecauseOfProductPrecisionForNewListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_new.yml');
         $data['data'][0]['attributes']['quantity'] = 1.2345;
@@ -1349,13 +1325,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'quantity unit precision constraint',
                 'detail' => 'The precision for the unit "set" is not valid.',
-                'source' => ['pointer' => '/data/0/attributes/quantity'],
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithInvalidQuantityBecauseOfProductPrecisionForExistingListItem()
+    public function testTryToAddToCartWithInvalidQuantityBecauseOfProductPrecisionForExistingListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_existing.yml');
         $data['data'][0]['attributes']['quantity'] = 1.2345;
@@ -1377,7 +1353,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToAddToCartWithNegativeQuantityForNewListItem()
+    public function testTryToAddToCartWithNegativeQuantityForNewListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_new.yml');
         $data['data'][0]['attributes']['quantity'] = -1;
@@ -1393,13 +1369,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'expression constraint',
                 'detail' => 'Quantity must be greater than 0',
-                'source' => ['pointer' => '/data/0/attributes/quantity'],
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithNegativeQuantityForExistingListItem()
+    public function testTryToAddToCartWithNegativeQuantityForExistingListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_existing.yml');
         $data['data'][0]['attributes']['quantity'] = -1;
@@ -1415,13 +1391,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'expression constraint',
                 'detail' => 'Quantity must be greater than 0',
-                'source' => ['pointer' => '/data/0/attributes/quantity'],
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithZeroQuantityForNewListItem()
+    public function testTryToAddToCartWithZeroQuantityForNewListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_new.yml');
         $data['data'][0]['attributes']['quantity'] = 0;
@@ -1437,13 +1413,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'expression constraint',
                 'detail' => 'Quantity must be greater than 0',
-                'source' => ['pointer' => '/data/0/attributes/quantity'],
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithZeroQuantityForExistingListItem()
+    public function testTryToAddToCartWithZeroQuantityForExistingListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_existing.yml');
         $data['data'][0]['attributes']['quantity'] = 0;
@@ -1459,13 +1435,13 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'title' => 'expression constraint',
                 'detail' => 'Quantity must be greater than 0',
-                'source' => ['pointer' => '/data/0/attributes/quantity'],
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithEmptyQuantityForNewListItem()
+    public function testTryToAddToCartWithEmptyQuantityForNewListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_new.yml');
         $data['data'][0]['attributes']['quantity'] = '';
@@ -1487,7 +1463,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToAddToCartWithEmptyQuantityForExistingListItem()
+    public function testTryToAddToCartWithEmptyQuantityForExistingListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_existing.yml');
         $data['data'][0]['attributes']['quantity'] = '';
@@ -1509,7 +1485,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToAddToCartWithNullQuantityForNewListItem()
+    public function testTryToAddToCartWithNullQuantityForNewListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_new.yml');
         $data['data'][0]['attributes']['quantity'] = null;
@@ -1521,19 +1497,17 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
+                'title' => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithNullQuantityForExistingListItem()
+    public function testTryToAddToCartWithNullQuantityForExistingListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_existing.yml');
         $data['data'][0]['attributes']['quantity'] = null;
@@ -1545,19 +1519,17 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
+                'title' => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithoutQuantityForNewListItem()
+    public function testTryToAddToCartWithoutQuantityForNewListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_new.yml');
         unset($data['data'][0]['attributes']);
@@ -1569,19 +1541,17 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
+                'title' => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testTryToAddToCartWithoutQuantityForExistingListItem()
+    public function testTryToAddToCartWithoutQuantityForExistingListItem(): void
     {
         $data = $this->getRequestData('add_line_item_invalid_quantity_existing.yml');
         unset($data['data'][0]['attributes']);
@@ -1593,19 +1563,17 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'not blank constraint',
-                    'detail' => 'This value should not be blank.',
-                    'source' => ['pointer' => '/data/0/attributes/quantity'],
-                ],
+                'title' => 'not blank constraint',
+                'detail' => 'This value should not be blank.',
+                'source' => ['pointer' => '/data/0/attributes/quantity']
             ],
             $response
         );
     }
 
-    public function testAddToCartForDefaultShoppingListForUserWithoutShoppingLists()
+    public function testAddToCartForDefaultShoppingListForUserWithoutShoppingLists(): void
     {
         $userId = $this->getReference('user')->getId();
         $organizationId = $this->getReference('organization')->getId();
@@ -1623,9 +1591,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
 
         /** @var LineItem $lineItem */
-        $lineItem = $this->getEntityManager()
-            ->getRepository(LineItem::class)
-            ->find((int)$responseContent['data'][0]['id']);
+        $lineItem = $this->getEntityManager()->find(LineItem::class, (int)$responseContent['data'][0]['id']);
         $shoppingList = $lineItem->getShoppingList();
         self::assertEquals(
             self::getContainer()->get('translator')->trans('oro.shoppinglist.default.label'),
@@ -1646,7 +1612,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($shoppingList, 109.9, 'USD');
     }
 
-    public function testGetSubresourceCustomer()
+    public function testGetSubresourceCustomer(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'customer']
@@ -1658,15 +1624,15 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                     'type' => 'customers',
                     'id' => '<toString(@customer->id)>',
                     'attributes' => [
-                        'name' => 'Customer',
-                    ],
-                ],
+                        'name' => 'Customer'
+                    ]
+                ]
             ],
             $response
         );
     }
 
-    public function testGetRelationshipCustomer()
+    public function testGetRelationshipCustomer(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'customer']
@@ -1676,14 +1642,14 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     'type' => 'customers',
-                    'id' => '<toString(@customer->id)>',
-                ],
+                    'id' => '<toString(@customer->id)>'
+                ]
             ],
             $response
         );
     }
 
-    public function testTryToUpdateRelationshipCustomer()
+    public function testTryToUpdateRelationshipCustomer(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'customer'],
@@ -1695,7 +1661,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceCustomerUser()
+    public function testGetSubresourceCustomerUser(): void
     {
         $response = $this->getSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'customerUser']
@@ -1707,15 +1673,15 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                     'type' => 'customerusers',
                     'id' => '<toString(@customer_user->id)>',
                     'attributes' => [
-                        'email' => 'frontend_admin_api@example.com',
-                    ],
-                ],
+                        'email' => 'frontend_admin_api@example.com'
+                    ]
+                ]
             ],
             $response
         );
     }
 
-    public function testGetRelationshipCustomerUser()
+    public function testGetRelationshipCustomerUser(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'customerUser']
@@ -1725,14 +1691,14 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
             [
                 'data' => [
                     'type' => 'customerusers',
-                    'id' => '<toString(@customer_user->id)>',
-                ],
+                    'id' => '<toString(@customer_user->id)>'
+                ]
             ],
             $response
         );
     }
 
-    public function testTryToUpdateRelationshipCustomerUser()
+    public function testTryToUpdateRelationshipCustomerUser(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'customerUser'],
@@ -1744,8 +1710,11 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function testGetSubresourceItems()
+    public function testGetSubresourceItems(): void
     {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
         $response = $this->getSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items']
         );
@@ -1759,8 +1728,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 5,
                             'currency' => 'USD',
-                            'value' => '1.23',
-                        ],
+                            'value' => '1.23'
+                        ]
                     ],
                     [
                         'type' => 'shoppinglistitems',
@@ -1768,8 +1737,8 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 10,
                             'currency' => 'USD',
-                            'value' => '2.34',
-                        ],
+                            'value' => '2.34'
+                        ]
                     ],
                     [
                         'type' => 'shoppinglistitems',
@@ -1777,16 +1746,16 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 2,
                             'currency' => 'USD',
-                            'value' => '14.8',
-                        ],
-                    ],
-                ],
+                            'value' => '14.8'
+                        ]
+                    ]
+                ]
             ],
             $response
         );
     }
 
-    public function testTryToUpdateSubresourceRelationshipItems()
+    public function testTryToUpdateSubresourceRelationshipItems(): void
     {
         $response = $this->patchSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1798,7 +1767,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST');
     }
 
-    public function testTryToDeleteSubresourceRelationshipItems()
+    public function testTryToDeleteSubresourceRelationshipItems(): void
     {
         $response = $this->deleteSubresource(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1810,7 +1779,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST');
     }
 
-    public function testGetRelationshipItems()
+    public function testGetRelationshipItems(): void
     {
         $response = $this->getRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items']
@@ -1821,14 +1790,14 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 'data' => [
                     ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
                     ['type' => 'shoppinglistitems', 'id' => '<toString(@line_item2->id)>'],
-                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>'],
-                ],
+                    ['type' => 'shoppinglistitems', 'id' => '<toString(@kit_line_item1->id)>']
+                ]
             ],
             $response
         );
     }
 
-    public function testTryToUpdateRelationshipItems()
+    public function testTryToUpdateRelationshipItems(): void
     {
         $response = $this->patchRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1840,7 +1809,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
-    public function testTryToAddRelationshipItems()
+    public function testTryToAddRelationshipItems(): void
     {
         $response = $this->postRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1852,7 +1821,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
-    public function testTryToDeleteRelationshipItems()
+    public function testTryToDeleteRelationshipItems(): void
     {
         $response = $this->deleteRelationship(
             ['entity' => 'shoppinglists', 'id' => '<toString(@shopping_list1->id)>', 'association' => 'items'],
@@ -1864,7 +1833,7 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
-    public function testResetDefaultShoppingListAfterShoppingListDeletion()
+    public function testResetDefaultShoppingListAfterShoppingListDeletion(): void
     {
         $customerUserId = $this->getReference('customer_user')->getId();
         $shoppingListId = $this->getReference('shopping_list1')->getId();

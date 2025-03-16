@@ -97,12 +97,10 @@ api:
                     data_type: string
                     form_options:
                         mapped: false
-                    depends_on: [product, quantity, unit]
                 value:
                     data_type: money
                     form_options:
                         mapped: false
-                    depends_on: [product, quantity, unit]
                 kitItems:
                     property_path: kitItemLineItems
                 checksum:
@@ -142,10 +140,12 @@ api:
                     data_type: string
                     form_options:
                         mapped: false
+                    depends_on: [ kitItem ]
                 value:
                     data_type: money
                     form_options:
                         mapped: false
+                    depends_on: [ kitItem ]
                 sortOrder:
                     data_type: integer
             actions:

@@ -14,6 +14,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 
 /**
  * Computes values for "currency" and "value" fields for a shopping list item.
+ * THIS CLASS IS DEPRECATED AND WILL BE REMOVED IN THE NEXT MAJOR RELEASE.
  */
 abstract class AbstractComputeLineItemPrice implements ProcessorInterface
 {

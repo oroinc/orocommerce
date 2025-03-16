@@ -143,6 +143,9 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
     public function testGetList(): void
     {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
 
         $this->assertResponseContains('cget_line_item.yml', $response);
@@ -159,6 +162,80 @@ class ShoppingListItemTest extends FrontendRestJsonApiTestCase
 
         $this->assertResponseContains('cget_line_item_filter.yml', $response);
         self::assertEquals(3, $response->headers->get('X-Include-Total-Count'));
+    }
+
+    public function testGetListWithPriceOnly(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->cget(
+            ['entity' => 'shoppinglistitems'],
+            ['fields[shoppinglistitems]' => 'currency,value']
+        );
+
+        $expectedData = $this->getResponseData('cget_line_item.yml');
+        foreach ($expectedData['data'] as $i => $item) {
+            foreach ($expectedData['data'][$i]['attributes'] as $name => $val) {
+                if (!\in_array($name, ['currency', 'value'], true)) {
+                    unset($expectedData['data'][$i]['attributes'][$name]);
+                }
+            }
+            unset($expectedData['data'][$i]['relationships']);
+        }
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testGetListWithPriceOnlyAndKits(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->cget(
+            ['entity' => 'shoppinglistitems'],
+            [
+                'fields[shoppinglistitems]' => 'currency,value,kitItems',
+                'fields[shoppinglistkititems]' => 'currency,value',
+                'include' => 'kitItems'
+            ]
+        );
+
+        $expectedData = $this->getResponseData('cget_line_item.yml');
+        foreach ($expectedData['data'] as $i => $item) {
+            foreach ($expectedData['data'][$i]['attributes'] as $name => $val) {
+                if (!\in_array($name, ['currency', 'value'], true)) {
+                    unset($expectedData['data'][$i]['attributes'][$name]);
+                }
+            }
+            unset($expectedData['data'][$i]['relationships']);
+        }
+        $expectedData['included'] = [
+            [
+                'type' => 'shoppinglistkititems',
+                'id' => '<toString(@product_kit_item1_line_item1->id)>',
+                'attributes' => [
+                    'currency' => 'USD',
+                    'value' => '1.23'
+                ]
+            ],
+            [
+                'type' => 'shoppinglistkititems',
+                'id' => '<toString(@product_kit_item1_line_item2->id)>',
+                'attributes' => [
+                    'currency' => null,
+                    'value' => null
+                ]
+            ],
+            [
+                'type' => 'shoppinglistkititems',
+                'id' => '<toString(@product_kit_item2_line_item1->id)>',
+                'attributes' => [
+                    'currency' => 'USD',
+                    'value' => '1.23'
+                ]
+            ],
+        ];
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testGet(): void

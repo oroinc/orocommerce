@@ -62,6 +62,9 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
 
     public function testGetList(): void
     {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
         $response = $this->cget(['entity' => 'shoppinglistkititems']);
 
         $this->assertResponseContains('cget_kit_line_item.yml', $response);
@@ -75,6 +78,28 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
         );
 
         $this->assertResponseContains('cget_kit_line_item_filter.yml', $response);
+    }
+
+    public function testGetListWithPriceOnly(): void
+    {
+        // clear the entity manager to be sure that "compute prices" API processors work correctly
+        $this->getEntityManager()->clear();
+
+        $response = $this->cget(
+            ['entity' => 'shoppinglistkititems'],
+            ['fields[shoppinglistkititems]' => 'currency,value']
+        );
+
+        $expectedData = $this->getResponseData('cget_kit_line_item.yml');
+        foreach ($expectedData['data'] as $i => $item) {
+            foreach ($expectedData['data'][$i]['attributes'] as $name => $val) {
+                if (!\in_array($name, ['currency', 'value'], true)) {
+                    unset($expectedData['data'][$i]['attributes'][$name]);
+                }
+            }
+            unset($expectedData['data'][$i]['relationships']);
+        }
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testGet(): void
