@@ -827,6 +827,8 @@ services:
     oro_shopping_list.model.product_price_scope_criteria_factory:
         class: Oro\Bundle\ShoppingListBundle\Model\ProductPriceScopeCriteriaFactory
         decorates: oro_pricing.model.product_price_scope_criteria_factory
+        calls:
+            - [ setCustomerUserRelationsProvider, [ '@oro_customer.provider.customer_user_relations_provider' ] ]
         arguments:
             - '@oro_customer.security.customer_user_provider'
             - '@.inner'
