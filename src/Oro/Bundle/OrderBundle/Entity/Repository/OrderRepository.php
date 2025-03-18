@@ -321,4 +321,52 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
         return $salesOrdersDataQueryBuilder;
     }
+
+    public function getOrdersPurchaseVolume(
+        int $websiteId,
+        int $customerId,
+        string $currency,
+        string $period,
+        \DateTime $dateLimit,
+        array $statuses = []
+    ): array {
+        $queryBuilder = $this->getOrdersPurchaseVolumeQueryBuilder(
+            $websiteId,
+            $customerId,
+            $currency,
+            $period,
+            $dateLimit,
+            $statuses
+        );
+
+        return $this->aclHelper->apply($queryBuilder)->getResult();
+    }
+
+    public function getOrdersPurchaseVolumeQueryBuilder(
+        int $websiteId,
+        int $customerId,
+        string $currency,
+        string $period,
+        \DateTime $dateLimit,
+        array $statuses = []
+    ): QueryBuilder {
+        $qb = $this->createQueryBuilder('o');
+
+        return $qb
+            ->select('DATE_TRUNC(:period, o.createdAt) as label, SUM(o.totalValue) as value')
+            ->andWhere($qb->expr()->eq('o.website', ':websiteId'))
+            ->andWhere($qb->expr()->notIn("JSON_EXTRACT(o.serialized_data, 'internal_status')", ':statuses'))
+            ->andWhere($qb->expr()->eq('o.currency', ':currency'))
+            ->andWhere($qb->expr()->eq('o.customer', ':customerId'))
+            ->andWhere('o.parent IS NULL')
+            ->andWhere('o.totalValue IS NOT NULL')
+            ->having($qb->expr()->gt('DATE_TRUNC(:period, o.createdAt)', ':dateLimit'))
+            ->setParameter('period', $period)
+            ->setParameter('websiteId', $websiteId)
+            ->setParameter('statuses', $statuses)
+            ->setParameter('currency', $currency)
+            ->setParameter('customerId', $customerId)
+            ->setParameter('dateLimit', $dateLimit)
+            ->groupBy('label');
+    }
 }

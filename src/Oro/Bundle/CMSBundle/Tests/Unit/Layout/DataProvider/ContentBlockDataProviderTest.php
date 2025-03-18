@@ -15,18 +15,19 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
+final class ContentBlockDataProviderTest extends TestCase
 {
-    private const SCOPE_TYPE = 'test_scope_type';
+    private const string SCOPE_TYPE = 'test_scope_type';
 
-    private ContentBlockResolver|MockObject $resolver;
-    private ManagerRegistry|MockObject $doctrine;
-    private ScopeManager|MockObject $scopeManager;
-    private ThemeConfigurationProvider|MockObject $themeConfigurationProvider;
-    private AclHelper|MockObject $aclHelper;
-    private LoggerInterface|MockObject $logger;
+    private ContentBlockResolver&MockObject $resolver;
+    private ManagerRegistry&MockObject $doctrine;
+    private ScopeManager&MockObject $scopeManager;
+    private ThemeConfigurationProvider&MockObject $themeConfigurationProvider;
+    private AclHelper&MockObject $aclHelper;
+    private LoggerInterface&MockObject $logger;
     private ContentBlockDataProvider $provider;
 
     #[\Override]
@@ -72,6 +73,29 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
         self::assertEquals($alias, $this->provider->getPromotionalBlockAlias());
     }
 
+    public function testGetContentBlockAlias(): void
+    {
+        $alias = 'alias';
+        $key = ThemeConfiguration::buildOptionKey('header', 'promotional_content');
+
+        $this->themeConfigurationProvider->expects(self::once())
+            ->method('getThemeConfigurationOption')
+            ->with($key)
+            ->willReturn(1);
+
+        $repo = $this->createMock(ContentBlockRepository::class);
+        $this->doctrine->expects(self::any())
+            ->method('getRepository')
+            ->with(ContentBlock::class)
+            ->willReturn($repo);
+        $repo->expects(self::once())
+            ->method('getContentBlockAliasById')
+            ->with(1, $this->aclHelper)
+            ->willReturn($alias);
+
+        self::assertEquals($alias, $this->provider->getContentBlockAliasByThemeConfigKey($key));
+    }
+
     public function testGetPromotionalBlockAliasWhenAliasNotExist(): void
     {
         $this->themeConfigurationProvider->expects(self::once())
@@ -103,6 +127,20 @@ class ContentBlockDataProviderTest extends \PHPUnit\Framework\TestCase
             ->method('getRepository');
 
         self::assertSame('', $this->provider->getPromotionalBlockAlias());
+    }
+
+    public function testGetContentBlockAliasWhenNoThemeConfigurationOption(): void
+    {
+        $key = ThemeConfiguration::buildOptionKey('header', 'promotional_content');
+        $this->themeConfigurationProvider->expects(self::once())
+            ->method('getThemeConfigurationOption')
+            ->with($key)
+            ->willReturn(null);
+
+        $this->doctrine->expects(self::never())
+            ->method('getRepository');
+
+        self::assertSame('', $this->provider->getContentBlockAliasByThemeConfigKey($key));
     }
 
     public function testGetContentBlockView(): void

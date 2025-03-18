@@ -28,6 +28,7 @@ class ContentBlockDataProviderTest extends WebTestCase
     use ConfigManagerAwareTestTrait;
 
     private ContentBlockDataProvider $provider;
+    private ?string $optionKey = null;
 
     #[\Override]
     protected function setUp(): void
@@ -40,6 +41,7 @@ class ContentBlockDataProviderTest extends WebTestCase
             LoadThemeConfigurationData::class,
         ]);
         $this->provider = self::getContainer()->get('oro_cms.provider.content_block_provider');
+        $this->optionKey = ThemeConfiguration::buildOptionKey('header', 'promotional_content');
     }
 
     #[\Override]
@@ -66,7 +68,7 @@ class ContentBlockDataProviderTest extends WebTestCase
     private function setContentBlockForThemeConfiguration(): void
     {
         $this->getThemeConfiguration()->addConfigurationOption(
-            ThemeConfiguration::buildOptionKey('header', 'promotional_content'),
+            $this->optionKey,
             $this->getReference('content_block_1')->getId()
         );
         $this->getThemeConfigurationEntityManager()->flush();
@@ -87,6 +89,7 @@ class ContentBlockDataProviderTest extends WebTestCase
         $this->setContentBlockForThemeConfiguration();
 
         self::assertEquals('content_block_1', $this->provider->getPromotionalBlockAlias());
+        self::assertEquals('content_block_1', $this->provider->getContentBlockAliasByThemeConfigKey($this->optionKey));
     }
 
     public function testGetPromotionalBlockAliasForCustomerUser(): void
@@ -105,6 +108,7 @@ class ContentBlockDataProviderTest extends WebTestCase
         $this->setContentBlockForThemeConfiguration();
 
         self::assertEquals('content_block_1', $this->provider->getPromotionalBlockAlias());
+        self::assertEquals('content_block_1', $this->provider->getContentBlockAliasByThemeConfigKey($this->optionKey));
     }
 
     public function testGetPromotionalBlockAliasForAnonymous(): void
@@ -114,6 +118,7 @@ class ContentBlockDataProviderTest extends WebTestCase
         $this->setContentBlockForThemeConfiguration();
 
         self::assertEquals('content_block_1', $this->provider->getPromotionalBlockAlias());
+        self::assertEquals('content_block_1', $this->provider->getContentBlockAliasByThemeConfigKey($this->optionKey));
     }
 
     public function testGetPromotionalBlockAliasFromThemeConfigurationForAnonymous(): void
@@ -128,5 +133,6 @@ class ContentBlockDataProviderTest extends WebTestCase
         $configManager->flush();
 
         self::assertEquals('content_block_1', $this->provider->getPromotionalBlockAlias());
+        self::assertEquals('content_block_1', $this->provider->getContentBlockAliasByThemeConfigKey($this->optionKey));
     }
 }

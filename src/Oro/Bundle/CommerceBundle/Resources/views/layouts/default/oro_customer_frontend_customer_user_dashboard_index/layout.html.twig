@@ -1,0 +1,248 @@
+{% block _dashboard_page_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid dashboard-container "
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_quick_access_menu_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_primary_group_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12 grid dashboard-primary-container"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_group_one_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12 grid"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_content_widget_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-6 grid-col-tablet-big-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_content_widget_2_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-6 grid-col-tablet-big-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_group_two_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12 grid"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_content_widget_3_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-6 grid-col-tablet-big-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_content_widget_4_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-6 grid-col-tablet-big-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_charts_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_group_three_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12 grid"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_content_widget_5_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-6 grid-col-tablet-big-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_content_widget_6_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-6 grid-col-tablet-big-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_secondary_group_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12 grid dashboard-secondary-container"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length > 0 %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_recommended_products_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length > 0 %}
+        <div {{ block('block_attributes') }}>
+            <div class="dashboard-widget">
+                <div class="dashboard-widget__content dashboard-widget__segment">
+                    {{ children|raw }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_recommended_products_2_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length > 0 %}
+        <div {{ block('block_attributes') }}>
+            <div class="dashboard-widget">
+                <div class="dashboard-widget__content dashboard-widget__segment">
+                    {{ children|raw }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_promotional_content_block_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length > 0 %}
+        <div {{ block('block_attributes') }}>
+            <div class="dashboard-widget">
+                <div class="dashboard-widget__header">
+                    <h3 class="h3 no-offset">{{ 'oro.customer.frontend.dashboard.widgets.promotional_content_block.title'|trans }}</h3>
+                </div>
+                <div class="dashboard-widget__content dashboard-widget__segment">
+                    {{ children|raw }}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_promotional_content_block_2_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'class': "grid-col-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length > 0 %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}

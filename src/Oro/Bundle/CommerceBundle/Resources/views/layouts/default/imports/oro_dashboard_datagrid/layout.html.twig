@@ -1,0 +1,71 @@
+{% block __oro_dashboard_datagrid__dashboard_datagrid_container_widget %}
+    {% do block|merge_context({
+        'routeName': routeName|default(null),
+        'routeParams': routeParams|default({}),
+        'itemsCount': itemsCount|default(0),
+        'title': label|default(),
+        'grid_full_name': pageComponentName|default('')
+    }) %}
+
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block __oro_dashboard_datagrid__dashboard_datagrid_inner_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__inner'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_dashboard_datagrid__dashboard_datagrid_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__header no-offset'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_dashboard_datagrid__dashboard_datagrid_body_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__content'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_dashboard_datagrid__dashboard_datagrid_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' h3 dashboard-widget__title hide-on-mobile'
+    }) %}
+    <h2 {{ block('block_attributes') }}>{{ title }}</h2>
+{% endblock %}
+
+{% block __oro_dashboard_datagrid__dashboard_datagrid_items_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__items visible-items-counter',
+        'data-role': grid_full_name ~ '-items-count',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <strong data-role="items-count-value"></strong>
+    </div>
+{% endblock %}
+
+{% block __oro_dashboard_datagrid__dashboard_datagrid_btn_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__btn'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {% if routeName is defined and routeName != null %}
+            <a class="btn btn--size-small btn--flat" href="{{ path(routeName, routeParams) }}">{{ 'oro.customer.frontend.dashboard.view_all'|trans }}</a>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -1,0 +1,19 @@
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote{1..5}:
+        internal_status: '@quote_internal_status_sent_to_customer'
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@amanda'
+        qid: 'Quote<current()>'
+        po_number: 'PO<current()>'
+        validUntil: '<(new DateTime("01-01-5000 00:00:00"))>'
+        website: '@website1'
+
+Oro\Bundle\WorkflowBundle\Entity\WorkflowItem:
+    quote{1..5}WorkflowItem:
+        workflowName: 'b2b_quote_backoffice_approvals'
+        definition: '@workflow_b2b_quote_backoffice_approvals'
+        currentStep: '@workflow_b2b_quote_backoffice_approvals_sent_to_customer'
+        entityId: '<current()>'
+        entityClass: 'Oro\\Bundle\\SaleBundle\\Entity\\Quote'
+        serializedData: <('[]')>

@@ -1,0 +1,83 @@
+oro:
+    commerce:
+        content_widget_type:
+            customer_dashboard_datagrid:
+                label: Customer Dashboard DataGrid
+                form:
+                    choose_datagrid: Choose a datagrid...
+                    no_available_datagrid: No available datagrids
+                options:
+                    name: 'DataGrid Name'
+                    labels:
+                        label: Labels
+                        singular_label: Label
+                        tooltip: If provided, this label will be displayed above the datagrid.
+                    view_all:
+                        label: View All
+                        tooltip: If provided, this link will be displayed above the datagrid.
+
+        datagrid:
+            number: Number
+            last_updated: Last Updated
+
+    customer:
+        frontend:
+            dashboard:
+                page:
+                    title: 'Welcome,  %userName%!'
+                view_all: 'View All'
+                widgets:
+                    purchase_volume_chart:
+                        title: 'Purchase Volume'
+                    my_checkouts:
+                        title: 'My Checkouts'
+                    my_shopping_lists:
+                        title: 'My Shopping Lists'
+                    open_quotes:
+                        title: 'Open Quotes'
+                    latest_rfqs:
+                        title: 'Requests For Quote'
+                    my_latest_orders:
+                        title: 'My Latest Orders'
+                    promotional_content_block:
+                        title: 'News'
+            theme:
+                default:
+                    configuration:
+                        customer_user_dashboard:
+                            label: 'Dashboard'
+                            content_widget.tooltip: 'If provided, this content widget will be displayed on the customer dashboard page.'
+                            content_block.tooltip: 'If provided, this content block will be displayed on the customer dashboard page.'
+                            show_dashboard_quick_access_menu:
+                                label: 'Show Quick Access Menu'
+                                tooltip: 'If provided, this menu will be displayed on the customer dashboard page.'
+                            show_purchase_volume_chart:
+                                label: 'Show Purchase Volume Chart'
+                                tooltip: 'If provided, this chart will be displayed on the customer dashboard page.'
+                            content_widget:
+                                label: 'Customer Dashboard Content Widget'
+                            content_widget_2:
+                                label: 'Customer Dashboard Content Widget (2)'
+                            content_widget_3:
+                                label: 'Customer Dashboard Content Widget (3)'
+                            content_widget_4:
+                                label: 'Customer Dashboard Content Widget (4)'
+                            content_widget_5:
+                                label: 'Customer Dashboard Content Widget (5)'
+                            content_widget_6:
+                                label: 'Customer Dashboard Content Widget (6)'
+                            recommended_products:
+                                label: 'Recommended Products'
+                            recommended_products_2:
+                                label: 'Recommended Products (2)'
+                            promotional_content_block:
+                                label: 'Promotional Content Block'
+                            promotional_content_block_2:
+                                label: 'Promotional Content Block (2)'
+
+        chart:
+            purchase_volume_chart:
+                label: Purchase Volume Chart
+                params:
+                    label: Category (X axis)
+                    value: Value (Y axis)

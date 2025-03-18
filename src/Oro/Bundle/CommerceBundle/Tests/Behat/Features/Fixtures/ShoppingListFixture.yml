@@ -1,0 +1,24 @@
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shopping_list{1..5}:
+        label: 'Shopping List <current()>'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        organization: '@organization'
+        website: '@website1'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    line_item{1..5}:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shopping_list<current()>'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shopping_list_total{1..5}:
+        __construct: ['@shopping_list<current()>','USD']
+        shoppingList: '@shopping_list<current()>'
+        currency: 'USD'
+        subtotalValue: '10'
+        valid: true

@@ -1,0 +1,22 @@
+services:
+    oro_commerce.content_widget_type.customer_dashboard_datagrid:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\CustomerDashboardDatagridContentWidgetType
+        arguments:
+            - '@security.authorization_checker'
+            - '@oro_datagrid.datagrid.manager'
+            - '@oro_frontend.request.frontend_helper'
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    oro_commerce.form.type.customer_dashboard_datagrid_select:
+        class: Oro\Bundle\CommerceBundle\Form\Type\CustomerDashboardDatagridSelectType
+        arguments:
+            - '@oro_commerce.content_widget.provider.customer_dashboard_datagrids'
+        tags:
+            - { name: form.type }
+
+    Oro\Bundle\CommerceBundle\ContentWidget\Provider\CustomerDashboardDatagridsProviderInterface:
+        alias: oro_commerce.content_widget.provider.customer_dashboard_datagrids
+
+    oro_commerce.content_widget.provider.customer_dashboard_datagrids:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\Provider\CustomerDashboardDatagridsProvider

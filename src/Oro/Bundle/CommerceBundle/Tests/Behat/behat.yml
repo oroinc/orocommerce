@@ -1,0 +1,76 @@
+oro_behat_extension:
+  suites:
+    OroCommerceBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\ApplicationBundle\Tests\Behat\Context\CommerceMainContext
+        - Oro\Bundle\DataGridBundle\Tests\Behat\Context\GridContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FormContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\CommerceBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+      paths:
+        - '@OroCommerceBundle/Tests/Behat/Features'
+
+  elements:
+    Quick Access Dashboard Menu:
+      selector: 'ul.dashboard-menu'
+
+    PurchaseVolumeChart:
+      selector: 'div.chart-container.purchase-volume-chart'
+
+    Purchase Volume Widget:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "dashboard-widget__collapse-body") and preceding-sibling::a/span[contains(text(), "Purchase Volume")]]'
+
+    My Shopping Lists Widget:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "dashboard-widget__collapse-body") and preceding-sibling::a/span[contains(text(), "My Shopping Lists")]]'
+
+    My Checkouts Widget:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "dashboard-widget__collapse-body") and preceding-sibling::a/span[contains(text(), "My Checkouts")]]'
+
+    My Latest Orders Widget:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "dashboard-widget__collapse-body") and preceding-sibling::a/span[contains(text(), "My Latest Orders")]]'
+
+    Open Quotes Widget:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "dashboard-widget__collapse-body") and preceding-sibling::a/span[contains(text(), "Open Quotes")]]'
+
+    Requests For Quote Widget:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "dashboard-widget__collapse-body") and preceding-sibling::a/span[contains(text(), "Requests For Quote")]]'
+
+    Dashboard Widget Count:
+      selector:
+        type: xpath
+        locator: '//div[contains(@class, "dashboard-widget")]//h2[contains(normalize-space(), "%s")]/following-sibling::div[contains(@class, "dashboard-widget__items")]//strong[@data-role="items-count-value"]'
+
+    My Shopping Lists Grid:
+      selector: 'div[data-page-component-name="frontend-customer-dashboard-my-shopping-lists-grid:1"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    My Checkouts Grid:
+      selector: 'div[data-page-component-name="frontend-customer-dashboard-my-checkouts-grid:2"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    My Latest Orders Grid:
+      selector: 'div[data-page-component-name="frontend-customer-dashboard-my-latest-orders-grid:3"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Open Quotes Grid:
+      selector: 'div[data-page-component-name="frontend-customer-dashboard-open-quotes-grid:4"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid
+
+    Request For Quote Grid:
+      selector: 'div[data-page-component-name="frontend-customer-dashboard-requests-for-quote-grid:5"]'
+      class: Oro\Bundle\FrontendBundle\Tests\Behat\Element\Grid

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Configuration;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\Repository\ContentBlockRepository;
 use Oro\Bundle\CMSBundle\Form\Configuration\ContentBlockBuilder;
@@ -11,6 +12,7 @@ use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
 use Oro\Bundle\ThemeBundle\Form\Configuration\ConfigurationChildBuilderInterface;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -22,10 +24,12 @@ final class ContentBlockBuilderTest extends TestCase
 {
     private ContentBlockBuilder $contentBlockBuilder;
 
-    private Packages|MockObject $packages;
-    private DataTransformerInterface|MockObject $transformer;
-    private ManagerRegistry|MockObject $registry;
-    private FormBuilder|MockObject $formBuilder;
+    private Packages&MockObject $packages;
+    private DataTransformerInterface&MockObject $transformer;
+    private ManagerRegistry&MockObject $registry;
+    private FormBuilder&MockObject $formBuilder;
+    private ObjectRepository&MockObject $repository;
+    private LoggerInterface&MockObject $logger;
 
     #[\Override]
     protected function setUp(): void
@@ -33,9 +37,16 @@ final class ContentBlockBuilderTest extends TestCase
         $this->packages = $this->createMock(Packages::class);
         $this->transformer = $this->createMock(DataTransformerInterface::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->contentBlockBuilder = new ContentBlockBuilder($this->packages, $this->transformer, $this->registry);
-
+        $this->logger = $this->createMock(LoggerInterface::class);
+        $this->repository = $this->createMock(ObjectRepository::class);
         $this->formBuilder = $this->createMock(FormBuilder::class);
+
+        $this->contentBlockBuilder = new ContentBlockBuilder(
+            $this->packages,
+            $this->transformer,
+            $this->registry,
+            $this->logger
+        );
     }
 
     /**
@@ -43,7 +54,7 @@ final class ContentBlockBuilderTest extends TestCase
      */
     public function testSupports(string $type, bool $expectedResult): void
     {
-        self::assertEquals(
+        self::assertSame(
             $expectedResult,
             $this->contentBlockBuilder->supports(['type' => $type])
         );
@@ -97,7 +108,6 @@ final class ContentBlockBuilderTest extends TestCase
             ->method('getRepository')
             ->willReturn($repository);
 
-
         $themeOption = [
             'previews' => [
                 'home-page-slider' => 'home-page-slider.png',
@@ -112,8 +122,8 @@ final class ContentBlockBuilderTest extends TestCase
             $themeOption
         );
 
-        self::assertEquals($formView->vars['attr'], ['data-preview' => '/promotion-content.png']);
-        self::assertEquals($formView->vars['group_attr'] ?? [], [
+        self::assertSame($formView->vars['attr'], ['data-preview' => '/promotion-content.png']);
+        self::assertSame($formView->vars['group_attr'] ?? [], [
             'data-page-component-view' => ConfigurationChildBuilderInterface::VIEW_MODULE_NAME,
             'data-page-component-options' => [
                 'autoRender' => true,
@@ -158,8 +168,8 @@ final class ContentBlockBuilderTest extends TestCase
             $themeOption
         );
 
-        self::assertEquals($expectedAttr, $formView->vars['attr']);
-        self::assertEquals($expectedGroupAttr, $formView->vars['group_attr'] ?? []);
+        self::assertSame($expectedAttr, $formView->vars['attr']);
+        self::assertSame($expectedGroupAttr, $formView->vars['group_attr'] ?? []);
     }
 
     /**
@@ -282,12 +292,12 @@ final class ContentBlockBuilderTest extends TestCase
             ->expects(self::once())
             ->method('addModelTransformer')
             ->with(self::callback(function (CallbackTransformer $callbackTransformer) {
-                self::assertEquals([], $callbackTransformer->reverseTransform([]));
-                self::assertEquals(
+                self::assertSame([], $callbackTransformer->reverseTransform([]));
+                self::assertSame(
                     ['blockName' => 'identifier'],
                     $callbackTransformer->reverseTransform(['blockName' => 'identifier'])
                 );
-                self::assertEquals(
+                self::assertSame(
                     ['blockName' => 'identifier'],
                     $callbackTransformer->reverseTransform(['blockName' => new \stdClass()])
                 );
@@ -333,7 +343,7 @@ final class ContentBlockBuilderTest extends TestCase
             ->expects(self::once())
             ->method('addModelTransformer')
             ->with(self::callback(function (CallbackTransformer $callbackTransformer) {
-                self::assertEquals([], $callbackTransformer->transform([]));
+                self::assertSame([], $callbackTransformer->transform([]));
                 self::assertEquals(
                     ['blockName' => new \stdClass()],
                     $callbackTransformer->transform(['blockName' => new \stdClass()])
@@ -370,5 +380,93 @@ final class ContentBlockBuilderTest extends TestCase
                 ],
             ]
         );
+    }
+
+    public function testThatOptionValueNotFoundBuiltCorrectly(): void
+    {
+        $name = ThemeConfiguration::buildOptionKey('general', 'promotional_content');
+        $option = [
+            'name' => $name,
+            'form_type' => ContentBlockSelectType::class,
+            'label' => 'Select',
+            'options' => ['required' => false],
+            'values' => ['promotional_content' => 'promotional_content']
+        ];
+
+        $this->formBuilder
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $name,
+                ContentBlockSelectType::class,
+                [
+                    'required' => false,
+                    'label' => 'Select',
+                    'attr' => [],
+                    'choice_attr' => function () {
+                    },
+                    'choices' => []
+                ]
+            );
+
+        $this->registry->expects(self::once())
+            ->method('getRepository')
+            ->with(ContentBlock::class)
+            ->willReturn($this->repository);
+
+        $this->repository->expects(self::once())
+            ->method('findOneBy')
+            ->with(['alias' => 'promotional_content'])
+            ->willReturn(null);
+
+        $this->logger->expects(self::once())
+            ->method('warning')
+            ->with('The content block with "promotional_content" alias was not found for "content_block_selector".');
+
+        $this->contentBlockBuilder->buildOption($this->formBuilder, $option);
+    }
+
+    public function testThatOptionValuesBuiltCorrectly(): void
+    {
+        $contentBlock = new ContentBlock();
+        $name = ThemeConfiguration::buildOptionKey('general', 'promotional_content');
+        $option = [
+            'name' => $name,
+            'form_type' => ContentBlockSelectType::class,
+            'label' => 'Select',
+            'options' => ['required' => false],
+            'values' => ['promotional_content' => 'promotional_content']
+        ];
+
+        $this->formBuilder
+            ->expects(self::once())
+            ->method('add')
+            ->with(
+                $name,
+                ContentBlockSelectType::class,
+                [
+                    'required' => false,
+                    'label' => 'Select',
+                    'attr' => [],
+                    'choice_attr' => function () {
+                    },
+                    'choices' => ['promotional_content' => $contentBlock]
+                ]
+            );
+
+        $this->registry->expects(self::once())
+            ->method('getRepository')
+            ->with(ContentBlock::class)
+            ->willReturn($this->repository);
+
+        $this->repository->expects(self::once())
+            ->method('findOneBy')
+            ->with(['alias' => 'promotional_content'])
+            ->willReturn($contentBlock);
+
+        $this->logger->expects(self::never())
+            ->method('warning');
+
+        $this->contentBlockBuilder->buildOption($this->formBuilder, $option);
     }
 }

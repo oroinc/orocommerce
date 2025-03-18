@@ -1,0 +1,28 @@
+layout:
+    imports:
+        -   id: oro_dashboard_datagrid
+            root: content_widget_customer_dashboard_datagrid
+            namespace: 'customer_dashboard_datagrid'
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@add':
+            id: content_widget_customer_dashboard_datagrid
+            parentId: content_widget_container
+            blockType: container
+
+        - '@setOption':
+            id: customer_dashboard_datagrid_dashboard_datagrid_container
+            optionName: visible
+            optionValue: '=data["visible"]'
+
+        - '@appendOption':
+            id: customer_dashboard_datagrid_dashboard_datagrid_container
+            optionName: vars
+            optionValue:
+                gridName: '=data["datagrid"]'
+                label: '=data["locale"].getLocalizedValue(data["labels"])'
+                pageComponentName: '=data["pageComponentName"]'
+                routeName: '=data["viewAll"]'

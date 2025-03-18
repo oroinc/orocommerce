@@ -1,0 +1,153 @@
+layout:
+    imports:
+        -   id: oro_customer_page
+
+        -   id: oro_customer_dashboard_menu
+            root: dashboard_quick_access_menu
+
+        -   id: oro_purchase_volume_chart
+            root: dashboard_charts
+            namespace: 'chart_volume'
+
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@setOption':
+              id: page_title
+              optionName: defaultValue
+              optionValue:
+                  label: oro.customer.frontend.dashboard.page.title
+                  parameters:
+                      '%userName%': '=data["current_user"].getCurrentUser().getFirstName()'
+
+        - '@addTree':
+            items:
+                dashboard_page_container:
+                    blockType: container
+
+                dashboard_quick_access_menu:
+                    blockType: container
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__show_dashboard_quick_access_menu")'
+
+                dashboard_primary_group:
+                    blockType: container
+
+                dashboard_group_one:
+                    blockType: container
+
+                dashboard_content_widget:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__content_widget")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__content_widget")'
+
+                dashboard_content_widget_2:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__content_widget_2")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__content_widget_2")'
+
+                dashboard_group_two:
+                    blockType: container
+
+                dashboard_content_widget_3:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__content_widget_3")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__content_widget_3")'
+
+                dashboard_content_widget_4:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__content_widget_4")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__content_widget_4")'
+
+                dashboard_charts:
+                    blockType: container
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__show_purchase_volume_chart")'
+
+                dashboard_group_three:
+                    blockType: container
+
+                dashboard_content_widget_5:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__content_widget_5")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__content_widget_5")'
+
+                dashboard_content_widget_6:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__content_widget_6")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__content_widget_6")'
+
+                dashboard_secondary_group:
+                    blockType: container
+
+                dashboard_recommended_products:
+                    blockType: container
+
+                dashboard_recommended_products_content:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__recommended_products")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__recommended_products")'
+
+                dashboard_recommended_products_2:
+                    blockType: container
+
+                dashboard_recommended_products_2_content:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__recommended_products_2")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__recommended_products_2")'
+
+                dashboard_promotional_content_block:
+                    blockType: container
+
+                dashboard_promotional_content_block_content:
+                    blockType: content_block
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__promotional_content_block")'
+                        alias: '=data["content_block"].getContentBlockAliasByThemeConfigKey("customer_user_dashboard__promotional_content_block")'
+                        vars:
+                            hideTitle: true
+
+                dashboard_promotional_content_block_2:
+                    blockType: container
+
+                dashboard_promotional_content_block_2_content:
+                     blockType: content_block
+                     options:
+                         visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__promotional_content_block_2")'
+                         alias: '=data["content_block"].getContentBlockAliasByThemeConfigKey("customer_user_dashboard__promotional_content_block_2")'
+                         vars:
+                             hideTitle: true
+
+            tree:
+                page_content:
+                    dashboard_page_container:
+                        dashboard_quick_access_menu: ~
+                        dashboard_primary_group:
+                            dashboard_group_one:
+                                dashboard_content_widget: ~
+                                dashboard_content_widget_2: ~
+                            dashboard_group_two:
+                                dashboard_content_widget_3: ~
+                                dashboard_content_widget_4: ~
+                            dashboard_charts: ~
+                            dashboard_group_three:
+                                dashboard_content_widget_5: ~
+                                dashboard_content_widget_6: ~
+                        dashboard_secondary_group:
+                            dashboard_recommended_products:
+                                dashboard_recommended_products_content: ~
+                            dashboard_recommended_products_2:
+                                dashboard_recommended_products_2_content: ~
+                            dashboard_promotional_content_block:
+                                dashboard_promotional_content_block_content: ~
+                            dashboard_promotional_content_block_2:
+                                dashboard_promotional_content_block_2_content: ~

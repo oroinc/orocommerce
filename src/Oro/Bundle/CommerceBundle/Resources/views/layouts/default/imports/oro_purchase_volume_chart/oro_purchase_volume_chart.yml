@@ -1,0 +1,55 @@
+layout:
+    imports:
+        -   id: collapse_container
+            root: __dashboard_volume_chart_container
+
+    actions:
+        - '@setBlockTheme':
+              themes: '@OroCommerce/layouts/default/imports/oro_purchase_volume_chart/oro_purchase_volume_chart.html.twig'
+
+        - '@setOption':
+              id: __collapse_container
+              optionName: vars.open
+              optionValue: '=context["is_mobile"] == false'
+
+        - '@appendOption':
+              id: __collapse_header
+              optionName: attr.class
+              optionValue: 'dashboard-widget__collapse-header '
+
+        - '@appendOption':
+              id: __collapse_body
+              optionName: attr.class
+              optionValue: 'dashboard-widget__collapse-body'
+
+        - '@addTree':
+              items:
+                  __dashboard_volume_chart_container:
+                      blockType: container
+                  __dashboard_volume_chart_inner:
+                      blockType: container
+                  __dashboard_volume_chart_header:
+                      blockType: container
+                  __dashboard_volume_chart_title:
+                      blockType: container
+                  __dashboard_volume_chart_body:
+                      blockType: container
+                  __dashboard_volume_chart_content:
+                      blockType: container
+                      options:
+                          vars:
+                              chartView: '=data["oro_commerce_purchase_volume_chart"].getPurchaseVolumeChartView()'
+
+              tree:
+                  __root:
+                      __dashboard_volume_chart_container:
+                          __dashboard_volume_chart_inner:
+                              __dashboard_volume_chart_header:
+                                  __dashboard_volume_chart_title: ~
+                              __dashboard_volume_chart_body:
+                                __dashboard_volume_chart_content: ~
+
+        # Moved volume_chart widget inner content under collapse
+        - '@move':
+              id: __dashboard_volume_chart_inner
+              parentId: __collapse_body

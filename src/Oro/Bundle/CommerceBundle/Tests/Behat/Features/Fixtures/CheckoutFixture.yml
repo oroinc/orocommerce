@@ -1,0 +1,27 @@
+Oro\Bundle\CurrencyBundle\Entity\Price:
+  price1:
+    value: 5
+    currency: USD
+
+Oro\Bundle\CheckoutBundle\Entity\CheckoutSource:
+  checkout_source{1..5}:
+    shoppingList: '@shopping_list<current()>'
+
+Oro\Bundle\CheckoutBundle\Entity\Checkout:
+  checkout{1..5}:
+    organization: '@organization'
+    owner: '@admin'
+    customerUser: '@amanda'
+    website: '@website1'
+    source: '@checkout_source<current()>'
+    __calls:
+      - addLineItem: ['@checkout_line_item<current()>']
+
+Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem:
+  checkout_line_item{1..5}:
+    product: '@product1'
+    price: '@price1'
+    quantity: 10
+    productUnit: '@item'
+    productUnitCode: item
+    priceFixed: true

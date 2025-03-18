@@ -303,11 +303,11 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     private function getRandomDateTime(): \DateTime
     {
         return new \DateTime(
-            sprintf(
+            \sprintf(
                 '-%sday %s:%s',
-                random_int(0, 7),
-                random_int(0, 23),
-                random_int(0, 59)
+                \random_int(0, 270),
+                \random_int(0, 23),
+                \random_int(0, 59)
             ),
             new \DateTimeZone('UTC')
         );

@@ -105,9 +105,15 @@ Previously known as GOD Object
 
 #### RFPBundle
 * The "Add Offer" button has been hidden for line items containing kit products on the RFQ storefront, back-office, and converted RFQ to quote pages. This restriction is implemented because such type line items can have only a single offer.
+* Removed `\Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener`, use `\Oro\Bundle\WorkflowBundle\Datagrid\HideWorkflowStepColumnListener` instead.
 
 #### WebCatalogBundle
 * Changed the type of `oro_web_catalog.empty_search_result_page` system config setting from `array` to `scalar` to get rid of serialized objects in `oro_config_value` table.
+
+#### CMSBundle
+* Removed `\Oro\Bundle\CMSBundle\Acl\Voter\ContentBlockVoter`, use `\Oro\Bundle\ThemeBundle\Acl\Voter\ThemeConfigurationDependencyDeleteVoter` instead.
+* Added supports setting a content widget in the theme configuration option using the `themeConfigOption` key in the `\Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadContentWidgetData` fixture.
+* Allowed to use `widget` and `widget_icon` twig functions on storefront.
 
 ### Added
 
@@ -198,6 +204,29 @@ Previously known as GOD Object
   * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPostMoveEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service;
   * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPreMergeEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service;
   * Added `\Oro\Bundle\ShoppingListBundle\Event\ShoppingListPostMergeEvent` dispatching in `oro_shopping_list.manager.guest_shopping_list_migration` service.
+* Added `\Oro\Bundle\ShoppingListBundle\Datagrid\Provider\ShoppingListActionPermissionProvider` datagrid action configuration provider that determines which actions (Edit/View) are available for a shopping list.
+
+#### CMSBundle
+* Added a new `content_widget_selector` theme configuration option type.
+* Added a new `content_widget` layout block type.
+
+#### CommerceBundle
+* Added a new `\Oro\Bundle\CommerceBundle\ContentWidget\CustomerDashboardDatagridContentWidgetType` content widget.
+* Added a new `customer-dashboard-promotional-content` content block for demo data.
+* Added new `my-latest-orders`, `open-quotes`, `my-checkouts`, `latest-rfq`, `my-shopping-lists` content widgets for default data.
+* Added new theme configuration options for `customer_user_dashboard` section:
+  * `show_dashboard_quick_access_menu`;
+  * `show_purchase_volume_chart`;
+  * `content_widget`;
+  * `content_widget_2`;
+  * `content_widget_3`;
+  * `content_widget_4`;
+  * `content_widget_5`;
+  * `content_widget_6`;
+  * `recommended_products`;
+  * `recommended_products_2`;
+  * `promotional_content_block`;
+  * `promotional_content_block_2`.
 
 ### Removed
 

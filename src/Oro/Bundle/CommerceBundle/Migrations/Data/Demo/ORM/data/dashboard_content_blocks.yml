@@ -1,0 +1,36 @@
+customer-dashboard-promotional-content:
+    title: 'Customer Dashboard Promotional Content'
+    themeConfigOption: customer_user_dashboard__promotional_content_block
+    content: >
+        <ol class="grid dashboard-news">
+            <li class="grid-col-4 grid-col-tablet-6 grid-col-mobile-12">
+                <article class="dashboard-news__item">
+                    <figure class="dashboard-news__placeholder"></figure>
+                    <div class="grid grid-columns-1 grid-row-gap-16 dashboard-news__text">
+                        <time class="dashboard-news__date" datetime="2023-06-04">04 June 2023</time>
+                        <h4><a href="#" class="dashboard-news__link">5 Exercises Basketball Players Should Be Using To Develop Strength</a></h4>
+                        <p class="dashboard-news__description">This article was written by Jake Willhoite from Healthlisted.com Strength in basketball isn't all about a massive body mass or ripped muscles.</p>
+                    </div>
+                </article>
+            </li>
+            <li class="grid-col-4 grid-col-tablet-6 grid-col-mobile-12">
+                <article class="dashboard-news__item">
+                    <figure class="dashboard-news__placeholder"></figure>
+                    <div class="grid grid-columns-1 grid-row-gap-16 dashboard-news__text">
+                        <time class="dashboard-news__date" datetime="2023-06-04">04 June 2023</time>
+                        <h4><a href="#" class="dashboard-news__link">5 Exercises Basketball Players Should Be Using To Develop Strength</a></h4>
+                        <p class="dashboard-news__description">This article was written by Jake Willhoite from Healthlisted.com Strength in basketball isn't all about a massive body mass or ripped muscles.</p>
+                    </div>
+                </article>
+            </li>
+            <li class="grid-col-4 grid-col-tablet-6 grid-col-mobile-12">
+                <article class="dashboard-news__item">
+                    <figure class="dashboard-news__placeholder"></figure>
+                    <div class="grid grid-columns-1 grid-row-gap-16 dashboard-news__text">
+                        <time class="dashboard-news__date" datetime="2023-06-04">04 June 2023</time>
+                        <h4><a href="#" class="dashboard-news__link">5 Exercises Basketball Players Should Be Using To Develop Strength</a></h4>
+                        <p class="dashboard-news__description">This article was written by Jake Willhoite from Healthlisted.com Strength in basketball isn't all about a massive body mass or ripped muscles.</p>
+                    </div>
+                </article>
+            </li>
+        </ol>

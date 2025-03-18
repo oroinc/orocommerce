@@ -970,6 +970,7 @@ services:
             -
                 - 'frontend-customer-user-shopping-lists-grid'
                 - 'frontend-customer-user-shopping-list-select-grid'
+                - 'frontend-customer-dashboard-my-shopping-lists-grid'
             -
                 - 'b2b_flow_checkout_start_from_shoppinglist'
                 - 'b2b_flow_checkout_single_page_start_from_shoppinglist'

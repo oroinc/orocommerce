@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
+use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeInterface;
 use Oro\Bundle\CMSBundle\ContentWidget\ContentWidgetTypeRegistry;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Twig\Environment;
@@ -17,16 +19,17 @@ class ContentWidgetDataProvider implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
-    /** @var ContentWidgetTypeRegistry */
-    private $contentWidgetTypeRegistry;
+    public function __construct(
+        private ContentWidgetTypeRegistry $contentWidgetTypeRegistry,
+        private Environment $twig,
+        private ManagerRegistry $doctrine,
+        private ThemeConfigurationProvider $themeConfigurationProvider,
+    ) {
+    }
 
-    /** @var Environment */
-    private $twig;
-
-    public function __construct(ContentWidgetTypeRegistry $contentWidgetTypeRegistry, Environment $twig)
+    public function getContentWidgetNameByThemeConfigKey(string $key): string
     {
-        $this->contentWidgetTypeRegistry = $contentWidgetTypeRegistry;
-        $this->twig = $twig;
+        return $this->getContentWidgetName($key);
     }
 
     public function getWidgetData(ContentWidget $contentWidget): array
@@ -36,11 +39,28 @@ class ContentWidgetDataProvider implements LoggerAwareInterface
         return $contentWidgetType ? $contentWidgetType->getWidgetData($contentWidget) : [];
     }
 
+    public function hasContentWidget(string $name): bool
+    {
+        return null !== $this->getContentWidgetByName($name);
+    }
+
     public function getDefaultTemplate(ContentWidget $contentWidget): string
     {
         $contentWidgetType = $this->getType($contentWidget);
 
         return $contentWidgetType ? $contentWidgetType->getDefaultTemplate($contentWidget, $this->twig) : '';
+    }
+
+    private function getContentWidgetName(string $key): string
+    {
+        $configValue = $this->themeConfigurationProvider->getThemeConfigurationOption($key);
+        if (!$configValue) {
+            return '';
+        }
+
+        $contentWidget = $this->doctrine->getRepository(ContentWidget::class)->find($configValue);
+
+        return $contentWidget?->getName() ?? '';
     }
 
     private function getType(ContentWidget $contentWidget): ?ContentWidgetTypeInterface
@@ -53,5 +73,10 @@ class ContentWidgetDataProvider implements LoggerAwareInterface
         }
 
         return $contentWidgetType;
+    }
+
+    private function getContentWidgetByName(string $name): ?ContentWidget
+    {
+        return $this->doctrine->getRepository(ContentWidget::class)->findOneBy(['name' => $name]);
     }
 }

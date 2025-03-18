@@ -17,7 +17,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
@@ -30,7 +29,6 @@ class LoadPromotionContentBlockData extends AbstractFixture implements
     ContainerAwareInterface
 {
     use ContainerAwareTrait;
-    use UserUtilityTrait;
 
     #[\Override]
     public function getDependencies(): array

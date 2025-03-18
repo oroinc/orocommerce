@@ -90,3 +90,15 @@ services:
             - [setName, ['wysiwyg_style']]
         tags:
             - { name: layout.block_type, alias: wysiwyg_style }
+
+    oro_cms.layout.block_type.content_widget:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['content_widget']]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        name: { required: true }
+        tags:
+            - { name: layout.block_type, alias: content_widget }

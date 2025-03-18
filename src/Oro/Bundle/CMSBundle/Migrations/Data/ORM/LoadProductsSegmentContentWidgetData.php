@@ -5,6 +5,7 @@ namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadContentWidgetData;
+use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfigurationData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadFeaturedProductsSegmentData;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadNewArrivalProductsSegmentData;
 use Oro\Bundle\SegmentBundle\Entity\Segment;
@@ -17,13 +18,12 @@ class LoadProductsSegmentContentWidgetData extends AbstractLoadContentWidgetData
     #[\Override]
     public function getDependencies(): array
     {
-        return array_merge(
-            parent::getDependencies(),
-            [
-                LoadFeaturedProductsSegmentData::class,
-                LoadNewArrivalProductsSegmentData::class
-            ]
-        );
+        return [
+            ...parent::getDependencies(),
+            LoadFeaturedProductsSegmentData::class,
+            LoadNewArrivalProductsSegmentData::class,
+            LoadGlobalThemeConfigurationData::class
+        ];
     }
 
     #[\Override]

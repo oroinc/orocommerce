@@ -15,10 +15,10 @@ Feature: Language and currency switcher above the header
     When go to Marketing / Content Blocks
     And click "Create Content Block"
     And fill "Content Block Form" with:
-      | Owner   | Main       |
-      | Alias   | test_alias |
-      | Titles  | Test Title |
-      | Enabled | True       |
+      | Owner   | Main                |
+      | Alias   | promotional-content |
+      | Titles  | Test Title          |
+      | Enabled | True                |
     And I click "Add Content"
     And I fill "Content Block Form" with:
       | Content Variant | <div>Some Content</div> |
@@ -99,7 +99,7 @@ Feature: Language and currency switcher above the header
     When I go to System / Theme Configurations
     And I click Edit "Refreshing Teal" in grid
     And I fill "Theme Configuration Form" with:
-      | Promotional Content | test_alias |
+      | Promotional Content | promotional-content |
     And I save and close form
     Then I should see "Theme Configuration has been saved" flash message
 

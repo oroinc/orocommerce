@@ -3,9 +3,11 @@
 namespace Oro\Bundle\CMSBundle\Form\Configuration;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\Persistence\ObjectRepository;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockSelectType;
 use Oro\Bundle\ThemeBundle\Form\Configuration\AbstractChoiceBuilder;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\DataTransformerInterface;
@@ -19,7 +21,8 @@ class ContentBlockBuilder extends AbstractChoiceBuilder
     public function __construct(
         Packages $packages,
         private DataTransformerInterface $dataTransformer,
-        private ManagerRegistry $registry
+        private ManagerRegistry $registry,
+        private LoggerInterface $logger
     ) {
         parent::__construct($packages);
     }
@@ -69,14 +72,41 @@ class ContentBlockBuilder extends AbstractChoiceBuilder
     }
 
     #[\Override]
+    protected function getConfiguredOptions($option): array
+    {
+        $options = parent::getConfiguredOptions($option);
+
+        foreach ($options['choices'] ?? [] as $key => $alias) {
+            $block = $this->getRepository(ContentBlock::class)?->findOneBy(['alias' => $alias]);
+            if (!$block) {
+                $this->logger->warning(
+                    \sprintf('The content block with "%s" alias was not found for "%s".', $alias, self::getType())
+                );
+                unset($options['choices'][$key]);
+
+                continue;
+            }
+
+            $options['choices'][$key] = $block;
+        }
+
+        return $options;
+    }
+
+    #[\Override]
     protected function getOptionPreview(array $option, mixed $value = null, bool $default = false): ?string
     {
         if ($value && !$value instanceof ContentBlock && $value !== self::DEFAULT_PREVIEW_KEY) {
-            $value = $this->registry->getRepository(ContentBlock::class)->find($value);
+            $value = $this->getRepository(ContentBlock::class)->find($value);
         }
 
         $value = $value instanceof ContentBlock ? $value->getAlias() : $value;
 
         return parent::getOptionPreview($option, $value, $default);
+    }
+
+    private function getRepository(string $class): ?ObjectRepository
+    {
+        return $this->registry->getRepository($class);
     }
 }

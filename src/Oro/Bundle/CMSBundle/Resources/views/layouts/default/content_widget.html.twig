@@ -1,0 +1,8 @@
+{% block content_widget_widget %}
+    {% set blockAttributes = block('block_attributes')|trim %}
+    {%- if blockAttributes is not empty -%}
+        <div {{ blockAttributes }}>{{ widget(name) }}</div>
+    {%- else -%}
+        {{ widget(name) }}
+    {%- endif %}
+{% endblock %}

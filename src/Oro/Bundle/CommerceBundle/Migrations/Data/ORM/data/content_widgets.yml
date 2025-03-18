@@ -1,0 +1,40 @@
+my-shopping-lists:
+    name: 'my-shopping-lists'
+    type: customer_dashboard_datagrid
+    label: 'My Shopping Lists'
+    themeConfigOption: customer_user_dashboard__content_widget
+    settings:
+        datagrid: frontend-customer-dashboard-my-shopping-lists-grid
+        viewAll: oro_shopping_list_frontend_index
+my-checkouts:
+    name: 'my-checkouts'
+    type: customer_dashboard_datagrid
+    label: 'My Checkouts'
+    themeConfigOption: customer_user_dashboard__content_widget_2
+    settings:
+        datagrid: frontend-customer-dashboard-my-checkouts-grid
+        viewAll: oro_order_frontend_index
+my-latest-orders:
+    name: 'my-latest-orders'
+    type: customer_dashboard_datagrid
+    label: 'My Latest Orders'
+    themeConfigOption: customer_user_dashboard__content_widget_3
+    settings:
+        datagrid: frontend-customer-dashboard-my-latest-orders-grid
+        viewAll: oro_order_frontend_index
+open-quotes:
+    name: 'open-quotes'
+    type: customer_dashboard_datagrid
+    label: 'Open Quotes'
+    themeConfigOption: customer_user_dashboard__content_widget_4
+    settings:
+        datagrid: frontend-customer-dashboard-open-quotes-grid
+        viewAll: oro_sale_quote_frontend_index
+latest-rfq:
+    name: 'latest-rfq'
+    type: customer_dashboard_datagrid
+    label: 'Requests For Quote'
+    themeConfigOption: customer_user_dashboard__content_widget_5
+    settings:
+        datagrid: frontend-customer-dashboard-requests-for-quote-grid
+        viewAll: oro_rfp_frontend_request_index

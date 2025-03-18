@@ -158,7 +158,7 @@ services:
             - { name: container.service_subscriber, id: oro_workflow.manager }
 
     oro_rfp.datagrid.listener.column:
-        class: 'Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener'
+        class: 'Oro\Bundle\WorkflowBundle\Datagrid\HideWorkflowStepColumnListener'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.rfp-requests-grid, method: onBuildBefore }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-requests-grid, method: onBuildBefore }

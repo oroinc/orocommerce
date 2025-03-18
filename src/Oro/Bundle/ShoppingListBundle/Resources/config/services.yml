@@ -878,3 +878,9 @@ services:
             - '@translator'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_order_limit }
+
+    oro_shopping_list.datagrid.action_permission_provider:
+        class: 'Oro\Bundle\ShoppingListBundle\Datagrid\Provider\ShoppingListActionPermissionProvider'
+        public: true
+        arguments:
+            - '@security.authorization_checker'

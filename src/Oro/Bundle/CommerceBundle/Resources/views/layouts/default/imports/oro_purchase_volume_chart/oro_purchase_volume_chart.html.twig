@@ -1,0 +1,48 @@
+{% block __oro_purchase_volume_chart__dashboard_volume_chart_container_widget %}
+    {% do block|merge_context({
+        'title': title|default('oro.customer.frontend.dashboard.widgets.purchase_volume_chart.title'|trans),
+        'iconName': iconName|default(null)
+    }) %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block __oro_purchase_volume_chart__dashboard_volume_chart_inner_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__inner'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_purchase_volume_chart__dashboard_volume_chart_header_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__header no-offset'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_purchase_volume_chart__dashboard_volume_chart_body_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-widget__content'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_purchase_volume_chart__dashboard_volume_chart_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' h3 dashboard-widget__title hide-on-mobile'
+    }) %}
+    <h2 {{ block('block_attributes') }}>{{ title }}</h2>
+{% endblock %}
+
+{% block __oro_purchase_volume_chart__dashboard_volume_chart_content_widget %}
+    {{ chartView.render()|raw }}
+{% endblock %}

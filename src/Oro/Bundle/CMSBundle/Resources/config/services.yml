@@ -57,6 +57,8 @@ services:
         arguments:
             - '@oro_cms.content_widget.type_registry'
             - '@twig'
+            - '@doctrine'
+            - '@oro_theme.provider.theme_configuration'
         calls:
             - [setLogger, ['@logger']]
         tags:
@@ -124,6 +126,8 @@ services:
         arguments:
             - '@oro_cms.content_widget.renderer'
             - '@oro_cms.content_widget.wysiwyg_widget_icon_renderer'
+        tags:
+            - { name: twig.extension }
 
     oro_cms.twig.content_widget_type_extension:
         class: 'Oro\Bundle\CMSBundle\Twig\ContentWidgetTypeExtension'
@@ -261,13 +265,28 @@ services:
             - '@oro_cms.content_widget_layout_cache'
 
     oro_cms.acl.voter.content_block:
-        class: Oro\Bundle\CMSBundle\Acl\Voter\ContentBlockVoter
+        class: Oro\Bundle\ThemeBundle\Acl\Voter\ThemeConfigurationDependencyDeleteVoter
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_theme.provider.theme_configuration'
+            - 'content_block_selector'
+        calls:
+            - [setClassName, ['Oro\Bundle\CMSBundle\Entity\ContentBlock']]
         tags:
             - { name: security.voter }
 
-    oro_cms.acl.voter.frontend_quote_permission_voter:
+    oro_cms.acl.voter.content_widget:
+        class: Oro\Bundle\ThemeBundle\Acl\Voter\ThemeConfigurationDependencyDeleteVoter
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_theme.provider.theme_configuration'
+            - 'content_widget_selector'
+        calls:
+            - [setClassName, ['Oro\Bundle\CMSBundle\Entity\ContentWidget']]
+        tags:
+            - { name: security.voter }
+
+    oro_cms.acl.voter.content_widget_usage:
         class: Oro\Bundle\CMSBundle\Acl\Voter\ContentWidgetVoter
         arguments:
             - '@oro_entity.doctrine_helper'

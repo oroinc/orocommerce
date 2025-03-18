@@ -1,0 +1,28 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if datagrid is defined %}
+    {{ UI.renderProperty(
+        'oro.commerce.content_widget_type.customer_dashboard_datagrid.options.name'|trans,
+        datagrid
+    ) }}
+{% endif %}
+
+{% if defaultLabel is defined and defaultLabel is not null %}
+    {{ UI.renderProperty(
+        'oro.commerce.content_widget_type.customer_dashboard_datagrid.options.labels.singular_label'|trans,
+        defaultLabel|default('N/A'|trans),
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.commerce.content_widget_type.customer_dashboard_datagrid.options.labels.tooltip')}
+    ) }}
+{% endif %}
+
+{% if viewAll is defined and viewAll is not null %}
+    {{ UI.renderHtmlProperty(
+        'oro.commerce.content_widget_type.customer_dashboard_datagrid.options.view_all.label'|trans,
+        UI.renderUrl(path(viewAll)),
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.commerce.content_widget_type.customer_dashboard_datagrid.options.view_all.tooltip')}
+    ) }}
+{% endif %}

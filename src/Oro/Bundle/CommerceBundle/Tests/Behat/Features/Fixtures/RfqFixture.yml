@@ -1,0 +1,10 @@
+Oro\Bundle\RFPBundle\Entity\Request:
+    request{1..5}:
+        po_number: 'PO<current()>'
+        first_name: 'Amanda'
+        last_name: 'Cole'
+        email: 'AmandaRCole@example.org'
+        company: 'Company A'
+        organization: '@organization'
+        owner: '@admin'
+        customer_user: '@amanda'

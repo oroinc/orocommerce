@@ -17,7 +17,7 @@ use Symfony\Component\Security\Core\Authorization\AuthorizationCheckerInterface;
 /**
  * @dbIsolationPerTest
  */
-class ContentBlockVoterTest extends WebTestCase
+class ThemeConfigurationDeleteVoterTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 

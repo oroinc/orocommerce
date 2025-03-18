@@ -109,7 +109,7 @@
                                     </h2>
                                 {% endif %}
                                 {% if imageSlide.text %}
-                                    <div class="promo-slider__text">{{ imageSlide.text|raw }}</div>
+                                    <div class="promo-slider__text">{{ imageSlide.text|oro_html_sanitize }}</div>
                                 {% endif %}
                             </div>
                         </div>

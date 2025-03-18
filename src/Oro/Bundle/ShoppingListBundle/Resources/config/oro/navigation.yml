@@ -56,6 +56,6 @@ navigation:
     titles:
         oro_shopping_list_index: ~
         oro_shopping_list_view: '%label%'
-        oro_shopping_list_frontend_index: ~
+        oro_shopping_list_frontend_index: '' # empty string because RouteChoiceType doesn't see the route title with the ~ symbol
         oro_shopping_list_frontend_view: '%label%'
         oro_shopping_list_frontend_update: '%label%'

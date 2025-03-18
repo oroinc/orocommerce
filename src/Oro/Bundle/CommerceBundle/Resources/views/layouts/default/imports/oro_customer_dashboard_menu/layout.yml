@@ -1,0 +1,18 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCommerce/layouts/default/imports/oro_customer_dashboard_menu/layout.html.twig'
+
+        - '@addTree':
+            items:
+                __dashboard_list:
+                    blockType: container
+                __dashboard_menu:
+                    blockType: menu
+                    options:
+                        item: '=data["menu"].getMenu("oro_customer_dashboard_quick_access_menu")'
+
+            tree:
+                __root:
+                    __dashboard_list:
+                        __dashboard_menu: ~

@@ -1,0 +1,337 @@
+datagrids:
+    frontend-customer-dashboard-no-filter-base-grid:
+        actions:
+            view:
+                type: navigate
+                link: view_link
+                icon: eye
+                rowAction: true
+        options:
+            frontend: true
+            toolbarOptions:
+                pageSize:
+                    items: [5]
+                    default_per_page: 5
+            jsmodules:
+                - orodatagrid/js/datagrid/builder/items-count-external
+
+    frontend-customer-dashboard-my-latest-orders-grid:
+        extends: frontend-customer-dashboard-no-filter-base-grid
+        options:
+            toolbarOptions:
+                itemsCounter:
+                    transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.ordersPlural'
+        source:
+            type: orm
+            query:
+                select:
+                    - o.id
+                    - o.identifier
+                    - o.updatedAt
+                    - JSON_EXTRACT(o.serialized_data, 'internal_status') as internal_status
+                    - o.totalValue
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                join:
+                    left:
+                        - { join: o.customerUser, alias: customerUser }
+                from:
+                    - { table: Oro\Bundle\OrderBundle\Entity\Order, alias: o }
+                orderBy:
+                    - column: o.updatedAt
+                      dir: DESC
+        columns:
+            identifier:
+                label: oro.commerce.datagrid.number
+            totalValue:
+                label: oro.order.total.label
+                data_name: totalValue
+                frontend_type: currency
+            internal_status:
+                label: oro.order.status.label
+                frontend_type: select
+                data_name: internal_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('order_internal_status')"
+                translatable_options: false
+            updatedAt:
+                label: oro.commerce.datagrid.last_updated
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_order_frontend_view
+                params:
+                    - id
+        filters:
+            columns:
+                customerUserName:
+                    type: string
+                    data_name: customerUserName
+                    enabled: false
+        views_list: '@oro_customer.datagrid.current_customer_user_view_list'
+
+    frontend-customer-dashboard-open-quotes-grid:
+        extends: frontend-customer-dashboard-no-filter-base-grid
+        options:
+            toolbarOptions:
+                itemsCounter:
+                    transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.quotesPlural'
+        source:
+            type: orm
+            query:
+                select:
+                    - quote.id
+                    - quote.qid
+                    - quote.validUntil
+                    - quote.poNumber
+                    - quote.updatedAt
+                from:
+                    - { table: Oro\Bundle\SaleBundle\Entity\Quote, alias: quote }
+                orderBy:
+                    - column: quote.updatedAt
+                      dir: DESC
+        columns:
+            qid:
+                label: oro.frontend.sale.quote.qid.label
+            poNumber:
+                label: oro.frontend.sale.quote.po_number.label
+            validUntil:
+                label: oro.frontend.sale.quote.valid_until.label
+                frontend_type: datetime
+            updatedAt:
+                label: oro.commerce.datagrid.last_updated
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_sale_quote_frontend_view
+                params: [id]
+            view_aria_label:
+                type: translatable
+                key: oro.frontend.sale.quote.action.view.aria_label
+                params: [qid]
+        actions:
+            view:
+                type: navigate
+                label: oro.grid.action.view
+                ariaLabel: view_aria_label
+                link: view_link
+                icon: eye
+                rowAction: true
+
+    frontend-customer-dashboard-my-checkouts-grid:
+        extends: frontend-customer-dashboard-no-filter-base-grid
+        update: false
+        delete: false
+        options:
+            entityHint: oro.checkout.open_order.plural_label
+            toolbarOptions:
+                itemsCounter:
+                    transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.ordersPlural'
+        source:
+            type: orm
+            query:
+                select:
+                    - checkout.id
+                    - checkout.updatedAt
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                join:
+                    left:
+                        - { join: checkout.customerUser, alias: customerUser }
+                        - { join: checkout.subtotals, alias: checkout_subtotals, conditionType: WITH, condition: 'checkout_subtotals.currency = :user_currency' }
+                from:
+                    - { table: Oro\Bundle\CheckoutBundle\Entity\Checkout, alias: checkout }
+                where:
+                    and:
+                        - checkout.deleted = false
+                        - checkout.completed = false
+                orderBy:
+                    - column: checkout.updatedAt
+                      dir: DESC
+        columns:
+            startedFrom:
+                label: oro.checkout.started_from.label
+                type: twig
+                frontend_type: html
+                template: '@OroCheckout/Checkout/Datagrid/startedFrom.html.twig'
+                order: 10
+            itemsCount:
+                label: oro.checkout.line_items_count.label
+                order: 20
+            subtotal:
+                label: oro.checkout.grid.subtotal.label
+                type: twig
+                frontend_type: html
+                template: '@OroPricing/Datagrid/Column/subtotal.html.twig'
+                order: 25
+            updatedAt:
+                label: oro.commerce.datagrid.last_updated
+                frontend_type: datetime
+                order: 40
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_checkout_frontend_checkout
+                params:
+                    - id
+        filters:
+            columns:
+                customerUserName:
+                    type: string
+                    data_name: customerUserName
+                    enabled: false
+        views_list: '@oro_customer.datagrid.current_customer_user_view_list'
+        actions:
+            view:
+                type: navigate
+                label: oro.checkout.grid.checkout_link.label
+                ariaLabel: view_aria_label
+                link: view_link
+                icon: shopping-cart
+                acl_resource: oro_checkout_frontend_checkout
+                rowAction: true
+        action_configuration: ['@oro_checkout.datagrid.action_permission_provider', 'getPermissions']
+
+    frontend-customer-dashboard-requests-for-quote-grid:
+        extends: frontend-customer-dashboard-no-filter-base-grid
+        options:
+            toolbarOptions:
+                itemsCounter:
+                    transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfqPlural'
+        source:
+            type: orm
+            query:
+                select:
+                    - request.id
+                    - request.poNumber
+                    - request.updatedAt
+                    - JSON_EXTRACT(request.serialized_data, 'internal_status') as internal_status
+                    - JSON_EXTRACT(request.serialized_data, 'customer_status') as customer_status
+                from:
+                    - {table: Oro\Bundle\RFPBundle\Entity\Request, alias: request}
+                where:
+                    and:
+                        - JSON_EXTRACT(request.serialized_data, 'internal_status') IS NULL OR JSON_EXTRACT(request.serialized_data, 'internal_status') <> :internalStatus
+                orderBy:
+                    - column: request.updatedAt
+                      dir: DESC
+            bind_parameters:
+                - name: internalStatus
+                  default: rfp_internal_status.deleted
+        columns:
+            id:
+                label: oro.frontend.rfp.request.id.label
+            poNumber:
+                label: oro.frontend.rfp.request.po_number.label
+            customer_status:
+                label: oro.frontend.rfp.request.customer_status.label
+                frontend_type: select
+                data_name: customer_status
+                choices: "@oro_entity_extend.enum_options_provider->getEnumChoicesByCode('rfp_customer_status')"
+                translatable_options: false
+            updatedAt:
+                label: oro.commerce.datagrid.last_updated
+                frontend_type: datetime
+        properties:
+            id: ~
+            view_link:
+                type: url
+                route: oro_rfp_frontend_request_view
+                params: [id]
+            view_aria_label:
+                type: translatable
+                key: oro.rfp.action.request.view.aria_label
+                params: [id]
+        actions:
+            view:
+                type: navigate
+                label: oro.grid.action.view
+                ariaLabel: view_aria_label
+                link: view_link
+                icon: eye
+                rowAction: true
+                acl_resource: oro_rfp_frontend_request_view
+
+    frontend-customer-dashboard-my-shopping-lists-grid:
+        extends: frontend-customer-dashboard-no-filter-base-grid
+        options:
+            toolbarOptions:
+                itemsCounter:
+                    transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.shoppingListsPlural'
+        source:
+            type: orm
+            query:
+                select:
+                    - shopping_list.id
+                    - shopping_list.label
+                    - cachedTotal.subtotalValue AS subtotal
+                    - cachedTotal.currency
+                    - shopping_list.updatedAt
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - COUNT(lineItems.id) as lineItemsCount
+                from:
+                    - { table: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList, alias: shopping_list }
+                join:
+                    left:
+                        - { join: shopping_list.customerUser, alias: customerUser }
+                        - { join: shopping_list.lineItems, alias: lineItems }
+                        -
+                            join: Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal
+                            alias: cachedTotal
+                            conditionType: WITH
+                            condition: 'cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = :current_currency AND cachedTotal.customerUser = shopping_list.customerUser'
+                orderBy:
+                    - column: shopping_list.updatedAt
+                      dir: DESC
+            bind_parameters:
+                -
+                    name: current_currency
+        columns:
+            label:
+                label: oro.frontend.shoppinglist.name.label
+                order: 10
+            lineItemsCount:
+                label: oro.frontend.shoppinglist.line_items_count.label
+                order: 20
+            subtotal:
+                label: oro.shoppinglist.subtotal.label
+                type: twig
+                frontend_type: html
+                template: '@OroPricing/Datagrid/Column/subtotal.html.twig'
+                order: 30
+            updatedAt:
+                label: oro.commerce.datagrid.last_updated
+                frontend_type: datetime
+                order: 40
+        properties:
+            view_link:
+                type: url
+                route: oro_shopping_list_frontend_view
+                params: [id]
+            update_link:
+                type: url
+                route: oro_shopping_list_frontend_update
+                params: [id]
+        filters:
+            columns:
+                customerUserName:
+                    type: string
+                    data_name: customerUserName
+        actions:
+            view:
+                type: navigate
+                label: oro.grid.action.view
+                link: view_link
+                icon: eye
+                acl_resource: oro_shopping_list_frontend_view
+                rowAction: true
+            update:
+                type: navigate
+                label: oro.grid.action.update
+                link: update_link
+                icon: pencil
+                acl_resource: oro_shopping_list_frontend_update
+        action_configuration: ['@oro_shopping_list.datagrid.action_permission_provider', 'getShoppingListPermissions']
+        views_list: '@oro_customer.datagrid.current_customer_user_view_list'

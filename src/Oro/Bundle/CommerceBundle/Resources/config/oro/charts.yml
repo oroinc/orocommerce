@@ -1,0 +1,19 @@
+charts:
+    purchase_volume_chart:
+        label: oro.customer.chart.purchase_volume_chart.label
+        data_schema:
+            label:
+                name: label
+                label: oro.customer.chart.purchase_volume_chart.params.label
+                type: month_short
+                required: true
+            value:
+                name: value
+                label: oro.customer.chart.purchase_volume_chart.params.value
+                type: currency_rounded
+                required: true
+        default_settings:
+            connect_dots_with_line: true
+            available_in_reports: true
+            xNoTicks: 12
+        template: '@OroCommerce/Chart/purchase_volume_chart.html.twig'

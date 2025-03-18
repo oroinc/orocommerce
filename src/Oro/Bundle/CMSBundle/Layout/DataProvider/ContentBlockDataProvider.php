@@ -30,17 +30,16 @@ class ContentBlockDataProvider
     ) {
     }
 
+    public function getContentBlockAliasByThemeConfigKey(string $key): string
+    {
+        return $this->getContentBlockAlias($key);
+    }
+
     public function getPromotionalBlockAlias(): string
     {
-        $configValue = $this->themeConfigurationProvider->getThemeConfigurationOption(
+        return $this->getContentBlockAlias(
             ThemeConfiguration::buildOptionKey('header', 'promotional_content')
         );
-        if (!$configValue) {
-            return '';
-        }
-
-        return $this->doctrine->getRepository(ContentBlock::class)
-            ->getContentBlockAliasById($configValue, $this->aclHelper) ?? '';
     }
 
     public function hasContentBlockView(string $alias): bool
@@ -66,6 +65,17 @@ class ContentBlockDataProvider
         }
 
         return $contentBlockView;
+    }
+
+    private function getContentBlockAlias(string $key): string
+    {
+        $configValue = $this->themeConfigurationProvider->getThemeConfigurationOption($key);
+        if (!$configValue) {
+            return '';
+        }
+
+        return $this->doctrine->getRepository(ContentBlock::class)
+            ->getContentBlockAliasById($configValue, $this->aclHelper) ?? '';
     }
 
     private function getContentBlock(string $alias): ?ContentBlock

@@ -6,8 +6,11 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
+use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -45,34 +48,19 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
         array $row
     ): void;
 
+    /**
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
+        $data = Yaml::parseFile($this->getFilePaths());
         $organization = $this->getOrganization($manager);
 
-        foreach ((array)$this->getFilePaths() as $filePath) {
-            $contentWidgets = $this->loadFromFile($manager, $filePath, $organization);
-            foreach ($contentWidgets as $reference => $contentWidget) {
-                $this->setReference($reference, $contentWidget);
-                $manager->persist($contentWidget);
-            }
-        }
-        $manager->flush();
-    }
+        $themeConfigBlocks = [];
 
-    protected function getOrganization(ObjectManager $manager): Organization
-    {
-        return $manager->getRepository(Organization::class)->getFirst();
-    }
-
-    /**
-     * @return ContentWidget[]
-     */
-    protected function loadFromFile(ObjectManager $manager, string $filePath, Organization $organization): array
-    {
-        $rows = Yaml::parse(file_get_contents($filePath));
-        $contentWidgets = [];
-        foreach ($rows as $reference => $row) {
+        foreach ($data as $blockAlias => $row) {
             $contentWidget = $this->findContentWidget($manager, $row, $organization);
             if (!$contentWidget) {
                 $contentWidget = new ContentWidget();
@@ -89,12 +77,42 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
                 $contentWidget->setDefaultLabel($row['label']);
             }
 
+            if ($row['themeConfigOption'] ?? false) {
+                $themeConfigBlocks[$row['themeConfigOption']] = $contentWidget;
+            }
+
             $this->updateContentWidget($manager, $contentWidget, $row);
 
-            $contentWidgets[$reference] = $contentWidget;
+            $manager->persist($contentWidget);
+
+            if (!$this->hasReference($blockAlias)) {
+                $this->setReference($blockAlias, $contentWidget);
+            }
         }
 
-        return $contentWidgets;
+        $manager->flush();
+
+        $themeConfiguration = $this->getThemeConfiguration($manager);
+        if (!$themeConfiguration) {
+            return;
+        }
+
+        $doFlush = false;
+        foreach ($themeConfigBlocks as $key => $contentWidget) {
+            if (!$themeConfiguration->getConfigurationOption($key)) {
+                $themeConfiguration->addConfigurationOption($key, $contentWidget->getId());
+                $doFlush = true;
+            }
+        }
+
+        if ($doFlush) {
+            $manager->flush();
+        }
+    }
+
+    protected function getOrganization(ObjectManager $manager): Organization
+    {
+        return $manager->getRepository(Organization::class)->getFirst();
     }
 
     protected function findContentWidget(ObjectManager $manager, array $row, Organization $organization): ?ContentWidget
@@ -113,5 +131,17 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
     {
         $locator = $this->container->get('file_locator');
         return $locator->locate($path);
+    }
+
+    protected function getThemeConfiguration(ObjectManager $manager): ?ThemeConfiguration
+    {
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_config.global');
+        $value = $configManager->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION));
+        if (!$value) {
+            return null;
+        }
+
+        return $manager->getRepository(ThemeConfiguration::class)->find($value);
     }
 }

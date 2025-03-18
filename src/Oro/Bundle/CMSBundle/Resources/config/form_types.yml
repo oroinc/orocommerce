@@ -155,18 +155,45 @@ services:
         tags:
             - { name: form.type }
 
+    oro_cms.form.type.content_widget_select:
+        class: Oro\Bundle\CMSBundle\Form\Type\ContentWidgetSelectType
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type }
+
     oro_cms.form.content_block_builder:
         class: Oro\Bundle\CMSBundle\Form\Configuration\ContentBlockBuilder
         arguments:
             - '@assets.packages'
             - '@oro_cms.form.content_block_transformer'
             - '@doctrine'
+            - '@logger'
         tags:
             - { name: oro_theme.form.configuration_child_builder }
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.form.content_block_transformer:
         class: Oro\Bundle\FormBundle\Form\DataTransformer\EntityToIdTransformer
         arguments:
             - '@doctrine'
             - Oro\Bundle\CMSBundle\Entity\ContentBlock
+            - id
+
+    oro_cms.form.content_widget_builder:
+        class: Oro\Bundle\CMSBundle\Form\Configuration\ContentWidgetBuilder
+        arguments:
+            - '@assets.packages'
+            - '@oro_cms.form.content_widget_transformer'
+            - '@doctrine'
+            - '@logger'
+        tags:
+            - { name: oro_theme.form.configuration_child_builder }
+            - { name: monolog.logger, channel: oro_cms }
+
+    oro_cms.form.content_widget_transformer:
+        class: Oro\Bundle\FormBundle\Form\DataTransformer\EntityToIdTransformer
+        arguments:
+            - '@doctrine'
+            - Oro\Bundle\CMSBundle\Entity\ContentWidget
             - id

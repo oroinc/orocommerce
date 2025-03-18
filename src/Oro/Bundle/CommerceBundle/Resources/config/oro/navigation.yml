@@ -1,0 +1,42 @@
+navigation:
+    menu_config:
+        items:
+            oro_customer_frontend_dashboard_order_history:
+                label: 'oro.order.order_history.label'
+                route: 'oro_order_frontend_index'
+                position: 30
+                acl_resource_id: 'oro_order_frontend_view'
+                extras:
+                    icon: fa-flash
+
+            oro_customer_frontend_dashboard_quotes:
+                label: 'oro.frontend.sale.quote.entity_plural_label'
+                route: oro_sale_quote_frontend_index
+                acl_resource_id: 'oro_sale_quote_frontend_index'
+                position: 40
+                extras:
+                    icon: fa-bookmark-o
+
+            oro_customer_frontend_dashboard_shopping_lists:
+                label: 'oro.shoppinglist.menu.shopping_lists.label'
+                route: 'oro_shopping_list_frontend_index'
+                acl_resource_id: 'oro_shopping_list_frontend_view'
+                position: 50
+                extras:
+                    icon: fa-shopping-cart
+                    condition: "config_value('oro_shopping_list.shopping_list_limit') != 1"
+
+            oro_customer_frontend_dashboard_rfqs:
+                label: 'oro.frontend.rfp.request.entity_plural_label'
+                route: 'oro_rfp_frontend_request_index'
+                position: 60
+                extras:
+                    icon: fa-file-o
+
+        tree:
+            oro_customer_dashboard_quick_access_menu:
+                children:
+                    oro_customer_frontend_dashboard_order_history: ~
+                    oro_customer_frontend_dashboard_quotes: ~
+                    oro_customer_frontend_dashboard_shopping_lists: ~
+                    oro_customer_frontend_dashboard_rfqs: ~

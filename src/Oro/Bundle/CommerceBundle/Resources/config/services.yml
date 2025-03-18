@@ -6,3 +6,58 @@ services:
             - '@oro_distribution.handler.application_status'
         tags:
             - { name: oro_entity_extend.warmer }
+
+    oro_commerce.layout.data_provider.purchase_volume_chart:
+        class: Oro\Bundle\CommerceBundle\Layout\DataProvider\PurchaseVolumeChartDataProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_website.manager'
+            - '@oro_currency.config.currency'
+            - '@oro_security.token_accessor'
+            - '@oro_locale.settings'
+            - '@oro_chart.config_provider'
+            - '@oro_chart.view_builder'
+            - ['order_internal_status.cancelled']
+        tags:
+            - { name: layout.data_provider, alias: oro_commerce_purchase_volume_chart }
+
+    oro_commerce.datagrid.customer_dashboard.workflow_step_column_listener:
+        class: Oro\Bundle\WorkflowBundle\Datagrid\HideWorkflowStepColumnListener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-dashboard-requests-for-quote-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-dashboard-my-checkouts-grid, method: onBuildBefore }
+
+    oro_commerce.datagrid.customer_dashboard.my_checkouts_listener:
+        class: Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener
+        arguments:
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_checkout.repository.checkout'
+            - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_entity.entity_name_resolver'
+            - '@oro_entity.doctrine_helper'
+            - '@Doctrine\Inflector\Inflector'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-dashboard-my-checkouts-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-customer-dashboard-my-checkouts-grid, method: onResultAfter }
+
+    oro_commerce.datagrid.customer_dashboard.my_checkouts_acl_listener:
+        class: Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerVisitorAclListener
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-dashboard-my-checkouts-grid, method: onBuildBefore }
+
+    oro_commerce.datagrid.customer_dashboard.open_quotes_listener:
+        class: Oro\Bundle\SaleBundle\EventListener\Datagrid\FrontendQuoteDatagridListener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.frontend-customer-dashboard-open-quotes-grid, method: onBuildAfter }
+
+    oro_commerce.datagrid.customer_dashboard.my_shopping_lists_listener:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\EventListener\FrontendShoppingListsGridEventListener
+        arguments:
+            - '@oro_shopping_list.manager.current_shopping_list'
+            - '@oro_shopping_list.manager.shopping_list_total'
+            - '@oro_pricing.user_currency_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-dashboard-my-shopping-lists-grid, method: onBuildBefore }
+

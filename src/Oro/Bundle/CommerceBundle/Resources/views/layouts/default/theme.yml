@@ -1,0 +1,98 @@
+configuration:
+    sections:
+        customer_user_dashboard:
+            label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.label'
+            options:
+                show_dashboard_quick_access_menu:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.show_dashboard_quick_access_menu.label'
+                    type: checkbox
+                    default: checked
+                    options:
+                        tooltip: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.show_dashboard_quick_access_menu.tooltip'
+
+                show_purchase_volume_chart:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.show_purchase_volume_chart.label'
+                    type: checkbox
+                    default: checked
+                    options:
+                        tooltip: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.show_purchase_volume_chart.tooltip'
+
+                content_widget:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - customer_dashboard_datagrid
+
+                content_widget_2:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget_2.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - customer_dashboard_datagrid
+
+                content_widget_3:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget_3.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - customer_dashboard_datagrid
+
+                content_widget_4:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget_4.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - customer_dashboard_datagrid
+
+                content_widget_5:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget_5.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - customer_dashboard_datagrid
+
+                content_widget_6:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget_6.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - customer_dashboard_datagrid
+
+                recommended_products:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.recommended_products.label'
+                    type: content_widget_selector
+                    options:
+                        tooltip: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget.tooltip'
+                        required: false
+                        widgetTypes:
+                            - product_segment
+
+                recommended_products_2:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.recommended_products_2.label'
+                    type: content_widget_selector
+                    options:
+                        tooltip: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_widget.tooltip'
+                        required: false
+                        widgetTypes:
+                            - product_segment
+
+                promotional_content_block:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.promotional_content_block.label'
+                    type: content_block_selector
+                    options:
+                        tooltip: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_block.tooltip'
+                        required: false
+
+                promotional_content_block_2:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.promotional_content_block_2.label'
+                    type: content_block_selector
+                    options:
+                        tooltip: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_block.tooltip'
+                        required: false

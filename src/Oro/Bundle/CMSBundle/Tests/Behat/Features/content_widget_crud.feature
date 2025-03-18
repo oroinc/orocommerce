@@ -51,7 +51,7 @@ Feature: Content Widget CRUD
 
   Scenario: Check content widgets datagrid
     When go to Marketing/ Content Widgets
-    Then there is 4 records in grid
+    Then there is 9 records in grid
     And I should see following grid:
       | Name               | Description         | Type               | Layout |
       | product_mini_block | product_mini_block2 | Product Mini-Block |        |

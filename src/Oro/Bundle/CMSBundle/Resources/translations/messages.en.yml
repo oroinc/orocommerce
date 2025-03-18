@@ -112,6 +112,7 @@ oro.cms:
             choose_content_widget_type: Choose a content widget type...
             choose_content_widget_layout: Choose a content widget layout...
             no_available_content_widget_types: No content widget types available
+            choose_content_widget.label: Choose Content Widget
 
         sections:
             general.label: General
@@ -120,6 +121,7 @@ oro.cms:
             usages.label: Usages
             slider_options.label: Slider Options
             tabbed_content_items.label: Tabs
+            options: Options
 
         layouts:
             tabbed_content:

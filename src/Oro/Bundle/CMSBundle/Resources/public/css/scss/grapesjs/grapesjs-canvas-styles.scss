@@ -103,3 +103,7 @@ body {
     stroke-width: 5;
     stroke: $primary;
 }
+
+.dashboard-news__link::after {
+    content: none;
+}

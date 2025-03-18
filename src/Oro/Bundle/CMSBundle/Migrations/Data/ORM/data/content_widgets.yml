@@ -2,6 +2,7 @@ featured-products:
   name: 'featured-products'
   type: product_segment
   label: 'Featured Products'
+  themeConfigOption: customer_user_dashboard__recommended_products
   settings:
     maximum_items: 10
     minimum_items: 3
@@ -18,6 +19,7 @@ new-arrivals:
   name: 'new-arrivals'
   type: product_segment
   label: 'New Arrivals'
+  themeConfigOption: customer_user_dashboard__recommended_products_2
   settings:
     maximum_items: 6
     minimum_items: 3

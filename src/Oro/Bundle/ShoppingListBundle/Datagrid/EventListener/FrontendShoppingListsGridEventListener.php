@@ -14,23 +14,11 @@ use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
  */
 class FrontendShoppingListsGridEventListener
 {
-    /** @var CurrentShoppingListManager */
-    private $currentShoppingListManager;
-
-    /** @var ShoppingListTotalManager */
-    private $shoppingListTotalManager;
-
-    /** @var UserCurrencyManager */
-    private $userCurrencyManager;
-
     public function __construct(
-        CurrentShoppingListManager $currentShoppingListManager,
-        ShoppingListTotalManager $shoppingListTotalManager,
-        UserCurrencyManager $userCurrencyManager
+        private CurrentShoppingListManager $currentShoppingListManager,
+        private ShoppingListTotalManager $shoppingListTotalManager,
+        private UserCurrencyManager $userCurrencyManager
     ) {
-        $this->currentShoppingListManager = $currentShoppingListManager;
-        $this->shoppingListTotalManager = $shoppingListTotalManager;
-        $this->userCurrencyManager = $userCurrencyManager;
     }
 
     public function onBuildBefore(BuildBefore $event): void

@@ -1,0 +1,27 @@
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
+  all_customers:
+    name: 'All Customers'
+    organization: '@organization'
+    owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\Customer:
+  customer1:
+    name: 'Customer A'
+    organization: '@organization'
+    owner: '@admin'
+    group: '@all_customers'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+  amanda:
+    email: 'AmandaRCole@example.org'
+    username: 'AmandaRCole@example.org'
+    password: <userPassword(@amanda->username)>
+    firstName: 'Amanda'
+    lastName: 'Cole'
+    enabled: true
+    confirmed: true
+    customer: '@customer1'
+    organization: '@organization'
+    userRoles: ['@buyer']
+    owner: '@admin'
+    website: '@website1'

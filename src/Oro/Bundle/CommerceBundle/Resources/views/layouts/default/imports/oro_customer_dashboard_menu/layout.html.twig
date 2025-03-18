@@ -1,0 +1,32 @@
+{% block __oro_customer_dashboard_menu__dashboard_list_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' dashboard-menu'
+    }) %}
+
+    <ul {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </ul>
+{% endblock %}
+
+{% block __oro_customer_dashboard_menu__dashboard_menu_widget %}
+    {% import '@OroUI/layouts/renderIcon.html.twig' as renderIcon %}
+
+    {% for child in item.children %}
+        {% if child.displayed and child.extras.isAllowed %}
+            {% set icon = child.extras.icon|default('briefcase') %}
+            {% set uri = child.uri %}
+            {% set label = child.label %}
+
+            <li class="dashboard-menu__item">
+                {%- apply spaceless -%}
+                    <a href="{{ uri }}" class="dashboard-menu__link">
+                        {%- if icon -%}
+                            {{ renderIcon.icon({name: icon, extraClass: 'dashboard-menu__icon theme-icon--lg'}) }}
+                        {%- endif -%}
+                        <span class="dashboard-menu__text">{{- label|trans -}}</span>
+                    </a>
+                {%- endapply -%}
+            </li>
+        {% endif %}
+    {% endfor %}
+{% endblock %}

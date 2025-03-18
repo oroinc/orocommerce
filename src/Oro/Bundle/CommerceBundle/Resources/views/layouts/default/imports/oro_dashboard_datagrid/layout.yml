@@ -1,0 +1,99 @@
+layout:
+    imports:
+        -   id: collapse_container
+            root: __dashboard_datagrid_container
+
+        -   id: datagrid
+            root: __dashboard_datagrid_body
+            namespace: 'dashboard'
+
+    actions:
+        - '@setBlockTheme':
+            themes: '@OroCommerce/layouts/default/imports/oro_dashboard_datagrid/layout.html.twig'
+
+        - '@setOption':
+            id: __dashboard_datagrid
+            optionName: grid_name
+            optionValue: ''
+
+        - '@setOption':
+            id: __dashboard_datagrid
+            optionName: grid_render_parameters.enableViews
+            optionValue: false
+
+        - '@setOption':
+            id: __dashboard_datagrid
+            optionName: grid_render_parameters.routerEnabled
+            optionValue: false
+
+        - '@setOption':
+            id: __dashboard_datagrid
+            optionName: grid_render_parameters.enableFilters
+            optionValue: false
+
+        - '@setOption':
+            id: __dashboard_datagrid
+            optionName: grid_render_parameters.toolbarOptions.hide
+            optionValue: true
+
+        - '@setOption':
+            id: __dashboard_datagrid
+            optionName: grid_render_parameters.toolbarOptions.pageSize.default_per_page
+            optionValue: 10
+
+        - '@appendOption':
+            id: __dashboard_datagrid
+            optionName: grid_render_parameters.themeOptions
+            optionValue:
+                cellActionsHideCount: 3
+                cellLauncherOptions:
+                    launcherMode: 'icon-only'
+                    dropdownLauncherMode: 'icon-text'
+                tableClassName: 'table-xs'
+                actionHeaderCellLabel: ''
+
+        - '@setOption':
+            id: __collapse_container
+            optionName: vars.open
+            optionValue: '=context["is_mobile"] == false'
+
+        - '@appendOption':
+            id: __collapse_header
+            optionName: attr.class
+            optionValue: 'dashboard-widget__collapse-header'
+
+        - '@appendOption':
+            id: __collapse_body
+            optionName: attr.class
+            optionValue: 'dashboard-widget__collapse-body'
+
+        - '@addTree':
+            items:
+                __dashboard_datagrid_container:
+                    blockType: container
+                __dashboard_datagrid_header:
+                    blockType: container
+                __dashboard_datagrid_title:
+                    blockType: block
+                __dashboard_datagrid_items:
+                    blockType: container
+                __dashboard_datagrid_btn:
+                    blockType: block
+                __dashboard_datagrid_body:
+                    blockType: container
+                __dashboard_datagrid_inner:
+                    blockType: container
+            tree:
+                __root:
+                    __dashboard_datagrid_container:
+                        __dashboard_datagrid_inner:
+                            __dashboard_datagrid_header:
+                                __dashboard_datagrid_title: ~
+                                __dashboard_datagrid_items: ~
+                                __dashboard_datagrid_btn: ~
+                            __dashboard_datagrid_body: ~
+
+        # Moved datagrid widget inner content under collapse
+        - '@move':
+            id: __dashboard_datagrid_inner
+            parentId: __collapse_body

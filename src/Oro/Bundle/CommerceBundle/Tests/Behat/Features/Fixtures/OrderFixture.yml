@@ -1,0 +1,28 @@
+Oro\Bundle\CurrencyBundle\Entity\Price:
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\OrderBundle\Entity\Order:
+    order{1..5}:
+        organization: '@organization'
+        owner: '@admin'
+        customer: '@customer1'
+        customerUser: '@amanda'
+        identifier: 'Order<current()>'
+        poNumber: 'OrderPoNumber<current()>'
+        website: '@website1'
+        total: 10.00
+        currency: USD
+        __calls:
+            - addLineItem: ['@order_line_item<current()>']
+
+Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+    order_line_item{1..5}:
+        product: '@product1'
+        price: '@price1'
+        quantity: 10
+        productUnit: '@item'
+        productUnitCode: item
+        __calls:
+            -   addOrder: [ '@order<current()>' ]
