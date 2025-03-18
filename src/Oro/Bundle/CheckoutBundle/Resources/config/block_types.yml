@@ -19,6 +19,29 @@ services:
             - [setOptionsConfig, [{transitionData: {required: true}, checkout: {required: true}, componentOptions: {default: []}}]]
         tags:
             - { name: layout.block_type, alias: checkout_transition_continue }
+
+    # Component added back for theme layout BC from version 6.0
+    oro_checkout.layout.block_type.checkout_transition_submit:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [ setName, [ 'checkout_transition_submit' ] ]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        transitionData: { required: true }
+                        finalTransitionData: { required: true }
+                        checkout: { required: true }
+                        componentOptions: { default: [ ] }
+                        steps: {required: true, default: []}
+                        stepOrder: {required: true, default: '-'}
+                        workflowStep: {required: true}
+                        workflowItem: {required: true}
+                        excludedSteps: {default: [] }
+                        buttonLabel: {default: ''}
+        tags:
+            - { name: layout.block_type, alias: checkout_transition_submit }
+
     oro_checkout.layout.block_type.checkout_transition_step_edit:
         parent: oro_checkout.layout.block_type.abstract_transition_button
         calls:

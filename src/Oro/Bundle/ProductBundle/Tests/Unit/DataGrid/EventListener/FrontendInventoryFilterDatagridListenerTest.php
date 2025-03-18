@@ -114,7 +114,7 @@ final class FrontendInventoryFilterDatagridListenerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+            ->with('default', ['default_50', 'default_51', 'default_60'])
             ->willReturn(false);
 
         $config->expects(self::exactly(2))
@@ -162,7 +162,7 @@ final class FrontendInventoryFilterDatagridListenerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+            ->with('default', ['default_50', 'default_51', 'default_60'])
             ->willReturn(true);
 
         $config->expects(self::never())
@@ -210,7 +210,7 @@ final class FrontendInventoryFilterDatagridListenerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with('default', ['default_50', 'default_51'])
+            ->with('default', ['default_50', 'default_51', 'default_60'])
             ->willReturn(false);
 
         $config->expects(self::exactly(2))

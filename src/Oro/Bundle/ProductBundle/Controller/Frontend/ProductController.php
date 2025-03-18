@@ -144,7 +144,7 @@ class ProductController extends AbstractController
         ]);
     }
 
-    private function getFiltersPosition(): string
+    private function getFiltersPosition(): ?string
     {
         /** @var ThemeConfigurationProvider $themeConfigurationProvider */
         $themeConfigurationProvider = $this->container->get(ThemeConfigurationProvider::class);

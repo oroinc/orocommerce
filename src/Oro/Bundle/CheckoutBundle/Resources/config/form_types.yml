@@ -26,6 +26,13 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType }
 
+    oro_checkout.form.extension.checkout_workflow_csrf_bc:
+        class: 'Oro\Bundle\CheckoutBundle\Form\Extension\CheckoutWorkflowCsrfBCExtension'
+        arguments:
+            - '%form.type_extension.csrf.field_name%'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Bundle\WorkflowBundle\Form\Type\WorkflowTransitionType, priority: -100}
+
     oro_checkout.form.type.oro_save_address:
         class: 'Oro\Bundle\CheckoutBundle\Form\Type\SaveAddressType'
         arguments:

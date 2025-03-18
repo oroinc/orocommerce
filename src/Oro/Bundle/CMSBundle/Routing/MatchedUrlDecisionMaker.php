@@ -61,7 +61,7 @@ class MatchedUrlDecisionMaker extends BaseMatchedUrlDecisionMaker
             return parent::matches($pathinfo);
         }
 
-        if (!$this->themeManager->themeHasParent($currentTheme, ['default_50', 'default_51'])) {
+        if (!$this->themeManager->themeHasParent($currentTheme, ['default_50', 'default_51', 'default_60',])) {
             return parent::matches($pathinfo);
         }
 

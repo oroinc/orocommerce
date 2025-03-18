@@ -137,7 +137,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with($themeName, ['default_50', 'default_51'])
+            ->with($themeName, ['default_50', 'default_51', 'default_60'])
             ->willReturn(false);
 
         $this->frontendHelper->expects(self::once())
@@ -165,7 +165,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with($themeName, ['default_50', 'default_51'])
+            ->with($themeName, ['default_50', 'default_51', 'default_60'])
             ->willReturn(true);
 
         $this->slugEntityFinder->expects(self::once())
@@ -201,7 +201,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with($themeName, ['default_50', 'default_51'])
+            ->with($themeName, ['default_50', 'default_51', 'default_60'])
             ->willReturn(true);
 
         $this->slugEntityFinder->expects(self::once())
@@ -242,7 +242,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with($themeName, ['default_50', 'default_51'])
+            ->with($themeName, ['default_50', 'default_51', 'default_60'])
             ->willReturn(true);
 
         $slug = (new Slug())->setRouteName('oro_cms_frontend_page_view');
@@ -285,7 +285,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with($themeName, ['default_50', 'default_51'])
+            ->with($themeName, ['default_50', 'default_51', 'default_60'])
             ->willReturn(true);
 
         $this->slugEntityFinder->expects(self::once())
@@ -332,7 +332,7 @@ class MatchedUrlDecisionMakerTest extends TestCase
 
         $this->themeManager->expects(self::once())
             ->method('themeHasParent')
-            ->with($themeName, ['default_50', 'default_51'])
+            ->with($themeName, ['default_50', 'default_51', 'default_60'])
             ->willReturn(true);
 
         $homepageId = 1;

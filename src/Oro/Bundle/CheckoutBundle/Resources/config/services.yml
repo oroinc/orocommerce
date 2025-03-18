@@ -1223,5 +1223,6 @@ services:
             - '@oro_layout.current_theme_provider'
             - '@oro_layout.theme_manager'
         calls:
+            - ['addTheme', ['default_60']]
             - ['addTheme', ['default_51']]
             - ['addTheme', ['default_50']]
