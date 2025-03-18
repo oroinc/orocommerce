@@ -32,6 +32,7 @@ Feature: Category canonical url
     And I expand "Retail Supplies" in tree
     Then I should see "All Products Lighting Products Retail Supplies Printers"
     And I should see "Retail Supplies" after "Lighting Products" in tree
+    And I scroll to "Printers"
     And I click "Printers"
     When I click "Save"
     Then I should see "Content Node has been saved" flash message

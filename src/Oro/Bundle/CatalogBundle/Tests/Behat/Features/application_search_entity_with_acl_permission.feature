@@ -19,7 +19,6 @@ Feature: Application search entity with acl permission
 
   Scenario: Search Category with 'Edit:None' permissions
     Given I login as "charlie" user
-    And I click "Search"
     And type "Printers" in "search"
     When I click "Search Submit"
     Then I should be on Search Result page
@@ -39,7 +38,6 @@ Feature: Application search entity with acl permission
 
   Scenario: Search Category with 'Edit:Global' permissions
     Given I login as "charlie" user
-    And I click "Search"
     And type "Printers" in "search"
     When I click "Search Submit"
     Then I should be on Search Result page

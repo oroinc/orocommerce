@@ -46,7 +46,6 @@ Feature: Product Kit search attribute
     Then I should see "Product has been saved" flash message
 
   Scenario: Check the search of product kits after adding a new searchable attribute to simple product related to product kit in the back-office
-    And I click "Search"
     When I type "KitAttributeValue" in "search"
     Then I should see 2 search suggestion
     When I click "Search Submit"
@@ -85,7 +84,6 @@ Feature: Product Kit search attribute
     Then I should see "Attribute was successfully saved" flash message
 
   Scenario: Check the search of product kits after disabling searchable option for simple product related to product kit in the back-office
-    When I click "Search"
     When I type "KitAttributeValue" in "search"
     Then I should see "No results found"
 
@@ -110,7 +108,6 @@ Feature: Product Kit search attribute
     Then I should see "Attribute was successfully saved" flash message
 
   Scenario: Check the search of product kits after enabling searchable attribute for simple product related to product kit in the back-office
-    When I click "Search"
     And I type "KitAttributeValue" in "search"
     Then I should see 2 search suggestion
     When I click "Search Submit"
@@ -201,7 +198,6 @@ Feature: Product Kit search attribute
     And I click "Kit Item 2 Toggler"
     And I save and close form
     Then I should see "Product has been saved" flash message
-    When I click "Search"
     And I type "AnotherKitFamilyAttributeValue" in "search"
     Then I should see 2 search suggestion
     When I click "Search Submit"

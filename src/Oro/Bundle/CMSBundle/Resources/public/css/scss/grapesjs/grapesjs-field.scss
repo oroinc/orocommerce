@@ -2,9 +2,9 @@
 
 .#{$app-prefix} {
     &field {
-        border-radius: 2px;
+        border-radius: 4px;
         background-color: $primary-inverse;
-        border: 2px solid $primary-750;
+        border: 1px solid $primary-750;
         color: $primary-100;
 
         select {

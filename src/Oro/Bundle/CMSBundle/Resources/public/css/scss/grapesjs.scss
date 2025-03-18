@@ -94,13 +94,18 @@
         .#{$pn-prefix}btn,
         .btn {
             background-color: $button-bg-color;
-            border-radius: 30px;
+            color: $button-color;
+            border-radius: $button-border-radius;
             margin-right: 7px;
+
+            &:hover {
+                background-color: $secondary-secondary-6;
+            }
 
             &.#{$pn-prefix}active,
             &[aria-expanded="true"] {
-                background-color: $additional-extra-light;
-                box-shadow: $button-bg-shadow;
+                background-color: $secondary-secondary-4;
+                color: $neutral-white;
             }
         }
     }
@@ -184,13 +189,13 @@
         .#{$app-prefix}sm-sector-title,
         .#{$app-prefix}sm-title,
         .#{$app-prefix}title {
-            border-bottom: none;
-            font-weight: font-weight('bold');
+            font-weight: font-weight('semi-bold');
             padding: 6px 14px 5px;
             letter-spacing: normal;
             font-size: $base-font-size;
-            color: $primary-100;
-            background-color: $primary-860;
+            color: $text-primary;
+            background-color: $neutral-grey-1;
+            border: 1px solid $neutral-grey-3;
             border-radius: 4px;
         }
 

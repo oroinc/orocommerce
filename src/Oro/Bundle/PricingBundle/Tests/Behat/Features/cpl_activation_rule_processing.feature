@@ -55,6 +55,7 @@ Feature: CPL activation rule processing
     And click edit "priceListForWebsite" in grid
     And I fill "Price Calculation Rules Form" with:
       | Calculate As | pricelist[1].prices.value * 1.1 |
+    And I click "General"
     And I save and close form
     Then I should see "Price List has been saved" flash message
     And There are 0 prices in combined price list:

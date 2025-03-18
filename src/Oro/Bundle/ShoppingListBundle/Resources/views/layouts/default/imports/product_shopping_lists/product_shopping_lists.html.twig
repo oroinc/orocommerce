@@ -68,7 +68,7 @@
 
         <button {{ block('block_attributes') }}>
             {{ renderIcon.icon({name: 'pencil'}) }}
-            <span class="clip-text">
+            <span class="text-clip">
                 <% if (shoppingListsCount == 1) { %>
                     <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
                 <% } else { %>
@@ -80,7 +80,7 @@
         </button>
     {% else %}
         <div class="shopping-lists__text">
-            <span class="clip-text">
+            <span class="text-clip">
                 <% if (shoppingListsCount == 1) { %>
                     <%- _.__('oro.shoppinglist.actions.in_shopping_list') %>
                 <% } else { %>

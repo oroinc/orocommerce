@@ -8,26 +8,37 @@
 
         .#{$pn-prefix}buttons {
             .#{$pn-prefix}btn {
+                display: flex;
+                align-items: center;
+
                 width: 100%;
                 margin-right: 0;
                 border-radius: 0;
+                color: $text-primary;
 
-                background-color: $primary-900;
-                border-top: 2px solid $primary-750;
-                border-left: 2px solid $primary-750;
-                border-bottom: 2px solid $primary-750;
+                background-color: $neutral-white;
+                border-top: 1px solid $neutral-grey-3;
+                border-left: 1px solid $neutral-grey-3;
+                border-bottom: 1px solid $neutral-grey-3;
                 line-height: 20px;
 
                 box-shadow: none;
 
+                &:hover {
+                    background-color: $primary-accent-extra-light;
+                }
+
+                &:first-child {
+                    border-radius: $border-radius 0 0 $border-radius;
+                }
+
                 &:last-child {
-                    border-right: 2px solid $primary-750;
+                    border-right: 1px solid $neutral-grey-3;
+                    border-radius: 0 $border-radius $border-radius 0;
                 }
 
                 &.#{$pn-prefix}active {
-                    border-top-color: $secondary;
-                    border-bottom-color: $primary-inverse;
-                    background-color: $primary-inverse;
+                    background-color: $primary-accent-light;
                 }
             }
         }

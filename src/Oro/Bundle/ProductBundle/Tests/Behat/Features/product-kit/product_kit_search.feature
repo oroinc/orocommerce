@@ -19,7 +19,6 @@ Feature: Product Kit search
   Scenario: Check the search of product kits in the back-office
     Given I proceed as the Admin
     And I login as administrator
-    And I click "Search"
     When I type "PSKU_KIT1" in "search"
     Then I should see 1 search suggestion
     When I follow "Product Kit 1"
@@ -27,8 +26,7 @@ Feature: Product Kit search
     And I should see "PSKU_KIT1 - Product Kit 1"
 
   Scenario: Check the search of product kits by kit item label in the back-office
-    Given I click "Search"
-    When I type "Base Unit" in "search"
+    Given I type "Base Unit" in "search"
     Then I should see 1 search suggestion
     When I click "Search Submit"
     Then I should be on Search Result page
@@ -42,8 +40,7 @@ Feature: Product Kit search
       | PSKU_KIT1 - Product Kit 1 | Product |
 
   Scenario: Check the search of product kits by simple product related to the product kit in the back-office
-    Given I click "Search"
-    When I type "PSKU1" in "search"
+    Given I type "PSKU1" in "search"
     Then I should see 2 search suggestion
     When I click "Search Submit"
     Then I should be on Search Result page
@@ -108,8 +105,7 @@ Feature: Product Kit search
     Then I should see "Product has been saved" flash message
 
   Scenario: Check the search of product kits after changing the kit item label in the back-office
-    When I click "Search"
-    And I type "Edited" in "search"
+    When I type "Edited" in "search"
     Then I should see 1 search suggestion
     When I click "Search Submit"
     Then I should be on Search Result page
@@ -139,8 +135,7 @@ Feature: Product Kit search
     Then I should see "Product has been saved" flash message
 
   Scenario: Check the search of product kits after removing a kit item product in the back-office
-    When I click "Search"
-    And I type "Edited" in "search"
+    When I type "Edited" in "search"
     Then I should see "No results found"
 
   Scenario: Check the search of product kits after removing a kit item product on the storefront
@@ -168,8 +163,7 @@ Feature: Product Kit search
     Then I should see "Product has been saved" flash message
 
   Scenario: Check the search of product kits after adding a new kit item product in the back-office
-    When I click "Search"
-    And I type "Flash Drives" in "search"
+    When I type "Flash Drives" in "search"
     Then I should see 1 search suggestion
     When I click "Search Submit"
     Then I should be on Search Result page
@@ -178,7 +172,6 @@ Feature: Product Kit search
       | Title                     | Type    |
       | PSKU_KIT1 - Product Kit 1 | Product |
 
-    When I click "Search"
     And I type "PSKU2" in "search"
     Then I should see 2 search suggestion
     When I click "Search Submit"
@@ -224,8 +217,7 @@ Feature: Product Kit search
     Then I should see "Product has been saved" flash message
 
   Scenario: Check the search of product kits after changing simple product related to product kit in the back-office
-    When I click "Search"
-    And I type "Handheld Flashlight" in "search"
+    When I type "Handheld Flashlight" in "search"
     Then I should see 2 search suggestion
     When I click "Search Submit"
     Then I should be on Search Result page

@@ -116,8 +116,7 @@ Feature: Landing Page Drafts
     And I should not see "CMS Page Drafts Grid" grid
 
   Scenario: Draft is not available in backoffice search
-    When I click "Search"
-    And I type "Draft" in "search"
+    When I type "Draft" in "search"
     And I click "Search Submit"
     Then I should see "No results were found to match your search."
     And I should see "Try modifying your search criteria or creating a new"
@@ -144,8 +143,7 @@ Feature: Landing Page Drafts
     And number of records in "CMS Page Drafts Grid" should be 1
 
   Scenario: After "Publish" Draft become a Landing Page and available in the backoffice search
-    When I click "Search"
-    And type "New Title" in "search"
+    When type "New Title" in "search"
     Then I should see 1 search suggestions
     When I click "Search Submit"
     Then I should be on Search Result page
