@@ -2,11 +2,15 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Model;
 
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutLineItem;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
 use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemsHolderDTO;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
@@ -16,6 +20,7 @@ class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFacto
 {
     public function __construct(
         private CustomerUserProvider $customerUserProvider,
+        private CustomerUserRelationsProvider $customerRelationsProvider,
         private ProductPriceScopeCriteriaFactoryInterface $inner
     ) {
     }
@@ -33,12 +38,45 @@ class ProductPriceScopeCriteriaFactory implements ProductPriceScopeCriteriaFacto
     #[\Override]
     public function createByContext($context, array $data = []): ProductPriceScopeCriteriaInterface
     {
-        $customerUser = $this->customerUserProvider->getLoggedUser();
         $criteria = $this->inner->createByContext($context, $data);
-        if ($context instanceof CustomerOwnerAwareInterface && $customerUser) {
-            $criteria->setCustomer($customerUser->getCustomer());
+
+        $customerHolder = $this->getCustomerHolder($context);
+        if ($customerHolder) {
+            $customerUser = $this->customerUserProvider->getLoggedUser() ?: $customerHolder->getCustomerUser();
+
+            $customer = null;
+            if (!$customerUser) {
+                $customer = $customerHolder->getCustomer();
+            }
+
+            if (!$customer) {
+                $customer = $this->customerRelationsProvider->getCustomerIncludingEmpty($customerUser);
+            }
+
+            if ($context instanceof CustomerOwnerAwareInterface && $customer) {
+                $criteria->setCustomer($customer);
+            }
         }
 
         return $criteria;
+    }
+
+    private function getCustomerHolder($context): ?CustomerOwnerAwareInterface
+    {
+        if ($context instanceof ProductLineItemsHolderDTO) {
+            $realLineItem = $context->getLineItems()->first();
+            if ($realLineItem instanceof LineItem) {
+                return $realLineItem->getShoppingList();
+            }
+            if ($realLineItem instanceof CheckoutLineItem) {
+                return $realLineItem->getCheckout();
+            }
+        }
+
+        if ($context instanceof CustomerOwnerAwareInterface) {
+            return $context;
+        }
+
+        return null;
     }
 }

@@ -832,6 +832,7 @@ services:
         decorates: oro_pricing.model.product_price_scope_criteria_factory
         arguments:
             - '@oro_customer.security.customer_user_provider'
+            - '@oro_customer.provider.customer_user_relations_provider'
             - '@.inner'
 
     oro_shopping_list.provider.shopping_list_current_currency:
