@@ -25,7 +25,7 @@ class OrderLineItemsGridFrontendTest extends FrontendWebTestCase
         $this->client->getCookieJar()->set(
             new Cookie(
                 AnonymousCustomerUserAuthenticator::COOKIE_NAME,
-                base64_encode(\json_encode([$visitor->getId(), $visitor->getSessionId()])),
+                base64_encode(json_encode($visitor->getSessionId(), JSON_THROW_ON_ERROR)),
                 time() + 60
             )
         );

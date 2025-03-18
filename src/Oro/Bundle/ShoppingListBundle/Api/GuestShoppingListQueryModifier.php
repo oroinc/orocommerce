@@ -83,7 +83,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         ?CustomerVisitor $visitor
     ): void {
         QueryBuilderUtil::checkIdentifier($rootAlias);
-        if (null === $visitor) {
+        if (null === $visitor || !$visitor->getId()) {
             // deny access to shopping lists
             $qb->andWhere('1 = 0');
         } else {
@@ -96,7 +96,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         string $rootAlias,
         ?CustomerVisitor $visitor
     ): void {
-        if (null === $visitor) {
+        if (null === $visitor || !$visitor->getId()) {
             // deny access to shopping list items
             $qb->andWhere('1 = 0');
         } else {
@@ -190,7 +190,7 @@ class GuestShoppingListQueryModifier implements QueryModifierInterface
         string $rootAlias,
         ?CustomerVisitor $visitor
     ): void {
-        if (null === $visitor) {
+        if (null === $visitor || !$visitor->getId()) {
             // deny access to kit item line items
             $qb->andWhere('1 = 0');
         } else {
