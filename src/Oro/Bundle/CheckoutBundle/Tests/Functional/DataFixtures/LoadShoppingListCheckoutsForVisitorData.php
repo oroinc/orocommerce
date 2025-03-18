@@ -110,8 +110,6 @@ class LoadShoppingListCheckoutsForVisitorData extends AbstractLoadCheckouts
     private function createCustomerVisitor(ObjectManager $manager, string $reference): CustomerVisitor
     {
         $visitor = new CustomerVisitor();
-        $visitor->setSessionId(md5(time()));
-
         $manager->persist($visitor);
         $this->addReference($reference, $visitor);
 

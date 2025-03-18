@@ -154,6 +154,9 @@ class GuestShoppingListManager
         $shoppingList->setLabel($this->translator->trans('oro.shoppinglist.default.label'));
 
         $em = $this->doctrineHelper->getEntityManager(ShoppingList::class);
+        if (null === $customerVisitor->getId()) {
+            $em->persist($customerVisitor);
+        }
         $em->persist($shoppingList);
 
         //Link customer visitor to shopping list

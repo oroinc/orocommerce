@@ -95,7 +95,7 @@ class QuoteDemand implements
     /**
      * @var CustomerVisitor|null
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerVisitor", cascade={"persist"})
      * @ORM\JoinColumn(name="visitor_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $visitor;

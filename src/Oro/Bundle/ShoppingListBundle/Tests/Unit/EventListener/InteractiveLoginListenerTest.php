@@ -19,7 +19,7 @@ use Symfony\Component\Security\Http\Event\InteractiveLoginEvent;
 
 class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
 {
-    private const VISITOR_CREDENTIALS = [1, 'someSessionId'];
+    private const VISITOR_SESSION_ID = 'someSessionId';
 
     private Request $request;
 
@@ -74,7 +74,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
-            base64_encode(json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
 
         $this->configManager->expects(self::once())
@@ -100,7 +100,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
-            base64_encode(json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
 
         $this->configManager->expects(self::once())
@@ -111,7 +111,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
         $visitor = new CustomerVisitorStub();
         $this->visitorManager->expects(self::once())
             ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
+            ->with(null, self::VISITOR_SESSION_ID)
             ->willReturn($visitor);
 
         $this->sendChangedEntitiesToMessageQueueListener->expects(self::exactly(2))
@@ -128,7 +128,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
-            base64_encode(json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
         $this->configManager->expects(self::once())
             ->method('get')
@@ -144,7 +144,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
         $visitor->addShoppingList($shoppingList);
         $this->visitorManager->expects(self::once())
             ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
+            ->with(null, self::VISITOR_SESSION_ID)
             ->willReturn($visitor);
 
         $this->sendChangedEntitiesToMessageQueueListener->expects(self::exactly(2))
@@ -162,7 +162,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
     {
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticationListener::COOKIE_NAME,
-            base64_encode(json_encode(self::VISITOR_CREDENTIALS))
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
         );
         $this->configManager->expects(self::once())
             ->method('get')
@@ -175,7 +175,7 @@ class InteractiveLoginListenerTest extends \PHPUnit\Framework\TestCase
         $visitor->addShoppingList($shoppingList);
         $this->visitorManager->expects(self::once())
             ->method('find')
-            ->with(self::VISITOR_CREDENTIALS[0], self::VISITOR_CREDENTIALS[1])
+            ->with(null, self::VISITOR_SESSION_ID)
             ->willReturn($visitor);
 
         $customerUser = new CustomerUser();
