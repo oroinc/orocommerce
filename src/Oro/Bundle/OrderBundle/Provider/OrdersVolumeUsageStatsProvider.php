@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Provider;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Provider\OrganizationRestrictionProviderInterface;
@@ -16,18 +15,15 @@ class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
 {
     private ManagerRegistry $doctrine;
     private OrganizationRestrictionProviderInterface $organizationRestrictionProvider;
-    private CurrencyProviderInterface $currencyProvider;
     private NumberFormatter $numberFormatter;
 
     public function __construct(
         ManagerRegistry $doctrine,
         OrganizationRestrictionProviderInterface $organizationRestrictionProvider,
-        CurrencyProviderInterface $currencyProvider,
         NumberFormatter $numberFormatter
     ) {
         $this->doctrine = $doctrine;
         $this->organizationRestrictionProvider = $organizationRestrictionProvider;
-        $this->currencyProvider = $currencyProvider;
         $this->numberFormatter = $numberFormatter;
     }
 
@@ -46,7 +42,7 @@ class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
     #[\Override]
     public function isApplicable(): bool
     {
-        return \count($this->currencyProvider->getCurrencyList()) === 1;
+        return true;
     }
 
     #[\Override]
@@ -58,7 +54,7 @@ class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
             null,
             false,
             'total',
-            $this->currencyProvider->getCurrencyList()[0],
+            null,
             'year'
         );
         $this->organizationRestrictionProvider->applyOrganizationRestrictions($queryBuilder);

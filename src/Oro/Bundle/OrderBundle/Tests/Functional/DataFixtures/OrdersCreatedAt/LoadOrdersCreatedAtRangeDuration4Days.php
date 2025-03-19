@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\OrdersCreatedAt;
 
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
@@ -156,8 +157,15 @@ class LoadOrdersCreatedAtRangeDuration4Days extends LoadOrders
             ->setShipUntil(new \DateTime())
             ->setCurrency($orderData['currency'])
             ->setPoNumber($orderData['poNumber'])
-            ->setSubtotal($orderData['subtotal'])
-            ->setTotal($orderData['total'])
+            ->setSubtotalDiscountObject(
+                MultiCurrency::create($orderData['subtotal'], $orderData['currency'], $orderData['subtotal'])
+            )
+            ->setSubtotalObject(
+                MultiCurrency::create($orderData['subtotal'], $orderData['currency'], $orderData['subtotal'])
+            )
+            ->setTotalObject(
+                MultiCurrency::create($orderData['total'], $orderData['currency'], $orderData['total'])
+            )
             ->setCustomer($customerUser->getCustomer())
             ->setWebsite($website)
             ->setCustomerUser($customerUser)

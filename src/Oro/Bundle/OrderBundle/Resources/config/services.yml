@@ -790,7 +790,6 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_organization.organization_restriction_provider'
-            - '@oro_currency.config.currency'
             - '@oro_locale.formatter.number'
         tags:
             - { name: oro_platform.usage_stats_provider, priority: 70 }

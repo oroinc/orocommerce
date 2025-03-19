@@ -5,7 +5,6 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider;
 use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
@@ -19,7 +18,6 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
     private ManagerRegistry|MockObject $doctrine;
     private OrderRepository|MockObject $orderRepository;
     private OrganizationRestrictionProviderInterface|MockObject $organizationRestrictionProvider;
-    private CurrencyProviderInterface|MockObject $currencyProvider;
     private NumberFormatter|MockObject $numberFormatter;
     private OrdersVolumeUsageStatsProvider $provider;
 
@@ -29,13 +27,11 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->orderRepository = $this->createMock(OrderRepository::class);
         $this->organizationRestrictionProvider = $this->createMock(OrganizationRestrictionProviderInterface::class);
-        $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
         $this->numberFormatter = $this->createMock(NumberFormatter::class);
 
         $this->provider = new OrdersVolumeUsageStatsProvider(
             $this->doctrine,
             $this->organizationRestrictionProvider,
-            $this->currencyProvider,
             $this->numberFormatter
         );
     }
@@ -56,42 +52,9 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider isApplicableDataProvider
-     */
-    public function testIsApplicable(array $currencyList, bool $expectedResult): void
+    public function testIsApplicable(): void
     {
-        $this->currencyProvider->expects(self::once())
-            ->method('getCurrencyList')
-            ->willReturn($currencyList);
-
-        self::assertEquals(
-            $expectedResult,
-            $this->provider->isApplicable()
-        );
-    }
-
-    public function isApplicableDataProvider(): array
-    {
-        return [
-            'one currency' => [
-                'currencyList' => [
-                    'USD'
-                ],
-                'expectedResult' => true,
-            ],
-            'multiple currencies' => [
-                'currencyList' => [
-                    'USD',
-                    'EUR',
-                ],
-                'expectedResult' => false,
-            ],
-            'no currencies' => [
-                'currencyList' => [],
-                'expectedResult' => false,
-            ],
-        ];
+        self::assertEquals(true, $this->provider->isApplicable());
     }
 
     /**
@@ -99,10 +62,6 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
      */
     public function testGetValue(array $repositoryResult, float $expectedFloat, string $expectedCurrency): void
     {
-        $this->currencyProvider->expects(self::once())
-            ->method('getCurrencyList')
-            ->willReturn(['USD']);
-
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $query = $this->createMock(AbstractQuery::class);
 
@@ -119,7 +78,7 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
                 null,
                 false,
                 'total',
-                'USD',
+                null,
                 'year'
             )
             ->willReturn($queryBuilder);

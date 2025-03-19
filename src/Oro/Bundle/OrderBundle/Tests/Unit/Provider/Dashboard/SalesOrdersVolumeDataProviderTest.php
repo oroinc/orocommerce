@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Provider\Dashboard;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
 use Oro\Bundle\DashboardBundle\Model\WidgetOptionBag;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
@@ -16,15 +15,12 @@ class SalesOrdersVolumeDataProviderTest extends TestCase
 {
     private OrderRepository|MockObject $orderRepository;
 
-    private CurrencyProviderInterface|MockObject $currencyProvider;
-
     private SalesOrdersVolumeDataProvider $salesOrdersVolumeDataProvider;
 
     #[\Override]
     protected function setUp(): void
     {
         $this->orderRepository = $this->createMock(OrderRepository::class);
-        $this->currencyProvider = $this->createMock(CurrencyProviderInterface::class);
 
         $registry = $this->createMock(ManagerRegistry::class);
         $registry->expects(self::once())
@@ -32,10 +28,7 @@ class SalesOrdersVolumeDataProviderTest extends TestCase
             ->with(Order::class)
             ->willReturn($this->orderRepository);
 
-        $this->salesOrdersVolumeDataProvider = new SalesOrdersVolumeDataProvider(
-            $registry,
-            $this->currencyProvider
-        );
+        $this->salesOrdersVolumeDataProvider = new SalesOrdersVolumeDataProvider($registry);
     }
 
     public function testGetData(): void
@@ -61,7 +54,6 @@ class SalesOrdersVolumeDataProviderTest extends TestCase
             ]
         );
         $scaleType = 'day';
-        $currency = 'USD';
 
         $salesOrdersVolumeData = [
             [
@@ -79,14 +71,10 @@ class SalesOrdersVolumeDataProviderTest extends TestCase
                 $includedOrderStatuses,
                 $isIncludeSubOrders,
                 $amountType,
-                $currency,
+                null,
                 $scaleType,
             )
             ->willReturn($salesOrdersVolumeData);
-
-        $this->currencyProvider->expects(self::exactly(2))
-            ->method('getDefaultCurrency')
-            ->willReturn($currency);
 
         self::assertSame(
             $salesOrdersVolumeData,

@@ -41,6 +41,7 @@ class OrdersVolumeUsageStatsProviderTest extends WebTestCase
     {
         $provider = self::getContainer()->get('oro_order.provider.orders_volume_usage_stats_provider');
 
-        self::assertSame('$7,404.00', $provider->getValue());
+        // Sum orders in USD and EUR (with conversation to USD).
+        self::assertSame('$9,104.00', $provider->getValue());
     }
 }
