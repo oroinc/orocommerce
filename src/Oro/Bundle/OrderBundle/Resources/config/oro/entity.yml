@@ -2,6 +2,7 @@ oro_entity:
     exclusions:
         - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: subtotalCurrency }
         - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: totalCurrency }
+        - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: subtotalWithDiscountsCurrency }
         - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: baseTotalValue }
         - { entity: Oro\Bundle\OrderBundle\Entity\Order, field: baseSubtotalValue }
 

@@ -40,7 +40,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_20_2';
+        return 'v1_20_3';
     }
 
     /**
@@ -72,6 +72,8 @@ class OroOrderBundleInstaller implements
 
     /**
      * Create oro_order table
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     private function createOroOrderTable(Schema $schema, QueryBag $queries): void
     {
@@ -110,7 +112,17 @@ class OroOrderBundleInstaller implements
             ['notnull' => false, 'comment' => '(DC2Type:money)']
         );
         $table->addColumn(
-            'subtotal_with_discounts',
+            'subtotal_with_discounts_value',
+            'money_value',
+            ['notnull' => false, 'precision' => 0, 'comment' => '(DC2Type:money_value)']
+        );
+        $table->addColumn(
+            'subtotal_with_discounts_currency',
+            'currency',
+            ['length' => 3, 'notnull' => false, 'comment' => '(DC2Type:currency)']
+        );
+        $table->addColumn(
+            'subtotal_with_discounts', // Base subtotal with discount.
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );

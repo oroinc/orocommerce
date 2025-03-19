@@ -56,42 +56,9 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
         );
     }
 
-    /**
-     * @dataProvider isApplicableDataProvider
-     */
-    public function testIsApplicable(array $currencyList, bool $expectedResult): void
+    public function testIsApplicable(): void
     {
-        $this->currencyProvider->expects(self::once())
-            ->method('getCurrencyList')
-            ->willReturn($currencyList);
-
-        self::assertEquals(
-            $expectedResult,
-            $this->provider->isApplicable()
-        );
-    }
-
-    public function isApplicableDataProvider(): array
-    {
-        return [
-            'one currency' => [
-                'currencyList' => [
-                    'USD'
-                ],
-                'expectedResult' => true,
-            ],
-            'multiple currencies' => [
-                'currencyList' => [
-                    'USD',
-                    'EUR',
-                ],
-                'expectedResult' => false,
-            ],
-            'no currencies' => [
-                'currencyList' => [],
-                'expectedResult' => false,
-            ],
-        ];
+        self::assertEquals(true, $this->provider->isApplicable());
     }
 
     /**
@@ -99,10 +66,6 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
      */
     public function testGetValue(array $repositoryResult, float $expectedFloat, string $expectedCurrency): void
     {
-        $this->currencyProvider->expects(self::once())
-            ->method('getCurrencyList')
-            ->willReturn(['USD']);
-
         $queryBuilder = $this->createMock(QueryBuilder::class);
         $query = $this->createMock(AbstractQuery::class);
 
@@ -125,7 +88,7 @@ class OrdersVolumeUsageStatsProviderTest extends TestCase
                 ],
                 false,
                 'total',
-                'USD',
+                null,
                 'year'
             )
             ->willReturn($queryBuilder);

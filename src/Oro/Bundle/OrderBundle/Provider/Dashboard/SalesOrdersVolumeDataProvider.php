@@ -61,18 +61,6 @@ class SalesOrdersVolumeDataProvider implements SalesOrdersDataProviderInterface
         WidgetOptionBag $widgetOptions,
         string $scaleType
     ): array {
-        if ($this->currencyProvider !== null) {
-            return $this->getOrderRepository()->getSalesOrdersVolumeForCurrency(
-                $dateFrom,
-                $dateTo,
-                $widgetOptions->get('includedOrderStatuses', []),
-                $widgetOptions->get('includeSubOrders'),
-                $widgetOptions->get('orderTotal'),
-                $this->currencyProvider->getDefaultCurrency(),
-                $scaleType
-            );
-        }
-
         return $this->getOrderRepository()->getSalesOrdersVolume(
             $dateFrom,
             $dateTo,

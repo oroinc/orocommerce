@@ -44,7 +44,7 @@ class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
 
     public function isApplicable(): bool
     {
-        return count($this->currencyProvider->getCurrencyList()) === 1;
+        return true;
     }
 
     public function getValue(): ?string
@@ -63,7 +63,7 @@ class OrdersVolumeUsageStatsProvider extends AbstractUsageStatsProvider
             ],
             false,
             'total',
-            $this->currencyProvider->getCurrencyList()[0],
+            null,
             'year'
         );
 

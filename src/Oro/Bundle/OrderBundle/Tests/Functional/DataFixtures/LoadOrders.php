@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -193,8 +194,15 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
         $order->setShipUntil(new \DateTime());
         $order->setCurrency($orderData['currency']);
         $order->setPoNumber($orderData['poNumber']);
-        $order->setSubtotal($orderData['subtotal']);
-        $order->setTotal($orderData['total']);
+        $order->setSubtotalDiscountObject(
+            MultiCurrency::create($orderData['subtotal'], $orderData['currency'], $orderData['subtotal'])
+        );
+        $order->setSubtotalObject(
+            MultiCurrency::create($orderData['subtotal'], $orderData['currency'], $orderData['subtotal'])
+        );
+        $order->setTotalObject(
+            MultiCurrency::create($orderData['total'], $orderData['currency'], $orderData['total'])
+        );
         $order->setCustomer($customerUser->getCustomer());
         $order->setWebsite($website);
         $order->setCustomerUser($customerUser);

@@ -357,31 +357,9 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         string $scaleType
     ): QueryBuilder {
         $qb = $this->createQueryBuilder('o');
-        switch ($amountType) {
-            case self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT:
-                $qb->select(
-                    'SUM(
-                        CASE WHEN o.subtotalWithDiscounts IS NOT NULL THEN o.subtotalWithDiscounts ELSE 0 END
-                    ) AS amount'
-                );
-                break;
-            case self::AMOUNT_TYPE_SUBTOTAL:
-                $qb->select(
-                    'SUM(
-                        CASE WHEN o.subtotalValue IS NOT NULL THEN o.subtotalValue ELSE 0 END
-                    ) AS amount'
-                );
-                break;
-            case self::AMOUNT_TYPE_TOTAL:
-                $qb->select(
-                    'SUM(
-                        CASE WHEN o.totalValue IS NOT NULL THEN o.totalValue ELSE 0 END
-                    ) AS amount'
-                );
-                break;
-            default:
-                throw new \InvalidArgumentException(sprintf('Unsupported amount type "%s"', $amountType));
-        }
+
+        $amountField = $this->getAmountField($amountType, $currency);
+        $qb->select(sprintf('SUM(CASE WHEN %s IS NOT NULL THEN %s ELSE 0 END) AS amount', $amountField, $amountField));
 
         $salesOrdersDataQueryBuilder = $this->getSalesOrdersDataQueryBuilder(
             $qb,
@@ -393,25 +371,42 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         );
 
         if ($currency) {
-            switch ($amountType) {
-                case self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT:
-                case self::AMOUNT_TYPE_SUBTOTAL:
-                    $salesOrdersDataQueryBuilder
-                        ->andWhere(
-                            $salesOrdersDataQueryBuilder->expr()->eq('o.subtotalCurrency', ':currency')
-                        )
-                        ->setParameter('currency', $currency);
-                    break;
-                case self::AMOUNT_TYPE_TOTAL:
-                    $salesOrdersDataQueryBuilder
-                        ->andWhere(
-                            $salesOrdersDataQueryBuilder->expr()->eq('o.totalCurrency', ':currency')
-                        )
-                        ->setParameter('currency', $currency);
-                    break;
-            }
+            $this->applyCurrencyFilter($salesOrdersDataQueryBuilder, $amountType, $currency);
         }
 
         return $salesOrdersDataQueryBuilder;
+    }
+
+    private function getAmountField(string $amountType, ?string $currency): string
+    {
+        $useBaseValue = null === $currency;
+
+        return match ($amountType) {
+            self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT => $useBaseValue
+                ? 'o.subtotalWithDiscounts'
+                : 'o.subtotalWithDiscountsValue',
+            self::AMOUNT_TYPE_SUBTOTAL => $useBaseValue
+                ? 'o.baseSubtotalValue'
+                : 'o.subtotalValue',
+            self::AMOUNT_TYPE_TOTAL => $useBaseValue
+                ? 'o.baseTotalValue'
+                : 'o.totalValue',
+            default => throw new \InvalidArgumentException(sprintf('Unsupported amount type "%s"', $amountType)),
+        };
+    }
+
+    private function applyCurrencyFilter(QueryBuilder $qb, string $amountType, string $currency): void
+    {
+        $currencyField = match ($amountType) {
+            self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT,
+            self::AMOUNT_TYPE_SUBTOTAL => 'o.subtotalCurrency',
+            self::AMOUNT_TYPE_TOTAL => 'o.totalCurrency',
+            default => null,
+        };
+
+        if ($currencyField !== null) {
+            $qb->andWhere($qb->expr()->eq($currencyField, ':currency'))
+                ->setParameter('currency', $currency);
+        }
     }
 }

@@ -870,6 +870,8 @@ services:
         class: Oro\Bundle\PromotionBundle\EventListener\OrderSubtotalWithDiscountsListener
         arguments:
             - '@oro_promotion.provider.subtotal_provider'
+        calls:
+            - [setRateConverter, ['@oro_currency.converter.rate']]
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: prePersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\OrderBundle\Entity\Order', event: preUpdate }
