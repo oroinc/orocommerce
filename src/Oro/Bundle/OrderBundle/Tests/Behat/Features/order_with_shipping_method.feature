@@ -19,6 +19,24 @@ Feature: Order with shipping method
       | Total     | $53.00 |
       | Total ($) | $53.00 |
 
+  Scenario: Change the price for shipping rules
+    Given I go to System/ Shipping Rules
+    And click "edit" on first row in grid
+    When I fill form with:
+      | Price | 2 |
+    And save and close form
+    Then I should see "Shipping rule has been saved" flash message
+
+  Scenario: Re-save order with changed shipping prices
+    Given I go to Sales/Orders
+    And click edit SimpleOrder in grid
+    When I save and close form
+    And go to Sales/Orders
+    # The price has not changed because the order has already been created and paid for.
+    Then I should see SimpleOrder in grid with following data:
+      | Total     | $53.00 |
+      | Total ($) | $53.00 |
+
   Scenario: Override shipping cost to 5
     When I click edit SimpleOrder in grid
     And I type "5" in "Overridden shipping cost amount"

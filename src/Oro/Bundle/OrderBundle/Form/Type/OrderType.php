@@ -83,7 +83,7 @@ class OrderType extends AbstractType
         $this->addAddresses($builder, $order);
         $this->addBillingAddress($builder, $order, $options);
 
-        $this->addPreSubmitEventListener($builder);
+        $this->addPreSubmitEventListener($builder, $order);
         $builder->addEventSubscriber($this->subtotalSubscriber);
 
         if (!$order->getSubOrders()->count()) {
@@ -214,16 +214,41 @@ class OrderType extends AbstractType
             ));
     }
 
-    private function addPreSubmitEventListener(FormBuilderInterface $builder): void
+    private function addPreSubmitEventListener(FormBuilderInterface $builder, Order $order): void
     {
         $builder
-            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) {
+            ->addEventListener(FormEvents::PRE_SUBMIT, function (FormEvent $event) use ($order) {
+                $data =  $event->getData();
+
+                /**
+                 * This condition is required to save the selected shipping method after changing product prices or
+                 * additional prices in the integration itself.
+                 *
+                 * This is necessary because after an order has been created, there should be no conditions
+                 * that would change the selected shipping method, unless it is explicitly changed (the administrator
+                 * is responsible for this).
+                 *
+                 * For example, the shipping price of a created order was changed after payment, so this method is
+                 * displayed as “Previously selected delivery method” and can only be changed by explicitly specifying
+                 * a new shipping method.
+                 */
+                if (empty($data['shippingMethod']) &&
+                    empty($data['shippingMethodType']) &&
+                    empty($data['estimatedShippingCostAmount'])
+                ) {
+                    $data['shippingMethod'] = $order->getShippingMethod();
+                    $data['shippingMethodType'] = $order->getShippingMethodType();
+                    $data['estimatedShippingCostAmount'] = $order->getEstimatedShippingCostAmount();
+                }
+
                 if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING)) {
                     $event->getForm()->remove('billingAddress');
                 }
                 if (!$this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_SHIPPING)) {
                     $event->getForm()->remove('shippingAddress');
                 }
+
+                $event->setData($data);
             });
     }
 }
