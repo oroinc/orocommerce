@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Unit\EventListener;
 
+use Brick\Math\BigDecimal;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order\SubtotalTrait;
@@ -21,13 +24,16 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
     use SubtotalTrait;
     use EntityTrait;
 
+    private RateConverterInterface|MockObject $rateConverter;
     private SubtotalProviderInterface|MockObject $subtotalProvider;
     private OrderSubtotalWithDiscountsListener $subtotalWithDiscountsListener;
 
     protected function setUp(): void
     {
         $this->subtotalProvider = $this->createMock(SubtotalProviderInterface::class);
+        $this->rateConverter = $this->createMock(RateConverterInterface::class);
         $this->subtotalWithDiscountsListener = new OrderSubtotalWithDiscountsListener($this->subtotalProvider);
+        $this->subtotalWithDiscountsListener->setRateConverter($this->rateConverter);
     }
 
     /**
@@ -37,7 +43,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
         array $subtotals,
         float $amount,
         ArrayCollection $discounts,
-        float $result
+        float $value,
+        float $baseValue
     ): void {
         $order = $this->getEntity(Order::class, ['subtotal' => $amount, 'discounts' => $discounts]);
 
@@ -49,6 +56,15 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
             ->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->rateConverter->expects(self::any())
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $currency) {
+                $value = BigDecimal::of($currency->getValue());
+                $value = $value->multipliedBy(1.1);
+
+                return $value->toFloat();
+            });
 
         $this
             ->subtotalProvider
@@ -64,9 +80,12 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
             ->willReturn(true);
 
         $this->subtotalWithDiscountsListener->prePersist($order, $prePersistEvent);
-        self::assertEquals($order->getSubtotalWithDiscounts(), $result);
+        self::assertEquals($order->getSubtotalDiscountObject()->getValue(), $value);
+        self::assertEquals($order->getSubtotalDiscountObject()->getBaseCurrencyValue(), $baseValue);
+
         $this->subtotalWithDiscountsListener->preUpdate($order, $preUpdateEvent);
-        self::assertEquals($order->getSubtotalWithDiscounts(), $result);
+        self::assertEquals($order->getSubtotalDiscountObject()->getValue(), $value);
+        self::assertEquals($order->getSubtotalDiscountObject()->getBaseCurrencyValue(), $baseValue);
     }
 
     /**
@@ -76,7 +95,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
         array $subtotals,
         float $amount,
         ArrayCollection $discounts,
-        float $result
+        float $value,
+        float $baseValue
     ): void {
         $order = $this->getEntity(Order::class, ['subtotal' => $amount, 'discounts' => $discounts]);
 
@@ -88,6 +108,15 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
             ->getMockBuilder(LifecycleEventArgs::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->rateConverter->expects(self::any())
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $currency) {
+                $value = BigDecimal::of($currency->getValue());
+                $value = $value->multipliedBy(1.1);
+
+                return $value->toFloat();
+            });
 
         $this
             ->subtotalProvider
@@ -103,11 +132,17 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
             ->willReturn(false);
 
         $this->subtotalWithDiscountsListener->prePersist($order, $prePersistEvent);
-        self::assertEquals($order->getSubtotalWithDiscounts(), $result);
+        self::assertEquals($order->getSubtotalDiscountObject()->getValue(), $value);
+        self::assertEquals($order->getSubtotalDiscountObject()->getBaseCurrencyValue(), $baseValue);
+
         $this->subtotalWithDiscountsListener->preUpdate($order, $preUpdateEvent);
-        self::assertEquals($order->getSubtotalWithDiscounts(), $result);
+        self::assertEquals($order->getSubtotalDiscountObject()->getValue(), $value);
+        self::assertEquals($order->getSubtotalDiscountObject()->getBaseCurrencyValue(), $baseValue);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     private function getSubtotalsForSupportedEntity(): array
     {
         return [
@@ -132,7 +167,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
                 'discounts' => new ArrayCollection([
                     $this->getEntity(OrderDiscount::class, ['amount' => 5.00]),
                 ]),
-                'result' => 45.00,
+                'value' => 45.0,
+                'base_value' => 49.5,
             ],
             'operation subtract' => [
                 'subtotals' => [
@@ -157,7 +193,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
                     $this->getEntity(OrderDiscount::class, ['amount' => 2.00]),
                     $this->getEntity(OrderDiscount::class, ['amount' => 2.00]),
                 ]),
-                'result' => 5.00,
+                'value' => 5.0,
+                'base_value' => 5.5,
             ],
             'operation subtract with negative result' => [
                 'subtotals' => [
@@ -182,7 +219,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
                     $this->getEntity(OrderDiscount::class, ['amount' => 20.00]),
                     $this->getEntity(OrderDiscount::class, ['amount' => 30.00]),
                 ]),
-                'result' => 0.00,
+                'value' => 0.0,
+                'base_value' => 0.0,
             ],
             'operation subtract with negative result and empty discounts' => [
                 'subtotals' => [
@@ -203,11 +241,15 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
                 ],
                 'amount' => 10.00,
                 'discounts' => new ArrayCollection([]),
-                'result' => 0.00,
+                'value' => 0.0,
+                'base_value' => 0.0,
             ]
         ];
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     private function getSubtotalsForUnsupportedEntity(): array
     {
         return [
@@ -232,7 +274,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
                 'discounts' => new ArrayCollection([
                     $this->getEntity(OrderDiscount::class, ['amount' => 5.00]),
                 ]),
-                'result' => 25.00,
+                'value' => 25.0,
+                'base_value' => 27.5,
             ],
             'operation subtract and unsupported entity' => [
                 'subtotals' => [
@@ -257,7 +300,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
                     $this->getEntity(OrderDiscount::class, ['amount' => 2.00]),
                     $this->getEntity(OrderDiscount::class, ['amount' => 2.00]),
                 ]),
-                'result' => 15.00,
+                'value' => 15.0,
+                'base_value' => 16.5,
             ],
             'operation subtract with negative result unsupported entity' => [
                 'subtotals' => [
@@ -282,7 +326,8 @@ class OrderSubtotalWithDiscountsListenerTest extends TestCase
                     $this->getEntity(OrderDiscount::class, ['amount' => 20.00]),
                     $this->getEntity(OrderDiscount::class, ['amount' => 30.00]),
                 ]),
-                'result' => 0.00,
+                'value' => 0.0,
+                'base_value' => 0.0,
             ],
         ];
     }

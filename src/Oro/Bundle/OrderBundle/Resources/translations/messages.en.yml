@@ -121,6 +121,10 @@ oro:
         subtotal_with_discounts:
             label: 'Subtotal With Discounts'
             description: 'A subtotal amount is the sum of the line item cost including order discounts excluding shipping discounts.'
+        subtotal_with_discounts_currency.label: Subtotal with discount currency
+        subtotal_with_discounts_value:
+            label: Subtotal with discounts value
+            description: 'A subtotal amount is the sum of the line item cost including order discounts excluding shipping discounts in base currency.'
         total:
             label: Total
         base.label:                       'Total In Base Currency'

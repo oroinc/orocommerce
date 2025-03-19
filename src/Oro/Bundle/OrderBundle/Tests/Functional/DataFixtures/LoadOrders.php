@@ -5,6 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
@@ -190,7 +191,17 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             ->setTotal($orderData['total'])
             ->setCustomer($customerUser->getCustomer())
             ->setWebsite($website)
-            ->setCustomerUser($customerUser);
+            ->setCustomerUser($customerUser)
+            ->setSubtotalDiscountObject(
+                MultiCurrency::create($orderData['subtotal'], $orderData['currency'], $orderData['subtotal'])
+            )
+            ->setSubtotalObject(
+                MultiCurrency::create($orderData['subtotal'], $orderData['currency'], $orderData['subtotal'])
+            )
+            ->setTotalObject(
+                MultiCurrency::create($orderData['total'], $orderData['currency'], $orderData['total'])
+            );
+
         if (isset($orderData['external'])) {
             $order->setExternal($orderData['external']);
         }

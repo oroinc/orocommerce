@@ -207,6 +207,14 @@ The entity from which this order was created.
 
 **The read-only field. A passed value will be ignored.**
 
+### subtotalWithDiscountsValue
+
+#### create, update
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### totalDiscountsAmount
 
 #### create, update

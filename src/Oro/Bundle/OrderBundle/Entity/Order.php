@@ -231,19 +231,81 @@ class Order implements
     protected $currency;
 
     /**
-     * Changes to this value object wont affect entity change set
+     * Changes to this value object won't affect entity change set
+     * To change persisted price value you should create and set new Multicurrency
+     *
+     * @var Multicurrency
+     */
+    protected $subtotalDiscounts;
+
+    /**
+     * @ORM\Column(name="subtotal_with_discounts_currency", type="currency", length=3, nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true,
+     *              "immutable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=55
+     *          },
+     *          "multicurrency"={
+     *              "target" = "subtotalDiscounts"
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotalWithDiscountsCurrency;
+
+    /**
+     * @ORM\Column(name="subtotal_with_discounts_value", type="money_value", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "form"={
+     *              "form_type"="Oro\Bundle\FormBundle\Form\Type\OroMoneyType",
+     *              "form_options"={
+     *                  "constraints"={{"Range":{"min":0}}},
+     *              }
+     *          },
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=50
+     *          },
+     *          "multicurrency"={
+     *              "target" = "subtotalDiscounts",
+     *              "virtual_field" = "subtotalWithDiscountsCurrency"
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotalWithDiscountsValue;
+
+    /**
+     * Base subtotal with discounts.
+     *
+     * @ORM\Column(name="subtotal_with_discounts", type="money", nullable=true)
+     * @ConfigField(
+     *      defaultValues={
+     *          "dataaudit"={
+     *              "auditable"=true
+     *          },
+     *          "multicurrency"={
+     *              "target" = "subtotalDiscounts"
+     *          }
+     *      }
+     * )
+     */
+    protected $subtotalWithDiscounts;
+
+    /**
+     * Changes to this value object won't affect entity change set
      * To change persisted price value you should create and set new Multicurrency
      *
      * @var Multicurrency
      */
     protected $subtotal;
-
-    /**
-     * @var float
-     *
-     * @ORM\Column(name="subtotal_with_discounts", type="money", nullable=true)
-     */
-    protected $subtotalWithDiscounts;
 
     /**
      * @var string
@@ -534,6 +596,11 @@ class Order implements
      */
     public function loadMultiCurrencyFields()
     {
+        $this->subtotalDiscounts = MultiCurrency::create(
+            $this->subtotalWithDiscountsValue,
+            $this->currency,
+            $this->subtotalWithDiscounts // Base subtotal with discounts.
+        );
         $this->subtotal = MultiCurrency::create(
             $this->subtotalValue,
             $this->currency,
@@ -556,6 +623,7 @@ class Order implements
         $this->fixCurrencyInMultiCurrencyFields();
         $this->updateSubtotal();
         $this->updateTotal();
+        $this->updateSubtotalWithDiscount();
     }
 
     /**
@@ -789,6 +857,19 @@ class Order implements
     }
 
     /**
+     * @param null|float $baseValue
+     *
+     * @return $this
+     */
+    public function setBaseSubtotalWithDiscountValue($baseValue)
+    {
+        $this->subtotalWithDiscounts = $baseValue;
+        $this->subtotalDiscounts->setBaseCurrencyValue($baseValue);
+
+        return $this;
+    }
+
+    /**
      * Set subtotal
      *
      * @param float $value
@@ -829,6 +910,26 @@ class Order implements
     public function getSubtotalObject()
     {
         return $this->subtotal;
+    }
+
+    /**
+     * @param MultiCurrency $subtotal
+     *
+     * @return $this
+     */
+    public function setSubtotalDiscountObject(MultiCurrency $subtotal)
+    {
+        $this->subtotalDiscounts = $subtotal;
+
+        return $this;
+    }
+
+    /**
+     * @return MultiCurrency
+     */
+    public function getSubtotalDiscountObject()
+    {
+        return $this->subtotalDiscounts;
     }
 
     /**
@@ -1361,6 +1462,15 @@ class Order implements
     }
 
     /**
+     * @param string $subtotalWithDiscountCurrency
+     */
+    protected function setSubtotalWithDiscountCurrency($subtotalWithDiscountCurrency)
+    {
+        $this->subtotalWithDiscountsCurrency = $subtotalWithDiscountCurrency;
+        $this->subtotalDiscounts->setCurrency($subtotalWithDiscountCurrency);
+    }
+
+    /**
      * @param string $subtotalCurrency
      */
     protected function setSubtotalCurrency($subtotalCurrency)
@@ -1376,6 +1486,18 @@ class Order implements
     {
         $this->totalCurrency = $totalCurrency;
         $this->total->setCurrency($totalCurrency);
+    }
+
+    protected function updateSubtotalWithDiscount()
+    {
+        $this->subtotalWithDiscountsValue = $this->subtotalDiscounts->getValue();
+        if (null !== $this->subtotalWithDiscountsValue) {
+            $this->setSubtotalWithDiscountCurrency($this->subtotalDiscounts->getCurrency());
+            $this->setBaseSubtotalWithDiscountValue($this->subtotalDiscounts->getBaseCurrencyValue());
+            return;
+        }
+
+        $this->setBaseSubtotalWithDiscountValue(null);
     }
 
     protected function updateSubtotal()

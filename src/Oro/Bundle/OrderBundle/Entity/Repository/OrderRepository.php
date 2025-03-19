@@ -11,6 +11,7 @@ use Oro\Bundle\DashboardBundle\Helper\DateHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Repository for Order entity provides methods to extract order related info.
@@ -256,31 +257,15 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         string $scaleType
     ): array {
         $qb = $this->createQueryBuilder('o');
-        switch ($amountType) {
-            case self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT:
-                $qb->select(
-                    'SUM(
-                        CASE WHEN o.subtotalWithDiscounts IS NOT NULL THEN o.subtotalWithDiscounts ELSE 0 END
-                    ) AS amount'
-                );
-                break;
-            case self::AMOUNT_TYPE_SUBTOTAL:
-                $qb->select(
-                    'SUM(
-                        CASE WHEN o.subtotalValue IS NOT NULL THEN o.subtotalValue ELSE 0 END
-                    ) AS amount'
-                );
-                break;
-            case self::AMOUNT_TYPE_TOTAL:
-                $qb->select(
-                    'SUM(
-                        CASE WHEN o.totalValue IS NOT NULL THEN o.totalValue ELSE 0 END
-                    ) AS amount'
-                );
-                break;
-            default:
-                throw new \InvalidArgumentException(sprintf('Unsupported amount type "%s"', $amountType));
-        }
+
+        $amountField = $this->getAmountField($amountType);
+        $qb->select(
+            QueryBuilderUtil::sprintf(
+                'SUM(CASE WHEN %s IS NOT NULL THEN %s ELSE 0 END) AS amount',
+                $amountField,
+                $amountField
+            )
+        );
 
         return $this->getSalesOrdersData(
             $qb,
@@ -290,5 +275,17 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             $isIncludeSubOrders,
             $scaleType
         );
+
+        return $salesOrdersDataQueryBuilder;
+    }
+
+    private function getAmountField(string $amountType): string
+    {
+        return match ($amountType) {
+            self::AMOUNT_TYPE_SUBTOTAL_WITH_DISCOUNT => 'o.subtotalWithDiscounts',
+            self::AMOUNT_TYPE_SUBTOTAL => 'o.baseSubtotalValue',
+            self::AMOUNT_TYPE_TOTAL => 'o.baseTotalValue',
+            default => throw new \InvalidArgumentException(sprintf('Unsupported amount type "%s"', $amountType)),
+        };
     }
 }

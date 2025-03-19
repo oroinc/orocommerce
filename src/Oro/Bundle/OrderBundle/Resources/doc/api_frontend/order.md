@@ -361,6 +361,14 @@ Example of data: **\[{"code": "payment_term_1", "label": "Payment Term"}, {"code
 
 **The read-only field. A passed value will be ignored.**
 
+### subtotalWithDiscountsValue
+
+#### create
+
+{@inheritdoc}
+
+**The read-only field. A passed value will be ignored.**
+
 ### billingAddress
 
 #### create
