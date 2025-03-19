@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Helper;
 
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
@@ -20,25 +21,43 @@ class CheckoutWorkflowHelper
 
     public static function isSinglePageCheckoutWorkflow(WorkflowItem $workflowItem): bool
     {
-        $metadata = $workflowItem->getDefinition()?->getMetadata();
+        return self::isSinglePageCheckoutWorkflowDefinition($workflowItem->getDefinition());
+    }
 
-        return self::isCheckoutWorkflow($workflowItem)
-            && !empty($metadata['is_single_page_checkout']);
+    public static function isSinglePageCheckoutWorkflowDefinition(?WorkflowDefinition $definition): bool
+    {
+        return self::isCheckoutWorkflowDefinition($definition)
+            && self::checkMetadataKey($definition, 'is_single_page_checkout');
     }
 
     public static function isMultiStepCheckoutWorkflow(WorkflowItem $workflowItem): bool
     {
-        $metadata = $workflowItem->getDefinition()?->getMetadata();
+        return self::isMultiStepCheckoutWorkflowDefinition($workflowItem->getDefinition());
+    }
 
-        return self::isCheckoutWorkflow($workflowItem)
-            && empty($metadata['is_single_page_checkout']);
+    public static function isMultiStepCheckoutWorkflowDefinition(?WorkflowDefinition $definition): bool
+    {
+        return self::isCheckoutWorkflowDefinition($definition)
+            && !self::checkMetadataKey($definition, 'is_single_page_checkout');
     }
 
     public static function isCheckoutWorkflow(WorkflowItem $workflowItem): bool
     {
-        $metadata = $workflowItem->getDefinition()?->getMetadata();
+        return self::isCheckoutWorkflowDefinition($workflowItem->getDefinition());
+    }
 
-        return !empty($metadata['is_checkout_workflow']);
+    public static function isCheckoutWorkflowDefinition(?WorkflowDefinition $definition): bool
+    {
+        return self::checkMetadataKey($definition, 'is_checkout_workflow');
+    }
+
+    private static function checkMetadataKey(?WorkflowDefinition $definition, string $key): bool
+    {
+        if (!$definition) {
+            return false;
+        }
+
+        return !empty($definition?->getMetadata()[$key]);
     }
 
     public function getWorkflowItem(CheckoutInterface $checkout): ?WorkflowItem

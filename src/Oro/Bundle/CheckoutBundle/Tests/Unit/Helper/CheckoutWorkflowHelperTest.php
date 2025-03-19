@@ -12,6 +12,9 @@ use Oro\Component\Testing\ReflectionUtil;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class CheckoutWorkflowHelperTest extends TestCase
 {
     /** @var WorkflowManager|MockObject */
@@ -140,6 +143,19 @@ class CheckoutWorkflowHelperTest extends TestCase
         self::assertSame($expected, CheckoutWorkflowHelper::isCheckoutWorkflow($workflowItem));
     }
 
+    /**
+     * @dataProvider isCheckoutWorkflowDataProvider
+     */
+    public function testIsCheckoutWorkflowDefinition(?array $metadata, bool $expected)
+    {
+        $definition = new WorkflowDefinition();
+        if ($metadata !== null) {
+            $definition->setMetadata($metadata);
+        }
+
+        self::assertSame($expected, CheckoutWorkflowHelper::isCheckoutWorkflowDefinition($definition));
+    }
+
     public function isCheckoutWorkflowDataProvider(): iterable
     {
         yield [
@@ -176,6 +192,19 @@ class CheckoutWorkflowHelperTest extends TestCase
         }
 
         self::assertSame($expected, CheckoutWorkflowHelper::isSinglePageCheckoutWorkflow($workflowItem));
+    }
+
+    /**
+     * @dataProvider isSinglePageCheckoutWorkflowDataProvider
+     */
+    public function testIsSinglePageCheckoutWorkflowDefinition(?array $metadata, bool $expected)
+    {
+        $definition = new WorkflowDefinition();
+        if ($metadata !== null) {
+            $definition->setMetadata($metadata);
+        }
+
+        self::assertSame($expected, CheckoutWorkflowHelper::isSinglePageCheckoutWorkflowDefinition($definition));
     }
 
     public function isSinglePageCheckoutWorkflowDataProvider(): iterable
@@ -224,6 +253,19 @@ class CheckoutWorkflowHelperTest extends TestCase
         }
 
         self::assertSame($expected, CheckoutWorkflowHelper::isMultiStepCheckoutWorkflow($workflowItem));
+    }
+
+    /**
+     * @dataProvider isMultiStepCheckoutWorkflowDataProvider
+     */
+    public function testIsMultiStepCheckoutWorkflowDefinition(?array $metadata, bool $expected)
+    {
+        $definition = new WorkflowDefinition();
+        if ($metadata !== null) {
+            $definition->setMetadata($metadata);
+        }
+
+        self::assertSame($expected, CheckoutWorkflowHelper::isMultiStepCheckoutWorkflowDefinition($definition));
     }
 
     public function isMultiStepCheckoutWorkflowDataProvider(): iterable

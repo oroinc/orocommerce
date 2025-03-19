@@ -10,6 +10,7 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Event\EventDispatcher;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class ContinueTransitionButtonDataProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -35,7 +36,11 @@ class ContinueTransitionButtonDataProviderTest extends \PHPUnit\Framework\TestCa
     public function testGetContinueTransition()
     {
         $transitionOptionsResolver = $this->createMock(TransitionOptionsResolver::class);
-        $transition = new Transition($transitionOptionsResolver, $this->createMock(EventDispatcher::class));
+        $transition = new Transition(
+            $transitionOptionsResolver,
+            $this->createMock(EventDispatcher::class),
+            $this->createMock(TranslatorInterface::class)
+        );
         $transition->setFrontendOptions([]);
 
         $transitionData = new TransitionData($transition, true, new ArrayCollection());

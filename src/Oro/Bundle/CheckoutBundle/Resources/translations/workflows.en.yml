@@ -8,6 +8,10 @@
 oro:
     workflow:
         checkout:
+            captcha:
+                warning.message: "Please complete the CAPTCHA challenge to confirm that you are not a robot. This simple step helps ensure an enjoyable browsing experience for genuine users."
+                recaptcha.warning.message: "We are performing a quick check to confirm that you are not a robot. Thank you for your patience."
+                verification_dialog.title: 'Additional Verification'
             state_token:
                 attribute_label: 'Token to track checkout state'
                 form_label: ''
@@ -103,6 +107,8 @@ oro:
                     label: 'Grouped line items'
                 shipping_data_ready:
                     label: 'Shipping data is ready'
+                captcha:
+                    label: 'CAPTCHA'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'
@@ -299,6 +305,8 @@ oro:
                     label: 'Is consents available'
                 shipping_data_ready:
                     label: 'Shipping data is ready'
+                captcha:
+                    label: 'CAPTCHA'
             transition:
                 __start__:
                     label: 'Start Checkout (System)'

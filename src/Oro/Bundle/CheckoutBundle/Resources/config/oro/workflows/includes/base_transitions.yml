@@ -19,6 +19,7 @@ workflows:
                 is_unavailable_hidden: true
                 transition_service: 'oro_checkout.workflow.base_transition.start_from_shopping_list'
                 frontend_options:
+                    is_captcha_protected: true
                     data:
                       component_name: oro_shopping_list_matrix_to_create_order
                       page-component-module: oroshoppinglist/js/app/components/shoppinglist-create-order-button-component

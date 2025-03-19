@@ -16,6 +16,7 @@ use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class CheckoutTransitionPurchaseTest extends TestCase
 {
@@ -36,7 +37,8 @@ class CheckoutTransitionPurchaseTest extends TestCase
         $eventDispatcher = self::createMock(EventDispatcher::class);
 
         $transitionOptionsResolver = self::createMock(TransitionOptionsResolver::class);
-        $transition = new Transition($transitionOptionsResolver, $eventDispatcher);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $transition = new Transition($transitionOptionsResolver, $eventDispatcher, $translator);
 
         $workflowItem = new WorkflowItem();
         $event = new CheckoutTransitionAfterEvent($workflowItem, $transition, true, new ArrayCollection([]));
@@ -57,7 +59,8 @@ class CheckoutTransitionPurchaseTest extends TestCase
         $eventDispatcher = self::createMock(EventDispatcher::class);
 
         $transitionOptionsResolver = self::createMock(TransitionOptionsResolver::class);
-        $transition = new Transition($transitionOptionsResolver, $eventDispatcher);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $transition = new Transition($transitionOptionsResolver, $eventDispatcher, $translator);
 
         $workflowResult = new WorkflowResult(['responseData' => ['successful' => false]]);
 
@@ -84,7 +87,8 @@ class CheckoutTransitionPurchaseTest extends TestCase
         $eventDispatcher = self::createMock(EventDispatcher::class);
 
         $transitionOptionsResolver = self::createMock(TransitionOptionsResolver::class);
-        $transition = new Transition($transitionOptionsResolver, $eventDispatcher);
+        $translator = $this->createMock(TranslatorInterface::class);
+        $transition = new Transition($transitionOptionsResolver, $eventDispatcher, $translator);
 
         $workflowResult = new WorkflowResult(['responseData' => ['successful' => true]]);
 

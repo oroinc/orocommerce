@@ -87,6 +87,7 @@ services:
         class: Oro\Bundle\ProductBundle\Form\Type\QuickAddType
         tags:
             - { name: form.type, alias: 'oro_product_quick_add' }
+            - { name: oro_form.captcha_protected, form_name: oro_product_quick_add }
 
     oro_product.form.type.extension.integer:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension'

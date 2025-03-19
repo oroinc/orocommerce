@@ -15,5 +15,6 @@ class OroCheckoutBundle extends Bundle
 
         $container->addCompilerPass(new Compiler\TwigSandboxConfigurationPass());
         $container->addCompilerPass(new Compiler\CheckoutLineItemConverterPass());
+        $container->addCompilerPass(new Compiler\AddCheckoutStartToCaptchaProtected());
     }
 }

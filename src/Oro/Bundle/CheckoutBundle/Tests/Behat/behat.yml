@@ -34,6 +34,8 @@ oro_behat_extension:
         - '@OroCheckoutBundle/Tests/Behat/Features'
 
   elements:
+    Checkout Captcha Field:
+      selector: '[name="oro_workflow_transition[captcha]"]'
 
     Customer User Sign In:
       selector:

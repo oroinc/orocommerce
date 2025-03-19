@@ -69,3 +69,5 @@ workflows:
                 type: boolean
             shipping_data_ready:
                 type: boolean
+            captcha:
+                type: string

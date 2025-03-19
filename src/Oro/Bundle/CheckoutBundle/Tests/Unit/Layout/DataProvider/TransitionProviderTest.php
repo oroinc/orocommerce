@@ -14,6 +14,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Bundle\WorkflowBundle\Resolver\TransitionOptionsResolver;
 use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TransitionProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -184,7 +185,11 @@ class TransitionProviderTest extends \PHPUnit\Framework\TestCase
 
     private function createTransition(string $name): Transition
     {
-        $transition = new Transition($this->optionsResolver, $this->eventDispatcher);
+        $transition = new Transition(
+            $this->optionsResolver,
+            $this->eventDispatcher,
+            $this->createMock(TranslatorInterface::class)
+        );
         $transition->setName($name);
 
         return $transition;

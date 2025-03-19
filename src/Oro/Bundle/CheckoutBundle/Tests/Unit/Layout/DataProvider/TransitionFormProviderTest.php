@@ -16,6 +16,7 @@ use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Contracts\Translation\TranslatorInterface;
 
 class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -51,7 +52,11 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
         $workflowItem->setData($workflowData);
         $optionsResolver = $this->createMock(TransitionOptionsResolver::class);
 
-        $continueTransition = new Transition($optionsResolver, $this->createMock(EventDispatcher::class));
+        $continueTransition = new Transition(
+            $optionsResolver,
+            $this->createMock(EventDispatcher::class),
+            $this->createMock(TranslatorInterface::class)
+        );
         $continueTransition->setName('transition3');
         $continueTransition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $continueTransition->setFormType('transition_type');
@@ -92,7 +97,11 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
         $workflowItem->setData($workflowData);
         $optionsResolver = $this->createMock(TransitionOptionsResolver::class);
 
-        $transition = new Transition($optionsResolver, $this->createMock(EventDispatcher::class));
+        $transition = new Transition(
+            $optionsResolver,
+            $this->createMock(EventDispatcher::class),
+            $this->createMock(TranslatorInterface::class)
+        );
         $transition->setName('transition3');
         $transition->setFormOptions(['attribute_fields' => ['test' => null]]);
         $transition->setFormType('transition_type');
@@ -121,7 +130,8 @@ class TransitionFormProviderTest extends \PHPUnit\Framework\TestCase
     {
         $transition = new Transition(
             $this->createMock(TransitionOptionsResolver::class),
-            $this->createMock(EventDispatcher::class)
+            $this->createMock(EventDispatcher::class),
+            $this->createMock(TranslatorInterface::class)
         );
         $transition->setName('transition3');
 

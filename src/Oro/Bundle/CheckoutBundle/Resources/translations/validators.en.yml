@@ -27,6 +27,8 @@ oro:
                     not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}.'
 
         validator:
+            start_transition:
+                captcha_not_verified.message: "Verification failed: Your submission did not pass the anti-bot check. Please try again or contact support if you continue to experience issues."
             order_line_items_not_empty:
                 allow_rfp.message: No products can be added to this order. Please create an RFQ to request price.
                 not_allow_rfp.message: No products can be added to this order.

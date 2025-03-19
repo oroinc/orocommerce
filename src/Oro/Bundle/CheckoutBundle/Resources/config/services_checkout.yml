@@ -567,6 +567,16 @@ services:
             - { name: kernel.event_listener, event: oro_workflow.entered, method: onStepEntered }
             - { name: oro_featuretogle.feature, feature: consents }
 
+    oro_checkout.event_listener.checkout_protected_transitions_event_listener:
+        class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\CheckoutProtectedTransitionsEventListener
+        arguments:
+            - '@oro_form.captcha.settings_provider'
+            - '@oro_form.captcha.service_registry'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro_workflow.transition.assemble, method: onAssemble }
+            - { name: kernel.event_listener, event: oro_workflow.pre_guard, method: onPreGuard }
+
     oro_checkout.event_listener.actualize_workflow_item:
         class: Oro\Bundle\CheckoutBundle\Workflow\EventListener\ActualizeWorkflowItem
         arguments:
