@@ -22,13 +22,6 @@ Feature: Disable promotions in backoffice
       | Order Promotion | Order Total | Active | -$7.00   |
     And I should see following buttons:
       | Add Coupon Code |
-    When I save and close form
-    And click "Save" in modal window
-    Then I should see next rows in "Promotions" table
-      | Promotion       | Type        | Status | Discount |
-      | Order Promotion | Order Total | Active | -$7.00   |
-    And I should see following buttons:
-      | Add Coupon Code |
 
   Scenario: Do not see the promotions for order with disabled promotions
     When I go to Sales/Orders

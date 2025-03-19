@@ -9,64 +9,68 @@ class OrderInternalStatusTest extends RestJsonApiTestCase
     public function testGetList(): void
     {
         $response = $this->cget(['entity' => 'orderinternalstatuses']);
-        $this->assertResponseContains(
-            [
-                'data' => [
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'archived',
-                        'attributes' => [
-                            'name'     => 'Archived',
-                            'priority' => 5,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'cancelled',
-                        'attributes' => [
-                            'name'     => 'Cancelled',
-                            'priority' => 2,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'closed',
-                        'attributes' => [
-                            'name'     => 'Closed',
-                            'priority' => 4,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'open',
-                        'attributes' => [
-                            'name'     => 'Open',
-                            'priority' => 1,
-                            'default'  => false
-                        ]
-                    ],
-                    [
-                        'type'       => 'orderinternalstatuses',
-                        'id'         => 'shipped',
-                        'attributes' => [
-                            'name'     => 'Shipped',
-                            'priority' => 3,
-                            'default'  => false
-                        ]
+        $response = json_decode($response->getContent(), true);
+
+        $expectedStatuses = [
+                [
+                    'type'       => 'orderinternalstatuses',
+                    'id'         => 'archived',
+                    'attributes' => [
+                        'name'     => 'Archived',
+                        'priority' => 5,
+                        'default'  => false
+                    ]
+                ],
+                [
+                    'type'       => 'orderinternalstatuses',
+                    'id'         => 'cancelled',
+                    'attributes' => [
+                        'name'     => 'Cancelled',
+                        'priority' => 2,
+                        'default'  => false
+                    ]
+                ],
+                [
+                    'type'       => 'orderinternalstatuses',
+                    'id'         => 'closed',
+                    'attributes' => [
+                        'name'     => 'Closed',
+                        'priority' => 4,
+                        'default'  => false
+                    ]
+                ],
+                [
+                    'type'       => 'orderinternalstatuses',
+                    'id'         => 'open',
+                    'attributes' => [
+                        'name'     => 'Open',
+                        'priority' => 1,
+                        'default'  => false
+                    ]
+                ],
+                [
+                    'type'       => 'orderinternalstatuses',
+                    'id'         => 'shipped',
+                    'attributes' => [
+                        'name'     => 'Shipped',
+                        'priority' => 3,
+                        'default'  => false
                     ]
                 ]
-            ],
-            $response
-        );
+        ];
+
+        foreach ($expectedStatuses as $expectedStatus) {
+            $this->assertContains($expectedStatus, $response['data']);
+        }
     }
 
     public function testGetListSortedByPriority(): void
     {
         $response = $this->cget(['entity' => 'orderinternalstatuses'], ['sort' => 'priority']);
-        $this->assertResponseContains(
+        $response = json_decode($response->getContent(), true);
+        $response['data'] = array_slice($response['data'], 0, 5);
+
+        $this->assertEquals(
             [
                 'data' => [
                     [

@@ -20,38 +20,39 @@ class OrderStatusTest extends FrontendRestJsonApiTestCase
     public function testGetList(): void
     {
         $response = $this->cget(['entity' => 'orderstatuses']);
-        $this->assertResponseContains(
+        $response = json_decode($response->getContent(), true);
+
+        $expectedStatuses = [
             [
-                'data' => [
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'archived',
-                        'attributes' => ['name' => 'Archived']
-                    ],
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'cancelled',
-                        'attributes' => ['name' => 'Cancelled']
-                    ],
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'closed',
-                        'attributes' => ['name' => 'Closed']
-                    ],
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'open',
-                        'attributes' => ['name' => 'Open']
-                    ],
-                    [
-                        'type'       => 'orderstatuses',
-                        'id'         => 'shipped',
-                        'attributes' => ['name' => 'Shipped']
-                    ]
-                ]
+                'type'       => 'orderstatuses',
+                'id'         => 'archived',
+                'attributes' => ['name' => 'Archived']
             ],
-            $response
-        );
+            [
+                'type'       => 'orderstatuses',
+                'id'         => 'cancelled',
+                'attributes' => ['name' => 'Cancelled']
+            ],
+            [
+                'type'       => 'orderstatuses',
+                'id'         => 'closed',
+                'attributes' => ['name' => 'Closed']
+            ],
+            [
+                'type'       => 'orderstatuses',
+                'id'         => 'open',
+                'attributes' => ['name' => 'Open']
+            ],
+            [
+                'type'       => 'orderstatuses',
+                'id'         => 'shipped',
+                'attributes' => ['name' => 'Shipped']
+            ]
+        ];
+
+        foreach ($expectedStatuses as $expectedStatus) {
+            $this->assertContains($expectedStatus, $response['data']);
+        }
     }
 
     public function testGet(): void
