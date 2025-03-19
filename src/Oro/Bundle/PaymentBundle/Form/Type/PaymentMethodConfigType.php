@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\OroUnstructuredHiddenType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
@@ -18,24 +17,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class PaymentMethodConfigType extends AbstractType
 {
-    const NAME = 'oro_payment_method_config';
-
-    /**
-     * @var PaymentMethodProviderInterface
-     */
-    protected $methodProvider;
-
-    /**
-     * @var PaymentMethodViewProviderInterface
-     */
-    protected $methodViewProvider;
-
     public function __construct(
-        PaymentMethodProviderInterface $methodProvider,
-        PaymentMethodViewProviderInterface $methodViewProvider
+        private PaymentMethodViewProviderInterface $methodViewProvider
     ) {
-        $this->methodProvider = $methodProvider;
-        $this->methodViewProvider = $methodViewProvider;
     }
 
     #[\Override]
@@ -47,7 +31,7 @@ class PaymentMethodConfigType extends AbstractType
             [
                 'required' => true,
                 'label' => 'oro.payment.paymentmethodconfig.type.label',
-                'attr' => ['placeholder' => 'oro.payment.paymentmethodconfig.type.label']
+                'attr' => ['placeholder' => 'oro.payment.paymentmethodconfig.type.label'],
             ]
         );
         $builder->add('options', OroUnstructuredHiddenType::class);
@@ -56,15 +40,16 @@ class PaymentMethodConfigType extends AbstractType
     #[\Override]
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $result = [];
-        foreach ($this->methodProvider->getPaymentMethods() as $method) {
-            $methodId = $method->getIdentifier();
-            $result[$methodId] = $this
-                ->methodViewProvider->getPaymentMethodView($methodId)
-                ->getAdminLabel();
-        }
+        $view->vars['payment_method_label'] = null;
 
-        $view->vars['methods_labels'] = $result;
+        /** @var PaymentMethodConfig|null $paymentMethodConfig */
+        $paymentMethodConfig = $form->getData();
+        if ($paymentMethodConfig !== null) {
+            if ($this->methodViewProvider->hasPaymentMethodView($paymentMethodConfig->getType())) {
+                $view->vars['payment_method_label'] = $this->methodViewProvider
+                    ->getPaymentMethodView($paymentMethodConfig->getType())->getAdminLabel();
+            }
+        }
     }
 
     #[\Override]
@@ -78,6 +63,6 @@ class PaymentMethodConfigType extends AbstractType
     #[\Override]
     public function getBlockPrefix(): string
     {
-        return self::NAME;
+        return 'oro_payment_method_config';
     }
 }

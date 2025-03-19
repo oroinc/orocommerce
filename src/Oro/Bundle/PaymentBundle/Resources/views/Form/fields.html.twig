@@ -5,7 +5,7 @@
                 {{ form_label(form.type) }}
             </div>
             <div class="controls">
-                <input type="text" disabled="disabled" value="{{ methods_labels[form.type.vars.value]|trans }}"/>
+                <input type="text" disabled="disabled" value="{{ payment_method_label|default('N/A')|trans }}"/>
                 {{ form_widget(form.type) }}
             </div>
         </div>

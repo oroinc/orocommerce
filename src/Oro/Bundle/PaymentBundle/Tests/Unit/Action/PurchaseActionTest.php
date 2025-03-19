@@ -92,6 +92,9 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
             ->setPaymentMethod($options['paymentMethod']);
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
         $paymentMethod->expects(self::once())
             ->method('execute')
             ->with(PaymentMethodInterface::PURCHASE, $paymentTransaction)
@@ -250,6 +253,9 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($paymentTransaction);
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
         $paymentMethod->expects(self::once())
             ->method('supports')
             ->with(PaymentMethodInterface::VALIDATE)
@@ -302,6 +308,9 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($status);
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
         $paymentMethod->expects(self::once())
             ->method('supports')
             ->with(PaymentMethodInterface::VALIDATE)
@@ -415,6 +424,9 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
             ->willReturn($paymentTransaction);
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
         $paymentMethod->expects(self::once())
             ->method('supports')
             ->with(PaymentMethodInterface::VALIDATE)
@@ -446,5 +458,117 @@ class PurchaseActionTest extends \PHPUnit\Framework\TestCase
             ->method('getPaymentMethod')
             ->with($identifier)
             ->willReturn($paymentMethod);
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testExecuteWithPaymentMethodInstance(): void
+    {
+        $context = [];
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $data = [
+            'options' => [
+                'object' => new \stdClass(),
+                'amount' => 100.0,
+                'currency' => 'USD',
+                'attribute' => new PropertyPath('test'),
+                'paymentMethodInstance' => $paymentMethod,
+                'transactionOptions' => [
+                    'testOption' => 'testOption',
+                ],
+            ],
+            'response' => ['testResponse' => 'testResponse'],
+        ];
+        $options = $data['options'];
+
+        $this->action->initialize($options);
+
+        $this->contextAccessor
+            ->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::PURCHASE)
+            ->setPaymentMethod(self::PAYMENT_METHOD);
+
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn(self::PAYMENT_METHOD);
+        $paymentMethod
+            ->expects(self::once())
+            ->method('execute')
+            ->with(PaymentMethodInterface::PURCHASE, $paymentTransaction)
+            ->willReturn($data['response']);
+        $paymentMethod
+            ->expects(self::once())
+            ->method('supports')
+            ->with(PaymentMethodInterface::VALIDATE)
+            ->willReturn(false);
+
+        $this->paymentTransactionProvider
+            ->expects(self::once())
+            ->method('createPaymentTransaction')
+            ->with(self::PAYMENT_METHOD, PaymentMethodInterface::PURCHASE, $options['object'])
+            ->willReturn($paymentTransaction);
+
+        $this->paymentMethodProvider
+            ->expects(self::never())
+            ->method('hasPaymentMethod');
+
+        $this->paymentMethodProvider
+            ->expects(self::never())
+            ->method('getPaymentMethod');
+
+        $this->paymentTransactionProvider
+            ->expects(self::once())
+            ->method('savePaymentTransaction')
+            ->with($paymentTransaction)
+            ->willReturnCallback(function (PaymentTransaction $paymentTransaction) use ($options) {
+                self::assertEquals($options['amount'], $paymentTransaction->getAmount());
+                self::assertEquals($options['currency'], $paymentTransaction->getCurrency());
+                self::assertEquals(
+                    $options['transactionOptions'],
+                    $paymentTransaction->getTransactionOptions()
+                );
+            });
+
+        $this->router
+            ->expects(self::exactly(2))
+            ->method('generate')
+            ->withConsecutive(
+                [
+                    'oro_payment_callback_error',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    ],
+                    RouterInterface::ABSOLUTE_URL
+                ],
+                [
+                    'oro_payment_callback_return',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    ],
+                    RouterInterface::ABSOLUTE_URL
+                ]
+            )
+            ->willReturnArgument(0);
+
+        $expected = [
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'errorUrl' => 'oro_payment_callback_error',
+            'returnUrl' => 'oro_payment_callback_return',
+            'testResponse' => 'testResponse',
+            'paymentMethodSupportsValidation' => false,
+            'testOption' => 'testOption',
+        ];
+        $this->contextAccessor
+            ->expects(self::once())
+            ->method('setValue')
+            ->with($context, $options['attribute'], $expected);
+
+        $this->action->execute($context);
     }
 }

@@ -5,6 +5,9 @@ namespace Oro\Bundle\PaymentBundle\Action;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Action to validate a payment.
+ */
 class ValidateAction extends AbstractPaymentMethodAction
 {
     #[\Override]
@@ -32,9 +35,11 @@ class ValidateAction extends AbstractPaymentMethodAction
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);
+        /** @var PaymentMethodInterface $paymentMethod */
+        $paymentMethod = $this->extractPaymentMethodFromOptions($options);
 
         $validatePaymentTransaction = $this->paymentTransactionProvider->createPaymentTransaction(
-            $options['paymentMethod'],
+            $paymentMethod->getIdentifier(),
             PaymentMethodInterface::VALIDATE,
             $options['object']
         );
@@ -43,14 +48,14 @@ class ValidateAction extends AbstractPaymentMethodAction
             $validatePaymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $response = $this->executePaymentTransaction($validatePaymentTransaction);
+        $response = $this->executePaymentTransaction($validatePaymentTransaction, $paymentMethod);
 
         $this->paymentTransactionProvider->savePaymentTransaction($validatePaymentTransaction);
 
         $this->setAttributeValue(
             $context,
             array_merge(
-                ['paymentMethod' => $options['paymentMethod']],
+                ['paymentMethod' => $paymentMethod->getIdentifier()],
                 $this->getCallbackUrls($validatePaymentTransaction),
                 $validatePaymentTransaction->getTransactionOptions(),
                 $response

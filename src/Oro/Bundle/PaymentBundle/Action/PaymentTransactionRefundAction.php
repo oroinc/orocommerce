@@ -45,12 +45,29 @@ class PaymentTransactionRefundAction extends AbstractPaymentMethodAction
     }
 
     #[\Override]
+    protected function extractPaymentMethodFromOptions(array $options): ?PaymentMethodInterface
+    {
+        $paymentMethod = parent::extractPaymentMethodFromOptions($options);
+        if ($paymentMethod !== null) {
+            return $paymentMethod;
+        }
+
+        $sourcePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
+        if ($this->paymentMethodProvider->hasPaymentMethod($sourcePaymentTransaction->getPaymentMethod())) {
+            return $this->paymentMethodProvider->getPaymentMethod($sourcePaymentTransaction->getPaymentMethod());
+        }
+
+        return null;
+    }
+
+    #[\Override]
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);
-
+        $paymentMethod = $this->extractPaymentMethodFromOptions($options);
         $sourcePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
-        if (!$this->paymentMethodProvider->hasPaymentMethod($sourcePaymentTransaction->getPaymentMethod())) {
+
+        if ($paymentMethod === null) {
             $this->setAttributeValue(
                 $context,
                 array_merge(
@@ -68,7 +85,7 @@ class PaymentTransactionRefundAction extends AbstractPaymentMethodAction
 
         $refundPaymentTransaction = $this->createTransaction($sourcePaymentTransaction, $options);
 
-        $response = $this->executePaymentTransaction($refundPaymentTransaction);
+        $response = $this->executePaymentTransaction($refundPaymentTransaction, $paymentMethod);
 
         $this->paymentTransactionProvider->savePaymentTransaction($refundPaymentTransaction);
         $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);

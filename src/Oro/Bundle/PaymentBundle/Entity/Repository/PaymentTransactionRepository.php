@@ -12,9 +12,16 @@ class PaymentTransactionRepository extends ServiceEntityRepository
 {
     /**
      * @param string $entityClass
-     * @param array  $entityIds
+     * @param array<int> $entityIds
      *
-     * @return array
+     * @return array<int,array<string>>
+     *     [
+     *          42 => [ // Source entity ID
+     *              // List of payment method identifiers.
+     *              'payment_term_11',
+     *              'money_order_20',
+     *          ],
+     *     ]
      */
     public function getPaymentMethods($entityClass, array $entityIds)
     {

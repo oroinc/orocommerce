@@ -5,3 +5,9 @@ oro:
             month: "Please, choose correct month."
             credit_card: "Invalid card number."
             credit_card_type: "Credit card type not accepted."
+
+        payment_transaction:
+            capture:
+                title: 'Charge The Customer'
+                message: 'The customer will be charged {{ amount }}. Are you sure you want to continue?'
+                button.okText: 'Yes, Charge'

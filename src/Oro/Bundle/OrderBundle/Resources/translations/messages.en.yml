@@ -636,34 +636,6 @@ oro:
         permission:
             cancel_orders.label: 'Cancel Orders'
             close_orders.label: 'Close Orders'
-            view_payment_history.label: 'View Payment History'
-            charge_authorized_payments.label: 'Charge Authorized Payments'
-            cancel_payments.label: 'Cancel Payments'
-            refund_payments.label: 'Refund Payments'
-
-        payment_transaction:
-            capture:
-                title: 'Charge The Customer'
-                message: 'The customer will be charged {{ amount }}. Are you sure you want to continue?'
-                button.okText: 'Yes, Charge'
-                result.success: 'The payment of %amount% has been captured successfully.'
-            cancel:
-                title: 'Cancel Authorization'
-                message: 'The %amount% payment will be cancelled. Are you sure you want to continue?'
-                button.okText: 'Yes, Cancel Authorization'
-                button.resetText: 'Back'
-                result.success: 'The payment of %amount% has been canceled successfully.'
-            refund:
-                title: 'Refund Payment'
-                message: 'The %amount% payment will be refunded. Are you sure you want to continue?'
-                button.okText: 'Yes, Refund Payment'
-                button.resetText: 'Back'
-                result.success: 'The payment of %amount% has been refunded successfully.'
-            note:
-                cancel_authorization:
-                    default_message: '<p>Payment authorization hold was cancelled. </p><strong>Notes: </strong>'
-                refund:
-                    default_message: '<p>Payment refund was initiated. </p><strong>Notes: </strong>'
 
         action:
             order:
@@ -673,8 +645,6 @@ oro:
                 order:
                     cancel.success: 'Order #%id% has been cancelled.'
                     close.success: 'Order #%id% has been closed.'
-            note_message:
-                label: Notes
 
         datagrid:
             view:

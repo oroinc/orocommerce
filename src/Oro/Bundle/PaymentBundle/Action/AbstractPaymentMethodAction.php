@@ -3,15 +3,21 @@
 namespace Oro\Bundle\PaymentBundle\Action;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\ConfigExpression\ContextAccessor;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
+/**
+ * Abstract class for payment actions.
+ */
 abstract class AbstractPaymentMethodAction extends AbstractAction
 {
     use LoggerAwareTrait;
@@ -81,31 +87,56 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         $propertyPathType = 'Symfony\Component\PropertyAccess\PropertyPathInterface';
 
         $resolver
-            ->setRequired(['object', 'amount', 'currency', 'paymentMethod'])
-            ->setDefined(['transactionOptions', 'attribute', 'conditions'])
+            ->setRequired(['object', 'amount', 'currency'])
+            ->setDefined(['paymentMethod', 'paymentMethodInstance', 'transactionOptions', 'attribute', 'conditions'])
             ->setDefault('attribute', null)
             ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', ['object', $propertyPathType])
             ->addAllowedTypes('amount', ['float', 'string', $propertyPathType])
             ->addAllowedTypes('currency', ['string', $propertyPathType])
             ->addAllowedTypes('paymentMethod', ['string', $propertyPathType])
+            ->addAllowedTypes('paymentMethodInstance', [PaymentMethodInterface::class, $propertyPathType])
             ->setAllowedTypes('transactionOptions', ['array', $propertyPathType])
-            ->setAllowedTypes('attribute', ['null', $propertyPathType]);
+            ->setAllowedTypes('attribute', ['null', $propertyPathType])
+            ->setNormalizer('paymentMethod', $this->getExclusiveNormalizer('paymentMethod', 'paymentMethodInstance'))
+            ->setNormalizer(
+                'paymentMethodInstance',
+                $this->getExclusiveNormalizer('paymentMethodInstance', 'paymentMethod')
+            );
     }
 
     protected function configureValuesResolver(OptionsResolver $resolver)
     {
         $resolver
-            ->setRequired(['object', 'amount', 'currency', 'paymentMethod'])
-            ->setDefined(['transactionOptions', 'attribute'])
+            ->setRequired(['object', 'amount', 'currency'])
+            ->setDefined(['paymentMethod', 'paymentMethodInstance', 'transactionOptions', 'attribute'])
             ->setDefault('attribute', null)
             ->setDefault('transactionOptions', [])
             ->addAllowedTypes('object', 'object')
             ->addAllowedTypes('amount', 'float')
             ->addAllowedTypes('currency', 'string')
-            ->addAllowedTypes('paymentMethod', 'string')
+            ->addAllowedTypes('paymentMethod', ['string', PaymentMethodInterface::class])
+            ->addAllowedTypes('paymentMethodInstance', [PaymentMethodInterface::class])
             ->addAllowedTypes('transactionOptions', 'array')
-            ->setAllowedTypes('attribute', ['null', 'Symfony\Component\PropertyAccess\PropertyPathInterface']);
+            ->setAllowedTypes('attribute', ['null', 'Symfony\Component\PropertyAccess\PropertyPathInterface'])
+            ->setNormalizer('paymentMethod', $this->getExclusiveNormalizer('paymentMethod', 'paymentMethodInstance'))
+            ->setNormalizer(
+                'paymentMethodInstance',
+                $this->getExclusiveNormalizer('paymentMethodInstance', 'paymentMethod')
+            );
+    }
+
+    private function getExclusiveNormalizer(string $optionName, string $exclusiveOptionName): \Closure
+    {
+        return static function (Options $options, $value) use ($optionName, $exclusiveOptionName) {
+            if ((!isset($value) && !isset($options[$exclusiveOptionName])) || isset($options[$exclusiveOptionName])) {
+                throw new MissingOptionsException(
+                    sprintf('Either "%s" or "%s" must be provided.', $optionName, $exclusiveOptionName)
+                );
+            }
+
+            return $value;
+        };
     }
 
     /**
@@ -156,17 +187,23 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     * @param PaymentMethodInterface|null $paymentMethod
+     *
      * @return array
      */
-    protected function executePaymentTransaction(PaymentTransaction $paymentTransaction)
-    {
+    protected function executePaymentTransaction(
+        PaymentTransaction $paymentTransaction,
+        ?PaymentMethodInterface $paymentMethod = null
+    ) {
         try {
-            $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
-            if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
-                return $this->paymentMethodProvider
-                    ->getPaymentMethod($paymentMethodIdentifier)
-                    ->execute($paymentTransaction->getAction(), $paymentTransaction);
+            if ($paymentMethod === null) {
+                $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
+                if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
+                    $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodIdentifier);
+                }
             }
+
+            return $paymentMethod->execute($paymentTransaction->getAction(), $paymentTransaction);
         } catch (\Exception $e) {
             if ($this->logger) {
                 // do not expose sensitive data in context
@@ -192,5 +229,20 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
         if (!empty($this->options['attribute'])) {
             $this->contextAccessor->setValue($context, $this->options['attribute'], $value);
         }
+    }
+
+    protected function extractPaymentMethodFromOptions(array $options): ?PaymentMethodInterface
+    {
+        if (!empty($options['paymentMethodInstance']) &&
+            $options['paymentMethodInstance'] instanceof PaymentMethodInterface) {
+            return $options['paymentMethodInstance'];
+        }
+
+        if (empty($options['paymentMethod']) ||
+            !$this->paymentMethodProvider->hasPaymentMethod($options['paymentMethod'])) {
+            return null;
+        }
+
+        return $this->paymentMethodProvider->getPaymentMethod($options['paymentMethod']);
     }
 }

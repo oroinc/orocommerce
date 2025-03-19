@@ -25,23 +25,28 @@ class PurchaseAction extends AbstractPaymentMethodAction
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);
+        /** @var PaymentMethodInterface $paymentMethod */
+        $paymentMethod = $this->extractPaymentMethodFromOptions($options);
 
         $paymentTransaction = $this->paymentTransactionProvider->createPaymentTransaction(
-            $options['paymentMethod'],
+            $paymentMethod->getIdentifier(),
             PaymentMethodInterface::PURCHASE,
             $options['object']
         );
 
-        $isPaymentMethodSupportsValidation = $this->isPaymentMethodSupportsValidation($paymentTransaction);
+        $isPaymentMethodSupportsValidation = $this->isPaymentMethodSupportsValidation(
+            $paymentTransaction,
+            $paymentMethod
+        );
 
         $attributes = [
-            'paymentMethod' => $options['paymentMethod'],
+            'paymentMethod' => $paymentMethod->getIdentifier(),
             'paymentMethodSupportsValidation' => (bool)$isPaymentMethodSupportsValidation,
         ];
 
         if ($isPaymentMethodSupportsValidation) {
             $sourcePaymentTransaction = $this->paymentTransactionProvider
-                ->getActiveValidatePaymentTransaction($options['paymentMethod']);
+                ->getActiveValidatePaymentTransaction($paymentMethod->getIdentifier());
 
             if (!$sourcePaymentTransaction) {
                 throw new \RuntimeException('Validation payment transaction not found');
@@ -58,7 +63,7 @@ class PurchaseAction extends AbstractPaymentMethodAction
             $paymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $response = $this->executePaymentTransaction($paymentTransaction);
+        $response = $this->executePaymentTransaction($paymentTransaction, $paymentMethod);
 
         $this->paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
 
@@ -83,16 +88,20 @@ class PurchaseAction extends AbstractPaymentMethodAction
         );
     }
 
-    protected function isPaymentMethodSupportsValidation(PaymentTransaction $paymentTransaction): bool
-    {
-        $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
-        if ($this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
-            return $this->paymentMethodProvider
-                ->getPaymentMethod($paymentMethodIdentifier)
-                ->supports(PaymentMethodInterface::VALIDATE);
+    protected function isPaymentMethodSupportsValidation(
+        PaymentTransaction $paymentTransaction,
+        ?PaymentMethodInterface $paymentMethod = null
+    ): bool {
+        if ($paymentMethod === null) {
+            $paymentMethodIdentifier = $paymentTransaction->getPaymentMethod();
+            if (!$this->paymentMethodProvider->hasPaymentMethod($paymentMethodIdentifier)) {
+                return false;
+            }
+
+            $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodIdentifier);
         }
 
-        return false;
+        return $paymentMethod->supports(PaymentMethodInterface::VALIDATE);
     }
 
     protected function handleSaveForLaterUse(PaymentTransaction $paymentTransaction): void

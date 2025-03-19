@@ -51,17 +51,34 @@ class PaymentTransactionCaptureAction extends AbstractPaymentMethodAction
     }
 
     #[\Override]
+    protected function extractPaymentMethodFromOptions(array $options): ?PaymentMethodInterface
+    {
+        $paymentMethod = parent::extractPaymentMethodFromOptions($options);
+        if ($paymentMethod !== null) {
+            return $paymentMethod;
+        }
+
+        $sourcePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
+        if ($this->paymentMethodProvider->hasPaymentMethod($sourcePaymentTransaction->getPaymentMethod())) {
+            return $this->paymentMethodProvider->getPaymentMethod($sourcePaymentTransaction->getPaymentMethod());
+        }
+
+        return null;
+    }
+
+    #[\Override]
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);
+        $paymentMethod = $this->extractPaymentMethodFromOptions($options);
+        $sourcePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
 
-        $authorizePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
-        if (!$this->paymentMethodProvider->hasPaymentMethod($authorizePaymentTransaction->getPaymentMethod())) {
+        if ($paymentMethod === null) {
             $this->setAttributeValue(
                 $context,
                 array_merge(
                     [
-                        'transaction' => $authorizePaymentTransaction->getId(),
+                        'transaction' => $sourcePaymentTransaction->getId(),
                         'successful' => false,
                         'message' => 'oro.payment.message.error',
                     ],
@@ -72,16 +89,13 @@ class PaymentTransactionCaptureAction extends AbstractPaymentMethodAction
             return;
         }
 
-        $paymentMethod = $this->paymentMethodProvider
-            ->getPaymentMethod($authorizePaymentTransaction->getPaymentMethod());
-
         if ($paymentMethod instanceof CaptureActionInterface && $paymentMethod->useSourcePaymentTransaction()) {
-            $capturePaymentTransaction = $authorizePaymentTransaction;
+            $capturePaymentTransaction = $sourcePaymentTransaction;
             $capturePaymentTransaction->setAction(PaymentMethodInterface::CAPTURE);
         } else {
             $capturePaymentTransaction = $this->paymentTransactionProvider->createPaymentTransactionByParentTransaction(
                 PaymentMethodInterface::CAPTURE,
-                $authorizePaymentTransaction
+                $sourcePaymentTransaction
             );
         }
 
@@ -89,10 +103,10 @@ class PaymentTransactionCaptureAction extends AbstractPaymentMethodAction
             $capturePaymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $response = $this->executePaymentTransaction($capturePaymentTransaction);
+        $response = $this->executePaymentTransaction($capturePaymentTransaction, $paymentMethod);
 
         $this->paymentTransactionProvider->savePaymentTransaction($capturePaymentTransaction);
-        $this->paymentTransactionProvider->savePaymentTransaction($authorizePaymentTransaction);
+        $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
 
         $this->setAttributeValue(
             $context,

@@ -1,0 +1,28 @@
+oro_permissions:
+    VIEW_PAYMENT_HISTORY:
+        label: oro.payment.permission.view_payment_history.label
+        apply_to_all: false
+        apply_to_entities: []
+        group_names:
+            - 'default'
+
+    CHARGE_AUTHORIZED_PAYMENTS:
+        label: oro.payment.permission.charge_authorized_payments.label
+        apply_to_all: false
+        apply_to_entities: []
+        group_names:
+            - 'default'
+
+    CANCEL_PAYMENTS:
+        label: oro.payment.permission.cancel_payments.label
+        apply_to_all: false
+        apply_to_entities: []
+        group_names:
+            - 'default'
+
+    REFUND_PAYMENTS:
+        label: oro.payment.permission.refund_payments.label
+        apply_to_all: false
+        apply_to_entities: []
+        group_names:
+            - 'default'

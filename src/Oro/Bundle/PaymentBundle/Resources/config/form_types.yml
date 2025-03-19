@@ -14,7 +14,6 @@ services:
     oro_payment.form.type.method_config:
         class: Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType
         arguments:
-            - '@oro_payment.payment_method.composite_provider'
             - '@oro_payment.payment_method_view.composite_provider'
         tags:
             - { name: form.type, alias: oro_payment_method_config }

@@ -89,6 +89,8 @@ Previously known as GOD Object
     * CheckoutPostRequestHandler extracted from CheckoutWorkflowHelper
     * ForgotPasswordHandler and CustomerRegistrationHandler are isolated in the CustomerBundle, dependency removed from CheckoutWorkflowHelper
 
+#### PaymentBundle
+- Refactored PaymentMethodConfigType to remove the unneeded $methodProvider dependency.
 
 #### ProductBundle
 * Changed entity config fallback logic - substituted system config fallback on theme configuration fallback as default.
@@ -156,6 +158,12 @@ Previously known as GOD Object
 * Added validatedAt field to `\Oro\Bundle\OrderBundle\Entity\OrderAddress` entity.
 * Added validatedAt field to `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressType` form type.
 * Added `oroorder/js/app/views/order-address-validated-at-view` that intercepts form submit and address book address change to validate address via Address Validation feature on backoffice order create and edit pages.
+
+#### PaymentBundle
+- Added PaymentMethodGroupAwareInterface to differentiate payment methods and views into groups
+- Added ability to filter payment methods by a payment group to CompositePaymentMethodProvider, CompositePaymentMethodViewProvider via setPaymentMethodGroup method
+- Added ability to filter payment methods by a payment group in PaymentMethodsConfigsRuleType via "payment_method_group" option
+- Added ability to pass payment method instance to payment method actions: purchase, validate, capture, cancel, refund
 
 #### ProductBundle
 * Added a new frontend `inventory-switcher` filter.
@@ -235,6 +243,14 @@ Previously known as GOD Object
 
 #### CheckoutBundle
 * Removed `checkout_transition_submit` block type
+
+#### OrderBundle
+- Moved payment transaction operations and related translation keys from OrderBundle to PaymentBundle, added them back by extending them from PaymentBundle
+- Moved payment transactions permission definitions and related translation keys to PaymentBundle, extended them to add Order entity as applicable
+- Removed color from total label on order view page
+
+#### PaymentBundle
+- removed unused config-hide-fields-component.js
 
 #### ProductBundle
 * Removed `oroproduct/js/app/views/sidebar-filters/filter-extra-hint-view`

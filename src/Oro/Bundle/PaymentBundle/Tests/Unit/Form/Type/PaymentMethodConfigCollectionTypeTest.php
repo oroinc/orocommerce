@@ -97,7 +97,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
                 [
                     $this->type,
                     CollectionType::class          => new CollectionType(),
-                    PaymentMethodConfigType::class => new PaymentMethodConfigType($methodProvider, $methodViewProvider),
+                    PaymentMethodConfigType::class => new PaymentMethodConfigType($methodViewProvider),
                 ],
                 []
             ),

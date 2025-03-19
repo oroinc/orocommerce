@@ -24,7 +24,7 @@ use Twig\TwigFunction;
  *
  * Provides Twig functions to render payment status:
  *   - get_payment_status_label
- *   - getPaymentStatus
+ *   - get_payment_status
  */
 class PaymentExtension extends AbstractExtension implements ServiceSubscriberInterface
 {

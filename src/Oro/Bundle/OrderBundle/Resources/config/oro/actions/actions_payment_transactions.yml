@@ -1,0 +1,15 @@
+operations:
+    oro_order_payment_transaction_capture:
+        extends: oro_payment_transaction_capture
+        datagrids:
+            - order-payment-transactions-grid
+
+    oro_order_payment_transaction_cancel:
+        extends: oro_payment_transaction_cancel
+        datagrids:
+            - order-payment-transactions-grid
+
+    oro_order_payment_transaction_refund:
+        extends: oro_payment_transaction_refund
+        datagrids:
+            - order-payment-transactions-grid

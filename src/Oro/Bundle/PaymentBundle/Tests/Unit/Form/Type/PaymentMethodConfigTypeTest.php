@@ -4,16 +4,12 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 
 class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 {
-    /** @var PaymentMethodProviderInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private $paymentMethodProvider;
-
     /** @var CompositePaymentMethodViewProvider|\PHPUnit\Framework\MockObject\MockObject */
     private $paymentMethodViewProvider;
 
@@ -23,11 +19,9 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->paymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
 
         $this->formType = new PaymentMethodConfigType(
-            $this->paymentMethodProvider,
             $this->paymentMethodViewProvider
         );
 
@@ -36,7 +30,7 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefix()
     {
-        $this->assertEquals(PaymentMethodConfigType::NAME, $this->formType->getBlockPrefix());
+        $this->assertEquals('oro_payment_method_config', $this->formType->getBlockPrefix());
     }
 
     /**

@@ -5,6 +5,8 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodGroupAwareInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
@@ -46,7 +48,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     {
         $builder
             ->add('methodConfigs', PaymentMethodConfigCollectionType::class, [
-                'required' => false
+                'required' => false,
             ])
             ->add('destinations', PaymentMethodsConfigsRuleDestinationCollectionType::class, [
                 'required'             => false,
@@ -62,7 +64,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             ])
             ->add('method', ChoiceType::class, [
                 'mapped'  => false,
-                'choices' => $this->getMethods()
+                'choices' => $this->getMethods($options['payment_method_group']),
             ]);
 
         $builder->addEventSubscriber(new DestinationCollectionTypeSubscriber());
@@ -82,6 +84,11 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             'data_class' => PaymentMethodsConfigsRule::class,
             'validation_groups' => [Constraint::DEFAULT_GROUP, 'PaymentMethodsConfigsRule'],
         ]);
+
+        $resolver
+            ->define('payment_method_group')
+            ->allowedTypes('string')
+            ->default('');
     }
 
     #[\Override]
@@ -91,13 +98,20 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     }
 
     /**
-     * @return array
+     * @return array<string,string>
      */
-    protected function getMethods()
+    private function getMethods(string $paymentMethodGroup): array
     {
         $result = [];
-        foreach ($this->paymentMethodProvider->getPaymentMethods() as $method) {
-            $identifier = $method->getIdentifier();
+
+        /** @var PaymentMethodInterface|PaymentMethodGroupAwareInterface $paymentMethod */
+        foreach ($this->paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
+            if ($paymentMethod instanceof PaymentMethodGroupAwareInterface &&
+                !$paymentMethod->isApplicableForGroup($paymentMethodGroup)) {
+                continue;
+            }
+
+            $identifier = $paymentMethod->getIdentifier();
             $label = $this->methodViewProvider
                 ->getPaymentMethodView($identifier)
                 ->getAdminLabel();

@@ -231,4 +231,82 @@ class PaymentTransactionRefundActionTest extends \PHPUnit\Framework\TestCase
 
         return $paymentTransaction;
     }
+
+    public function testExecuteWithPaymentMethodInstance(): void
+    {
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $data = [
+            'refundPaymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::REFUND, true),
+            'options' => [
+                'paymentMethodInstance' => $paymentMethod,
+                'paymentTransaction' => $this->getPaymentTransaction(PaymentMethodInterface::CAPTURE, true),
+                'attribute' => new PropertyPath('test'),
+                'transactionOptions' => [
+                    'testOption' => 'testOption',
+                ],
+            ],
+            'response' => ['testResponse' => 'testResponse'],
+        ];
+
+        /** @var PaymentTransaction $capturePaymentTransaction */
+        $capturePaymentTransaction = $data['options']['paymentTransaction'];
+        /** @var PaymentTransaction $cancelPaymentTransaction */
+        $cancelPaymentTransaction = $data['refundPaymentTransaction'];
+        $options = $data['options'];
+        $context = [];
+
+        $this->contextAccessor
+            ->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $this->paymentTransactionProvider
+            ->expects(self::once())
+            ->method('createPaymentTransactionByParentTransaction')
+            ->with(PaymentMethodInterface::REFUND, $capturePaymentTransaction)
+            ->willReturn($cancelPaymentTransaction);
+
+        if ($data['response'] instanceof \Exception) {
+            $responseValue = $this->throwException($data['response']);
+        } else {
+            $responseValue = $this->returnValue($data['response']);
+        }
+
+        $paymentMethod
+            ->expects(self::once())
+            ->method('execute')
+            ->with(PaymentMethodInterface::REFUND, $cancelPaymentTransaction)
+            ->will($responseValue);
+
+        $this->paymentMethodProvider
+            ->expects(self::never())
+            ->method('hasPaymentMethod');
+
+        $this->paymentMethodProvider
+            ->expects(self::never())
+            ->method('getPaymentMethod');
+
+        $this->paymentTransactionProvider
+            ->expects(self::exactly(2))
+            ->method('savePaymentTransaction')
+            ->withConsecutive(
+                [$cancelPaymentTransaction],
+                [$capturePaymentTransaction]
+            );
+
+        $expected = [
+            'transaction' => null,
+            'successful' => true,
+            'message' => null,
+            'testOption' => 'testOption',
+            'testResponse' => 'testResponse',
+        ];
+        $this->contextAccessor
+            ->expects(self::once())
+            ->method('setValue')
+            ->with($context, $options['attribute'], $expected);
+
+        $this->action->initialize($options);
+        $this->action->execute($context);
+    }
 }

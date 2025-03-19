@@ -50,17 +50,34 @@ class PaymentTransactionCancelAction extends AbstractPaymentMethodAction
     }
 
     #[\Override]
+    protected function extractPaymentMethodFromOptions(array $options): ?PaymentMethodInterface
+    {
+        $paymentMethod = parent::extractPaymentMethodFromOptions($options);
+        if ($paymentMethod !== null) {
+            return $paymentMethod;
+        }
+
+        $sourcePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
+        if ($this->paymentMethodProvider->hasPaymentMethod($sourcePaymentTransaction->getPaymentMethod())) {
+            return $this->paymentMethodProvider->getPaymentMethod($sourcePaymentTransaction->getPaymentMethod());
+        }
+
+        return null;
+    }
+
+    #[\Override]
     protected function executeAction($context)
     {
         $options = $this->getOptions($context);
+        $paymentMethod = $this->extractPaymentMethodFromOptions($options);
+        $sourcePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
 
-        $authorizePaymentTransaction = $this->extractPaymentTransactionFromOptions($options);
-        if (!$this->paymentMethodProvider->hasPaymentMethod($authorizePaymentTransaction->getPaymentMethod())) {
+        if ($paymentMethod === null) {
             $this->setAttributeValue(
                 $context,
                 array_merge(
                     [
-                        'transaction' => $authorizePaymentTransaction->getId(),
+                        'transaction' => $sourcePaymentTransaction->getId(),
                         'successful' => false,
                         'message' => 'oro.payment.message.error',
                     ],
@@ -73,20 +90,20 @@ class PaymentTransactionCancelAction extends AbstractPaymentMethodAction
 
         $cancelPaymentTransaction = $this->paymentTransactionProvider->createPaymentTransactionByParentTransaction(
             PaymentMethodInterface::CANCEL,
-            $authorizePaymentTransaction
+            $sourcePaymentTransaction
         );
 
         if (!empty($options['transactionOptions'])) {
             $cancelPaymentTransaction->setTransactionOptions($options['transactionOptions']);
         }
 
-        $response = $this->executePaymentTransaction($cancelPaymentTransaction);
+        $response = $this->executePaymentTransaction($cancelPaymentTransaction, $paymentMethod);
 
         if ($cancelPaymentTransaction->isSuccessful()) {
-            $authorizePaymentTransaction->setActive(false);
+            $sourcePaymentTransaction->setActive(false);
         }
         $this->paymentTransactionProvider->savePaymentTransaction($cancelPaymentTransaction);
-        $this->paymentTransactionProvider->savePaymentTransaction($authorizePaymentTransaction);
+        $this->paymentTransactionProvider->savePaymentTransaction($sourcePaymentTransaction);
 
         $this->setAttributeValue(
             $context,

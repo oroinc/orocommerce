@@ -2,7 +2,7 @@
 
 {% block widget_content_inner %}
     <div class="alert alert-info" role="alert">
-        {{ 'oro.order.payment_transaction.cancel.message'|trans({'%amount%': context.amountWithCurrency}) }}
+        {{ 'oro.payment.payment_transaction.cancel.message'|trans({'%amount%': context.amountWithCurrency}) }}
     </div>
     {{ parent() }}
 {% endblock %}

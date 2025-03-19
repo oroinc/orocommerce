@@ -117,7 +117,6 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                         $this->subscriber
                     ),
                     PaymentMethodConfigType::class => new PaymentMethodConfigType(
-                        $paymentMethodProvider,
                         $methodViewProvider
                     ),
                     CurrencySelectionType::class => new CurrencySelectionType(

@@ -85,6 +85,10 @@ class ValidateActionTest extends \PHPUnit\Framework\TestCase
             ->setAction(PaymentMethodInterface::VALIDATE)
             ->setPaymentMethod($options['paymentMethod']);
 
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn($options['paymentMethod']);
+
         $paymentMethod->expects(self::once())
             ->method('execute')
             ->with($paymentTransaction->getAction(), $paymentTransaction)
@@ -203,5 +207,102 @@ class ValidateActionTest extends \PHPUnit\Framework\TestCase
                 ]
             ],
         ];
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
+    public function testExecuteActionWithPaymentMethodInstance(): void
+    {
+        $context = [];
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $data = [
+            'options' => [
+                'object' => new \stdClass(),
+                'attribute' => new PropertyPath('test'),
+                'paymentMethodInstance' => $paymentMethod,
+                'transactionOptions' => [
+                    'testOption' => 'testOption'
+                ],
+            ],
+            'response' => ['testResponse' => 'testResponse'],
+        ];
+        $options = $data['options'];
+
+        $this->contextAccessor->expects(self::any())
+            ->method('getValue')
+            ->willReturnArgument(1);
+
+        $this->action->initialize($options);
+
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction(PaymentMethodInterface::VALIDATE)
+            ->setPaymentMethod(self::PAYMENT_METHOD);
+
+        $paymentMethod
+            ->method('getIdentifier')
+            ->willReturn(self::PAYMENT_METHOD);
+
+        $paymentMethod->expects(self::once())
+            ->method('execute')
+            ->with($paymentTransaction->getAction(), $paymentTransaction)
+            ->willReturn($data['response']);
+
+        $this->paymentTransactionProvider->expects(self::once())
+            ->method('createPaymentTransaction')
+            ->with(self::PAYMENT_METHOD, PaymentMethodInterface::VALIDATE, $options['object'])
+            ->willReturn($paymentTransaction);
+
+        $this->paymentMethodProvider
+            ->expects(self::never())
+            ->method('hasPaymentMethod');
+
+        $this->paymentMethodProvider
+            ->expects(self::never())
+            ->method('getPaymentMethod');
+
+        $this->paymentTransactionProvider->expects(self::once())
+            ->method('savePaymentTransaction')
+            ->with($paymentTransaction)
+            ->willReturnCallback(function (PaymentTransaction $paymentTransaction) use ($options) {
+                self::assertEquals(
+                    $options['transactionOptions'],
+                    $paymentTransaction->getTransactionOptions()
+                );
+            });
+
+        $expected = [
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'errorUrl' => 'oro_payment_callback_error',
+            'returnUrl' => 'oro_payment_callback_return',
+            'testResponse' => 'testResponse',
+            'testOption' => 'testOption',
+        ];
+        $this->contextAccessor->expects(self::once())
+            ->method('setValue')
+            ->with($context, $options['attribute'], $expected);
+
+        $this->router->expects(self::exactly(2))
+            ->method('generate')
+            ->withConsecutive(
+                [
+                    'oro_payment_callback_error',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    ],
+                    RouterInterface::ABSOLUTE_URL
+                ],
+                [
+                    'oro_payment_callback_return',
+                    [
+                        'accessIdentifier' => $paymentTransaction->getAccessIdentifier(),
+                    ],
+                    RouterInterface::ABSOLUTE_URL
+                ]
+            )
+            ->willReturnArgument(0);
+
+        $this->action->execute($context);
     }
 }
