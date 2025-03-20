@@ -216,7 +216,10 @@ oro:
             product_required: Please select a product first...
             tooltip:
                 show_on_product_view: Select whether to display the NEW icon on the product view page.
-        form.add_row: Add More Rows
+            add_row: Add More Rows
+        validators:
+            product_kit_line_item_contains_required_kit_items:
+                missing_required_kit_item: 'Product kit {{ product_kit_sku }} is missing the required kit item {{ product_kit_item_label }}'
 
         productdescription:
             entity_label: 'Product Description'
@@ -1317,3 +1320,5 @@ oro:
             button:
                 aria_label: Download Product Data
                 title: Download Product Data
+
+oro_form.captcha.protected_form_name.oro_product_quick_add: Quick Order Form

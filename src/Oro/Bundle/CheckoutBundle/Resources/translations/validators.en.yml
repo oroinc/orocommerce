@@ -11,6 +11,9 @@ oro:
                     min_message: 'The quantity should be {{ limit }} or more.'
                     max_message: 'The quantity should be {{ limit }} or less. '
                     not_in_range_message: 'The quantity should be between {{ min }} and {{ max }}.'
+        validator:
+            start_transition:
+                captcha_not_verified.message: "Verification failed: Your submission did not pass the anti-bot check. Please try again or contact support if you continue to experience issues."
         lineitem:
             quantity:
                 greater_than_zero:

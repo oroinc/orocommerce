@@ -71,3 +71,5 @@ workflows:
                     class: Doctrine\Common\Collections\ArrayCollection
             consents_available:
                 type: boolean
+            captcha:
+                type: string

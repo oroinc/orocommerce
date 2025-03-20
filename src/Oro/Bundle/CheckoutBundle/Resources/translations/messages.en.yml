@@ -52,6 +52,9 @@ oro:
         completed_data.label: Completed Data
         confirm_email_flash_message: Please confirm your email before continue checkout
         late_registration.label: Save my data and create an account
+        validator:
+            start_transition:
+                captcha_not_verified.message: "Verification failed: Your submission did not pass the anti-bot check. Please try again or contact support if you continue to experience issues."
         navigation_sidebar:
             status:
                 completed: Completed
@@ -285,6 +288,8 @@ oro:
             delete.label: Delete
 
         workflow.condition:
+            start_transition:
+                captcha_not_verified.message: "Verification failed: Your submission did not pass the anti-bot check. Please try again or contact support if you continue to experience issues."
             order_line_items_not_empty:
                 allow_rfp.message: No products can be added to this order. Please create an RFQ to request price.
                 not_allow_rfp.message: No products can be added to this order.
@@ -423,3 +428,5 @@ oro:
         line_items_grouping:
             other_items_group:
                 title: Other Items
+
+oro_form.captcha.protected_form_name.oro_workflow_checkout_start: Start Checkout Form

@@ -22,6 +22,7 @@ workflows:
                 transition_definition: start_from_shoppinglist_definition
                 frontend_options:
                     icon: fa-briefcase
+                    is_captcha_protected: true
                     data:
                       component_name: oro_shopping_list_matrix_to_create_order
                       page-component-module: oroshoppinglist/js/app/components/shoppinglist-create-order-button-component
