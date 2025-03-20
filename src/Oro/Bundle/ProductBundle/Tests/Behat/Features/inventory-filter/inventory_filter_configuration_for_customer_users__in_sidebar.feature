@@ -18,7 +18,7 @@ Feature: Inventory Filter configuration for Customer Users - In Sidebar
 
   Scenario: Place the product filters in the sidebar
     When I go to System / Theme Configurations
-    And I click Edit "Refreshing Teal" in grid
+    And I click Edit "Golden Carbon" in grid
     And I fill "Theme Configuration Form" with:
       | Filter Panel Position | sidebar |
     And I save and close form

@@ -43,7 +43,7 @@ Feature: Create product
     And I should see a "Theme Selector" element
     When I click "Theme Selector"
     Then I should see a "Theme Selector Dropdown" element
-    And I should see "Refreshing Teal" in the "Theme Selector Dropdown" element
+    And I should see "Golden Carbon" in the "Theme Selector Dropdown" element
     And I should not see "Blank Theme" in the "Theme Selector Dropdown" element
     And I should not see "Optimized Theme" in the "Theme Selector Dropdown" element
     And I click on empty space

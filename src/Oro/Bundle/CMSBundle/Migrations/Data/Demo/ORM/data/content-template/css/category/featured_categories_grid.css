@@ -27,7 +27,7 @@
     column-gap: 8px;
     row-gap: 0;
     border-radius: 12px;
-    background-color: #f0f3f5;
+    background-color: var(--neutral-grey1);
     text-decoration: none;
     color: inherit;
     overflow: hidden;

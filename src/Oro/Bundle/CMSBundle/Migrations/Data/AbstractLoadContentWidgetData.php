@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractLoadFrontendTheme;
 use Oro\Bundle\MigrationBundle\Fixture\VersionedFixtureInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
@@ -19,7 +19,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Abstract class for content widgets data fixture.
  */
-abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
+abstract class AbstractLoadContentWidgetData extends AbstractLoadFrontendTheme implements
     ContainerAwareInterface,
     DependentFixtureInterface,
     VersionedFixtureInterface
@@ -92,16 +92,18 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
 
         $manager->flush();
 
-        $themeConfiguration = $this->getThemeConfiguration($manager);
-        if (!$themeConfiguration) {
+        $themeConfigurations = $this->getThemeConfigurations($manager, $organization);
+        if (!$themeConfigurations) {
             return;
         }
 
         $doFlush = false;
         foreach ($themeConfigBlocks as $key => $contentWidget) {
-            if (!$themeConfiguration->getConfigurationOption($key)) {
-                $themeConfiguration->addConfigurationOption($key, $contentWidget->getId());
-                $doFlush = true;
+            foreach ($themeConfigurations as $themeConfiguration) {
+                if (!$themeConfiguration->getConfigurationOption($key)) {
+                    $themeConfiguration->addConfigurationOption($key, $contentWidget->getId());
+                    $doFlush = true;
+                }
             }
         }
 
@@ -133,15 +135,18 @@ abstract class AbstractLoadContentWidgetData extends AbstractFixture implements
         return $locator->locate($path);
     }
 
-    protected function getThemeConfiguration(ObjectManager $manager): ?ThemeConfiguration
+    protected function getThemeConfigurations(ObjectManager $manager, Organization $organization): array
     {
         /** @var ConfigManager $configManager */
         $configManager = $this->container->get('oro_config.global');
         $value = $configManager->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION));
         if (!$value) {
-            return null;
+            return [];
         }
 
-        return $manager->getRepository(ThemeConfiguration::class)->find($value);
+        return $manager->getRepository(ThemeConfiguration::class)->findBy([
+            'id' => (int)$value,
+            'organization' => $organization
+        ]);
     }
 }

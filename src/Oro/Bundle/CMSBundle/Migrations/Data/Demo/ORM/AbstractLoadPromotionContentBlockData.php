@@ -1,33 +1,32 @@
 <?php
 
-namespace Oro\Bundle\CommerceBundle\Migrations\Data\Demo\ORM;
+declare(strict_types=1);
+
+namespace Oro\Bundle\CMSBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractLoadFrontendTheme;
 use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfigurationData;
+use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration as LayoutThemeConfiguration;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
-use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Loads customer dashboards content block data and configures theme configuration for active theme
+ * Abstraction for loading promotional content block data and configures system config for organizations
  */
-class LoadCustomerDashboardContentBlocksDemoData extends AbstractLoadFrontendTheme implements
+abstract class AbstractLoadPromotionContentBlockData extends AbstractLoadFrontendTheme implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
     use ContainerAwareTrait;
-
-    public const string FILE_PATH = '@OroCommerceBundle/Migrations/Data/Demo/ORM/data/dashboard_content_blocks.yml';
 
     #[\Override]
     public function getDependencies(): array
@@ -38,28 +37,24 @@ class LoadCustomerDashboardContentBlocksDemoData extends AbstractLoadFrontendThe
         ];
     }
 
-    /**
-     * @SuppressWarnings(PHPMD.NPathComplexity)
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        $data = Yaml::parseFile($this->getFilePaths(static::FILE_PATH));
+        $data = Yaml::parseFile($this->getFilePathsFromLocator($this->getDataSource()));
 
         $organization = $manager->getRepository(Organization::class)->getFirst();
-        $themeConfigBlocks = [];
+        $themeConfigBlock = null;
         foreach ($data as $blockAlias => $properties) {
             $block = $this->findContentBlock($blockAlias, $manager);
 
             if (!$block) {
                 $title = new LocalizedFallbackValue();
-                $title->setString($properties['title'] ?? 'Content Block');
+                $title->setString($properties['title'] ?? 'Promotional Content');
                 $manager->persist($title);
 
                 $variant = new TextContentVariant();
-                $variant->setDefault(true);
-                $variant->setContent($properties['content'] ?? '');
+                $variant->setDefault($properties['variant']['default'] ?? false);
+                $variant->setContent($properties['variant']['content']);
                 $manager->persist($variant);
 
                 $block = new ContentBlock();
@@ -71,8 +66,8 @@ class LoadCustomerDashboardContentBlocksDemoData extends AbstractLoadFrontendThe
                 $manager->persist($block);
             }
 
-            if ($properties['themeConfigOption'] ?? false) {
-                $themeConfigBlocks[$properties['themeConfigOption']] = $block;
+            if ($properties['useForThemeConfig'] ?? false) {
+                $themeConfigBlock = $block;
             }
 
             if (!$this->hasReference($blockAlias)) {
@@ -82,29 +77,31 @@ class LoadCustomerDashboardContentBlocksDemoData extends AbstractLoadFrontendThe
 
         $manager->flush();
 
-        $themeConfigurations = $this->getThemeConfigurations($manager, $organization);
-        if (!$themeConfigurations) {
-            return;
-        }
-
-        $doFlush = false;
-        foreach ($themeConfigBlocks as $key => $block) {
+        if ($themeConfigBlock) {
+            $themeConfigurations = $this->getThemeConfigurations($manager);
+            $key = LayoutThemeConfiguration::buildOptionKey('header', 'promotional_content');
+            $doFLush = false;
             foreach ($themeConfigurations as $themeConfiguration) {
                 if (!$themeConfiguration->getConfigurationOption($key)) {
-                    $themeConfiguration->addConfigurationOption($key, $block->getId());
-                    $doFlush = true;
+                    $themeConfiguration->addConfigurationOption($key, $themeConfigBlock->getId());
+                    $doFLush = true;
                 }
             }
-        }
 
-        if ($doFlush) {
-            $manager->flush();
+            if ($doFLush) {
+                $manager->flush();
+            }
         }
     }
 
-    protected function getFilePaths(string $path): string
+    protected function getDataSource(): string
     {
-        return $this->container->get('file_locator')->locate($path);
+        return '@OroCMSBundle/Migrations/Data/Demo/ORM/data/promotional_content.yml';
+    }
+
+    protected function getFilePathsFromLocator(string $path): string
+    {
+        return $this->container->get('file_locator')->locate($path, first: true);
     }
 
     protected function findContentBlock(string $alias, ObjectManager $manager): ?ContentBlock
@@ -112,24 +109,13 @@ class LoadCustomerDashboardContentBlocksDemoData extends AbstractLoadFrontendThe
         return $manager->getRepository(ContentBlock::class)->findOneBy(['alias' => $alias]);
     }
 
-    protected function getThemeConfigurations(ObjectManager $manager, Organization $organization): array
+    protected function getThemeConfigurations(ObjectManager $manager): array
     {
-        /** @var ConfigManager $configManager */
-        $configManager = $this->container->get('oro_config.global');
-        $value = $configManager->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION));
-        if (!$value) {
+        $frontendTheme = $this->getFrontendTheme();
+        if (!$frontendTheme) {
             return [];
         }
 
-        return $manager->getRepository(ThemeConfiguration::class)->findBy([
-            'id' => (int)$value,
-            'organization' => $organization
-        ]);
-    }
-
-    #[\Override]
-    protected function getFrontendTheme(): ?string
-    {
-        return null;
+        return $manager->getRepository(ThemeConfiguration::class)->findBy(['theme' => $frontendTheme]);
     }
 }

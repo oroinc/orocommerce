@@ -242,7 +242,7 @@ Feature: Showing related products
   Scenario: Verify that "Related Products" block is displayed in "Wide Template" layout view
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Refreshing Teal" in grid
+    And I click "Edit" on row "Golden Carbon" in grid
     And I fill "Theme Configuration Form" with:
       | Page Template | wide |
     And I save and close form
@@ -266,7 +266,7 @@ Feature: Showing related products
   Scenario: Verify that "Related Products" block is displayed in "Tabs Template" layout view
     Given I proceed as the Admin
     When I go to System / Theme Configurations
-    And I click "Edit" on row "Refreshing Teal" in grid
+    And I click "Edit" on row "Golden Carbon" in grid
     And I fill "Theme Configuration Form" with:
       | Page Template | tabs |
     And I save and close form

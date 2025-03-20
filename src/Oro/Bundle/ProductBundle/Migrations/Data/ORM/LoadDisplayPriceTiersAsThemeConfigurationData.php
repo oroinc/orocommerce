@@ -7,12 +7,10 @@ use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfigurationData;
 use Oro\Bundle\LayoutBundle\Layout\Extension\ThemeConfiguration;
-use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration as ThemeConfigurationEntity;
 use Oro\Bundle\ThemeBundle\Migrations\Data\AbstractLoadThemeConfiguration;
 
 /**
- * Load Display Price Tiers As Theme Configurations Data For Global level
+ * Load Display Price Tiers As Theme Configurations Data for active theme: look at "oro_layout.active_theme"
  */
 class LoadDisplayPriceTiersAsThemeConfigurationData extends AbstractLoadThemeConfiguration implements
     DependentFixtureInterface
@@ -52,38 +50,43 @@ class LoadDisplayPriceTiersAsThemeConfigurationData extends AbstractLoadThemeCon
         $this->init($manager);
 
         foreach ($this->getScopes() as $scope) {
-            $themeConfigurationId = $this->configManager->get(
-                Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION),
-                false,
-                false,
-                $scope
-            );
-            /** @var ThemeConfigurationEntity $themeConfiguration */
-            $themeConfiguration = $this->manager
-                ->getRepository(ThemeConfigurationEntity::class)
-                ->find($themeConfigurationId);
+            $themeConfigurations = $this->getThemeConfigurations($manager, $scope);
+            foreach ($themeConfigurations as $themeConfiguration) {
+                $frontendTheme = $this->getFrontendTheme($this->configManager, $scope);
+                if (!$themeConfiguration || $themeConfiguration->getTheme() !== $frontendTheme) {
+                    continue;
+                }
 
-            $frontendTheme = $themeConfiguration?->getTheme();
-            if (!$frontendTheme) {
-                continue;
-            }
-
-            $definition = $this->themeDefinitionBag->getThemeDefinition($frontendTheme);
-            $configuration = $this->buildConfigurationFromDefinition($definition, $scope);
-            foreach (array_keys($this->getThemeConfigurationKeys()) as $configurationKey) {
-                $themeConfiguration->addConfigurationOption(
-                    $configurationKey,
-                    $configuration[$configurationKey] ?? null
-                );
+                $definition = $this->themeDefinitionBag->getThemeDefinition($frontendTheme);
+                $configuration = $this->buildConfigurationFromDefinition($definition, $scope);
+                foreach (\array_keys($this->getThemeConfigurationKeys()) as $configurationKey) {
+                    if (!$themeConfiguration->getConfigurationOption($configurationKey)) {
+                        $themeConfiguration->addConfigurationOption(
+                            $configurationKey,
+                            $configuration[$configurationKey] ?? null
+                        );
+                    }
+                }
             }
         }
 
         $manager->flush();
     }
 
+    protected function getThemeConfigurations(ObjectManager $manager, ?object $scope = null): array
+    {
+        return [$this->getThemeConfiguration($this->configManager, $manager, $scope)];
+    }
+
     #[\Override]
     protected function isApplicable(): bool
     {
         return true;
+    }
+
+    #[\Override]
+    protected function getFrontendTheme(ConfigManager $configManager, ?object $scope = null): ?string
+    {
+        return $configManager->get('oro_frontend.frontend_theme', false, false, $scope);
     }
 }

@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadNewArrivalProductsSegmentDa
 use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
- * Class to load "product_segment" content widget's data.
+ * Class to load "product_segment" content widget's data and configures theme configuration for active theme
  */
 class LoadProductsSegmentContentWidgetData extends AbstractLoadContentWidgetData
 {
@@ -54,5 +54,10 @@ class LoadProductsSegmentContentWidgetData extends AbstractLoadContentWidgetData
     {
         $name = $this->container->getParameter($parameter);
         return $manager->getRepository(Segment::class)->findOneBy(['name' => $name]);
+    }
+
+    protected function getFrontendTheme(): ?string
+    {
+        return null;
     }
 }

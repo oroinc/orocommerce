@@ -50,7 +50,7 @@
         </div>
     {% elseif currencies|length > 2 %}
         <button
-            class="btn btn--flat btn--flat-inverse currency-switcher currency-switcher--{{ selected_currency|lower }}"
+            class="{{ triggerClass|default('btn')}} currency-switcher currency-switcher--{{ selected_currency|lower }}"
             type="button"
         >
             {{ renderIcon.icon({name: 'credit-card'}) }}

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\DistributionBundle\Handler\ApplicationState;
+use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractLoadFrontendTheme;
 use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfigurationData;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
@@ -18,9 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\Yaml\Yaml;
 
 /**
- * Sets product segments for theme configuration for already installed applications
+ * Sets product segments for theme configuration for already installed applications for active theme
  */
-class SetProductSegmentsForThemeConfiguration extends AbstractFixture implements
+class SetProductSegmentsForThemeConfiguration extends AbstractLoadFrontendTheme implements
     DependentFixtureInterface,
     ContainerAwareInterface
 {
@@ -36,8 +36,8 @@ class SetProductSegmentsForThemeConfiguration extends AbstractFixture implements
         }
 
         $organization = $manager->getRepository(Organization::class)->getFirst();
-        $themeConfiguration = $this->getThemeConfiguration($manager);
-        if (!$themeConfiguration) {
+        $themeConfigurations = $this->getThemeConfigurations($manager, $organization);
+        if (!$themeConfigurations) {
             return;
         }
 
@@ -54,9 +54,11 @@ class SetProductSegmentsForThemeConfiguration extends AbstractFixture implements
                 continue;
             }
 
-            if (!$themeConfiguration->getConfigurationOption($row['themeConfigOption'])) {
-                $themeConfiguration->addConfigurationOption($row['themeConfigOption'], $contentWidget->getId());
-                $doFlush = true;
+            foreach ($themeConfigurations as $themeConfiguration) {
+                if (!$themeConfiguration->getConfigurationOption($row['themeConfigOption'])) {
+                    $themeConfiguration->addConfigurationOption($row['themeConfigOption'], $contentWidget->getId());
+                    $doFlush = true;
+                }
             }
         }
 
@@ -82,16 +84,19 @@ class SetProductSegmentsForThemeConfiguration extends AbstractFixture implements
         return $this->container->get('file_locator')->locate($path);
     }
 
-    protected function getThemeConfiguration(ObjectManager $manager): ?ThemeConfiguration
+    protected function getThemeConfigurations(ObjectManager $manager, Organization $organization): array
     {
         /** @var ConfigManager $configManager */
         $configManager = $this->container->get('oro_config.global');
         $value = $configManager->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION));
         if (!$value) {
-            return null;
+            return [];
         }
 
-        return $manager->getRepository(ThemeConfiguration::class)->find($value);
+        return $manager->getRepository(ThemeConfiguration::class)->findBy([
+            'id' => (int)$value,
+            'organization' => $organization
+        ]);
     }
 
     public function getDependencies(): array
@@ -101,5 +106,11 @@ class SetProductSegmentsForThemeConfiguration extends AbstractFixture implements
             LoadGlobalThemeConfigurationData::class,
             LoadProductsSegmentContentWidgetData::class
         ];
+    }
+
+    #[\Override]
+    protected function getFrontendTheme(): ?string
+    {
+        return null;
     }
 }

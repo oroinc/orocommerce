@@ -5,23 +5,19 @@ namespace Oro\Bundle\CommerceBundle\Migrations\Data\ORM;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\CMSBundle\Entity\ContentWidget;
 use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadContentWidgetData;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfigurationData;
-use Oro\Bundle\ThemeBundle\DependencyInjection\Configuration;
-use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
 
 /**
- * Loads customer dashboards content widget data and configures system config for organizations
+ * Loads customer dashboards content widget data and configures theme configuration for active theme
  */
 class LoadCustomerDashboardContentWidgetData extends AbstractLoadContentWidgetData
 {
-    private ?ThemeConfiguration $themeConfiguration = null;
-
     public function getVersion(): string
     {
         return '1.0';
     }
 
+    #[\Override]
     public function getDependencies(): array
     {
         return [
@@ -42,19 +38,9 @@ class LoadCustomerDashboardContentWidgetData extends AbstractLoadContentWidgetDa
         return;
     }
 
-    protected function getThemeConfiguration(ObjectManager $manager): ?ThemeConfiguration
+    #[\Override]
+    protected function getFrontendTheme(): ?string
     {
-        if (!$this->themeConfiguration) {
-            /** @var ConfigManager $configManager */
-            $configManager = $this->container->get('oro_config.global');
-            $value = $configManager->get(Configuration::getConfigKeyByName(Configuration::THEME_CONFIGURATION));
-            if (!$value) {
-                return null;
-            }
-
-            $this->themeConfiguration = $manager->getRepository(ThemeConfiguration::class)->find($value);
-        }
-
-        return $this->themeConfiguration;
+        return null;
     }
 }

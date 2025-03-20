@@ -38,6 +38,7 @@ $search-autocomplete-product-hover-title-text-decoration: underline !default;
 $search-autocomplete-product-image-width: 44px !default;
 $search-autocomplete-product-image-height: 44px !default;
 $search-autocomplete-product-image-border: 1px solid get-var-color('neutral', 'grey2') !default;
+$border-radius-background-color: get-color('neutral', 'grey1') !default;
 $search-autocomplete-product-image-offset-right: spacing('base') !default;
 $search-autocomplete-product-image-flex-grow: 0 !default;
 $search-autocomplete-product-image-flex-shrink: 0 !default;

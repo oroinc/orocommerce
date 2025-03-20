@@ -16,7 +16,7 @@ Feature: Sidebar filters on product listing page
     And I login as administrator
     And I set configuration property "oro_catalog.all_products_page_enabled" to "1"
     And I go to System / Theme Configurations
-    When I click Edit "Refreshing Teal" in grid
+    When I click Edit "Golden Carbon" in grid
     And fill "Theme Configuration Form" with:
       | Filter Panel Position on Product Listing Page | sidebar |
     And I save and close form

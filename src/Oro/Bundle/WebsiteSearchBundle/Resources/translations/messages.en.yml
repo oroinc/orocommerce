@@ -4,6 +4,7 @@ oro:
         search_label: Search
         search_submit_btn: Start Searching
         search_submit_btn_reset: Reset search input
+        search_submit_btn_cancel: Cancel
 
         entity_config:
             search_boost:

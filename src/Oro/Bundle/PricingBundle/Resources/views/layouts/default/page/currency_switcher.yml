@@ -29,3 +29,8 @@ layout:
             id: currency_localization_container_inner
             optionName: vars.currencies
             optionValue: '=data["oro_pricing_currency"].getAvailableCurrencies()'
+
+        - '@appendOption':
+            id: currency_localization_container_inner
+            optionName: vars.triggerClass
+            optionValue: 'btn btn--flat btn--flat-inverse'

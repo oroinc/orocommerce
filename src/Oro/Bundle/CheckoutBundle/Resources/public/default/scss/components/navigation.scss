@@ -84,12 +84,12 @@
         color: $checkout-navigation-icon-color;
 
         &--current {
-            color: $checkout-navigation-current-color;
+            color: $checkout-navigation-icon-current-color;
             background-color: $checkout-navigation-icon-current-background-color;
         }
 
         &--complete {
-            color: $checkout-navigation-complete-color;
+            color: $checkout-navigation-icon-complete-color;
             background-color: $checkout-navigation-complete-background-color;
         }
     }

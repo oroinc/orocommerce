@@ -11,6 +11,9 @@ $checkout-navigation-step-display: grid !default;
 $checkout-navigation-step-grid-template-columns: auto minmax(0, 1fr) !default;
 $checkout-navigation-step-gap: spacing('sm') !default;
 
+$checkout-navigation-complete-color: get-color('neutral', 'white-100') !default;
+$checkout-navigation-complete-background-color: get-color('success', 'dark') !default;
+
 $checkout-navigation-title-color: get-color('text', 'disabled') !default;
 $checkout-navigation-icon-size: 26px !default;
 $checkout-navigation-icon-background-color: get-color('neutral', 'grey2') !default;
@@ -19,8 +22,8 @@ $checkout-navigation-icon-size: 26px !default;
 $checkout-navigation-current-color: get-color('text', 'primary') !default;
 $checkout-navigation-icon-current-background-color: get-color('secondary', 'c1') !default;
 $checkout-navigation-icon-font-size: 14px !default;
-
-$checkout-navigation-current-color: get-color('text', 'primary') !default;
+$checkout-navigation-icon-complete-color: $checkout-navigation-complete-color !default;
+$checkout-navigation-icon-current-color: $checkout-navigation-current-color !default;
 
 $checkout-navigation-divider-thickness: 1px !default;
 $checkout-navigation-divider-background: get-color('neutral', 'grey2') !default;
@@ -33,9 +36,6 @@ $checkout-navigation-divider-background-image: linear-gradient(
 $checkout-navigation-divider-background-repeat: no-repeat !default;
 $checkout-navigation-divider-background-size: $checkout-navigation-divider-thickness 100% !default;
 $checkout-navigation-divider-background-position: center top !default;
-
-$checkout-navigation-complete-color: get-color('neutral', 'white-100') !default;
-$checkout-navigation-complete-background-color: get-color('success', 'dark') !default;
 
 // Mobile Big
 $checkout-navigation-divider-mobile-big-background-size: 100% $checkout-navigation-divider-thickness !default;

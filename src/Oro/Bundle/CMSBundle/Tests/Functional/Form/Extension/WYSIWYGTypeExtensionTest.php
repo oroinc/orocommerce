@@ -13,6 +13,8 @@ class WYSIWYGTypeExtensionTest extends WebTestCase
 {
     use ConfigManagerAwareTestTrait;
 
+    private ?string $originalLayoutThemeName;
+
     #[\Override]
     protected function setUp(): void
     {
@@ -21,6 +23,16 @@ class WYSIWYGTypeExtensionTest extends WebTestCase
         $this->updateUserSecurityToken(self::AUTH_USER);
         // Emulate request processing
         $this->emulateRequest();
+        $this->originalLayoutThemeName = self::getConfigManager(null)->get('oro_frontend.frontend_theme');
+        self::getConfigManager(null)->set('oro_frontend.frontend_theme', $this->getActualThemeName());
+        self::getConfigManager(null)->flush();
+    }
+
+    #[\Override]
+    protected function tearDown(): void
+    {
+        self::getConfigManager(null)->set('oro_frontend.frontend_theme', $this->originalLayoutThemeName);
+        self::getConfigManager(null)->flush();
     }
 
     public function testFinishView(): void
@@ -94,5 +106,16 @@ class WYSIWYGTypeExtensionTest extends WebTestCase
             }
         }
         self::assertTrue($hasThemeOptions, sprintf("Theme's '%s' options are missing", $themeOptions['name']));
+    }
+
+    private function getActualThemeName(): ?string
+    {
+        $defaultWebsite = self::getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $themeName = self::getContainer()->get('oro_theme.provider.theme_configuration')->getThemeName($defaultWebsite);
+        if ($themeName) {
+            return $themeName;
+        }
+
+        return self::getConfigManager()->get('oro_frontend.frontend_theme', false, false, $defaultWebsite);
     }
 }

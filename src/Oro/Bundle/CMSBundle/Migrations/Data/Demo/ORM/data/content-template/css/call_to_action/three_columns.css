@@ -4,7 +4,7 @@
 
 /* stylelint-disable scale-unlimited/declaration-strict-value */
 .three-columns-call-to-action .grid-sub-title {
-    color: #45606e;
+    color: var(--text-secondary);
 }
 /* stylelint-enable scale-unlimited/declaration-strict-value */
 

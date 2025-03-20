@@ -2,3 +2,8 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '@OroFrontendLocalization/layouts/default/layout.html.twig'
+
+        - '@setOption':
+              id: currency_localization_container_inner
+              optionName: vars.triggerClass
+              optionValue: 'btn btn--flat btn--flat-inverse'

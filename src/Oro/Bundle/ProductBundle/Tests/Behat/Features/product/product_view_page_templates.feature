@@ -242,7 +242,7 @@ Feature: Product View Page Templates
 
     When I operate as the Admin
     And I go to System / Theme Configurations
-    And I click Edit "Refreshing Teal" in grid
+    And I click Edit "Golden Carbon" in grid
     And I fill "Theme Configuration Form" with:
       | Display Price Tiers As | Single-unit table |
     And I save and close form
@@ -262,7 +262,7 @@ Feature: Product View Page Templates
 
     When I operate as the Admin
     And I go to System / Theme Configurations
-    And I click Edit "Refreshing Teal" in grid
+    And I click Edit "Golden Carbon" in grid
     And I fill "Theme Configuration Form" with:
       | Display Price Tiers As | Multi-unit table |
     And I save and close form

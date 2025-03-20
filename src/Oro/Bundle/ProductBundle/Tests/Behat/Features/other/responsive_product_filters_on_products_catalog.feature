@@ -57,7 +57,7 @@ Feature: Responsive Product Filters On Products Catalog
     Given I proceed as the admin
     And I login as administrator
     And I go to System / Theme Configurations
-    When I click "Edit" on row "Refreshing Teal" in grid
+    When I click "Edit" on row "Golden Carbon" in grid
     And I fill "Theme Configuration Form" with:
       | Filter Panel Position on Product Listing Page | sidebar |
     And I save and close form

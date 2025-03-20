@@ -28,7 +28,7 @@ $product-view-media-gallery-slick-slide-item-box-shadow: 0 0 0 1px get-var-color
 $product-view-media-gallery-slick-slide-current-item-box-shadow: 0 0 0 2px get-var-color('primary', 'main') !default;
 
 $product-view-media-gallery-nav-loading-url: get-color('neutral', 'white-100')
-    url('#{$global-url}/orofrontend/default/images/loader.svg') no-repeat center center !default;
+    url('#{$global-loader-url}') no-repeat center center !default;
 
 $product-view-media-gallery-nav-tab-content-max-width: $product-view-media-gallery-tab-content-max-width -
     $product-view-media-gallery-nav-arrow-width * 2 !default;
