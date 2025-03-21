@@ -11,6 +11,7 @@ use Oro\Bundle\DashboardBundle\Helper\DateHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
 
 /**
  * Repository for Order entity provides methods to extract order related info.
@@ -359,7 +360,11 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         $qb = $this->createQueryBuilder('o');
 
         $amountField = $this->getAmountField($amountType, $currency);
-        $qb->select(sprintf('SUM(CASE WHEN %s IS NOT NULL THEN %s ELSE 0 END) AS amount', $amountField, $amountField));
+        $qb->select(QueryBuilderUtil::sprintf(
+            'SUM(CASE WHEN %s IS NOT NULL THEN %s ELSE 0 END) AS amount',
+            $amountField,
+            $amountField
+        ));
 
         $salesOrdersDataQueryBuilder = $this->getSalesOrdersDataQueryBuilder(
             $qb,
@@ -405,6 +410,7 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         };
 
         if ($currencyField !== null) {
+            QueryBuilderUtil::checkParameter($currencyField);
             $qb->andWhere($qb->expr()->eq($currencyField, ':currency'))
                 ->setParameter('currency', $currency);
         }
