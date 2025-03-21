@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_13_1;
+namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_14_1;
 
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
