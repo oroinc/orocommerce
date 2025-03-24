@@ -4,10 +4,14 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Filter;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\FilterType;
+use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FilterBundle\Tests\Unit\Fixtures\CustomFormExtension;
-use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\Filter\NumberRangeFilterTypeTest;
+use Oro\Bundle\FilterBundle\Tests\Unit\Form\Type\AbstractTypeTestCase;
+use Oro\Bundle\FormBundle\Form\Extension\ConstraintAsOptionExtension;
 use Oro\Bundle\FormBundle\Form\Extension\NumberTypeExtension;
+use Oro\Bundle\FormBundle\Validator\ConstraintFactory;
 use Oro\Bundle\LocaleBundle\Formatter\Factory\IntlNumberFormatterFactory;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
@@ -16,14 +20,13 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 use Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatterInterface;
 use Oro\Component\Testing\Unit\PreloadedExtension;
-use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Forms;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 
-class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
+class ProductPriceFilterTypeTest extends AbstractTypeTestCase
 {
-    /** @var NumberFormatter|MockObject */
-    private $numberFormatter;
+    private ProductPriceFilterType $type;
+    private NumberFormatter $numberFormatter;
     private string $defaultLocale;
 
     #[\Override]
@@ -35,7 +38,7 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         \Locale::setDefault($locale);
 
         $localeSettings = $this->createMock(LocaleSettings::class);
-        $localeSettings->expects($this->any())
+        $localeSettings->expects(self::any())
             ->method('getLocale')
             ->willReturn($locale);
 
@@ -44,27 +47,27 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
             new IntlNumberFormatterFactory($localeSettings)
         );
 
-        $translator = $this->createMockTranslator();
-
-        $this->formExtensions = [
-            new CustomFormExtension([new NumberRangeFilterType($translator)])
-        ];
+        $translator = $this->createTranslator();
 
         $formatter = $this->createMock(UnitLabelFormatterInterface::class);
-        $formatter->expects($this->any())
+        $formatter->expects(self::any())
             ->method('format')
             ->with('item')
             ->willReturn('Item');
 
-        parent::setUp();
-
         $this->type = new ProductPriceFilterType($translator, $this->getDoctrine(), $formatter);
-        $this->formExtensions[] = new PreloadedExtension([$this->type], []);
 
-        $this->factory = Forms::createFormFactoryBuilder()
-            ->addExtensions($this->getExtensions())
-            ->addTypeExtensions($this->getTypeExtensions())
-            ->getFormFactory();
+        $this->formExtensions[] = new CustomFormExtension([
+            new FilterType($translator),
+            new NumberFilterType($translator, $this->numberFormatter),
+            new NumberRangeFilterType($translator)
+        ]);
+        $this->formExtensions[] = new PreloadedExtension(
+            [$this->type],
+            [NumberType::class => [new ConstraintAsOptionExtension(new ConstraintFactory())]]
+        );
+
+        parent::setUp();
     }
 
     #[\Override]
@@ -88,27 +91,21 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
         return $this->type;
     }
 
-    public function getDoctrine(): ManagerRegistry
+    private function getDoctrine(): ManagerRegistry
     {
-        $productUnitMock = $this->createMock(ProductUnit::class);
-        $productUnitMock->expects($this->any())
-            ->method('getCode')
-            ->willReturn('item');
-
         $productUnitRepository = $this->createMock(ProductUnitRepository::class);
-
-        $productUnitRepository->expects($this->any())
+        $productUnitRepository->expects(self::any())
             ->method('getAllUnitCodes')
             ->willReturn(['item']);
 
         $entityManager = $this->createMock(EntityManager::class);
-        $entityManager->expects($this->any())
+        $entityManager->expects(self::any())
             ->method('getRepository')
             ->with(ProductUnit::class)
             ->willReturn($productUnitRepository);
 
         $doctrine = $this->createMock(ManagerRegistry::class);
-        $doctrine->expects($this->any())
+        $doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->with(ProductUnit::class)
             ->willReturn($entityManager);
@@ -139,22 +136,96 @@ class ProductPriceFilterTypeTest extends NumberRangeFilterTypeTest
     #[\Override]
     public function bindDataProvider(): array
     {
-        $bindData = parent::bindDataProvider();
-
-        /* ProductPriceFilterType doesn't have "not between" option */
-        unset($bindData['not between range']);
-
-        foreach ($bindData as $key => &$data) {
-            $data['bindData']['unit'] = 'item';
-            $data['formData']['unit'] = 'item';
-            $data['viewData']['value']['unit'] = 'item';
-        }
-
-        return $bindData;
+        return [
+            'empty range' => [
+                'bindData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'unit' => 'item'
+                ],
+                'formData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => null,
+                    'value_end' => null,
+                    'unit' => 'item'
+                ],
+                'viewData'      => [
+                    'value' => [
+                        'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                        'value' => null,
+                        'value_end' => null,
+                        'unit' => 'item'
+                    ]
+                ]
+            ],
+            'empty end value' => [
+                'bindData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => '1',
+                    'unit' => 'item'
+                ],
+                'formData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => '1',
+                    'value_end' => null,
+                    'unit' => 'item'
+                ],
+                'viewData'      => [
+                    'value' => [
+                        'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                        'value' => '1',
+                        'value_end' => null,
+                        'unit' => 'item'
+                    ]
+                ]
+            ],
+            'empty start value' => [
+                'bindData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value_end' => '20',
+                    'unit' => 'item'
+                ],
+                'formData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => null,
+                    'value_end' => '20',
+                    'unit' => 'item'
+                ],
+                'viewData'      => [
+                    'value' => [
+                        'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                        'value' => null,
+                        'value_end' => '20',
+                        'unit' => 'item'
+                    ]
+                ]
+            ],
+            'between range' => [
+                'bindData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => '10',
+                    'value_end' => '20',
+                    'unit' => 'item'
+                ],
+                'formData'      => [
+                    'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                    'value' => '10',
+                    'value_end' => '20',
+                    'unit' => 'item'
+                ],
+                'viewData'      => [
+                    'value' => [
+                        'type' => NumberRangeFilterType::TYPE_BETWEEN,
+                        'value' => '10',
+                        'value_end' => '20',
+                        'unit' => 'item'
+                    ]
+                ]
+            ]
+        ];
     }
 
-    public function testGetParent()
+    public function testGetParent(): void
     {
-        $this->assertEquals(NumberRangeFilterType::class, $this->type->getParent());
+        self::assertEquals(NumberRangeFilterType::class, $this->type->getParent());
     }
 }

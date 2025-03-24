@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver;
 
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
-use Oro\Bundle\TaxBundle\Matcher\CountryMatcher;
 use Oro\Bundle\TaxBundle\Matcher\MatcherInterface;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TaxBundle\Model\Taxable;
@@ -19,9 +18,9 @@ abstract class AbstractItemResolverTestCase extends TestCase
 {
     use ResultComparatorTrait;
 
-    protected UnitResolver|MockObject $unitResolver;
-    protected RowTotalResolver|MockObject $rowTotalResolver;
-    protected CountryMatcher|MockObject $matcher;
+    protected UnitResolver&MockObject $unitResolver;
+    protected RowTotalResolver&MockObject $rowTotalResolver;
+    protected MatcherInterface&MockObject $matcher;
     protected AbstractItemResolver $resolver;
 
     #[\Override]
@@ -36,32 +35,31 @@ abstract class AbstractItemResolverTestCase extends TestCase
 
     abstract protected function createResolver(): AbstractItemResolver;
 
-    protected function assertNothing()
-    {
-        $this->matcher->expects($this->never())
-            ->method($this->anything());
-        $this->unitResolver->expects($this->never())
-            ->method($this->anything());
-        $this->rowTotalResolver->expects($this->never())
-            ->method($this->anything());
-    }
-
     protected function getTaxRule(string $taxCode, string $taxRate): TaxRule
     {
         $taxRule = new TaxRule();
         $tax = new Tax();
-        $tax
-            ->setRate($taxRate)
-            ->setCode($taxCode);
+        $tax->setRate($taxRate);
+        $tax->setCode($taxCode);
         $taxRule->setTax($tax);
 
         return $taxRule;
     }
 
+    protected function assertNothing(): void
+    {
+        $this->matcher->expects(self::never())
+            ->method(self::anything());
+        $this->unitResolver->expects(self::never())
+            ->method(self::anything());
+        $this->rowTotalResolver->expects(self::never())
+            ->method(self::anything());
+    }
+
     protected function assertEmptyResult(Taxable $taxable): void
     {
-        $this->assertEquals(new ResultElement(), $taxable->getResult()->getUnit());
-        $this->assertEquals(new ResultElement(), $taxable->getResult()->getRow());
-        $this->assertEquals([], $taxable->getResult()->getTaxes());
+        self::assertEquals(new ResultElement(), $taxable->getResult()->getUnit());
+        self::assertEquals(new ResultElement(), $taxable->getResult()->getRow());
+        self::assertEquals([], $taxable->getResult()->getTaxes());
     }
 }

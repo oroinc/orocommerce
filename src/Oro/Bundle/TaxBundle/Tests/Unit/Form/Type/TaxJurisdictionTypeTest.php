@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Tests\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
+use Oro\Bundle\AddressBundle\Tests\Unit\Form\Type\AddressFormExtensionTestCase;
 use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Tests\Unit\Stub\TooltipFormExtensionStub;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
@@ -14,7 +15,7 @@ use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
-class TaxJurisdictionTypeTest extends AbstractAddressTestCase
+class TaxJurisdictionTypeTest extends AddressFormExtensionTestCase
 {
     private TaxJurisdictionType $formType;
 
@@ -26,49 +27,65 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
         parent::setUp();
     }
 
-    public function testBuildForm()
+    #[\Override]
+    protected function getExtensions(): array
+    {
+        return array_merge([
+            new PreloadedExtension(
+                [
+                    $this->formType,
+                    TaxJurisdictionType::class => $this->formType,
+                    new ZipCodeType()
+                ],
+                [
+                    HiddenType::class => [new AdditionalAttrExtension()],
+                    FormType::class => [new TooltipFormExtensionStub($this)]
+                ]
+            )
+        ], parent::getExtensions());
+    }
+
+    public function testBuildForm(): void
     {
         $form = $this->factory->create(TaxJurisdictionType::class);
 
-        $this->assertTrue($form->has('code'));
-        $this->assertTrue($form->has('description'));
-        $this->assertTrue($form->has('country'));
-        $this->assertTrue($form->has('region'));
-        $this->assertTrue($form->has('region_text'));
-        $this->assertTrue($form->has('zipCodes'));
+        self::assertTrue($form->has('code'));
+        self::assertTrue($form->has('description'));
+        self::assertTrue($form->has('country'));
+        self::assertTrue($form->has('region'));
+        self::assertTrue($form->has('region_text'));
+        self::assertTrue($form->has('zipCodes'));
     }
 
     /**
      * @dataProvider submitDataProvider
      */
-    #[\Override]
     public function testSubmit(
         bool $isValid,
         mixed $defaultData,
         mixed $viewData,
         array $submittedData,
         array $expectedData
-    ) {
+    ): void {
         $form = $this->factory->create(TaxJurisdictionType::class, $defaultData);
 
         $formConfig = $form->getConfig();
-        $this->assertEquals(TaxJurisdiction::class, $formConfig->getOption('data_class'));
+        self::assertEquals(TaxJurisdiction::class, $formConfig->getOption('data_class'));
 
-        $this->assertEquals($defaultData, $form->getData());
-        $this->assertEquals($viewData, $form->getViewData());
+        self::assertEquals($defaultData, $form->getData());
+        self::assertEquals($viewData, $form->getViewData());
 
         $form->submit($submittedData);
-        $this->assertEquals($isValid, $form->isValid());
-        $this->assertTrue($form->isSynchronized());
+        self::assertEquals($isValid, $form->isValid());
+        self::assertTrue($form->isSynchronized());
 
         foreach ($expectedData as $field => $data) {
-            $this->assertTrue($form->has($field));
+            self::assertTrue($form->has($field));
             $fieldForm = $form->get($field);
-            $this->assertEquals($data, $fieldForm->getData());
+            self::assertEquals($data, $fieldForm->getData());
         }
     }
 
-    #[\Override]
     public function submitDataProvider(): array
     {
         $taxJurisdiction = new TaxJurisdiction();
@@ -119,29 +136,5 @@ class TaxJurisdictionTypeTest extends AbstractAddressTestCase
                 ],
             ],
         ];
-    }
-
-    #[\Override]
-    protected function getExtensions(): array
-    {
-        return array_merge([
-            new PreloadedExtension(
-                [
-                    $this->formType,
-                    TaxJurisdictionType::class => $this->formType,
-                    new ZipCodeType()
-                ],
-                [
-                    HiddenType::class => [new AdditionalAttrExtension()],
-                    FormType::class => [new TooltipFormExtensionStub($this)]
-                ]
-            )
-        ], parent::getExtensions());
-    }
-
-    #[\Override]
-    protected function getFormTypeClass(): string
-    {
-        return TaxJurisdictionType::class;
     }
 }

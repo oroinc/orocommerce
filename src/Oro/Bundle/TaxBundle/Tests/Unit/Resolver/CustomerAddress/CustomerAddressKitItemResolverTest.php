@@ -4,14 +4,13 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\CustomerAddress;
 
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\CustomerAddress\CustomerAddressKitItemResolver;
 use Oro\Bundle\TaxBundle\Tests\Unit\Resolver\AbstractItemResolverTestCase;
 
 class CustomerAddressKitItemResolverTest extends AbstractItemResolverTestCase
 {
     #[\Override]
-    protected function createResolver(): AbstractItemResolver
+    protected function createResolver(): CustomerAddressKitItemResolver
     {
         return new CustomerAddressKitItemResolver(
             $this->unitResolver,
@@ -25,26 +24,26 @@ class CustomerAddressKitItemResolverTest extends AbstractItemResolverTestCase
         $taxable = new Taxable();
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->setPrice('19.99');
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->addItem(new Taxable());
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->setTaxationAddress(new OrderAddress());
         $this->resolver->resolve($taxable);
 
-        $this->assertTrue($taxable->getResult()->isResultLocked());
+        self::assertTrue($taxable->getResult()->isResultLocked());
     }
 
     public function testResultLocked(): void
@@ -57,9 +56,9 @@ class CustomerAddressKitItemResolverTest extends AbstractItemResolverTestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertTrue($taxable->getResult()->isResultLocked());
-        $this->assertEmpty($taxable->getResult()->getUnit()->getExcludingTax());
-        $this->assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
+        self::assertTrue($taxable->getResult()->isResultLocked());
+        self::assertEmpty($taxable->getResult()->getUnit()->getExcludingTax());
+        self::assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
     }
 
     /**
@@ -79,11 +78,11 @@ class CustomerAddressKitItemResolverTest extends AbstractItemResolverTestCase
             ->method('match')
             ->willReturn($taxRules);
 
-        $this->unitResolver->expects($this->once())
+        $this->unitResolver->expects(self::once())
             ->method('resolveUnitPrice')
             ->with($taxable->getResult(), $taxRules, $taxable->getPrice());
 
-        $this->rowTotalResolver->expects($this->once())
+        $this->rowTotalResolver->expects(self::once())
             ->method('resolveRowTotal')
             ->with($taxable->getResult(), $taxRules, $taxable->getPrice(), $taxable->getQuantity());
 

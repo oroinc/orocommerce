@@ -4,7 +4,6 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\Resolver\CustomerAddress;
 
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\CustomerAddress\CustomerAddressItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\CustomerAddress\CustomerAddressKitItemResolver;
 use Oro\Bundle\TaxBundle\Tests\Unit\Resolver\AbstractItemResolverTestCase;
@@ -12,7 +11,7 @@ use Oro\Bundle\TaxBundle\Tests\Unit\Resolver\AbstractItemResolverTestCase;
 class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
 {
     #[\Override]
-    protected function createResolver(): AbstractItemResolver
+    protected function createResolver(): CustomerAddressItemResolver
     {
         return new CustomerAddressItemResolver(
             $this->unitResolver,
@@ -31,27 +30,27 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
         $taxable = new Taxable();
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->setKitTaxable(true);
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->setPrice('19.99');
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->addItem(new Taxable());
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->setTaxationAddress(new OrderAddress());
         $this->resolver->resolve($taxable);
 
-        $this->assertTrue($taxable->getResult()->isResultLocked());
+        self::assertTrue($taxable->getResult()->isResultLocked());
     }
 
     public function testResultLocked(): void
@@ -65,9 +64,9 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertTrue($taxable->getResult()->isResultLocked());
-        $this->assertEmpty($taxable->getResult()->getUnit()->getExcludingTax());
-        $this->assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
+        self::assertTrue($taxable->getResult()->isResultLocked());
+        self::assertEmpty($taxable->getResult()->getUnit()->getExcludingTax());
+        self::assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
     }
 
     public function testEmptyRules(): void
@@ -77,27 +76,27 @@ class CustomerAddressItemResolverTest extends AbstractItemResolverTestCase
         $taxable->setPrice('1');
         $taxable->setAmount('1');
 
-        $this->matcher->expects($this->once())
+        $this->matcher->expects(self::once())
             ->method('match')
             ->willReturn([]);
 
-        $this->unitResolver->expects($this->once())
+        $this->unitResolver->expects(self::once())
             ->method('resolveUnitPrice')
             ->with($taxable->getResult(), [], $taxable->getPrice());
 
-        $this->rowTotalResolver->expects($this->once())
+        $this->rowTotalResolver->expects(self::once())
             ->method('resolveRowTotal')
             ->with($taxable->getResult(), [], $taxable->getPrice(), $taxable->getQuantity());
 
         $this->resolver->resolve($taxable);
 
-        $this->assertEquals([], $taxable->getResult()->getTaxes());
+        self::assertEquals([], $taxable->getResult()->getTaxes());
     }
 
     /**
      * @dataProvider rulesDataProvider
      */
-    public function testRules(string $taxableAmount, array $taxRules)
+    public function testRules(string $taxableAmount, array $taxRules): void
     {
         $taxableItem = new Taxable();
         $taxableItem->setPrice(10);

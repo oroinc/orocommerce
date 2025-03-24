@@ -9,6 +9,7 @@ use Oro\Bundle\PricingBundle\Model\DTO\ProductPriceDTO;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
@@ -30,38 +31,16 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 final class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
-    private Quote $entity;
     private QuoteProductPricesProvider&MockObject $quoteProductPricesProvider;
+    private Quote $entity;
 
     #[\Override]
     protected function setUp(): void
     {
+        $this->quoteProductPricesProvider = $this->createMock(QuoteProductPricesProvider::class);
         $this->entity = new Quote();
 
         parent::setUp();
-
-        $lineItemChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);
-        $this->quoteProductPricesProvider = $this->createMock(QuoteProductPricesProvider::class);
-
-        $lineItemChecksumGenerator
-            ->method('getChecksum')
-            ->willReturnCallback(
-                static function (BaseQuoteProductItem $quoteProductItem) {
-                    return ($quoteProductItem->getProduct()?->getId()
-                        .'|'.$quoteProductItem->getProductUnit()?->getCode()
-                        .'|'.$quoteProductItem->getQuantity());
-                }
-            );
-
-        $this->extension = new QuoteDataStorageExtension(
-            $this->getRequestStack(),
-            $this->storage,
-            PropertyAccess::createPropertyAccessor(),
-            $this->doctrine,
-            $lineItemChecksumGenerator,
-            $this->logger,
-            $this->quoteProductPricesProvider
-        );
 
         $this->initEntityMetadata([
             ProductUnit::class => [
@@ -86,6 +65,29 @@ final class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExte
                 ],
             ],
         ]);
+    }
+
+    #[\Override]
+    protected function getExtension(): AbstractProductDataStorageExtension
+    {
+        $lineItemChecksumGenerator = $this->createMock(LineItemChecksumGeneratorInterface::class);
+        $lineItemChecksumGenerator->expects(self::any())
+            ->method('getChecksum')
+            ->willReturnCallback(static function (BaseQuoteProductItem $quoteProductItem) {
+                return ($quoteProductItem->getProduct()?->getId()
+                    .'|'.$quoteProductItem->getProductUnit()?->getCode()
+                    .'|'.$quoteProductItem->getQuantity());
+            });
+
+        return new QuoteDataStorageExtension(
+            $this->getRequestStack(),
+            $this->storage,
+            PropertyAccess::createPropertyAccessor(),
+            $this->doctrine,
+            $lineItemChecksumGenerator,
+            $this->logger,
+            $this->quoteProductPricesProvider
+        );
     }
 
     #[\Override]
@@ -145,7 +147,7 @@ final class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExte
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertEquals($customer, $this->entity->getCustomer());
         self::assertEquals($customerUser, $this->entity->getCustomerUser());
@@ -294,7 +296,7 @@ final class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExte
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertEquals($customer, $this->entity->getCustomer());
         self::assertEquals($customerUser, $this->entity->getCustomerUser());

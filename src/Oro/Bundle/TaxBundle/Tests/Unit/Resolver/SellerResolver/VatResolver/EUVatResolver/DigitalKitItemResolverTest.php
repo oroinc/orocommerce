@@ -7,14 +7,13 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\TaxBundle\Model\Address;
 use Oro\Bundle\TaxBundle\Model\Taxable;
-use Oro\Bundle\TaxBundle\Resolver\AbstractItemResolver;
 use Oro\Bundle\TaxBundle\Resolver\SellerResolver\VatResolver\EUVatResolver\DigitalKitItemResolver;
 use Oro\Bundle\TaxBundle\Tests\Unit\Resolver\AbstractItemResolverTestCase;
 
 class DigitalKitItemResolverTest extends AbstractItemResolverTestCase
 {
     #[\Override]
-    protected function createResolver(): AbstractItemResolver
+    protected function createResolver(): DigitalKitItemResolver
     {
         return new DigitalKitItemResolver(
             $this->unitResolver,
@@ -40,11 +39,11 @@ class DigitalKitItemResolverTest extends AbstractItemResolverTestCase
             ->method('match')
             ->willReturn($taxRules);
 
-        $this->unitResolver->expects($this->once())
+        $this->unitResolver->expects(self::once())
             ->method('resolveUnitPrice')
             ->with($taxable->getResult(), $taxRules, $taxable->getPrice());
 
-        $this->rowTotalResolver->expects($this->once())
+        $this->rowTotalResolver->expects(self::once())
             ->method('resolveRowTotal')
             ->with($taxable->getResult(), $taxRules, $taxable->getPrice(), $taxable->getQuantity());
 
@@ -79,9 +78,9 @@ class DigitalKitItemResolverTest extends AbstractItemResolverTestCase
 
         $this->resolver->resolve($taxable);
 
-        $this->assertTrue($taxable->getResult()->isResultLocked());
-        $this->assertEmpty($taxable->getResult()->getUnit()->getExcludingTax());
-        $this->assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
+        self::assertTrue($taxable->getResult()->isResultLocked());
+        self::assertEmpty($taxable->getResult()->getUnit()->getExcludingTax());
+        self::assertEmpty($taxable->getResult()->getRow()->getExcludingTax());
     }
 
     public function testIsApplicable(): void
@@ -89,38 +88,38 @@ class DigitalKitItemResolverTest extends AbstractItemResolverTestCase
         $taxable = new Taxable();
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->setPrice('19.99');
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->addContext(Taxable::DIGITAL_PRODUCT, true);
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $taxable->addItem(new Taxable());
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $address = new Address();
         $taxable->setDestination($address);
         $this->resolver->resolve($taxable);
 
-        $this->assertFalse($taxable->getResult()->isResultLocked());
+        self::assertFalse($taxable->getResult()->isResultLocked());
 
         $address->setCountry(new Country('UK'));
 
         $this->resolver->resolve($taxable);
 
-        $this->assertTrue($taxable->getResult()->isResultLocked());
+        self::assertTrue($taxable->getResult()->isResultLocked());
     }
 
     public function testDestinationAddressForDigitalProductsAndEUBuyer(): void
@@ -143,17 +142,17 @@ class DigitalKitItemResolverTest extends AbstractItemResolverTestCase
 
         $taxable->makeOriginAddressTaxable();
 
-        $this->matcher->expects($this->once())
+        $this->matcher->expects(self::once())
             ->method('match')
             ->willReturn([]);
-        $this->rowTotalResolver->expects($this->once())
+        $this->rowTotalResolver->expects(self::once())
             ->method('resolveRowTotal');
-        $this->unitResolver->expects($this->once())
+        $this->unitResolver->expects(self::once())
             ->method('resolveUnitPrice');
 
         $this->resolver->resolve($taxable);
 
-        $this->assertSame($address, $taxable->getTaxationAddress());
+        self::assertSame($address, $taxable->getTaxationAddress());
     }
 
     public function testOriginAddressForNonDigitalProductsAndEUBuyer(): void
@@ -176,16 +175,16 @@ class DigitalKitItemResolverTest extends AbstractItemResolverTestCase
 
         $taxable->makeOriginAddressTaxable();
 
-        $this->matcher->expects($this->never())
+        $this->matcher->expects(self::never())
             ->method('match');
-        $this->rowTotalResolver->expects($this->never())
+        $this->rowTotalResolver->expects(self::never())
             ->method('resolveRowTotal');
-        $this->unitResolver->expects($this->never())
+        $this->unitResolver->expects(self::never())
             ->method('resolveUnitPrice');
 
         $this->resolver->resolve($taxable);
 
-        $this->assertSame($origin, $taxable->getTaxationAddress());
+        self::assertSame($origin, $taxable->getTaxationAddress());
     }
 
     public function testDestinationAddressForDigitalProductsAndNonEUBuyer(): void
@@ -208,15 +207,15 @@ class DigitalKitItemResolverTest extends AbstractItemResolverTestCase
 
         $taxable->makeOriginAddressTaxable();
 
-        $this->matcher->expects($this->never())
+        $this->matcher->expects(self::never())
             ->method('match');
-        $this->rowTotalResolver->expects($this->never())
+        $this->rowTotalResolver->expects(self::never())
             ->method('resolveRowTotal');
-        $this->unitResolver->expects($this->never())
+        $this->unitResolver->expects(self::never())
             ->method('resolveUnitPrice');
 
         $this->resolver->resolve($taxable);
 
-        $this->assertSame($origin, $taxable->getTaxationAddress());
+        self::assertSame($origin, $taxable->getTaxationAddress());
     }
 }

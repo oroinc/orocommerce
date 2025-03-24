@@ -14,6 +14,8 @@ use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -25,25 +27,13 @@ use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Framework\TestCase
+abstract class AbstractProductDataStorageExtensionTestCase extends TestCase
 {
-    /** @var Request|\PHPUnit\Framework\MockObject\MockObject */
-    protected $request;
-
-    /** @var ProductDataStorage|\PHPUnit\Framework\MockObject\MockObject */
-    protected $storage;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    protected $doctrine;
-
-    /** @var LoggerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $logger;
-
-    /** @var EntityManagerInterface|\PHPUnit\Framework\MockObject\MockObject */
-    protected $entityManager;
-
-    /** @var AbstractProductDataStorageExtension */
-    protected $extension;
+    protected Request&MockObject $request;
+    protected ProductDataStorage&MockObject $storage;
+    protected ManagerRegistry&MockObject $doctrine;
+    protected LoggerInterface&MockObject $logger;
+    protected EntityManagerInterface&MockObject $entityManager;
 
     #[\Override]
     protected function setUp(): void
@@ -55,28 +45,31 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->entityManager = $this->createMock(EntityManagerInterface::class);
 
-        $entityClass = get_class($this->getTargetEntity());
-        $this->doctrine->expects($this->any())
+        $this->doctrine->expects(self::any())
             ->method('getManagerForClass')
-            ->with($entityClass)
+            ->with(get_class($this->getTargetEntity()))
             ->willReturn($this->entityManager);
     }
 
+    abstract protected function getExtension(): AbstractProductDataStorageExtension;
+
+    abstract protected function getTargetEntity(): object;
+
     public function testBuildFormNoRequestParameter(): void
     {
-        $this->request->expects($this->any())
+        $this->request->expects(self::any())
             ->method('get')
             ->with(ProductDataStorage::STORAGE_KEY)
             ->willReturn(false);
 
-        $this->storage->expects($this->never())
-            ->method($this->anything());
+        $this->storage->expects(self::never())
+            ->method(self::anything());
 
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->never())
+        $builder->expects(self::never())
             ->method('addEventListener');
 
-        $this->extension->buildForm($builder, []);
+        $this->getExtension()->buildForm($builder, []);
     }
 
     public function testBuildFormExistingEntity(): void
@@ -89,13 +82,13 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
 
         $this->expectsGetStorageFromRequest();
 
-        $this->storage->expects($this->once())
+        $this->storage->expects(self::once())
             ->method('get')
             ->willReturn($data);
-        $this->storage->expects($this->never())
+        $this->storage->expects(self::never())
             ->method('remove');
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
     }
 
     public function testBuildFormNoData(): void
@@ -107,7 +100,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
     }
 
     public function testBuildFormWithWrongPropertiesInData(): void
@@ -119,25 +112,25 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
         $this->expectsGetStorageFromRequest();
         $this->expectsGetDataFromStorage($data);
 
-        $this->logger->expects($this->once())
+        $this->logger->expects(self::once())
             ->method('notice')
             ->with(
                 'No such property {property} in the entity {entity}',
-                $this->callback(function (array $context) {
-                    $this->assertEquals('notExistsProperty', $context['property']);
-                    $this->assertEquals(get_class($this->getTargetEntity()), $context['entity']);
-                    $this->assertInstanceOf(NoSuchPropertyException::class, $context['exception']);
+                self::callback(function (array $context) {
+                    self::assertEquals('notExistsProperty', $context['property']);
+                    self::assertEquals(get_class($this->getTargetEntity()), $context['entity']);
+                    self::assertInstanceOf(NoSuchPropertyException::class, $context['exception']);
 
                     return true;
                 })
             );
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
     }
 
     protected function expectsGetStorageFromRequest(): void
     {
-        $this->request->expects($this->any())
+        $this->request->expects(self::any())
             ->method('get')
             ->with(ProductDataStorage::STORAGE_KEY)
             ->willReturn(true);
@@ -145,16 +138,16 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
 
     protected function expectsGetDataFromStorage(array $data): void
     {
-        $this->storage->expects($this->any())
+        $this->storage->expects(self::any())
             ->method('get')
             ->willReturn($data);
-        $this->storage->expects($this->once())
+        $this->storage->expects(self::once())
             ->method('remove');
     }
 
     protected function expectsFindProduct(int $productId, Product $product): void
     {
-        $this->entityManager->expects($this->once())
+        $this->entityManager->expects(self::once())
             ->method('find')
             ->with(Product::class, $productId)
             ->willReturn($product);
@@ -162,7 +155,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
 
     protected function initEntityMetadata(array $mappings): void
     {
-        $this->entityManager->expects($this->any())
+        $this->entityManager->expects(self::any())
             ->method('getClassMetadata')
             ->willReturnCallback(function ($object) use ($mappings) {
                 $class = is_object($object) ? ClassUtils::getClass($object) : ClassUtils::getRealClass($object);
@@ -182,19 +175,17 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
                 return $metadata;
             });
 
-        $this->entityManager->expects($this->any())
+        $this->entityManager->expects(self::any())
             ->method('getReference')
             ->willReturnCallback(function (string $className, int|string $id) {
                 return $this->getEntity($className, $id);
             });
     }
 
-    abstract protected function getTargetEntity(): object;
-
     protected function getRequestStack(): RequestStack
     {
         $requestStack = $this->createMock(RequestStack::class);
-        $requestStack->expects($this->any())
+        $requestStack->expects(self::any())
             ->method('getCurrentRequest')
             ->willReturn($this->request);
 
@@ -240,15 +231,15 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit\Fram
     protected function getFormBuilder(): FormBuilderInterface
     {
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->any())
+        $builder->expects(self::any())
             ->method('addEventListener')
             ->with(
                 FormEvents::PRE_SET_DATA,
-                $this->logicalAnd(
-                    $this->isInstanceOf(\Closure::class),
-                    $this->callback(function (\Closure $closure) {
+                self::logicalAnd(
+                    self::isInstanceOf(\Closure::class),
+                    self::callback(function (\Closure $closure) {
                         $event = $this->createMock(FormEvent::class);
-                        $event->expects($this->any())
+                        $event->expects(self::any())
                             ->method('getData')
                             ->willReturn($this->getTargetEntity());
                         $closure($event);

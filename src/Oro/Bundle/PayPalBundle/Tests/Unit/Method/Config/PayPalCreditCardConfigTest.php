@@ -2,23 +2,21 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class PayPalCreditCardConfigTest extends AbstractPayPalConfigTest
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
+class PayPalCreditCardConfigTest extends TestCase
 {
-    use EntityTrait;
-
-    /** @var PayPalCreditCardConfigInterface */
-    protected $config;
+    private PayPalCreditCardConfig $config;
 
     #[\Override]
-    protected function getPaymentConfig(): PaymentConfigInterface
+    protected function setUp(): void
     {
-        $params = [
+        $this->config = new PayPalCreditCardConfig([
             PayPalCreditCardConfig::FIELD_LABEL => 'test label',
             PayPalCreditCardConfig::FIELD_SHORT_LABEL => 'test short label',
             PayPalCreditCardConfig::FIELD_ADMIN_LABEL => 'test admin label',
@@ -39,61 +37,95 @@ class PayPalCreditCardConfigTest extends AbstractPayPalConfigTest
                 Option\User::USER => 'string',
                 Option\Password::PASSWORD => 'string',
                 Option\Partner::PARTNER => 'string'
+            ]
+        ]);
+    }
+
+    public function testGetLabel(): void
+    {
+        self::assertSame('test label', $this->config->getLabel());
+    }
+
+    public function testGetShortLabel(): void
+    {
+        self::assertSame('test short label', $this->config->getShortLabel());
+    }
+
+    public function testGetAdminLabel(): void
+    {
+        self::assertSame('test admin label', $this->config->getAdminLabel());
+    }
+
+    public function testGetPaymentMethodIdentifier(): void
+    {
+        self::assertSame('test_payment_method_identifier', $this->config->getPaymentMethodIdentifier());
+    }
+
+    public function testIsTestMode(): void
+    {
+        self::assertTrue($this->config->isTestMode());
+    }
+
+    public function testGetPurchaseAction(): void
+    {
+        self::assertSame('string', $this->config->getPurchaseAction());
+    }
+
+    public function testGetCredentials(): void
+    {
+        self::assertSame(
+            [
+                Option\Vendor::VENDOR => 'string',
+                Option\User::USER => 'string',
+                Option\Password::PASSWORD => 'string',
+                Option\Partner::PARTNER => 'string'
             ],
-        ];
-
-        return new PayPalCreditCardConfig($params);
+            $this->config->getCredentials()
+        );
     }
 
-    public function testIsZeroAmountAuthorizationEnabled()
+    public function testIsZeroAmountAuthorizationEnabled(): void
     {
-        $returnValue = true;
-        $this->assertSame($returnValue, $this->config->isZeroAmountAuthorizationEnabled());
+        self::assertTrue($this->config->isZeroAmountAuthorizationEnabled());
     }
 
-    public function testIsAuthorizationForRequiredAmountEnabled()
+    public function testIsAuthorizationForRequiredAmountEnabled(): void
     {
-        $returnValue = true;
-        $this->assertSame($returnValue, $this->config->isAuthorizationForRequiredAmountEnabled());
+        self::assertTrue($this->config->isAuthorizationForRequiredAmountEnabled());
     }
 
-    public function testGetAllowedCreditCards()
+    public function testGetAllowedCreditCards(): void
     {
-        $returnValue = ['Master Card', 'Visa'];
-        $this->assertSame($returnValue, $this->config->getAllowedCreditCards());
+        self::assertSame(['Master Card', 'Visa'], $this->config->getAllowedCreditCards());
     }
 
-    public function testIsDebugModeEnabled()
+    public function testIsDebugModeEnabled(): void
     {
-        $returnValue = true;
-        $this->assertSame($returnValue, $this->config->isDebugModeEnabled());
+        self::assertTrue($this->config->isDebugModeEnabled());
     }
 
-    public function testIsUseProxyEnabled()
+    public function testIsUseProxyEnabled(): void
     {
-        $returnValue = true;
-        $this->assertSame($returnValue, $this->config->isUseProxyEnabled());
+        self::assertTrue($this->config->isUseProxyEnabled());
     }
 
-    public function testGetProxyHost()
+    public function testGetProxyHost(): void
     {
-        $returnValue = 'proxy host';
-        $this->assertSame($returnValue, $this->config->getProxyHost());
+        self::assertSame('proxy host', $this->config->getProxyHost());
     }
 
-    public function testGetProxyPort()
+    public function testGetProxyPort(): void
     {
-        $returnValue = 8099;
-        $this->assertSame($returnValue, $this->config->getProxyPort());
+        self::assertSame(8099, $this->config->getProxyPort());
     }
 
-    public function testIsSslVerificationEnabled()
+    public function testIsSslVerificationEnabled(): void
     {
-        $this->assertTrue($this->config->isSslVerificationEnabled());
+        self::assertTrue($this->config->isSslVerificationEnabled());
     }
 
-    public function testIsRequireCvvEntryEnabled()
+    public function testIsRequireCvvEntryEnabled(): void
     {
-        $this->assertTrue($this->config->isRequireCvvEntryEnabled());
+        self::assertTrue($this->config->isRequireCvvEntryEnabled());
     }
 }

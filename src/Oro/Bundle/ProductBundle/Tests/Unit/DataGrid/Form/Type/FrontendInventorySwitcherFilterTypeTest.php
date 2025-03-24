@@ -18,7 +18,7 @@ final class FrontendInventorySwitcherFilterTypeTest extends AbstractTypeTestCase
     #[\Override]
     protected function setUp(): void
     {
-        $translator = $this->createMockTranslator();
+        $translator = $this->createTranslator();
 
         $this->type = new FrontendInventorySwitcherFilterType($translator);
 

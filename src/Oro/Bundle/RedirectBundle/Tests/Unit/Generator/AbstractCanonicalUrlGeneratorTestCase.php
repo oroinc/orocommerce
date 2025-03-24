@@ -11,50 +11,22 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Contracts\Cache\CacheInterface;
 
-abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\TestCase
+abstract class AbstractCanonicalUrlGeneratorTestCase extends TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $configManager;
-
-    /**
-     * @var CacheInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $cache;
-
-    /**
-     * @var RequestStack|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $requestStack;
-
-    /**
-     * @var RoutingInformationProvider|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $routingInformationProvider;
-
-    /**
-     * @var WebsiteUrlResolver|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $websiteUrlResolver;
-
-    /**
-     * @var LocalizationProviderInterface
-     */
-    protected $localizationProvider;
-
-    /**
-     * @var CanonicalUrlGenerator
-     */
-    protected $canonicalUrlGenerator;
+    protected ConfigManager&MockObject $configManager;
+    protected CacheInterface&MockObject $cache;
+    protected RequestStack&MockObject $requestStack;
+    protected RoutingInformationProvider&MockObject $routingInformationProvider;
+    protected WebsiteUrlResolver&MockObject $websiteUrlResolver;
+    protected LocalizationProviderInterface&MockObject $localizationProvider;
+    protected CanonicalUrlGenerator $canonicalUrlGenerator;
 
     #[\Override]
     protected function setUp(): void
@@ -78,7 +50,7 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
             $urlTypeKey .= '.' . $website->getId();
             $urlSecurityTypeKey .= '.' . $website->getId();
         }
-        $this->cache->expects($this->any())
+        $this->cache->expects(self::any())
             ->method('get')
             ->willReturnCallback(
                 function ($cacheKey) use ($urlTypeKey, $urlSecurityTypeKey, $urlSecurityType) {
@@ -88,10 +60,12 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
                         case $urlSecurityTypeKey:
                             return $urlSecurityType;
                     }
+
+                    return null;
                 }
             );
 
-        $this->configManager->expects($this->any())
+        $this->configManager->expects(self::any())
             ->method('get')
             ->willReturnMap([
                 [$urlTypeKey, false, false, $website, Configuration::DIRECT_URL],
@@ -103,25 +77,20 @@ abstract class AbstractCanonicalUrlGeneratorTestCase extends \PHPUnit\Framework\
         SluggableInterface $data,
         string $expectedBaseUrl = ''
     ): void {
-        /** @var Request|\PHPUnit\Framework\MockObject\MockObject $request */
         $request = $this->createMock(Request::class);
-        $request->expects($this->any())
+        $request->expects(self::any())
             ->method('getBaseUrl')
             ->willReturn($expectedBaseUrl);
-        $this->requestStack->expects($this->atMost(1))
+        $this->requestStack->expects(self::atMost(1))
             ->method('getMainRequest')
             ->willReturn($request);
 
-        $this->routingInformationProvider->expects($this->never())
+        $this->routingInformationProvider->expects(self::never())
             ->method('getRouteData')
             ->with($data);
     }
 
-    /**
-     * @param Slug $slug
-     * @return SluggableInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getSluggableEntity(Slug $slug)
+    protected function getSluggableEntity(Slug $slug): SluggableInterface
     {
         $entity = new SluggableEntityStub();
         $entity->addSlug($slug);

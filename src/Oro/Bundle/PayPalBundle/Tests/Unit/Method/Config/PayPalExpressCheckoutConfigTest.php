@@ -2,23 +2,18 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Component\Testing\Unit\EntityTrait;
+use PHPUnit\Framework\TestCase;
 
-class PayPalExpressCheckoutConfigTest extends AbstractPayPalConfigTest
+class PayPalExpressCheckoutConfigTest extends TestCase
 {
-    use EntityTrait;
-
-    /** @var PayPalExpressCheckoutConfigInterface */
-    protected $config;
+    private PayPalExpressCheckoutConfig $config;
 
     #[\Override]
-    protected function getPaymentConfig(): PaymentConfigInterface
+    protected function setUp(): void
     {
-        $params = [
+        $this->config = new PayPalExpressCheckoutConfig([
             PayPalExpressCheckoutConfig::FIELD_LABEL => 'test label',
             PayPalExpressCheckoutConfig::FIELD_SHORT_LABEL => 'test short label',
             PayPalExpressCheckoutConfig::FIELD_ADMIN_LABEL => 'test admin label',
@@ -30,9 +25,50 @@ class PayPalExpressCheckoutConfigTest extends AbstractPayPalConfigTest
                 Option\User::USER => 'string',
                 Option\Password::PASSWORD => 'string',
                 Option\Partner::PARTNER => 'string'
-            ],
-        ];
+            ]
+        ]);
+    }
 
-        return new PayPalExpressCheckoutConfig($params);
+    public function testGetLabel(): void
+    {
+        self::assertSame('test label', $this->config->getLabel());
+    }
+
+    public function testGetShortLabel(): void
+    {
+        self::assertSame('test short label', $this->config->getShortLabel());
+    }
+
+    public function testGetAdminLabel(): void
+    {
+        self::assertSame('test admin label', $this->config->getAdminLabel());
+    }
+
+    public function testGetPaymentMethodIdentifier(): void
+    {
+        self::assertSame('test_payment_method_identifier', $this->config->getPaymentMethodIdentifier());
+    }
+
+    public function testIsTestMode(): void
+    {
+        self::assertTrue($this->config->isTestMode());
+    }
+
+    public function testGetPurchaseAction(): void
+    {
+        self::assertSame('string', $this->config->getPurchaseAction());
+    }
+
+    public function testGetCredentials(): void
+    {
+        self::assertSame(
+            [
+                Option\Vendor::VENDOR => 'string',
+                Option\User::USER => 'string',
+                Option\Password::PASSWORD => 'string',
+                Option\Partner::PARTNER => 'string'
+            ],
+            $this->config->getCredentials()
+        );
     }
 }

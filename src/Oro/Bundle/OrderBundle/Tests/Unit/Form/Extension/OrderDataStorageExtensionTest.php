@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductKitItem;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Extension\AbstractProductDataStorageExtension;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ProductKitItemStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Extension\AbstractProductDataStorageExtensionTestCase;
@@ -28,14 +29,6 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         parent::setUp();
 
-        $this->extension = new OrderDataStorageExtension(
-            $this->getRequestStack(),
-            $this->storage,
-            PropertyAccess::createPropertyAccessor(),
-            $this->doctrine,
-            $this->logger
-        );
-
         $this->initEntityMetadata([
             OrderProductKitItemLineItem::class => [
                 'associationMappings' => [
@@ -48,6 +41,18 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                 'identifier' => ['code'],
             ],
         ]);
+    }
+
+    #[\Override]
+    protected function getExtension(): AbstractProductDataStorageExtension
+    {
+        return new OrderDataStorageExtension(
+            $this->getRequestStack(),
+            $this->storage,
+            PropertyAccess::createPropertyAccessor(),
+            $this->doctrine,
+            $this->logger
+        );
     }
 
     #[\Override]
@@ -78,7 +83,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertCount(1, $this->entity->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -112,7 +117,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertEmpty($this->getTargetEntity()->getLineItems());
     }
@@ -137,7 +142,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         /** @var OrderLineItem $lineItem */
         $lineItem = $this->entity->getLineItems()->first();
@@ -195,7 +200,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertCount(1, $this->entity->getLineItems());
         /** @var OrderLineItem $lineItem */
@@ -266,7 +271,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertCount(1, $this->entity->getLineItems());
         /** @var OrderLineItem $lineItem */

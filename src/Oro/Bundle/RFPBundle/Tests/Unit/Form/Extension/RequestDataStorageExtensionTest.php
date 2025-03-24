@@ -26,60 +26,20 @@ use Twig\Environment;
 
 class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensionTestCase
 {
-    /** @var ProductRFPAvailabilityProvider|MockObject */
-    private $productAvailabilityProvider;
-
-    /** @var Environment|MockObject */
-    private $twig;
-
-    /** @var FlashBagInterface|MockObject */
-    private $flashBag;
-
-    /** @var RFPRequest */
-    private $entity;
-
-    /** @var RequestDataStorageExtension */
-    protected $extension;
+    private ProductRFPAvailabilityProvider&MockObject $productAvailabilityProvider;
+    private Environment&MockObject $twig;
+    private FlashBagInterface&MockObject $flashBag;
+    private RFPRequest $entity;
 
     #[\Override]
     protected function setUp(): void
     {
+        $this->productAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);
+        $this->twig = $this->createMock(Environment::class);
+        $this->flashBag = $this->createMock(FlashBagInterface::class);
         $this->entity = new RFPRequest();
 
         parent::setUp();
-
-        $this->productAvailabilityProvider = $this->createMock(ProductRFPAvailabilityProvider::class);
-        $translator = $this->createMock(TranslatorInterface::class);
-        $translator->expects(self::any())
-            ->method('trans')
-            ->willReturnCallback(static fn ($key) => $key . '_translated');
-
-        $this->twig = $this->createMock(Environment::class);
-        $this->flashBag = $this->createMock(FlashBagInterface::class);
-
-        $session = $this->createMock(Session::class);
-        $session->expects(self::any())
-            ->method('getFlashBag')
-            ->willReturn($this->flashBag);
-
-        $requestStack = $this->createMock(RequestStack::class);
-        $requestStack->expects(self::any())
-            ->method('getCurrentRequest')
-            ->willReturn($this->request);
-        $requestStack->expects(self::any())
-            ->method('getSession')
-            ->willReturn($session);
-
-        $this->extension = new RequestDataStorageExtension(
-            $requestStack,
-            $this->storage,
-            PropertyAccess::createPropertyAccessor(),
-            $this->doctrine,
-            $this->logger,
-            $this->productAvailabilityProvider,
-            $translator,
-            $this->twig
-        );
 
         $this->initEntityMetadata([
             RequestProductKitItemLineItem::class => [
@@ -93,6 +53,39 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
                 'identifier' => ['code'],
             ],
         ]);
+    }
+
+    #[\Override]
+    protected function getExtension(): RequestDataStorageExtension
+    {
+        $session = $this->createMock(Session::class);
+        $session->expects(self::any())
+            ->method('getFlashBag')
+            ->willReturn($this->flashBag);
+
+        $requestStack = $this->createMock(RequestStack::class);
+        $requestStack->expects(self::any())
+            ->method('getCurrentRequest')
+            ->willReturn($this->request);
+        $requestStack->expects(self::any())
+            ->method('getSession')
+            ->willReturn($session);
+
+        $translator = $this->createMock(TranslatorInterface::class);
+        $translator->expects(self::any())
+            ->method('trans')
+            ->willReturnCallback(static fn ($key) => $key . '_translated');
+
+        return new RequestDataStorageExtension(
+            $requestStack,
+            $this->storage,
+            PropertyAccess::createPropertyAccessor(),
+            $this->doctrine,
+            $this->logger,
+            $this->productAvailabilityProvider,
+            $translator,
+            $this->twig
+        );
     }
 
     #[\Override]
@@ -128,7 +121,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertCount(1, $this->entity->getRequestProducts());
         /** @var RequestProduct $requestProduct */
@@ -174,7 +167,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->expectsWarningFlashMessage([$product]);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertEmpty($this->entity->getRequestProducts());
     }
@@ -200,7 +193,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->expectsGetDataFromStorage($data);
         $this->expectsFindProduct($productId, $product);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertEmpty($this->entity->getRequestProducts());
     }
@@ -285,7 +278,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($product)
             ->willReturn(true);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertCount(1, $this->entity->getRequestProducts());
         /** @var RequestProduct $requestProduct */
@@ -358,7 +351,7 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
             ->with($product)
             ->willReturn(true);
 
-        $this->extension->buildForm($this->getFormBuilder(), []);
+        $this->getExtension()->buildForm($this->getFormBuilder(), []);
 
         self::assertCount(1, $this->entity->getRequestProducts());
         /** @var RequestProduct $requestProduct */
