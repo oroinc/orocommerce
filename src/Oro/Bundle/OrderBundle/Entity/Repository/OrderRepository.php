@@ -250,9 +250,11 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         $dateTimeFrom = clone $dateTimeFrom;
         $dateTimeTo = clone $dateTimeTo;
 
-        $queryBuilder
-            ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
-            ->setParameter('includedOrderStatuses', $includedOrderStatuses);
+        if (count($includedOrderStatuses)) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
+                ->setParameter('includedOrderStatuses', $includedOrderStatuses);
+        }
 
         if ($isIncludeSubOrders === false) {
             $queryBuilder->andWhere($queryBuilder->expr()->isNull('o.parent'));
