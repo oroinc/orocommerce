@@ -38,24 +38,21 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
             );
         }
 
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_shopping_list.availability_for_guests', true);
-        $configManager->flush();
+        $this->setGuestShoppingListFeatureStatus(true);
     }
 
     #[\Override]
     protected function tearDown(): void
     {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_shopping_list.availability_for_guests', false);
-        $configManager->flush();
+        $this->setGuestShoppingListFeatureStatus(false);
         parent::tearDown();
     }
 
-    #[\Override]
-    protected function getRequestDataFolderName(): string
+    private function setGuestShoppingListFeatureStatus(bool $status): void
     {
-        return '../../ApiFrontend/RestJsonApi/requests';
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_shopping_list.availability_for_guests', $status);
+        $configManager->flush();
     }
 
     /**
@@ -105,7 +102,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         return $lineItem;
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
         $this->setVisitorCookie($this->getReference('visitor1'));
 
@@ -115,7 +112,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         self::assertEquals(1, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testGetListForNewVisitor()
+    public function testGetListForNewVisitor(): void
     {
         $response = $this->cget(['entity' => 'shoppinglists'], [], ['HTTP_X-Include' => 'totalCount']);
 
@@ -123,7 +120,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         self::assertEquals(0, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testAddToCart()
+    public function testAddToCart(): void
     {
         $this->setVisitorCookie($this->getReference('visitor1'));
 
@@ -155,7 +152,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         );
     }
 
-    public function testAddToCartForNewVisitorForDefaultShoppingList()
+    public function testAddToCartForNewVisitorForDefaultShoppingList(): void
     {
         $organizationId = $this->getReference('organization')->getId();
         $productId = $this->getReference('product2')->getId();
@@ -188,7 +185,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         );
     }
 
-    public function testAddToCartForDefaultShoppingList()
+    public function testAddToCartForDefaultShoppingList(): void
     {
         $this->setVisitorCookie($this->getReference('visitor1'));
 
@@ -220,7 +217,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         );
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $this->setVisitorCookie($this->getReference('visitor1'));
 
@@ -231,7 +228,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains('get_shopping_list_visitor.yml', $response);
     }
 
-    public function testGetForDefaultShoppingList()
+    public function testGetForDefaultShoppingList(): void
     {
         $this->setVisitorCookie($this->getReference('visitor1'));
 
@@ -242,7 +239,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains('get_shopping_list_visitor.yml', $response);
     }
 
-    public function testTryToGetForDefaultShoppingListForNewVisitor()
+    public function testTryToGetForDefaultShoppingListForNewVisitor(): void
     {
         $response = $this->get(
             ['entity' => 'shoppinglists', 'id' => 'default'],
@@ -261,7 +258,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         );
     }
 
-    public function testGetLineItemsFilteredByDefaultShoppingListForNewVisitor()
+    public function testGetLineItemsFilteredByDefaultShoppingListForNewVisitor(): void
     {
         $response = $this->cget(
             ['entity' => 'shoppinglistitems'],
@@ -273,13 +270,13 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         self::assertEquals(0, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testTryToCreateShoppingListIfVisitorAlreadyHaveOne()
+    public function testTryToCreateShoppingListIfVisitorAlreadyHaveOne(): void
     {
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->post(
             ['entity' => 'shoppinglists'],
-            'create_shopping_list_min.yml',
+            '../../ApiFrontend/RestJsonApi/requests/create_shopping_list_min.yml',
             [],
             false
         );
@@ -293,7 +290,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         );
     }
 
-    public function testCreateLineItemForDefaultShoppingListForNewVisitor()
+    public function testCreateLineItemForDefaultShoppingListForNewVisitor(): void
     {
         $organizationId = $this->getReference('organization')->getId();
         $productId = $this->getReference('product2')->getId();
@@ -330,7 +327,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         );
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
         $this->setVisitorCookie($this->getReference('visitor1'));
 
@@ -353,7 +350,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains($data, $response);
     }
 
-    public function testCreateWithLineItemWhenTheRoleHasNoPermissions()
+    public function testCreateWithLineItemWhenTheRoleHasNoPermissions(): void
     {
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
@@ -371,7 +368,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
 
         $response = $this->post(
             ['entity' => 'shoppinglists'],
-            'create_shopping_list_inverse.yml'
+            '../../ApiFrontend/RestJsonApi/requests/create_shopping_list_inverse.yml'
         );
 
         $shoppingListId = (int)$this->getResourceId($response);
@@ -385,7 +382,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         self::assertCount(1, $shoppingList->getLineItems());
     }
 
-    public function testGetListWhenVisitorHasNoAccessToShoppingList()
+    public function testGetListWhenVisitorHasNoAccessToShoppingList(): void
     {
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
@@ -408,7 +405,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains('cget_shopping_list_visitor.yml', $response);
     }
 
-    public function testGetWhenVisitorHasNoAccessToShoppingList()
+    public function testGetWhenVisitorHasNoAccessToShoppingList(): void
     {
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
@@ -431,7 +428,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains('get_shopping_list_visitor.yml', $response);
     }
 
-    public function testAddToCartWhenVisitorHasNoAccessToShoppingList()
+    public function testAddToCartWhenVisitorHasNoAccessToShoppingList(): void
     {
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
@@ -458,7 +455,7 @@ class ShoppingListForVisitorWithShoppingListTest extends FrontendRestJsonApiTest
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testUpdateWhenVisitorHasNoAccessToShoppingList()
+    public function testUpdateWhenVisitorHasNoAccessToShoppingList(): void
     {
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
