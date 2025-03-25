@@ -13,9 +13,8 @@ use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @dbIsolationPerTest
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
+class ShoppingListKitItemForVisitorWithShoppingListTest extends FrontendRestJsonApiTestCase
 {
     use ConfigManagerAwareTestTrait;
 
@@ -36,12 +35,22 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
                 true
             );
         }
+
+        $this->setGuestShoppingListFeatureStatus(true);
     }
 
     #[\Override]
-    protected function getRequestDataFolderName(): string
+    protected function tearDown(): void
     {
-        return '../../ApiFrontend/RestJsonApi/requests';
+        $this->setGuestShoppingListFeatureStatus(false);
+        parent::tearDown();
+    }
+
+    private function setGuestShoppingListFeatureStatus(bool $status): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_shopping_list.availability_for_guests', $status);
+        $configManager->flush();
     }
 
     private static function assertProductKitItemLineItem(
@@ -61,13 +70,6 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertEquals($sortOrder, $kitItemLineItem->getSortOrder());
     }
 
-    private function setGuestShoppingListFeatureStatus(bool $status = true): void
-    {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_shopping_list.availability_for_guests', $status);
-        $configManager->flush();
-    }
-
     private function assertShoppingListTotal(
         ShoppingList $shoppingList,
         float $total,
@@ -83,24 +85,8 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertEquals($currency, $totalEntity->getCurrency());
     }
 
-    public function testTryToGetListWhenGuestShoppingListFeatureIsDisabled(): void
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->cget(
-            ['entity' => 'shoppinglistkititems'],
-            [],
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
     public function testGetEmptyList(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor2'));
 
         $response = $this->cget(['entity' => 'shoppinglistkititems'], [], ['HTTP_X-Include' => 'totalCount']);
@@ -111,7 +97,6 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
 
     public function testGetList(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->cget(['entity' => 'shoppinglistkititems'], [], ['HTTP_X-Include' => 'totalCount']);
@@ -122,7 +107,6 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
 
     public function testGetListFilteredByLineItem(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->cget(
@@ -133,24 +117,8 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_kit_line_item_filter_visitor.yml', $response);
     }
 
-    public function testTryToGetWhenGuestShoppingListFeatureIsDisabled(): void
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->get(
-            ['entity' => 'shoppinglistkititems', 'id' => '<toString(@product_kit_item1_line_item1->id)>'],
-            [],
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
     public function testTryToGetNotVisitorKitItemLineItem(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->get(
@@ -165,7 +133,6 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
 
     public function testGet(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->get(
@@ -175,24 +142,8 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_kit_line_item_visitor.yml', $response);
     }
 
-    public function testTryToCreateWhenGuestShoppingListFeatureIsDisabled(): void
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->post(
-            ['entity' => 'shoppinglistkititems'],
-            'create_kit_item_line_item_visitor.yml',
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
     public function testCreate(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $shoppingList1 = $this->getReference('shopping_list1');
@@ -234,35 +185,8 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($kitItemLineItemShoppingList, 81.89, 'USD');
     }
 
-    public function testTryToUpdateWhenGuestShoppingListFeatureIsDisabled(): void
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $kitItemLineItemId = (string) $this->getReference('product_kit_item1_line_item1')->getId();
-        $data = [
-            'data' => [
-                'type' => 'shoppinglistkititems',
-                'id' => $kitItemLineItemId,
-                'attributes' => [
-                    'quantity' => 10
-                ]
-            ]
-        ];
-
-        $response = $this->patch(
-            ['entity' => 'shoppinglistkititems', 'id' => $kitItemLineItemId],
-            $data,
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
     public function testTryToUpdateNotVisitorKitItemLineItem(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $kitItemLineItemId = (string) $this->getReference('product_kit_item1_line_item3')->getId();
@@ -293,7 +217,6 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
 
     public function testUpdate(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $shoppingList1 = $this->getReference('shopping_list1');
@@ -326,26 +249,8 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertShoppingListTotal($kitItemLineItemShoppingList, 69.47, 'USD');
     }
 
-    public function testTryToDeleteWhenGuestShoppingListFeatureIsDisabled(): void
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $kitItemLineItemId = $this->getReference('product_kit_item1_line_item1')->getId();
-
-        $response = $this->delete(
-            ['entity' => 'shoppinglistkititems', 'id' => (string)$kitItemLineItemId],
-            [],
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
     public function testTryToDeleteNotVisitorKitItemLineItem()
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $kitItemLineItemId = $this->getReference('product_kit_item1_line_item3')->getId();
@@ -366,7 +271,6 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
 
     public function testDelete(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         /** @var ProductKitItemLineItem $kitItemLineItemReference */
@@ -392,18 +296,5 @@ class ShoppingListKitItemForVisitorTest extends FrontendRestJsonApiTestCase
         $lineItemShoppingList = $lineItem->getShoppingList();
         self::assertEquals($shoppingList1->getId(), $lineItemShoppingList->getId());
         $this->assertShoppingListTotal($lineItemShoppingList, 44.87, 'USD');
-    }
-
-    public function testOptionsWhenGuestShoppingListFeatureIsDisabled(): void
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->options(
-            $this->getListRouteName(),
-            ['entity' => 'shoppinglistkititems']
-        );
-
-        self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST, DELETE');
     }
 }

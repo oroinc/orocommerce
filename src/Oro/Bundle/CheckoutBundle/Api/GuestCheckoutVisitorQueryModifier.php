@@ -94,13 +94,19 @@ class GuestCheckoutVisitorQueryModifier implements QueryModifierInterface, Query
 
     private function applyCheckoutRootRestriction(QueryBuilder $qb, string $rootAlias): void
     {
-        $checkoutSourceAlias = $this->ensureEntityJoined($qb, 'checkoutSource', $rootAlias . '.source');
-        $paramName = QueryBuilderUtil::generateParameterName('visitor', $qb);
-        $qb
-            ->andWhere($qb->expr()->orX(
-                ...$this->getCheckoutSourceRestrictions($qb, $checkoutSourceAlias, $paramName)
-            ))
-            ->setParameter($paramName, $this->guestCheckoutChecker->getVisitor());
+        $visitor = $this->guestCheckoutChecker->getVisitor();
+        if (!$visitor->getId()) {
+            // an anonymous customer visitor cannot have checkouts
+            $qb->andWhere('1 = 0');
+        } else {
+            $checkoutSourceAlias = $this->ensureEntityJoined($qb, 'checkoutSource', $rootAlias . '.source');
+            $paramName = QueryBuilderUtil::generateParameterName('visitor', $qb);
+            $qb
+                ->andWhere($qb->expr()->orX(
+                    ...$this->getCheckoutSourceRestrictions($qb, $checkoutSourceAlias, $paramName)
+                ))
+                ->setParameter($paramName, $visitor);
+        }
     }
 
     private function applyCheckoutLineItemRootRestriction(QueryBuilder $qb, string $rootAlias): void

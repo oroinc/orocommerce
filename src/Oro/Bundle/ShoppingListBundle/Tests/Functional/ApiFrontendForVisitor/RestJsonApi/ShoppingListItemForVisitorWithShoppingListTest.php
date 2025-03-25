@@ -15,9 +15,8 @@ use Symfony\Component\HttpFoundation\Response;
  * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  */
-class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
+class ShoppingListItemForVisitorWithShoppingListTest extends FrontendRestJsonApiTestCase
 {
     use RolePermissionExtension;
     use ConfigManagerAwareTestTrait;
@@ -39,12 +38,22 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
                 true
             );
         }
+
+        $this->setGuestShoppingListFeatureStatus(true);
     }
 
     #[\Override]
-    protected function getRequestDataFolderName(): string
+    protected function tearDown(): void
     {
-        return '../../ApiFrontend/RestJsonApi/requests';
+        $this->setGuestShoppingListFeatureStatus(false);
+        parent::tearDown();
+    }
+
+    private function setGuestShoppingListFeatureStatus(bool $status): void
+    {
+        $configManager = self::getConfigManager();
+        $configManager->set('oro_shopping_list.availability_for_guests', $status);
+        $configManager->flush();
     }
 
     /**
@@ -79,16 +88,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         }
     }
 
-    private function setGuestShoppingListFeatureStatus(bool $status = true): void
+    public function testGetList(): void
     {
-        $configManager = self::getConfigManager();
-        $configManager->set('oro_shopping_list.availability_for_guests', $status);
-        $configManager->flush();
-    }
-
-    public function testGetList()
-    {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->cget(['entity' => 'shoppinglistitems'], [], ['HTTP_X-Include' => 'totalCount']);
@@ -97,9 +98,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertEquals(2, $response->headers->get('X-Include-Total-Count'));
     }
 
-    public function testGet()
+    public function testGet(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->get(
@@ -109,9 +109,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_line_item_visitor.yml', $response);
     }
 
-    public function testCreateLineItem()
+    public function testCreateLineItem(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $organizationId = $this->getReference('organization')->getId();
@@ -143,9 +142,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         );
     }
 
-    public function testTryToGetNotVisitorLineItem()
+    public function testTryToGetNotVisitorLineItem(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $response = $this->get(
@@ -158,9 +156,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testUpdate()
+    public function testUpdate(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $lineItemId = $this->getReference('line_item1')->getId();
@@ -182,9 +179,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
     }
 
-    public function testTryToUpdateNotVisitorLineItem()
+    public function testTryToUpdateNotVisitorLineItem(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $lineItemId = $this->getReference('line_item2')->getId();
@@ -211,9 +207,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testDelete()
+    public function testDelete(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $lineItemId = $this->getReference('line_item1')->getId();
@@ -227,9 +222,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertTrue(null === $lineItem);
     }
 
-    public function testTryToDeleteNotVisitorLineItem()
+    public function testTryToDeleteNotVisitorLineItem(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor1'));
 
         $lineItemId = $this->getReference('line_item2')->getId();
@@ -247,110 +241,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
     }
 
-    public function testTryToGetListWhenGuestShoppingListFeatureIsDisabled()
+    public function testGetListWhenVisitorHasNoAccessToShoppingList(): void
     {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->cget(
-            ['entity' => 'shoppinglistitems'],
-            [],
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
-    public function testTryToGetWhenGuestShoppingListFeatureIsDisabled()
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->get(
-            ['entity' => 'shoppinglistitems', 'id' => '<toString(@line_item1->id)>'],
-            [],
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
-    public function testTryToCreateLineItemWhenGuestShoppingListFeatureIsDisabled()
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->post(
-            ['entity' => 'shoppinglistitems'],
-            'create_line_item_visitor.yml',
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
-    public function testTryToUpdateLineItemWhenGuestShoppingListFeatureIsDisabled()
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $lineItemId = $this->getReference('line_item1')->getId();
-        $data = [
-            'data' => [
-                'type'       => 'shoppinglistitems',
-                'id'         => (string)$lineItemId,
-                'attributes' => [
-                    'quantity' => 123.4
-                ]
-            ]
-        ];
-
-        $response = $this->patch(
-            ['entity' => 'shoppinglistitems', 'id' => (string)$lineItemId],
-            $data,
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
-    public function testTryToDeleteWhenGuestShoppingListFeatureIsDisabled()
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $lineItemId = $this->getReference('line_item1')->getId();
-
-        $response = $this->delete(
-            ['entity' => 'shoppinglistitems', 'id' => (string)$lineItemId],
-            [],
-            [],
-            false
-        );
-
-        self::assertResponseStatusCodeEquals($response, Response::HTTP_FORBIDDEN);
-    }
-
-    public function testOptionsWhenGuestShoppingListFeatureIsDisabled()
-    {
-        $this->setGuestShoppingListFeatureStatus(false);
-        $this->setVisitorCookie($this->getReference('visitor1'));
-
-        $response = $this->options(
-            $this->getListRouteName(),
-            ['entity' => 'shoppinglists']
-        );
-
-        self::assertAllowResponseHeader($response, 'OPTIONS, GET, POST, DELETE');
-    }
-
-    public function testGetListWhenVisitorHasNoAccessToShoppingList()
-    {
-        $this->setGuestShoppingListFeatureStatus();
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
             ShoppingList::class,
@@ -372,9 +264,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('cget_line_item_visitor.yml', $response);
     }
 
-    public function testGetWhenVisitorHasNoAccessToShoppingList()
+    public function testGetWhenVisitorHasNoAccessToShoppingList(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
             ShoppingList::class,
@@ -396,9 +287,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains('get_line_item_visitor.yml', $response);
     }
 
-    public function testCreateLineItemWhenVisitorHasNoAccessToShoppingList()
+    public function testCreateLineItemWhenVisitorHasNoAccessToShoppingList(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
             ShoppingList::class,
@@ -422,9 +312,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($responseContent, $response);
     }
 
-    public function testUpdateWhenVisitorHasNoAccessToShoppingList()
+    public function testUpdateWhenVisitorHasNoAccessToShoppingList(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
             ShoppingList::class,
@@ -458,9 +347,8 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         $this->assertResponseContains($data, $response);
     }
 
-    public function testDeleteWhenVisitorHasNoAccessToShoppingList()
+    public function testDeleteWhenVisitorHasNoAccessToShoppingList(): void
     {
-        $this->setGuestShoppingListFeatureStatus();
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
             ShoppingList::class,
@@ -486,7 +374,7 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
         self::assertTrue(null === $lineItem);
     }
 
-    public function testCreateTogetherWithShoppingListWhenTheRoleHasNoPermissions()
+    public function testCreateTogetherWithShoppingListWhenTheRoleHasNoPermissions(): void
     {
         $this->updateRolePermissions(
             'ROLE_FRONTEND_ANONYMOUS',
@@ -500,7 +388,6 @@ class ShoppingListItemForVisitorTest extends FrontendRestJsonApiTestCase
             ]
         );
 
-        $this->setGuestShoppingListFeatureStatus();
         $this->setVisitorCookie($this->getReference('visitor2'));
 
         $response = $this->post(
