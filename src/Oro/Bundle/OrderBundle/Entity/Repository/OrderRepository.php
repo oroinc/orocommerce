@@ -212,9 +212,11 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         $dateTimeFrom = clone $dateTimeFrom;
         $dateTimeTo = clone $dateTimeTo;
 
-        $queryBuilder
-            ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
-            ->setParameter('includedOrderStatuses', $includedOrderStatuses);
+        if (count($includedOrderStatuses)) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
+                ->setParameter('includedOrderStatuses', $includedOrderStatuses);
+        }
 
         if ($isIncludeSubOrders === false) {
             $queryBuilder->andWhere($queryBuilder->expr()->isNull('o.parent'));
@@ -287,5 +289,36 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             self::AMOUNT_TYPE_TOTAL => 'o.baseTotalValue',
             default => throw new \InvalidArgumentException(sprintf('Unsupported amount type "%s"', $amountType)),
         };
+    }
+
+    public function getSalesOrdersDataQueryBuilder(
+        QueryBuilder $queryBuilder,
+        \DateTime $dateTimeFrom,
+        \DateTime $dateTimeTo,
+        ?array $includedOrderStatuses,
+        bool $isIncludeSubOrders,
+        string $scaleType
+    ): QueryBuilder {
+        $dateTimeFrom = clone $dateTimeFrom;
+        $dateTimeTo = clone $dateTimeTo;
+
+        if (null !== $includedOrderStatuses) {
+            $queryBuilder
+                ->andWhere($queryBuilder->expr()->in('o.internal_status', ':includedOrderStatuses'))
+                ->setParameter('includedOrderStatuses', $includedOrderStatuses);
+        }
+
+        if ($isIncludeSubOrders === false) {
+            $queryBuilder->andWhere($queryBuilder->expr()->isNull('o.parent'));
+        }
+
+        $this->dateHelper->addDatePartsSelect($dateTimeFrom, $dateTimeTo, $queryBuilder, 'o.createdAt', $scaleType);
+
+        $queryBuilder
+            ->andWhere($queryBuilder->expr()->between('o.createdAt', ':from', ':to'))
+            ->setParameter('to', $dateTimeTo, Types::DATETIME_MUTABLE)
+            ->setParameter('from', $dateTimeFrom, Types::DATETIME_MUTABLE);
+
+        return $queryBuilder;
     }
 }
