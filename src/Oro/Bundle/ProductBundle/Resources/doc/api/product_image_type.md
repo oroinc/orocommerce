@@ -122,7 +122,7 @@ The associated product image.
 
 #### get_subresource
 
-Retrieve the record of the product image a specific product image type record is associated with.
+Retrieve a record of the product image a specific product image type record is associated with.
 
 #### get_relationship
 

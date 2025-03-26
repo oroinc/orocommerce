@@ -98,7 +98,7 @@ Retrieve the ID of the product unit precision record assigned to a specific inve
 
 #### get_subresource
 
-Retrieve the record of the organization a specific inventory level belongs to.
+Retrieve a record of the organization a specific inventory level belongs to.
 
 #### get_relationship
 

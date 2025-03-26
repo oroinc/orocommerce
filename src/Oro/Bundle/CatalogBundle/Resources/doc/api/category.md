@@ -180,7 +180,7 @@ Retrieve the IDs of the service records that store category titles data.
 
 #### get_subresource
 
-Retrieve the records of the product assigned to a specific category record.
+Retrieve records of the product assigned to a specific category record.
 
 #### get_relationship
 
@@ -190,7 +190,7 @@ Retrieve the IDs of the product records assigned to a specific category record.
 
 #### get_subresource
 
-Retrieve the record of the small image assigned to a specific category record.
+Retrieve a record of the small image assigned to a specific category record.
 
 #### get_relationship
 
@@ -230,7 +230,7 @@ Retrieve the IDs of the service records that store category low inventory thresh
 
 #### get_subresource
 
-Retrieve the record of the organization a specific category belongs to.
+Retrieve a record of the organization a specific category belongs to.
 
 #### get_relationship
 

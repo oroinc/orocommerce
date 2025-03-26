@@ -103,7 +103,7 @@ Retrieve a record of localization assigned to a specific category title record.
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific category title record.
+Retrieve the ID of localization record assigned to a specific category title record.
 
 #### update_relationship
 
@@ -130,7 +130,7 @@ Retrieve a record of category assigned to a specific category title record.
 
 #### get_relationship
 
-Retrieve ID of category record assigned to a specific category title record.
+Retrieve the ID of category record assigned to a specific category title record.
 
 #### update_relationship
 

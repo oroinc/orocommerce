@@ -78,9 +78,9 @@ Feature: Guest RFQ
     And I should see "Product1"
     When I click "Edit"
     When I click "Assigned To Tooltip Icon"
-    Then I should see "The ID of the user who acts as an order fulfillment officer."
+    Then I should see "The user who acts as an order fulfillment officer."
     When I click "Assigned Customer Users Tooltip Icon"
-    Then I should see "The IDs of the customer users that will receive the order delivery."
+    Then I should see "The customer users that will receive the order delivery."
 
   Scenario: Create second RFQ without adding to shopping list
     Given I proceed as the Buyer

@@ -16,16 +16,16 @@
 "EUR": "EUR"
 oro:
     order:
-        entity_label:                     Order
-        entity_plural_label:              Orders
-        entity_grid_all_view_label:       All %entity_plural_label%
+        entity_label: Order
+        entity_plural_label: Orders
+        entity_grid_all_view_label: All %entity_plural_label%
         entity_frontend_grid_all_view_label: All Past Orders
-        entity_description:               Orders contain information about buyers’ shopping lists submitted for purchase and the collected information about billing and shipping addresses, payment methods, etc.
+        entity_description: Orders contain information about buyers’ shopping lists submitted for purchase and the collected information about billing and shipping addresses, payment methods, etc.
         id.label: ID
         identifier:
-            label:                        Order Number
-            description:                  Unique identifier that is used as a reference for the order.
-            short_label:                  'Order #'
+            label: Order Number
+            description: Unique identifier that is used as a reference for the order.
+            short_label: 'Order #'
         owner.label: Owner
         created_by:
             label: Created By
@@ -35,8 +35,8 @@ oro:
             yes.label: Yes
             no.label: No
         customer:
-            label:                        Customer
-            description:                  Customers are companies who buy products using OroCommerce storefront. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
+            label: Customer
+            description: Customers are companies who buy products using OroCommerce storefront. Customer record contains information about the company, their place in the corporate structure, assigned sales representative, and sales metrics.
             quick_access_button:
                 new_order:
                     label: New Order
@@ -45,8 +45,8 @@ oro:
                     widget:
                         title: Create Order
         customer_user:
-            label:                        Customer User
-            description:                  Customer User represents a person who acts on behalf of the company to buy products using OroCommerce storefront.
+            label: Customer User
+            description: Customer User represents a person who acts on behalf of the company to buy products using OroCommerce storefront.
             quick_access_button:
                 new_order:
                     label: New Order
@@ -54,81 +54,81 @@ oro:
                     label: Create Order
                     widget:
                         title: Create Order
-        organization.label:               Organization
+        organization.label: Organization
         currency:
-            label:                        Currency
-            description:                  The currency that is used to get the prices for the order line items.
+            label: Currency
+            description: The currency that is used to get the prices for the order line items.
         website:
-            label:                        Website
-            description:                  A website where the order is created.
+            label: Website
+            description: A website where the order is created.
         customer_notes:
-            label:                        Customer Notes
-            description:                  A message the buyer has entered in the notes section for the order or a line item.
-            frontend.label:               Notes
+            label: Customer Notes
+            description: A message the buyer has entered in the notes section for the order or a line item.
+            frontend.label: Notes
         po_number:
-            label:                        PO Number
-            description:                  A purchase order number provided by the buyer, if any.
+            label: PO Number
+            description: A purchase order number provided by the buyer, if any.
         ship_until:
-            label:                        Ship by
-            description:                  The latest shipping date that is acceptable to the customer user.
-        payment_method.label:             Payment Method
-        payment_status.label:             Payment Status
+            label: Ship by
+            description: The latest shipping date that is acceptable to the customer user.
+        payment_method.label: Payment Method
+        payment_status.label: Payment Status
         billing_address:
-            label:                        Billing Address
-            description:                  A customer user address provided as the billing address for the order.
+            label: Billing Address
+            description: A customer user address provided as the billing address for the order.
         shipping_address:
-            label:                        Shipping Address
-            description:                  A customer user address provided as the shipping address for the order.
-        price_list.label:                 'Price List'
+            label: Shipping Address
+            description: A customer user address provided as the shipping address for the order.
+        price_list.label: 'Price List'
         line_items:
-            label:                        Line Items
-            description:                  A line item represents a unique product with the quantity and unit of quantity that was ordered by the customer user. Order contains one or more line items.
-        line_items_count.label:           '# Line Items'
-        shipping_cost.label:              'Shipping Cost'
-        estimated_shipping_cost.label:    'Estimated Shipping Cost'
-        overridden_shipping_cost.label:   'Overridden Shipping Cost'
+            label: Line Items
+            description: A line item represents a unique product with the quantity and unit of quantity that was ordered by the customer user. Order contains one or more line items.
+        line_items_count.label: '# Line Items'
+        shipping_cost.label: 'Shipping Cost'
+        estimated_shipping_cost.label: 'Estimated Shipping Cost'
+        overridden_shipping_cost.label: 'Overridden Shipping Cost'
         estimated_shipping_cost_amount:
-            label:                        'Estimated Shipping Cost Amount'
-            description:                  Estimated Shipping Cost Amount is calculated based on the shipping method selected by the customer user and the shipping cost configured for this method and/or communicated by the method provider.
+            label: 'Estimated Shipping Cost Amount'
+            description: A shipping cost is calculated based on the selected shipping method.
         overridden_shipping_cost_amount:
-            label:                        'Overridden Shipping Cost Amount'
-            description:                  Sales manager can enter the Overridden Shipping Cost Amount to manually override the shipping cost for the order.
+            label: 'Overridden Shipping Cost Amount'
+            description: A custom shipping cost that will be used instead of the one that is dynamically generated based on the selected shipping method.
         number_of_items:
-            label:                        'Number of Items'
-        total_currency.label:             'Total currency'
+            label: 'Number of Items'
+        total_currency.label: 'Total currency'
         total_value:
-            label:                        'Total'
-            description:                  Total amount includes the sum of the line item costs, shipping and handling costs and is adjusted to subtract any discounts applied to the order.
-        base_total_value.label:           'Total In Base Currency'
-        subtotal_currency.label:          'Subtotal currency'
+            label: 'Total'
+            description: Total amount includes the sum of the line item costs, shipping and handling costs and is adjusted to subtract any discounts applied to the order.
+        base_total_value.label: 'Total In Base Currency'
+        subtotal_currency.label: 'Subtotal currency'
         subtotal_value:
-            label:                        'Subtotal'
-            description:                  A subtotal amount is the sum of the line item cost.
-        base_subtotal_value.label:        'Subtotal In Base Currency'
-        contact_information.label:        'Contact Information'
+            label: 'Subtotal'
+            description: A subtotal amount is the sum of the line item cost.
+        base_subtotal_value.label: 'Subtotal In Base Currency'
+        contact_information.label: 'Contact Information'
         internal_status:
-            label:                        Internal Status
-            description:                  An order status is managed only in the back-office.
+            label: Internal Status
+            description: An order status is managed only in the back-office.
         status:
-            label:                        Status
-            description:                  An order status is managed by an external system and visible when "Enable External Status Management" configuration option is enabled.
+            label: Status
+            description: An order status is managed by an external system and visible when "Enable External Status Management" configuration option is enabled.
         shipping_status:
-            label:                        Shipping Status
-            description:                  Indicates whether an order is partially or fully shipped.
-        recency.label:                    'Recency'
+            label: Shipping Status
+            description: Indicates whether an order is partially or fully shipped.
+        recency.label: 'Recency'
         parent:
-            label:                        'Main Order'
-            description:                  Related main order assigned to current order.
+            label: 'Main Order'
+            description: Related main order assigned to current order.
         sub_orders:
-            label:                        'Sub-Orders'
-            description:                  Represents collection of child orders assigned to order.
+            label: 'Sub-Orders'
+            description: Represents collection of child orders assigned to order.
         order_type:
-            label:                        'Order Type'
-            primary_order:                'Primary Order'
-            sub_order:                    'Sub-Order'
+            label: 'Order Type'
+            primary_order: 'Primary Order'
+            sub_order: 'Sub-Order'
         subtotal:
             label: Subtotal
-            base.label:                   'Subtotal In Base Currency'
+            base.label: 'Subtotal In Base Currency'
         subtotal_with_discounts:
             label: 'Subtotal With Discounts'
             description: 'A subtotal amount is the sum of the line item cost including order discounts excluding shipping discounts.'
@@ -138,75 +138,74 @@ oro:
             description: 'A subtotal amount is the sum of the line item cost including order discounts excluding shipping discounts in base currency.'
         total:
             label: Total
-        base.label:                       'Total In Base Currency'
+        base.label: 'Total In Base Currency'
         # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
-        shipping_cost_amount.label:       'Shipping Cost Amount'
+        shipping_cost_amount.label: 'Shipping Cost Amount'
         shipping_method:
-            label:                        Shipping Method
-            description:                  The shipping method that was selected by the customer user for the order.
+            label: Shipping Method
+            description: The shipping method that was selected by the customer user for the order.
         shipping_method_type:
-            label:                        Shipping Method Type
-            description:                  The flag that indicates whether the shipping method is configured to be used as the primary one.
-        source_document.label:            Source Document
+            label: Shipping Method Type
+            description: Represents assigned shipping method type.
+        source_document.label: Source Document
         source_entity_class:
-            label:                        Source Entity Class
-            description:                  The class of the entity the order was created from (e.g. shopping list).
+            label: Source Entity Class
+            description: The class of the entity the order was created from (e.g. shopping list).
         source_entity_id:
-            label:                        Source Entity Id
-            description:                  The numeric identifier of the entity the order was created from (e.g. shopping list).
+            label: Source Entity Id
+            description: The numeric identifier of the entity the order was created from (e.g. shopping list).
         source_entity_identifier:
-            label:                        Source Entity Identifier
-            description:                  The identifier of the entity the order was created from (e.g. shopping list).
-        order_date.label:                 Order Date
-        shipping_method.label:            Shipping Method
+            label: Source Entity Identifier
+            description: The identifier of the entity the order was created from (e.g. shopping list).
+        order_date.label: Order Date
+        shipping_method.label: Shipping Method
         shipping_trackings:
-            label:                        Shipping Tracking Numbers
-            description:                  The identifier of the collection of the shipping trackings methods and numbers that are used to track the order delivery.
-        payment.label:                    Payment
+            label: Shipping Tracking Numbers
+            description: The identifier of the collection of the shipping trackings methods and numbers that are used to track the order delivery.
+        payment.label: Payment
         frontend.order_information.title: 'Order Information'
         frontend.ordered_items.title: 'Items Ordered'
         frontend.order_list_link.text: 'Back to Orders List'
         discount.label: Discount
         total_discounts_amount:
-            label:                        Total Discounts Amount
-            description:                  The aggregated amount of the discounts applied to the order.
+            label: Total Discounts Amount
+            description: The aggregated amount of the discounts applied to the order.
         discounts:
-            label:                        Discounts
-            description:                  The identifier of the collection of the discounts that are applied to the order (including the discounts per line items, per order, and shipping discounts).
-        discountitem.add_label:           Add Discount
-        order_history.label:              Order History
-        top_selling_items.label:          Top Selling Items
-        frontend_index_title:             Order History - My Account - Home page
+            label: Discounts
+            description: The identifier of the collection of the discounts that are applied to the order (including the discounts per line items, per order, and shipping discounts).
+        discountitem.add_label: Add Discount
+        order_history.label: Order History
+        top_selling_items.label: Top Selling Items
+        frontend_index_title: Order History - My Account - Home page
         warehouse:
-            label:                        Warehouse
-            description:                  The products are stored in warehouse(s), and the product inventory levels are defined per warehouse to indicate the quantity of the proucts that may be shipped from a particular warehouse. Based on the warehouse shipping origin, different taxes may apply or the calculated shipping cost may vary.
+            label: Warehouse
+            description: The products are stored in warehouse(s), and the product inventory levels are defined per warehouse to indicate the quantity of the proucts that may be shipped from a particular warehouse. Based on the warehouse shipping origin, different taxes may apply or the calculated shipping cost may vary.
         external:
-            label:                        Is External
-            description:                  Indicates whether the order is loaded externally.
-
+            label: Is External
+            description: Indicates whether the order is loaded externally.
         payment_term_7c4f1e8e:
-            label:                        'Payment term'
-            description:                  Relationship with the payment term that was selected as a payment method.
+            label: Payment Term
+            description: Relationship with the payment term that was selected as a payment method.
 
         shipping_tracking:
-            entity_label:         Shipping Tracking
-            entity_plural_label:  Shipping Tracking Numbers
+            entity_label: Shipping Tracking
+            entity_plural_label: Shipping Tracking Numbers
             entity_grid_all_view_label: All %entity_plural_label%
-            entity_description:   Shipping Tracking is manually entered by the sales manager to help the customer user track the shipping status via the shipping provider.
+            entity_description: Shipping Tracking is manually entered by the sales manager to help the customer user track the shipping status via the shipping provider.
             method:
-                label:            Method
-                description:      The human-readable identifier of the shipping provider (e.g., UPS).
+                label: Method
+                description: The human-readable identifier of the shipping provider (e.g., UPS).
             number:
-                label:            Number
-                description:      The identifier of the shipping the shipping provider has assigned to the order.
+                label: Number
+                description: The identifier of the shipping the shipping provider has assigned to the order.
             action:
-                cancel:           Cancel
-                save:             Save
+                cancel: Cancel
+                save: Save
             flash:
-                save_success:     Shipping Tracking Numbers have been updated
+                save_success: Shipping Tracking Numbers have been updated
             orders:
-                label:            Orders
-                description:      The relationship with the orders this shipping tracking is used with.
+                label: Orders
+                description: The relationship with the orders this shipping tracking is used with.
 
         ordershippingtracking:
             entity_label: 'Shipping Tracking'
@@ -225,26 +224,26 @@ oro:
                 description: 'The Orders related to current shipping tracking entity'
 
         orderdiscount:
-            entity_label:         Order Discount
-            entity_plural_label:  Order Discounts
+            entity_label: Order Discount
+            entity_plural_label: Order Discounts
             entity_grid_all_view_label: All %entity_plural_label%
-            entity_description:   Order Discounts are applied to the order in the discount section of the order.
-            id.label:             ID
+            entity_description: Order Discounts are applied to the order in the discount section of the order.
+            id.label: ID
             amount:
-                label:            Amount
-                description:      The monetary value of the discount (e.g., 120$).
+                label: Amount
+                description: The monetary value of the discount (e.g., 120$).
             description:
-                label:            Description
-                description:      A human-readable description provided for the discount.
+                label: Description
+                description: A human-readable description provided for the discount.
             percent:
-                label:            Percent
-                description:      Discounted value in percent based on the original order total amount.
+                label: Percent
+                description: Discounted value in percent based on the original order total amount.
             order:
-                label:            Order
-                description:      The relationship with the order this discount is created for.
+                label: Order
+                description: The relationship with the order this discount is created for.
             type:
-                label:            Order Discount Type
-                description:      The type of discount applied to the order.
+                label: Order Discount Type
+                description: The type of discount applied to the order.
             flash.save_success: Order Discount successfully added
             add_discount.label: Add Special Discount
             value.label: Discount
@@ -256,75 +255,75 @@ oro:
                 edit: Edit
 
         orderaddress:
-            entity_label:                 Order Address
-            entity_plural_label:          Order Addresses
-            entity_grid_all_view_label:   All %entity_plural_label%
-            entity_description:           Order Addresses refer to the address information that was used by customer users as the billing or shipping address in their orders.
-            id.label:                     ID
+            entity_label: Order Address
+            entity_plural_label: Order Addresses
+            entity_grid_all_view_label: All %entity_plural_label%
+            entity_description: Order addresses refer to the address information that was used by customer users as the billing or shipping address in their orders.
+            id.label: ID
             customer_address:
-                label:                    Customer address
-                description:              The identifier of customer address, which was used as order address.
+                label: Customer address
+                description: The identifier of customer address, which was used as order address.
             customer_user_address:
-                label:                    Customer user address
-                description:              The identifier of customer user address, which was used as order address.
+                label: Customer user address
+                description: The identifier of customer user address, which was used as order address.
             label:
-                label:                    Label
-                description:              Order Address label (e.g., Main Office).
+                label: Label
+                description: Order address label (e.g., Main Office).
             first_name:
-                label:                    First Name
-                description:              Customer user's first name provided in the order shipping or billing address.
+                label: First Name
+                description: Customer user's first name provided in the order shipping or billing address.
             middle_name:
-                label:                    Middle Name
-                description:              Customer user's middle name provided in the order shipping or billing address.
+                label: Middle Name
+                description: Customer user's middle name provided in the order shipping or billing address.
             last_name:
-                label:                    Last Name
-                description:              Customer user last name provided in the order shipping or billing address.
+                label: Last Name
+                description: Customer user last name provided in the order shipping or billing address.
             name_prefix:
-                label:                    Name Prefix
-                description:              Customer user's name prefix provided in the order shipping or billing address.
+                label: Name Prefix
+                description: Customer user's name prefix provided in the order shipping or billing address.
             name_suffix:
-                label:                    Name Suffix
-                description:              Customer user's name suffix provided in the order shipping or billing address.
+                label: Name Suffix
+                description: Customer user's name suffix provided in the order shipping or billing address.
             organization:
-                label:                    Organization
-                description:              The organization that is specified in the order address.
+                label: Organization
+                description: The organization that is specified in the order address.
             city:
-                label:                    City
-                description:              The city provided in the order shipping or billing address.
+                label: City
+                description: The city provided in the order shipping or billing address.
             postal_code:
-                label:                    Zip/Postal Code
-                description:              The postal code provided in the order shipping or billing address.
+                label: Zip/Postal Code
+                description: The postal code provided in the order shipping or billing address.
             country:
-                label:                    Country
-                description:              The country provided in the order shipping or billing address.
+                label: Country
+                description: The country provided in the order shipping or billing address.
             region:
-                label:                    State
-                description:              The state or region provided in the order shipping or billing address.
+                label: State
+                description: The state or region provided in the order shipping or billing address.
             region_text:
-                label:                    State
-                description:              The region name for cases when a country does not have predefined regions.
+                label: State
+                description: The region name for cases when a country does not have predefined regions.
             street:
-                label:                    Street
-                description:              The street address provided in the order shipping or billing address.
+                label: Street
+                description: The street address provided in the order shipping or billing address.
             street2:
-                label:                    Street 2
-                description:              The street address provided in the order shipping or billing address.
+                label: Street 2
+                description: The street address provided in the order shipping or billing address.
             from_external_source:
-                label:                    Created from External Source
-                description:              The flag that indicates that the address was imported from an extrenal system.
+                label: Created from External Source
+                description: The flag that indicates that the address was imported from an extrenal system.
             phone:
-                label:                    Phone
-                description:              A customer user phone number provided for the order address.
+                label: Phone
+                description: A customer user phone number provided for the order address.
             created:
-                label:                    Created at
-                description:              The date and time when the order address was created.
+                label: Created at
+                description: The date and time when the order address was created.
             updated:
-                label:                    Updated at
-                description:              The date and time when the order address was updated.
-            country_name.label:           Country name
-            country_iso2_code.label:      Country ISO2 code
-            country_iso3_code.label:      Country ISO3 code
-            region_name.label:            State name
+                label: Updated at
+                description: The date and time when the order address was updated.
+            country_name.label: Country name
+            country_iso2_code.label: Country ISO2 code
+            country_iso3_code.label: Country ISO3 code
+            region_name.label: State name
             validated_at:
                 label: Validated At
                 description: The date and time when address was validated.
@@ -337,83 +336,83 @@ oro:
             add_label: 'Add Product'
             id.label: 'ID'
             product:
-                label:          'Product'
-                description:    A reference to the product information.
+                label: 'Product'
+                description: A reference to the product information.
             product_sku:
-                label:          'Product SKU'
-                description:    A unique human-readable product identifier.
+                label: 'Product SKU'
+                description: A unique human-readable product identifier.
             product_name:
-                label:          'Product Name'
-                description:    'The default name of the ordered product'
+                label: 'Product Name'
+                description: 'The default name of the ordered product'
             product_variant_fields:
-                label:          'Product Variant Fields'
-                description:    'Contains data about fields of ordered configurable product'
-            order.label:        Order
+                label: 'Product Variant Fields'
+                description: 'Contains data about fields of ordered configurable product'
+            order.label: Order
             orders:
-                label:          'Orders'
-                description:    A relationship with the orders that contains the line item.
+                label: 'Orders'
+                description: A relationship with the orders that contains the line item.
             order_product_items.label: 'Order Product Items'
             order_product_requests.label: 'Order Product Requests'
             request_product_item.label: 'Requested Item'
             comment:
-                label:        'Notes'
-                description:   Comments to the line item.
+                label: 'Notes'
+                description: Comments to the line item.
             column_summary: 'Summary'
             item: '{units}, {price} per {unit}'
             item_bundled: '{units}, {price} for every {units}'
             quantity:
-                label:          'Quantity'
-                description:    The product quantity which is ordered.
+                label: 'Quantity'
+                description: The product quantity which is ordered.
             product_unit:
-                label:          'Product Unit'
-                description:    A reference to the product unit in which the product is ordered.
+                label: 'Product Unit'
+                description: A reference to the product unit in which the product is ordered.
                 empty: Choose Unit...
             product_unit_code:
-                label:        'Product Unit Code'
-                description:  The human-readable product unit code.
+                label: 'Product Unit Code'
+                description: The human-readable product unit code.
             price.label: 'Price'
             value:
-                label:        'Price Value'
-                description:  Price for a product unit that is used in this order.
+                label: 'Price Value'
+                description: Price for a product unit that is used in this order.
             currency:
-                label:        'Price Currency'
-                description:  A currency for a product price.
+                label: 'Price Currency'
+                description: A currency for a product price.
             quote_product_offer.label: 'Quote Product Offer'
             ship_by:
-                label:                'Ship By'
-                description:          The latest shipping date that is acceptable for a buyer.
+                label: 'Ship By'
+                description: The latest shipping date that is acceptable for a buyer.
             free_form_product:
-                label:                Product (free-form)
-                description:          The product name as provided when the free-form entry used to add a product to the order line items.
+                label: Product (free-form)
+                description: The product name as provided when the free-form entry used to add a product to the order line items.
             from_external_source:
-                label:                Created from External Source
-                description:          A flag that indicates that a product information was received from the external source.
+                label: Created from External Source
+                description: A flag that indicates that a product information was received from the external source.
             price_type:
-                label:                'Price Type'
-                description:          The identifier of the price type.
+                label: 'Price Type'
+                description: The identifier of the price type.
             select:
                 product: Select product
                 free_form: Free-form entry
             parent_product:
-                label:                'Parent Product'
-                description:          The parent product of the product added to the order.
+                label: 'Parent Product'
+                description: The parent product of the product added to the order.
             column:
                 product: 'Product'
             warehouse:
-                label:                Warehouse
-                description:          The warehouse that the order should be shipped from.
+                label: Warehouse
+                description: The warehouse that the order should be shipped from.
             shipping_method:
-                label:                Line item shipping method
-                description:          Represents assigned shipping method.
+                label: Line item shipping method
+                description: Represents assigned shipping method.
             shipping_method_type:
-                label:                Line item shipping method type
-                description:          Represents assigned shipping method type.
+                label: Line item shipping method type
+                description: Represents assigned shipping method type.
             shipping_estimate_amount:
-                label:                Line item shipping cost
-                description:          The shipping cost value calculated according to configured shipping rules and assigned line item shipping method.
+                label: Line item shipping cost
+                description: The shipping cost value calculated according to configured shipping rules and assigned line item shipping method.
             kit_item_line_items:
                 label: Kit Item Line Items
-                description: Stores the collection of kit item line items when the line item product is a kit.
+                description: The collection of kit item line items when the line item product is a kit.
             checksum:
                 label: Checksum
                 description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
@@ -484,7 +483,7 @@ oro:
                 description: Price for a product kit item line item product unit
             currency:
                 label: Price Currency
-                description:  A currency for a product kit item line item price
+                description: A currency for a product kit item line item price
 
         order_discount:
             add_label: Add Special Discount
@@ -651,9 +650,9 @@ oro:
                 open_orders: 'Open Orders'
             orderlineitems:
                 shipping_cost:
-                    label:      Shipping Cost
+                    label: Shipping Cost
                 shipping_method:
-                    label:      Shipping Method
+                    label: Shipping Method
 
         dashboard:
             widget:

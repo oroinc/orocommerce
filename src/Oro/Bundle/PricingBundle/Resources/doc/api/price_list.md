@@ -231,7 +231,7 @@ Remove the schedules for a specific price list.
 
 #### get_subresource
 
-Retrieve the record of the organization a specific price list belongs to.
+Retrieve a record of the organization a specific price list belongs to.
 
 #### get_relationship
 

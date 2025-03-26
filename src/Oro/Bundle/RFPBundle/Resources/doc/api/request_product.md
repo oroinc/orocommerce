@@ -29,7 +29,6 @@ Example:
 {
   "data": {
     "type": "rfqproducts",
-    "id": "1",
     "attributes": {
       "comment": "Notes 0"
     },
@@ -177,7 +176,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the request records a specific request product record is assigned to.
+Retrieve the request record a specific request product record is assigned to.
 
 #### get_relationship
 
@@ -204,7 +203,7 @@ Example:
 
 #### get_subresource
 
-Retrieve records of a request product item assigned to a specific request product record.
+Retrieve records of request product items assigned to a specific request product record.
 
 #### get_relationship
 

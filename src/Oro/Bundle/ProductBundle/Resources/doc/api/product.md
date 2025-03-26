@@ -1413,7 +1413,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for backOrder for a specific product.
+Retrieve a record of the fallback entity value for backOrder for a specific product.
 
 #### get_relationship
 
@@ -1467,7 +1467,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for decrementQuantity flag for a specific product.
+Retrieve a record of the fallback entity value for decrementQuantity flag for a specific product.
 
 #### get_relationship
 
@@ -1494,7 +1494,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for inventoryThreshold for a specific product.
+Retrieve a record of the fallback entity value for inventoryThreshold for a specific product.
 
 #### get_relationship
 
@@ -1575,7 +1575,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for inventory_status flag for a specific product.
+Retrieve a record of the fallback entity value for inventory_status flag for a specific product.
 
 #### get_relationship
 
@@ -1602,7 +1602,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for manageInventory flag for a specific product.
+Retrieve a record of the fallback entity value for manageInventory flag for a specific product.
 
 #### get_relationship
 
@@ -1656,7 +1656,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for maximumQuantityToOrder for a specific product.
+Retrieve a record of the fallback entity value for maximumQuantityToOrder for a specific product.
 
 #### get_relationship
 
@@ -1683,7 +1683,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for minimumQuantityToOrder for a specific product.
+Retrieve a record of the fallback entity value for minimumQuantityToOrder for a specific product.
 
 #### get_relationship
 
@@ -1710,7 +1710,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the fallback entity value for pageTemplate for a specific product.
+Retrieve a record of the fallback entity value for pageTemplate for a specific product.
 
 #### get_relationship
 
@@ -1737,7 +1737,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the business unit that is the owner of a specific product record.
+Retrieve a record of the business unit that is the owner of a specific product record.
 
 #### get_relationship
 
@@ -1764,7 +1764,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the organization a specific product record belongs to.
+Retrieve a record of the organization a specific product record belongs to.
 
 #### get_relationship
 

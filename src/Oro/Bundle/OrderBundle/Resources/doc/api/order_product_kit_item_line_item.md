@@ -261,15 +261,11 @@ Delete a collection of line item records.
 
 **The required field.**
 
-**If this field changes then will be changed related price value field of `orderlineitems`.**
-
 #### update
 
 {@inheritdoc}
 
 **This field must not be empty, if it is passed.**
-
-**If the value of the field changes then will be changed related price value of `orderlineitems`.**
 
 ### currency
 
@@ -315,7 +311,7 @@ Retrieve a record of product assigned to a specific order product kit item line 
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific order product kit item line item record.
+Retrieve the ID of product record assigned to a specific order product kit item line item record.
 
 #### update_relationship
 
@@ -342,7 +338,7 @@ Retrieve a record of product unit assigned to a specific order product kit item 
 
 #### get_relationship
 
-Retrieve ID of product unit record assigned to a specific order product kit item line item record.
+Retrieve the ID of product unit record assigned to a specific order product kit item line item record.
 
 #### update_relationship
 

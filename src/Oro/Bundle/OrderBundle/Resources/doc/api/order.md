@@ -267,7 +267,7 @@ Retrieve a record of address assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of address record assigned to a specific order record.
+Retrieve the ID of address record assigned to a specific order record.
 
 #### update_relationship
 
@@ -294,7 +294,7 @@ Retrieve a record of customer assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of customer record assigned to a specific order record.
+Retrieve the ID of customer record assigned to a specific order record.
 
 #### update_relationship
 
@@ -321,7 +321,7 @@ Retrieve a record of a back-office user which created the Order.
 
 #### get_relationship
 
-Retrieve ID of a back-office user which created the Order.
+Retrieve the ID of a back-office user which created the Order.
 
 ### customerUser
 
@@ -331,7 +331,7 @@ Retrieve a record of customer user assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of customer user record assigned to a specific order record.
+Retrieve the ID of customer user record assigned to a specific order record.
 
 #### update_relationship
 
@@ -488,11 +488,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the organization a specific order record belongs to.
+Retrieve a record of the organization a specific order record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the organization record which a specific order record will belong to.
+Retrieve the ID of the organization record which a specific order record belongs to.
 
 #### update_relationship
 
@@ -515,7 +515,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the user who is an owner of a specific order record.
+Retrieve a record of the user who is an owner of a specific order record.
 
 #### get_relationship
 
@@ -546,7 +546,7 @@ Retrieve a record of address assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of address record assigned to a specific order record.
+Retrieve the ID of address record assigned to a specific order record.
 
 #### update_relationship
 
@@ -640,7 +640,7 @@ Retrieve a record of payment term assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of payment term record assigned to a specific order record.
+Retrieve the ID of payment term record assigned to a specific order record.
 
 #### update_relationship
 
@@ -694,7 +694,7 @@ Retrieve a record of parent order assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of parent order record assigned to a specific order record.
+Retrieve the ID of parent order record assigned to a specific order record.
 
 #### update_relationship
 

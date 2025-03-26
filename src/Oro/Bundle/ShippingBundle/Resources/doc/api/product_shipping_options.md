@@ -169,7 +169,7 @@ The weight unit of a product shipping option.
 
 #### get_subresource
 
-Retrieve the record of the dimension unit a specific product shipping option record is associated with.
+Retrieve a record of the dimension unit a specific product shipping option record is associated with.
 
 #### get_relationship
 
@@ -196,7 +196,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the freight class a specific product shipping option record is associated with.
+Retrieve a record of the freight class a specific product shipping option record is associated with.
 
 #### get_relationship
 
@@ -233,7 +233,7 @@ Retrieve a record of product assigned to a specific product shipping option reco
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific product shipping option record.
+Retrieve the ID of product record assigned to a specific product shipping option record.
 
 #### update_relationship
 
@@ -262,7 +262,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the product unit a specific product shipping option record is associated with.
+Retrieve a record of the product unit a specific product shipping option record is associated with.
 
 #### get_relationship
 
@@ -289,7 +289,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the weight unit a specific product shipping option record is associated with.
+Retrieve a record of the weight unit a specific product shipping option record is associated with.
 
 #### get_relationship
 

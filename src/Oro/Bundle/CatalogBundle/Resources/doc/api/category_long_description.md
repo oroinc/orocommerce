@@ -103,7 +103,7 @@ Retrieve a record of localization assigned to a specific category long descripti
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific category long description record.
+Retrieve the ID of localization record assigned to a specific category long description record.
 
 #### update_relationship
 
@@ -130,7 +130,7 @@ Retrieve a record of category assigned to a specific category long description r
 
 #### get_relationship
 
-Retrieve ID of category record assigned to a specific category long description record.
+Retrieve the ID of category record assigned to a specific category long description record.
 
 #### update_relationship
 

@@ -227,15 +227,15 @@ Delete a collection of request records.
 
 #### get_subresource
 
-Retrieve a record of assigned user assigned to a specific request record.
+Retrieve records of an order fulfillment officers assigned to a specific request record.
 
 #### get_relationship
 
-Retrieve IDs of assigned user records assigned to a specific request record.
+Retrieve IDs of an order fulfillment officers records assigned to a specific request record.
 
 #### update_relationship
 
-Replace the list of assigned user assigned to a specific request record.
+Replace the list of an order fulfillment officers assigned to a specific request record.
 
 {@request:json_api}
 Example:
@@ -258,7 +258,7 @@ Example:
 
 #### add_relationship
 
-Set assigned user records for a specific request record.
+Set an order fulfillment officers records for a specific request record.
 
 {@request:json_api}
 Example:
@@ -281,7 +281,7 @@ Example:
 
 #### delete_relationship
 
-Remove assigned user records from a specific request record.
+Remove an order fulfillment officers records from a specific request record.
 
 {@request:json_api}
 Example:
@@ -306,15 +306,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of assigned customer user assigned to a specific request record.
+Retrieve records of customer users that will receive the order delivery assigned to a specific request record.
 
 #### get_relationship
 
-Retrieve IDs of assigned customer user records assigned to a specific request record.
+Retrieve IDs of customer users that will receive the order delivery records assigned to a specific request record.
 
 #### update_relationship
 
-Replace the list of assigned customer user assigned to a specific request record.
+Replace the list of customer users that will receive the order delivery assigned to a specific request record.
 
 {@request:json_api}
 Example:
@@ -337,7 +337,7 @@ Example:
 
 #### add_relationship
 
-Set assigned customer user records for a specific request record.
+Set customer users that will receive the order delivery records for a specific request record.
 
 {@request:json_api}
 Example:
@@ -360,7 +360,7 @@ Example:
 
 #### delete_relationship
 
-Remove assigned customer user records from a specific request record.
+Remove customer users that will receive the order delivery records from a specific request record.
 
 {@request:json_api}
 Example:
@@ -385,15 +385,15 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of request additional note assigned to a specific request record.
+Retrieve records of additional notes assigned to a specific request record.
 
 #### get_relationship
 
-Retrieve IDs of request additional note records assigned to a specific request record.
+Retrieve IDs of additional note records assigned to a specific request record.
 
 #### update_relationship
 
-Replace the list of request additional note assigned to a specific request record.
+Replace the list of additional notes assigned to a specific request record.
 
 {@request:json_api}
 Example:
@@ -416,7 +416,7 @@ Example:
 
 #### add_relationship
 
-Set request additional note records for a specific request record.
+Set additional note records for a specific request record.
 
 {@request:json_api}
 Example:
@@ -439,7 +439,7 @@ Example:
 
 #### delete_relationship
 
-Remove request additional note records from a specific request record.
+Remove additional note records from a specific request record.
 
 {@request:json_api}
 Example:
@@ -601,7 +601,7 @@ Retrieve a record of customer status assigned to a specific request record.
 
 #### get_relationship
 
-Retrieve ID of customer status record assigned to a specific request record.
+Retrieve the ID of customer status record assigned to a specific request record.
 
 #### update_relationship
 
@@ -628,7 +628,7 @@ Retrieve a record of internal status assigned to a specific request record.
 
 #### get_relationship
 
-Retrieve ID of internal status record assigned to a specific request record.
+Retrieve the ID of internal status record assigned to a specific request record.
 
 #### update_relationship
 
@@ -651,11 +651,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the organization a specific request record belongs to.
+Retrieve a record of the organization a specific request record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the organization record which a specific request record will belong to.
+Retrieve the ID of the organization record which a specific request record belongs to.
 
 #### update_relationship
 
@@ -678,7 +678,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the user who is an owner of a specific request record.
+Retrieve a record of the user who is an owner of a specific request record.
 
 #### get_relationship
 

@@ -20,7 +20,7 @@ Retrieve a collection of price attribute price list records.
 
 #### get_subresource
 
-Retrieve the record of the organization a specific price attribute record belongs to.
+Retrieve a record of the organization a specific price attribute record belongs to.
 
 #### get_relationship
 

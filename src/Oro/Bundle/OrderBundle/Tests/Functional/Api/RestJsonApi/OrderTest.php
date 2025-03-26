@@ -7,6 +7,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderUsers;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -556,6 +557,38 @@ class OrderTest extends RestJsonApiTestCase
         /** @var OrderLineItem $productKitLineItem */
         $productKitLineItem = $lineItems->get(1);
         self::assertEquals(1, $productKitLineItem->getKitItemLineItems()->count());
+        /** @var OrderProductKitItemLineItem $kitItemLineItem */
+        $kitItemLineItem = $productKitLineItem->getKitItemLineItems()->first();
+        self::assertSame(10.59, $kitItemLineItem->getValue());
+    }
+
+    public function testTryToCreateWithoutValueForHitItemLineItem(): void
+    {
+        $data = $this->getRequestData('create_order.yml');
+        unset($data['included'][2]['attributes']['value']);
+
+        $response = $this->post(
+            ['entity' => 'orders'],
+            $data,
+            [],
+            false
+        );
+
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title' => 'not blank constraint',
+                    'detail' => 'Price value should not be blank. Source: price.',
+                    'source' => ['pointer' => '/included/2']
+                ],
+                [
+                    'title' => 'not blank constraint',
+                    'detail' => 'Price value should not be blank.',
+                    'source' => ['pointer' => '/included/2/attributes/value']
+                ]
+            ],
+            $response
+        );
     }
 
     public function testTryToCreateWithCreatedAtAndUpdatedAt(): void

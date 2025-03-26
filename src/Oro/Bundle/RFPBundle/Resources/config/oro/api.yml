@@ -34,7 +34,7 @@ api:
                         mapped: false
 
         Oro\Bundle\RFPBundle\Entity\RequestProduct:
-            documentation_resource: '@OroRFPBundle/Resources/doc/api/request_products.md'
+            documentation_resource: '@OroRFPBundle/Resources/doc/api/request_product.md'
             fields:
                 productSku:
                     exclude: true

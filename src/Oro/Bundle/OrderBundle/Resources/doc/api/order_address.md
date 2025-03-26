@@ -232,7 +232,7 @@ Retrieve a record of country assigned to a specific address record.
 
 #### get_relationship
 
-Retrieve ID of country record assigned to a specific address record.
+Retrieve the ID of country record assigned to a specific address record.
 
 #### update_relationship
 

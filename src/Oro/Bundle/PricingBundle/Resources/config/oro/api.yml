@@ -374,7 +374,7 @@ api:
                         operators: ['=']
             actions:
                 get_list:
-                    page_size: -1
+                    disable_paging: true
                     disable_sorting: true
                 get: false
                 create: false

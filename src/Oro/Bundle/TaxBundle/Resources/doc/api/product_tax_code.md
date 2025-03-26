@@ -105,7 +105,7 @@ Delete a collection of product tax code records.
 
 #### get_subresource
 
-Retrieve the record of the organization a specific product tax code record belongs to.
+Retrieve a record of the organization a specific product tax code record belongs to.
 
 #### get_relationship
 

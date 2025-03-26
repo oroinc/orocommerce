@@ -111,7 +111,7 @@ Retrieve a record of localization assigned to a specific product description rec
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific product description record.
+Retrieve the ID of localization record assigned to a specific product description record.
 
 #### update_relationship
 
@@ -138,7 +138,7 @@ Retrieve a record of product assigned to a specific product description record.
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific product description record.
+Retrieve the ID of product record assigned to a specific product description record.
 
 #### update_relationship
 

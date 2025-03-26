@@ -134,7 +134,7 @@ Retrieve a record of parent product assigned to a specific line item record.
 
 #### get_relationship
 
-Retrieve ID of parent product record assigned to a specific line item record.
+Retrieve the ID of parent product record assigned to a specific line item record.
 
 ### product
 
@@ -144,7 +144,7 @@ Retrieve a record of product assigned to a specific line item record.
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific line item record.
+Retrieve the ID of product record assigned to a specific line item record.
 
 ### productUnit
 
@@ -154,7 +154,7 @@ Retrieve a record of product unit assigned to a specific line item record.
 
 #### get_relationship
 
-Retrieve ID of product unit record assigned to a specific line item record.
+Retrieve the ID of product unit record assigned to a specific line item record.
 
 ### kitItemLineItems
 

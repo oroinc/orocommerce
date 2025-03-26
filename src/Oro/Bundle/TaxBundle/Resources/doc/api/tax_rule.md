@@ -171,7 +171,7 @@ Delete a collection of tax rule records.
 
 #### get_subresource
 
-Retrieve the record of the customer tax code that a specific tax rule record is associated with.
+Retrieve a record of the customer tax code that a specific tax rule record is associated with.
 
 #### get_relationship
 
@@ -198,7 +198,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the product tax code that a specific tax rule record is associated with.
+Retrieve a record of the product tax code that a specific tax rule record is associated with.
 
 #### get_relationship
 
@@ -225,7 +225,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the tax that a specific tax rule record is associated with.
+Retrieve a record of the tax that a specific tax rule record is associated with.
 
 #### get_relationship
 
@@ -252,7 +252,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the tax jurisdiction that a specific tax rule record is associated with.
+Retrieve a record of the tax jurisdiction that a specific tax rule record is associated with.
 
 #### get_relationship
 
@@ -279,7 +279,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the organization a specific tax rule record belongs to.
+Retrieve a record of the organization a specific tax rule record belongs to.
 
 #### get_relationship
 

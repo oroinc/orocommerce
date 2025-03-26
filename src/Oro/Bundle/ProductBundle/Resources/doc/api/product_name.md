@@ -103,7 +103,7 @@ Retrieve a record of localization assigned to a specific product name record.
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific product name record.
+Retrieve the ID of localization record assigned to a specific product name record.
 
 #### update_relationship
 
@@ -130,7 +130,7 @@ Retrieve a record of product assigned to a specific product name record.
 
 #### get_relationship
 
-Retrieve ID of product record assigned to a specific product name record.
+Retrieve the ID of product record assigned to a specific product name record.
 
 #### update_relationship
 

@@ -88,7 +88,7 @@ Retrieve a record of localization assigned to a specific product kit item label 
 
 #### get_relationship
 
-Retrieve ID of localization record assigned to a specific product kit item label record.
+Retrieve the ID of localization record assigned to a specific product kit item label record.
 
 ### kitItem
 
@@ -98,4 +98,4 @@ Retrieve a record of product kit item assigned to a specific product kit item la
 
 #### get_relationship
 
-Retrieve ID of product kit item record assigned to a specific product kit item label record.
+Retrieve the ID of product kit item record assigned to a specific product kit item label record.

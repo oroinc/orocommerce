@@ -29,7 +29,7 @@ oro:
                 description:            The role of the customer user who placed the RFQ.
             customer_status:
                 label:                  'Customer Status'
-                description:            The status of the RFQ that reflects the step of its management in the front store.
+                description:            The status of the RFQ that reflects the step of its management in the storefront.
             internal_status:
                 label:                  'Internal Status'
                 description:            The status of the RFQ that reflects the step of its backoffice management.
@@ -38,7 +38,7 @@ oro:
                 description:            The additional information or comments regarding the RFQ.
             request_additional_notes:
                 label:                  'Request Additional Notes'
-                description:            The IDs of the notes placed with requests to provide more info on the RFQ and replies to them.
+                description:            Notes placed with requests to provide more info on the RFQ and replies to them.
             customer_user:
                 label:                  'Submitted By'
                 description:            The customer user that submitted the RFQ.
@@ -55,13 +55,13 @@ oro:
                 description:            The date and time before which the order based on the RFQ must be shipped.
             request_products:
                 label:                  'Request Products'
-                description:            The IDs of the products that the RFQ is made for.
+                description:            The products that the RFQ is made for.
             assigned_users:
                 label:                  'Assigned To'
-                description:            The ID of the user who acts as an order fulfillment officer.
+                description:            The user who acts as an order fulfillment officer.
             assigned_customer_users:
                 label:                  'Assigned Customer Users'
-                description:            The IDs of the customer users that will receive the order delivery.
+                description:            The customer users that will receive the order delivery.
             cancellation_reason:
                 label:                  'Cancelation reason'
                 description:            The reason for the RFQ cancellation.
@@ -90,22 +90,22 @@ oro:
             id.label:                   'ID'
             product:
                 label:                  'Product'
-                description:            The ID of the product that the RFQ is made for.
+                description:            The product that the RFQ is made for.
             product_sku.label:          'Product SKU'
             request:
                 label:                  'Request'
-                description:            The ID of the RFQ that includes the product.
+                description:            The RFQ that includes the product.
             request_product_items:
                 label:                  'Request Product Lines'
                 description:            The product line item added to the request for quote. That is, price per unit for a specific quantity of a selected product.
             comment:
                 label:                  'Notes'
-                description:            The note made regarding the individual product in the RFQ.
+                description:            A note made regarding the individual product in the RFQ.
                 form:
                     label: 'Add a Note to This Item'
             kit_item_line_items:
                 label: Kit Item Line Items
-                description: Stores the collection of kit item line items when the request product is a kit
+                description: The collection of kit item line items when the request product is a kit.
             message:
                 product.blank:          'Please select a product'
 

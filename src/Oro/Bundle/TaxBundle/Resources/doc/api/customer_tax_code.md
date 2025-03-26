@@ -113,7 +113,7 @@ Delete a collection of customer tax code records.
 
 #### get_subresource
 
-Retrieve the record of the user a specific customer tax code record belongs to.
+Retrieve a record of the user a specific customer tax code record belongs to.
 
 #### get_relationship
 
@@ -123,7 +123,7 @@ Retrieve the ID of the user record which a specific customer tax code record bel
 
 #### get_subresource
 
-Retrieve the record of the organization a specific customer tax code record belongs to.
+Retrieve a record of the organization a specific customer tax code record belongs to.
 
 #### get_relationship
 

@@ -424,7 +424,7 @@ Retrieve a record of address assigned to a specific checkout record.
 
 #### get_relationship
 
-Retrieve ID of address record assigned to a specific checkout record.
+Retrieve the ID of address record assigned to a specific checkout record.
 
 ### shippingAddress
 
@@ -434,7 +434,7 @@ Retrieve a record of address assigned to a specific checkout record.
 
 #### get_relationship
 
-Retrieve ID of address record assigned to a specific checkout record.
+Retrieve the ID of address record assigned to a specific checkout record.
 
 ### customer
 
@@ -444,7 +444,7 @@ Retrieve a record of customer assigned to a specific checkout record.
 
 #### get_relationship
 
-Retrieve ID of customer record assigned to a specific checkout record.
+Retrieve the ID of customer record assigned to a specific checkout record.
 
 ### customerUser
 
@@ -454,7 +454,7 @@ Retrieve a record of customer user assigned to a specific checkout record.
 
 #### get_relationship
 
-Retrieve ID of customer user record assigned to a specific checkout record.
+Retrieve the ID of customer user record assigned to a specific checkout record.
 
 ### lineItems
 
@@ -551,7 +551,7 @@ Retrieve an entity from which a specific checkout record was created.
 
 #### get_relationship
 
-Retrieve ID of an entity from which a specific checkout record was created.
+Retrieve the ID of an entity from which a specific checkout record was created.
 
 ### coupons
 

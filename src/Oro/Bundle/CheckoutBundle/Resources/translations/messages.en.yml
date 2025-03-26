@@ -53,8 +53,10 @@ oro:
         shipping_estimate_currency:
             label: Shipping Estimate Currency
             description: The currency in which the shipping estimate amount is calculated.
-        shipping_method.label: Shipping Method
-        shipping_method.description: The shipping method selected for the order delivery.
+        shipping_method:
+            label: Shipping Method
+            description: The shipping method selected for the order delivery.
+            hint: Please select a shipping method for each group of line items below.
         shipping_method_type:
             label: Shipping Method Type
             description: The shipping method type selected for the order delivery.
@@ -171,7 +173,7 @@ oro:
                 description: The shipping cost value calculated according to configured shipping rules and assigned line item shipping method.
             kit_item_line_items:
                 label: Kit Item Line Items
-                description: Stores the collection of kit item line items when the line item product is a kit.
+                description: The collection of kit item line items when the line item product is a kit.
             checksum:
                 label: Checksum
                 description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
@@ -260,8 +262,6 @@ oro:
         billing_information: Billing
         shipping_information: Shipping
         payment: Payment
-
-        shipping_method.hint: Please select a shipping method for each group of line items below.
 
         order_review:
             label: Order Review

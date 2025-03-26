@@ -182,7 +182,7 @@ Retrieve a record of product unit assigned to a specific product unit precision 
 
 #### get_relationship
 
-Retrieve ID of product unit records assigned to a specific product unit precision record.
+Retrieve the ID of product unit records assigned to a specific product unit precision record.
 
 #### update_relationship
 

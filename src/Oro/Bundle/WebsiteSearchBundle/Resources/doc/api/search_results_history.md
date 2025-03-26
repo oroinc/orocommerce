@@ -40,38 +40,38 @@ Retrieve the ID of a customer user a specific search result history belongs to.
 
 #### get_subresource
 
-Retrieve the record of the localization a specific search result history record belongs to.
+Retrieve a record of the localization a specific search result history record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the localization record which a specific search result history record will belong to.
+Retrieve the ID of the localization record which a specific search result history record belongs to.
 
 ### website
 
 #### get_subresource
 
-Retrieve the record of the website a specific search result history record belongs to.
+Retrieve a record of the website a specific search result history record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the website record which a specific search result history record will belong to.
+Retrieve the ID of the website record which a specific search result history record belongs to.
 
 ### organization
 
 #### get_subresource
 
-Retrieve the record of the organization a specific search result history record belongs to.
+Retrieve a record of the organization a specific search result history record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the organization record which a specific search result history record will belong to.
+Retrieve the ID of the organization record which a specific search result history record belongs to.
 
 ### owner
 
 #### get_subresource
 
-Retrieve the record of the business unit a specific search result history record belongs to.
+Retrieve a record of the business unit a specific search result history record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the business unit record which a specific search result history record will belong to.
+Retrieve the ID of the business unit record which a specific search result history record belongs to.

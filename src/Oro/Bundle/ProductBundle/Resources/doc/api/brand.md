@@ -623,11 +623,11 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the organization a specific brand record belongs to.
+Retrieve a record of the organization a specific brand record belongs to.
 
 #### get_relationship
 
-Retrieve the ID of the organization record which a specific brand record will belong to.
+Retrieve the ID of the organization record which a specific brand record belongs to.
 
 #### update_relationship
 
@@ -650,7 +650,7 @@ Example:
 
 #### get_subresource
 
-Retrieve the record of the business unit who is an owner of a specific brand record.
+Retrieve a record of the business unit who is an owner of a specific brand record.
 
 #### get_relationship
 

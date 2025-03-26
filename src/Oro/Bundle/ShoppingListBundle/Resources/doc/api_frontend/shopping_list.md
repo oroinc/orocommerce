@@ -184,7 +184,7 @@ Retrieve a record of customer assigned to a specific shopping list record.
 
 #### get_relationship
 
-Retrieve ID of customer record assigned to a shopping list record.
+Retrieve the ID of customer record assigned to a shopping list record.
 
 ### customerUser
 
@@ -194,7 +194,7 @@ Retrieve a record of customer user assigned to a specific shopping list record.
 
 #### get_relationship
 
-Retrieve ID of customer user record assigned to a shopping list record.
+Retrieve the ID of customer user record assigned to a shopping list record.
 
 ### checkout
 

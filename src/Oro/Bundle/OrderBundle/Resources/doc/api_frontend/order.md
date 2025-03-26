@@ -425,7 +425,7 @@ Retrieve a record of address assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of address record assigned to a specific order record.
+Retrieve the ID of address record assigned to a specific order record.
 
 ### customer
 
@@ -435,7 +435,7 @@ Retrieve a record of customer assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of customer record assigned to a specific order record.
+Retrieve the ID of customer record assigned to a specific order record.
 
 ### customerUser
 
@@ -445,7 +445,7 @@ Retrieve a record of customer user assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of customer user record assigned to a specific order record.
+Retrieve the ID of customer user record assigned to a specific order record.
 
 ### lineItems
 
@@ -465,7 +465,7 @@ Retrieve a record of address assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of address record assigned to a specific order record.
+Retrieve the ID of address record assigned to a specific order record.
 
 ### paymentTerm
 
@@ -475,7 +475,7 @@ Retrieve a record of payment term assigned to a specific order record.
 
 #### get_relationship
 
-Retrieve ID of payment term record assigned to a specific order record.
+Retrieve the ID of payment term record assigned to a specific order record.
 
 ### parent
 
@@ -485,7 +485,7 @@ Retrieve a record of parent order assigned to a specific order.
 
 #### get_relationship
 
-Retrieve ID of parent order record assigned to a specific order record.
+Retrieve the ID of parent order record assigned to a specific order record.
 
 ### subOrders
 
