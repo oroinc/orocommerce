@@ -16,6 +16,13 @@ services:
             - '@security.token_storage'
             - '@oro_featuretoggle.checker.feature_checker'
 
+    oro_checkout.api.guest_checkout_customer_user_validator:
+        class: Oro\Bundle\CheckoutBundle\Api\Validator\GuestCheckoutCustomerUserValidator
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: validator.constraint_validator }
+
     oro_checkout.api.guest_checkout_query_modifier:
         class: Oro\Bundle\CheckoutBundle\Api\GuestCheckoutQueryModifier
         arguments:
@@ -90,6 +97,8 @@ services:
         arguments:
             - '@oro_checkout.api.guest_checkout_checker'
         tags:
+            - { name: oro.api.processor, action: get_list, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\Customer, priority: 150 }
+            - { name: oro.api.processor, action: get, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\Customer, priority: 150 }
             - { name: oro.api.processor, action: create, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: 150 }
             - { name: oro.api.processor, action: get_list, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: 150 }
             - { name: oro.api.processor, action: get, group: security_check, requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: 150 }
@@ -105,6 +114,7 @@ services:
         tags:
             - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, targetAction: create, priority: -250 }
             - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress, targetAction: create, priority: -250 }
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, targetAction: create|update, priority: -250 }
 
     oro_checkout.api.configure_guest_checkout_readonly_fields_for_customer_user:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutReadonlyFields
@@ -120,6 +130,13 @@ services:
             - '@oro_checkout.api.guest_checkout_checker'
         tags:
             - { name: oro.api.processor, action: customize_form_data, event: pre_validate|post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser }
+
+    oro_checkout.api.update_guest_checkout_customer:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\UpdateGuestCheckoutCustomer
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_validate, requestType: frontend, parentAction: create, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser, priority: -10 }
 
     oro_checkout.api.link_guest_checkout_customer_user_to_visitor:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\LinkGuestCheckoutCustomerUserToVisitor
@@ -225,6 +242,13 @@ services:
             - '@translator'
         tags:
             - { name: oro.api.processor, action: delete_subresource, group: save_data, requestType: frontend, association: coupons, parentClass: Oro\Bundle\CheckoutBundle\Entity\Checkout }
+
+    oro_checkout.api.configure_guest_checkout_access.customer_user:
+        class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureGuestCheckoutCustomerUserAccess
+        arguments:
+            - '@oro_checkout.api.guest_checkout_checker'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: frontend, class: Oro\Bundle\CheckoutBundle\Entity\Checkout, priority: -250 }
 
     oro_checkout.api.configure_checkout_source_association:
         class: Oro\Bundle\CheckoutBundle\Api\Processor\ConfigureCheckoutSourceAssociation

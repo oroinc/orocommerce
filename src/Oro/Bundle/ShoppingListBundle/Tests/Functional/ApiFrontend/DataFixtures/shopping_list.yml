@@ -14,6 +14,12 @@ Oro\Bundle\WebsiteBundle\Entity\Website:
         owner: '@business_unit'
 
 Oro\Bundle\CustomerBundle\Entity\Customer:
+    child_customer:
+        parent: '@customer'
+        name: 'Child Customer'
+        group: '@customer_group'
+        owner: '@user'
+        organization: '@organization'
     customer1:
         name: 'Company 1'
         organization: '@organization'
@@ -42,6 +48,19 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         enabled: true
         confirmed: true
         customer: '@customer'
+        userRoles: ['@buyer']
+        website: '@website'
+        owner: '@user'
+        organization: '@organization'
+    nancy:
+        email: 'nancy@example.com'
+        username: 'nancy@example.com'
+        password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+        firstName: 'Nancy'
+        lastName: 'Sallee'
+        enabled: true
+        confirmed: true
+        customer: '@child_customer'
         userRoles: ['@buyer']
         website: '@website'
         owner: '@user'

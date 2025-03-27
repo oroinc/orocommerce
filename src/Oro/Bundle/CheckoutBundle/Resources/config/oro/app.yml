@@ -1,0 +1,3 @@
+oro_api:
+    error_title_overrides:
+        'guest checkout customer user constraint': 'access granted constraint'

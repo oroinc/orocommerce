@@ -247,6 +247,93 @@ class CheckoutForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTestCas
         );
     }
 
+    public function testUpdateAndAssignToNewGuestCustomerUser(): void
+    {
+        $checkoutId = $this->getReference('checkout.in_progress')->getId();
+        $data = [
+            'data' => [
+                'type' => 'checkouts',
+                'id' => (string)$checkoutId,
+                'relationships' => [
+                    'customerUser' => [
+                        'data' => [
+                            'type' => 'customerusers',
+                            'id' => 'nww_customer_user'
+                        ]
+                    ]
+                ]
+            ],
+            'included' => [
+                [
+                    'type' => 'customerusers',
+                    'id' => 'nww_customer_user',
+                    'attributes' => [
+                        'email' => 'guest@example.com',
+                        'firstName' => 'John',
+                        'lastName' => 'Doe'
+                    ]
+                ]
+            ]
+        ];
+        $this->patch(
+            ['entity' => 'checkouts', 'id' => (string)$checkoutId],
+            $data
+        );
+
+        $checkout = $this->getEntityManager()->find(Checkout::class, $checkoutId);
+        self::assertNotNull($checkout->getCustomerUser());
+        self::assertEquals('guest@example.com', $checkout->getCustomerUser()->getEmail());
+        self::assertTrue($checkout->getCustomerUser()->isGuest());
+        self::assertFalse($checkout->getCustomerUser()->isEnabled());
+        self::assertFalse($checkout->getCustomerUser()->isConfirmed());
+        self::assertNotNull($checkout->getCustomer());
+        self::assertEquals('John Doe', $checkout->getCustomer()->getName());
+    }
+
+    public function testUpdateAndAssignToNewCustomerUser(): void
+    {
+        $checkoutId = $this->getReference('checkout.in_progress')->getId();
+        $data = [
+            'data' => [
+                'type' => 'checkouts',
+                'id' => (string)$checkoutId,
+                'relationships' => [
+                    'customerUser' => [
+                        'data' => [
+                            'type' => 'customerusers',
+                            'id' => 'nww_customer_user'
+                        ]
+                    ]
+                ]
+            ],
+            'included' => [
+                [
+                    'type' => 'customerusers',
+                    'id' => 'nww_customer_user',
+                    'attributes' => [
+                        'email' => 'user@example.com',
+                        'firstName' => 'John',
+                        'lastName' => 'Doe',
+                        'isGuest' => false
+                    ]
+                ]
+            ]
+        ];
+        $this->patch(
+            ['entity' => 'checkouts', 'id' => (string)$checkoutId],
+            $data
+        );
+
+        $checkout = $this->getEntityManager()->find(Checkout::class, $checkoutId);
+        self::assertNotNull($checkout->getCustomerUser());
+        self::assertEquals('user@example.com', $checkout->getCustomerUser()->getEmail());
+        self::assertFalse($checkout->getCustomerUser()->isGuest());
+        self::assertFalse($checkout->getCustomerUser()->isEnabled());
+        self::assertFalse($checkout->getCustomerUser()->isConfirmed());
+        self::assertNotNull($checkout->getCustomer());
+        self::assertEquals('John Doe', $checkout->getCustomer()->getName());
+    }
+
     public function testDelete(): void
     {
         $checkoutId = $this->getReference('checkout.in_progress')->getId();
