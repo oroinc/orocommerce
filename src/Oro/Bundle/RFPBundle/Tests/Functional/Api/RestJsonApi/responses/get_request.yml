@@ -1,0 +1,42 @@
+data:
+    type: rfqs
+    id: '<toString(@rfp.request.2->id)>'
+    attributes:
+        firstName: Grzegorz
+        lastName: Brzeczyszczykiewicz
+        email: test_request@example.com
+        phone: 2-(999)507-4625
+        company: Google
+        role: CEO
+        note: rfp.request.2
+        cancellationReason: null
+        poNumber: CA1234USD
+        shipUntil: '@rfp.request.2->shipUntil->format("Y-m-d")'
+        deletedAt: null
+        createdAt: '@rfp.request.2->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@rfp.request.2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+    relationships:
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@rfp-customer1-user1@example.com->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@rfp-customer1->id)>'
+        owner:
+            data:
+                type: users
+                id: '<toString(@user->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@organization->id)>'
+        customer_status:
+            data:
+                type: rfqcustomerstatuses
+                id: submitted
+        internal_status:
+            data:
+                type: rfqinternalstatuses
+                id: open

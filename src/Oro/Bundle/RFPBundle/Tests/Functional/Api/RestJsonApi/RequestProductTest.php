@@ -30,7 +30,7 @@ class RequestProductTest extends RestJsonApiTestCase
             * LoadRequestData::NUM_LINE_ITEMS
             * LoadRequestData::NUM_PRODUCTS;
 
-        $this->assertResponseCount($expectedCount, $response);
+        self::assertResponseCount($expectedCount, $response);
     }
 
     public function testGet(): void

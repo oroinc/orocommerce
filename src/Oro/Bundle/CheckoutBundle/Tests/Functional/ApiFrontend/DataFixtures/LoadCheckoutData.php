@@ -33,6 +33,9 @@ class LoadCheckoutData extends AbstractLoadCheckoutData
         /** @var Customer $customer */
         $customer = $this->getReference('customer');
 
+        $childCustomer = $this->createCustomer($manager, 'child_customer', $this->getReference(LoadUser::USER));
+        $childCustomer->setParent($customer);
+
         $anotherCustomerUser = $this->createCustomerUser(
             $manager,
             'another_customer_user',

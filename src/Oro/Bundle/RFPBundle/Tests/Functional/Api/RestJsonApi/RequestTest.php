@@ -3,9 +3,6 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
@@ -30,35 +27,149 @@ class RequestTest extends RestJsonApiTestCase
 
     public function testGet(): void
     {
-        $entity = $this->getEntityManager()
-            ->getRepository(Request::class)
-            ->findOneBy([]);
-
         $response = $this->get(
-            ['entity' => 'rfqs', 'id' => $entity->getId()]
+            ['entity' => 'rfqs', 'id' => '<toString(@rfp.request.2->id)>']
         );
 
-        self::assertResponseNotEmpty($response);
+        $this->assertResponseContains('get_request.yml', $response);
+    }
+
+    public function testCreate(): void
+    {
+        $response = $this->post(
+            ['entity' => 'rfqs'],
+            [
+                'data' => [
+                    'type' => 'rfqs',
+                    'id' => 'new_request_id',
+                    'attributes' => [
+                        'company' => 'Oro',
+                        'firstName' => 'Ronald',
+                        'lastName' => 'Rivera',
+                        'email' => 'test@example.com'
+                    ],
+                    'relationships' => [
+                        'requestProducts' => [
+                            'data' => [
+                                ['type' => 'rfqproducts', 'id' => 'request_product_1']
+                            ]
+                        ]
+                    ]
+                ],
+                'included' => [
+                    [
+                        'type' => 'rfqproducts',
+                        'id' => 'request_product_1',
+                        'attributes' => [
+                            'comment' => 'Test'
+                        ],
+                        'relationships' => [
+                            'request' => [
+                                'data' => ['type' => 'rfqs', 'id' => 'new_request_id']
+                            ],
+                            'product' => [
+                                'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                            ],
+                            'requestProductItems' => [
+                                'data' => [
+                                    ['type' => 'rfqproductitems', 'id' => 'request_product_item_1']
+                                ]
+                            ]
+                        ]
+                    ],
+                    [
+                        'type' => 'rfqproductitems',
+                        'id' => 'request_product_item_1',
+                        'attributes' => [
+                            'quantity' => 10,
+                            'value' => 100,
+                            'currency' => 'USD'
+                        ],
+                        'relationships' => [
+                            'productUnit' => [
+                                'data' => ['type' => 'productunits', 'id' => '@product_unit.liter->code']
+                            ],
+                            'requestProduct' => [
+                                'data' => ['type' => 'rfqproducts', 'id' => 'request_product_1']
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'rfqs',
+                    'attributes' => [
+                        'company' => 'Oro',
+                        'firstName' => 'Ronald',
+                        'lastName' => 'Rivera',
+                        'email' => 'test@example.com'
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testTryToCreateWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $response = $this->post(
+            ['entity' => 'rfqs'],
+            [
+                'data' => [
+                    'type' => 'rfqs',
+                    'id' => 'new_request_id',
+                    'attributes' => [
+                        'company' => 'Oro',
+                        'firstName' => 'Ronald',
+                        'lastName' => 'Rivera',
+                        'email' => 'test@example.com'
+                    ],
+                    'relationships' => [
+                        'customerUser' => [
+                            'data' => [
+                                'type' => 'customerusers',
+                                'id' => '<toString(@rfp-customer1-user1@example.com->id)>'
+                            ]
+                        ],
+                        'customer' => [
+                            'data' => [
+                                'type' => 'customers',
+                                'id' => '<toString(@rfp-customer2->id)>'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
     }
 
     public function testUpdate(): void
     {
-        /** @var Request $requestEntity */
-        $requestEntity = $this->getReference('rfp.request.1');
-        $oldRequestEntity = clone $requestEntity;
-
+        $requestEntityId = $this->getReference('rfp.request.1')->getId();
         $data = [
             'data' => [
                 'type' => 'rfqs',
-                'id' => (string)$requestEntity->getId(),
+                'id' => (string)$requestEntityId,
                 'attributes' => [
                     'firstName' => 'Ronald',
                     'lastName' => 'Rivera',
                     'company' => 'Centidel',
                     'phone' => '2-(999)507-4625',
-                    'poNumber' => 'CA3009USD',
-                    'createdAt' => '1970-01-01T00:00:00Z',
-                    'updatedAt' => '1970-01-01T00:00:00Z'
+                    'poNumber' => 'CA3009USD'
                 ],
                 'relationships' => [
                     'customer_status' => [
@@ -70,138 +181,57 @@ class RequestTest extends RestJsonApiTestCase
                 ]
             ]
         ];
-
         $response = $this->patch(
-            ['entity' => 'rfqs', 'id' => $requestEntity->getId()],
+            ['entity' => 'rfqs', 'id' => (string)$requestEntityId],
             $data
         );
 
-        $result = self::jsonToArray($response->getContent());
-        $this->assertUpdatedRequest($oldRequestEntity, $result, $data);
+        $expectedData = $data;
+        $expectedData['data']['relationships']['customer_status']['data']['id'] = 'submitted';
+        $expectedData['data']['relationships']['internal_status']['data']['id'] = 'open';
+        $this->assertResponseContains($expectedData, $response);
     }
 
-    protected function assertUpdatedRequest(Request $oldRequest, array $result, array $data)
+    public function testTryToUpdateWhenCustomerUserDoesNotBelongsToCustomer(): void
     {
-        /** @var Request $newRequest */
-        $newRequest = $this->getEntityManager()->find(Request::class, $data['data']['id']);
-
-        $attributes = $data['data']['attributes'];
-        unset($attributes['createdAt'], $attributes['updatedAt']);
-
-        foreach ($attributes as $name => $attribute) {
-            self::assertEquals($result['data']['attributes'][$name], $attribute);
-        }
-
-        self::assertEquals(
-            $newRequest->getInternalStatus()->getId(),
-            $oldRequest->getInternalStatus()->getId()
-        );
-
-        self::assertEquals(
-            $newRequest->getCustomerStatus()->getId(),
-            $oldRequest->getCustomerStatus()->getId()
-        );
-    }
-
-    public function testCreate(): int
-    {
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-        $product = (string)$product->getId();
-
-        /** @var ProductUnit $productUnit */
-        $productUnit = $this->getReference('product_unit.liter');
-
-        $data = [
-            'data' => [
-                'id' => '8da4d8e6',
-                'type' => 'rfqs',
-                'attributes' => [
-                    'company' => 'Oro',
-                    'firstName' => 'Ronald',
-                    'lastName' => 'Rivera',
-                    'email' => 'test@example.com'
-                ],
-                'relationships' => [
-                    'requestProducts' => [
-                        'data' => [
-                            [
-                                'type' => 'rfqproducts',
-                                'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
+        $requestEntityId = $this->getReference('rfp.request.3')->getId();
+        $response = $this->patch(
+            ['entity' => 'rfqs', 'id' => (string)$requestEntityId],
+            [
+                'data' => [
+                    'type' => 'rfqs',
+                    'id' => (string)$requestEntityId,
+                    'relationships' => [
+                        'customer' => [
+                            'data' => [
+                                'type' => 'customers',
+                                'id' => '<toString(@rfp-customer2->id)>'
                             ]
                         ]
                     ]
                 ]
             ],
-            'included' => [
-                [
-                    'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f',
-                    'type' => 'rfqproducts',
-                    'attributes' => [
-                        'comment' => 'Test'
-                    ],
-                    'relationships' => [
-                        'request' => [
-                            'data' => ['type' => 'rfqs', 'id' => '8da4d8e6']
-                        ],
-                        'product' => [
-                            'data' => ['type' => 'products', 'id' => $product]
-                        ],
-                        'requestProductItems' => [
-                            'data' => [
-                                [
-                                    'type' => 'rfqproductitems',
-                                    'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7'
-                                ]
-                            ]
-                        ]
-                    ]
-                ],
-                [
-                    'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7',
-                    'type' => 'rfqproductitems',
-                    'attributes' => [
-                        'quantity' => 10,
-                        'value' => 100,
-                        'currency' => 'USD'
-                    ],
-                    'relationships' => [
-                        'productUnit' => [
-                            'data' => ['type' => 'productunits', 'id' => $productUnit->getCode()]
-                        ],
-                        'requestProduct' => [
-                            'data' => [
-                                'type' => 'rfqproducts',
-                                'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
-                            ]
-                        ]
-                    ]
-                ]
-            ]
-        ];
-
-        $response = $this->post(
-            ['entity' => 'rfqs'],
-            $data
+            [],
+            false
         );
 
-        $result = self::jsonToArray($response->getContent());
-
-        self::assertEquals($data['data']['attributes']['firstName'], $result['data']['attributes']['firstName']);
-
-        return (int)$result['data']['id'];
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
     }
 
-    /**
-     * @depends testCreate
-     */
-    public function testDelete(int $entityId): void
+    public function testDelete(): void
     {
+        $requestEntityId = $this->getReference('rfp.request.1')->getId();
         $this->delete(
-            ['entity' => 'rfqs', 'id' => $entityId]
+            ['entity' => 'rfqs', 'id' => (string)$requestEntityId]
         );
 
-        $entity = $this->getEntityManager()->find(Request::class, $entityId);
-        self::assertTrue(null === $entity);
+        $deletedRequestEntity = $this->getEntityManager()->find(Request::class, $requestEntityId);
+        self::assertTrue(null === $deletedRequestEntity);
     }
 }

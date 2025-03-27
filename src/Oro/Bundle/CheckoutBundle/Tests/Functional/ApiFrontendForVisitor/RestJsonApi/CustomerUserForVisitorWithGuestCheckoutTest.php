@@ -92,13 +92,13 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         return $customerUserRelationsProvider->getCustomerGroup();
     }
 
-    private function assertGuestCustomer(CustomerUser $customerUser): void
+    private function assertGuestCustomer(CustomerUser $customerUser, string $customerName = ' '): void
     {
         $customerGroup = $this->getGuestCustomerGroup();
         $customerGroupId = $customerGroup?->getId();
 
         $customer = $customerUser->getCustomer();
-        self::assertSame(' ', $customer->getName());
+        self::assertSame($customerName, $customer->getName());
         if (null === $customerGroupId) {
             self::assertNull($customer->getGroup());
         } else {
@@ -242,6 +242,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         $expectedContent['data']['attributes']['namePrefix'] = null;
         $expectedContent['data']['attributes']['nameSuffix'] = null;
         $expectedContent['data']['attributes']['birthday'] = null;
+        $expectedContent['data']['attributes']['isGuest'] = true;
         $expectedContent['data']['attributes']['enabled'] = false;
         $expectedContent['data']['attributes']['confirmed'] = false;
         $expectedContent['data']['relationships']['customer']['data'] = ['type' => 'customers'];
@@ -261,6 +262,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         self::assertNull($customerUser->getMiddleName());
         self::assertNull($customerUser->getNamePrefix());
         self::assertNull($customerUser->getNameSuffix());
+        self::assertTrue($customerUser->isGuest());
         self::assertFalse($customerUser->isEnabled());
         self::assertFalse($customerUser->isConfirmed());
         self::assertNotNull($customerUser->getCustomer());
@@ -274,7 +276,7 @@ class CustomerUserForVisitorWithGuestCheckoutTest extends FrontendRestJsonApiTes
         self::assertSame($ownerId, $customerUser->getOwner()->getId());
         self::assertNotEmpty($customerUser->getPassword());
 
-        $this->assertGuestCustomer($customerUser);
+        $this->assertGuestCustomer($customerUser, 'John Smith');
         $address = $this->getEntityManager()->find(CustomerUserAddress::class, $addressId);
         $addressData = $responseContent['included'][0];
         self::assertEquals($addressData['attributes']['organization'], $address->getOrganization());

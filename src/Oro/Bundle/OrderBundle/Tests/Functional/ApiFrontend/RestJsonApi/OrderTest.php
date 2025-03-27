@@ -341,6 +341,36 @@ class OrderTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['relationships']['customer']['data'] = [
+            'type' => 'customers',
+            'id' => '<toString(@customer1->id)>'
+        ];
+        $data['data']['relationships']['customerUser']['data'] = [
+            'type' => 'customerusers',
+            'id' => '<toString(@customer_user->id)>'
+        ];
+
+        $response = $this->post(['entity' => 'orders'], $data, [], false);
+
+        $this->assertResponseValidationErrors(
+            [
+                [
+                    'title' => 'customer owner constraint',
+                    'detail' => 'The customer user does not belong to the customer.'
+                ],
+                [
+                    'title' => 'customer or user address granted constraint',
+                    'detail' => 'It is not allowed to use this address for the order.',
+                    'source' => ['pointer' => '/included/2/relationships/customerAddress/data']
+                ]
+            ],
+            $response
+        );
+    }
+
     public function testTryToUpdate(): void
     {
         $response = $this->patch(

@@ -17,6 +17,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -24,34 +25,32 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
 {
     use ContainerAwareTrait;
 
-    const FIRST_NAME = 'Grzegorz';
-    const FIRST_NAME_DELETED = 'John';
-    const LAST_NAME = 'Brzeczyszczykiewicz';
-    const EMAIL = 'test_request@example.com';
-    const PO_NUMBER = 'CA1234USD';
+    public const REQUEST1 = 'rfp.request.1';
+    public const REQUEST2 = 'rfp.request.2';
+    public const REQUEST3 = 'rfp.request.3';
+    public const REQUEST4 = 'rfp.request.4';
+    public const REQUEST5 = 'rfp.request.5';
+    public const REQUEST6 = 'rfp.request.6';
+    public const REQUEST7 = 'rfp.request.7';
+    public const REQUEST8 = 'rfp.request.8';
+    public const REQUEST9 = 'rfp.request.9';
+    public const REQUEST10 = 'rfp.request.10';
+    public const REQUEST11 = 'rfp.request.11';
+    public const REQUEST12 = 'rfp.request.12';
+    public const REQUEST13 = 'rfp.request.13';
+    public const REQUEST14 = 'rfp.request.14';
 
-    const REQUEST1 = 'rfp.request.1';
-    const REQUEST2 = 'rfp.request.2';
-    const REQUEST3 = 'rfp.request.3';
-    const REQUEST4 = 'rfp.request.4';
-    const REQUEST5 = 'rfp.request.5';
-    const REQUEST6 = 'rfp.request.6';
-    const REQUEST7 = 'rfp.request.7';
-    const REQUEST8 = 'rfp.request.8';
-    const REQUEST9 = 'rfp.request.9';
-    const REQUEST10 = 'rfp.request.10';
-    const REQUEST11 = 'rfp.request.11';
-    const REQUEST12 = 'rfp.request.12';
-    const REQUEST13 = 'rfp.request.13';
-    const REQUEST14 = 'rfp.request.14';
-    const NUM_REQUESTS = 14;
-    const NUM_LINE_ITEMS = 5;
-    const NUM_PRODUCTS = 5;
+    public const FIRST_NAME = 'Grzegorz';
+    public const FIRST_NAME_DELETED = 'John';
+    public const LAST_NAME = 'Brzeczyszczykiewicz';
+    public const EMAIL = 'test_request@example.com';
+    public const PO_NUMBER = 'CA1234USD';
 
-    /**
-     * @var array
-     */
-    protected static $requests = [
+    public const NUM_REQUESTS = 14;
+    public const NUM_LINE_ITEMS = 5;
+    public const NUM_PRODUCTS = 5;
+
+    private static array $requests = [
         self::REQUEST1 => [
             'first_name' => self::FIRST_NAME,
             'last_name' => self::LAST_NAME,
@@ -215,13 +214,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         ]
     ];
 
-    /**
-     * @param string $requestFieldName
-     * @param string $requestFieldValue
-     *
-     * @return array
-     */
-    public static function getRequestsFor($requestFieldName, $requestFieldValue)
+    public static function getRequestsFor(string $requestFieldName, string $requestFieldValue): array
     {
         return array_filter(self::$requests, function ($request) use ($requestFieldName, $requestFieldValue) {
             return array_key_exists($requestFieldName, $request) && $request[$requestFieldName] == $requestFieldValue;
@@ -229,26 +222,27 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
     }
 
     #[\Override]
-    public function getDependencies()
+    public function getDependencies(): array
     {
         return [
             LoadUser::class,
             LoadUserData::class,
-            LoadProductUnitPrecisions::class,
+            LoadWebsite::class,
+            LoadProductUnitPrecisions::class
         ];
     }
 
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         /** @var User $owner */
-        $owner = $this->getReference('user');
+        $owner = $this->getReference(LoadUser::USER);
 
         /** @var Organization $organization */
         $organization = $owner->getOrganization();
 
         /** @var Website $website */
-        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
+        $website = $this->getReference(LoadWebsite::WEBSITE);
 
         foreach (self::$requests as $key => $rawRequest) {
             $request = new Request();
@@ -294,7 +288,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         $this->updatedInternalStatus($manager);
     }
 
-    protected function updatedInternalStatus(ObjectManager $manager)
+    private function updatedInternalStatus(ObjectManager $manager): void
     {
         $enumRepository = $manager->getRepository(EnumOption::class);
         foreach (self::$requests as $key => $rawRequest) {
@@ -320,7 +314,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         $manager->flush();
     }
 
-    protected function processRequestProducts(Request $request)
+    private function processRequestProducts(Request $request): void
     {
         $currencies = $this->getCurrencies();
         $products = [
@@ -352,10 +346,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         }
     }
 
-    /**
-     * @return array
-     */
-    protected function getCurrencies()
+    private function getCurrencies(): array
     {
         return $this->container->get('oro_currency.config.currency')->getCurrencyList();
     }

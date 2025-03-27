@@ -21,8 +21,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ShoppingListTest extends FrontendRestJsonApiTestCase
 {
-    /** @var int|null */
-    private $originalShoppingListLimit;
+    private int|null $originalShoppingListLimit;
 
     #[\Override]
     protected function setUp(): void
@@ -607,6 +606,28 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
         self::assertTrue(null === $deletedLineItem);
     }
 
+    public function testTryToCreateWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $data = $this->getRequestData('create_shopping_list.yml');
+        $data['data']['relationships']['customer']['data'] = [
+            'type' => 'customers',
+            'id' => '<toString(@child_customer->id)>'
+        ];
+        $data['data']['relationships']['customerUser']['data'] = [
+            'type' => 'customerusers',
+            'id' => '<toString(@customer_user->id)>'
+        ];
+        $response = $this->post(['entity' => 'shoppinglists'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
+    }
+
     public function testCreateAndSetDefaultShoppingListWhenNoDefaultShoppingList(): void
     {
         $data = $this->getRequestData('create_shopping_list_min.yml');
@@ -724,6 +745,51 @@ class ShoppingListTest extends FrontendRestJsonApiTestCase
                 $this->getReference('customer_user')->getId()
             )
         );
+    }
+
+    public function testTryToUpdateCustomerAndCustomerUser(): void
+    {
+        $shoppingListId = $this->getReference('shopping_list1')->getId();
+        $response = $this->patch(
+            ['entity' => 'shoppinglists', 'id' => (string)$shoppingListId],
+            [
+                'data' => [
+                    'type' => 'shoppinglists',
+                    'id' => (string)$shoppingListId,
+                    'relationships' => [
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => '<toString(@child_customer->id)>']
+                        ],
+                        'customerUser' => [
+                            'data' => ['type' => 'customerusers', 'id' => '<toString(@nancy->id)>']
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $customerId = $this->getReference('customer')->getId();
+        $customerUserId = $this->getReference('customer_user')->getId();
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'shoppinglists',
+                    'id' => (string)$shoppingListId,
+                    'relationships' => [
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => (string)$customerId]
+                        ],
+                        'customerUser' => [
+                            'data' => ['type' => 'customerusers', 'id' => (string)$customerUserId]
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+        $shoppingList = $this->getEntityManager()->find(ShoppingList::class, $shoppingListId);
+        self::assertEquals($customerId, $shoppingList->getCustomer()->getId());
+        self::assertEquals($customerUserId, $shoppingList->getCustomerUser()->getId());
     }
 
     public function testUpdateAndSetDefaultShoppingListWhenNoDefaultShoppingList(): void

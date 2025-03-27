@@ -51,6 +51,36 @@ class ValidateCheckoutTest extends FrontendRestJsonApiTestCase
         );
     }
 
+    public function testTryToCreateWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $response = $this->post(
+            ['entity' => 'checkouts'],
+            [
+                'data' => [
+                    'type' => 'checkouts',
+                    'relationships' => [
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => '<toString(@child_customer->id)>']
+                        ],
+                        'customerUser' => [
+                            'data' => ['type' => 'customerusers', 'id' => '<toString(@customer_user->id)>']
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
+    }
+
     public function testTryToUpdateWithDuplicatedLineItem(): void
     {
         $response = $this->patch(
@@ -66,6 +96,66 @@ class ValidateCheckoutTest extends FrontendRestJsonApiTestCase
                 'source' => ['pointer' => '/included/0']
             ],
             $response
+        );
+    }
+
+    public function testTryToUpdateWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $checkoutId = $this->getReference('checkout.ready_for_completion')->getId();
+        $response = $this->patch(
+            ['entity' => 'checkouts', 'id' => (string)$checkoutId],
+            [
+                'data' => [
+                    'type' => 'checkouts',
+                    'id' => (string)$checkoutId,
+                    'relationships' => [
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => '<toString(@child_customer->id)>']
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
+    }
+
+    public function testTryToUpdateWhenNoViewPermissionForNewCustomer(): void
+    {
+        $checkoutId = $this->getReference('checkout.ready_for_completion')->getId();
+        $response = $this->patch(
+            ['entity' => 'checkouts', 'id' => (string)$checkoutId],
+            [
+                'data' => [
+                    'type' => 'checkouts',
+                    'id' => (string)$checkoutId,
+                    'relationships' => [
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => '<toString(@another_customer->id)>']
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'access granted constraint',
+                'detail' => 'The "VIEW" permission is denied for the related resource.',
+                'source' => ['pointer' => '/data/relationships/customer/data']
+            ],
+            $response,
+            Response::HTTP_FORBIDDEN
         );
     }
 

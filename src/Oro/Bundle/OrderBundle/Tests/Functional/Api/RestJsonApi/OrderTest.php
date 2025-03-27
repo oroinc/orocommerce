@@ -783,6 +783,22 @@ class OrderTest extends RestJsonApiTestCase
         self::assertSame($productId, $lineItem->getProduct()->getId());
     }
 
+    public function testTryToCreateWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $data = $this->getRequestData('create_order.yml');
+        $data['data']['relationships']['customer']['data']['id'] = '<toString(@customer.level_1_1->id)>';
+
+        $response = $this->post(['entity' => 'orders'], $data, [], false);
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
+    }
+
     public function testCreateExternal(): void
     {
         $data = $this->getRequestData('create_order.yml');
@@ -1016,6 +1032,35 @@ class OrderTest extends RestJsonApiTestCase
         // createdAt and updatedAt fields are read-only for orders
         self::assertEquals($orderCreatedAt, $updatedOrder->getCreatedAt()->format('Y-m-d\TH:i:s\Z'));
         self::assertNotEquals($orderNewUpdatedAt, $updatedOrder->getUpdatedAt()->format('Y-m-d\TH:i:s\Z'));
+    }
+
+    public function testTryToUpdateWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->patch(
+            ['entity' => 'orders', 'id' => (string)$orderId],
+            [
+                'data' => [
+                    'type' => 'orders',
+                    'id' => (string)$orderId,
+                    'relationships' => [
+                        'customer' => [
+                            'data' => ['type' => 'customers', 'id' => '<toString(@customer.level_1_1->id)>']
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
     }
 
     public function testTryToUpdateCreatedBy(): void
@@ -1956,5 +2001,29 @@ class OrderTest extends RestJsonApiTestCase
             self::assertCount(4, $item['attributes'], sprintf('included.%d.attributes', $i));
             self::assertArrayNotHasKey('relationships', $item, sprintf('included.%d.relationships', $i));
         }
+    }
+
+    public function testTryToSetCustomerViaRelationshipWhenCustomerUserDoesNotBelongsToCustomer(): void
+    {
+        $orderId = $this->getReference(LoadOrders::ORDER_1)->getId();
+        $response = $this->patchRelationship(
+            ['entity' => 'orders', 'id' => (string)$orderId, 'association' => 'customer'],
+            [
+                'data' => [
+                    'type' => 'customers',
+                    'id'   => '<toString(@customer.level_1_1->id)>'
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'customer owner constraint',
+                'detail' => 'The customer user does not belong to the customer.'
+            ],
+            $response
+        );
     }
 }
