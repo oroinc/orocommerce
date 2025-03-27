@@ -36,7 +36,7 @@
             {{ form_widget(form.quoteProductOffer) }}
             {{ form_errors(form.quoteProductOffer) }}
         </td>
-        <td class="grid-cell qty-cell">
+        <td class="grid-cell qty-cell grid-cell--offset-l-none-mobile">
             <div class="fields-row">
                 <div class="product__qty-input product__qty-input_inline product__qty-input_more-info">
                     {% set quantityReadOnly = form.quantity.vars.attr.readonly is defined and true %}
@@ -119,11 +119,11 @@
 {% endblock %}
 
 {% block oro_sale_quote_product_demand_collection_widget %}
-    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container customer-line-items' }) %}
+    {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'grid-container customer-line-items customer-line-items--rfq' }) %}
     {% apply spaceless %}
         <div {{ block('widget_container_attributes') }}>
             <table class="oro-grid-table customer-line-items__table">
-                <thead class="grid-header hide-on-mobile-landscape">
+                <thead class="grid-header hide-on-mobile-big">
                 <tr class="grid-header-row">
                     <th class="grid-cell">{{ 'oro.frontend.sale.quoteproduct.product_name.label'|trans }}</th>
                     <th class="grid-cell">{{ 'oro.frontend.sale.quoteproductoffer.select_offer.label'|trans }}</th>
