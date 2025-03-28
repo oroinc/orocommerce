@@ -55,6 +55,7 @@ Feature: Promotion CRUD
     And I should see following grid:
       | SKU   | Name      |
       | PSKU1 | Product 1 |
+    And I click "Items To Discount"
     When I filter SKU as is equal to "NonExisting"
     Then number of records should be 0
 

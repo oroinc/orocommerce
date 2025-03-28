@@ -142,6 +142,7 @@
     &sm-label {
         font-size: $base-font-size;
         color: $primary-200;
+        font-weight: font-weight('medium');
 
         &.#{$app-prefix}color-warn {
             color: $primary-200;
@@ -174,6 +175,7 @@
     &sm-sectors,
     &sm-sector,
     &block-category {
+        font-weight: font-weight('medium');
         margin-bottom: 12px;
         border-bottom: none;
 
@@ -395,6 +397,10 @@
 
     &resizer-h-cl {
         margin: auto -8px;
+    }
+
+    &category-title {
+        font-weight: font-weight('medium');
     }
 }
 
@@ -622,4 +628,8 @@
     .close {
         display: none;
     }
+}
+
+.#{$trt-prefix}trait {
+    font-weight: font-weight('medium');
 }

@@ -5,20 +5,20 @@
         background: none;
         &.#{$app-prefix}hovered {
             .#{$app-prefix}layer-title {
-                background-color: $primary-860;
-                border-bottom: none;
+                background-color: $neutral-grey-3;
             }
         }
 
         &.#{$app-prefix}selected {
             .#{$app-prefix}layer-title {
-                background-color: $primary-800;
+                background-color: $secondary-secondary-6;
             }
         }
 
         .#{$app-prefix}layer-title {
-            background-color: $primary-860;
-            border-bottom: none;
+            background-color: $neutral-grey-1;
+            border: 1px solid $neutral-grey-3;
+            font-weight: font-weight('semi-bold');
             margin-bottom: 8px;
             border-radius: 4px;
         }

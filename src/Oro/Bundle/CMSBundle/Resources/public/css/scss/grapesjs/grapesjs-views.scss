@@ -17,9 +17,9 @@
                 color: $text-primary;
 
                 background-color: $neutral-white;
-                border-top: 1px solid $neutral-grey-3;
-                border-left: 1px solid $neutral-grey-3;
-                border-bottom: 1px solid $neutral-grey-3;
+                border-top: 1px solid $neutral-grey-4;
+                border-left: 1px solid $neutral-grey-4;
+                border-bottom: 1px solid $neutral-grey-4;
                 line-height: 20px;
 
                 box-shadow: none;
@@ -33,12 +33,13 @@
                 }
 
                 &:last-child {
-                    border-right: 1px solid $neutral-grey-3;
+                    border-right: 1px solid $neutral-grey-4;
                     border-radius: 0 $border-radius $border-radius 0;
                 }
 
                 &.#{$pn-prefix}active {
-                    background-color: $primary-accent-light;
+                    background-color: $secondary-secondary-4;
+                    color: $primary-inverse;
                 }
             }
         }
