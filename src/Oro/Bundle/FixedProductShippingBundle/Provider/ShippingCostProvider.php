@@ -178,7 +178,9 @@ class ShippingCostProvider
                 Product::KIT_SHIPPING_ONLY_ITEMS =>
                     $this->getKitItemsPriceWithShipping($lineItem, $currency),
                 Product::KIT_SHIPPING_ONLY_PRODUCT =>
-                    $this->getKitRealPriceWithShipping($checkout, $lineItem, $currency)
+                    $this->getKitRealPriceWithShipping($checkout, $lineItem, $currency),
+                default =>
+                    $this->getKitAndItemsPriceWithShipping($checkout, $lineItem, $currency),
             };
         } else {
             $subtotalWithShipping = $this->getLineItemProductPrice($lineItem, $currency);
@@ -247,13 +249,27 @@ class ShippingCostProvider
         $matchedKitPrices = $this
             ->productPriceProvider
             ->getPricesByScopeCriteriaAndProducts($priceScopeCriteria, [$product], [$currency]);
-        $kitPriceDto = current($matchedKitPrices[$product->getId()]);
-        $subtotal = BigDecimal::of($kitPriceDto->getPrice()?->getValue() ?? self::DEFAULT_COST)
+
+        $kitPrice = $this->getKitPrice($matchedKitPrices, $product->getId());
+        $kitShippingPrice = $this->getItemShippingPrice($lineItem, $currency);
+
+        $subtotal = BigDecimal::of($kitPrice)
             ->multipliedBy($lineItem->getQuantity());
-        $shipping = BigDecimal::of($this->getItemShippingPrice($lineItem, $currency))
+        $shipping = BigDecimal::of($kitShippingPrice)
             ->multipliedBy($lineItem->getQuantity());
 
         return [$subtotal, $shipping];
+    }
+
+    private function getKitPrice(array $matchedKitPrices, int $productId): float
+    {
+        if (!array_key_exists($productId, $matchedKitPrices)) {
+            return self::DEFAULT_COST;
+        }
+
+        $kitPriceDto = current($matchedKitPrices[$productId]);
+
+        return $kitPriceDto->getPrice()?->getValue() ?? self::DEFAULT_COST;
     }
 
     /**
