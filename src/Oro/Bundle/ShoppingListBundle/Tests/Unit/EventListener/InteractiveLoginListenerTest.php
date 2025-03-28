@@ -26,8 +26,6 @@ final class InteractiveLoginListenerTest extends TestCase
     private const string VISITOR_SESSION_ID = 'someSessionId';
 
     private Request $request;
-    private InteractiveLoginListener $listener;
-
     private CustomerVisitorManager&MockObject $visitorManager;
     private GuestShoppingListMigrationManager&MockObject $guestShoppingListMigrationManager;
     private ConfigManager&MockObject $configManager;
@@ -35,6 +33,7 @@ final class InteractiveLoginListenerTest extends TestCase
     private SendChangedEntitiesToMessageQueueListener&MockObject $sendChangedEntitiesListener;
     private TranslatorInterface&MockObject $translator;
     private TokenInterface&MockObject $token;
+    private InteractiveLoginListener $listener;
 
     #[\Override]
     protected function setUp(): void
@@ -58,57 +57,66 @@ final class InteractiveLoginListenerTest extends TestCase
         );
     }
 
-    public function testNoAvailabilityGorGuests(): void
+    public function testNoCustomerUser(): void
     {
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(null);
+
+        $this->configManager->expects(self::never())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests');
+
+        $this->guestShoppingListMigrationManager->expects(self::never())
+            ->method('migrateGuestShoppingList');
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+    }
+
+    public function testAvailabilityForGuestsIsDisabled(): void
+    {
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
+
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(false);
 
-        $this->token->expects(self::never())
-            ->method('getUser');
-
-        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
-    }
-
-    public function testNoCustomerUser(): void
-    {
-        $this->configManager->expects(self::once())
-            ->method('get')
-            ->with('oro_shopping_list.availability_for_guests')
-            ->willReturn(true);
-
-        $this->token->expects(self::once())
-            ->method('getUser')
-            ->willReturn(null);
+        $this->guestShoppingListMigrationManager->expects(self::never())
+            ->method('migrateGuestShoppingList');
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
     }
 
     public function testWithoutCookie(): void
     {
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
+
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
 
-        $this->token->expects(self::once())
-            ->method('getUser')
-            ->willReturn(new CustomerUser());
+        $this->guestShoppingListMigrationManager->expects(self::never())
+            ->method('migrateGuestShoppingList');
 
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
     }
 
     public function testWithoutVisitor(): void
     {
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
+
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
-
-        $this->token->expects(self::once())
-            ->method('getUser')
-            ->willReturn(new CustomerUser());
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
@@ -120,10 +128,6 @@ final class InteractiveLoginListenerTest extends TestCase
             ->with(self::VISITOR_SESSION_ID)
             ->willReturn(null);
 
-        $this->sendChangedEntitiesListener->expects(self::once())
-            ->method('setEnabled')
-            ->with(true);
-
         $this->guestShoppingListMigrationManager->expects(self::never())
             ->method('migrateGuestShoppingList');
 
@@ -132,14 +136,14 @@ final class InteractiveLoginListenerTest extends TestCase
 
     public function testWithoutVisitorShoppingLists(): void
     {
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
+
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
-
-        $this->token->expects(self::exactly(2))
-            ->method('getUser')
-            ->willReturn(new CustomerUser());
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
@@ -151,10 +155,6 @@ final class InteractiveLoginListenerTest extends TestCase
             ->method('find')
             ->with(self::VISITOR_SESSION_ID)
             ->willReturn($visitor);
-
-        $this->sendChangedEntitiesListener->expects(self::exactly(2))
-            ->method('setEnabled')
-            ->withConsecutive([false], [true]);
 
         $this->guestShoppingListMigrationManager->expects(self::never())
             ->method('migrateGuestShoppingList');
@@ -169,14 +169,14 @@ final class InteractiveLoginListenerTest extends TestCase
         $visitor = new CustomerVisitorStub();
         $visitor->addShoppingList($shoppingList);
 
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
-
-        $this->token->expects(self::exactly(2))
-            ->method('getUser')
-            ->willReturn($customerUser);
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
@@ -203,21 +203,21 @@ final class InteractiveLoginListenerTest extends TestCase
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
     }
 
-    public function testMigrateGuestShoppingList(): void
+    public function testMigrateGuestShoppingListWithOperationCodeMerge(): void
     {
         $shoppingList = new ShoppingList();
         $customerUser = new CustomerUser();
         $visitor = new CustomerVisitorStub();
         $visitor->addShoppingList($shoppingList);
 
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
         $this->configManager->expects(self::once())
             ->method('get')
             ->with('oro_shopping_list.availability_for_guests')
             ->willReturn(true);
-
-        $this->token->expects(self::exactly(2))
-            ->method('getUser')
-            ->willReturn($customerUser);
 
         $this->request->cookies->set(
             AnonymousCustomerUserAuthenticator::COOKIE_NAME,
@@ -258,11 +258,105 @@ final class InteractiveLoginListenerTest extends TestCase
         $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
     }
 
-    public function testLogException(): void
+    public function testMigrateGuestShoppingListWhenVisitorSessionIdIsRetrievedFromRequestAttributes(): void
     {
+        $shoppingList = new ShoppingList();
+        $customerUser = new CustomerUser();
+        $visitor = new CustomerVisitorStub();
+        $visitor->addShoppingList($shoppingList);
+
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
         $this->configManager->expects(self::once())
             ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
+
+        $this->request->attributes->set('visitor_session_id', self::VISITOR_SESSION_ID);
+
+        $this->visitorManager->expects(self::once())
+            ->method('find')
+            ->with(self::VISITOR_SESSION_ID)
+            ->willReturn($visitor);
+
+        $this->sendChangedEntitiesListener->expects(self::exactly(2))
+            ->method('setEnabled')
+            ->withConsecutive([false], [true]);
+
+        $this->guestShoppingListMigrationManager->expects(self::once())
+            ->method('migrateGuestShoppingList')
+            ->with($visitor, $customerUser, $shoppingList)
+            ->willReturn(GuestShoppingListMigrationManager::OPERATION_MERGE);
+
+        $this->translator->expects(self::never())
+            ->method('trans');
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+    }
+
+    public function testMigrateGuestShoppingListWhenNotExistingVisitorSessionIdIsRetrievedFromRequestAttributes(): void
+    {
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
+
+        $this->request->attributes->set('visitor_session_id', self::VISITOR_SESSION_ID);
+
+        $this->visitorManager->expects(self::once())
+            ->method('find')
+            ->with(self::VISITOR_SESSION_ID)
+            ->willReturn(null);
+
+        $this->guestShoppingListMigrationManager->expects(self::never())
+            ->method('migrateGuestShoppingList');
+
+        $this->listener->onInteractiveLogin(new InteractiveLoginEvent($this->request, $this->token));
+    }
+
+    public function testLogException(): void
+    {
+        $shoppingList = new ShoppingList();
+        $customerUser = new CustomerUser();
+        $visitor = new CustomerVisitorStub();
+        $visitor->addShoppingList($shoppingList);
+
+        $this->token->expects(self::once())
+            ->method('getUser')
+            ->willReturn($customerUser);
+
+        $this->configManager->expects(self::once())
+            ->method('get')
+            ->with('oro_shopping_list.availability_for_guests')
+            ->willReturn(true);
+
+        $this->request->cookies->set(
+            AnonymousCustomerUserAuthenticator::COOKIE_NAME,
+            base64_encode(json_encode(self::VISITOR_SESSION_ID, JSON_THROW_ON_ERROR))
+        );
+
+        $this->visitorManager->expects(self::once())
+            ->method('find')
+            ->with(self::VISITOR_SESSION_ID)
+            ->willReturn($visitor);
+
+        $this->sendChangedEntitiesListener->expects(self::exactly(2))
+            ->method('setEnabled')
+            ->withConsecutive([false], [true]);
+
+        $this->guestShoppingListMigrationManager->expects(self::once())
+            ->method('migrateGuestShoppingList')
+            ->with($visitor, $customerUser, $shoppingList)
             ->willThrowException(new \Exception());
+
+        $this->translator->expects(self::never())
+            ->method('trans');
 
         $this->logger->expects(self::once())
             ->method('error')
