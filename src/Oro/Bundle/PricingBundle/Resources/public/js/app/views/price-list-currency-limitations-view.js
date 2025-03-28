@@ -24,6 +24,11 @@ define(function(require) {
         currencies: {},
 
         /**
+         * @property {bool}
+         */
+        defaultCurrency: null,
+
+        /**
          * @inheritdoc
          */
         events: function() {
@@ -94,13 +99,14 @@ define(function(require) {
         /**
          * Prepare currency list select for selected price list
          *
-         *  @param {Boolean} selectFirst
+         *  @param {Boolean} selectDefaultOrFirst
          */
-        prepareCurrencySelect: function(selectFirst) {
+        prepareCurrencySelect: function(selectDefaultOrFirst) {
             const priceListId = this.$(this.options.priceListSelector).val();
 
             if (!priceListId) {
                 const $currencySelect = this.$(this.options.currencySelector);
+                this.defaultCurrency = $currencySelect.val();
                 $currencySelect.find('option[value=""]').show();
                 $currencySelect.attr('disabled', 'disabled');
                 $currencySelect.val('');
@@ -109,7 +115,7 @@ define(function(require) {
             }
 
             if (_.has(this.currencies, priceListId)) {
-                this.handleCurrencies(this.currencies[priceListId], selectFirst);
+                this.handleCurrencies(this.currencies[priceListId], selectDefaultOrFirst);
             } else {
                 const loadingMaskView = this.getLoadingMaskView();
                 $.ajax({
@@ -122,7 +128,7 @@ define(function(require) {
                         const priceListCurrencies = _.keys(response);
                         this.currencies[priceListId] = priceListCurrencies;
                         this.$el.closest(this.options.container).data('currencies', this.currencies);
-                        this.handleCurrencies(priceListCurrencies, selectFirst);
+                        this.handleCurrencies(priceListCurrencies, selectDefaultOrFirst);
                     }.bind(this),
                     complete: function() {
                         loadingMaskView.hide();
@@ -133,9 +139,9 @@ define(function(require) {
 
         /**
          * @param {array} priceListCurrencies
-         * @param {Boolean} selectFirst
+         * @param {Boolean} selectDefaultOrFirst
          */
-        handleCurrencies: function(priceListCurrencies, selectFirst) {
+        handleCurrencies: function(priceListCurrencies, selectDefaultOrFirst) {
             // Add empty key for empty value placeholder
             if (priceListCurrencies.indexOf('') === -1) {
                 priceListCurrencies.unshift('');
@@ -157,12 +163,17 @@ define(function(require) {
                 .prop('disabled', false)
                 .find('option[value=""]').hide();
 
-            if (selectFirst && _.isEmpty(value)) {
-                $currencySelect.val(priceListCurrencies[1]);
-                $currencySelect.trigger('change');
-            } else {
-                $currencySelect.val(value);
+            if (selectDefaultOrFirst && _.isEmpty(value)) {
+                const hasDefault = this.defaultCurrency &&
+                    $currencySelect.find(`option[value="${this.defaultCurrency}"]`).length > 0;
+
+                const defaultValue = hasDefault ? this.defaultCurrency : priceListCurrencies[1];
+
+                $currencySelect.val(defaultValue).trigger('change');
+                return;
             }
+
+            $currencySelect.val(value);
         },
 
         /**
