@@ -491,6 +491,113 @@ class ShippingCostProviderTest extends TestCase
         ];
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)*
+     */
+    public function testGetCalculatedProductKitShippingCostWithoutPrices(): void
+    {
+        $unitCode = 'each';
+        $currency = 'USD';
+        $lineItemsArray = [
+            'kit1' => [
+                'quantity' => 1,
+                'unitCode' => 'each',
+                'kitShippingCalculationMethod' => Product::KIT_SHIPPING_ALL,
+                'shippingPrice' => (new PriceAttributeProductPrice())->setPrice(
+                    Price::create(1.50, 'USD')
+                ),
+                'price' => null,
+                'kitLineItemsArray' => [
+                    'sku1' => [
+                        'quantity' => 3,
+                        'unitCode' => 'each',
+                        'shippingPrice' => (new PriceAttributeProductPrice())->setPrice(
+                            Price::create(2.25, 'USD')
+                        ),
+                        'price' => Price::create(12.25, 'USD'),
+                    ],
+                ]
+            ],
+        ];
+
+        $this->initShippingCostProvider();
+
+        $checkout = new Checkout();
+        $lineItems = new ArrayCollection([]);
+        $productPrices = [];
+
+        foreach ($lineItemsArray as $itemKey => $item) {
+            $shippingLineItem = $this->getShippingLineItem(
+                quantity: $item['quantity'],
+                unitCode: $item['unitCode']
+            )->setPrice($item['price']);
+            $product = $this
+                ->createEmptyProduct($itemKey, Product::TYPE_KIT, $unitCode)
+                ->setKitShippingCalculationMethod($item['kitShippingCalculationMethod']);
+
+            ReflectionUtil::setId($product, 1);
+
+            $this->productPriceProvider
+                ->expects(self::any())
+                ->method('getPricesByScopeCriteriaAndProducts')
+                ->with($this->productPriceScopeCriteria, [$product], [$currency])
+                ->willReturn([]);
+
+            $productPrices[$itemKey] = [
+                'shippingPrice' => $item['shippingPrice']->setProduct($product),
+                'price' => $item['price']
+            ];
+
+            if ($product->isKit()) {
+                $kitItemLineItems = new ArrayCollection([]);
+                foreach ($item['kitLineItemsArray'] as $lineItemKey => $lineItem) {
+                    $itemProduct = $this->createEmptyProduct(sku: $lineItemKey, unitCode: $lineItem['unitCode']);
+                    $productPrices[$lineItemKey] = [
+                        'shippingPrice' => $lineItem['shippingPrice']->setProduct($itemProduct),
+                        'price' => $lineItem['price']
+                    ];
+                    $kitItemLineItems->add(
+                        $this->getShippingKitItemLineItem(
+                            $itemProduct,
+                            $lineItem['price'],
+                            $lineItem['quantity'],
+                            $lineItem['unitCode']
+                        )->setProduct($itemProduct)
+                    );
+                }
+                $shippingLineItem->setKitItemLineItems($kitItemLineItems);
+            }
+            $shippingLineItem->setProduct($product);
+            $lineItems->add($shippingLineItem);
+        }
+
+        $this->priceAttribute->setCurrencies([$currency, 'NotExistingCurrency']);
+        $this->priceProvider->expects(self::any())
+            ->method('getPricesWithUnitAndCurrencies')
+            ->willReturnCallback(function ($priceAttribute, $product) use ($productPrices) {
+                $data = [];
+                foreach ($product->getAvailableUnitCodes() as $unitCode) {
+                    $prices = [];
+                    foreach ($priceAttribute->getCurrencies() as $currency) {
+                        $prices[$currency] = $productPrices[$product->getSku()]['shippingPrice'];
+                    }
+
+                    $data[$unitCode] = $prices;
+                }
+
+                return $data;
+            });
+
+        $result = $this->provider->getCalculatedProductShippingCostWithSubtotal(
+            $checkout,
+            $lineItems,
+            $currency
+        );
+
+        self::assertEquals([BigDecimal::of(36.75), BigDecimal::of(8.25)], $result);
+    }
+
     private function initShippingCostProvider(): void
     {
         $this->provider = new ShippingCostProvider(
