@@ -11,64 +11,64 @@ class LoadHomePageDemoData extends AbstractLoadPageData
 {
     protected array $imagesMap = [
         'homepage' => [
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-order-history.png' =>
-                '/bundles/orocms/images/home-page/illustration-carts-order-history.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-order-history-1280.png' =>
-                '/bundles/orocms/images/home-page/illustration-carts-order-history-1280.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-contact-us.png' =>
-                '/bundles/orocms/images/home-page/illustration-carts-contact-us.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-contact-us-1280.png' =>
-                '/bundles/orocms/images/home-page/illustration-carts-contact-us-1280.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-1.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-1.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-1-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-1-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-1-992.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-1-992.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-2.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-2-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2-992.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-2-992.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2-1280.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-2-1280.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-3.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-3.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-3-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-3-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-3-992.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-3-992.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-4.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-4.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-4-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-4-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-5.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-5.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-5-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-5-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-5-992.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-5-992.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-6.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-6.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-6-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-6-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-6-992.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-6-992.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-7.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-7.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-7-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-7-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-7-992.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-7-992.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-8.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8-640.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-8-640.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8-992.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-8-992.png',
-            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8-1280.png' =>
-                '/bundles/orocms/images/home-page/featured-categories-grid-img-8-1280.png',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-order-history.webp' =>
+                '/bundles/orocms/images/home-page/illustration-carts-order-history.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-order-history-1280.webp' =>
+                '/bundles/orocms/images/home-page/illustration-carts-order-history-1280.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-contact-us.webp' =>
+                '/bundles/orocms/images/home-page/illustration-carts-contact-us.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-contact-us-1280.webp' =>
+                '/bundles/orocms/images/home-page/illustration-carts-contact-us-1280.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-1.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-1.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-1-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-1-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-1-992.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-1-992.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-2.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-2-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2-992.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-2-992.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-2-1280.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-2-1280.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-3.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-3.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-3-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-3-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-3-992.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-3-992.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-4.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-4.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-4-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-4-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-5.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-5.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-5-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-5-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-5-992.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-5-992.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-6.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-6.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-6-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-6-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-6-992.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-6-992.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-7.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-7.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-7-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-7-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-7-992.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-7-992.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-8.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8-640.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-8-640.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8-992.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-8-992.webp',
+            '@OroCMSBundle/Migrations/Data/ORM/data/home-page/featured-categories-grid-img-8-1280.webp' =>
+                '/bundles/orocms/images/home-page/featured-categories-grid-img-8-1280.webp',
         ]
     ];
 

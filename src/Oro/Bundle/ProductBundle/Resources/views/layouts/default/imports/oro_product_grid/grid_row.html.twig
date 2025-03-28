@@ -145,17 +145,35 @@
             type: 'image/webp'
         }] %}
     {% endif %}
-    {% include '@OroAttachment/Twig/picture.html.twig' with {
+    {% set pictureConfig = {
         sources: sources|default([]),
         img_attrs: {
             src: product.image,
             alt: product.name,
             class: 'product-item__preview-image',
-            itemprop: 'image',
-            loading: 'lazy'
+            itemprop: 'image'
         },
         picture_attrs: attr
     } %}
+
+    {% if isMobileVersion() %}
+        {# Preload the first image as fast as possible because it affects the Largest Contentful Paint #}
+        {% if rowIterationIndex is defined and rowIterationIndex == 1 %}
+            {% set pictureConfig = pictureConfig|merge({
+                img_attrs: pictureConfig.img_attrs|merge({fetchpriority: 'high'})
+            }) %}
+        {% else %}
+            {% set pictureConfig = pictureConfig|merge({
+                img_attrs: pictureConfig.img_attrs|merge({loading: 'lazy'})
+            }) %}
+        {% endif %}
+    {% else %}
+        {% set pictureConfig = pictureConfig|merge({
+            img_attrs: pictureConfig.img_attrs|merge({loading: 'lazy'})
+        }) %}
+    {% endif %}
+
+    {% include '@OroAttachment/Twig/picture.html.twig' with pictureConfig %}
 {% endblock %}
 
 {% block __oro_product_grid__product_title_widget %}

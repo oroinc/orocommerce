@@ -43,15 +43,15 @@ about:
                     </div>
                     <div class="grid-col-7 grid-col-tablet-big-6 grid-col-mobile-big-12">
                         <picture>
-                            <source srcset="/bundles/orocms/images/landing-page/1_360.jpg 1x, /bundles/orocms/images/landing-page/1_360-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/1_360.webp 1x, /bundles/orocms/images/landing-page/1_360-2x.webp 2x"
                                     media="(max-width: 430px)">
-                            <source srcset="/bundles/orocms/images/landing-page/1_768.jpg 1x, /bundles/orocms/images/landing-page/1_768-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/1_768.webp 1x, /bundles/orocms/images/landing-page/1_768-2x.webp 2x"
                                     media="(max-width: 768px)">
-                            <source srcset="/bundles/orocms/images/landing-page/1_1280.jpg 1x, /bundles/orocms/images/landing-page/1_1280-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/1_1280.webp 1x, /bundles/orocms/images/landing-page/1_1280-2x.webp 2x"
                                     media="(max-width: 1280px)">
-                            <source srcset="/bundles/orocms/images/landing-page/1_1920.jpg 1x, /bundles/orocms/images/landing-page/1_1920-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/1_1920.webp 1x, /bundles/orocms/images/landing-page/1_1920-2x.webp 2x"
                                     media="(min-width: 1281px)">
-                            <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/1_1920.jpg"
+                            <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/1_1920.webp"
                                  alt="Image">
                         </picture>
                     </div>
@@ -68,15 +68,15 @@ about:
                     <p>RVs are a great way to explore the country while enjoying the modern comforts and the company of your family 24/7. If you feel the passion for a nomadic adventure across some breath-taking sites of mother nature, an RV will definitely take you there!</p>
                     <figure>
                         <picture>
-                            <source srcset="/bundles/orocms/images/landing-page/2_360.jpg 1x, /bundles/orocms/images/landing-page/2_360-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/2_360.webp 1x, /bundles/orocms/images/landing-page/2_360-2x.webp 2x"
                                     media="(max-width: 430px)">
-                            <source srcset="/bundles/orocms/images/landing-page/2_768.jpg 1x, /bundles/orocms/images/landing-page/2_768-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/2_768.webp 1x, /bundles/orocms/images/landing-page/2_768-2x.webp 2x"
                                     media="(max-width: 768px)">
-                            <source srcset="/bundles/orocms/images/landing-page/2_1280.jpg 1x, /bundles/orocms/images/landing-page/2_1280-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/2_1280.webp 1x, /bundles/orocms/images/landing-page/2_1280-2x.webp 2x"
                                     media="(max-width: 1280px)">
-                            <source srcset="/bundles/orocms/images/landing-page/2_1920.jpg 1x, /bundles/orocms/images/landing-page/2_1920-2x.jpg 2x"
+                            <source srcset="/bundles/orocms/images/landing-page/2_1920.webp 1x, /bundles/orocms/images/landing-page/2_1920-2x.webp 2x"
                                     media="(min-width: 1281px)">
-                            <img src="/bundles/orocms/images/landing-page/2_1920.jpg" alt="Image">
+                            <img src="/bundles/orocms/images/landing-page/2_1920.webp" alt="Image" loading="lazy">
                         </picture>
                         <figcaption>
                             <p class="h1">RV & GEAR SELLER</p>
@@ -183,15 +183,15 @@ about:
                     <div class="grid grid-row-gap-tablet-small-24">
                         <div class="grid-col-4 grid-col-tablet-small-12">
                             <picture>
-                                <source srcset="/bundles/orocms/images/landing-page/3_360.jpg 1x, /bundles/orocms/images/landing-page/3_360-2x.jpg 2x"
+                                <source srcset="/bundles/orocms/images/landing-page/3_360.webp 1x, /bundles/orocms/images/landing-page/3_360-2x.webp 2x"
                                         media="(max-width: 430px)">
-                                <source srcset="/bundles/orocms/images/landing-page/3_768.jpg 1x, /bundles/orocms/images/landing-page/3_768-2x.jpg 2x"
+                                <source srcset="/bundles/orocms/images/landing-page/3_768.webp 1x, /bundles/orocms/images/landing-page/3_768-2x.webp 2x"
                                         media="(max-width: 992px)">
-                                <source srcset="/bundles/orocms/images/landing-page/3_1280.jpg 1x, /bundles/orocms/images/landing-page/3_1280-2x.jpg 2x"
+                                <source srcset="/bundles/orocms/images/landing-page/3_1280.webp 1x, /bundles/orocms/images/landing-page/3_1280-2x.webp 2x"
                                         media="(max-width: 1280px)">
-                                <source srcset="/bundles/orocms/images/landing-page/3_1920.jpg 1x, /bundles/orocms/images/landing-page/3_1920-2x.jpg 2x"
+                                <source srcset="/bundles/orocms/images/landing-page/3_1920.webp 1x, /bundles/orocms/images/landing-page/3_1920-2x.webp 2x"
                                         media="(min-width: 1281px)">
-                                <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/3_1920.jpg" alt="Image">
+                                <img class="cover-img full-cover" src="/bundles/orocms/images/landing-page/3_1920.webp" alt="Image" loading="lazy">
                             </picture>
                         </div>
                         <div class="grid-col-8 grid-col-tablet-small-12">
@@ -261,7 +261,13 @@ about:
                         </div>
                     </div>
                     <div class="grid-col-8 grid-col-tablet-6 grid-col-mobile-big-12">
-                        <iframe title="Address Overview Map" class="iframe-map" frameborder="0" src="https://maps.google.com/maps?&q=Box 564, Disneyland&z=7&t=q&output=embed"></iframe>
+                    <picture>
+                        <source srcset="/bundles/orocms/images/landing-page/360_map.webp" media="(max-width: 430px)">
+                        <source srcset="/bundles/orocms/images/landing-page/768_map.webp" media="(max-width: 992px)">
+                        <source srcset="/bundles/orocms/images/landing-page/1280_map.webp" media="(max-width: 1280px)">
+                        <source srcset="/bundles/orocms/images/landing-page/1920_map.webp" media="(min-width: 1281px)">
+                        <img class="img-fluid" src="/bundles/orocms/images/landing-page/1920_map.webp" alt="Address Overview Map" loading="lazy">
+                    </picture>
                    </div>
                 </div>
             </div>
