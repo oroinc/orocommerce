@@ -24,6 +24,11 @@ define(function(require) {
         currencies: {},
 
         /**
+         * @property {bool}
+         */
+        defaultCurrency: null,
+
+        /**
          * @inheritdoc
          */
         events: function() {
@@ -101,6 +106,7 @@ define(function(require) {
 
             if (!priceListId) {
                 const $currencySelect = this.$(this.options.currencySelector);
+                this.defaultCurrency = $currencySelect.val();
                 $currencySelect.find('option[value=""]').show();
                 $currencySelect.attr('disabled', 'disabled');
                 $currencySelect.val('');
@@ -158,11 +164,16 @@ define(function(require) {
                 .find('option[value=""]').hide();
 
             if (selectFirst && _.isEmpty(value)) {
-                $currencySelect.val(priceListCurrencies[1]);
-                $currencySelect.trigger('change');
-            } else {
-                $currencySelect.val(value);
+                const hasDefault = this.defaultCurrency &&
+                    $currencySelect.find(`option[value="${this.defaultCurrency}"]`).length > 0;
+
+                const defaultValue = hasDefault ? this.defaultCurrency : priceListCurrencies[1];
+
+                $currencySelect.val(defaultValue).trigger('change');
+                return;
             }
+
+            $currencySelect.val(value);
         },
 
         /**
