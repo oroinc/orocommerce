@@ -52,9 +52,9 @@ Feature: WYSIWYG image type component
       | image   | 1 |
     And I enter to edit mode "SelectedComponent" component in canvas
     And I filter "Title" as Contains "about_1_1920"
-    And I click on about_1_1920.jpg in grid
+    And I click on about_1_1920.webp in grid
     And I check wysiwyg content in "CMS Page Content":
-      | 5 | <img alt="about_1_1920.jpg"/> |
+      | 5 | <img alt="about_1_1920.webp"/> |
 
   Scenario: Copy/Move/Delete image
     When I add new component "2 Columns" from panel to editor area
@@ -67,14 +67,14 @@ Feature: WYSIWYG image type component
       | image   | 1 |
     And I move "SelectedComponent" to "FirstColumnInGrid" in editor canvas
     Then I check wysiwyg content in "CMS Page Content":
-      | 8  | <div class="grid-cell">     |
-      | 9  | <picture>                   |
-      | 10 | <source type="image/webp"/> |
-      | 11 | <source type="image/jpeg"/> |
-      | 12 | <source type="image/jpeg"/> |
-      | 13 | <img alt="about_1_1920.jpg"/> |
-      | 14 | </picture>                  |
-      | 15 | </div>                      |
+      | 8  | <div class="grid-cell">        |
+      | 9  | <picture>                      |
+      | 10 | <source type="image/webp"/>    |
+      | 11 | <source type="image/jpeg"/>    |
+      | 12 | <source type="image/jpeg"/>    |
+      | 13 | <img alt="about_1_1920.webp"/> |
+      | 14 | </picture>                     |
+      | 15 | </div>                         |
     And I select component in canvas by tree:
       | grid-row    | 1 |
       | grid-column | 1 |

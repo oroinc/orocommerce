@@ -231,7 +231,8 @@
 
             {% do child|merge_context({
                 'datagrid_row': datagrid_row,
-                'themeOptions': themeOptions
+                'themeOptions': themeOptions,
+                'rowIterationIndex': loop.index
             }) %}
             {{ block_widget(child, {'attr': childAttr}) }}
         {% endfor %}

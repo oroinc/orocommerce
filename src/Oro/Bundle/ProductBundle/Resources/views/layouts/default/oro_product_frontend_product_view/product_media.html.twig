@@ -182,6 +182,13 @@
                                 itemprop: 'image'
                             }) %}
 
+                            {% if isMobileVersion() %}
+                                {# Preload the first image as fast as possible because it affects the Largest Contentful Paint #}
+                                {% set img_attrs = img_attrs|merge({
+                                    fetchpriority: 'high'
+                                }) %}
+                            {% endif %}
+
                             {% if enabledZoom %}
                                 {% set img_attrs = img_attrs|merge({
                                     'data-page-component-module': 'oroui/js/app/components/viewport-component',
