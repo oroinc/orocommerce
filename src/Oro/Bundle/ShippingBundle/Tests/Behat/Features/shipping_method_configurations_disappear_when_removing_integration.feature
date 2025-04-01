@@ -3,6 +3,8 @@
 @automatically-ticket-tagged
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroShippingBundle:ShippingMethodsConfigsRule.yml
+@fixture-OroPaymentBundle:PaymentMethodsConfigsRule.yml
+
 Feature: Shipping Method Configurations disappear when removing integration
   As an Administrator
   I want to be sure that Shipping Method Configurations is disappear when removing integration

@@ -403,6 +403,8 @@ oro:
                 message: |
                     The selected payment method is not available.
                     Please return to the payment method selection step and select a different one.
+            applicable_payment_method:
+                message: The selected payment method is no longer available. Please select a different payment method.
             payment_method_is_not_selected:
                 message: Payment method is not selected.
             payment_method_is_applicable:

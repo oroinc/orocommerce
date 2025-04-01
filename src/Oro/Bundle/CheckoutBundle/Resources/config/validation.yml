@@ -12,6 +12,9 @@ Oro\Bundle\CheckoutBundle\Entity\Checkout:
         -   Oro\Bundle\CheckoutBundle\Validator\Constraints\HasApplicablePaymentMethods:
                 groups:
                     - checkout_order_create_pre_checks
+        -   Oro\Bundle\CheckoutBundle\Validator\Constraints\ApplicablePaymentMethod:
+                groups:
+                    - checkout_order_create_pre_checks
         -   Oro\Bundle\CheckoutBundle\Validator\Constraints\HasApplicableShippingRules:
                 groups:
                     - checkout_order_create_pre_checks
