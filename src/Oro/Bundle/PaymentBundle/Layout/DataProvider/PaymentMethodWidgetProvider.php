@@ -5,6 +5,9 @@ namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
+/**
+ * Provides a widget name for a given payment method based on the provided entity and prefix.
+ */
 class PaymentMethodWidgetProvider
 {
     const NAME = 'oro_payment_method_widget_provider';
@@ -34,7 +37,11 @@ class PaymentMethodWidgetProvider
                 PaymentMethodAwareInterface::class
             ));
         }
-        $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($entity->getPaymentMethod());
+        try {
+            $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($entity->getPaymentMethod());
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
 
         return sprintf('_%s%s', $prefix, $paymentMethodView->getBlock());
     }

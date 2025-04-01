@@ -294,9 +294,11 @@ oro:
                 please contact us for assistance. Otherwise, please click on "Submit" to proceed with the order submission.
             payment_has_not_fully_been_processed.message: |-
                 We have not been able to place one or more authorization holds on the provided payment card. Order <a href="%orderViewLink%" target="_blank">#%orderIdentifier%</a> has been created and successfully processed items have been removed. To finish the order submission please review the remaining unprocessed items and the payment information and try again, or contact us at 1-800-555-5555.
-            payment_method_is_not_applicable.message: |
+            has_applicable_payment_methods.message: |
                 The selected payment method is not available.
                 Please return to the payment method selection step and select a different one.
+            applicable_payment_method:
+                message: The selected payment method is no longer available. Please select a different payment method.
             content_of_order_was_changed.message: |-
                 There was a change to the contents of your order.
                 Please review the order information before proceeding to the next step.

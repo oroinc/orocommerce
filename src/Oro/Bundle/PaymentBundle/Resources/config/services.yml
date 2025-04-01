@@ -59,6 +59,13 @@ services:
         calls:
             - [setMemoryCacheProvider, ['@oro_payment.method.provider.applicable_methods_provider.cache']]
 
+    oro_payment.rule_filtration.enabled_rule_filtration_decorator:
+        class: Oro\Bundle\PaymentBundle\RuleFiltration\EnabledPaymentRuleFiltrationService
+        decorates: oro_rule.enabled_rule_filtration.service
+        arguments:
+            - '@oro_payment.payment_method.composite_provider'
+            - '@.inner'
+
     oro_payment.method.provider.applicable_methods_provider.cache:
         parent: oro.cache.provider.memory_cache
 

@@ -50,6 +50,25 @@ class PaymentMethodWidgetProviderTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testGetPaymentMethodWidgetNameWithInvalidView()
+    {
+        $entity = $this->createMock(PaymentMethodAwareInterface::class);
+        $entity->expects(self::once())
+            ->method('getPaymentMethod')
+            ->willReturn(self::PAYMENT_METHOD_IDENTIFIER);
+
+        $paymentMethodView = $this->createMock(PaymentMethodViewInterface::class);
+        $paymentMethodView->expects(self::never())
+            ->method('getBlock');
+
+        $this->paymentMethodViewProvider->expects(self::once())
+            ->method('getPaymentMethodView')
+            ->willThrowException(new \InvalidArgumentException('Exception message'));
+
+
+        self::assertNull($this->provider->getPaymentMethodWidgetName($entity, 'test_prefix'));
+    }
+
     public function testGetPaymentMethodWidgetNameEmpty()
     {
         $this->expectException(\InvalidArgumentException::class);

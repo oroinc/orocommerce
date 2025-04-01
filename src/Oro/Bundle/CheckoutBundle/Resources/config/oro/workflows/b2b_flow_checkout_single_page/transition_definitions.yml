@@ -409,6 +409,15 @@ workflows:
                                                 events: ['extendable_condition.before_order_create']
                                         parameters: [$.result.extendableConditionBeforeOrderCreate, true]
                             - '@tree':
+                                  conditions:
+                                      '@blank': $.result.hasApplicablePaymentMethods
+                                  actions:
+                                      - '@assign_value': [$.result.hasApplicablePaymentMethods, false]
+                                      - '@assign_value':
+                                            conditions:
+                                                '@has_applicable_payment_methods': $.result.paymentContext
+                                            parameters: [$.result.hasApplicablePaymentMethods, true]
+                            - '@tree':
                                 conditions:
                                     '@blank': $.result.paymentMethodApplicable
                                 actions:
@@ -467,8 +476,11 @@ workflows:
                                       parameters: [$.result.shippingMethodHasEnabledShippingRules, true]
                                       message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                                 - '@equal':
+                                      parameters: [$.result.hasApplicablePaymentMethods, true]
+                                      message: oro.checkout.workflow.condition.has_applicable_payment_methods.message
+                                - '@equal':
                                       parameters: [$.result.paymentMethodApplicable, true]
-                                      message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
+                                      message: oro.checkout.workflow.condition.applicable_payment_method.message
                                 - '@quote_acceptable': [$checkout.sourceEntity, true]
                                 - '@equal': [$.result.extendableConditionCheckout, true]
                                 - '@equal': [$.result.extendableConditionBeforeOrderCreate, true]
