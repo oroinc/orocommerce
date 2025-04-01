@@ -37,7 +37,7 @@ Feature: Ensure that disabled shipping and payment rules are handled properly wh
 
   Scenario: Ensure order cannot be submitted when shipping method is not available anymore
     Given I proceed as the Buyer
-    And I click "Submit Order"
+    And I reload the page
     Then I should see "The selected shipping method is not available. Please return to the shipping method selection step and select a different one." flash message
     And on the "Order Review" checkout step I go back to "Edit Shipping Method"
     And I check "Flat Rate" on the "Shipping Method" checkout step and press Continue
@@ -52,8 +52,8 @@ Feature: Ensure that disabled shipping and payment rules are handled properly wh
 
   Scenario: Ensure order cannot be submitted when payment method is not available anymore
     Given I proceed as the Buyer
-    And I click "Submit Order"
-    Then I should see "The selected payment method is not available. Please return to the payment method selection step and select a different one." flash message
+    And I reload the page
+    Then I should see "The selected payment method is no longer available. Please select a different payment method." flash message
     And on the "Order Review" checkout step I go back to "Edit Payment"
     And I check "Payment Terms" on the "Payment" checkout step and press Continue
     And I check "Delete this shopping list after ordering" on the "Order Review" checkout step and press Submit Order

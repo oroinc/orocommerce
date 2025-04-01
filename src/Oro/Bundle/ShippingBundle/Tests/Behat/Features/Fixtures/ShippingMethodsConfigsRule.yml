@@ -1,5 +1,3 @@
-include:
-    - ../../../../../PaymentBundle/Tests/Behat/Features/Fixtures/PaymentMethodsConfigsRule.yml
 Oro\Bundle\RuleBundle\Entity\Rule:
     rule1:
         name: 'Shipping Rule First'
@@ -93,6 +91,8 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Shopping List 1'
         customerUser: '@amanda'
         website: '@website1'
+        organization: '@organization'
+        owner: '@admin'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:

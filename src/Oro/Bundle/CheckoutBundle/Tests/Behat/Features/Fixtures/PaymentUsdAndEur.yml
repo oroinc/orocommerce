@@ -1,6 +1,8 @@
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     paymentMethodConfigEur:
         type: '<("payment_term_".@paymentTermIntegration->getId())>'
+    paymentMethodConfigUsd:
+        type: '<("payment_term_".@paymentTermIntegration->getId())>'
 
 Oro\Bundle\RuleBundle\Entity\Rule:
     paymentRuleEur:
@@ -15,7 +17,7 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     paymentMethodsConfigsRule:
         rule: '@paymentRule'
-        methodConfigs: ['@paymentMethodConfigEur']
+        methodConfigs: ['@paymentMethodConfigUsd']
         currency: 'USD'
         organization: '@organization'
     paymentMethodsConfigsRuleEur:

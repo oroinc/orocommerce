@@ -1124,6 +1124,14 @@ services:
         tags:
             - { name: validator.constraint_validator }
 
+    oro_checkout.constraint.validator.applicable_payment_method:
+        class: Oro\Bundle\CheckoutBundle\Validator\Constraints\ApplicablePaymentMethodValidator
+        arguments:
+            - '@oro_checkout.provider.payment_context'
+            - '@oro_payment.method.provider.applicable_methods_provider'
+        tags:
+            - { name: validator.constraint_validator }
+
     oro_checkout.constraint.validator.payment_method_is_applicable:
         class: Oro\Bundle\CheckoutBundle\Validator\Constraints\PaymentMethodIsApplicableValidator
         arguments:
