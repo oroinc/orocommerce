@@ -134,7 +134,7 @@ class PlaceOrderTest extends TestCase
                 true,
                 false,
                 false,
-                [['message' => 'oro.checkout.workflow.condition.payment_method_is_not_applicable.message']]
+                [['message' => 'oro.checkout.workflow.condition.applicable_payment_method.message']]
             ],
         ];
     }

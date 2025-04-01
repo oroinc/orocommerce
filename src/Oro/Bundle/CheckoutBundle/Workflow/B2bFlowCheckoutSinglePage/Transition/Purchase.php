@@ -151,7 +151,7 @@ class Purchase extends TransitionServiceAbstract
             expressionName: 'has_applicable_payment_methods',
             data: [$paymentContext],
             errors: $errors,
-            message: 'oro.checkout.workflow.condition.payment_method_is_not_applicable.message'
+            message: 'oro.checkout.workflow.condition.has_applicable_payment_methods.message'
         );
     }
 

@@ -61,7 +61,7 @@ class PlaceOrder extends BasePlaceOrder
         }
 
         if (!$this->isPaymentMethodApplicable($checkout)) {
-            $errors?->add(['message' => 'oro.checkout.workflow.condition.payment_method_is_not_applicable.message']);
+            $errors?->add(['message' => 'oro.checkout.workflow.condition.applicable_payment_method.message']);
 
             return false;
         }
