@@ -61,12 +61,12 @@ Feature: Enter coupon code on front store on single page checkout
     Then I should see "Coupon code has been applied successfully, please review discounts" flash message
     And I should not see "PayPalFlow"
     When I click "Submit Order"
-    Then I should see "The selected payment method is not available. Please return to the payment method selection step and select a different one."
+    Then I should see "The selected payment method is no longer available. Please select a different payment method."
     When I click "Coupon Delete Button"
     Then I should see "Coupon code has been removed" flash message
     And I should not see "coupon-3 Third Promotion Name"
     And I should see "PayPalFlow"
-    And I should not see "The selected payment method is not available. Please return to the payment method selection step and select a different one."
+    And I should not see "The selected payment method is no longer available. Please select a different payment method."
 
   Scenario: Payment card data should be visible when coupon applied after Paypal payment method available again.
     When I scroll to top
