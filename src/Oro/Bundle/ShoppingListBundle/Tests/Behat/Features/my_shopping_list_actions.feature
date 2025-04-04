@@ -1,6 +1,7 @@
 @regression
 @ticket-BB-19469
 @ticket-BB-21750
+@fix-BB-24936
 @fixture-OroShoppingListBundle:MyShoppingListsFixture.yml
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroCheckoutBundle:Shipping.yml

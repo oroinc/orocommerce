@@ -115,6 +115,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Product Kit Shopping List'
         customer: '@Customer_AmandaRCole'
         customerUser: '@CustomerUser_AmandaRCole'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -125,6 +126,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@CustomerUser_AmandaRCole'
         shoppingList: '@product_kit_shopping_list'
+        owner: '@admin'
         organization: '@organization'
         checksum: 'product_kit1_line_item1'
         notes: 'Product Kit 1 Line Item 1 Notes'
@@ -134,6 +136,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@CustomerUser_AmandaRCole'
         shoppingList: '@product_kit_shopping_list'
+        owner: '@admin'
         organization: '@organization'
         checksum: 'product_kit1_line_item2'
         notes: 'Product Kit 1 Line Item 2 Notes'

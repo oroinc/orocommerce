@@ -3,6 +3,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Product Kit Shopping List'
         customer: '@customer1'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -13,6 +14,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@amanda'
         shoppingList: '@product_kit_shopping_list'
+        owner: '@admin'
         organization: '@organization'
         checksum: 'product_kit1_line_item1'
     product_kit1_line_item2:
@@ -21,6 +23,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@amanda'
         shoppingList: '@product_kit_shopping_list'
+        owner: '@admin'
         organization: '@organization'
         checksum: 'product_kit1_line_item2'
 
