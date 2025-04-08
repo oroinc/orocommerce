@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 
+use Oro\Bundle\ActionBundle\Datagrid\Provider\MassActionProviderInterface;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionProvider;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -27,7 +28,7 @@ class AjaxMassActionController extends AbstractController
         return new JsonResponse($formattedMassActions);
     }
 
-    private function getMassActionProvider(): AddLineItemMassActionProvider
+    private function getMassActionProvider(): MassActionProviderInterface
     {
         return $this->container->get(AddLineItemMassActionProvider::class);
     }
