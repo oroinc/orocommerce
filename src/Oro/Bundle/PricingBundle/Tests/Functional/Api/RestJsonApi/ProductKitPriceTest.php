@@ -13,9 +13,9 @@ use Oro\Bundle\SecurityBundle\Test\Functional\RolePermissionExtension;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
+ * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolationPerTest
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductKitPriceTest extends RestJsonApiTestCase
@@ -44,23 +44,23 @@ class ProductKitPriceTest extends RestJsonApiTestCase
             [
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "customer" filter is required.',
+                    'detail' => 'The "customer" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "website" filter is required.',
+                    'detail' => 'The "website" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "product" filter is required.',
+                    'detail' => 'The "product" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "quantity" filter is required.',
+                    'detail' => 'The "quantity" filter is required.'
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => 'The "unit" filter is required.',
+                    'detail' => 'The "unit" filter is required.'
                 ]
             ],
             $response
@@ -71,13 +71,15 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'customer' => 'text',
-                'website' => '@US->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1
-            ]],
+            [
+                'filter' => [
+                    'customer' => 'text',
+                    'website' => '@US->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1
+                ]
+            ],
             [],
             false
         );
@@ -96,13 +98,15 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'customer' => '@customer.level_1->id',
-                'website' => '@US->id',
-                'product' => 'text',
-                'unit' => 'milliliter',
-                'quantity' => 1
-            ]],
+            [
+                'filter' => [
+                    'customer' => '@customer.level_1->id',
+                    'website' => '@US->id',
+                    'product' => 'text',
+                    'unit' => 'milliliter',
+                    'quantity' => 1
+                ]
+            ],
             [],
             false
         );
@@ -121,13 +125,15 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'customer' => '@customer.level_1->id',
-                'website' => 'text',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1
-            ]],
+            [
+                'filter' => [
+                    'customer' => '@customer.level_1->id',
+                    'website' => 'text',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1
+                ]
+            ],
             [],
             false
         );
@@ -146,22 +152,23 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1
+                ]
+            ],
             [],
             false
         );
 
         $this->assertResponseValidationError(
             [
-                'status' => '400',
                 'title' => 'value constraint',
-                'detail' => 'The resource supports only "kit" products.',
+                'detail' => 'The resource supports only "kit" products.'
             ],
             $response
         );
@@ -173,13 +180,15 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1
+                ]
+            ],
             [],
             false
         );
@@ -188,12 +197,12 @@ class ProductKitPriceTest extends RestJsonApiTestCase
             [
                 [
                     'title' => 'filter constraint',
-                    'detail' => "The \"filter[kitItems][$kitItemId][product]\" filter is required.",
+                    'detail' => "The \"filter[kitItems][$kitItemId][product]\" filter is required."
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => "The \"filter[kitItems][$kitItemId][quantity]\" filter is required.",
-                ],
+                    'detail' => "The \"filter[kitItems][$kitItemId][quantity]\" filter is required."
+                ]
             ],
             $response
         );
@@ -205,24 +214,24 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => '@product-1->id',
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => '@product-1->id'
+                ]
+            ],
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'filter constraint',
-                    'detail' => "The \"filter[kitItems][$kitItemId][quantity]\" filter is required.",
-                ],
+                'title' => 'filter constraint',
+                'detail' => "The \"filter[kitItems][$kitItemId][quantity]\" filter is required."
             ],
             $response
         );
@@ -232,25 +241,25 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                'kitItems.text.product' => '@product-1->id',
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    'kitItems.text.product' => '@product-1->id'
+                ]
+            ],
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'filter constraint',
-                    'detail' => "The filter is not supported.",
-                    'source' => ['parameter' => 'filter[kitItems.text.product]']
-                ],
+                'title' => 'filter constraint',
+                'detail' => 'The filter is not supported.',
+                'source' => ['parameter' => 'filter[kitItems.text.product]']
             ],
             $response
         );
@@ -263,15 +272,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                'kitItems.999.product' => '@product-1->id',
-                'kitItems.999.quantity' => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    'kitItems.999.product' => '@product-1->id',
+                    'kitItems.999.quantity' => 1
+                ]
+            ],
             [],
             false
         );
@@ -280,15 +291,15 @@ class ProductKitPriceTest extends RestJsonApiTestCase
             [
                 [
                     'title' => 'filter constraint',
-                    'detail' => "The \"filter[kitItems][$kitItemId][product]\" filter is required.",
+                    'detail' => "The \"filter[kitItems][$kitItemId][product]\" filter is required."
                 ],
                 [
                     'title' => 'filter constraint',
-                    'detail' => "The \"filter[kitItems][$kitItemId][quantity]\" filter is required.",
+                    'detail' => "The \"filter[kitItems][$kitItemId][quantity]\" filter is required."
                 ],
                 [
                     'title' => 'value constraint',
-                    'detail' => "The kit item #999 does not belong to product kit #{$productKit->getId()}.",
+                    'detail' => "The kit item #999 does not belong to product kit #{$productKit->getId()}."
                 ]
             ],
             $response
@@ -298,7 +309,8 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     public function testTryToGetListWithSkippedOptionalKitItemFilter(): void
     {
         $kitItems = $this->getReference('product-kit-2')->getKitItems();
-        $requiredKitItemId = $optionalKitItemId = null;
+        $requiredKitItemId = null;
+        $optionalKitItemId = null;
         foreach ($kitItems as $kitItem) {
             $optionalKitItemId ??= $kitItem->isOptional() ? $kitItem->getId() : null;
             $requiredKitItemId ??= !$kitItem->isOptional() ? $kitItem->getId() : null;
@@ -306,26 +318,26 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-2->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$requiredKitItemId.product" => '@product-1->id',
-                "kitItems.$requiredKitItemId.quantity" => 1,
-                "kitItems.$optionalKitItemId.quantity" => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-2->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$requiredKitItemId.product" => '@product-1->id',
+                    "kitItems.$requiredKitItemId.quantity" => 1,
+                    "kitItems.$optionalKitItemId.quantity" => 1
+                ]
+            ],
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'filter constraint',
-                    'detail' => "The \"filter[kitItems][$optionalKitItemId][product]\" filter is missed.",
-                ],
+                'title' => 'filter constraint',
+                'detail' => "The \"filter[kitItems][$optionalKitItemId][product]\" filter is missed."
             ],
             $response
         );
@@ -337,25 +349,25 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => 999,
-                "kitItems.$kitItemId.quantity" => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => 999,
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ],
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'value constraint',
-                    'detail' => "The kit item product #999 does not belong to kit item #$kitItemId.",
-                ]
+                'title' => 'value constraint',
+                'detail' => "The kit item product #999 does not belong to kit item #$kitItemId."
             ],
             $response
         );
@@ -367,26 +379,26 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => 'text',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => 'text',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ],
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'filter constraint',
-                    'detail' => "Expected integer value. Given \"text\".",
-                    'source' => ['parameter' => "filter[kitItems.$kitItemId.product]"]
-                ]
+                'title' => 'filter constraint',
+                'detail' => 'Expected integer value. Given "text".',
+                'source' => ['parameter' => "filter[kitItems.$kitItemId.product]"]
             ],
             $response
         );
@@ -398,26 +410,26 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 'text',
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 'text'
+                ]
+            ],
             [],
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'filter constraint',
-                    'detail' => "Expected number value. Given \"text\".",
-                    'source' => ['parameter' => "filter[kitItems.$kitItemId.quantity]"]
-                ]
+                'title' => 'filter constraint',
+                'detail' => 'Expected number value. Given "text".',
+                'source' => ['parameter' => "filter[kitItems.$kitItemId.quantity]"]
             ],
             $response
         );
@@ -432,19 +444,21 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-3->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 3,
-                "kitItems.$kitItemId2.product" => '@product-3->id',
-                "kitItems.$kitItemId2.quantity" => 1,
-                "kitItems.$kitItemId3.product" => '@product-4->id',
-                "kitItems.$kitItemId3.quantity" => 5,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-3->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 3,
+                    "kitItems.$kitItemId2.product" => '@product-3->id',
+                    "kitItems.$kitItemId2.quantity" => 1,
+                    "kitItems.$kitItemId3.product" => '@product-4->id',
+                    "kitItems.$kitItemId3.quantity" => 5
+                ]
+            ],
             [],
             false
         );
@@ -454,17 +468,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                 [
                     'title' => 'value constraint',
                     'detail' => "The \"filter[kitItems][$kitItemId][quantity]\"" .
-                        " filter value should be between 1 and 2.",
+                        ' filter value should be between 1 and 2.'
                 ],
                 [
                     'title' => 'value constraint',
                     'detail' => "The \"filter[kitItems][$kitItemId2][quantity]\"" .
-                        " filter value should be equals to or exceed 2.",
+                        ' filter value should be equals to or exceed 2.'
                 ],
                 [
                     'title' => 'value constraint',
                     'detail' => "The \"filter[kitItems][$kitItemId3][quantity]\"" .
-                        " filter value should be equals to or less than 4.",
+                        ' filter value should be equals to or less than 4.'
                 ]
             ],
             $response
@@ -485,7 +499,7 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                     'unit' => 'milliliter',
                     'quantity' => 1,
                     "kitItems.$kitItemId.product" => '@product-1->id',
-                    "kitItems.$kitItemId.quantity" => 1,
+                    "kitItems.$kitItemId.quantity" => 1
                 ]
             ]
         );
@@ -542,7 +556,7 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                     'unit' => 'milliliter',
                     'quantity' => 1,
                     "kitItems.$kitItemId.product" => '@product-1->id',
-                    "kitItems.$kitItemId.quantity" => 1,
+                    "kitItems.$kitItemId.quantity" => 1
                 ]
             ]
         );
@@ -615,7 +629,7 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                         'attributes' => [
                             'quantity' => 1,
                             'value' => '30.0000'
-                        ],
+                        ]
                     ]
                 ]
             ],
@@ -703,16 +717,18 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                         'attributes' => ['currency' => 'USD', 'quantity' => 1, 'value' => '10.0000'],
                         'relationships' => [
                             'product' => ['data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']],
-                            'customer' => ['data' => [
-                                'type' => 'customers',
-                                'id' => '<toString(@customer.level_1->id)>'
-                            ]],
+                            'customer' => [
+                                'data' => [
+                                    'type' => 'customers',
+                                    'id' => '<toString(@customer.level_1->id)>'
+                                ]
+                            ],
                             'website' => ['data' => ['type' => 'websites', 'id' => '<toString(@US->id)>']],
                             'unit' => ['data' => ['type' => 'productunits', 'id' => 'milliliter']],
                             'kitItem' => ['data' => ['type' => 'productkititems', 'id' => (string)$kitItemId]]
-                        ],
+                        ]
                     ]
-                ],
+                ]
             ],
             $response
         );
@@ -724,16 +740,18 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                'currency' => 'EUR',
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    'currency' => 'EUR',
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ],
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -745,16 +763,18 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'box',
-                'quantity' => 1,
-                'currency' => 'USD',
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'box',
+                    'quantity' => 1,
+                    'currency' => 'USD',
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ]
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -766,15 +786,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => -1,
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => -1,
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ]
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -786,15 +808,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => '0.1',
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => '0.1',
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ]
         );
 
         $priceId = '<(implode("-", [@customer.level_1->id, @US->id, @product-kit-1->id, "USD-milliliter-1"]))>';
@@ -841,15 +865,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => '0.1',
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => '0.5',
-            ]],
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => '0.1',
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => '0.5'
+                ]
+            ],
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -861,15 +887,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => '@US->id',
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'test',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]]
+            [
+                'filter' => [
+                    'website' => '@US->id',
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'test',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ]
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -881,15 +909,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'website' => 999999,
-                'customer' => '@customer.level_1->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]]
+            [
+                'filter' => [
+                    'website' => 999999,
+                    'customer' => '@customer.level_1->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ]
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -901,15 +931,17 @@ class ProductKitPriceTest extends RestJsonApiTestCase
 
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'customer' => 999999,
-                'website' => '@US->id',
-                'product' => '@product-kit-1->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-                "kitItems.$kitItemId.product" => '@product-1->id',
-                "kitItems.$kitItemId.quantity" => 1,
-            ]]
+            [
+                'filter' => [
+                    'customer' => 999999,
+                    'website' => '@US->id',
+                    'product' => '@product-kit-1->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1,
+                    "kitItems.$kitItemId.product" => '@product-1->id',
+                    "kitItems.$kitItemId.quantity" => 1
+                ]
+            ]
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -919,13 +951,15 @@ class ProductKitPriceTest extends RestJsonApiTestCase
     {
         $response = $this->cget(
             ['entity' => 'productkitprices'],
-            ['filter' => [
-                'product' => 999999,
-                'customer' => '@customer.level_1->id',
-                'website' => '@US->id',
-                'unit' => 'milliliter',
-                'quantity' => 1,
-            ]]
+            [
+                'filter' => [
+                    'product' => 999999,
+                    'customer' => '@customer.level_1->id',
+                    'website' => '@US->id',
+                    'unit' => 'milliliter',
+                    'quantity' => 1
+                ]
+            ]
         );
 
         $this->assertResponseContains(['data' => []], $response);
@@ -1015,7 +1049,7 @@ class ProductKitPriceTest extends RestJsonApiTestCase
                     'unit' => 'milliliter',
                     'quantity' => 1,
                     "kitItems.$kitItemId.product" => '@product-1->id',
-                    "kitItems.$kitItemId.quantity" => 1,
+                    "kitItems.$kitItemId.quantity" => 1
                 ]
             ]
         );

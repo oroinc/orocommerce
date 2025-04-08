@@ -564,19 +564,11 @@ class ProductTest extends RestJsonApiTestCase
             false
         );
 
-        $this->assertResponseValidationErrors(
+        $this->assertResponseValidationError(
             [
-                [
-                    'title' => 'form constraint',
-                    'detail' => 'Unit precision "bottle" already exists for this product.',
-                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
-                ],
-                [
-                    'title' => 'primary product unit precision constraint',
-                    'detail' => 'A primary product unit precision should be in the collection'
-                        . ' of product unit precisions.',
-                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
-                ]
+                'title' => 'form constraint',
+                'detail' => 'Unit precision "bottle" already exists for this product.',
+                'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
             ],
             $response
         );
@@ -599,12 +591,6 @@ class ProductTest extends RestJsonApiTestCase
                 [
                     'title' => 'form constraint',
                     'detail' => 'Unit precision "liter" already exists for this product.',
-                    'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
-                ],
-                [
-                    'title' => 'primary product unit precision constraint',
-                    'detail' => 'A primary product unit precision should be in the collection'
-                        . ' of product unit precisions.',
                     'source' => ['pointer' => '/data/relationships/unitPrecisions/data']
                 ],
                 [

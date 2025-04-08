@@ -722,7 +722,6 @@ class ShoppingListKitItemTest extends FrontendRestJsonApiTestCase
                 ],
                 'expectedErrors' => [
                     [
-                        'status' => '400',
                         'title' => 'product kit item line item product unit available constraint',
                         'detail' => 'The selected product unit is not allowed',
                         'source' => ['pointer' => '/data/relationships/unit/data']

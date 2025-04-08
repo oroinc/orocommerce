@@ -197,7 +197,7 @@ class ProductVariantUniqueTest extends RestJsonApiTestCase
         $this->assertResponseValidationError(
             [
                 'title'  => 'unchangeable field constraint',
-                'detail' => 'Field cannot be changed once set',
+                'detail' => 'This field cannot be changed once set.',
                 'source' => ['pointer' => '/data/relationships/parentProduct/data']
             ],
             $response

@@ -2,49 +2,41 @@
 
 namespace Oro\Bundle\SaleBundle\Validator\Constraints;
 
-use Oro\Bundle\SaleBundle\Entity;
-use Oro\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\SaleBundle\Entity\QuoteProduct as QuoteProductEntity;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validates that a quote product represents either a regular product or a free form product.
+ */
 class QuoteProductValidator extends ConstraintValidator
 {
-    /**
-     *
-     * @param Entity\QuoteProduct $quoteProduct
-     * @param Constraints\QuoteProduct $constraint
-     */
     #[\Override]
-    public function validate($quoteProduct, Constraint $constraint)
+    public function validate(mixed $value, Constraint $constraint): void
     {
-        if (!$quoteProduct instanceof Entity\QuoteProduct) {
-            throw new UnexpectedTypeException(
-                $quoteProduct,
-                'Oro\Bundle\SaleBundle\Entity\QuoteProduct'
-            );
+        if (!$constraint instanceof QuoteProduct) {
+            throw new UnexpectedTypeException($constraint, QuoteProduct::class);
         }
 
-        if ($quoteProduct->isTypeNotAvailable()) {
-            $product = $quoteProduct->getProductReplacement();
-            $isProductFreeForm = $quoteProduct->isProductReplacementFreeForm();
+        if (!$value instanceof QuoteProductEntity) {
+            throw new UnexpectedTypeException($value, QuoteProductEntity::class);
+        }
+
+        if ($value->isTypeNotAvailable()) {
+            $product = $value->getProductReplacement();
+            $isProductFreeForm = $value->isProductReplacementFreeForm();
             $fieldPath = 'productReplacement';
         } else {
-            $product = $quoteProduct->getProduct();
-            $isProductFreeForm = $quoteProduct->isProductFreeForm();
+            $product = $value->getProduct();
+            $isProductFreeForm = $value->isProductFreeForm();
             $fieldPath = 'product';
         }
 
         if (!$isProductFreeForm && null === $product) {
-            $this->addViolation($fieldPath, $constraint);
-            return;
+            $this->context->buildViolation($constraint->message)
+                ->atPath($fieldPath)
+                ->addViolation();
         }
-    }
-
-    protected function addViolation($fieldPath, Constraints\QuoteProduct $constraint)
-    {
-        $this->context->buildViolation($constraint->message)
-            ->atPath($fieldPath)
-            ->addViolation();
     }
 }

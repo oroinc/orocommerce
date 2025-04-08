@@ -10,7 +10,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 /**
- * Validator to check if the selected payment method is applicable for the current checkout.
+ * Validates that the selected payment method is applicable for a checkout.
  */
 class ApplicablePaymentMethodValidator extends ConstraintValidator
 {
@@ -53,7 +53,7 @@ class ApplicablePaymentMethodValidator extends ConstraintValidator
     private function isApplicablePaymentMethod(Checkout $checkout): bool
     {
         $paymentContext = $this->paymentContextProvider->getContext($checkout);
-        if ($paymentContext === null) {
+        if (null === $paymentContext) {
             return false;
         }
 

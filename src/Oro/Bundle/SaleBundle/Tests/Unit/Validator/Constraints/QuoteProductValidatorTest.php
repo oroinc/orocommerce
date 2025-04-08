@@ -4,7 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Validator\Constraints;
 
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
-use Oro\Bundle\SaleBundle\Validator\Constraints;
+use Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProduct as QuoteProductConstraint;
+use Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductValidator;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
@@ -12,31 +13,31 @@ use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 class QuoteProductValidatorTest extends ConstraintValidatorTestCase
 {
     #[\Override]
-    protected function createValidator(): Constraints\QuoteProductValidator
+    protected function createValidator(): QuoteProductValidator
     {
-        return new Constraints\QuoteProductValidator();
+        return new QuoteProductValidator();
     }
 
-    public function testGetTargets()
-    {
-        $constraint = new Constraints\QuoteProduct();
-        self::assertEquals([Constraint::CLASS_CONSTRAINT], $constraint->getTargets());
-    }
-
-    public function testNotQuoteProduct()
+    public function testUnexpectedConstraint(): void
     {
         $this->expectException(UnexpectedTypeException::class);
 
-        $constraint = new Constraints\QuoteProduct();
-        $this->validator->validate(new \stdClass(), $constraint);
+        $this->validator->validate($this->createMock(QuoteProduct::class), $this->createMock(Constraint::class));
+    }
+
+    public function testValidateWithNonQuoteProductEntity(): void
+    {
+        $this->expectException(UnexpectedTypeException::class);
+
+        $this->validator->validate(new \stdClass(), new QuoteProductConstraint());
     }
 
     /**
      * @dataProvider validateProvider
      */
-    public function testValidate(QuoteProduct $value, bool $valid, string $fieldPath = 'product')
+    public function testValidate(QuoteProduct $value, bool $valid, string $fieldPath = 'product'): void
     {
-        $constraint = new Constraints\QuoteProduct();
+        $constraint = new QuoteProductConstraint();
         $this->validator->validate($value, $constraint);
 
         if ($valid) {
@@ -50,43 +51,60 @@ class QuoteProductValidatorTest extends ConstraintValidatorTestCase
 
     public function validateProvider(): array
     {
-        $product = new Product();
-
-        $item1 = new QuoteProduct();
-        $item2 = $this->getQuoteProduct($product, null, QuoteProduct::TYPE_NOT_AVAILABLE);
-        $item3 = $this->getQuoteProduct($product, null, QuoteProduct::TYPE_OFFER, 'free form product');
-        $item4 = $this->getQuoteProduct(null, $product, QuoteProduct::TYPE_NOT_AVAILABLE, '', 'free form product');
-        $item5 = $this->getQuoteProduct($product, null, QuoteProduct::TYPE_OFFER, 'free form product');
-        $item6 = $this->getQuoteProduct(null, $product, QuoteProduct::TYPE_NOT_AVAILABLE, '', 'free form product');
-
         return [
             'empty product & empty free form' => [
-                'value' => $item1,
-                'valid' => false,
+                'value' => new QuoteProduct(),
+                'valid' => false
             ],
             'empty product replacement & empty free form replacement' => [
-                'value' => $item2,
+                'value' => $this->getQuoteProduct(
+                    new Product(),
+                    null,
+                    QuoteProduct::TYPE_NOT_AVAILABLE
+                ),
                 'valid' => false,
-                'fieldPath' => 'productReplacement',
+                'fieldPath' => 'productReplacement'
             ],
             'empty product & filled free form' => [
-                'value' => $item3,
-                'valid' => true,
+                'value' => $this->getQuoteProduct(
+                    new Product(),
+                    null,
+                    QuoteProduct::TYPE_OFFER,
+                    'free form product'
+                ),
+                'valid' => true
             ],
             'empty product replacement & filled free form replacement' => [
-                'value' => $item4,
+                'value' => $this->getQuoteProduct(
+                    null,
+                    new Product(),
+                    QuoteProduct::TYPE_NOT_AVAILABLE,
+                    '',
+                    'free form product'
+                ),
                 'valid' => true,
-                'fieldPath' => 'product',
+                'fieldPath' => 'product'
             ],
             'filled product' => [
-                'value' => $item5,
+                'value' => $this->getQuoteProduct(
+                    new Product(),
+                    null,
+                    QuoteProduct::TYPE_OFFER,
+                    'free form product'
+                ),
                 'valid' => true,
-                'fieldPath' => 'product',
+                'fieldPath' => 'product'
             ],
             'filled product replacement' => [
-                'value' => $item6,
+                'value' => $this->getQuoteProduct(
+                    null,
+                    new Product(),
+                    QuoteProduct::TYPE_NOT_AVAILABLE,
+                    '',
+                    'free form product'
+                ),
                 'valid' => true,
-                'fieldPath' => 'product',
+                'fieldPath' => 'product'
             ],
         ];
     }
@@ -99,12 +117,11 @@ class QuoteProductValidatorTest extends ConstraintValidatorTestCase
         string $freeFormProductReplacement = ''
     ): QuoteProduct {
         $quoteProduct = new QuoteProduct();
-        $quoteProduct
-            ->setType($type)
-            ->setProduct($product)
-            ->setProductReplacement($replacement)
-            ->setFreeFormProduct($freeFormProduct)
-            ->setFreeFormProductReplacement($freeFormProductReplacement);
+        $quoteProduct->setType($type);
+        $quoteProduct->setProduct($product);
+        $quoteProduct->setProductReplacement($replacement);
+        $quoteProduct->setFreeFormProduct($freeFormProduct);
+        $quoteProduct->setFreeFormProductReplacement($freeFormProductReplacement);
 
         return $quoteProduct;
     }

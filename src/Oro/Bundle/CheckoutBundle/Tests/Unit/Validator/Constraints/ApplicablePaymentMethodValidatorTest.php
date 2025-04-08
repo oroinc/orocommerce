@@ -93,6 +93,8 @@ class ApplicablePaymentMethodValidatorTest extends ConstraintValidatorTestCase
 
         $constraint = new ApplicablePaymentMethod();
         $this->validator->validate($checkout, $constraint);
+
+        $this->assertNoViolation();
     }
 
     public function testValidateWithDisabledPaymentMethod(): void
@@ -158,5 +160,7 @@ class ApplicablePaymentMethodValidatorTest extends ConstraintValidatorTestCase
 
         $constraint = new ApplicablePaymentMethod();
         $this->validator->validate($checkout, $constraint);
+
+        $this->assertNoViolation();
     }
 }
