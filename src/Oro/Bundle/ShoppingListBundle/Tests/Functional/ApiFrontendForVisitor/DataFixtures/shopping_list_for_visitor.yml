@@ -240,6 +240,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Shopping List 1'
         notes: 'Shopping List 1 Notes'
         lineItems: ['@line_item1', '@kit_line_item1']
+        owner: '@user'
         organization: '@organization'
         website: '@website'
     shopping_list2:
@@ -248,12 +249,14 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         lineItems: ['@line_item2', '@kit_line_item2']
         customer: '@customer'
         customerUser: '@amanda'
+        owner: '@user'
         organization: '@organization'
         website: '@website'
     shopping_list3:
         label: 'Shopping List 3'
         notes: 'Shopping List 3 Notes'
         lineItems: ['@line_item3']
+        owner: '@user'
         organization: '@organization'
         website: '@website1'
 

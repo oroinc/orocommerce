@@ -51,6 +51,11 @@ class StartFromShoppingListTransition extends TransitionServiceAbstract
             return false;
         }
 
+        // Do not allow to start checkout for reassigned Shopping Lists while Customer User is not being set
+        if ($shoppingList->getCustomer() && !$shoppingList->getCustomerUser()) {
+            return false;
+        }
+
         if (!$shoppingList->getLineItems() || $shoppingList->getLineItems()->isEmpty()) {
             return false;
         }

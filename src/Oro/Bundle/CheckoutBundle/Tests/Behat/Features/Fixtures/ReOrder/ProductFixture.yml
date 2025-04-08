@@ -166,7 +166,9 @@ Oro\Bundle\PricingBundle\Entity\PriceListToProduct:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist1:
         label: 'List 1'
+        customer: '@amanda->customer'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -177,6 +179,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist1'
+        owner: '@admin'
         organization: '@organization'
     lineitem2:
         product: '@product2'
@@ -184,4 +187,5 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist1'
+        owner: '@admin'
         organization: '@organization'

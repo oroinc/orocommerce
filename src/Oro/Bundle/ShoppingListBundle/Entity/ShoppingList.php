@@ -13,7 +13,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitor;
 use Oro\Bundle\CustomerBundle\Entity\CustomerVisitorOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerAwareTrait;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Attribute\Config;
@@ -53,11 +52,13 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
             'owner_type' => 'USER',
             'owner_field_name' => 'owner',
             'owner_column_name' => 'user_owner_id',
+            'organization_field_name' => 'organization',
+            'organization_column_name' => 'organization_id',
             'frontend_owner_type' => 'FRONTEND_USER',
             'frontend_owner_field_name' => 'customerUser',
             'frontend_owner_column_name' => 'customer_user_id',
-            'organization_field_name' => 'organization',
-            'organization_column_name' => 'organization_id'
+            'frontend_customer_field_name' => 'customer',
+            'frontend_customer_column_name' => 'customer_id'
         ],
         'dataaudit' => ['auditable' => true],
         'security' => ['type' => 'ACL', 'group_name' => 'commerce', 'category' => 'shopping']
@@ -125,7 +126,7 @@ class ShoppingList implements
      * persist.
      */
     #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
-    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?CustomerUser $customerUser = null;
 

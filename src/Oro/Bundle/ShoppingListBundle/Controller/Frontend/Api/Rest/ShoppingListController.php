@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\Attribute\AclAncestor;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\SoapBundle\Controller\Api\Rest\RestController;
@@ -28,6 +29,11 @@ class ShoppingListController extends RestController
     #[AclAncestor('oro_shopping_list_frontend_set_as_default')]
     public function setCurrentAction(ShoppingList $shoppingList)
     {
+        $user = $this->getUser();
+        if (!$user instanceof CustomerUser) {
+            throw $this->createAccessDeniedException();
+        }
+
         $this->container->get('oro_shopping_list.manager.current_shopping_list')
             ->setCurrent($this->getUser(), $shoppingList);
 
@@ -53,14 +59,17 @@ class ShoppingListController extends RestController
     {
         $manager = $this->container->get('oro_shopping_list.shopping_list.owner_manager');
         $status = Response::HTTP_OK;
-        $data = $this->container->get('translator')
-            ->trans(
-                'oro.shoppinglist.flash.update_success',
-                ['%shoppinglist%' => $shoppingList->getLabel()]
-            );
+
+        $data = null;
         try {
             $ownerId = $request->request->get("ownerId");
             $manager->setOwner($ownerId, $shoppingList);
+
+            $data = $this->container->get('translator')
+                ->trans(
+                    'oro.shoppinglist.flash.update_success',
+                    ['%shoppinglist%' => $shoppingList->getLabel()]
+                );
         } catch (AccessDeniedException $e) {
             $status = Response::HTTP_FORBIDDEN;
         } catch (\InvalidArgumentException $e) {

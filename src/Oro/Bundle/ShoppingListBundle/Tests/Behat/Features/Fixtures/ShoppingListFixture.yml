@@ -33,19 +33,23 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Shopping List 1'
         customer: '@customer1'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
     shoppinglist4:
         label: 'Shopping List 4'
+        customer: '@customer4'
         customerUser: '@marlene'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
     shoppinglist5:
         label: 'Shopping List 5'
+        customer: '@customer1'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
-        owner: '@admin'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
     lineitem1:
@@ -54,6 +58,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist1'
+        owner: '@admin'
         organization: '@organization'
     lineitem4:
        product: '@product1'
@@ -61,6 +66,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
        unit: '@item'
        customerUser: '@marlene'
        shoppingList: '@shoppinglist4'
+       owner: '@admin'
        organization: '@organization'
     lineitem5:
        product: '@product1'
@@ -68,6 +74,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
        unit: '@set'
        customerUser: '@amanda'
        shoppingList: '@shoppinglist5'
+       owner: '@admin'
        organization: '@organization'
     lineitem6:
        product: '@product1'
@@ -75,6 +82,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
        unit: '@item'
        customerUser: '@amanda'
        shoppingList: '@shoppinglist5'
+       owner: '@admin'
        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:

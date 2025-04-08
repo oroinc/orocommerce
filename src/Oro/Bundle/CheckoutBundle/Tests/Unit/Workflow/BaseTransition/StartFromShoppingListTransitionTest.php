@@ -12,6 +12,8 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Provider\OrderLimitProviderInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\ActionGroup\StartShoppingListCheckoutInterface;
 use Oro\Bundle\CheckoutBundle\Workflow\BaseTransition\StartFromShoppingListTransition;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\EmptyMatrixGridInterface;
@@ -60,6 +62,7 @@ class StartFromShoppingListTransitionTest extends TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @dataProvider preConditionsDataProvider
      */
     public function testIsPreConditionAllowed(
@@ -69,6 +72,8 @@ class StartFromShoppingListTransitionTest extends TestCase
         bool $isAclAllowed,
         bool $isMinimumOrderAmountMet,
         bool $isMaximumOrderAmountMet,
+        ?Customer $customer,
+        ?CustomerUser $customerUser,
         bool $expected
     ): void {
         $workflowItem = $this->createMock(WorkflowItem::class);
@@ -91,6 +96,12 @@ class StartFromShoppingListTransitionTest extends TestCase
         $shoppingList->expects($this->any())
             ->method('getLineItems')
             ->willReturn($lineItems);
+        $shoppingList->expects($this->any())
+            ->method('getCustomer')
+            ->willReturn($customer);
+        $shoppingList->expects($this->any())
+            ->method('getCustomerUser')
+            ->willReturn($customerUser);
 
         $this->editableMatrixGrid->expects($this->any())
             ->method('hasEmptyMatrix')
@@ -154,6 +165,9 @@ class StartFromShoppingListTransitionTest extends TestCase
         $this->assertSame($expected, $this->transition->isPreConditionAllowed($workflowItem));
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function preConditionsDataProvider(): array
     {
         return [
@@ -164,6 +178,19 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => true,
                 'isMinimumOrderAmountMet' => true,
                 'isMaximumOrderAmountMet' => true,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
+                'expected' => false
+            ],
+            'reassigned shopping list' => [
+                'lineItemsArray' => [$this->createMock(LineItem::class)],
+                'isStartAllowedByListeners' => true,
+                'isAllowedForAny' => true,
+                'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
+                'customer' => new Customer(),
+                'customerUser' => null,
                 'expected' => false
             ],
             'not allowed by listeners' => [
@@ -173,6 +200,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => true,
                 'isMinimumOrderAmountMet' => true,
                 'isMaximumOrderAmountMet' => true,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
                 'expected' => false
             ],
             'not allowed by isWorkflowStartFromShoppingListAllowed' => [
@@ -182,6 +211,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => true,
                 'isMinimumOrderAmountMet' => true,
                 'isMaximumOrderAmountMet' => true,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
                 'expected' => false
             ],
             'not allowed by ACL' => [
@@ -191,6 +222,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => false,
                 'isMinimumOrderAmountMet' => true,
                 'isMaximumOrderAmountMet' => true,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
                 'expected' => false
             ],
             'not allowed by minimum order amount' => [
@@ -200,6 +233,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => true,
                 'isMinimumOrderAmountMet' => false,
                 'isMaximumOrderAmountMet' => true,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
                 'expected' => false
             ],
             'not allowed by maximum order amount' => [
@@ -209,6 +244,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => true,
                 'isMinimumOrderAmountMet' => true,
                 'isMaximumOrderAmountMet' => false,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
                 'expected' => false
             ],
             'not allowed by minimum and maximum order amount' => [
@@ -218,6 +255,8 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => true,
                 'isMinimumOrderAmountMet' => false,
                 'isMaximumOrderAmountMet' => false,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
                 'expected' => false
             ],
             'allowed' => [
@@ -227,6 +266,30 @@ class StartFromShoppingListTransitionTest extends TestCase
                 'isAclAllowed' => true,
                 'isMinimumOrderAmountMet' => true,
                 'isMaximumOrderAmountMet' => true,
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
+                'expected' => true
+            ],
+            'allowed no customer' => [
+                'lineItemsArray' => [$this->createMock(LineItem::class)],
+                'isStartAllowedByListeners' => true,
+                'isAllowedForAny' => true,
+                'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
+                'customer' => null,
+                'customerUser' => new CustomerUser(),
+                'expected' => true
+            ],
+            'allowed no customer user and customer' => [
+                'lineItemsArray' => [$this->createMock(LineItem::class)],
+                'isStartAllowedByListeners' => true,
+                'isAllowedForAny' => true,
+                'isAclAllowed' => true,
+                'isMinimumOrderAmountMet' => true,
+                'isMaximumOrderAmountMet' => true,
+                'customer' => null,
+                'customerUser' => null,
                 'expected' => true
             ],
         ];

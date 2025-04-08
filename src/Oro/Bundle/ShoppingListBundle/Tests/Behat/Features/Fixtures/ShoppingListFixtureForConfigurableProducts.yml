@@ -7,12 +7,14 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Configurable products list 1'
         customer: '@customer1'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
     configurable_2:
         label: 'Configurable products list 2'
         customer: '@customer1'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -24,6 +26,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@configurable_1'
+        owner: '@admin'
         organization: '@organization'
     lineitem1_2:
         product: '@product_A_2'
@@ -32,6 +35,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@configurable_1'
+        owner: '@admin'
         organization: '@organization'
     lineitem2_1:
         product: '@product_A_1'
@@ -40,6 +44,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@configurable_2'
+        owner: '@admin'
         organization: '@organization'
     lineitem2_2:
         product: '@product_A_2'
@@ -48,4 +53,5 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@configurable_2'
+        owner: '@admin'
         organization: '@organization'

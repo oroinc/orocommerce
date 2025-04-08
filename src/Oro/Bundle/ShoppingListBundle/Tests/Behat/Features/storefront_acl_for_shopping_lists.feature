@@ -1,5 +1,6 @@
 @regression
 @ticket-BB-15117
+@fix-BB-24936
 @fixture-OroShoppingListBundle:ShoppingListFixtureWithCustomers.yml
 
 Feature: Storefront acl for shopping lists

@@ -282,18 +282,21 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Shopping List 1'
         customer: '@customer'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
     shoppinglist2:
         label: 'Shopping List 2'
         customer: '@customer'
         customerUser: '@nancy'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
     shoppinglist3:
         label: 'Shopping List 3'
         customer: '@customer'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -305,6 +308,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note <current()> text'
     lineitem6:
@@ -314,6 +318,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note 6 text'
     lineitem7:
@@ -323,6 +328,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note 7 text'
     lineitem{8..9}:
@@ -332,6 +338,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note <current()> text'
     lineitem10:
@@ -341,6 +348,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@set'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note 10 text'
     lineitem11:
@@ -350,6 +358,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@set'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note 11 text'
     lineitem12:
@@ -359,6 +368,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note 12 text'
     lineitem{13..17}:
@@ -367,6 +377,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note <current()> text'
     lineitem{18..20}:
@@ -375,6 +386,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@set'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note <current()> text'
     lineitem{21..35}:
@@ -383,6 +395,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist3'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note <current()> text'
     lineitem{36..38}:
@@ -391,6 +404,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@amanda'
         shoppingList: '@shoppinglist1'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note <current()> text'
     lineitem{39..40}:
@@ -399,6 +413,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@piece'
         customerUser: '@nancy'
         shoppingList: '@shoppinglist2'
+        owner: '@admin'
         organization: '@organization'
         notes: 'Note <current()> text'
 

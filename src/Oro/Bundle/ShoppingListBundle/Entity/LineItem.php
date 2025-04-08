@@ -123,7 +123,7 @@ class LineItem implements
     protected ?string $notes = null;
 
     #[ORM\ManyToOne(targetEntity: CustomerUser::class)]
-    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'CASCADE')]
+    #[ORM\JoinColumn(name: 'customer_user_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?CustomerUser $customerUser = null;
 
@@ -280,7 +280,7 @@ class LineItem implements
      *
      * @return $this
      */
-    public function setCustomerUser(CustomerUser $user = null)
+    public function setCustomerUser(?CustomerUser $user = null)
     {
         $this->customerUser = $user;
 
