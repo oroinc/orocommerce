@@ -241,6 +241,15 @@ services:
             - { name: oro_action.datagrid.mass_action_provider, alias: oro_shopping_list_add_products }
             - { name: oro_featuretogle.feature, feature: 'shopping_list_create' }
 
+    oro_shopping_list.action.datagrid.mass_action_provider_for_old_themes_decorator:
+        class: Oro\Bundle\ShoppingListBundle\Datagrid\Provider\MassAction\AddLineItemMassActionForOldThemesProvider
+        decorates: 'oro_shopping_list.action.datagrid.mass_action_provider'
+        arguments:
+            - '@.inner'
+            - '@oro_theme.provider.theme_configuration'
+            - '@translator'
+            - [ 'default_51', 'default_50' ]
+
     oro_shopping_list.event_listener.frontend_product_datagrid:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
         arguments:
