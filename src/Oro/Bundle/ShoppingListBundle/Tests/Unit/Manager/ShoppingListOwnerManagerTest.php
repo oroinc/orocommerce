@@ -2,13 +2,11 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
-use Doctrine\ORM\AbstractQuery;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\SecurityBundle\Owner\OwnerChecker;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager;
@@ -18,33 +16,20 @@ use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 class ShoppingListOwnerManagerTest extends TestCase
 {
-    private AclHelper&MockObject $aclHelper;
-    private ManagerRegistry&MockObject $doctrine;
+    protected ManagerRegistry|MockObject $doctrine;
+    protected OwnerChecker|MockObject $ownerChecker;
+
     private ShoppingListOwnerManager $manager;
 
-    #[\Override]
     protected function setUp(): void
     {
-        $this->aclHelper = $this->createMock(AclHelper::class);
         $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $this->ownerChecker = $this->createMock(OwnerChecker::class);
 
-        $this->manager = new ShoppingListOwnerManager($this->aclHelper, $this->doctrine);
-    }
-
-    private function getQueryBuilder(): QueryBuilder
-    {
-        $qb = $this->createMock(QueryBuilder::class);
-        $qb->expects(self::any())
-            ->method('select')
-            ->willReturn($qb);
-        $qb->expects(self::any())
-            ->method('where')
-            ->willReturn($qb);
-        $qb->expects(self::any())
-            ->method('setParameter')
-            ->willReturn($qb);
-
-        return $qb;
+        $this->manager = new ShoppingListOwnerManager(
+            $this->ownerChecker,
+            $this->doctrine
+        );
     }
 
     public function testSetOwner(): void
@@ -56,38 +41,17 @@ class ShoppingListOwnerManagerTest extends TestCase
             ->willReturn($repo);
 
         $user = new CustomerUser();
-        $repo->expects(self::any())
-            ->method('find')
-            ->with(1)
-            ->willReturn($user);
-
-        $qb = $this->getQueryBuilder();
-        $repo->expects(self::once())
-            ->method('createQueryBuilder')
-            ->willReturn($qb);
-
-        $queryWithCriteria = $this->createMock(AbstractQuery::class);
-        $this->aclHelper->expects(self::once())
-            ->method('apply')
-            ->with(
-                $qb,
-                'ASSIGN',
-                [
-                    'aclDisable' => true,
-                    'availableOwnerEnable' => true,
-                    'availableOwnerTargetEntityClass' => ShoppingList::class
-                ]
-            )
-            ->willReturn($queryWithCriteria);
-        $queryWithCriteria->expects(self::any())
-            ->method('getOneOrNullResult')
-            ->willReturn(1);
-
+        $repo->method('find')->with(1)->willReturn($user);
         $shoppingList = new ShoppingList();
         $lineItem1 = new LineItem();
         $lineItem2 = new LineItem();
         $shoppingList->addLineItem($lineItem1);
         $shoppingList->addLineItem($lineItem2);
+
+        $this->ownerChecker->expects($this->once())
+            ->method('isOwnerCanBeSet')
+            ->with($shoppingList)
+            ->willReturn(true);
 
         $em = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->expects(self::any())
@@ -127,6 +91,9 @@ class ShoppingListOwnerManagerTest extends TestCase
         $em->expects(self::never())
             ->method('flush');
 
+        $this->ownerChecker->expects($this->never())
+            ->method('isOwnerCanBeSet');
+
         $shoppingList = new ShoppingList();
         $shoppingList->setCustomerUser($user);
         $this->manager->setOwner(1, $shoppingList);
@@ -157,11 +124,14 @@ class ShoppingListOwnerManagerTest extends TestCase
         // flush should not be called
         $em->expects(self::never())
             ->method('flush');
+        $this->ownerChecker->expects($this->never())
+            ->method('isOwnerCanBeSet');
         $this->manager->setOwner(1, new ShoppingList());
     }
 
     public function testSetOwnerPermissionDenied(): void
     {
+        $shoppingList = new ShoppingList();
         $repo = $this->createMock(EntityRepository::class);
         $this->doctrine->expects(self::any())
             ->method('getRepository')
@@ -174,28 +144,21 @@ class ShoppingListOwnerManagerTest extends TestCase
             ->with(1)
             ->willReturn($user);
 
-        $qb = $this->getQueryBuilder();
-        $repo->expects(self::once())
-            ->method('createQueryBuilder')
-            ->willReturn($qb);
-        $queryWithCriteria = $this->createMock(AbstractQuery::class);
-        $this->aclHelper->expects(self::once())
-            ->method('apply')
-            ->willReturn($queryWithCriteria);
-        $queryWithCriteria->expects(self::any())
-            ->method('getOneOrNullResult')
-            ->willReturn(null);
-
         $em = $this->createMock(EntityManagerInterface::class);
         $this->doctrine->expects(self::any())
             ->method('getManagerForClass')
             ->with(ShoppingList::class)
             ->willReturn($em);
 
+        $this->ownerChecker->expects($this->once())
+            ->method('isOwnerCanBeSet')
+            ->with($shoppingList)
+            ->willReturn(false);
+
         // flush should not be called
         $em->expects(self::never())
             ->method('flush');
         $this->expectException(AccessDeniedException::class);
-        $this->manager->setOwner(1, new ShoppingList());
+        $this->manager->setOwner(1, $shoppingList);
     }
 }

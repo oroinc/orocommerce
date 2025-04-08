@@ -11,6 +11,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\WebsiteManagerTrait;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListConfigurableLineItems;
@@ -23,6 +24,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @dbIsolationPerTest
  */
 class ShoppingListRepositoryTest extends WebTestCase
 {
@@ -200,6 +202,13 @@ class ShoppingListRepositoryTest extends WebTestCase
 
     public function testResetCustomerUserForSomeEntities()
     {
+        $lineItemRepo = self::getContainer()->get('doctrine')->getRepository(LineItem::class);
+
+        $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
+        self::assertCount(0, $shoppingLists);
+        $lineItems = $lineItemRepo->findBy(['customerUser' => null]);
+        self::assertCount(0, $lineItems);
+
         $customerUser = $this->getCustomerUser();
         $this->getRepository()->resetCustomerUser($customerUser, [
             $this->getReference(LoadShoppingLists::SHOPPING_LIST_1),
@@ -208,15 +217,28 @@ class ShoppingListRepositoryTest extends WebTestCase
 
         $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
         self::assertCount(2, $shoppingLists);
+
+        $lineItems = $lineItemRepo->findBy(['customerUser' => null]);
+        self::assertCount(4, $lineItems);
     }
 
     public function testResetCustomerUser()
     {
+        $lineItemRepo = self::getContainer()->get('doctrine')->getRepository(LineItem::class);
+
+        $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
+        self::assertCount(0, $shoppingLists);
+        $lineItems = $lineItemRepo->findBy(['customerUser' => null]);
+        self::assertCount(0, $lineItems);
+
         $customerUser = $this->getCustomerUser();
         $this->getRepository()->resetCustomerUser($customerUser);
 
         $shoppingLists = $this->getRepository()->findBy(['customerUser' => null]);
         self::assertCount(7, $shoppingLists);
+
+        $lineItems = $lineItemRepo->findBy(['customerUser' => null]);
+        self::assertCount(13, $lineItems);
     }
 
     public function testHasEmptyConfigurableLineItems(): void

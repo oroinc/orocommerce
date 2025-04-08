@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Datagrid\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmQueryConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -16,16 +16,10 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
  */
 class FrontendShoppingListAssignGridEventListener
 {
-    /** @var ManagerRegistry */
-    private $registry;
-
-    /** @var AclHelper */
-    private $aclHelper;
-
-    public function __construct(ManagerRegistry $registry, AclHelper $aclHelper)
-    {
-        $this->registry = $registry;
-        $this->aclHelper = $aclHelper;
+    public function __construct(
+        private ManagerRegistry $registry,
+        private AclHelper $aclHelper
+    ) {
     }
 
     public function onBuildBefore(BuildBefore $event): void
@@ -44,17 +38,16 @@ class FrontendShoppingListAssignGridEventListener
 
         $config->offsetAddToArrayByPath(
             OrmQueryConfiguration::WHERE_AND_PATH,
-            [sprintf('%s.id IN (:customer_user_ids)', $rootAlias)]
+            [sprintf('IDENTITY(%s.customer) IN (:customer_ids)', $rootAlias)]
         );
-        $config->offsetAddToArrayByPath(DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH, ['customer_user_ids']);
+        $config->offsetAddToArrayByPath(DatagridConfiguration::DATASOURCE_BIND_PARAMETERS_PATH, ['customer_ids']);
 
         $event->getDatagrid()
             ->getParameters()
             ->set(
-                'customer_user_ids',
-                $this->registry->getManagerForClass(CustomerUser::class)
-                    ->getRepository(CustomerUser::class)
-                    ->getAssignableCustomerUserIds($this->aclHelper, ShoppingList::class)
+                'customer_ids',
+                $this->registry->getRepository(Customer::class)
+                    ->getAssignableCustomerIds($this->aclHelper, ShoppingList::class)
             );
     }
 }

@@ -198,7 +198,9 @@ Oro\Bundle\SaleBundle\Entity\Quote:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
   shoppinglist_entity:
     label: 'New ShoppingList'
+    customer: '@customer_user_entity->customer'
     customerUser: '@customer_user_entity'
+    owner: '@admin'
     organization: '@organization'
     website: '@website_entity'
 

@@ -7,6 +7,7 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
         label: 'Configurable products list 1'
         customer: '@customer'
         customerUser: '@amanda'
+        owner: '@admin'
         organization: '@organization'
         website: '@website1'
 
@@ -18,6 +19,7 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@configurable_1'
+        owner: '@admin'
         organization: '@organization'
     lineitem1_2:
         product: '@product_A_2'
@@ -26,4 +28,5 @@ Oro\Bundle\ShoppingListBundle\Entity\LineItem:
         unit: '@item'
         customerUser: '@amanda'
         shoppingList: '@configurable_1'
+        owner: '@admin'
         organization: '@organization'

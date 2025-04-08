@@ -6,11 +6,13 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Acl\BasicPermission;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
@@ -20,7 +22,30 @@ use Oro\Component\DoctrineUtils\ORM\QueryBuilderUtil;
  */
 class ShoppingListRepository extends ServiceEntityRepository implements ResettableCustomerUserRepositoryInterface
 {
-    use ResetCustomerUserTrait;
+    use ResetCustomerUserTrait {
+        ResetCustomerUserTrait::resetCustomerUser as private baseResetCustomerUser;
+    }
+
+    public function resetCustomerUser(CustomerUser $customerUser, array $updatedEntities = [])
+    {
+        $this->baseResetCustomerUser($customerUser, $updatedEntities);
+
+        /** @var QueryBuilder $qb */
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->update(LineItem::class, 'e')
+            ->set('e.customerUser', ':newCustomerUser')
+            ->where($qb->expr()->eq('e.customerUser', ':oldCustomerUser'))
+            ->setParameter('newCustomerUser', null)
+            ->setParameter('oldCustomerUser', $customerUser);
+
+        if ($updatedEntities) {
+            $qb->andWhere($qb->expr()->in('e.shoppingList', ':updatedEntities'))
+                ->setParameter('updatedEntities', $updatedEntities);
+        }
+
+        return $qb->getQuery()->execute();
+    }
 
     /**
      * @param AclHelper $aclHelper
