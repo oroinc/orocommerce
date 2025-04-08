@@ -39,7 +39,7 @@ oro_behat_extension:
 
     Customer User Sign In:
       selector:
-        locator: '//form[@id="form-login"]//button[@type="submit"]'
+        locator: '//form[@id="form-login"]//*[self::button or self::input][@type="submit"]'
         type: xpath
 
     Single Checkout Page Add New Billing Address:
