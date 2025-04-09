@@ -244,7 +244,7 @@ class FieldsProvider implements FieldsProviderInterface
      */
     protected function isWhitelistedField($className, $fieldName)
     {
-        return !empty($this->fieldsWhiteList[$className][$fieldName]);
+        return !empty($this->getFieldsWhiteList()[$className][$fieldName]);
     }
 
     /**
@@ -263,7 +263,7 @@ class FieldsProvider implements FieldsProviderInterface
      */
     protected function isBlacklistedField($className, $fieldName)
     {
-        return !empty($this->fieldsBlackList[$className][$fieldName]);
+        return !empty($this->getFieldsBlackList()[$className][$fieldName]);
     }
 
     /**

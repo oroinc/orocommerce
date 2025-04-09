@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceListAssignedProductsTopic;
 use Oro\Bundle\PricingBundle\Async\Topic\ResolvePriceRulesTopic;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -31,11 +32,10 @@ class PriceRuleLexemeTriggerHandler
     }
 
     /**
-     * @param string   $className
-     * @param array    $updatedFields
+     * @param string $className
+     * @param array|string[] $updatedFields
      * @param int|null $relationId
-     *
-     * @return PriceRuleLexeme[]
+     * @return array|PriceRuleLexeme[]
      */
     public function findEntityLexemes(string $className, array $updatedFields = [], ?int $relationId = null): array
     {
@@ -46,8 +46,27 @@ class PriceRuleLexemeTriggerHandler
     }
 
     /**
+     * @param string $className
+     * @param array|string[] $updatedFields
+     * @param int|null $relationId
+     * @param Organization|null $organization
+     * @return array|PriceRuleLexeme[]
+     */
+    public function findEntityLexemesByOrganization(
+        string $className,
+        array $updatedFields = [],
+        ?int $relationId = null,
+        ?Organization $organization = null
+    ): array {
+        /** @var PriceRuleLexemeRepository $repository */
+        $repository = $this->doctrine->getRepository(PriceRuleLexeme::class);
+
+        return $repository->findEntityLexemesByOrganization($className, $updatedFields, $relationId, $organization);
+    }
+
+    /**
      * @param PriceRuleLexeme[] $lexemes
-     * @param array|Product[]   $products
+     * @param array|Product[] $products
      */
     public function processLexemes(array $lexemes, array $products = []): void
     {

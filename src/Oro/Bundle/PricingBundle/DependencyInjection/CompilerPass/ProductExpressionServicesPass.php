@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -68,6 +69,11 @@ class ProductExpressionServicesPass implements CompilerPassInterface
                 ->addMethodCall(
                     'addFieldToWhiteList',
                     [PriceList::class, 'prices']
+                );
+            $container->getDefinition(self::FIELDS_PROVIDER)
+                ->addMethodCall(
+                    'addFieldToBlackList',
+                    [ProductPrice::class, 'version']
                 );
         }
 

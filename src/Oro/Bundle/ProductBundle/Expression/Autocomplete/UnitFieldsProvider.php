@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
  */
 class UnitFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
-    #[\Override]
     protected function getFieldsData($numericalOnly, $withRelations)
     {
         if ($numericalOnly) {
