@@ -52,6 +52,14 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
                 ['type' => 'float'],
                 ['type' => 'ref-one'],
             ],
+            'fieldsDataUpdate' => [
+                'UnitClass' => [
+                    'price' => [
+                        'label' => 'price TRANS',
+                        'type' => 'float',
+                    ]
+                ]
+            ]
         ];
 
         $this->provider->addSpecialFieldInformation(
@@ -60,6 +68,7 @@ class AutocompleteFieldsProviderTest extends AbstractFieldsProviderTest
             ['label' => 'special', 'type' => 'collection']
         );
         $this->provider->addSpecialFieldInformation('UnitClass', 'code', ['type' => 'standalone']);
+        $this->provider->addSpecialFieldInformation('UnitClass', 'price', ['type' => 'float', 'label' => 'price']);
         $this->assertEquals($expected, $this->provider->getDataProviderConfig($numericalOnly, $withRelations));
     }
 

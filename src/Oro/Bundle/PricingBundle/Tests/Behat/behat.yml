@@ -78,7 +78,9 @@ oro_behat_extension:
     Price Calculation Unit Expression Editor Content:
       selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][productUnitExpression]"] [contenteditable="true"]'
     Price Calculation Unit Expression Button:
-      selector: 'a.price-rule-item-product-unit-type-expression'
+      selector: '[data-content="oro_pricing_price_list[priceRules][0]"] a.price-rule-item-product-unit-type-expression'
+    Price Calculation Unit Expression Button Second Row:
+      selector: '[data-content="oro_pricing_price_list[priceRules][1]"] a.price-rule-item-product-unit-type-expression'
     Price Calculation Currency Expression:
       selector: 'input[name="oro_pricing_price_list[priceRules][0][currencyExpression]"]'
     Price Calculation Currency Expression Editor:
@@ -93,6 +95,8 @@ oro_behat_extension:
       selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][rule]"]'
     Price Calculation Calculate As Editor Content:
       selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][rule]"] [contenteditable="true"]'
+    Price Calculation Calculate As Editor Content Line:
+      selector: '.expression-editor[data-name="oro_pricing_price_list[priceRules][0][rule]"] .cm-line'
     Price Calculation Condition:
       selector: 'textarea[name="oro_pricing_price_list[priceRules][0][ruleCondition]"]'
     Price Calculation Condition Editor Content:
@@ -238,6 +242,41 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//input[contains(@name,"oro_pricing_price_list_schedules_0_deactivateAt-uid")]'
           Rule: 'oro_pricing_price_list[productAssignmentRule]'
+
+    Add Price Calculation Rules:
+      selector:
+        locator: '//h4[text()="Price Calculation Rules"]/..//a[contains(text(),"Add")]'
+        type: xpath
+
+    Price Calculation Rules Form:
+      selector: 'form[name="oro_pricing_price_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price for quantity: 'oro_pricing_price_list[priceRules][0][quantity]'
+          Price for quantity expression: 'oro_pricing_price_list[priceRules][0][quantityExpression]'
+          Price Unit: 'oro_pricing_price_list[priceRules][0][productUnitExpression]'
+          Price Unit Static: 'oro_pricing_price_list[priceRules][0][productUnit]'
+          Price Currency: 'oro_pricing_price_list[priceRules][0][currencyExpression]'
+          Price Currency Static: 'oro_pricing_price_list[priceRules][0][currency]'
+          Price Calculate As: 'oro_pricing_price_list[priceRules][0][rule]'
+          Price Condition: 'oro_pricing_price_list[priceRules][0][ruleCondition]'
+          Price Priority: 'oro_pricing_price_list[priceRules][0][priority]'
+
+    Price Calculation Rules Form Second Row:
+      selector: 'form[name="oro_pricing_price_list"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Price for quantity: 'oro_pricing_price_list[priceRules][1][quantity]'
+          Price for quantity expression: 'oro_pricing_price_list[priceRules][1][quantityExpression]'
+          Price Unit: 'oro_pricing_price_list[priceRules][1][productUnitExpression]'
+          Price Unit Static: 'oro_pricing_price_list[priceRules][1][productUnit]'
+          Price Currency: 'oro_pricing_price_list[priceRules][1][currencyExpression]'
+          Price Currency Static: 'oro_pricing_price_list[priceRules][1][currency]'
+          Price Calculate As: 'oro_pricing_price_list[priceRules][1][rule]'
+          Price Condition: 'oro_pricing_price_list[priceRules][1][ruleCondition]'
+          Price Priority: 'oro_pricing_price_list[priceRules][1][priority]'
 
     Order Review Form:
       selector: 'section.page-content'

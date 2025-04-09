@@ -7,7 +7,6 @@ namespace Oro\Bundle\ProductBundle\Expression\Autocomplete;
  */
 class CurrencyFieldsProvider extends AbstractAutocompleteFieldsProvider
 {
-    #[\Override]
     protected function getFieldsData($numericalOnly, $withRelations)
     {
         $result = [];

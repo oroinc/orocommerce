@@ -3,12 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\DBAL\Logging\DebugStack;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceRuleLexemeRepository;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRuleLexemes;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -78,6 +81,33 @@ class PriceRuleLexemeRepositoryTest extends WebTestCase
         foreach ($lexemes as $lexeme) {
             $this->assertEquals(Category::class, $lexeme->getClassName());
         }
+    }
+
+    public function testFindEntityLexemesByClassNameWithOrganization()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+
+        $lexemes = $this->repository->findEntityLexemes(Category::class, [], null, $priceList->getOrganization());
+        // 5 rule lexemes from PriceRuleLexeme + 2 productAssignmentRule from LoadPriceLists
+        $this->assertCount(7, $lexemes);
+        foreach ($lexemes as $lexeme) {
+            $this->assertEquals(Category::class, $lexeme->getClassName());
+        }
+    }
+
+    public function testFindEntityLexemesByClassNameWithUnknownOrganization()
+    {
+        /** @var PriceList $priceList */
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+
+        $registry = self::getContainer()->get('doctrine');
+        /** @var EntityManager $em */
+        $em = $registry->getManagerForClass(Organization::class);
+        $otherOrg = $em->getReference(Organization::class, $priceList->getOrganization()->getId() + 1);
+
+        $lexemes = $this->repository->findEntityLexemes(Category::class, [], null, $otherOrg);
+        $this->assertEmpty($lexemes);
     }
 
     public function testFindEntityLexemesByClassNameAndFields()

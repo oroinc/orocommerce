@@ -40,10 +40,10 @@ class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
         $this->priceRuleLexemeTriggerHandler->expects($this->exactly(4))
             ->method('findEntityLexemes')
             ->willReturnMap([
-                [PriceList::class, [], 1, [$lexeme1, $lexeme2]],
-                [PriceList::class, [], 2, [$lexeme3]],
-                [PriceList::class, [], 3, []],
-                [PriceList::class, [], 4, []],
+                [PriceList::class, [], 1, null, [$lexeme1, $lexeme2]],
+                [PriceList::class, [], 2, null, [$lexeme3]],
+                [PriceList::class, [], 3, null, []],
+                [PriceList::class, [], 4, null, []],
             ]);
 
         $this->assertEquals(
@@ -91,11 +91,11 @@ class DependentPriceListProviderTest extends \PHPUnit\Framework\TestCase
         $this->priceRuleLexemeTriggerHandler->expects($this->exactly(6))
             ->method('findEntityLexemes')
             ->willReturnMap([
-                [PriceList::class, [], 1, [$lexeme1, $lexeme2]],
-                [PriceList::class, [], 2, [$lexeme3, $lexeme4]],
-                [PriceList::class, [], 3, []],
-                [PriceList::class, [], 4, []],
-                [PriceList::class, [], 5, []],
+                [PriceList::class, [], 1, null, [$lexeme1, $lexeme2]],
+                [PriceList::class, [], 2, null, [$lexeme3, $lexeme4]],
+                [PriceList::class, [], 3, null, []],
+                [PriceList::class, [], 4, null, []],
+                [PriceList::class, [], 5, null, []],
             ]);
 
         $this->assertEquals(
