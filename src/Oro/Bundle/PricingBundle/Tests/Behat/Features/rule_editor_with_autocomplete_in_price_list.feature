@@ -91,7 +91,7 @@ Feature: Rule Editor with Autocomplete in Price List
     And I select "pricelist…" from typeahead suggestions for "Price Calculation Calculate As Editor"
     And I click on "Price List Select Grid Button"
     And I click on Default Price List in grid
-    Then I click on "Price Calculation Calculate As Editor"
+    Then I click on "Price Calculation Calculate As Editor Content Line"
     And I select "prices" from typeahead suggestions for "Price Calculation Calculate As Editor"
     And I select "quantity" from typeahead suggestions for "Price Calculation Calculate As Editor"
     And I select "+" from typeahead suggestions for "Price Calculation Calculate As Editor"

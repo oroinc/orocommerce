@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\DependencyInjection\CompilerPass;
 
 use Oro\Bundle\PricingBundle\DependencyInjection\CompilerPass\ProductExpressionServicesPass;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
@@ -118,9 +119,10 @@ class ProductExpressionServicesPassTest extends \PHPUnit\Framework\TestCase
 
         $this->compiler->process($container);
 
-        self::assertEquals(
+        self::assertEqualsCanonicalizing(
             [
-                ['addFieldToWhiteList', [PriceList::class, 'prices']]
+                ['addFieldToWhiteList', [PriceList::class, 'prices']],
+                ['addFieldToBlackList', [ProductPrice::class, 'version']]
             ],
             $expressionFieldsProviderDef->getMethodCalls()
         );

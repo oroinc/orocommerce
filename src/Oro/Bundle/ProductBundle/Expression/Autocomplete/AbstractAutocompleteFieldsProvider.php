@@ -112,7 +112,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
         ];
 
         if (!empty($includeTypes)) {
-            $dataProviderConfig['include'] = array_map(function ($type) {
+            $dataProviderConfig['include'] = array_map(static function ($type) {
                 return ['type' => $type];
             }, $includeTypes);
         }
@@ -146,7 +146,9 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
     {
         if (array_key_exists($type, self::$scalarTypesMap)) {
             return self::$scalarTypesMap[$type];
-        } elseif (array_key_exists($type, self::$relationTypesMap)) {
+        }
+
+        if (array_key_exists($type, self::$relationTypesMap)) {
             return self::$relationTypesMap[$type];
         }
 
@@ -182,7 +184,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
             $hasChanges = false;
             $result = array_filter(
                 $result,
-                function ($fields) use (&$hasChanges) {
+                static function ($fields) use (&$hasChanges) {
                     $requireRemove = count($fields) === 0;
                     $hasChanges = $hasChanges || $requireRemove;
 
@@ -192,7 +194,7 @@ abstract class AbstractAutocompleteFieldsProvider implements AutocompleteFieldsP
             foreach ($result as $className => &$fields) {
                 $fields = array_filter(
                     $fields,
-                    function ($fieldInfo) use ($result, $className, &$hasChanges) {
+                    static function ($fieldInfo) use ($result, $className, &$hasChanges) {
                         $requireRemove = $fieldInfo['type'] === self::TYPE_RELATION
                             && (!array_key_exists($fieldInfo['relation_alias'], $result)
                                 || $fieldInfo['relation_alias'] === $className);

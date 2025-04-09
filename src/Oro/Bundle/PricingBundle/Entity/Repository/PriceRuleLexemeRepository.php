@@ -3,9 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceRuleLexeme;
 
+/**
+ *  ORM entity repository for PriceRuleLexeme entity.
+ */
 class PriceRuleLexemeRepository extends EntityRepository
 {
     const LEXEMES_CACHE_KEY = 'oro_pricing_price_rule_lexemes_cache';
@@ -45,12 +51,45 @@ class PriceRuleLexemeRepository extends EntityRepository
 
     /**
      * @param string $className
-     * @param array $updatedFields
-     * @param null|int $relationId
+     * @param array|string[] $updatedFields
+     * @param int|null $relationId
      * @return array|PriceRuleLexeme[]
      */
     public function findEntityLexemes($className, array $updatedFields = [], $relationId = null)
     {
+        $qb = $this->getLexemesQueryBuilder($className, $updatedFields, $relationId);
+
+        return $qb->getQuery()
+            ->useResultCache(true, 3600, self::LEXEMES_CACHE_KEY)
+            ->getResult();
+    }
+
+    /**
+     * @param string $className
+     * @param array|string[] $updatedFields
+     * @param int|null $relationId
+     * @param Organization|null $organization
+     * @return array|PriceRuleLexeme[]
+     */
+    public function findEntityLexemesByOrganization(
+        string $className,
+        array $updatedFields = [],
+        ?int $relationId = null,
+        ?Organization $organization = null
+    ): array {
+        $qb = $this->getLexemesQueryBuilder($className, $updatedFields, $relationId, $organization);
+
+        return $qb->getQuery()
+            ->useResultCache(true, 3600, self::LEXEMES_CACHE_KEY)
+            ->getResult();
+    }
+
+    protected function getLexemesQueryBuilder(
+        string $className,
+        array $updatedFields = [],
+        ?int $relationId = null,
+        ?Organization $organization = null
+    ): QueryBuilder {
         $qb = $this->createQueryBuilder('lexeme');
 
         $whereExpr = $qb->expr()->andX(
@@ -65,12 +104,15 @@ class PriceRuleLexemeRepository extends EntityRepository
             $whereExpr->add($qb->expr()->eq('lexeme.relationId', ':relationId'));
             $qb->setParameter('relationId', $relationId);
         }
+        if ($organization) {
+            $qb->innerJoin('lexeme.priceList', 'priceList', Join::WITH);
+            $whereExpr->add($qb->expr()->eq('priceList.organization', ':organization'));
+            $qb->setParameter('organization', $organization);
+        }
 
         $qb->where($whereExpr);
 
-        return $qb->getQuery()
-            ->useResultCache(true, 3600, self::LEXEMES_CACHE_KEY)
-            ->getResult();
+        return $qb;
     }
 
     public function invalidateCache()

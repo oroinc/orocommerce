@@ -154,23 +154,6 @@ oro_behat_extension:
           Attribute Groups Visible4: 'oro_attribute_family[attributeGroups][4][isVisible]'
           Attribute Groups Visible5: 'oro_attribute_family[attributeGroups][5][isVisible]'
 
-    Add Price Calculation Rules:
-      selector:
-        locator: '//h4[text()="Price Calculation Rules"]/..//a[contains(text(),"Add")]'
-        type: xpath
-
-    Price Calculation Rules Form:
-      selector: 'form[name="oro_pricing_price_list"]'
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
-      options:
-        mapping:
-          Price for quantity: 'oro_pricing_price_list[priceRules][0][quantity]'
-          Price for quantity expression: 'oro_pricing_price_list[priceRules][0][quantityExpression]'
-          Price Unit: 'oro_pricing_price_list[priceRules][0][productUnitExpression]'
-          Price Unit Static: 'oro_pricing_price_list[priceRules][0][productUnit]'
-          Price Currency: 'oro_pricing_price_list[priceRules][0][currencyExpression]'
-          Price Currency Static: 'oro_pricing_price_list[priceRules][0][currency]'
-
     Product Attribute Name:
       selector: '[name="oro_entity_config_type[fieldName]"]'
 

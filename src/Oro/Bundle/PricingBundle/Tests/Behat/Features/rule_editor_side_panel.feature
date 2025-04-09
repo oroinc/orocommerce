@@ -55,11 +55,10 @@ Feature: Rule Editor Side Panel
     And I click "Parentheses"
     And I click "Field"
     And I select "Product" option in selection results
-    And I select "Name" option in selection results
-    And I select "String value" option in selection results
+    And I select "SKU" option in selection results
     And I click "Match"
-    And I type "'Test Name'" in "Product Assignment Rule Editor"
-    Then Product Assignment Rule field should has (product.names.string matches containsRegExp('Test Name')) value
+    And I type "'Test SKU'" in "Product Assignment Rule Editor"
+    Then Product Assignment Rule field should has (product.sku matches containsRegExp('Test SKU')) value
     Given I clear text in "Product Assignment Rule Editor"
     And I click "Yes"
     And I click "Field"
