@@ -10,6 +10,7 @@ define(function(require) {
 
         defaults: $.extend(true, {}, TransitionButtonComponent.prototype.defaults, {
             selectors: {
+                checkoutContent: '[data-role="checkout-content"]',
                 checkoutRequire: '[data-role="checkout-require"]', // Required field label
                 shippingMethod: '[name$="[line_item_groups_shipping_methods]"]'
             }

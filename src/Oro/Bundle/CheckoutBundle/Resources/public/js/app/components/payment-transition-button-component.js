@@ -24,6 +24,7 @@ define(function(require) {
                 this.defaults,
                 {
                     selectors: {
+                        checkoutContent: '[data-role="checkout-content"]',
                         paymentForm: '[data-content="payment_method_form"]',
                         paymentMethodSelectorAbsolute: '[data-content="payment_method_form"] [name="paymentMethod"]',
                         paymentMethodSelector: '[name="paymentMethod"]',

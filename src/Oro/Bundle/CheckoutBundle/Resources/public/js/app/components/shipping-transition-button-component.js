@@ -28,6 +28,7 @@ define(function(require) {
                         shippingMethodTypeSelector: '[name$="shippingMethodType"]',
                         shippingMethodTypeSelectorAbsolute: '[data-content="shipping_method_form"]' +
                             ' [name$="shippingMethodType"]',
+                        checkoutContent: '[data-role="checkout-content"]',
                         checkoutRequire: '[data-role="checkout-require"]',
                         shippingMethod: '[name$="[shipping_method]"]',
                         shippingMethodType: '[name$="[shipping_method_type]"]'

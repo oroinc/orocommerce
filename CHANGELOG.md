@@ -44,6 +44,7 @@ The current file describes significant changes in the code that may affect the u
   - `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressType` and `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressType`
   - `\Oro\Bundle\CheckoutBundle\Form\Type\CheckoutAddressSelectType` and `\Oro\Bundle\OrderBundle\Form\Type\OrderAddressSelectType`  
 * Fixed billing and shipping address duplicating on single-page checkout.
+* Added support for `data-transition-name` attributes on blocks that should be updated during checkout page transitions.
 
 ##### Checkout start transitions
 

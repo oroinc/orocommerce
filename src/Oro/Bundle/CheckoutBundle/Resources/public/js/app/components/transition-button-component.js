@@ -16,11 +16,8 @@ define(function(require) {
             flashMessageOnSubmit: null,
             selectors: {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
-                checkoutSidebar: '[data-role="checkout-sidebar"]',
-                checkoutContent: '[data-role="checkout-content"]',
-                checkoutSummary: '[data-role="checkout-summary"]',
-                checkoutTotals: '[data-role="checkout-totals"]',
                 checkoutTitleRequiredLabel: '[data-role="checkout-title"] [data-role="require-label"]',
+                transitionCollection: '[data-transition-name]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
                 transitionTrigger: '[data-role="transition-trigger"]',
                 stateToken: '[name$="[state_token]"]'
@@ -261,27 +258,17 @@ define(function(require) {
                     document.title = $title.text();
                 }
                 const flashNotificationsSelector = this.options.selectors.checkoutFlashNotifications;
-                const sidebarSelector = this.options.selectors.checkoutSidebar;
-                const contentSelector = this.options.selectors.checkoutContent;
-                const summarySelector = this.options.selectors.checkoutSummary;
-                const totalsSelector = this.options.selectors.checkoutTotals;
+                const transitionCollectionSelector = this.options.selectors.transitionCollection;
                 const checkoutTitleRequiredLabelSelector = this.options.selectors.checkoutTitleRequiredLabel;
 
                 mediator.trigger('checkout-content:before-update');
 
                 $(checkoutTitleRequiredLabelSelector).remove();
 
-                const $sidebar = $(sidebarSelector);
-                $sidebar.html($response.find(sidebarSelector).html());
-
-                const $content = $(contentSelector);
-                $content.html($response.find(contentSelector).html());
-
-                const $summary = $(summarySelector);
-                $summary.html($response.find(summarySelector).html());
-
-                const $totals = $(totalsSelector);
-                $totals.html($response.find(totalsSelector).html());
+                $(transitionCollectionSelector).each(function() {
+                    const transitionName = $(this).data('transition-name');
+                    $(this).html($response.find(`[data-transition-name="${transitionName}"]`).html());
+                });
 
                 const $flashNotifications = $response.find(flashNotificationsSelector);
 

@@ -15,6 +15,7 @@
     <div {{ block('block_attributes') }}
             data-layout="separate"
             data-role="checkout-content"
+            data-transition-name="checkout-content"
             data-page-component-module="oroui/js/app/components/view-component"
             data-page-component-options="{{ {
                 view: 'orocheckout/js/app/views/checkout-inner-content-view',
@@ -61,6 +62,7 @@
         '~class': " multistep-checkout__footer",
         'data-layout': 'separate',
         'data-role': 'checkout-totals',
+        'data-transition-name': 'checkout-totals',
         'data-page-component-view': 'orocheckout/js/app/views/checkout-inner-content-view'
     }) %}
 
@@ -209,6 +211,7 @@
         '~class': " checkout-order-summary-container",
         'data-layout': "separate",
         'data-role': "checkout-summary",
+        'data-transition-name': "checkout-summary",
         'data-page-component-view': 'orocheckout/js/app/views/checkout-inner-content-view'
     }) %}
     <div {{ block('block_attributes') }}>
