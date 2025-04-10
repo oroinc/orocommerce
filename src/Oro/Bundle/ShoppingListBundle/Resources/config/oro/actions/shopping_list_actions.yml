@@ -67,7 +67,7 @@ operations:
                 attribute: $.newShoppingList
                 settings:
                     - [[setNull], [propertyName, [id]]]
-                    - [[collection], [propertyName, [totals]]]
+                    - [[emptyCollection], [propertyName, [totals]]] # Totals may vary for different customer users.
                     - [[collection], [propertyName, [lineItems]]]
                     - [[collection], [propertyName, [visitors]]]
                     - [[replaceValue, $.currentUser], [propertyName, [customerUser]]]
@@ -83,6 +83,10 @@ operations:
             - '@remove_restricted_products':
                 attribute: $.removedProducts
                 productHolderPath: $.newShoppingList.lineItems
+            - '@call_service_method':
+                  service: oro_shopping_list.manager.shopping_list_total
+                  method: setSubtotals
+                  method_parameters: [[$.newShoppingList], false]
             - '@flash_message':
                 conditions:
                     '@has_elements': $.removedProducts

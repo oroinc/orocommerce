@@ -1,5 +1,7 @@
+@ticket-BB-24899
 @regression
 @fixture-OroShoppingListBundle:DuplicateShoppingListFixture.yml
+
 Feature: Shopping list duplication
   In order to manager shopping lists on front store
   As a Buyer
@@ -14,6 +16,15 @@ Feature: Shopping list duplication
     And I go to System / Localization / Translations
     And I filter Key as equal to "oro.frontend.shoppinglist.lineitem.unit.label"
     And I edit "oro.frontend.shoppinglist.lineitem.unit.label" Translated Value as "Unit"
+
+  Scenario: Enable required currencies
+    Given I go to System/Configuration
+    And I follow "Commerce/Catalog/Pricing" on configuration sidebar
+    When I fill "Pricing Form" with:
+      | Enabled Currencies System | false                     |
+      | Enabled Currencies        | [US Dollar ($), Euro (€)] |
+    And click "Save settings"
+    Then I should see "Configuration saved" flash message
 
   Scenario: Duplicate shopping list
     Given I proceed as the Buyer
@@ -65,3 +76,30 @@ Feature: Shopping list duplication
     When Buyer is on "Shopping List C" shopping list
     And I click "Shopping List Actions"
     Then I should not see "Duplicate List"
+
+  Scenario: Trying to change currency to EUR and sign out
+    Given I click "Account Dropdown"
+    And click on "Shopping Lists"
+    When I select "€" currency
+    Then I should see that "€" currency is active
+    When I click "Account Dropdown"
+    And click "Sign Out"
+
+  Scenario: Duplicate another owner's shopping list
+    Given I proceed as the Buyer
+    When I signed in as NancyJSallee@example.org on the store frontend
+    And Buyer is on "Shopping List A" shopping list
+    Then I should see following grid:
+      | SKU | Qty | Unit  |
+      | AA1 | 10  | items |
+      | AA3 | 20  | items |
+
+    And click "Shopping List Actions"
+    And click "Duplicate"
+    And click "Yes, duplicate"
+    Then I should see "The shopping list has been duplicated" flash message and I close it
+    And should see "Shopping List A (copied "
+    And should see following grid:
+      | SKU | Qty Update All |
+      | AA1 | 10 item        |
+      | AA3 | 20 item        |
