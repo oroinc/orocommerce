@@ -134,15 +134,8 @@ datagrids:
                     - SUM(e.timesReturnedResults) as timesReturnedResultsSum
                     - SUM(e.timesEmpty) as timesEmptySum
                 from:
-                    - { table: 'Oro\Bundle\ReportBundle\Entity\CalendarDate', alias: calendarDate }
-                join:
-                    inner:
-                        -
-                            join: Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport
-                            alias: e
-                            conditionType: WITH
-                            condition: e.searchDate = calendarDate.date
-                groupBy: e.normalizedSearchTermHash, e.searchTerm
+                    - { table: Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport, alias: e }
+                groupBy: e.normalizedSearchTermHash
         columns:
             timePeriod:
                 label: oro.report.datagrid.column.time_period.label
@@ -162,7 +155,7 @@ datagrids:
             columns:
                 timePeriod:
                     data_name: timePeriod
-                    apply_callback: ['@oro_filter.date_grouping_filter', 'applyOrderBy']
+                    apply_callback: ['@oro_filter.entity_date_grouping_filter', 'applyOrderBy']
                 searchTerm:
                     data_name: e.searchTerm
                 timesSearchedSum:
@@ -206,14 +199,13 @@ datagrids:
                         default_value: Yes
                 grouping:
                     label: oro.report.filter.grouping.label
-                    type: date_grouping
-                    data_name: calendarDate.date
+                    type: entity_date_grouping
+                    data_name: e.searchDate
                     column_name: timePeriod
-                    calendar_entity: 'Oro\Bundle\ReportBundle\Entity\CalendarDate'
-                    target_entity: 'Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\SearchTermReport'
-                    not_nullable_field: e.id
-                    joined_column: searchDate
-                    joined_table: joinedTableAlias
+                    column_day: e.searchDateDay
+                    column_month: e.searchDateMonth
+                    column_quarter: e.searchDateQuarter
+                    column_year: e.searchDateYear
                     options:
                         field_options:
                             choices:
