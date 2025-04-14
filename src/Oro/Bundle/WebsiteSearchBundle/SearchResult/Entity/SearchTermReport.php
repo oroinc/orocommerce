@@ -24,7 +24,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
  *         )
  *     },
  *     indexes={
- *         @ORM\Index(name="website_search_term_report_date_idx", columns={"search_date"})
+ *         @ORM\Index(name="website_search_term_report_date_idx", columns={"search_date"}),
+ *         @ORM\Index(name="website_search_term_report_organization_id_idx", columns={"id", "organization_id"})
  *     }
  * )
  * @Config(
@@ -119,6 +120,42 @@ class SearchTermReport implements
      */
     private $searchDate;
 
+    /**
+     * @ORM\Column(
+     *     name="search_date_day",
+     *     type="integer",
+     *     nullable=false
+     * )
+     */
+    private $searchDateDay;
+
+    /**
+     * @ORM\Column(
+     *     name="search_date_month",
+     *     type="integer",
+     *     nullable=false
+     * )
+     */
+    private $searchDateMonth;
+
+    /**
+     * @ORM\Column(
+     *     name="search_date_quarter",
+     *     type="integer",
+     *     nullable=false
+     * )
+     */
+    private $searchDateQuarter;
+
+    /**
+     * @ORM\Column(
+     *     name="search_date_year",
+     *     type="integer",
+     *     nullable=false
+     * )
+     */
+    private $searchDateYear;
+
     public function getId(): ?string
     {
         return $this->id;
@@ -193,6 +230,31 @@ class SearchTermReport implements
     {
         $this->searchDate = $searchDate;
 
+        $this->searchDateDay = (int) $searchDate->format('d');
+        $this->searchDateMonth = (int) $searchDate->format('m');
+        $this->searchDateYear = (int) $searchDate->format('Y');
+        $this->searchDateQuarter = (int) ceil($this->searchDateMonth / 3.0);
+
         return $this;
+    }
+
+    public function getSearchDateDay(): int
+    {
+        return $this->searchDateDay;
+    }
+
+    public function getSearchDateMonth(): int
+    {
+        return $this->searchDateMonth;
+    }
+
+    public function getSearchDateQuarter(): int
+    {
+        return $this->searchDateQuarter;
+    }
+
+    public function getSearchDateYear(): int
+    {
+        return $this->searchDateYear;
     }
 }
