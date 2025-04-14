@@ -26,7 +26,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_10';
+        return 'v1_11';
     }
 
     #[\Override]
@@ -185,8 +185,17 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
         $table->addColumn('search_date', 'date');
         $table->addColumn('business_unit_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+
+        // Adding denormalized columns to store the day, month, quarter, and year of the search date.
+        // This is part of an optimization that helps speed up filtering, grouping, and sorting by dates.
+        $table->addColumn('search_date_day', 'integer', ['notnull' => true]);
+        $table->addColumn('search_date_month', 'integer', ['notnull' => true]);
+        $table->addColumn('search_date_quarter', 'integer', ['notnull' => true]);
+        $table->addColumn('search_date_year', 'integer', ['notnull' => true]);
+
         $table->setPrimaryKey(['id']);
         $table->addIndex(['search_date'], 'website_search_term_report_date_idx');
+        $table->addIndex(['id', 'organization_id'], 'website_search_term_report_organization_id_idx');
 
         $queries->addPostQuery(
             'ALTER TABLE oro_website_search_term_report'
