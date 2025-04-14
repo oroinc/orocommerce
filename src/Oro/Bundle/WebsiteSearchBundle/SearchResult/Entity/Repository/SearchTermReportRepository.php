@@ -39,7 +39,11 @@ INSERT INTO oro_website_search_term_report (
     times_searched, 
     times_returned_results,
     times_empty,
-    search_date
+    search_date,
+    search_date_day,
+    search_date_month,
+    search_date_quarter,
+    search_date_year
 )
 SELECT
     uuid_generate_v4(),
@@ -50,7 +54,11 @@ SELECT
     COUNT(*) as times_searched,
     COUNT(*) FILTER ( WHERE results_count <> 0 ) as times_returned_results,
     COUNT(*) FILTER ( WHERE results_count = 0 ) as times_empty,
-    DATE(created_at AT TIME ZONE 'UTC' AT TIME ZONE :timeZone) as search_date
+    DATE(created_at AT TIME ZONE 'UTC' AT TIME ZONE :timeZone) as search_date,
+    EXTRACT(DAY FROM (DATE(created_at AT TIME ZONE 'UTC' AT TIME ZONE :timeZone))) as search_date_day,
+    EXTRACT(MONTH FROM (DATE(created_at AT TIME ZONE 'UTC' AT TIME ZONE :timeZone))) as search_date_month,
+    EXTRACT(QUARTER FROM (DATE(created_at AT TIME ZONE 'UTC' AT TIME ZONE :timeZone))) as search_date_quarter,
+    EXTRACT(YEAR FROM (DATE(created_at AT TIME ZONE 'UTC' AT TIME ZONE :timeZone))) as search_date_year
 FROM 
     oro_website_search_result_history
     WHERE organization_id = :organizationId %s

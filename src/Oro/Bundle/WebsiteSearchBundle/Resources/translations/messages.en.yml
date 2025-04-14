@@ -60,6 +60,18 @@ oro:
                     search_date:
                         label: 'Search Date'
                         description: 'Date when search term was searched'
+                    search_date_day:
+                        label: 'Search Date Day'
+                        description: 'Day when the search term was searched'
+                    search_date_month:
+                        label: 'Search Date Month'
+                        description: 'Month when the search term was searched'
+                    search_date_quarter:
+                        label: 'Search Date Quarter'
+                        description: 'Quarter when the search term was searched'
+                    search_date_year:
+                        label: 'Search Date Year'
+                        description: 'Year when the search term was searched'
                     owner.label: Owner
                     organization.label: Organization
                 searchresulthistory:
