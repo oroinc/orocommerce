@@ -236,6 +236,20 @@ Previously known as GOD Object
   * `recommended_products_2`;
   * `promotional_content_block`;
   * `promotional_content_block_2`.
+* Added new system configuration settings for global/organization/website levels:
+  * `oro_commerce.company_name`;
+  * `oro_commerce.business_address`;
+  * `oro_commerce.phone_number`;
+  * `oro_commerce.contact_email`;
+  * `oro_commerce.website`;
+  * `oro_commerce.tax_id`;
+* Added new system variables for email templates:
+  * `sellerCompanyName`;
+  * `sellerBusinessAddress`;
+  * `sellerPhoneNumber`;
+  * `sellerContactEmail`;
+  * `sellerWebsiteURL`;
+  * `sellerTaxID`;
 
 ### Removed
 

@@ -1,0 +1,86 @@
+system_configuration:
+    groups:
+        contacts:
+            title: oro.commerce.system_configuration.groups.contacts.title
+        seller_info:
+            title: oro.commerce.system_configuration.groups.seller_info.title
+            icon: 'fa-id-card-o'
+        general_info:
+            title: oro.commerce.system_configuration.groups.general_info.title
+    fields:
+        oro_commerce.company_name:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\TextType
+            search_type: text
+            priority: 100
+            options:
+                label: oro.commerce.system_configuration.fields.company_name.label
+                required: false
+
+        oro_commerce.business_address:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\TextareaType
+            search_type: text
+            priority: 90
+            options:
+                label: oro.commerce.system_configuration.fields.business_address.label
+                required: false
+
+        oro_commerce.phone_number:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\TextType
+            search_type: text
+            priority: 80
+            options:
+                label: oro.commerce.system_configuration.fields.phone_number.label
+                required: false
+
+        oro_commerce.contact_email:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\EmailType
+            search_type: text
+            priority: 70
+            options:
+                label: oro.commerce.system_configuration.fields.contact_email.label
+                required: false
+                constraints:
+                    - Email: ~
+
+        oro_commerce.website:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\UrlType
+            search_type: text
+            priority: 60
+            options:
+                label: oro.commerce.system_configuration.fields.website.label
+                required: false
+                constraints:
+                    - Url: ~
+
+        oro_commerce.tax_id:
+            data_type: string
+            type: Symfony\Component\Form\Extension\Core\Type\TextType
+            search_type: text
+            priority: 50
+            options:
+                label: oro.commerce.system_configuration.fields.tax_id.label
+                required: false
+
+    tree:
+        system_configuration:
+            commerce:
+                children:
+                    contacts:
+                        children:
+                            seller_info:
+                                priority: 10
+                                children:
+                                    general_info:
+                                        priority: 10
+                                        children:
+                                            - oro_commerce.company_name
+                                            - oro_commerce.business_address
+                                            - oro_commerce.phone_number
+                                            - oro_commerce.contact_email
+                                            - oro_commerce.website
+                                            - oro_commerce.tax_id

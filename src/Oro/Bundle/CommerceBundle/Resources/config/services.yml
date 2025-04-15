@@ -61,3 +61,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-customer-dashboard-my-shopping-lists-grid, method: onBuildBefore }
 
+    oro_commerce.emailtemplate.variable_provider.seller_info:
+        class: Oro\Bundle\CommerceBundle\Provider\SellerInfoVariablesProvider
+        arguments:
+            - '@translator'
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_email.emailtemplate.variable_provider, scope: system }
