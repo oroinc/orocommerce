@@ -186,6 +186,14 @@ oro_behat_extension:
           First City: 'oro_customer_type[addresses][0][city]'
           First Postal Code: 'oro_customer_type[addresses][0][postalCode]'
           First Organization: 'oro_customer_type[addresses][0][organization]'
+          First Country List:
+            locator: '//*[@name="oro_customer_type[addresses][0][country]"]'
+            type: xpath
+            element: Select
+          First Region List:
+            locator: '//*[@name="oro_customer_type[addresses][0][region]"]'
+            type: xpath
+            element: Select
           First Country:
             locator: '//div[contains(@id,"s2id_oro_customer_type_addresses_0_country-uid")]/input'
             type: xpath
