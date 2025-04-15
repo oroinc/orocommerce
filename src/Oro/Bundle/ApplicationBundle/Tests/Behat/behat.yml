@@ -190,7 +190,14 @@ oro_behat_extension:
             type: 'xpath'
             locator: '//input[@name="oro_customer_type[group]"]'
             element: Select2Entity
-
+          First Country List:
+            locator: '//*[@name="oro_customer_type[addresses][0][country]"]'
+            type: xpath
+            element: Select
+          First Region List:
+            locator: '//*[@name="oro_customer_type[addresses][0][region]"]'
+            type: xpath
+            element: Select
     Customer Group Form:
       selector: 'form[name="oro_customer_group_type"]'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
