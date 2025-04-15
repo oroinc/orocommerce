@@ -20,6 +20,36 @@ oro:
             number: Number
             last_updated: Last Updated
 
+        system_configuration:
+            groups:
+                contacts:
+                    title: Contacts
+                seller_info:
+                    title: 'Seller Info'
+                general_info:
+                    title: 'General Info'
+            fields:
+                company_name:
+                    label: 'Company Name'
+                business_address:
+                    label: 'Business Address'
+                phone_number:
+                    label: 'Phone Number'
+                contact_email:
+                    label: 'Contact Email'
+                website:
+                    label: Website
+                tax_id:
+                    label: 'Tax ID'
+
+        emailtemplate:
+            seller_company_name: 'Seller Company Name'
+            seller_business_address: 'Seller Business Address'
+            seller_phone_number: 'Seller Phone Number'
+            seller_contact_email: 'Seller Contact Email'
+            seller_website_url: 'Seller Website URL'
+            seller_tax_id: 'Seller tax ID'
+
     customer:
         frontend:
             dashboard:

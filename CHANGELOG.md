@@ -23,6 +23,26 @@ The current file describes significant changes in the code that may affect the u
 - [1.2.0](#120-2017-06-01)
 - [1.1.0](#110-2017-03-31)
 
+## UNRELEASED
+
+### Added
+
+#### CommerceBundle
+* Added new system configuration settings for global/organization/website levels:
+  * `oro_commerce.company_name`;
+  * `oro_commerce.business_address`;
+  * `oro_commerce.phone_number`;
+  * `oro_commerce.contact_email`;
+  * `oro_commerce.website`;
+  * `oro_commerce.tax_id`;
+* Added new system variables for email templates:
+  * `sellerCompanyName`;
+  * `sellerBusinessAddress`;
+  * `sellerPhoneNumber`;
+  * `sellerContactEmail`;
+  * `sellerWebsiteURL`;
+  * `sellerTaxID`;
+
 ## 6.1.0 (2025-03-31)
 [Show detailed list of changes](incompatibilities-6-1.md)
 

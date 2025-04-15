@@ -10,6 +10,7 @@ oro_behat_extension:
         - Oro\Bundle\CommerceBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ShoppingListBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\NavigationBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\EmailBundle\Tests\Behat\Context\EmailContext
       paths:
         - '@OroCommerceBundle/Tests/Behat/Features'
 
