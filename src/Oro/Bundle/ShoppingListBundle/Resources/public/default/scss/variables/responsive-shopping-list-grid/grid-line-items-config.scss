@@ -6,6 +6,7 @@ $grid-line-items-line-height: $grid-line-item-link-line-height !default;
 $grid-line-items-word-break: break-word !default;
 $grid-line-items-title-font-size: $base-font-size--s !default;
 $grid-line-items-title-font-w: font-weight('semi-bold') !default;
+$grid-line-items-sub-row-product-kit-title-font-w: font-weight('normal') !default;
 
 $grid-line-items-link-color: get-color('text', 'primary') !default;
 $grid-line-items-link-color-hover: get-var-color('text', 'link-hover') !default;
