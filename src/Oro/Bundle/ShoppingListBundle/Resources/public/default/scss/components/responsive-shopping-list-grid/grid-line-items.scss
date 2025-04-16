@@ -53,6 +53,10 @@
         &:hover {
             color: $grid-line-items-link-color-hover;
         }
+
+        .sub-row-product-kit & {
+            font-weight: $grid-line-items-sub-row-product-kit-title-font-w;
+        }
     }
 
     &__title-content {
