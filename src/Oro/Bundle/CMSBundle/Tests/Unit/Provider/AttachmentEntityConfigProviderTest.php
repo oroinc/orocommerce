@@ -67,29 +67,29 @@ class AttachmentEntityConfigProviderTest extends \PHPUnit\Framework\TestCase
     /**
      * @dataProvider fieldConfigDataProvider
      */
-    public function getFieldConfig(string $fieldName, string $fieldType): void
+    public function testGetFieldConfig(string $fieldName, string $fieldNameWithoutSuffix, string $fieldType): void
     {
         $this->doctrine
-            ->expects($this->once())
+            ->expects(self::any())
             ->method('getManagerForClass')
             ->with($entityClass = 'SampleClass')
             ->willReturn($entityManager = $this->createMock(EntityManager::class));
 
         $entityManager
-            ->expects($this->once())
+            ->expects(self::any())
             ->method('getClassMetadata')
             ->with($entityClass)
             ->willReturn($classMetadata = $this->createMock(ClassMetadata::class));
 
         $classMetadata
-            ->expects($this->once())
+            ->expects(self::any())
             ->method('getTypeOfField')
             ->willReturn($fieldType);
 
         $this->innerAttachmentEntityConfigProvider
-            ->expects($this->once())
+            ->expects(self::any())
             ->method('getFieldConfig')
-            ->with($entityClass, 'sampleField')
+            ->with($entityClass, $fieldNameWithoutSuffix)
             ->willReturn($config = $this->createMock(ConfigInterface::class));
 
         $this->assertSame($config, $this->provider->getFieldConfig($entityClass, $fieldName));
@@ -100,14 +100,32 @@ class AttachmentEntityConfigProviderTest extends \PHPUnit\Framework\TestCase
         return [
             'regular field' => [
                 'fieldName' => 'sampleField',
+                'fieldNameWithoutSuffix' => 'sampleField',
                 'fieldType' => 'sampleType',
             ],
             'style field' => [
                 'fieldName' => 'sampleField_style',
+                'fieldNameWithoutSuffix' => 'sampleField',
                 'fieldType' => WYSIWYGStyleType::TYPE,
             ],
             'properties field' => [
                 'fieldName' => 'sampleField_properties',
+                'fieldNameWithoutSuffix' => 'sampleField',
+                'fieldType' => WYSIWYGPropertiesType::TYPE,
+            ],
+            'regular field with underscores' => [
+                'fieldName' => 'sample_field',
+                'fieldNameWithoutSuffix' => 'sample_field',
+                'fieldType' => 'sample_type',
+            ],
+            'style field camel case' => [
+                'fieldName' => 'sampleFieldStyle',
+                'fieldNameWithoutSuffix' => 'sampleField',
+                'fieldType' => WYSIWYGStyleType::TYPE,
+            ],
+            'properties field camel case' => [
+                'fieldName' => 'sampleFieldProperties',
+                'fieldNameWithoutSuffix' => 'sampleField',
                 'fieldType' => WYSIWYGPropertiesType::TYPE,
             ],
         ];

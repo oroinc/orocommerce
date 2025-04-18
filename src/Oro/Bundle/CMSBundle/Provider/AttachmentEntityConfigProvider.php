@@ -51,7 +51,7 @@ class AttachmentEntityConfigProvider implements AttachmentEntityConfigProviderIn
         foreach (self::NOT_CONFIGURABLE_TYPES as $notConfigurableType => $notConfigurableTypeSuffix) {
             if ($classMetadata->getTypeOfField($fieldName) === $notConfigurableType) {
                 // Field type is not configurable, so use main wysiwyg field instead.
-                $fieldName = substr_replace($fieldName, '', -strlen($notConfigurableTypeSuffix));
+                $fieldName = $this->getFieldName($fieldName, $notConfigurableTypeSuffix);
             }
         }
 
@@ -64,5 +64,17 @@ class AttachmentEntityConfigProvider implements AttachmentEntityConfigProviderIn
     public function getEntityConfig(string $entityClass): ?ConfigInterface
     {
         return $this->innerAttachmentEntityConfigProvider->getEntityConfig($entityClass);
+    }
+
+    private function getFieldName(string $fieldName, string $suffix): string
+    {
+        $suffixLength = strlen($suffix);
+        // If field naming use camel case instead of underscores
+        // decrease suffix length as is suffix not has underscore at the beginning
+        if (!str_contains($fieldName, '_')) {
+            $suffixLength--;
+        }
+
+        return substr_replace($fieldName, '', -$suffixLength);
     }
 }
