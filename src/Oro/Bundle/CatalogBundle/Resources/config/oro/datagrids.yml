@@ -13,7 +13,7 @@ datagrids:
                     - product.updatedAt
                     - >
                         (
-                            CASE WHEN (:category_id IS NOT NULL) THEN
+                            CASE WHEN (CAST(:category_id as INTEGER) IS NOT NULL) THEN
                                 CASE WHEN
                                     product.category = :category_id
                                     OR product.id IN (:data_in) AND product.id NOT IN (:data_not_in)
@@ -25,7 +25,7 @@ datagrids:
                         ) as inCategory
                     - >
                         (
-                            CASE WHEN (:category_id IS NOT NULL) THEN
+                            CASE WHEN (CAST(:category_id as INTEGER) IS NOT NULL) THEN
                                 CASE WHEN
                                     product.category = :category_id
                                     OR product.id IN (:data_in) AND product.id NOT IN (:data_not_in)

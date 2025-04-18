@@ -105,7 +105,7 @@ class ProductKitItemRepositoryTest extends WebTestCase
 
     public function testGetKitItemsCountWhenNoProduct(): void
     {
-        self::assertEquals(0, $this->repository->getKitItemsCount(PHP_INT_MAX));
+        self::assertEquals(0, $this->repository->getKitItemsCount(self::BIGINT));
     }
 
     public function testGetKitItemsCountWhenNoKitItems(): void

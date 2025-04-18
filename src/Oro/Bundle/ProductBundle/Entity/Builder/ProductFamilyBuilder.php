@@ -92,6 +92,7 @@ class ProductFamilyBuilder
         $this->family->setCode(self::DEFAULT_FAMILY_CODE);
         $this->family->setEntityClass(Product::class);
         $this->family->setOwner($organization);
+        $this->family->setIsEnabled(true);
         $this->family->setDefaultLabel(
             $this->translator->trans('oro.entityconfig.attribute.entity.attributefamily.default.label')
         );

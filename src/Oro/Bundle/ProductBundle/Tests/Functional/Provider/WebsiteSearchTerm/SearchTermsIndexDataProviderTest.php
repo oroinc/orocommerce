@@ -34,7 +34,7 @@ class SearchTermsIndexDataProviderTest extends WebTestCase
 
     public function testGetSearchTermsDataForProductsWhenMissingProduct(): void
     {
-        self::assertSame([], $this->provider->getSearchTermsDataForProducts([PHP_INT_MAX]));
+        self::assertSame([], $this->provider->getSearchTermsDataForProducts([self::BIGINT]));
     }
 
     public function testGetSearchTermsDataForProductsWhenHasRelatedProduct(): void

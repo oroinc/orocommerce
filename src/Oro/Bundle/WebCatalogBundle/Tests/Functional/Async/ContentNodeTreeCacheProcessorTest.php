@@ -36,8 +36,8 @@ class ContentNodeTreeCacheProcessorTest extends WebTestCase
             WebCatalogCalculateContentNodeTreeCacheTopic::getName(),
             [
                 WebCatalogCalculateContentNodeTreeCacheTopic::JOB_ID => $childJob->getId(),
-                WebCatalogCalculateContentNodeTreeCacheTopic::CONTENT_NODE => PHP_INT_MAX,
-                WebCatalogCalculateContentNodeTreeCacheTopic::SCOPE => PHP_INT_MAX,
+                WebCatalogCalculateContentNodeTreeCacheTopic::CONTENT_NODE => self::BIGINT,
+                WebCatalogCalculateContentNodeTreeCacheTopic::SCOPE => self::BIGINT,
             ]
         );
 

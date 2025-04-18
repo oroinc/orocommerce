@@ -157,7 +157,7 @@ class CouponValidationHandlerTest extends WebTestCase
 
     public function testHandleWhenCouponDoesNotExistById(): void
     {
-        $couponId = PHP_INT_MAX;
+        $couponId = self::BIGINT;
         $this->expectException(\RuntimeException::class);
         $this->expectExceptionMessage(sprintf('Cannot find "%s" entity with ID "%s".', Coupon::class, $couponId));
 

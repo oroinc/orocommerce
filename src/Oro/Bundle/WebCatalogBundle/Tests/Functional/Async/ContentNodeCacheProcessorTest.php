@@ -31,7 +31,7 @@ class ContentNodeCacheProcessorTest extends WebTestCase
     {
         $sentMessage = self::sendMessage(
             WebCatalogCalculateContentNodeCacheTopic::getName(),
-            [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => PHP_INT_MAX]
+            [WebCatalogCalculateContentNodeCacheTopic::CONTENT_NODE_ID => self::BIGINT]
         );
 
         self::consumeMessage($sentMessage);

@@ -390,20 +390,13 @@ class ProductTest extends FrontendRestJsonApiTestCase
             ['fields[products]' => 'productAttributes']
         );
 
-        // this is a workaround for a known PDO driver issue not saving null to nullable boolean field
-        // for PostgreSQL, see https://github.com/doctrine/dbal/issues/2580 for details
-        $emptyBooleanValue = null;
-        if ($this->isPostgreSql()) {
-            $emptyBooleanValue = false;
-        }
-
         $this->assertResponseContains(
             [
                 'data' => [
                     'attributes' => [
                         'productAttributes' => [
                             'testAttrString'     => null,
-                            'testAttrBoolean'    => $emptyBooleanValue,
+                            'testAttrBoolean'    => null,
                             'testAttrMoney'      => null,
                             'testAttrDateTime'   => null,
                             'testAttrMultiEnum'  => [],

@@ -38,7 +38,7 @@ class OroSaleBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_21';
+        return 'v1_22';
     }
 
     #[\Override]
@@ -206,7 +206,7 @@ class OroSaleBundleInstaller implements
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('checksum', 'string', ['length' => 40, 'notnull' => true, 'default' => '']);
         $table->addColumn('price_type', 'smallint');
-        $table->addColumn('allow_increments', 'boolean');
+        $table->addColumn('allow_increments', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
     }
 

@@ -128,7 +128,7 @@ class GenerateDirectUrlForEntitiesTest extends WebTestCase
     public function testProcessWheNoEntity(): void
     {
         $sentMessage = self::sendMessage(GenerateDirectUrlForEntitiesTopic::getName(), [
-            DirectUrlMessageFactory::ID => PHP_INT_MAX,
+            DirectUrlMessageFactory::ID => self::BIGINT,
             DirectUrlMessageFactory::ENTITY_CLASS_NAME => Page::class,
             DirectUrlMessageFactory::CREATE_REDIRECT => true,
         ]);

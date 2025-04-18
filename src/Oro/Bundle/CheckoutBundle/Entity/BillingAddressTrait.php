@@ -51,7 +51,7 @@ trait BillingAddressTrait
      */
     public function setSaveBillingAddress($saveBillingAddress)
     {
-        $this->saveBillingAddress = $saveBillingAddress;
+        $this->saveBillingAddress = (bool)$saveBillingAddress;
 
         return $this;
     }

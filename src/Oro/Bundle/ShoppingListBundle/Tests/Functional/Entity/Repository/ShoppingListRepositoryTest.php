@@ -128,13 +128,6 @@ class ShoppingListRepositoryTest extends WebTestCase
         self::assertSame($this->customerUser, $shoppingList->getCustomerUser());
     }
 
-    public function testFindByUserAndNonNumericalId()
-    {
-        $shoppingList = $this->getRepository()->findByUserAndId($this->aclHelper, 'abc');
-
-        self::assertNull($shoppingList);
-    }
-
     private function getCustomerUser(): CustomerUser
     {
         return self::getContainer()->get('doctrine')

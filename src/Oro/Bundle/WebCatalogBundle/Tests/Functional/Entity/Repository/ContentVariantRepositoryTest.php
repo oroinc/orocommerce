@@ -109,7 +109,7 @@ class ContentVariantRepositoryTest extends WebTestCase
     {
         self::assertEquals(
             [],
-            $this->repository->getContentVariantsData([PHP_INT_MAX])
+            $this->repository->getContentVariantsData([self::BIGINT])
         );
     }
 

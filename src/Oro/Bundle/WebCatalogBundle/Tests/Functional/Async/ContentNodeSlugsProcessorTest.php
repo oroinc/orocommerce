@@ -32,7 +32,7 @@ class ContentNodeSlugsProcessorTest extends WebTestCase
         $sentMessage = self::sendMessage(
             WebCatalogResolveContentNodeSlugsTopic::getName(),
             [
-                WebCatalogResolveContentNodeSlugsTopic::ID => PHP_INT_MAX,
+                WebCatalogResolveContentNodeSlugsTopic::ID => self::BIGINT,
                 WebCatalogResolveContentNodeSlugsTopic::CREATE_REDIRECT => false,
             ]
         );

@@ -178,7 +178,7 @@ class ContentNodeRepositoryTest extends WebTestCase
     {
         self::assertEquals(
             [],
-            $this->repository->getContentNodesData([PHP_INT_MAX])
+            $this->repository->getContentNodesData([self::BIGINT])
         );
     }
 

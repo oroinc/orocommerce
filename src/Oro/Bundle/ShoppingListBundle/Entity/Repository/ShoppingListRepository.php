@@ -133,13 +133,7 @@ class ShoppingListRepository extends ServiceEntityRepository implements Resettab
         return $aclHelper->apply($qb, BasicPermission::VIEW, [AclHelper::CHECK_RELATIONS => false])->getResult();
     }
 
-    /**
-     * @param AclHelper $aclHelper
-     * @param int $id
-     *
-     * @return ShoppingList|null
-     */
-    public function findByUserAndId(AclHelper $aclHelper, $id)
+    public function findByUserAndId(AclHelper $aclHelper, int $id): ?ShoppingList
     {
         $qb = $this->createQueryBuilder('list')
             ->select('list')

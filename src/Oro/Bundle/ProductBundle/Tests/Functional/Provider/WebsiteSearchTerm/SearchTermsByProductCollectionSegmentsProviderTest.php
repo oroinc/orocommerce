@@ -28,7 +28,7 @@ class SearchTermsByProductCollectionSegmentsProviderTest extends WebTestCase
 
     public function testGetRelatedSearchTermsWhenNoSegments(): void
     {
-        self::assertSame([], iterator_to_array($this->provider->getRelatedSearchTerms([PHP_INT_MAX])));
+        self::assertSame([], iterator_to_array($this->provider->getRelatedSearchTerms([self::BIGINT])));
     }
 
     public function testGetRelatedSearchTerms(): void

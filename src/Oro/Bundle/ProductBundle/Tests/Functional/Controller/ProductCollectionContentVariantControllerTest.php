@@ -49,7 +49,7 @@ class ProductCollectionContentVariantControllerTest extends WebTestCase
     {
         $this->ajaxRequest(
             'PUT',
-            $this->getUrl('oro_product_collection_content_variant_products_update', ['id' => PHP_INT_MAX]),
+            $this->getUrl('oro_product_collection_content_variant_products_update', ['id' => self::BIGINT]),
             []
         );
 

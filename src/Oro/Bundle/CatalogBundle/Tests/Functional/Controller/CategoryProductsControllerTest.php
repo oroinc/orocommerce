@@ -29,7 +29,7 @@ class CategoryProductsControllerTest extends WebTestCase
     {
         $this->ajaxRequest(
             'PUT',
-            $this->getUrl('oro_catalog_category_products_update', ['id' => PHP_INT_MAX]),
+            $this->getUrl('oro_catalog_category_products_update', ['id' => self::BIGINT]),
         );
 
         self::assertResponseStatusCodeEquals($this->client->getResponse(), 404);

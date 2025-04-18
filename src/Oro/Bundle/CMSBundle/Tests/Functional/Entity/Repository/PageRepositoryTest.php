@@ -100,13 +100,13 @@ class PageRepositoryTest extends WebTestCase
                     return [
                         $this->getReference(LoadPageData::PAGE_2)->getId(),
                         $this->getReference(LoadPageData::PAGE_1)->getId(),
-                        PHP_INT_MAX - 1,
-                        PHP_INT_MAX
+                        self::BIGINT - 1,
+                        self::BIGINT
                     ];
                 },
                 'expectedNonExistentPageIds' => [
-                    PHP_INT_MAX - 1,
-                    PHP_INT_MAX
+                    self::BIGINT - 1,
+                    self::BIGINT
                 ],
             ],
         ];
