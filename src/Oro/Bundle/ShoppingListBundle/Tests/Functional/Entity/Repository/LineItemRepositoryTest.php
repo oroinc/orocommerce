@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
+use Doctrine\DBAL\Logging\DebugStack;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
@@ -318,6 +319,23 @@ class LineItemRepositoryTest extends WebTestCase
             ],
             $result
         );
+    }
+
+    public function testGetEmptyLastProductsGroupedByShoppingList(): void
+    {
+        $em = self::getContainer()->get('doctrine.orm.entity_manager');
+        $logger = new DebugStack();
+        $em->getConnection()->getConfiguration()->setSQLLogger($logger);
+
+        $shoppingLists = [
+            $this->getReference(LoadShoppingLists::SHOPPING_LIST_10),
+        ];
+
+        /** @var LineItem[] $lineItems */
+        $result = $this->getLineItemRepository()->getLastProductsGroupedByShoppingList($shoppingLists, 2);
+
+        self::assertCount(1, $logger->queries);
+        self::assertEmpty($result);
     }
 
     public function testHasEmptyMatrixWhenOnlySimpleProducts(): void
