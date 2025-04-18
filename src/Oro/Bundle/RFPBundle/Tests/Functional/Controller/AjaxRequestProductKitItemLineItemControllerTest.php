@@ -30,7 +30,7 @@ class AjaxRequestProductKitItemLineItemControllerTest extends WebTestCase
             'GET',
             $this->getUrl(
                 'oro_rfp_request_product_kit_item_line_item_entry_point',
-                ['id' => \PHP_INT_MAX]
+                ['id' => self::BIGINT]
             )
         );
 

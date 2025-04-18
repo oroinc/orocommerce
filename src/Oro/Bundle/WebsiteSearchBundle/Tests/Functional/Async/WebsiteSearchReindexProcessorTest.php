@@ -95,7 +95,7 @@ class WebsiteSearchReindexProcessorTest extends WebTestCase
         );
 
         self::getContainer()->get('event_dispatcher')
-            ->addListener('oro_website_search.before_reindex', [$this, 'throwBeforeReindexException'], PHP_INT_MAX);
+            ->addListener('oro_website_search.before_reindex', [$this, 'throwBeforeReindexException'], self::BIGINT);
 
         self::consume();
 
@@ -122,7 +122,7 @@ class WebsiteSearchReindexProcessorTest extends WebTestCase
         );
 
         self::getContainer()->get('event_dispatcher')
-            ->addListener('oro_website_search.before_reindex', [$this, 'throwDeadlockException'], PHP_INT_MAX);
+            ->addListener('oro_website_search.before_reindex', [$this, 'throwDeadlockException'], self::BIGINT);
 
         self::consume();
 
@@ -161,7 +161,7 @@ class WebsiteSearchReindexProcessorTest extends WebTestCase
         $message = self::sendMessage(WebsiteSearchReindexTopic::getName(), ['class' => Product::class]);
 
         self::getContainer()->get('event_dispatcher')
-            ->addListener('oro_website_search.before_reindex', [$this, 'throwBeforeReindexException'], PHP_INT_MAX);
+            ->addListener('oro_website_search.before_reindex', [$this, 'throwBeforeReindexException'], self::BIGINT);
 
         self::consume();
 
@@ -179,7 +179,7 @@ class WebsiteSearchReindexProcessorTest extends WebTestCase
         $message = self::sendMessage(WebsiteSearchReindexTopic::getName(), ['class' => Product::class]);
 
         self::getContainer()->get('event_dispatcher')
-            ->addListener('oro_website_search.before_reindex', [$this, 'throwDeadlockException'], PHP_INT_MAX);
+            ->addListener('oro_website_search.before_reindex', [$this, 'throwDeadlockException'], self::BIGINT);
 
         self::consume();
 

@@ -14,10 +14,10 @@ Feature: Price list rules validation
     And I go to Sales/ Price Lists
     When I click "Create Price List"
     And I fill form with:
-      | Name       | Base Price List       |
-      | Currencies | US Dollar ($)         |
-      | Active     | true                  |
-      | Rule       | product.featured == 1 |
+      | Name       | Base Price List          |
+      | Currencies | US Dollar ($)            |
+      | Active     | true                     |
+      | Rule       | product.featured == 'Ok' |
     When I save and close form
     Then I should see validation errors:
       | Rule | Invalid expression |
@@ -61,7 +61,7 @@ Feature: Price list rules validation
   Scenario: Check price list rule condition expressions validation
     When I fill "Price Calculation Rules Form" with:
       | Calculate As | pricelist[1].prices.value |
-      | Condition    | product.featured == 1     |
+      | Condition    | product.featured == 'Ok'  |
     And I save and close form
     Then I should see validation errors:
       | Condition | Invalid expression |

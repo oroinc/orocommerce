@@ -176,7 +176,7 @@ class ProductRepository extends AbstractVisibilityRepository
     protected function getInsertStaticQueryBuilder(?Scope $scope = null, ?Product $product = null)
     {
         $visibilityCondition = sprintf(
-            "CASE WHEN pv.visibility = '%s' THEN %s ELSE %s END",
+            "CAST(CASE WHEN pv.visibility = '%s' THEN %s ELSE %s END AS integer)",
             ProductVisibility::VISIBLE,
             ProductVisibilityResolved::VISIBILITY_VISIBLE,
             ProductVisibilityResolved::VISIBILITY_HIDDEN

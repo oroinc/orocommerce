@@ -60,13 +60,13 @@ class ConsentRepositoryTest extends WebTestCase
                     return [
                         $this->getReference(LoadConsentsData::CONSENT_REQUIRED_NODE1_WITH_CMS)->getId(),
                         $this->getReference(LoadConsentsData::CONSENT_OPTIONAL_NODE1_WITH_CMS)->getId(),
-                        PHP_INT_MAX - 1,
-                        PHP_INT_MAX
+                        self::BIGINT - 1,
+                        self::BIGINT
                     ];
                 },
                 'expectedNonExistentConsentIds' => [
-                    PHP_INT_MAX - 1,
-                    PHP_INT_MAX
+                    self::BIGINT - 1,
+                    self::BIGINT
                 ],
             ],
         ];

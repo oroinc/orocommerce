@@ -5,6 +5,7 @@ data:
         sku: 'products-kit1'
         status: 'enabled'
         productType: 'kit'
+        testAttrBoolean: false
     relationships:
         owner:
             data:

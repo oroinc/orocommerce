@@ -81,7 +81,7 @@ class CalculateSlugCacheTest extends WebTestCase
     public function testProcessWhenNoEntity(): void
     {
         $sentMessage = self::sendMessage(CalculateSlugCacheTopic::getName(), [
-            DirectUrlMessageFactory::ID => [PHP_INT_MAX],
+            DirectUrlMessageFactory::ID => [self::BIGINT],
             DirectUrlMessageFactory::ENTITY_CLASS_NAME => Page::class,
         ]);
 

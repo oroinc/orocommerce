@@ -27,7 +27,7 @@ class OroPromotionBundleInstaller implements
     #[\Override]
     public function getMigrationVersion(): string
     {
-        return 'v1_8';
+        return 'v1_9';
     }
 
     #[\Override]
@@ -578,6 +578,7 @@ class OroPromotionBundleInstaller implements
             'disablePromotions',
             'boolean',
             [
+                'default' => false,
                 'oro_options' => [
                     'extend'    => ['is_extend' => true, 'owner' => ExtendScope::OWNER_SYSTEM],
                     'dataaudit' => ['auditable' => false]

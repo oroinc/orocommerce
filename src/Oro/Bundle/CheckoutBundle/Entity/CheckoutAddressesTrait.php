@@ -30,7 +30,7 @@ trait CheckoutAddressesTrait
      */
     public function setShipToBillingAddress($shipToBillingAddress)
     {
-        $this->shipToBillingAddress = $shipToBillingAddress;
+        $this->shipToBillingAddress = (bool)$shipToBillingAddress;
 
         return $this;
     }

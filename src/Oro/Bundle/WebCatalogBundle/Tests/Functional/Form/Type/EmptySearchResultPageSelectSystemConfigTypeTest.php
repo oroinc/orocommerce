@@ -189,7 +189,7 @@ class EmptySearchResultPageSelectSystemConfigTypeTest extends WebTestCase
             ['csrf_protection' => false]
         );
 
-        $form->submit(['contentNode' => PHP_INT_MAX]);
+        $form->submit(['contentNode' => self::BIGINT]);
 
         self::assertFalse($form->isValid());
         self::assertTrue($form->isSynchronized());

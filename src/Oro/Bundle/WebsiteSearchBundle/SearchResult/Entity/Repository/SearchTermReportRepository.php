@@ -73,8 +73,8 @@ DO UPDATE SET
 SQL;
 
         $connection = $this->getEntityManager()->getConnection();
-        $parameters = ['organizationId' => $organization->getId(), 'timeZone' => $timeZone->getName()];
-        $types = ['organizationId' => Types::INTEGER, 'timeZone' => Types::STRING];
+        $parameters = ['organizationId' => $organization->getId()];
+        $types = ['organizationId' => Types::INTEGER];
 
         $minDateStr = $connection->fetchOne(
             'SELECT MAX(search_date) FROM oro_website_search_term_report WHERE organization_id = ?',
@@ -92,6 +92,9 @@ SQL;
         } else {
             $reportSql = sprintf($reportSql, '');
         }
+
+        // DB can't resolve prepared statement if function used in the GROUP BY contains parameter
+        $reportSql = str_replace(':timeZone', $connection->quote($timeZone->getName()), $reportSql);
 
         $connection->executeStatement($reportSql, $parameters, $types);
     }

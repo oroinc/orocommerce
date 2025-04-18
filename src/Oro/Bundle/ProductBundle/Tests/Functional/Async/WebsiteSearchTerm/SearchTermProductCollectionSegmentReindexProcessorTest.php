@@ -41,7 +41,7 @@ class SearchTermProductCollectionSegmentReindexProcessorTest extends WebTestCase
         self::assertMessagesEmpty(SearchTermProductCollectionSegmentReindexTopic::getName());
 
         $message = self::sendMessage(SearchTermProductCollectionSegmentReindexTopic::getName(), [
-            SearchTermProductCollectionSegmentReindexTopic::SEARCH_TERM_ID => PHP_INT_MAX,
+            SearchTermProductCollectionSegmentReindexTopic::SEARCH_TERM_ID => self::BIGINT,
         ]);
 
         self::consume();

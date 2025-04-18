@@ -24,6 +24,7 @@ class SearchTermsByProductCollectionSegmentsProvider
      */
     public function getRelatedSearchTerms(array $segmentIds): iterable
     {
+        $segmentIds = array_filter($segmentIds); // Remove empty entries
         if (!$segmentIds) {
             return [];
         }

@@ -224,7 +224,7 @@ datagrids:
                     - relatedEntity.id
                     - relatedEntity.name
                     - >
-                      (CASE WHEN (:price_list_id IS NOT NULL) THEN
+                      (CASE WHEN (CAST(:price_list_id IS as INTEGER) NOT NULL) THEN
                         CASE WHEN (:price_list_id = priceList.id OR relatedEntity.id IN (:data_in)) AND relatedEntity.id NOT IN (:data_not_in)
                         THEN true ELSE false END
                       ELSE

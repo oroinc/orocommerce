@@ -254,14 +254,14 @@ class CustomerProductRepository extends AbstractVisibilityRepository
     private function getInsertStaticQueryBuilder(?Scope $scope = null)
     {
         $visibility = <<<VISIBILITY
-CASE WHEN apv.visibility = :visible
+CAST(CASE WHEN apv.visibility = :visible
     THEN :cacheVisible
 ELSE
     CASE WHEN apv.visibility = :currentProduct
         THEN :cacheFallbackAll
     ELSE :cacheHidden
     END
-END
+END AS integer)
 VISIBILITY;
         $queryBuilder = $this->getEntityManager()
             ->getRepository(CustomerProductVisibility::class)

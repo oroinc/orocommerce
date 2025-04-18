@@ -113,7 +113,7 @@ class SyncSlugRedirectsProcessorTest extends WebTestCase
     public function testProcessWheNoSlug(): void
     {
         $sentMessage = self::sendMessage(SyncSlugRedirectsTopic::getName(), [
-            SyncSlugRedirectsTopic::SLUG_ID => PHP_INT_MAX,
+            SyncSlugRedirectsTopic::SLUG_ID => self::BIGINT,
         ]);
 
         self::consume(1);

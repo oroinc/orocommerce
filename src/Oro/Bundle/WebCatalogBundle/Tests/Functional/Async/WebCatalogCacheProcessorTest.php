@@ -35,7 +35,7 @@ class WebCatalogCacheProcessorTest extends WebTestCase
     {
         $sentMessage = self::sendMessage(
             WebCatalogCalculateCacheTopic::getName(),
-            [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => PHP_INT_MAX]
+            [WebCatalogCalculateCacheTopic::WEB_CATALOG_ID => self::BIGINT]
         );
 
         self::consume(1);
@@ -44,7 +44,7 @@ class WebCatalogCacheProcessorTest extends WebTestCase
         self::assertProcessedMessageProcessor('oro_web_catalog.async.web_catalog_cache_processor', $sentMessage);
 
         self::assertTrue(
-            self::getLoggerTestHandler()->hasError('Root node for the web catalog #' . PHP_INT_MAX . ' is not found')
+            self::getLoggerTestHandler()->hasError('Root node for the web catalog #' . self::BIGINT . ' is not found')
         );
     }
 

@@ -181,7 +181,7 @@ class CustomerGroupProductRepository extends AbstractVisibilityRepository
                     'agpv.id',
                     'IDENTITY(agpv.scope)',
                     'IDENTITY(agpv.product)',
-                    'CASE WHEN agpv.visibility = :visible THEN :cacheVisible ELSE :cacheHidden END',
+                    'CAST(CASE WHEN agpv.visibility = :visible THEN :cacheVisible ELSE :cacheHidden END AS integer)',
                     (string)BaseProductVisibilityResolved::SOURCE_STATIC,
                 ]
             )

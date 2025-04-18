@@ -114,19 +114,22 @@ class CouponGenerator implements CouponGeneratorInterface
         $statement = $this->insertStatements[$count];
         $statement->bindValue(
             'organization_id',
-            $options->getOwner() ? $options->getOwner()->getOrganization()->getId() : null
+            $options->getOwner() ? $options->getOwner()->getOrganization()->getId() : null,
+            Types::INTEGER
         );
         $statement->bindValue(
             'business_unit_owner_id',
-            $options->getOwner() ? $options->getOwner()->getId() : null
+            $options->getOwner() ? $options->getOwner()->getId() : null,
+            Types::INTEGER
         );
         $statement->bindValue(
             'promotion_id',
-            $options->getPromotion() ? $options->getPromotion()->getId() : null
+            $options->getPromotion() ? $options->getPromotion()->getId() : null,
+            Types::INTEGER
         );
         $statement->bindValue('enabled', $options->isEnabled(), Types::BOOLEAN);
-        $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon());
-        $statement->bindValue('uses_per_person', $options->getUsesPerPerson());
+        $statement->bindValue('uses_per_coupon', $options->getUsesPerCoupon(), Types::INTEGER);
+        $statement->bindValue('uses_per_person', $options->getUsesPerPerson(), Types::INTEGER);
         $statement->bindValue(
             'valid_from',
             $connection->convertToDatabaseValue($options->getValidFrom(), Types::DATETIME_MUTABLE)
@@ -182,7 +185,8 @@ class CouponGenerator implements CouponGeneratorInterface
         $statement = $this->getInsertStatement($options, $filteredCodesCount);
 
         foreach ($filteredCodes as $index => $code) {
-            $statement->bindValue('code' . $index, $code);
+            $statement->bindValue('code' . $index, $code, Types::TEXT);
+            $statement->bindValue('upperCode' . $index, mb_strtoupper($code), Types::TEXT);
         }
 
         return $statement->executeQuery();
@@ -220,7 +224,7 @@ class CouponGenerator implements CouponGeneratorInterface
                   :business_unit_owner_id,
                   :promotion_id,
                   :code$i,
-                  UPPER(:code$i),
+                  :upperCode$i,
                   :enabled,
                   :uses_per_coupon,
                   :uses_per_person,

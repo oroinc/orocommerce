@@ -30,8 +30,8 @@ class QuoteProductOffer extends BaseQuoteProductItem
     #[ORM\Column(name: 'price_type', type: Types::SMALLINT)]
     protected $priceType = self::PRICE_TYPE_UNIT;
 
-    #[ORM\Column(name: 'allow_increments', type: Types::BOOLEAN)]
-    protected ?bool $allowIncrements = null;
+    #[ORM\Column(name: 'allow_increments', type: Types::BOOLEAN, options: ['default' => false])]
+    protected ?bool $allowIncrements = false;
 
     /**
      * @return array
@@ -75,7 +75,7 @@ class QuoteProductOffer extends BaseQuoteProductItem
      */
     public function setAllowIncrements($allowIncrements)
     {
-        $this->allowIncrements = $allowIncrements;
+        $this->allowIncrements = (bool)$allowIncrements;
 
         return $this;
     }

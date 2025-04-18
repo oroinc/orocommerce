@@ -46,7 +46,6 @@ class ProductTest extends RestJsonApiTestCase
     private function findShippingOption(int $id): ?ProductShippingOptions
     {
         return $this->getEntityManager()
-            ->getRepository(ProductShippingOptions::class)
             ->find(ProductShippingOptions::class, $id);
     }
 

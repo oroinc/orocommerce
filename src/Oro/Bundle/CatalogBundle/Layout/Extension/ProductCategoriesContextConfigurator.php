@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\Extension;
 
+use Doctrine\DBAL\Exception\DriverException;
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
@@ -12,7 +13,7 @@ use Oro\Component\Layout\ContextInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
- * Configure category context based on current category or currently requested product
+ * Configure category context based on a current category or currently requested product
  */
 class ProductCategoriesContextConfigurator implements ContextConfiguratorInterface
 {
@@ -67,20 +68,25 @@ class ProductCategoriesContextConfigurator implements ContextConfiguratorInterfa
         } elseif ($request->attributes->get('_route') === self::PRODUCT_VIEW_ROUTE) {
             $routeParams = $request->attributes->get('_route_params');
 
-            $product = $this->registry
-                ->getManagerForClass(Product::class)
-                ->getRepository(Product::class)
-                ->find((int)$routeParams['id']);
+            try {
+                $product = $this->registry
+                    ->getManagerForClass(Product::class)
+                    ->getRepository(Product::class)
+                    ->find((int)$routeParams['id']);
 
-            if (!$product) {
+                if (!$product) {
+                    return;
+                }
+                /** @var CategoryRepository $categoryRepository */
+                $categoryRepository = $this->registry
+                    ->getManagerForClass(Category::class)
+                    ->getRepository(Category::class);
+
+                $currentCategory = $categoryRepository->findOneByProduct($product);
+            } catch (DriverException) {
+                // Do nothing on DB error during context configuration
                 return;
             }
-            /** @var CategoryRepository $categoryRepository */
-            $categoryRepository = $this->registry
-                ->getManagerForClass(Category::class)
-                ->getRepository(Category::class);
-
-            $currentCategory = $categoryRepository->findOneByProduct($product);
         }
 
         $categoryIds = [];

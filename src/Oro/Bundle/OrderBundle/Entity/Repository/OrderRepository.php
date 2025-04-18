@@ -3,6 +3,7 @@
 namespace Oro\Bundle\OrderBundle\Entity\Repository;
 
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
@@ -117,10 +118,12 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             )
             ->innerJoin('orders.lineItems', 'lineItems')
             ->andWhere($qb->expr()->eq('orders.website', ':websiteId'))
-            ->andWhere($qb->expr()->in(
-                "JSON_EXTRACT(orders.serialized_data, 'internal_status')",
-                ':orderStatuses'
-            ))
+            ->andWhere(
+                $qb->expr()->in(
+                    "JSON_EXTRACT(orders.serialized_data, 'internal_status')",
+                    ':orderStatuses'
+                )
+            )
             ->groupBy('orders.customerUser');
 
         $qb
@@ -191,10 +194,12 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
         if (null !== $includedOrderStatuses) {
             $queryBuilder
-                ->andWhere($queryBuilder->expr()->in(
-                    "JSON_EXTRACT(o.serialized_data, 'internal_status')",
-                    ':includedOrderStatuses'
-                ))
+                ->andWhere(
+                    $queryBuilder->expr()->in(
+                        "JSON_EXTRACT(o.serialized_data, 'internal_status')",
+                        ':includedOrderStatuses'
+                    )
+                )
                 ->setParameter('includedOrderStatuses', $includedOrderStatuses);
         }
 
@@ -269,11 +274,13 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         $qb = $this->createQueryBuilder('o');
 
         $amountField = $this->getAmountField($amountType, $currency);
-        $qb->select(QueryBuilderUtil::sprintf(
-            'SUM(CASE WHEN %s IS NOT NULL THEN %s ELSE 0 END) AS amount',
-            $amountField,
-            $amountField
-        ));
+        $qb->select(
+            QueryBuilderUtil::sprintf(
+                'SUM(CASE WHEN %s IS NOT NULL THEN %s ELSE 0 END) AS amount',
+                $amountField,
+                $amountField
+            )
+        );
 
         $salesOrdersDataQueryBuilder = $this->getSalesOrdersDataQueryBuilder(
             $qb,
@@ -353,23 +360,46 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
         \DateTime $dateLimit,
         array $statuses = []
     ): QueryBuilder {
+        $period = strtolower($period);
+        $allowedPeriods = [
+            'microseconds',
+            'milliseconds',
+            'second',
+            'minute',
+            'hour',
+            'day',
+            'week',
+            'month',
+            'quarter',
+            'year',
+            'decade',
+            'century',
+            'millennium'
+        ];
+        if (!\in_array($period, $allowedPeriods, true)) {
+            throw new \InvalidArgumentException(sprintf('Unsupported period "%s"', $period));
+        }
+
         $qb = $this->createQueryBuilder('o');
+        $labelExpression = QueryBuilderUtil::sprintf("DATE_TRUNC('%s', o.createdAt)", $period);
 
         return $qb
-            ->select('DATE_TRUNC(:period, o.createdAt) as label, SUM(o.totalValue) as value')
+            ->select(
+                $labelExpression . ' as label',
+                'SUM(o.totalValue) as value'
+            )
             ->andWhere($qb->expr()->eq('o.website', ':websiteId'))
             ->andWhere($qb->expr()->notIn("JSON_EXTRACT(o.serialized_data, 'internal_status')", ':statuses'))
             ->andWhere($qb->expr()->eq('o.currency', ':currency'))
             ->andWhere($qb->expr()->eq('o.customer', ':customerId'))
             ->andWhere('o.parent IS NULL')
             ->andWhere('o.totalValue IS NOT NULL')
-            ->having($qb->expr()->gt('DATE_TRUNC(:period, o.createdAt)', ':dateLimit'))
-            ->setParameter('period', $period)
-            ->setParameter('websiteId', $websiteId)
-            ->setParameter('statuses', $statuses)
-            ->setParameter('currency', $currency)
-            ->setParameter('customerId', $customerId)
-            ->setParameter('dateLimit', $dateLimit)
+            ->having($qb->expr()->gt($labelExpression, ':dateLimit'))
+            ->setParameter('websiteId', $websiteId, Types::INTEGER)
+            ->setParameter('statuses', $statuses, Connection::PARAM_STR_ARRAY)
+            ->setParameter('currency', $currency, Types::STRING)
+            ->setParameter('customerId', $customerId, TYPES::INTEGER)
+            ->setParameter('dateLimit', $dateLimit, Types::DATETIME_MUTABLE)
             ->groupBy('label');
     }
 }
