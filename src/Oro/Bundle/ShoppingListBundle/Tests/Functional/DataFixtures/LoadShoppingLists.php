@@ -22,6 +22,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_7 = 'shopping_list_7';
     const SHOPPING_LIST_8 = 'shopping_list_8';
     const SHOPPING_LIST_9 = 'shopping_list_9';
+    const SHOPPING_LIST_10 = 'shopping_list_10';
 
     protected static $currency = 'USD';
 
@@ -142,6 +143,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
             ],
             self::SHOPPING_LIST_9 => [
                 'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
+            ],
+            self::SHOPPING_LIST_10 => [
+                'customerUser' => LoadCustomerUserData::LEVEL_1_1_EMAIL,
             ],
         ];
     }

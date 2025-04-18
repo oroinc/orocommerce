@@ -30,7 +30,7 @@ class ShoppingListsDuplicationInDatagridsTest extends WebTestCase
         );
         $result = static::getJsonResponseContent($response, 200);
 
-        static::assertCount(11, $result['data']);
+        static::assertCount(12, $result['data']);
         $this->assertNoDuplicatedShoppingLists($result['data']);
         foreach ($result['data'] as $data) {
             static::assertNotEquals('$1,000.00', $data['subtotal']);
