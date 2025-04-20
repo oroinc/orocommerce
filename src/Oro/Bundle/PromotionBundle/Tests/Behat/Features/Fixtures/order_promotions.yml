@@ -6,8 +6,6 @@ Oro\Bundle\ProductBundle\Entity\ProductName:
         string: 'Product1'
     product2Label:
         string: 'Product2'
-    product3Label:
-        string: 'Product3'
 
 Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
     orderTotalPromotionLabel:
@@ -21,10 +19,10 @@ Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
 
 Oro\Bundle\SegmentBundle\Entity\Segment:
     orderPromotionSegment:
-        name: 'All Products'
+        name: 'Product 2'
         type: '@segment_dynamic_type'
         entity: 'Oro\\Bundle\\ProductBundle\\Entity\\Product'
-        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"number","data":{"value":0,"type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
+        definition: <('{"filters":[[{"columnName":"sku","criterion":{"filter":"string","data":{"value":"Product2","type":"1"}}}]],"columns":[{"name":"id","label":"id","sorting":null,"func":null},{"name":"sku","label":"sku","sorting":null,"func":null}]}')>
         organization: '@organization'
         owner: '@business_unit'
 

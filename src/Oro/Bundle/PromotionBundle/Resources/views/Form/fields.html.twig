@@ -102,6 +102,7 @@
     {% if form.vars.value %}
         <div data-role="applied-promotion-element" data-source-promotion-id="{{ form.vars.value.sourcePromotionId }}">
             {{ form_widget(form.active, {attr: {'data-role': 'applied-promotion-active'}}) }}
+            {{ form_widget(form.removed, {attr: {'data-role': 'applied-promotion-removed'}}) }}
             {{ form_widget(form.sourcePromotionId) }}
         </div>
     {% endif %}

@@ -239,13 +239,19 @@ class LineItemRepository extends ServiceEntityRepository
             );
         }
 
+        $productsIdsFromShoppingLists = \array_merge(...\array_values($productsIdsByShoppingList));
+
+        if ($productsIdsFromShoppingLists === []) {
+            return  [];
+        }
+
         $qb = $this->getEntityManager()->createQueryBuilder();
         $qb
             ->select('product', 'names')
             ->from(Product::class, 'product', 'product.id')
             ->innerJoin('product.names', 'names')
             ->where($qb->expr()->in('product', ':product_ids'))
-            ->setParameter('product_ids', \array_merge(...\array_values($productsIdsByShoppingList)));
+            ->setParameter('product_ids', $productsIdsFromShoppingLists);
 
         /** @var Product[] $products */
         $products = $qb->getQuery()->getResult();

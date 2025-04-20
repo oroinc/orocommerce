@@ -1,3 +1,4 @@
+@random-failed
 @ticket-BB-16499
 @fixture-OroSaleBundle:Quote.yml
 @regression

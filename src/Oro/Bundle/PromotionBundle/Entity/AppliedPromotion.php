@@ -38,6 +38,13 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
     protected $active = true;
 
     /**
+     * @ORM\Column(type="boolean", name="removed", options={"default"=false})
+     *
+     * @var bool
+     */
+    protected $removed = false;
+
+    /**
      * @var AppliedCoupon|null
      *
      * @ORM\OneToOne(
@@ -268,6 +275,25 @@ class AppliedPromotion extends ExtendAppliedPromotion implements DatesAwareInter
         if ($this->appliedDiscounts->contains($appliedDiscount)) {
             $this->appliedDiscounts->removeElement($appliedDiscount);
         }
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRemoved()
+    {
+        return (bool)$this->removed;
+    }
+
+    /**
+     * @param ?bool $removed
+     * @return $this
+     */
+    public function setRemoved($removed)
+    {
+        $this->removed = (bool)$removed;
 
         return $this;
     }

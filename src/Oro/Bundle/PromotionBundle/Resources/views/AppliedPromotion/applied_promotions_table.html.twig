@@ -1,6 +1,8 @@
 {% import '@OroUI/macros.html.twig' as UI %}
 {% import '@OroDataGrid/macros.html.twig' as dataGrid %}
 
+{% set collection = collection|filter(item => not item.removed) %}
+
 {% if collection|length %}
     <table class="grid table-hover table table-bordered table-condensed">
         <thead>
