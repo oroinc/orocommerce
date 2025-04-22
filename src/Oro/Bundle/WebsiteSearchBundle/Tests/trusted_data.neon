@@ -1,5 +1,9 @@
 # Configuration for https://github.com/oroinc/phpstan-rules/
 trusted_data:
+    variables:
+        Oro\Bundle\WebsiteSearchBundle\SearchResult\Entity\Repository\SearchTermReportRepository:
+            actualizeReport:
+                reportSql: true
     safe_methods:
         Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderExpressionVisitor:
             dispatch: true
