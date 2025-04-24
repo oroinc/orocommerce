@@ -8,9 +8,9 @@ use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadContentWidgetData;
 use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\LoadGlobalThemeConfigurationData;
 
 /**
- * Loads customer dashboards datagrid content widget data and configures theme configuration for active theme
+ * Loads customer dashboards scorecard content widget data and configures theme configuration for active theme
  */
-class LoadCustomerDashboardContentWidgetData extends AbstractLoadContentWidgetData
+class LoadScorecardContentWidgetData extends AbstractLoadContentWidgetData
 {
     public function getVersion(): string
     {
@@ -29,7 +29,7 @@ class LoadCustomerDashboardContentWidgetData extends AbstractLoadContentWidgetDa
     #[\Override]
     protected function getFilePaths(): string
     {
-        return $this->getFilePathsFromLocator('@OroCommerceBundle/Migrations/Data/ORM/data/content_widgets.yml');
+        return $this->getFilePathsFromLocator('@OroCommerceBundle/Migrations/Data/ORM/data/scorecard_widgets.yml');
     }
 
     #[\Override]

@@ -661,16 +661,15 @@ class OrderRepositoryTest extends WebTestCase
         $result = $this->getRepository()
             ->getOrdersPurchaseVolume(
                 $this->getDefaultWebsite()->getId(),
-                $this->getCustomerUserByEmail(LoadOrders::ACCOUNT_USER)->getCustomer()->getId(),
                 'USD',
                 'month',
                 new \DateTime('-1 year', new \DateTimeZone('UTC')),
-                ['order_internal_status.cancelled']
+                ['cancelled']
             );
 
         $label = (new \DateTime('now'))->format('Y-m-01 00:00:00');
 
-        self::assertEquals([['label' => $label, 'value' => '7404.0000']], $result);
+        self::assertSame([['label' => $label, 'value' => '7404.0000']], $result);
     }
 
     public function testGetOrdersPurchaseVolumeQueryBuilder(): void
@@ -678,16 +677,39 @@ class OrderRepositoryTest extends WebTestCase
         $qb = $this->getRepository()
             ->getOrdersPurchaseVolumeQueryBuilder(
                 $this->getDefaultWebsite()->getId(),
-                $this->getCustomerUserByEmail(LoadOrders::ACCOUNT_USER)->getCustomer()->getId(),
                 'USD',
                 'month',
                 new \DateTime('-1 year', new \DateTimeZone('UTC')),
-                ['order_internal_status.cancelled']
+                ['cancelled']
             );
 
         $label = (new \DateTime('now'))->format('Y-m-01 00:00:00');
 
-        self::assertEquals([['label' => $label, 'value' => '7404.0000']], $qb->getQuery()->getResult());
+        self::assertSame([['label' => $label, 'value' => '7404.0000']], $qb->getQuery()->getResult());
+    }
+
+    public function testGetSumTotalOrders(): void
+    {
+        $result = $this->getRepository()
+            ->getSumTotalOrders(
+                $this->getDefaultWebsite()->getId(),
+                'USD',
+                ['cancelled']
+            );
+
+        self::assertSame('8638.0000', $result);
+    }
+
+    public function testGetSumTotalOrdersQueryBuilder(): void
+    {
+        $qb = $this->getRepository()
+            ->getSumTotalOrdersQueryBuilder(
+                $this->getDefaultWebsite()->getId(),
+                'USD',
+                ['cancelled']
+            );
+
+        self::assertSame([['total' => '8638.0000']], $qb->getQuery()->getResult());
     }
 
     /**

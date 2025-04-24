@@ -8,9 +8,9 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ThemeBundle\Entity\ThemeConfiguration;
 
 /**
- * Loads customer dashboards datagrid content widget data and configures theme configuration for default theme
+ * Loads customer dashboards scorecard content widget data and configures theme configuration for default theme
  */
-class LoadDefaultCustomerDashboardContentWidgetData extends LoadCustomerDashboardContentWidgetData
+class LoadDefaultScorecardContentWidgetData extends LoadScorecardContentWidgetData
 {
     #[\Override]
     public function getDependencies(): array
@@ -18,7 +18,7 @@ class LoadDefaultCustomerDashboardContentWidgetData extends LoadCustomerDashboar
         return [
             ...parent::getDependencies(),
             LoadGlobalDefaultThemeConfigurationData::class,
-            LoadCustomerDashboardContentWidgetData::class
+            LoadScorecardContentWidgetData::class
         ];
     }
 

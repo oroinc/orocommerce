@@ -66,7 +66,7 @@ final class CustomerDashboardDatagridSelectTypeTest extends TestCase
                 'attr' => [],
                 'configs' => [
                     'placeholder' =>
-                        'oro.commerce.content_widget_type.customer_dashboard_datagrid.form.no_available_datagrid'
+                        'oro.commerce.content_widget_type.customer_dashboard_datagrid.form.no_available_datagrids'
                 ],
             ],
             $view->vars

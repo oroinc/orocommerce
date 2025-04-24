@@ -1,0 +1,28 @@
+/* @theme: default; */
+
+$dashboard-scorecard-link-font-size: 18px !default;
+$dashboard-scorecard-link-line-height: 26px !default;
+$dashboard-scorecard-link-font-weight: font-weight('semi-bold') !default;
+$dashboard-scorecard-link-color: get-color('text', 'secondary') !default;
+$dashboard-scorecard-link-text-decoration: none !default;
+$dashboard-scorecard-link-text-display: flex !default;
+$dashboard-scorecard-link-text-gap: 18px !default;
+$dashboard-scorecard-link-text-align-items: center !default;
+$dashboard-scorecard-link-text-padding: 22px 48px !default;
+
+$dashboard-scorecard-link-hover-background: get-color('primary', 'main') !default;
+$dashboard-scorecard-link-hover-color: get-color('text', 'inverse') !default;
+
+$dashboard-scorecard-label-font-size: 16px !default;
+$dashboard-scorecard-label-white-space: nowrap !default;
+
+// Mobile Landscape
+$dashboard-scorecard-link-mobile-landscape-background: get-color('primary', 'light') !default;
+$dashboard-scorecard-link-mobile-landscape-border-bottom: 1px solid get-color('primary', 'main') !default;
+$dashboard-scorecard-link-mobile-landscape-padding: spacing('base') !default;
+$dashboard-scorecard-link-mobile-landscape-display: grid !default;
+$dashboard-scorecard-link-mobile-landscape-gap: spacing('xs') !default;
+
+$dashboard-scorecard-label-mobile-landscape-font-size: $base-font-size !default;
+$dashboard-scorecard-label-mobile-landscape-line-height: $base-line-height !default;
+$dashboard-scorecard-label-mobile-landscape-white-space: initial !default;

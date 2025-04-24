@@ -1,0 +1,28 @@
+{% import '@OroUI/macros.html.twig' as UI %}
+
+{% if scorecard is defined %}
+    {{ UI.renderProperty(
+        'oro.commerce.content_widget_type.scorecard.options.name'|trans,
+        scorecard
+    ) }}
+{% endif %}
+
+{% if defaultLabel is defined and defaultLabel is not null %}
+    {{ UI.renderProperty(
+        'oro.commerce.content_widget_type.scorecard.options.labels.singular_label'|trans,
+        defaultLabel|default('N/A'|trans),
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.commerce.content_widget_type.scorecard.options.labels.tooltip')}
+    ) }}
+{% endif %}
+
+{% if link is defined and link is not null %}
+    {{ UI.renderHtmlProperty(
+        'oro.commerce.content_widget_type.scorecard.options.link.label'|trans,
+        UI.renderUrl(path(link)),
+        null,
+        null,
+        {tooltipHTML: UI.tooltip('oro.commerce.content_widget_type.scorecard.options.link.tooltip')}
+    ) }}
+{% endif %}

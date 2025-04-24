@@ -1,0 +1,12 @@
+{% block _content_widget_scorecard_widget %}
+    {% set scorecardContent %}
+        <span class="dashboard-scorecard-link__metric">{{ metric }}</span>
+        <span class="dashboard-scorecard-link__label">{{ label }}</span>
+    {% endset %}
+
+    {% if routeName is not empty %}
+        <a href="{{ path(routeName) }}" class="dashboard-scorecard-link">{{ scorecardContent }}</a>
+    {% else %}
+        <div class="dashboard-scorecard-link">{{ scorecardContent }}</div>
+    {% endif %}
+{% endblock %}

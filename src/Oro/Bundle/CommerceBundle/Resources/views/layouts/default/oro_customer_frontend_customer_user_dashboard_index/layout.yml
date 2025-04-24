@@ -26,10 +26,40 @@ layout:
                 dashboard_page_container:
                     blockType: container
 
+                dashboard_page_top:
+                    blockType: container
+
                 dashboard_quick_access_menu:
                     blockType: container
                     options:
                         visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__show_dashboard_quick_access_menu")'
+
+                dashboard_scorecards_container:
+                    blockType: container
+
+                dashboard_scorecard_widget:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__scorecard_widget")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__scorecard_widget")'
+
+                dashboard_scorecard_widget_2:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__scorecard_widget_2")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__scorecard_widget_2")'
+
+                dashboard_scorecard_widget_3:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__scorecard_widget_3")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__scorecard_widget_3")'
+
+                dashboard_scorecard_widget_4:
+                    blockType: content_widget
+                    options:
+                        visible: '=data["theme_configuration"].getThemeConfigurationOption("customer_user_dashboard__scorecard_widget_4")'
+                        name: '=data["content_widget_data"].getContentWidgetNameByThemeConfigKey("customer_user_dashboard__scorecard_widget_4")'
 
                 dashboard_primary_group:
                     blockType: container
@@ -130,7 +160,13 @@ layout:
             tree:
                 page_content:
                     dashboard_page_container:
-                        dashboard_quick_access_menu: ~
+                        dashboard_page_top:
+                            dashboard_quick_access_menu: ~
+                            dashboard_scorecards_container:
+                                dashboard_scorecard_widget: ~
+                                dashboard_scorecard_widget_2: ~
+                                dashboard_scorecard_widget_3: ~
+                                dashboard_scorecard_widget_4: ~
                         dashboard_primary_group:
                             dashboard_group_one:
                                 dashboard_content_widget: ~

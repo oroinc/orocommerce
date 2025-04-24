@@ -1,0 +1,15 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
+        - '@add':
+            id: content_widget_scorecard
+            parentId: content_widget_container
+            blockType: container
+            options:
+                visible: '=data["visible"]'
+                vars:
+                    label: '=data["locale"].getLocalizedValue(data["labels"])'
+                    routeName: '=data["link"]'
+                    metric: '=data["metric"]'

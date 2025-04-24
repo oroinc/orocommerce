@@ -25,9 +25,26 @@ The current file describes significant changes in the code that may affect the u
 
 ## UNRELEASED
 
+### Changed
+
+#### CommerceBundle
+* Updated `Oro\Bundle\CommerceBundle\Layout\DataProvider\PurchaseVolumeChartDataProvider` by:
+  * replacing the `Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface` construct argument with `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager`.
+  * removing the `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface` construct argument.
+
+#### OrderBundle
+* Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
+
 ### Added
 
 #### CommerceBundle
+* Added a new `\Oro\Bundle\CommerceBundle\ContentWidget\ScorecardContentWidgetType` content widget.
+* Added new `users`, `shopping-lists`, `open-rfqs`, `total-orders` content widgets for default data.
+* Added new theme configuration options for `customer_user_dashboard` section:
+  * `scorecard_widget`;
+  * `scorecard_widget_2`;
+  * `scorecard_widget_3`;
+  * `scorecard_widget_4`;
 * Added new system configuration settings for global/organization/website levels:
   * `oro_commerce.company_name`;
   * `oro_commerce.business_address`;

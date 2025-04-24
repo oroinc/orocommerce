@@ -1,0 +1,42 @@
+/* @theme: default; */
+
+.dashboard-scorecard-link {
+    --focus-visible-outline-offset: -1px;
+
+    font-size: $dashboard-scorecard-link-font-size;
+    line-height: $dashboard-scorecard-link-line-height;
+    font-weight: $dashboard-scorecard-link-font-weight;
+    color: $dashboard-scorecard-link-color;
+    text-decoration: $dashboard-scorecard-link-text-decoration;
+    display: $dashboard-scorecard-link-text-display;
+    gap: $dashboard-scorecard-link-text-gap;
+    align-items: $dashboard-scorecard-link-text-align-items;
+    padding: $dashboard-scorecard-link-text-padding;
+
+    &:hover {
+        background: $dashboard-scorecard-link-hover-background;
+        color: $dashboard-scorecard-link-hover-color;
+    }
+
+    &__label {
+        font-size: $dashboard-scorecard-label-font-size;
+        white-space: $dashboard-scorecard-label-white-space;
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .dashboard-scorecard-link {
+        background: $dashboard-scorecard-link-mobile-landscape-background;
+        border-bottom: $dashboard-scorecard-link-mobile-landscape-border-bottom;
+        padding: $dashboard-scorecard-link-mobile-landscape-padding;
+        display: $dashboard-scorecard-link-mobile-landscape-display;
+        gap: $dashboard-scorecard-link-mobile-landscape-gap;
+
+        &__label {
+            font-size: $dashboard-scorecard-label-mobile-landscape-font-size;
+            line-height: $dashboard-scorecard-label-mobile-landscape-line-height;
+
+            white-space: $dashboard-scorecard-label-mobile-landscape-white-space;
+        }
+    }
+}

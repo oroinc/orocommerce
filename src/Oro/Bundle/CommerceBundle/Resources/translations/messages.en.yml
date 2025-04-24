@@ -5,7 +5,7 @@ oro:
                 label: Customer Dashboard DataGrid
                 form:
                     choose_datagrid: Choose a datagrid...
-                    no_available_datagrid: No available datagrids
+                    no_available_datagrids: No available datagrids
                 options:
                     name: 'DataGrid Name'
                     labels:
@@ -15,6 +15,24 @@ oro:
                     view_all:
                         label: View All
                         tooltip: If provided, this link will be displayed above the datagrid.
+            scorecard:
+                label: Scorecard
+                form:
+                    choose_scorecard: Choose a scorecard...
+                    no_available_scorecards: No available scorecards
+                options:
+                    name: 'Scorecard Name'
+                    labels:
+                        label: Labels
+                        singular_label: Label
+                        tooltip: If provided, this label will be displayed for the scorecard.
+                    link:
+                        label: Link
+                        tooltip: If provided, this link will redirect the user upon clicking the scorecard.
+                users: 'Users'
+                shopping_lists: 'Shopping Lists'
+                open_rfqs: 'Open RFQs'
+                total_orders: 'Total Orders'
 
         datagrid:
             number: Number
@@ -104,6 +122,14 @@ oro:
                                 label: 'Promotional Content Block'
                             promotional_content_block_2:
                                 label: 'Promotional Content Block (2)'
+                            scorecard_widget:
+                                label: 'Customer Dashboard Scorecard'
+                            scorecard_widget_2:
+                                label: 'Customer Dashboard Scorecard (2)'
+                            scorecard_widget_3:
+                                label: 'Customer Dashboard Scorecard (3)'
+                            scorecard_widget_4:
+                                label: 'Customer Dashboard Scorecard (4)'
 
         chart:
             purchase_volume_chart:

@@ -1,0 +1,32 @@
+users:
+    name: 'users'
+    type: scorecard
+    label: 'Users'
+    themeConfigOption: customer_user_dashboard__scorecard_widget
+    settings:
+        scorecard: users
+        link: oro_customer_frontend_customer_user_index
+shopping-lists:
+    name: 'shopping-lists'
+    type: scorecard
+    label: 'Shopping Lists'
+    themeConfigOption: customer_user_dashboard__scorecard_widget_2
+    settings:
+        scorecard: shopping_lists
+        link: oro_shopping_list_frontend_index
+open-rfqs:
+    name: 'open-rfqs'
+    type: scorecard
+    label: 'Open RFQs'
+    themeConfigOption: customer_user_dashboard__scorecard_widget_3
+    settings:
+        scorecard: open_rfqs
+        link: oro_rfp_frontend_request_index
+total-orders:
+    name: 'total-orders'
+    type: scorecard
+    label: 'Total Orders'
+    themeConfigOption: customer_user_dashboard__scorecard_widget_4
+    settings:
+        scorecard: total_orders
+        link: oro_order_frontend_index

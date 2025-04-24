@@ -1,0 +1,72 @@
+/* @theme: default; */
+
+.dashboard-scorecards-container {
+    background: $dashboard-scorecards-container-background;
+    border: $dashboard-scorecards-container-border;
+    display: $dashboard-scorecards-container-display;
+    overflow: $dashboard-scorecards-container-overflow;
+
+    &.horizontal-scrolling {
+        &.shadow-start::before,
+        &.shadow-end::after {
+            --scroll-shadow-inline-before-background: #{$dashboard-scorecards-container-background};
+            --scroll-shadow-inline-after-background: #{$dashboard-scorecards-container-background};
+
+            flex-shrink: 0;
+        }
+    }
+
+    &__item {
+        position: $dashboard-scorecards-container-item-position;
+
+        &:first-child {
+            margin-inline-start: auto;
+        }
+
+        &:last-child {
+            margin-inline-end: auto;
+        }
+
+        &:not(:last-child) {
+            margin-inline-end: $dashboard-scorecards-container-item-margin-inline-end;
+
+            &::after {
+                content: $dashboard-scorecards-container-divider-content;
+                background: $dashboard-scorecards-container-divider-background;
+                position: $dashboard-scorecards-container-divider-position;
+                inset: $dashboard-scorecards-container-divider-inset;
+                width: $dashboard-scorecards-container-divider-width;
+                pointer-events: none;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .dashboard-scorecards-container {
+        background: $dashboard-scorecards-container-mobile-landscape-background;
+        border: $dashboard-scorecards-container-mobile-landscape-border;
+        display: $dashboard-scorecards-container-mobile-landscape-display;
+        grid-template-columns: $dashboard-scorecards-container-mobile-landscape-grid-template-columns;
+        gap: $dashboard-scorecards-container-mobile-landscape-gap;
+        overflow: $dashboard-scorecards-container-mobile-landscape-overflow;
+
+        &__item {
+            &:first-child {
+                margin-inline-start: initial;
+            }
+
+            &:last-child {
+                margin-inline-end: initial;
+            }
+
+            &:not(:last-child) {
+                margin-inline-end: initial;
+
+                &::after {
+                    content: initial;
+                }
+            }
+        }
+    }
+}

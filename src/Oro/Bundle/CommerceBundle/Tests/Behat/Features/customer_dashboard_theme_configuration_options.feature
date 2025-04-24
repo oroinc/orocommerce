@@ -53,9 +53,6 @@ Feature: Customer Dashboard Theme Configuration Options
 
   Scenario: Disable Quick Access Menu and Widgets via Theme Configuration
     Given I proceed as the Admin
-    And I go to System / Theme Configurations
-    When I click "Edit" on row "Refreshing Teal" in grid
-    Then the "Theme" field should be disabled in form "Theme Configuration Form"
     When I fill "Theme Configuration Form" with:
       | Show Quick Access Menu                | false |
       | Show Purchase Volume Chart            | false |

@@ -95,9 +95,7 @@ oro_behat_extension:
             selector: '.ui-dialog .breakpoint-selector'
 
         breakpointMobileLandscape:
-            selector:
-                type: 'xpath'
-                locator: '//ul[contains(@class, "dropdown-menu")]/li[contains(text(),"mobile-landscape")]'
+            selector: '.dropdown-menu [title="mobile-landscape"]'
 
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"
@@ -182,6 +180,8 @@ oro_behat_extension:
                     Default Label: 'oro_cms_content_widget[settings][labels][values][default]'
                     Use Default: 'oro_cms_content_widget[settings][labels][values][localizations][1][use_fallback]'
                     English (United States): 'oro_cms_content_widget[settings][labels][values][localizations][1][value]'
+                    View All: 'oro_cms_content_widget[settings][viewAll]'
+                    Link: 'oro_cms_content_widget[settings][link]'
 
         Content Widget Label Localization Form Fallbacks:
             selector:
