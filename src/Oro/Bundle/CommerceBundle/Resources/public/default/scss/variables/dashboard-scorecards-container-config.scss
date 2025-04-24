@@ -1,0 +1,23 @@
+/* @theme: default; */
+
+$dashboard-scorecards-container-background: get-color('primary', 'light') !default;
+$dashboard-scorecards-container-border: 1px solid get-color('primary', 'main') !default;
+$dashboard-scorecards-container-display: flex !default;
+$dashboard-scorecards-container-overflow: auto !default;
+
+$dashboard-scorecards-container-item-position: relative !default;
+$dashboard-scorecards-container-item-margin-inline-end: -1px !default;
+
+$dashboard-scorecards-container-divider-content: '' !default;
+$dashboard-scorecards-container-divider-background: get-color('primary', 'main') !default;
+$dashboard-scorecards-container-divider-position: absolute !default;
+$dashboard-scorecards-container-divider-inset: 16px 0 16px auto !default;
+$dashboard-scorecards-container-divider-width: 1px !default;
+
+// Mobile Landscape
+$dashboard-scorecards-container-mobile-landscape-background: none !default;
+$dashboard-scorecards-container-mobile-landscape-border: none !default;
+$dashboard-scorecards-container-mobile-landscape-display: grid !default;
+$dashboard-scorecards-container-mobile-landscape-grid-template-columns: repeat(2, minmax(0, 1fr)) !default;
+$dashboard-scorecards-container-mobile-landscape-gap: spacing('base') !default;
+$dashboard-scorecards-container-mobile-landscape-overflow: initial !default;

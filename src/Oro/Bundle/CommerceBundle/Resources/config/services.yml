@@ -1,3 +1,7 @@
+parameters:
+    purchase_volume_chart.excluded_order_internal_status:
+        - 'cancelled'
+
 services:
     Oro\Bundle\CommerceBundle\CacheWarmer\ExtendEntityCacheWarmer:
         arguments:
@@ -12,12 +16,11 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_website.manager'
-            - '@oro_currency.config.currency'
-            - '@oro_security.token_accessor'
+            - '@oro_pricing.user_currency_manager'
             - '@oro_locale.settings'
             - '@oro_chart.config_provider'
             - '@oro_chart.view_builder'
-            - ['order_internal_status.cancelled']
+            - '%purchase_volume_chart.excluded_order_internal_status%'
         tags:
             - { name: layout.data_provider, alias: oro_commerce_purchase_volume_chart }
 

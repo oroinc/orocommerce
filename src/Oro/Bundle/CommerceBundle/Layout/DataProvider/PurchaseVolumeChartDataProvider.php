@@ -6,11 +6,9 @@ use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ChartBundle\Model\ChartView;
 use Oro\Bundle\ChartBundle\Model\ChartViewBuilder;
 use Oro\Bundle\ChartBundle\Model\ConfigProvider;
-use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
 /**
@@ -23,8 +21,7 @@ class PurchaseVolumeChartDataProvider
     public function __construct(
         private ManagerRegistry $registry,
         private WebsiteManager $websiteManager,
-        private DefaultCurrencyProviderInterface $defaultCurrencyProvider,
-        private TokenAccessorInterface $tokenAccessor,
+        private UserCurrencyManager $userCurrencyManager,
         private LocaleSettings $localeSettings,
         private ConfigProvider $configProvider,
         private ChartViewBuilder $chartViewBuilder,
@@ -59,12 +56,7 @@ class PurchaseVolumeChartDataProvider
             return [];
         }
 
-        $customerId = $this->getCustomerId();
-        if ($customerId === null) {
-            return [];
-        }
-
-        $currency = $this->getCurrency();
+        $currency = $this->userCurrencyManager->getUserCurrency();
         if ($currency === null) {
             return [];
         }
@@ -73,7 +65,6 @@ class PurchaseVolumeChartDataProvider
             ->getRepository(Order::class)
             ->getOrdersPurchaseVolume(
                 $websiteId,
-                $customerId,
                 $currency,
                 'month',
                 $this->getDateLimit(),
@@ -86,20 +77,8 @@ class PurchaseVolumeChartDataProvider
         return new \DateTime('-1 year', new \DateTimeZone($this->localeSettings->getTimeZone()));
     }
 
-    private function getCurrency(): ?string
-    {
-        return $this->defaultCurrencyProvider->getDefaultCurrency() ?? null;
-    }
-
     private function getWebsiteId(): ?int
     {
         return $this->websiteManager->getCurrentWebsite()?->getId();
-    }
-
-    private function getCustomerId(): ?int
-    {
-        $user = $this->tokenAccessor->getUser();
-
-        return $user instanceof CustomerUser ? $user->getCustomer()?->getId() : null;
     }
 }

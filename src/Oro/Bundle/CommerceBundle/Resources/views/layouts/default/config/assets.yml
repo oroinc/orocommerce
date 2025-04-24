@@ -1,0 +1,7 @@
+styles:
+    inputs:
+        - 'bundles/orocommerce/default/scss/variables/dashboard-scorecards-container-config.scss'
+        - 'bundles/orocommerce/default/scss/variables/dashboard-scorecard-link-config.scss'
+
+        - 'bundles/orocommerce/default/scss/components/dashboard-scorecards-container.scss'
+        - 'bundles/orocommerce/default/scss/components/dashboard-scorecard-link.scss'

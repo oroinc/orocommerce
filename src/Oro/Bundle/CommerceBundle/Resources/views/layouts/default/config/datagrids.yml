@@ -28,8 +28,9 @@ datagrids:
                     - o.id
                     - o.identifier
                     - o.updatedAt
+                    - o.currency
                     - JSON_EXTRACT(o.serialized_data, 'internal_status') as internal_status
-                    - o.totalValue
+                    - o.totalValue as total
                     - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
                 join:
                     left:
@@ -42,10 +43,15 @@ datagrids:
         columns:
             identifier:
                 label: oro.commerce.datagrid.number
-            totalValue:
+            total:
                 label: oro.order.total.label
-                data_name: totalValue
-                frontend_type: currency
+                frontend_type: multi-currency
+                type: callback
+                callable: ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    currency_field: currency
+            totalBaseCurrency:
+                renderable: false
             internal_status:
                 label: oro.order.status.label
                 frontend_type: select

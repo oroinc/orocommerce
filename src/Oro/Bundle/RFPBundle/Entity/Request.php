@@ -80,10 +80,10 @@ class Request implements
     use AuditableUserAwareTrait;
     use ExtendEntityTrait;
 
-    const CUSTOMER_STATUS_CODE = 'rfp_customer_status';
-    const INTERNAL_STATUS_CODE = 'rfp_internal_status';
+    public const string CUSTOMER_STATUS_CODE = 'rfp_customer_status';
+    public const string INTERNAL_STATUS_CODE = 'rfp_internal_status';
 
-    const INTERNAL_STATUS_DELETED = 'deleted';
+    public const string INTERNAL_STATUS_DELETED = 'deleted';
 
     #[ORM\Column(name: 'id', type: Types::INTEGER)]
     #[ORM\Id]

@@ -9,6 +9,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResetCustomerUserTrait;
 use Oro\Bundle\CustomerBundle\Entity\Repository\ResettableCustomerUserRepositoryInterface;
 use Oro\Bundle\DashboardBundle\Helper\DateHelper;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -334,7 +335,6 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
     public function getOrdersPurchaseVolume(
         int $websiteId,
-        int $customerId,
         string $currency,
         string $period,
         \DateTime $dateLimit,
@@ -342,7 +342,6 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
     ): array {
         $queryBuilder = $this->getOrdersPurchaseVolumeQueryBuilder(
             $websiteId,
-            $customerId,
             $currency,
             $period,
             $dateLimit,
@@ -354,7 +353,6 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
 
     public function getOrdersPurchaseVolumeQueryBuilder(
         int $websiteId,
-        int $customerId,
         string $currency,
         string $period,
         \DateTime $dateLimit,
@@ -391,15 +389,54 @@ class OrderRepository extends ServiceEntityRepository implements ResettableCusto
             ->andWhere($qb->expr()->eq('o.website', ':websiteId'))
             ->andWhere($qb->expr()->notIn("JSON_EXTRACT(o.serialized_data, 'internal_status')", ':statuses'))
             ->andWhere($qb->expr()->eq('o.currency', ':currency'))
-            ->andWhere($qb->expr()->eq('o.customer', ':customerId'))
             ->andWhere('o.parent IS NULL')
             ->andWhere('o.totalValue IS NOT NULL')
             ->having($qb->expr()->gt($labelExpression, ':dateLimit'))
             ->setParameter('websiteId', $websiteId, Types::INTEGER)
-            ->setParameter('statuses', $statuses, Connection::PARAM_STR_ARRAY)
+            ->setParameter(
+                'statuses',
+                ExtendHelper::mapToEnumOptionIds(Order::INTERNAL_STATUS_CODE, $statuses),
+                Connection::PARAM_STR_ARRAY
+            )
             ->setParameter('currency', $currency, Types::STRING)
-            ->setParameter('customerId', $customerId, TYPES::INTEGER)
             ->setParameter('dateLimit', $dateLimit, Types::DATETIME_MUTABLE)
             ->groupBy('label');
+    }
+
+    public function getSumTotalOrders(
+        int $websiteId,
+        string $currency,
+        array $statuses = []
+    ): ?string {
+        $queryBuilder = $this->getSumTotalOrdersQueryBuilder(
+            $websiteId,
+            $currency,
+            $statuses
+        );
+
+        return $this->aclHelper->apply($queryBuilder)->getSingleScalarResult();
+    }
+
+    public function getSumTotalOrdersQueryBuilder(
+        int $websiteId,
+        string $currency,
+        array $statuses = []
+    ): QueryBuilder {
+        $qb = $this->createQueryBuilder('o');
+
+        return $qb
+            ->select('SUM(o.totalValue) as total')
+            ->andWhere($qb->expr()->eq('o.website', ':websiteId'))
+            ->andWhere($qb->expr()->notIn("JSON_EXTRACT(o.serialized_data, 'internal_status')", ':statuses'))
+            ->andWhere($qb->expr()->eq('o.currency', ':currency'))
+            ->andWhere('o.parent IS NULL')
+            ->andWhere('o.totalValue IS NOT NULL')
+            ->setParameter('websiteId', $websiteId, Types::INTEGER)
+            ->setParameter(
+                'statuses',
+                ExtendHelper::mapToEnumOptionIds(Order::INTERNAL_STATUS_CODE, $statuses),
+                Connection::PARAM_STR_ARRAY
+            )
+            ->setParameter('currency', $currency, Types::STRING);
     }
 }

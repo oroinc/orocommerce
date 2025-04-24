@@ -30,6 +30,7 @@ The current file describes significant changes in the code that may affect the u
 * Moved logic for address copying from `\Oro\Bundle\OrderBundle\Manager\AbstractAddressManager` to `\Oro\Bundle\CustomerBundle\Utils\AddressCopier`.
 * Made `\Oro\Bundle\OrderBundle\Provider\OrderAddressProvider` resettable.
 * Changed logic from readonly to disabled fields when no custom address is selected in address book address component. 
+* Updated `Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository` by removing the required `$customerId` argument from the `getOrdersPurchaseVolume` and `getOrdersPurchaseVolumeQueryBuilder` methods.
 
 #### CheckoutBundle
 
@@ -117,6 +118,11 @@ Previously known as GOD Object
 * Removed `\Oro\Bundle\CMSBundle\Acl\Voter\ContentBlockVoter`, use `\Oro\Bundle\ThemeBundle\Acl\Voter\ThemeConfigurationDependencyDeleteVoter` instead.
 * Added supports setting a content widget in the theme configuration option using the `themeConfigOption` key in the `\Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadContentWidgetData` fixture.
 * Allowed to use `widget` and `widget_icon` twig functions on storefront.
+
+#### CommerceBundle
+* Updated `Oro\Bundle\CommerceBundle\Layout\DataProvider\PurchaseVolumeChartDataProvider` by:
+  * replacing the `Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface` construct argument with `Oro\Bundle\PricingBundle\Manager\UserCurrencyManager`.
+  * removing the `Oro\Bundle\SecurityBundle\Authentication\TokenAccessorInterface` construct argument.
 
 ### Added
 
@@ -236,6 +242,13 @@ Previously known as GOD Object
   * `recommended_products_2`;
   * `promotional_content_block`;
   * `promotional_content_block_2`.
+* Added a new `\Oro\Bundle\CommerceBundle\ContentWidget\ScorecardContentWidgetType` content widget.
+* Added new `users`, `shopping-lists`, `open-rfqs`, `total-orders` content widgets for default data.
+* Added new theme configuration options for `customer_user_dashboard` section:
+  * `scorecard_widget`;
+  * `scorecard_widget_2`;
+  * `scorecard_widget_3`;
+  * `scorecard_widget_4`;
 * Added new system configuration settings for global/organization/website levels:
   * `oro_commerce.company_name`;
   * `oro_commerce.business_address`;

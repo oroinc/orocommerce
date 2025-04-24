@@ -1,3 +1,9 @@
+parameters:
+    open_rfqs.excluded_customer_statuses:
+        - 'cancelled'
+    total_orders.excluded_internal_statuses:
+        - 'cancelled'
+
 services:
     oro_commerce.content_widget_type.customer_dashboard_datagrid:
         class: Oro\Bundle\CommerceBundle\ContentWidget\CustomerDashboardDatagridContentWidgetType
@@ -20,3 +26,63 @@ services:
 
     oro_commerce.content_widget.provider.customer_dashboard_datagrids:
         class: Oro\Bundle\CommerceBundle\ContentWidget\Provider\CustomerDashboardDatagridsProvider
+
+    oro_commerce.content_widget_type.scorecard:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\ScorecardContentWidgetType
+        arguments:
+            - '@oro_commerce.content_widget.provider.scorecards_registry'
+        tags:
+            - { name: oro_cms.content_widget.type }
+
+    oro_commerce.form.type.scorecard_select:
+        class: Oro\Bundle\CommerceBundle\Form\Type\ScorecardSelectType
+        arguments:
+            - '@oro_commerce.content_widget.provider.scorecards_registry'
+        tags:
+            - { name: form.type }
+
+    oro_commerce.content_widget.provider.scorecards_registry:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\Provider\ScorecardsRegistry
+        arguments:
+            - !tagged_iterator oro_commerce.scorecard
+
+    oro_commerce.content_widget.provider.scorecards_users:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\Provider\UsersScorecardProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@security.authorization_checker'
+        tags:
+            - { name: oro_commerce.scorecard }
+
+    oro_commerce.content_widget.provider.scorecards_shopping_lists:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\Provider\ShoppingListsScorecardProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@security.authorization_checker'
+        tags:
+            - { name: oro_commerce.scorecard }
+
+    oro_commerce.content_widget.provider.scorecards_open_rfqs:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\Provider\OpenRfqsScorecardProvider
+        arguments:
+            - '@doctrine'
+            - '@oro_security.acl_helper'
+            - '@security.authorization_checker'
+            - '%open_rfqs.excluded_customer_statuses%'
+        tags:
+            - { name: oro_commerce.scorecard }
+
+    oro_commerce.content_widget.provider.scorecards_total_orders:
+        class: Oro\Bundle\CommerceBundle\ContentWidget\Provider\TotalOrdersScorecardProvider
+        arguments:
+            - '@doctrine'
+            - '@security.authorization_checker'
+            - '@oro_website.manager'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_locale.formatter.number'
+            - '@oro_currency.rounding.price_rounding_service'
+            - '%total_orders.excluded_internal_statuses%'
+        tags:
+            - { name: oro_commerce.scorecard }

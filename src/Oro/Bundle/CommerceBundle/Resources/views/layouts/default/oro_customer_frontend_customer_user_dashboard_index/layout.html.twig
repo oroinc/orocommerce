@@ -1,6 +1,19 @@
 {% block _dashboard_page_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid dashboard-container "
+        '~class': " grid dashboard-container "
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_page_top_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid grid-col-12 dashboard-page-top "
     }) %}
 
     {% set children = block_widget(block) %}
@@ -13,7 +26,79 @@
 
 {% block _dashboard_quick_access_menu_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12"
+        '~class': " grid-col-12"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_scorecards_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " grid-col-12 dashboard-scorecards-container ",
+        'data-page-component-module': "oroui/js/app/components/viewport-component",
+        'data-page-component-options': {
+            viewport: 'mobile-landscape-min',
+            component: 'oroui/js/app/components/view-component',
+            view: 'orofrontend/js/app/views/scroll-shadow-view',
+        },
+        'data-scroll-target': ''
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <nav {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </nav>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_scorecard_widget_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " dashboard-scorecards-container__item"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_scorecard_widget_2_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " dashboard-scorecards-container__item"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_scorecard_widget_3_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " dashboard-scorecards-container__item"
+    }) %}
+
+    {% set children = block_widget(block) %}
+    {% if children|trim|length %}
+        <div {{ block('block_attributes') }}>
+            {{ children|raw }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _dashboard_scorecard_widget_4_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " dashboard-scorecards-container__item"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -26,7 +111,7 @@
 
 {% block _dashboard_primary_group_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12 grid dashboard-primary-container"
+        '~class': " grid-col-12 grid dashboard-primary-container"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -39,7 +124,7 @@
 
 {% block _dashboard_group_one_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12 grid"
+        '~class': " grid-col-12 grid"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -52,7 +137,7 @@
 
 {% block _dashboard_content_widget_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-6 grid-col-tablet-big-12"
+        '~class': " grid-col-6 grid-col-tablet-big-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -65,7 +150,7 @@
 
 {% block _dashboard_content_widget_2_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-6 grid-col-tablet-big-12"
+        '~class': " grid-col-6 grid-col-tablet-big-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -78,7 +163,7 @@
 
 {% block _dashboard_group_two_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12 grid"
+        '~class': " grid-col-12 grid"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -91,7 +176,7 @@
 
 {% block _dashboard_content_widget_3_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-6 grid-col-tablet-big-12"
+        '~class': " grid-col-6 grid-col-tablet-big-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -104,7 +189,7 @@
 
 {% block _dashboard_content_widget_4_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-6 grid-col-tablet-big-12"
+        '~class': " grid-col-6 grid-col-tablet-big-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -117,7 +202,7 @@
 
 {% block _dashboard_charts_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12"
+        '~class': " grid-col-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -130,7 +215,7 @@
 
 {% block _dashboard_group_three_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12 grid"
+        '~class': " grid-col-12 grid"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -143,7 +228,7 @@
 
 {% block _dashboard_content_widget_5_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-6 grid-col-tablet-big-12"
+        '~class': " grid-col-6 grid-col-tablet-big-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -156,7 +241,7 @@
 
 {% block _dashboard_content_widget_6_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-6 grid-col-tablet-big-12"
+        '~class': " grid-col-6 grid-col-tablet-big-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -169,7 +254,7 @@
 
 {% block _dashboard_secondary_group_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12 grid dashboard-secondary-container"
+        '~class': " grid-col-12 grid dashboard-secondary-container"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -182,7 +267,7 @@
 
 {% block _dashboard_recommended_products_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12"
+        '~class': " grid-col-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -199,7 +284,7 @@
 
 {% block _dashboard_recommended_products_2_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12"
+        '~class': " grid-col-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -216,7 +301,7 @@
 
 {% block _dashboard_promotional_content_block_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12"
+        '~class': " grid-col-12"
     }) %}
 
     {% set children = block_widget(block) %}
@@ -236,7 +321,7 @@
 
 {% block _dashboard_promotional_content_block_2_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'class': "grid-col-12"
+        '~class': " grid-col-12"
     }) %}
 
     {% set children = block_widget(block) %}

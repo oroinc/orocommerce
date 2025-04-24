@@ -96,3 +96,35 @@ configuration:
                     options:
                         tooltip: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.content_block.tooltip'
                         required: false
+
+                scorecard_widget:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.scorecard_widget.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - scorecard
+
+                scorecard_widget_2:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.scorecard_widget_2.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - scorecard
+
+                scorecard_widget_3:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.scorecard_widget_3.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - scorecard
+
+                scorecard_widget_4:
+                    label: 'oro.customer.frontend.theme.default.configuration.customer_user_dashboard.scorecard_widget_4.label'
+                    type: content_widget_selector
+                    options:
+                        required: false
+                        widgetTypes:
+                            - scorecard
