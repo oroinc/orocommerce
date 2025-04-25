@@ -79,10 +79,50 @@ define(function(require) {
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
         },
 
-        handleCustomerChange: function() {
-            // Allow default address usage on customer/customer user change
-            this._fillAddressFields({label: ''});
-            this.useDefaultAddress = true;
+        /**
+         * Handles customer change event and updates the address selection accordingly.
+         *
+         * Logic:
+         * 1. If the order uses a manually added address, no changes are made.
+         * 2. If the order uses an address belonging to the Customer, and during edit
+         *    we add, remove, or change the Customer User, no changes are made.
+         * 3. If the order uses an address belonging to the Customer, and during edit
+         *    we change the Customer, the address remains the same but is marked
+         *    as manually selected.
+         * 4. If the order uses an address belonging to the Customer User, and during edit
+         *    we change the Customer User, the address remains the same but is marked
+         *    as manually selected.
+         *
+         * @param {Object} e - Event data containing customer and user change flags.
+         */
+        handleCustomerChange: function(e) {
+            const isCustomerChanged = e.isCustomerChanged || false;
+            const isCustomerUserChanged = e.isCustomerUserChanged || false;
+            const isCustomerUserAddressSelected = this.isUserAddressSelected();
+
+            if (!isCustomerChanged && isCustomerUserChanged && !isCustomerUserAddressSelected) {
+                return;
+            }
+
+            this.useDefaultAddress = !isCustomerUserAddressSelected;
+            this._setReadOnlyMode(!isCustomerUserAddressSelected);
+            this.$address.val(null).trigger('change');
+        },
+
+        isUserAddressSelected: function() {
+            if (!this.$address || !this.$address.val()) {
+                return false;
+            }
+
+            const selectedAddressId = this.$address.val();
+            const addresses = this.$address.data('addresses') || {};
+            const selectedAddress = addresses[selectedAddressId];
+
+            if (!selectedAddress) {
+                return false;
+            }
+
+            return Boolean(selectedAddress.frontendOwner && selectedAddress.frontendOwner.email);
         },
 
         /**
