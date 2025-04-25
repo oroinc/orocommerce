@@ -34,15 +34,13 @@ class InventoryLevelUpdateListTest extends RestJsonApiUpdateListTestCase
             false
         );
 
-        $this->assertAsyncOperationErrors(
+        $this->assertAsyncOperationError(
             [
-                [
-                    'id'     => $operationId . '-1-1',
-                    'status' => 405,
-                    'title'  => 'action not allowed exception',
-                    'detail' => 'The "create" action is not allowed.',
-                    'source' => ['pointer' => '/data/0']
-                ]
+                'id' => $operationId . '-1-1',
+                'status' => 405,
+                'title' => 'action not allowed exception',
+                'detail' => 'The "create" action is not allowed.',
+                'source' => ['pointer' => '/data/0']
             ],
             $operationId
         );

@@ -161,15 +161,13 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
             ],
             false
         );
-        $this->assertAsyncOperationErrors(
+        $this->assertAsyncOperationError(
             [
-                [
-                    'id'     => $operationId . '-1-1',
-                    'status' => 400,
-                    'title'  => 'form constraint',
-                    'detail' => 'The entity does not exist.',
-                    'source' => ['pointer' => '/data/0/relationships/organization/data'],
-                ]
+                'id'     => $operationId . '-1-1',
+                'status' => 400,
+                'title'  => 'form constraint',
+                'detail' => 'The entity does not exist.',
+                'source' => ['pointer' => '/data/0/relationships/organization/data']
             ],
             $operationId
         );
@@ -250,15 +248,13 @@ class ProductUpdateListTest extends RestJsonApiUpdateListTestCase
             ],
             false
         );
-        $this->assertAsyncOperationErrors(
+        $this->assertAsyncOperationError(
             [
-                [
-                    'id'     => $operationId . '-1-1',
-                    'status' => 400,
-                    'title'  => 'form constraint',
-                    'detail' => 'The entity does not exist.',
-                    'source' => ['pointer' => '/data/0/relationships/organization/data'],
-                ]
+                'id'     => $operationId . '-1-1',
+                'status' => 400,
+                'title'  => 'form constraint',
+                'detail' => 'The entity does not exist.',
+                'source' => ['pointer' => '/data/0/relationships/organization/data']
             ],
             $operationId
         );

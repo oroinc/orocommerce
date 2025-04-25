@@ -163,15 +163,13 @@ class CustomerGroupProductVisibilityUpdateListTest extends RestJsonApiUpdateList
             false
         );
 
-        $this->assertAsyncOperationErrors(
+        $this->assertAsyncOperationError(
             [
-                [
-                    'id'     => $operationId . '-1-1',
-                    'status' => 400,
-                    'title'  => 'request data constraint',
-                    'detail' => 'The included data are not supported for this resource type.',
-                    'source' => ['pointer' => '/included'],
-                ],
+                'id'     => $operationId . '-1-1',
+                'status' => 400,
+                'title'  => 'request data constraint',
+                'detail' => 'The included data are not supported for this resource type.',
+                'source' => ['pointer' => '/included']
             ],
             $operationId
         );
