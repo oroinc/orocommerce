@@ -16,6 +16,8 @@ define(function(require) {
     const PossibleShippingMethodsView = BaseView.extend(_.extend({}, ElementsHelper, {
         autoRender: true,
 
+        renderPossibleShippingMethodOnOrderChange: false,
+
         options: {
             events: {
                 before: 'entry-point:order:load:before',
@@ -31,9 +33,14 @@ define(function(require) {
         },
 
         elements: {
+            customer: ['$document', '[name*="[customer]"]'],
+            customerUser: ['$document', '[name*="[customerUser]"]'],
+            shippingAddress: ['$document', '[name*="[shippingAddress]"]'],
+            billingAddress: ['$document', '[name*="[billingAddress]"]'],
             toggleBtn: '[data-role="possible_shipping_methods_btn"]',
             possibleShippingMethodForm: '[data-content="possible_shipping_methods_form"]',
             calculateShipping: '[data-name="field__calculate-shipping"]',
+            shippingMethodLabel: '[data-name="field__shipping-method-label"]',
             shippingMethod: '[data-name="field__shipping-method"]',
             shippingMethodType: '[data-name="field__shipping-method-type"]',
             estimatedShippingCostAmount: '[data-name="field__estimated-shipping-cost-amount"]',
@@ -43,7 +50,11 @@ define(function(require) {
         elementsEvents: {
             toggleBtn: ['click', 'onToggleBtnClick'],
             overriddenShippingCostAmount: ['change', 'onOverriddenShippingCostChange'],
-            possibleShippingMethodForm: ['change', 'onShippingMethodTypeChange']
+            possibleShippingMethodForm: ['change', 'onShippingMethodTypeChange'],
+            customer: ['change', 'keepRenderPreviousSelectedShippingMethod'],
+            customerUser: ['change', 'keepRenderPreviousSelectedShippingMethod'],
+            shippingAddress: ['change', 'keepRenderPreviousSelectedShippingMethod'],
+            billingAddress: ['change', 'keepRenderPreviousSelectedShippingMethod']
         },
 
         /**
@@ -76,6 +87,8 @@ define(function(require) {
 
         render: function() {
             this.getElement('possibleShippingMethodForm').hide();
+            // By default, render previous selected shipping method container.
+            this.renderPreviousSelectedShippingMethod();
         },
 
         onToggleBtnClick: function(e) {
@@ -155,6 +168,10 @@ define(function(require) {
             } else {
                 this.getElement('possibleShippingMethodForm').hide();
                 this.getElement('toggleBtn').parent('div').show();
+                if (!this.renderPossibleShippingMethodOnOrderChange) {
+                    this.removeSelectedShippingMethod();
+                }
+                this.renderPossibleShippingMethodOnOrderChange = false;
 
                 if (!this.orderHasChanged) {
                     this._startListeningToSubmit();
@@ -176,12 +193,15 @@ define(function(require) {
             this.recalculationIsNotRequired = true;
         },
 
+        keepRenderPreviousSelectedShippingMethod: function() {
+            this.renderPossibleShippingMethodOnOrderChange = true;
+        },
+
         updatePossibleShippingMethods: function(methods) {
             let selectedMethod = this.getSelectedMethod();
             if (!selectedMethod && this.options.savedShippingMethod) {
                 selectedMethod = this.options.savedShippingMethod;
             }
-            let selectedFound = false;
             let str = this.options.noShippingMethodsAvailableTemplate();
             if (_.size(methods) > 0) {
                 str = this.options.possibleShippingMethodsTemplate({
@@ -191,19 +211,8 @@ define(function(require) {
                     areMethodsEqual: this.areMethodsEqual,
                     NumberFormatter: NumberFormatter
                 });
-
-                selectedFound = this.isMethodAvailable(methods, selectedMethod);
+                this.getElement('possibleShippingMethodForm').html(str);
             }
-
-            this.removeSelectedShippingMethod();
-            if (!selectedFound) {
-                this.setElementsValue(null);
-                if (this.options.savedShippingMethod) {
-                    this.renderPreviousSelectedShippingMethod();
-                }
-            }
-
-            this.getElement('possibleShippingMethodForm').html(str);
         },
 
         getSelectedMethod: function() {
@@ -253,13 +262,15 @@ define(function(require) {
         },
 
         renderPreviousSelectedShippingMethod: function(label) {
-            this.removeSelectedShippingMethod();
-            const $prevDiv = $('<div>').html(this.options.selectedShippingMethodTemplate({
-                shippingMethodLabel: _.__('oro.order.previous_shipping_method.label'),
-                shippingMethodClass: 'selected-shipping-method',
-                selectedShippingMethod: this.options.savedShippingMethodLabel
-            }));
-            this.$el.closest('.responsive-cell').prepend($prevDiv);
+            if (this.options.savedShippingMethod) {
+                this.removeSelectedShippingMethod();
+                const $prevDiv = $('<div>').html(this.options.selectedShippingMethodTemplate({
+                    shippingMethodLabel: _.__('oro.order.previous_shipping_method.label'),
+                    shippingMethodClass: 'selected-shipping-method',
+                    selectedShippingMethod: this.options.savedShippingMethodLabel
+                }));
+                this.$el.closest('.responsive-cell').prepend($prevDiv);
+            }
         },
 
         /**
@@ -274,12 +285,8 @@ define(function(require) {
             );
 
             this.setElementsValue(method);
-
             this.removeSelectedShippingMethod();
-            if (this.options.savedShippingMethod && !this.areMethodsEqual(method, this.options.savedShippingMethod)) {
-                this.renderPreviousSelectedShippingMethod();
-            }
-
+            this.options.renderPossibleShippingMethodOnOrderChange = false;
             this.updateTotals();
         },
 

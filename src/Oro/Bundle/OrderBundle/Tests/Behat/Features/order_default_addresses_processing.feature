@@ -41,9 +41,8 @@ Feature: Order Default Addresses processing
   Scenario: Check order addresses for another customer user
     When I fill "Order Form" with:
       | Customer User | Nancy Sallee |
-    Then "Order Form" must contains values:
-      | Billing Address  | ORO, 2849 Junkins Avenue, ALBANY NY US 31707 |
-      | Shipping Address | ORO, 2849 Junkins Avenue, ALBANY NY US 31707 |
+    Then Order Billing Address Select field is empty
+    And Order Shipping Address Select field is empty
 
   Scenario: Check order addresses for another customer
     When I fill "Order Form" with:
