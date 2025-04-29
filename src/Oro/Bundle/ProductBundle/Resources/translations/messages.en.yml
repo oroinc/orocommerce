@@ -603,6 +603,8 @@ oro:
                     description: |
                         The change of the Product Description Field will not be applied immediately and will require manual start of the website search re-index.
                         Please check product detail page for unexpected layout shifts after changing Schema.org settings in test environment before making these changes on live website.
+                product_seo_settings.title: 'SEO'
+                product_seo_breadcrumbs_rendering.title: 'Breadcrumbs Rendering'
             fields:
                 original_file_names_enabled:
                     label: 'Enable Original File Names'
@@ -796,6 +798,9 @@ oro:
                         meta.label: 'SEO Meta Description'
                         short.label: 'Simplified Short Description'
                         long.label: 'Simplified [Long] Description'
+                breadcrumbs_exclude_current_on_product_view:
+                    label: 'Exclude Current Page in Breadcrumbs on Product View'
+                    tooltip: 'According to SEO best practices, the current page should not be included in the breadcrumbs. Starting with version 6.1 LTS, OroCommerce will exclude the current page from breadcrumbs by default.'
 
             notice:
                 product_image_watermark: >

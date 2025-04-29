@@ -226,6 +226,12 @@ oro:
                 search_autocomplete_max_categories:
                     label: 'Number Of Categories In Search Autocomplete'
                     tooltip: 'Set the maximum number of categories displayed in the storefront autocomplete dropdown.'
+                breadcrumbs_exclude_current_on_all_pages:
+                    label: 'Exclude Current Page in Breadcrumbs on All Pages'
+                    tooltip: 'According to SEO best practices, the current page should not be included in the breadcrumbs. Starting with version 6.1 LTS, OroCommerce will exclude the current page from breadcrumbs by default.'
+                breadcrumbs_remove_single_breadcrumb:
+                    label: 'Hides the breadcrumbs block entirely when it contains a single item'
+                    tooltip: 'Removes the last breadcrumb if it is the only item in the trail. This improves clarity and aligns with SEO recommendations by avoiding redundant navigation links.'
 
         featured_categories:
             label: 'Featured Categories'

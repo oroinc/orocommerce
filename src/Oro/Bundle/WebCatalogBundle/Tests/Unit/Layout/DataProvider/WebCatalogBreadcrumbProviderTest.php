@@ -4,6 +4,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Layout\DataProvider;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -19,6 +20,9 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 {
     use EntityTrait;
@@ -47,6 +51,9 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     /** @var WebCatalogBreadcrumbProvider */
     private $breadcrumbDataProvider;
 
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
+
     protected function setUp(): void
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
@@ -64,6 +71,8 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         );
 
         $this->webCatalog = $this->getEntity(WebCatalog::class, ['id' => 1]);
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->breadcrumbDataProvider->setConfigManager($this->configManager);
     }
 
     /**
@@ -176,16 +185,16 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $nodeUrl = '/';
         $currentNode = $this->getContentNode();
         $contentVariant = $this->createMock(ContentVariant::class);
-        $contentVariant->expects($this->any())
+        $contentVariant->expects(self::any())
             ->method('getNode')
             ->willReturn($currentNode);
 
         $request = Request::create('/', Request::METHOD_GET);
 
-        $this->requestStack->expects($this->exactly(2))
+        $this->requestStack->expects(self::exactly(1))
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $this->requestWebContentVariantProvider->expects($this->any())
+        $this->requestWebContentVariantProvider->expects(self::any())
             ->method('getContentVariant')
             ->willReturn($contentVariant);
 
@@ -193,17 +202,17 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
         $path = [];
         $this->cascadeToArray($currentNode, $path);
-        $nodeRepository->expects($this->once())
+        $nodeRepository->expects(self::once())
             ->method('getPath')
             ->with($currentNode)
             ->willReturn($path);
 
-        $this->doctrine->expects($this->any())
+        $this->doctrine->expects(self::any())
             ->method('getRepository')
             ->with(ContentNode::class)
             ->willReturn($nodeRepository);
 
-        $this->localizationHelper->expects($this->exactly(2))
+        $this->localizationHelper->expects(self::exactly(2))
             ->method('getLocalizedValue')
             ->withConsecutive(
                 [$currentNode->getTitles()],
@@ -328,6 +337,194 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->breadcrumbDataProvider->getItemsForProduct($categoryId, $currentPageTitle);
         $this->assertEquals($expectedBreadcrumbs, $result);
+    }
+
+    public function testGetItemsTrimsLastBreadcrumbWhenConfigEnabled(): void
+    {
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->query = new ParameterBag([
+            'categoryId' => 2
+        ]);
+
+        $this->requestStack->expects(self::any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $currentNode = $this->getContentNode();
+        $contentVariant = $this->createMock(ContentVariant::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($currentNode);
+
+        $this->requestWebContentVariantProvider->expects($this->any())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
+
+        $nodeRepository = $this->createMock(ContentNodeRepository::class);
+
+        $path = [];
+        $this->cascadeToArray($currentNode, $path);
+        $nodeRepository->expects($this->once())
+            ->method('getPath')
+            ->with($currentNode)
+            ->willReturn($path);
+
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
+            ->with(ContentNode::class)
+            ->willReturn($nodeRepository);
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_catalog.breadcrumbs_exclude_current_on_all_pages', false, false, null, true],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, false],
+            ]);
+
+        $result = $this->breadcrumbDataProvider->getItems();
+
+        $this->assertCount(0, $result);
+    }
+
+    public function testGetItemsForProductTrimsLastBreadcrumbWhenConfigEnabled(): void
+    {
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->query = new ParameterBag([
+            'categoryId' => 2
+        ]);
+
+        $this->requestStack->expects(self::any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $currentNode = $this->getContentNode();
+        $contentVariant = $this->createMock(ContentVariant::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($currentNode);
+
+        $this->requestWebContentVariantProvider->expects($this->any())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
+
+        $nodeRepository = $this->createMock(ContentNodeRepository::class);
+
+        $path = [];
+        $this->cascadeToArray($currentNode, $path);
+        $nodeRepository->expects($this->once())
+            ->method('getPath')
+            ->with($currentNode)
+            ->willReturn($path);
+
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
+            ->with(ContentNode::class)
+            ->willReturn($nodeRepository);
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_product.breadcrumbs_exclude_current_on_product_view', false, false, null, true],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, false],
+            ]);
+
+        $result = $this->breadcrumbDataProvider->getItemsForProduct(42, 'Product Title');
+
+        $this->assertCount(0, $result);
+    }
+
+    public function testGetItemsRemovesSingleItemWhenConfigEnabled(): void
+    {
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->query = new ParameterBag([
+            'categoryId' => 2
+        ]);
+
+        $this->requestStack->expects(self::any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $currentNode = $this->getContentNode();
+        $contentVariant = $this->createMock(ContentVariant::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($currentNode);
+
+        $this->requestWebContentVariantProvider->expects($this->any())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
+
+        $nodeRepository = $this->createMock(ContentNodeRepository::class);
+
+        $path = [];
+        $this->cascadeToArray($currentNode, $path);
+        $nodeRepository->expects($this->once())
+            ->method('getPath')
+            ->with($currentNode)
+            ->willReturn($path);
+
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
+            ->with(ContentNode::class)
+            ->willReturn($nodeRepository);
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_catalog.breadcrumbs_exclude_current_on_all_pages', false, false, null, false],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, true],
+            ]);
+
+        $result = $this->breadcrumbDataProvider->getItems();
+
+        $this->assertSame([], $result);
+    }
+
+    public function testGetItemsForProductRemovesSingleItemWhenConfigEnabled(): void
+    {
+        $request = Request::create('/', Request::METHOD_GET);
+        $request->query = new ParameterBag([
+            'categoryId' => 2
+        ]);
+
+        $this->requestStack->expects(self::any())
+            ->method('getCurrentRequest')
+            ->willReturn($request);
+
+        $currentNode = $this->getContentNode();
+        $contentVariant = $this->createMock(ContentVariant::class);
+        $contentVariant->expects($this->any())
+            ->method('getNode')
+            ->willReturn($currentNode);
+
+        $this->requestWebContentVariantProvider->expects($this->any())
+            ->method('getContentVariant')
+            ->willReturn($contentVariant);
+
+        $nodeRepository = $this->createMock(ContentNodeRepository::class);
+
+        $path = [];
+        $this->cascadeToArray($currentNode, $path);
+        $nodeRepository->expects($this->once())
+            ->method('getPath')
+            ->with($currentNode)
+            ->willReturn($path);
+
+        $this->doctrine->expects($this->any())
+            ->method('getRepository')
+            ->with(ContentNode::class)
+            ->willReturn($nodeRepository);
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_product.breadcrumbs_exclude_current_on_product_view', false, false, null, false],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, true],
+            ]);
+
+        $result = $this->breadcrumbDataProvider->getItemsForProduct(null, 'Product');
+
+        $this->assertSame([], $result);
     }
 
     private function getContentNode(array $children = []): ContentNode

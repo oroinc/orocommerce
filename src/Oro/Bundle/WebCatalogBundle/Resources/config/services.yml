@@ -439,6 +439,8 @@ services:
             - '@request_stack'
             - '@oro_web_catalog.request_web_content_variant_provider'
             - '@oro_catalog.layout.data_provider.category_breadcrumb'
+        calls:
+            - [ setConfigManager, [ '@oro_config.manager' ] ]
         tags:
             - { name: layout.data_provider, alias: web_catalog_breadcrumbs }
 

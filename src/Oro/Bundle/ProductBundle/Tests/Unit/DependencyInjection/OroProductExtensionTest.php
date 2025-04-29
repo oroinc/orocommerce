@@ -9,6 +9,9 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 
 class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
 {
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testLoad(): void
     {
         $container = new ContainerBuilder();
@@ -89,6 +92,10 @@ class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
                         // BB-23597
                         Configuration::DISPLAY_PRICE_TIERS_AS => [
                             'value' => Configuration::DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE,
+                            'scope' => 'app'
+                        ],
+                        Configuration::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW => [
+                            'value' => false,
                             'scope' => 'app'
                         ],
                     ]

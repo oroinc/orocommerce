@@ -88,6 +88,7 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_TYPES = 'product_types';
     public const DISPLAY_PRICE_TIERS_AS = 'product_details_display_price_tiers_as'; // BB-23597
     public const DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE = 'multi-unit-table'; // BB-23597
+    public const EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW = 'breadcrumbs_exclude_current_on_product_view';
 
     /**
      * {@inheritDoc}
@@ -222,7 +223,11 @@ class Configuration implements ConfigurationInterface
                 static::DISPLAY_PRICE_TIERS_AS => [ // BB-23597
                     'type' => 'string',
                     'value' => static::DISPLAY_PRICE_TIERS_AS_DEFAULT_VALUE
-                ]
+                ],
+                self::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW => [
+                    'value' => false,
+                    'type' => 'boolean',
+                ],
             ]
         );
 

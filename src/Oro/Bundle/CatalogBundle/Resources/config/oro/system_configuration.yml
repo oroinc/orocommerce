@@ -54,6 +54,20 @@ system_configuration:
                     -   Range:
                             min: 0
 
+        oro_catalog.breadcrumbs_exclude_current_on_all_pages:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.catalog.system_configuration.fields.breadcrumbs_exclude_current_on_all_pages.label
+                tooltip: oro.catalog.system_configuration.fields.breadcrumbs_exclude_current_on_all_pages.tooltip
+
+        oro_catalog.breadcrumbs_remove_single_breadcrumb:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.catalog.system_configuration.fields.breadcrumbs_remove_single_breadcrumb.label
+                tooltip: oro.catalog.system_configuration.fields.breadcrumbs_remove_single_breadcrumb.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -74,6 +88,13 @@ system_configuration:
                                     product_fulltext_search:
                                         children:
                                             - oro_catalog.search_autocomplete_max_categories
+                            product_seo_settings:
+                                priority: 0
+                                children:
+                                    product_seo_breadcrumbs_rendering:
+                                        children:
+                                            - oro_catalog.breadcrumbs_exclude_current_on_all_pages
+                                            - oro_catalog.breadcrumbs_remove_single_breadcrumb
 
                     catalog:
                         priority: 900

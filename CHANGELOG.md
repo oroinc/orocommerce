@@ -129,6 +129,22 @@ Previously known as GOD Object
 #### ProductBundle
 * Added a default variant field for the Product entity. This allows to choose a default variant from the product variants for a configurable product. This variant will be selected by default on the product view page. It can be set on product create and edit pages as well as via API or product import.
 
+#### WebCatalogBundle
+* Dynamically removes the last breadcrumb on product view or listing pages based on configuration.
+* Removes a single breadcrumb if only one is present and the corresponding configuration is enabled.
+* Added configuration options for managing breadcrumbs visibility:
+  - `Exclude Current Page in Breadcrumbs on Product View`
+  - `Exclude Current Page in Breadcrumbs on All Pages`
+  - `Hides the breadcrumbs block entirely when it contains a single item` (it hides a single breadcrumb if it's the only one)
+
+#### CatalogBundle
+* Dynamically removes the last breadcrumb on product view or listing pages based on configuration.
+* Removes a single breadcrumb if only one is present and the corresponding configuration is enabled.
+* Added configuration options for managing breadcrumbs visibility:
+  - `Exclude Current Page in Breadcrumbs on Product View`
+  - `Exclude Current Page in Breadcrumbs on All Pages`
+  - `Hides the breadcrumbs block entirely when it contains a single item` (it hides a single breadcrumb if it's the only one)
+
 ### Removed
 
 #### ProductBundle
