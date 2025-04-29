@@ -263,10 +263,10 @@ oro:
             id.label:                     ID
             customer_address:
                 label:                    Customer address
-                description:              The identifier of customer address, which was used as order address.
+                description:              The customer address, which was used as order address.
             customer_user_address:
                 label:                    Customer user address
-                description:              The identifier of customer user address, which was used as order address.
+                description:              The customer user address, which was used as order address.
             label:
                 label:                    Label
                 description:              Order Address label (e.g., Main Office).
@@ -390,7 +390,7 @@ oro:
                 description:          A flag that indicates that a product information was received from the external source.
             price_type:
                 label:                'Price Type'
-                description:          The identifier of the price type.
+                description:          The type of the product price.
             select:
                 product: Select product
                 free_form: Free-form entry

@@ -2,9 +2,14 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\UnitOfWork;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableFieldValidator;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
@@ -21,6 +26,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityTypeStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Form\FormInterface;
 
@@ -29,13 +35,10 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected const QP_TYPE1 = QuoteProduct::TYPE_REQUESTED;
     protected const QPO_PRICE_TYPE1 = QuoteProductOffer::PRICE_TYPE_UNIT;
 
-    /** @var QuoteProductFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $quoteProductFormatter;
+    protected QuoteProductFormatter&MockObject $quoteProductFormatter;
+    protected QuoteProductOfferFormatter&MockObject $quoteProductOfferFormatter;
 
-    /** @var QuoteProductOfferFormatter|\PHPUnit\Framework\MockObject\MockObject */
-    protected $quoteProductOfferFormatter;
-
-    protected function configureQuoteProductOfferFormatter()
+    protected function configureQuoteProductOfferFormatter(): void
     {
         $this->quoteProductFormatter = $this->createMock(QuoteProductFormatter::class);
         $this->quoteProductFormatter->expects(self::any())
@@ -84,10 +87,24 @@ abstract class AbstractTest extends FormIntegrationTestCase
                 return (float)$quantity;
             });
 
+        $doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $em = $this->createMock(EntityManagerInterface::class);
+        $doctrineHelper->expects(self::any())
+            ->method('getEntityManagerForClass')
+            ->willReturn($em);
+        $uow = $this->createMock(UnitOfWork::class);
+        $em->expects(self::any())
+            ->method('getUnitOfWork')
+            ->willReturn($uow);
+        $em->expects(self::any())
+            ->method('getClassMetadata')
+            ->willReturn($this->createMock(ClassMetadata::class));
+
         return [
             'oro_sale.validator.quote_product' => new Constraints\QuoteProductValidator(),
             'doctrine.orm.validator.unique' => $this->createMock(UniqueEntityValidator::class),
             QuantityUnitPrecisionValidator::class => new QuantityUnitPrecisionValidator($roundingService),
+            UnchangeableFieldValidator::class => new UnchangeableFieldValidator($doctrineHelper)
         ];
     }
 
@@ -174,9 +191,9 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param int                   $productId
-     * @param int|null $type
-     * @param string|null $comment
-     * @param string|null $commentCustomer
+     * @param int|null              $type
+     * @param string|null           $comment
+     * @param string|null           $commentCustomer
      * @param QuoteProductRequest[] $requests
      * @param QuoteProductOffer[]   $offers
      *

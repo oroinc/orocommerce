@@ -1,0 +1,111 @@
+data:
+    type: quotes
+    attributes:
+        poNumber: NEW_PO
+        shipUntil: '2025-01-20'
+        validUntil: '2025-01-20T10:20:30Z'
+        expired: false
+        currency: USD
+    relationships:
+        request:
+            data: null
+        quoteProducts:
+            data:
+                -
+                    type: quoteproducts
+                    id: product_1
+        shippingAddress:
+            data:
+                type: quoteshippingaddresses
+                id: shipping_address
+        assignedUsers:
+            data:
+                -
+                    type: users
+                    id: '<toString(@user->id)>'
+        assignedCustomerUsers:
+            data:
+                -
+                    type: customerusers
+                    id: '<toString(@sale-customer1-user1@example.com->id)>'
+        owner:
+            data:
+                type: users
+                id: '<toString(@user->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@organization->id)>'
+        customerUser:
+            data:
+                type: customerusers
+                id: '<toString(@sale-customer1-user1@example.com->id)>'
+        customer:
+            data:
+                type: customers
+                id: '<toString(@sale-customer1->id)>'
+        paymentTerm:
+            data:
+                type: paymentterms
+                id: '<toString(@payment_term_test_data_net 10->id)>'
+        attachments:
+            data: []
+        activityNotes:
+            data: []
+        activityEmails:
+            data: []
+included:
+    -
+        type: quoteproducts
+        id: product_1
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            quoteProductOffers:
+                data:
+                    -
+                        type: quoteproductoffers
+                        id: offer_1
+            quoteProductRequests:
+                data:
+                    -
+                        type: quoteproductrequests
+                        id: request_1
+    -
+        type: quoteproductoffers
+        id: offer_1
+        attributes:
+            quantity: 1
+        relationships:
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: quoteproductrequests
+        id: request_1
+        attributes:
+            quantity: 1
+        relationships:
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: quoteshippingaddresses
+        id: shipping_address
+        attributes:
+            street: '1215 Caldwell Road'
+            city: Rochester
+            postalCode: '14608'
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.US->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.US-NY->combinedCode)>'

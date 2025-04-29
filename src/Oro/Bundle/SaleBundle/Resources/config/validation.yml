@@ -23,6 +23,13 @@ Oro\Bundle\SaleBundle\Entity\Quote:
                             type: Date
         quoteProducts:
             -   Valid: ~
+        shippingAddress:
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    allowReset: true
+                    allowChangeOwner: false
+        request:
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    allowChangeOwner: false
 
 Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     constraints:
@@ -42,6 +49,8 @@ Oro\Bundle\SaleBundle\Entity\QuoteProduct:
     properties:
         quote:
             -   NotBlank: ~
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    allowChangeOwner: false
         type:
             -   NotBlank: ~
         quoteProductRequests:
@@ -245,9 +254,13 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
     constraints:
         -   Oro\Bundle\ProductBundle\Validator\Constraints\QuantityUnitPrecision:
                 path: quantity
+        -   Oro\Bundle\SaleBundle\Validator\Constraints\QuoteProductRequestSource: ~
     properties:
         quoteProduct:
             -   NotBlank: ~
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    message: 'oro.sale.quoteproductrequest.quote_product.unchangeable'
+                    allowChangeOwner: false
         quantity:
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
@@ -259,6 +272,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
                     message: 'oro.product.productunit.unit.blank'
         price:
             -   Valid: ~
+        requestProductItem:
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    allowChangeOwner: false
 
 Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
     constraints:
@@ -267,6 +283,9 @@ Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
     properties:
         quoteProduct:
             -   NotBlank: ~
+            -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
+                    message: 'oro.sale.quoteproductoffer.quote_product.unchangeable'
+                    allowChangeOwner: false
         quantity:
             -   NotBlank: ~
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~

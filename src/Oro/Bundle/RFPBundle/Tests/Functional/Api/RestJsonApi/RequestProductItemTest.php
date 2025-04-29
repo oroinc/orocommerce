@@ -4,13 +4,12 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Api\RestJsonApi;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\LineItemChecksumGenerator\LineItemChecksumGeneratorInterface;
-use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolationPerTest
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RequestProductItemTest extends RestJsonApiTestCase
 {
@@ -21,18 +20,6 @@ class RequestProductItemTest extends RestJsonApiTestCase
         $this->loadFixtures([LoadRequestData::class]);
     }
 
-    private function getRequestProductItemId(): int
-    {
-        /** @var Request $request */
-        $request = $this->getReference('rfp.request.1');
-        /** @var RequestProduct $requestProduct */
-        $requestProduct = $request->getRequestProducts()->first();
-        /** @var RequestProductItem $requestProductItem */
-        $requestProductItem = $requestProduct->getRequestProductItems()->first();
-
-        return $requestProductItem->getId();
-    }
-
     private function generateRequestProductItemChecksum(RequestProductItem $requestProductItem): string
     {
         /** @var LineItemChecksumGeneratorInterface $lineItemChecksumGenerator */
@@ -41,32 +28,6 @@ class RequestProductItemTest extends RestJsonApiTestCase
         self::assertNotEmpty($checksum, 'Impossible to generate the request product item checksum.');
 
         return $checksum;
-    }
-
-    private function getCreateData(): array
-    {
-        /** @var Request $request */
-        $request = $this->getReference(LoadRequestData::REQUEST1);
-        $requestProduct = $request->getRequestProducts()->first();
-
-        return [
-            'data' => [
-                'type' => 'rfqproductitems',
-                'attributes' => [
-                    'quantity' => 10,
-                    'value' => '100.0000',
-                    'currency' => 'USD'
-                ],
-                'relationships' => [
-                    'productUnit' => [
-                        'data' => ['type' => 'productunits', 'id' => '<toString(@product_unit.liter->code)>']
-                    ],
-                    'requestProduct' => [
-                        'data' => ['type' => 'rfqproducts', 'id' => (string)$requestProduct->getId()]
-                    ]
-                ]
-            ]
-        ];
     }
 
     public function testGetList(): void
@@ -85,20 +46,32 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testGet(): void
     {
-        $entity = $this->getEntityManager()
-            ->getRepository(RequestProductItem::class)
-            ->findOneBy([]);
+        $entityId = $this->getReference('rfp.request.1.product_item.1')->getId();
 
         $response = $this->get(
-            ['entity' => 'rfqproductitems', 'id' => $entity->getId()]
+            ['entity' => 'rfqproductitems', 'id' => (string)$entityId]
         );
 
-        self::assertResponseNotEmpty($response);
+        $this->assertResponseContains('get_request_product_item.yml', $response);
+    }
+
+    public function testCreateWithRequiredDataOnly(): void
+    {
+        $data = $this->getRequestData('create_request_product_item_min.yml');
+        $response = $this->post(
+            ['entity' => 'rfqproductitems'],
+            $data
+        );
+
+        $entityId = $this->getResourceId($response);
+        $expectedData = $data;
+        $expectedData['data']['id'] = $entityId;
+        $this->assertResponseContains($expectedData, $response);
     }
 
     public function testCreate(): void
     {
-        $data = $this->getCreateData();
+        $data = $this->getRequestData('create_request_product_item.yml');
         $response = $this->post(
             ['entity' => 'rfqproductitems'],
             $data
@@ -112,7 +85,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testTryToCreateWithEmptyValue(): void
     {
-        $data = $this->getCreateData();
+        $data = $this->getRequestData('create_request_product_item_min.yml');
         $data['data']['attributes']['value'] = '';
         $response = $this->post(
             ['entity' => 'rfqproductitems'],
@@ -133,7 +106,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testTryToCreateWithEmptyCurrency(): void
     {
-        $data = $this->getCreateData();
+        $data = $this->getRequestData('create_request_product_item_min.yml');
         $data['data']['attributes']['currency'] = '';
         $response = $this->post(
             ['entity' => 'rfqproductitems'],
@@ -154,7 +127,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testTryToCreateWithWrongValue(): void
     {
-        $data = $this->getCreateData();
+        $data = $this->getRequestData('create_request_product_item_min.yml');
         $data['data']['attributes']['value'] = 'test';
         $response = $this->post(
             ['entity' => 'rfqproductitems'],
@@ -175,7 +148,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testCreateWithReadonlyChecksum(): void
     {
-        $data = $this->getCreateData();
+        $data = $this->getRequestData('create_request_product_item_min.yml');
         $data['data']['attributes']['checksum'] = '123456789';
         $response = $this->post(['entity' => 'rfqproductitems'], $data);
 
@@ -192,7 +165,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testUpdate(): void
     {
-        $entityId = $this->getRequestProductItemId();
+        $entityId = $this->getReference('rfp.request.1.product_item.1')->getId();
         $data = [
             'data' => [
                 'type' => 'rfqproductitems',
@@ -214,8 +187,7 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testTryToUpdateReadonlyChecksum(): void
     {
-        $entityId = $this->getRequestProductItemId();
-
+        $entityId = $this->getReference('rfp.request.1.product_item.1')->getId();
         $data = [
             'data' => [
                 'type' => 'rfqproductitems',
@@ -241,9 +213,21 @@ class RequestProductItemTest extends RestJsonApiTestCase
 
     public function testDelete(): void
     {
-        $entityId = $this->getRequestProductItemId();
+        $entityId = $this->getReference('rfp.request.1.product_item.1')->getId();
         $this->delete(
             ['entity' => 'rfqproductitems', 'id' => $entityId]
+        );
+
+        $entity = $this->getEntityManager()->find(RequestProductItem::class, $entityId);
+        self::assertTrue(null === $entity);
+    }
+
+    public function testDeleteList(): void
+    {
+        $entityId = $this->getReference('rfp.request.1.product_item.1')->getId();
+        $this->cdelete(
+            ['entity' => 'rfqproductitems', 'id' => $entityId],
+            ['filter' => ['id' => (string)$entityId]]
         );
 
         $entity = $this->getEntityManager()->find(RequestProductItem::class, $entityId);

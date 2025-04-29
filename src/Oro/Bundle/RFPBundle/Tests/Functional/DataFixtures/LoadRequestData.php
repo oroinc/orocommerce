@@ -266,7 +266,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
                 $request->setCustomerUser($this->getReference($rawRequest['customerUser']));
             }
 
-            $this->processRequestProducts($request);
+            $this->processRequestProducts($request, $key);
             if (isset($rawRequest['ship_until'])) {
                 $request->setShipUntil(new \DateTime());
             }
@@ -314,7 +314,7 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
         $manager->flush();
     }
 
-    private function processRequestProducts(Request $request): void
+    private function processRequestProducts(Request $request, string $key): void
     {
         $currencies = $this->getCurrencies();
         $products = [
@@ -325,23 +325,27 @@ class LoadRequestData extends AbstractFixture implements ContainerAwareInterface
             LoadProductData::PRODUCT_5,
         ];
 
-        $numLineItems = self::NUM_LINE_ITEMS;
-        for ($i = 0; $i < $numLineItems; $i++) {
+        $productIndex = 0;
+        for ($i = 0; $i < self::NUM_LINE_ITEMS; $i++) {
             foreach ($products as $productRef) {
                 $product = $this->getReference($productRef);
                 $requestProduct = new RequestProduct();
                 $requestProduct->setProduct($product);
                 $requestProduct->setComment(sprintf('Notes %s', $i));
                 $productUnitPrecisions = $product->getUnitPrecisions();
-                $productUnit = $productUnitPrecisions[rand(0, count($productUnitPrecisions) - 1)]->getUnit();
-                $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
-                $requestProductItem
-                    ->setPrice(Price::create(rand(1, 100), $currency))
-                    ->setQuantity(rand(1, 100))
-                    ->setProductUnit($productUnit);
+                $requestProductItem->setPrice(
+                    Price::create($i + 1, $currencies[$productIndex % count($currencies)])
+                );
+                $requestProductItem->setQuantity($i + 1);
+                $requestProductItem->setProductUnit(
+                    $productUnitPrecisions[$productIndex % count($productUnitPrecisions)]->getUnit()
+                );
                 $requestProduct->addRequestProductItem($requestProductItem);
                 $request->addRequestProduct($requestProduct);
+                $this->setReference($key . '.product.' . $productIndex + 1, $requestProduct);
+                $this->setReference($key . '.product_item.' . $productIndex + 1, $requestProductItem);
+                $productIndex++;
             }
         }
     }

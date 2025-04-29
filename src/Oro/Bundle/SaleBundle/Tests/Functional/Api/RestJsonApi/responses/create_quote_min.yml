@@ -1,0 +1,51 @@
+data:
+    type: quotes
+    id: new
+    attributes:
+        identifier: new
+        guestAccessId: new
+        poNumber: null
+        shipUntil: null
+        validUntil: null
+        expired: false
+        pricesChanged: false
+        currency: null
+        createdAt: new
+        updatedAt: new
+    relationships:
+        request:
+            data: null
+        quoteProducts:
+            data: []
+        shippingAddress:
+            data: null
+        assignedUsers:
+            data: []
+        assignedCustomerUsers:
+            data: []
+        owner:
+            data:
+                type: users
+                id: '<toString(@user->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@organization->id)>'
+        customerUser:
+            data: null
+        customer:
+            data: null
+        paymentTerm:
+            data: null
+        customerStatus:
+            data: null
+        internalStatus:
+            data:
+                type: quoteinternalstatuses
+                id: draft
+        attachments:
+            data: []
+        activityNotes:
+            data: []
+        activityEmails:
+            data: []

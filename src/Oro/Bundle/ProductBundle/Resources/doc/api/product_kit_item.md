@@ -151,7 +151,7 @@ The last kit item cannot be deleted from the product kit.
 
 {@inheritdoc}
 
-Cannot be changed once already set.
+**Cannot be changed once already set.**
 
 **The required field.**
 

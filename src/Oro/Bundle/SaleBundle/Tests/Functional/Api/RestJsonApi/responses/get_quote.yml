@@ -1,0 +1,61 @@
+data:
+    type: quotes
+    id: '<toString(@sale.quote.1->id)>'
+    attributes:
+        identifier: sale.quote.1
+        guestAccessId: '@sale.quote.1->guestAccessId'
+        poNumber: PO_SALE.QUOTE.1
+        shipUntil: '@sale.quote.1->shipUntil->format("Y-m-d")'
+        validUntil: '@sale.quote.1->validUntil->format("Y-m-d\TH:i:s\Z")'
+        expired: false
+        pricesChanged: false
+        currency: null
+        createdAt: '@sale.quote.1->createdAt->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@sale.quote.1->updatedAt->format("Y-m-d\TH:i:s\Z")'
+    relationships:
+        request:
+            data: null
+        quoteProducts:
+            data:
+                -
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.1.product-1->id)>'
+                -
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.1.product-2->id)>'
+        shippingAddress:
+            data:
+                type: quoteshippingaddresses
+                id: '<toString(@sale.quote.1.shipping_address->id)>'
+        assignedUsers:
+            data: []
+        assignedCustomerUsers:
+            data: []
+        owner:
+            data:
+                type: users
+                id: '<toString(@user->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@organization->id)>'
+        customerUser:
+            data: null
+        customer:
+            data: null
+        paymentTerm:
+            data: null
+        customerStatus:
+            data:
+                type: quotecustomerstatuses
+                id: open
+        internalStatus:
+            data:
+                type: quoteinternalstatuses
+                id: draft
+        attachments:
+            data: []
+        activityNotes:
+            data: []
+        activityEmails:
+            data: []

@@ -6,6 +6,10 @@ use Oro\Bundle\AddressBundle\Tests\Functional\Api\RestJsonApi\AddressCountryAndR
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadCountryData;
 use Oro\Bundle\AddressBundle\Tests\Functional\DataFixtures\LoadRegionData;
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
@@ -37,7 +41,9 @@ class OrderAddressTest extends RestJsonApiTestCase
             LoadOrderAddressData::class,
             LoadOrderLineItemData::class,
             LoadCountryData::class,
-            LoadRegionData::class
+            LoadRegionData::class,
+            LoadCustomerAddresses::class,
+            LoadCustomerUserAddresses::class
         ]);
     }
 
@@ -46,16 +52,14 @@ class OrderAddressTest extends RestJsonApiTestCase
         return $this->getEntityManager()->find(Order::class, $orderId);
     }
 
-    public function testGetList()
+    public function testGetList(): void
     {
-        $response = $this->cget(
-            ['entity' => self::ENTITY_TYPE]
-        );
+        $response = $this->cget(['entity' => self::ENTITY_TYPE]);
 
         $this->assertResponseContains('cget_address.yml', $response);
     }
 
-    public function testGet()
+    public function testGet(): void
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
         $response = $this->get(
@@ -65,7 +69,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         $this->assertResponseContains('get_address.yml', $response);
     }
 
-    public function testCreate()
+    public function testCreate(): void
     {
         $countryId = $this->getReference('country.usa')->getIso2Code();
         $regionId = $this->getReference('region.usny')->getCombinedCode();
@@ -100,7 +104,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertEquals($regionId, $address->getRegion()->getCombinedCode());
     }
 
-    public function testTryToCreateWithRequiredDataOnlyAndWithoutOrganizationAndFirstNameAndLastName()
+    public function testTryToCreateWithRequiredDataOnlyAndWithoutOrganizationAndFirstNameAndLastName(): void
     {
         $data = $this->getRequestData(self::CREATE_MIN_REQUEST_DATA);
         unset($data['data']['attributes']['organization']);
@@ -133,7 +137,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         );
     }
 
-    public function testCreateWithRequiredDataOnlyAndOrganization()
+    public function testCreateWithRequiredDataOnlyAndOrganization(): void
     {
         $countryId = $this->getReference('country.usa')->getIso2Code();
         $regionId = $this->getReference('region.usny')->getCombinedCode();
@@ -178,7 +182,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertEquals($regionId, $address->getRegion()->getCombinedCode());
     }
 
-    public function testCreateWithRequiredDataOnlyAndFirstNameAndLastName()
+    public function testCreateWithRequiredDataOnlyAndFirstNameAndLastName(): void
     {
         $countryId = $this->getReference('country.usa')->getIso2Code();
         $regionId = $this->getReference('region.usny')->getCombinedCode();
@@ -225,7 +229,145 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertEquals($regionId, $address->getRegion()->getCombinedCode());
     }
 
-    public function testDelete()
+    public function testCreateBasedOnCustomerAddress(): void
+    {
+        $customerAddressId = $this->getReference('customer.level_1.address_1')->getId();
+
+        $data = [
+            'data' => [
+                'type' => self::ENTITY_TYPE,
+                'relationships' => [
+                    'customerAddress' => [
+                        'data' => ['type' => 'customeraddresses', 'id' => (string)$customerAddressId]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(
+            ['entity' => self::ENTITY_TYPE],
+            $data
+        );
+
+        $addressId = (int)$this->getResourceId($response);
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()->find(self::ENTITY_CLASS, $addressId);
+        self::assertTrue(null !== $address);
+        /** @var CustomerAddress $customerAddress */
+        $customerAddress = $this->getEntityManager()->find(CustomerAddress::class, $customerAddressId);
+
+        $expectedData = array_merge($data, [
+            'data' => [
+                'id' => (string)$addressId,
+                'attributes' => [
+                    'createdAt' => $address->getCreated()->format('Y-m-d\TH:i:s\Z'),
+                    'updatedAt' => $address->getUpdated()->format('Y-m-d\TH:i:s\Z'),
+                    'phone' => $customerAddress->getPhone(),
+                    'label' => $customerAddress->getLabel(),
+                    'street' => $customerAddress->getStreet(),
+                    'street2' => $customerAddress->getStreet2(),
+                    'city' => $customerAddress->getCity(),
+                    'postalCode' => $customerAddress->getPostalCode(),
+                    'organization' => $customerAddress->getOrganization(),
+                    'customRegion' => $customerAddress->getRegionText(),
+                    'namePrefix' => $customerAddress->getNamePrefix(),
+                    'firstName' => $customerAddress->getFirstName(),
+                    'middleName' => $customerAddress->getMiddleName(),
+                    'lastName' => $customerAddress->getLastName(),
+                    'nameSuffix' => $customerAddress->getNameSuffix(),
+                    'validatedAt' => $customerAddress->getValidatedAt()
+                ],
+                'relationships' => [
+                    'country' => [
+                        'data' => [
+                            'type' => 'countries',
+                            'id' => $customerAddress->getCountry()->getIso2Code()
+                        ]
+                    ],
+                    'region' => [
+                        'data' => [
+                            'type' => 'regions',
+                            'id' => $customerAddress->getRegion()->getCombinedCode()
+                        ]
+                    ],
+                    'customerUserAddress' => [
+                        'data' => null
+                    ]
+                ]
+            ]
+        ]);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testCreateBasedOnCustomerUserAddress(): void
+    {
+        $customerUserAddressId = $this->getReference('other.user@test.com.address_1')->getId();
+
+        $data = [
+            'data' => [
+                'type' => self::ENTITY_TYPE,
+                'relationships' => [
+                    'customerUserAddress' => [
+                        'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->post(
+            ['entity' => self::ENTITY_TYPE],
+            $data
+        );
+
+        $addressId = (int)$this->getResourceId($response);
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()->find(self::ENTITY_CLASS, $addressId);
+        self::assertTrue(null !== $address);
+        /** @var CustomerUserAddress $customerUserAddress */
+        $customerUserAddress = $this->getEntityManager()->find(CustomerUserAddress::class, $customerUserAddressId);
+
+        $expectedData = array_merge($data, [
+            'data' => [
+                'id' => (string)$addressId,
+                'attributes' => [
+                    'createdAt' => $address->getCreated()->format('Y-m-d\TH:i:s\Z'),
+                    'updatedAt' => $address->getUpdated()->format('Y-m-d\TH:i:s\Z'),
+                    'phone' => $customerUserAddress->getPhone(),
+                    'label' => $customerUserAddress->getLabel(),
+                    'street' => $customerUserAddress->getStreet(),
+                    'street2' => $customerUserAddress->getStreet2(),
+                    'city' => $customerUserAddress->getCity(),
+                    'postalCode' => $customerUserAddress->getPostalCode(),
+                    'organization' => $customerUserAddress->getOrganization(),
+                    'customRegion' => $customerUserAddress->getRegionText(),
+                    'namePrefix' => $customerUserAddress->getNamePrefix(),
+                    'firstName' => $customerUserAddress->getFirstName(),
+                    'middleName' => $customerUserAddress->getMiddleName(),
+                    'lastName' => $customerUserAddress->getLastName(),
+                    'nameSuffix' => $customerUserAddress->getNameSuffix(),
+                    'validatedAt' => $customerUserAddress->getValidatedAt()
+                ],
+                'relationships' => [
+                    'country' => [
+                        'data' => [
+                            'type' => 'countries',
+                            'id' => $customerUserAddress->getCountry()->getIso2Code()
+                        ]
+                    ],
+                    'region' => [
+                        'data' => [
+                            'type' => 'regions',
+                            'id' => $customerUserAddress->getRegion()->getCombinedCode()
+                        ]
+                    ],
+                    'customerAddress' => [
+                        'data' => null
+                    ]
+                ]
+            ]
+        ]);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testDelete(): void
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
 
@@ -238,7 +380,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertTrue(null === $address);
     }
 
-    public function testDeleteList()
+    public function testDeleteList(): void
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
 
@@ -252,7 +394,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertTrue(null === $address);
     }
 
-    public function testUpdatePhone()
+    public function testUpdatePhone(): void
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
 
@@ -275,7 +417,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertSame('111-111-111', $address->getPhone());
     }
 
-    public function testGetCountryRelationship()
+    public function testGetCountryRelationship(): void
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
 
@@ -289,7 +431,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         );
     }
 
-    public function testGetRegionRelationship()
+    public function testGetRegionRelationship(): void
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
 
@@ -303,7 +445,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         );
     }
 
-    public function testTryToSetNullCountry()
+    public function testTryToSetNullCountry(): void
     {
         $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
         $data = [
@@ -334,7 +476,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         );
     }
 
-    public function testUpdateOrderShippingAddressShouldRecalculateOrderTotals()
+    public function testUpdateOrderShippingAddressShouldRecalculateOrderTotals(): void
     {
         $orderId = $this->getReference(LoadOrders::ORDER_2)->getId();
         $shippingAddressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_4)->getId();
@@ -358,7 +500,7 @@ class OrderAddressTest extends RestJsonApiTestCase
         self::assertSame('1000.0000', $this->getOrder($orderId)->getTotal());
     }
 
-    public function testUpdateOrderBillingAddressShouldNotRecalculateOrderTotals()
+    public function testUpdateOrderBillingAddressShouldNotRecalculateOrderTotals(): void
     {
         $orderId = $this->getReference(LoadOrders::ORDER_2)->getId();
         $billingAddressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_3)->getId();
@@ -380,5 +522,182 @@ class OrderAddressTest extends RestJsonApiTestCase
         );
 
         self::assertSame('1234.0000', $this->getOrder($orderId)->getTotal());
+    }
+
+
+    public function testUpdateBasedOnCustomerAddress(): void
+    {
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+        $customerAddressId = $this->getReference('customer.level_1.address_1')->getId();
+
+        $data = [
+            'data' => [
+                'type' => self::ENTITY_TYPE,
+                'id' => (string)$addressId,
+                'relationships' => [
+                    'customerAddress' => [
+                        'data' => ['type' => 'customeraddresses', 'id' => (string)$customerAddressId]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => self::ENTITY_TYPE, 'id' => (string)$addressId],
+            $data
+        );
+
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()->find(self::ENTITY_CLASS, $addressId);
+        self::assertTrue(null !== $address);
+        /** @var CustomerAddress $customerAddress */
+        $customerAddress = $this->getEntityManager()->find(CustomerAddress::class, $customerAddressId);
+
+        $expectedData = array_merge($data, [
+            'data' => [
+                'attributes' => [
+                    'createdAt' => $address->getCreated()->format('Y-m-d\TH:i:s\Z'),
+                    'updatedAt' => $address->getUpdated()->format('Y-m-d\TH:i:s\Z'),
+                    'phone' => $customerAddress->getPhone(),
+                    'label' => $customerAddress->getLabel(),
+                    'street' => $customerAddress->getStreet(),
+                    'street2' => $customerAddress->getStreet2(),
+                    'city' => $customerAddress->getCity(),
+                    'postalCode' => $customerAddress->getPostalCode(),
+                    'organization' => $customerAddress->getOrganization(),
+                    'customRegion' => $customerAddress->getRegionText(),
+                    'namePrefix' => $customerAddress->getNamePrefix(),
+                    'firstName' => $customerAddress->getFirstName(),
+                    'middleName' => $customerAddress->getMiddleName(),
+                    'lastName' => $customerAddress->getLastName(),
+                    'nameSuffix' => $customerAddress->getNameSuffix(),
+                    'validatedAt' => $customerAddress->getValidatedAt()
+                ],
+                'relationships' => [
+                    'country' => [
+                        'data' => [
+                            'type' => 'countries',
+                            'id' => $customerAddress->getCountry()->getIso2Code()
+                        ]
+                    ],
+                    'region' => [
+                        'data' => [
+                            'type' => 'regions',
+                            'id' => $customerAddress->getRegion()->getCombinedCode()
+                        ]
+                    ],
+                    'customerUserAddress' => [
+                        'data' => null
+                    ]
+                ]
+            ]
+        ]);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testUpdateBasedOnCustomerUserAddress(): void
+    {
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+        $customerUserAddressId = $this->getReference('other.user@test.com.address_1')->getId();
+
+        $data = [
+            'data' => [
+                'type' => self::ENTITY_TYPE,
+                'id' => (string)$addressId,
+                'relationships' => [
+                    'customerUserAddress' => [
+                        'data' => ['type' => 'customeruseraddresses', 'id' => (string)$customerUserAddressId]
+                    ]
+                ]
+            ]
+        ];
+        $response = $this->patch(
+            ['entity' => self::ENTITY_TYPE, 'id' => (string)$addressId],
+            $data
+        );
+
+        /** @var OrderAddress $address */
+        $address = $this->getEntityManager()->find(self::ENTITY_CLASS, $addressId);
+        self::assertTrue(null !== $address);
+        /** @var CustomerUserAddress $customerUserAddress */
+        $customerUserAddress = $this->getEntityManager()->find(CustomerUserAddress::class, $customerUserAddressId);
+
+        $expectedData = array_merge($data, [
+            'data' => [
+                'attributes' => [
+                    'createdAt' => $address->getCreated()->format('Y-m-d\TH:i:s\Z'),
+                    'updatedAt' => $address->getUpdated()->format('Y-m-d\TH:i:s\Z'),
+                    'phone' => $customerUserAddress->getPhone(),
+                    'label' => $customerUserAddress->getLabel(),
+                    'street' => $customerUserAddress->getStreet(),
+                    'street2' => $customerUserAddress->getStreet2(),
+                    'city' => $customerUserAddress->getCity(),
+                    'postalCode' => $customerUserAddress->getPostalCode(),
+                    'organization' => $customerUserAddress->getOrganization(),
+                    'customRegion' => $customerUserAddress->getRegionText(),
+                    'namePrefix' => $customerUserAddress->getNamePrefix(),
+                    'firstName' => $customerUserAddress->getFirstName(),
+                    'middleName' => $customerUserAddress->getMiddleName(),
+                    'lastName' => $customerUserAddress->getLastName(),
+                    'nameSuffix' => $customerUserAddress->getNameSuffix(),
+                    'validatedAt' => $customerUserAddress->getValidatedAt()
+                ],
+                'relationships' => [
+                    'country' => [
+                        'data' => [
+                            'type' => 'countries',
+                            'id' => $customerUserAddress->getCountry()->getIso2Code()
+                        ]
+                    ],
+                    'region' => [
+                        'data' => [
+                            'type' => 'regions',
+                            'id' => $customerUserAddress->getRegion()->getCombinedCode()
+                        ]
+                    ],
+                    'customerAddress' => [
+                        'data' => null
+                    ]
+                ]
+            ]
+        ]);
+        $this->assertResponseContains($expectedData, $response);
+    }
+
+    public function testTryToUpdateCustomerAddressViaRelationship(): void
+    {
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+
+        $response = $this->patchRelationship(
+            ['entity' => self::ENTITY_TYPE, 'id' => (string)$addressId, 'association' => 'customerAddress'],
+            [
+                'data' => [
+                    'type' => 'customeraddresses',
+                    'id' => '<toString(@customer.level_1.address_1->id)>'
+                ]
+            ],
+            [],
+            false
+        );
+
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToUpdateCustomerUserAddressViaRelationship(): void
+    {
+        $addressId = $this->getReference(LoadOrderAddressData::ORDER_ADDRESS_1)->getId();
+
+        $response = $this->patchRelationship(
+            ['entity' => self::ENTITY_TYPE, 'id' => (string)$addressId, 'association' => 'customerUserAddress'],
+            [
+                'data' => [
+                    'type' => 'customeruseraddresses',
+                    'id' => '<toString(@other.user@test.com.address_1->id)>'
+                ]
+            ],
+            [],
+            false
+        );
+
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 }

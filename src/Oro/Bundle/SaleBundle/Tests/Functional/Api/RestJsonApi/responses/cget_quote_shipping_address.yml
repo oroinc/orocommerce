@@ -1,0 +1,153 @@
+data:
+    -
+        type: quoteshippingaddresses
+        id: '<toString(@sale.quote.1.shipping_address->id)>'
+        attributes:
+            phone: null
+            label: null
+            street: '2413 Capitol Avenue'
+            street2: null
+            city: Romney
+            postalCode: '47981'
+            organization: null
+            customRegion: null
+            namePrefix: null
+            firstName: John
+            middleName: null
+            lastName: Doe
+            nameSuffix: null
+            createdAt: '@sale.quote.1.shipping_address->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@sale.quote.1.shipping_address->updated->format("Y-m-d\TH:i:s\Z")'
+            validatedAt: null
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.US->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.US-IN->combinedCode)>'
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.1->id)>'
+    -
+        type: quoteshippingaddresses
+        id: '<toString(@sale.quote.3.shipping_address->id)>'
+        attributes:
+            phone: null
+            label: null
+            street: '1215 Caldwell Road'
+            street2: null
+            city: Rochester
+            postalCode: '14608'
+            organization: null
+            customRegion: null
+            namePrefix: null
+            firstName: null
+            middleName: null
+            lastName: null
+            nameSuffix: null
+            createdAt: '@sale.quote.3.shipping_address->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@sale.quote.3.shipping_address->updated->format("Y-m-d\TH:i:s\Z")'
+            validatedAt: null
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.US->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.US-NY->combinedCode)>'
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data: null
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.3->id)>'
+    -
+        type: quoteshippingaddresses
+        id: '<toString(@sale.quote.5.shipping_address->id)>'
+        attributes:
+            phone: null
+            label: sale.grzegorz.brzeczyszczykiewicz@example.com.address_1
+            street: '1215 Caldwell Road'
+            street2: null
+            city: Rochester
+            postalCode: '14608'
+            organization: 'Test Org'
+            customRegion: null
+            namePrefix: null
+            firstName: null
+            middleName: null
+            lastName: null
+            nameSuffix: null
+            createdAt: '@sale.quote.5.shipping_address->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@sale.quote.5.shipping_address->updated->format("Y-m-d\TH:i:s\Z")'
+            validatedAt: null
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.US->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.US-NY->combinedCode)>'
+            customerAddress:
+                data: null
+            customerUserAddress:
+                data:
+                    type: customeruseraddresses
+                    id: '<toString(@sale.grzegorz.brzeczyszczykiewicz@example.com.address_1->id)>'
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.5->id)>'
+    -
+        type: quoteshippingaddresses
+        id: '<toString(@sale.quote.6.shipping_address->id)>'
+        attributes:
+            phone: null
+            label: sale.customer.level_1.address_2
+            street: '2413 Capitol Avenue'
+            street2: null
+            city: Romney
+            postalCode: '47981'
+            organization: 'Test Org'
+            customRegion: null
+            namePrefix: null
+            firstName: null
+            middleName: null
+            lastName: null
+            nameSuffix: null
+            createdAt: '@sale.quote.6.shipping_address->created->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@sale.quote.6.shipping_address->updated->format("Y-m-d\TH:i:s\Z")'
+            validatedAt: null
+        relationships:
+            country:
+                data:
+                    type: countries
+                    id: '<toString(@country.US->iso2Code)>'
+            region:
+                data:
+                    type: regions
+                    id: '<toString(@region.US-IN->combinedCode)>'
+            customerAddress:
+                data:
+                    type: customeraddresses
+                    id: '<toString(@sale.customer.level_1.address_2->id)>'
+            customerUserAddress:
+                data: null
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.6->id)>'

@@ -7,18 +7,32 @@ oro:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
             entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: A quote is used to negotiate with the customer (e.g. offer better price, more convenient quantities and additional services). A quote may be created in response to a customer request for quote, or as a result of the direct communication with the customer.
             demands.label: 'Quote Demands'
             id.label: 'Numeric ID'
-            qid.label: 'Quote #'
-            guest_access_id.label: 'Guest Access Id'
-            unique_guest_link.label: 'Unique Guest Link'
+            qid:
+                label: 'Quote #'
+                description: Unique identifier that is used as a reference for the quote.
+            guest_access_id:
+                label: Guest Access Id
+                description: Unique identifier that is used as a reference for the quote created by a visitor.
+            unique_guest_link:
+                label: Unique Guest Link
+                description: The URL to the storefront page that shows the quote created by a visitor.
             owner.label: 'Owner'
             organization.label: 'Organization'
-            valid_until.label: 'Valid Until'
-            quote_products.label: 'Quote Products'
-            request.label: 'Request'
+            valid_until:
+                label: Valid Until
+                description: The date and time before which the quote is valid.
+            quote_products:
+                label: Quote Products
+                description: The quoted products.
+            request:
+                label: Request
+                description: The RFQ from which the quote is created.
             customer:
-                label: 'Customer'
+                label: Customer
+                description: The customer of the customer user the quote created for.
                 quick_access_button:
                     new_quote:
                         label: New Quote
@@ -26,11 +40,18 @@ oro:
                         label: Create Quote
                         widget:
                             title: Create Quote
-            internal_status.label: 'Internal Status'
-            customer_status.label: 'Customer Status'
-            website.label: 'Website'
+            internal_status:
+                label: Internal Status
+                description: The status of the quote that reflects the step of its backoffice management.
+            customer_status:
+                label: Customer Status
+                description: The status of the quote that reflects the step of its management in the storefront.
+            website:
+                label: Website
+                description: A website where the quote is created.
             customer_user:
-                label: 'Customer User'
+                label: Customer User
+                description: The customer user the quote created for.
                 quick_access_button:
                     new_quote:
                         label: New Quote
@@ -38,29 +59,60 @@ oro:
                         label: Create Quote
                         widget:
                             title: Create Quote
-            shipping_method_locked.label: 'Shipping Method Locked'
-            allow_unlisted_shipping_method.label: 'Allow Unlisted Shipping Method'
-            prices_changed.label: 'Prices Changed'
+            shipping_method_locked:
+                label: Shipping Method Locked
+                description: Indicates whether only the default shipping method can be used for this quote.
+            allow_unlisted_shipping_method:
+                label: Allow Unlisted Shipping Method
+                description: Indicates whether it is allowed to use the shipping method already selected as a default one, even if it is disabled in this quote configuration.
+            prices_changed:
+                label: Prices Changed
+                description: Indicates whether a offering price for any quoted product is changed.
             not_expired.label: 'Not Expired'
-            po_number.label: 'PO Number'
-            ship_until.label: 'Ship by'
+            po_number:
+                label: PO Number
+                description: The purchase order number provided in the quote.
+            ship_until:
+                label: Ship by
+                description: The date and time before which the order based on the quote should be shipped.
             price_list.label: 'Price List'
-            expired.label: 'Expired'
-            assigned_users.label: 'Assigned To'
-            assigned_customer_users.label: 'Assigned Customer Users'
+            expired:
+                label: Expired
+                description: Indicates whether the quote has expired.
+            assigned_users:
+                label: Assigned To
+                description: An order fulfillment officers.
+            assigned_customer_users:
+                label: Assigned Customer Users
+                description: Customer users that will receive the order delivery.
             shipping_estimate_amount.label: 'Shipping Estimate Ammount'
             shipping_estimate_currency.label: 'Shipping Estimate Currency'
             shipping_cost.label: 'Shipping Cost'
             estimated_shipping_cost.label: 'Estimated Shipping Cost'
             overridden_shipping_cost.label: 'Overridden Shipping Cost'
-            estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
-            overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
+            estimated_shipping_cost_amount:
+                label: Estimated Shipping Cost Amount
+                description: A shipping cost is calculated based on the selected shipping method.
+            overridden_shipping_cost_amount:
+                label: Overridden Shipping Cost Amount
+                description: A custom shipping cost that will be used instead of the one that is dynamically generated based on the selected shipping method.
             shipping_cost_amount.label: 'Shipping Cost Amount'
-            shipping_method.label: 'Shipping Method'
-            shipping_method_type.label: 'Shipping Method Type'
-            currency.label: 'Currency'
-            shipping_address.label: 'Shipping Address'
+            shipping_method:
+                label: Shipping Method
+                description: The shipping method for the order delivery.
+            shipping_method_type:
+                label: Shipping Method Type
+                description: The type of the shipping method for the order delivery.
+            currency:
+                label: Currency
+                description: The currency that is used to get the prices for the quote products.
+            shipping_address:
+                label: Shipping Address
+                description: A customer user address to which the order based on the quote should be shipped.
             contact_information.label: 'Contact Information'
+            payment_term_7c4f1e8e:
+                label: Payment Term
+                description: Relationship with the payment term that was selected as a payment method.
 
             sections:
                 general: 'General'
@@ -166,26 +218,47 @@ oro:
             entity_label: 'Quote Product'
             entity_plural_label: 'Quote Products'
             entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: The product that the quote is made for.
             add_label: 'Add Product'
             id.label: 'ID'
-            product.label: 'Product'
-            product_replacement.label: 'Suggested Replacement:'
-            product_sku.label: 'Product SKU'
-            product_replacement_sku.label: 'Suggested Replacement SKU'
-            quote.label: 'Quote'
-            quote_product_offers.label: 'Quote Product Offers'
-            quote_product_requests.label: 'Quote Product Requests'
-            request_product_item.label: 'Requested Item'
-            comment.label: 'Seller Notes'
-            comment_customer.label: 'Customer Notes'
-            comment_account.label: 'Customer Notes'
+            product:
+                label: Product
+                description: The product that the quote is made for.
+            product_replacement:
+                label: Suggested Replacement
+                description: The product used to suggest the product replacement.
+            product_sku:
+                label: Product SKU
+                description: A unique human-readable product identifier.
+            product_replacement_sku:
+                label: Suggested Replacement SKU
+                description: The product SKU as provided when the free-form entry used to suggest the product replacement.
+            quote:
+                label: Quote
+                description: The quote that includes the product.
+            quote_product_offers:
+                label: Quote Product Offers
+                description: The quote product offer.
+            quote_product_requests:
+                label: Quote Product Requests
+                description: The quote product request.
+            comment:
+                label: Seller Notes
+                description: A seller note made regarding the individual product in the quote.
+            comment_customer:
+                label: Customer Notes
+                description: A customer note made regarding the individual product in the quote.
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
-            free_form_product.label: 'Product (free-form)'
-            free_form_product_replacement.label: 'Product Replacement (free-form)'
+            free_form_product:
+                label: Product (free-form)
+                description: The product name as provided when the free-form entry used to add a product to the quote.
+            free_form_product_replacement:
+                label: Product Replacement (free-form)
+                description: The product name as provided when the free-form entry used to suggest the product replacement.
             kit_item_line_items:
                 label: Kit Item Line Items
-                description: Stores the collection of kit item line items when the quote product is a kit
+                description: The collection of kit item line items when the quote product is a kit.
             type:
                 label: 'Type'
                 requested: 'Requested'
@@ -208,66 +281,66 @@ oro:
             id.label: ID
             quote_product:
                 label: Quote Product Line Item
-                description: The related quote product line item
+                description: The related quote product line item.
             kit_item:
                 label: Product Kit Item
-                description: The related product kit item
+                description: The related product kit item.
             kit_item_id:
                 label: Product Kit Item Id
-                description: The related product kit item ID. Automatically filled from the related kit item. Contains ID even if the related kit item is deleted
+                description: The related product kit item ID. Automatically filled from the related kit item. Contains ID even if the related kit item is deleted.
             kit_item_label:
                 label: Product Kit Item Label
-                description: The default label of the quote product kit item. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+                description: The default label of the quote product kit item. Automatically filled from the related kit item. Contains data even if the related kit item is deleted.
             optional:
                 label: Optional
-                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+                description: Indicates whether this kit item is required for purchase, or can be skipped by the customer. Automatically filled from the related kit item. Contains data even if the related kit item is deleted.
             product:
                 label: Product
-                description: The kit item product
+                description: The kit item product.
                 form:
                     choices:
                         none: None
             product_id:
                 label: Product Id
-                description: ID of the kit item product. Automatically filled from the related product. Contains ID even if the related product is deleted
+                description: ID of the kit item product. Automatically filled from the related product. Contains ID even if the related product is deleted.
             product_sku:
                 label: Product SKU
-                description: A unique human-readable product identifier. Automatically filled from the related product. Contains data even if the related product is deleted
+                description: A unique human-readable product identifier. Automatically filled from the related product. Contains data even if the related product is deleted.
             product_name:
                 label: Product Name
-                description: The default name of the kit item product. Automatically filled from the related product. Contains data even if the related product is deleted
+                description: The default name of the kit item product. Automatically filled from the related product. Contains data even if the related product is deleted.
             quantity:
                 label: Quantity
-                description: The quantity of product kit item units to be purchased
+                description: The quantity of product kit item units to be purchased.
                 form:
                     tooltip: 'The quantity of product kit item units to be purchased: {{ unit_precision_info }}'
             minimum_quantity:
                 label: Minimum Quantity
-                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted.
             maximum_quantity:
                 label: Maximum Quantity
-                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+                description: Used to limit the quantity of this kit item that a customer may purchase as part of the kit. Automatically filled from the related kit item. Contains data even if the related kit item is deleted.
             product_unit:
                 label: Unit of Quantity
-                description: The unit of quantity of the kit item product was purchased in
+                description: The unit of quantity of the kit item product was purchased in.
             product_unit_precision:
                 label: Unit Precision
-                description: The unit precision of the related product. Automatically filled from the related product. Contains data even if the related product is deleted
+                description: The unit precision of the related product. Automatically filled from the related product. Contains data even if the related product is deleted.
             product_unit_code:
                 label: Product Unit Code
-                description: The code of the product unit of the kit item product was purchased in. Automatically filled from the related product unit. Contains data even if the related product unit is deleted
+                description: The code of the product unit of the kit item product was purchased in. Automatically filled from the related product unit. Contains data even if the related product unit is deleted.
             sort_order:
                 label: Sort Order
-                description: Used to sort kit item line item products when displaying. Automatically filled from the related kit item. Contains data even if the related kit item is deleted
+                description: Used to sort kit item line item products when displaying. Automatically filled from the related kit item. Contains data even if the related kit item is deleted.
             price:
                 label: Price
                 form_label: 'Price, <span class="line-item-price-symbol">%currency%</span>'
             value:
                 label: Price Value
-                description: Price for a product kit item line item product unit
+                description: Price for a product kit item line item product unit.
             currency:
                 label: Price Currency
-                description:  A currency for a product kit item line item price
+                description: The currency for a product kit item line item price.
 
         quoteproductoffer:
             item: '{0}{units}, {price} per {unit}|{1}{units} or more, {price} per {unit}'
@@ -275,72 +348,140 @@ oro:
             entity_label: 'Quote Product Offer'
             entity_plural_label: 'Quote Product Offers'
             entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: The offering price for the quote product.
             add_label: 'Add Offer'
             id.label: 'ID'
-            quantity.label: 'Quantity'
-            product_unit.label: 'Product Unit'
-            product_unit_code.label: 'Product Unit Code'
-            price.label: 'Price'
-            value.label: 'Price Value'
-            currency.label: 'Price Currency'
-            quote_product.label: 'Quote Product'
-            allow_increments.label: 'or more'
+            quantity:
+                label: Quantity
+                description: The quantity that is offered for a customer.
+            product_unit:
+                label: Product Unit
+                description: The unit of quantity of the product that is offered for a customer.
+            product_unit_code:
+                label: Product Unit Code
+                description: The code of the product unit for the product that is offered for a customer.
+            price:
+                label: Price
+                description: The product price that is offered for a customer.
+            value:
+                label: Price Value
+                description: The price for the specific quantity of the product that is offered for a customer.
+            currency:
+                label: Price Currency
+                description: The currency in which tte product price is offered for a customer.
+            quote_product:
+                label: Quote Product
+                description: The quote product.
+            allow_increments:
+                label: or more
+                description: Indicates whether the product quantity can be increased.
             price_type:
                 label: 'Price Type'
                 bundled: 'bundled offer'
                 unit: 'at unit price of'
-
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
             checksum:
                 label: Checksum
-                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
 
         quoteproductrequest:
             item: '{units}, {price} per {unit}'
             entity_label: 'Quote Product Request'
             entity_plural_label: 'Quote Product Requests'
             entity_grid_all_view_label: 'All %entity_plural_label%'
+            entity_description: The requested price for the quote product.
             add_label: 'Add Request'
             id.label: 'ID'
-            quantity.label: 'Requested Qty'
-            product_unit.label: 'Product Unit'
-            product_unit_code.label: 'Product Unit Code'
-            price.label: 'Requested Price'
-            value.label: 'Price Value'
-            currency.label: 'Price Currency'
-            quote_product.label: 'Quote Product'
-            request_product_item.label: 'Request Product Item'
+            quantity:
+                label: Requested Qty
+                description: The quantity that is requested by a customer.
+            product_unit:
+                label: Product Unit
+                description: The unit of quantity of the product that is requested by a customer.
+            product_unit_code:
+                label: Product Unit Code
+                description: The code of the product unit for the product that is requested by a customer.
+            price:
+                label: Requested Price
+                description: The product price that is requested by a customer.
+            value:
+                label: Price Value
+                description: The price for the specific quantity of the product that is requested by a customer.
+            currency:
+                label: Price Currency
+                description: The currency for a customer requested product price.
+            quote_product:
+                label: Quote Product
+                description: The quote product.
+            request_product_item:
+                label: Request Product Item
+                description: The product line item added to the RFQ from which the quote is created.
             product_unit.removed: '{title} - removed'
             product_unit.empty: 'Choose Unit...'
             column_summary: 'Summary'
             checksum:
                 label: Checksum
-                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times
+                description: Differentiates the unique constraint allowing to add the same product with the same unit code multiple times.
 
         quoteaddress:
             entity_label: Quote Address
             entity_plural_label: Quote Addresses
             entity_grid_all_view_label: All %entity_plural_label%
+            entity_description: Represents the shipping address for the quote.
             id.label: ID
-            customer_address.label: Customer address
-            customer_user_address.label: Customer user address
-            label.label: Label
-            first_name.label: First Name
-            middle_name.label: Middle Name
-            last_name.label: Last Name
-            name_prefix.label: Name Prefix
-            name_suffix.label: Name Suffix
-            organization.label: Organization
-            city.label: City
-            postal_code.label: Zip/Postal Code
-            country.label: Country
-            region.label: State
-            region_text.label: State
-            street.label: Street
-            street2.label: Street 2
-            phone.label: Phone
+            customer_address:
+                label: Customer address
+                description: The customer address, which was used as quote address.
+            customer_user_address:
+                label: Customer user address
+                description: The customer user address, which was used as quote address.
+            label:
+                label: Label
+                description: Quote address label (e.g., Main Office).
+            first_name:
+                label: First Name
+                description: Customer user's first name provided in the quote shipping or billing address.
+            middle_name:
+                label: Middle Name
+                description: Customer user's middle name provided in the quote shipping or billing address.
+            last_name:
+                label: Last Name
+                description: Customer user last name provided in the quote shipping or billing address.
+            name_prefix:
+                label: Name Prefix
+                description: Customer user's name prefix provided in the quote shipping or billing address.
+            name_suffix:
+                label: Name Suffix
+                description: Customer user's name suffix provided in the quote shipping or billing address.
+            organization:
+                label: Organization
+                description: The organization that is specified in the quote address.
+            city:
+                label: City
+                description: The city provided in the quote shipping or billing address.
+            postal_code:
+                label: Zip/Postal Code
+                description: The postal code provided in the quote shipping or billing address.
+            country:
+                label: Country
+                description: The country provided in the quote shipping or billing address.
+            region:
+                label: State
+                description: The state or region provided in the quote shipping or billing address.
+            region_text:
+                label: State
+                description: The region name for cases when a country does not have predefined regions.
+            street:
+                label: Street
+                description: The street address provided in the quote shipping or billing address.
+            street2:
+                label: Street 2
+                description: The street address provided in the quote shipping or billing address.
+            phone:
+                label: Phone
+                description: A customer user phone number provided for the quote address.
             country_name.label: Country name
             country_iso2_code.label: Country ISO2 code
             country_iso3_code.label: Country ISO3 code

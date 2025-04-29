@@ -1,0 +1,130 @@
+data:
+    -
+        type: quoteproducts
+        id: '<toString(@sale.quote.1.product-1->id)>'
+        attributes:
+            freeFormProduct: product-1.names.default
+            productSku: product-1
+            comment: null
+            customerComment: null
+        relationships:
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            quoteProductOffers:
+                data:
+                    -
+                        type: quoteproductoffers
+                        id: '<toString(@sale.quote.1.product-1.offer.1->id)>'
+                    -
+                        type: quoteproductoffers
+                        id: '<toString(@sale.quote.1.product-1.offer.2->id)>'
+            quoteProductRequests:
+                data:
+                    -
+                        type: quoteproductrequests
+                        id: '<toString(@sale.quote.1.product-1.request.1->id)>'
+    -
+        type: quoteproducts
+        id: '<toString(@sale.quote.1.product-2->id)>'
+        attributes:
+            freeFormProduct: product-2.names.default
+            productSku: product-2
+            comment: null
+            customerComment: null
+        relationships:
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.1->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            quoteProductOffers:
+                data:
+                    -
+                        type: quoteproductoffers
+                        id: '<toString(@sale.quote.1.product-2.offer.1->id)>'
+            quoteProductRequests:
+                data:
+                    -
+                        type: quoteproductrequests
+                        id: '<toString(@sale.quote.1.product-2.request.1->id)>'
+    -
+        type: quoteproducts
+        id: '<toString(@sale.quote.3.product-1->id)>'
+        attributes:
+            freeFormProduct: product-1.names.default
+            productSku: product-1
+            comment: null
+            customerComment: null
+        relationships:
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.3->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            quoteProductOffers:
+                data:
+                    -
+                        type: quoteproductoffers
+                        id: '<toString(@sale.quote.3.product-1.offer.1->id)>'
+            quoteProductRequests:
+                data: []
+    -
+        type: quoteproducts
+        id: '<toString(@sale.quote.13.product-1->id)>'
+        attributes:
+            freeFormProduct: product-1.names.default
+            productSku: product-1
+            comment: null
+            customerComment: null
+        relationships:
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.13->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            quoteProductOffers:
+                data:
+                    -
+                        type: quoteproductoffers
+                        id: '<toString(@sale.quote.13.product-1.offer.1->id)>'
+            quoteProductRequests:
+                data: []
+    -
+        type: quoteproducts
+        id: '<toString(@sale.quote.13.product-2->id)>'
+        attributes:
+            freeFormProduct: product-2.names.default
+            productSku: product-2
+            comment: null
+            customerComment: null
+        relationships:
+            quote:
+                data:
+                    type: quotes
+                    id: '<toString(@sale.quote.13->id)>'
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-2->id)>'
+            quoteProductOffers:
+                data:
+                    -
+                        type: quoteproductoffers
+                        id: '<toString(@sale.quote.13.product-2.offer.1->id)>'
+            quoteProductRequests:
+                data: []

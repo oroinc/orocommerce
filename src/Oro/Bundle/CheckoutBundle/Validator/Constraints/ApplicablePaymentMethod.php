@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 
 /**
- * This constraint is used to check whether the selected payment method is applicable.
+ * This constraint is used to check whether the selected payment method is applicable for a checkout.
  */
 class ApplicablePaymentMethod extends Constraint
 {
@@ -14,7 +14,7 @@ class ApplicablePaymentMethod extends Constraint
     public string $message = 'oro.checkout.validator.applicable_payment_method.message';
 
     #[\Override]
-    public function getTargets(): string
+    public function getTargets(): string|array
     {
         return self::CLASS_CONSTRAINT;
     }

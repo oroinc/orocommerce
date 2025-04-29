@@ -78,15 +78,11 @@ class FillOrderAddress implements ProcessorInterface
         }
 
         if ($isCustomerUserAddressSubmitted) {
-            unset($submittedData[$customerUserAddressFieldName]);
-
-            return $this->isArrayHasOnlyNullValues($submittedData);
+            return $this->isArrayHasOnlyNullValues($submittedData, [$customerUserAddressFieldName]);
         }
 
         if ($isCustomerAddressSubmitted) {
-            unset($submittedData[$customerAddressFieldName]);
-
-            return $this->isArrayHasOnlyNullValues($submittedData);
+            return $this->isArrayHasOnlyNullValues($submittedData, [$customerAddressFieldName]);
         }
 
         return true;
@@ -100,10 +96,10 @@ class FillOrderAddress implements ProcessorInterface
             && null !== $submittedData[$fieldName];
     }
 
-    private function isArrayHasOnlyNullValues(array $data): bool
+    private function isArrayHasOnlyNullValues(array $data, array $skipFields): bool
     {
-        foreach ($data as $fieldValue) {
-            if (null !== $fieldValue) {
+        foreach ($data as $fieldName => $fieldValue) {
+            if (null !== $fieldValue && !\in_array($fieldName, $skipFields, true)) {
                 return false;
             }
         }

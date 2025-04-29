@@ -8,21 +8,20 @@ use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validates that a quote product represents either a regular product or a free form product.
+ */
 class QuoteProductValidator extends ConstraintValidator
 {
-    /**
-     *
-     * @param Entity\QuoteProduct $quoteProduct
-     * @param Constraints\QuoteProduct $constraint
-     */
     #[\Override]
     public function validate($quoteProduct, Constraint $constraint)
     {
+        if (!$constraint instanceof Constraints\QuoteProduct) {
+            throw new UnexpectedTypeException($constraint, Constraints\QuoteProduct::class);
+        }
+
         if (!$quoteProduct instanceof Entity\QuoteProduct) {
-            throw new UnexpectedTypeException(
-                $quoteProduct,
-                'Oro\Bundle\SaleBundle\Entity\QuoteProduct'
-            );
+            throw new UnexpectedTypeException($quoteProduct, Entity\QuoteProduct::class);
         }
 
         if ($quoteProduct->isTypeNotAvailable()) {
@@ -37,7 +36,6 @@ class QuoteProductValidator extends ConstraintValidator
 
         if (!$isProductFreeForm && null === $product) {
             $this->addViolation($fieldPath, $constraint);
-            return;
         }
     }
 

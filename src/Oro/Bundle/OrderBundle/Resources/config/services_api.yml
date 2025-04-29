@@ -70,7 +70,7 @@ services:
             - '@oro_order.manager.order_address'
             - '@translator'
         tags:
-            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|pre_validate, requestType: frontend, class: Oro\Bundle\OrderBundle\Entity\OrderAddress }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|pre_validate, class: Oro\Bundle\OrderBundle\Entity\OrderAddress }
 
     oro_order.api.add_discount_to_order:
         class: Oro\Bundle\OrderBundle\Api\Processor\AddDiscountToOrder
