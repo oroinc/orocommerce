@@ -70,7 +70,6 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
                 'urlParts' => [
                     'master',
                     LoadCategoryData::FIRST_LEVEL,
-                    LoadCategoryData::SECOND_LEVEL1,
                 ],
             ],
             [
@@ -79,7 +78,6 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
                     'master',
                     LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
-                    LoadCategoryData::THIRD_LEVEL1,
                 ],
             ],
             [
@@ -87,7 +85,6 @@ class CategoryBreadcrumbProviderTest extends WebTestCase
                 'urlParts' => [
                     'master',
                     LoadCategoryData::FIRST_LEVEL,
-                    LoadCategoryData::SECOND_LEVEL1,
                 ],
             ],
         ];

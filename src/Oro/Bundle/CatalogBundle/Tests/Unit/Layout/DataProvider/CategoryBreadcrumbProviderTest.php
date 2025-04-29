@@ -84,13 +84,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
         $result = $this->categoryBreadcrumbProvider->getItems();
 
-        $expectedBreadcrumbs = [
-            [
-                'label' => 'root',
-                'url'   => '/',
-            ],
-        ];
-        self::assertEquals($expectedBreadcrumbs, $result);
+        self::assertEquals([], $result);
     }
 
     public function testGetItems(): void
@@ -147,11 +141,7 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             [
                 'label' => 'root',
                 'url'   => '/',
-            ],
-            [
-                'label' => 'office',
-                'url'   => '/?c=2',
-            ],
+            ]
         ];
         self::assertEquals($expectedBreadcrumbs, $result);
     }
@@ -222,10 +212,6 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
                 'label' => 'office',
                 'url'   => '/?c=2'
             ],
-            [
-                'label' => $currentPageTitle,
-                'url'   => null
-            ]
         ];
         self::assertEquals($expectedBreadcrumbs, $result);
     }

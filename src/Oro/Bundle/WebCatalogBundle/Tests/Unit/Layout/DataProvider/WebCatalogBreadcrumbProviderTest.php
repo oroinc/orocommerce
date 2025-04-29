@@ -52,7 +52,9 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     {
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->requestStack = $this->createMock(RequestStack::class);
-        $this->requestWebContentVariantProvider = $this->createMock(RequestWebContentVariantProvider::class);
+        $this->requestWebContentVariantProvider = $this->createMock(
+            RequestWebContentVariantProvider::class
+        );
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->categoryBreadcrumbProvider = $this->createMock(CategoryBreadcrumbProvider::class);
 
@@ -112,13 +114,13 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             'two levels'   => [
                 'rootNode'     => $this->getContentNode([$this->getContentNode()]),
                 'expectedData' => [
-                    'crumbs' => 2
+                    'crumbs' => 1
                 ]
             ],
             'three levels' => [
                 'rootNode'     => $this->getContentNode([$this->getContentNode([$this->getContentNode()])]),
                 'expectedData' => [
-                    'crumbs' => 3
+                    'crumbs' => 2
                 ]
             ]
         ];
@@ -140,10 +142,6 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             [
                 'label' => 'Main category',
                 'url' => '/'
-            ],
-            [
-                'label' => 'Sub category',
-                'url' => '/sub-category'
             ]
         ];
         $this->categoryBreadcrumbProvider->expects($this->once())
@@ -167,7 +165,10 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
 
     public function testGetItemsForProductWithoutRequest()
     {
-        $result = $this->breadcrumbDataProvider->getItemsForProduct(1, '220 Lumen Rechargeable Headlamp');
+        $result = $this->breadcrumbDataProvider->getItemsForProduct(
+            1,
+            '220 Lumen Rechargeable Headlamp'
+        );
         $this->assertEquals([], $result);
     }
 
@@ -215,13 +216,8 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $currentPageTitle = '220 Lumen Rechargeable Headlamp';
         $categoryId = 1;
         $result = $this->breadcrumbDataProvider->getItemsForProduct($categoryId, $currentPageTitle);
-        $expectedBreadcrumbs = [
-            [
-                'label' => $nodeTitle,
-                'url' => $nodeUrl
-            ]
-        ];
-        $this->assertEquals($expectedBreadcrumbs, $result);
+
+        $this->assertEquals([], $result);
     }
 
     public function testGetItemsForProductWithoutContentVariant()
@@ -280,19 +276,8 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
         $currentPageTitle = '220 Lumen Rechargeable Headlamp';
         $categoryId = 1;
         $result = $this->breadcrumbDataProvider->getItemsForProduct($categoryId, $currentPageTitle);
-        $expectedBreadcrumbs = [
-            [
-                'label' => $nodeTitle,
-                'url' => $nodeUrl
-            ],
-            [
-                'label' => $currentPageTitle,
-                'url' => null
 
-            ]
-        ];
-
-        $this->assertEquals($expectedBreadcrumbs, $result);
+        $this->assertEquals([], $result);
     }
 
     public function testGetItemsForProductWithoutContextAttributes()
@@ -316,10 +301,6 @@ class WebCatalogBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             [
                 'label' => 'Sub category',
                 'url' => '/sub-category'
-            ],
-            [
-                'label' => $currentPageTitle,
-                'url' => null
             ]
         ];
         $this->categoryBreadcrumbProvider->expects($this->once())

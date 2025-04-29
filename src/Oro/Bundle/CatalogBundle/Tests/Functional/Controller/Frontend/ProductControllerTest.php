@@ -141,21 +141,19 @@ class ProductControllerTest extends WebTestCase
             [
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'expectedParts' => [
-                    LoadCategoryData::SECOND_LEVEL1
+                    LoadCategoryData::FIRST_LEVEL,
                 ],
             ],
             [
-                'categoryId' => LoadCategoryData::THIRD_LEVEL1,
+                'category' => LoadCategoryData::THIRD_LEVEL1,
                 'expectedParts' => [
+                    LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
-                    LoadCategoryData::THIRD_LEVEL1
                 ],
             ],
             [
-                'categoryId' => LoadCategoryData::SECOND_LEVEL1,
+                'category' => LoadCategoryData::FIRST_LEVEL,
                 'expectedParts' => [
-                    LoadCategoryData::SECOND_LEVEL1,
-                    // filters are not expected to show as they render using javascript
                 ],
             ]
         ];

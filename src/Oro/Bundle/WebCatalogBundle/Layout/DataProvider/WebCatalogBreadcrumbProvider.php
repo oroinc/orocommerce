@@ -95,7 +95,6 @@ class WebCatalogBreadcrumbProvider
             $contentVariant = $this->getContentVariantRepository()->findVariantBySlug($slug);
             $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
         }
-        $breadcrumbs[] = ['label' => $currentPageTitle, 'url' => null];
 
         return $breadcrumbs;
     }
@@ -124,6 +123,8 @@ class WebCatalogBreadcrumbProvider
                             ->getLocalizedValue($breadcrumb->getLocalizedUrls())
                     ];
                 }
+
+                array_pop($breadcrumbs);
             }
         }
 

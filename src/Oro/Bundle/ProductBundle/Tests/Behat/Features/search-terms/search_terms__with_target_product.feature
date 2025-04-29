@@ -40,7 +40,7 @@ Feature: Search Terms - with target Product
     And I type "light" in "search"
     And I click "Search Button"
     Then Page title equals to "Product 13"
-    And I should see "All Products Category 3 Product 13"
+    And I should see "All Products Category 3"
     And the url should match "/product/search"
 
   Scenario: Authorized user will be forwarded to the Product view page
@@ -48,5 +48,5 @@ Feature: Search Terms - with target Product
     And I type "light" in "search"
     And I click "Search Button"
     Then Page title equals to "Product 13"
-    And I should see "All Products Category 3 Product 13"
+    And I should see "All Products Category 3"
     And the url should match "/product/search"
