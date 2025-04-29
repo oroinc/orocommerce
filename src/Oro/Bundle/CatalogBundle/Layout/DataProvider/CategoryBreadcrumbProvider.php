@@ -30,27 +30,9 @@ class CategoryBreadcrumbProvider
 
     public function getItems(): array
     {
-        $breadcrumbs = [];
-        $categories = $this->categoryProvider->getCategoryPath();
+        $breadcrumbs = $this->getAllCategoryItems();
 
-        foreach ($categories as $index => $category) {
-            if (0 === $index) {
-                $url = $this->urlGenerator->generate('oro_product_frontend_product_index');
-            } else {
-                $url = $this->urlGenerator->generate(
-                    'oro_product_frontend_product_index',
-                    [
-                        'categoryId'           => $category->getId(),
-                        'includeSubcategories' => $this->categoryProvider->getIncludeSubcategoriesChoice(true)
-                    ]
-                );
-            }
-
-            $breadcrumbs[] = [
-                'label' => (string)$this->localizationHelper->getLocalizedValue($category->getTitles()),
-                'url'   => $url
-            ];
-        }
+        array_pop($breadcrumbs);
 
         return $breadcrumbs;
     }
@@ -63,9 +45,32 @@ class CategoryBreadcrumbProvider
      */
     public function getItemsForProduct($categoryId, $currentPageTitle)
     {
-        $this->requestStack->getCurrentRequest()->attributes->set('categoryId', (int) $categoryId);
-        $breadcrumbs   = $this->getItems();
-        $breadcrumbs[] = ['label' => $currentPageTitle, 'url' => null];
+        $this->requestStack->getCurrentRequest()?->attributes->set('categoryId', (int) $categoryId);
+
+        return $this->getAllCategoryItems();
+    }
+
+    private function getAllCategoryItems(): array
+    {
+        $breadcrumbs = [];
+        $categories = $this->categoryProvider->getCategoryPath();
+
+        foreach ($categories as $index => $category) {
+            $url = $index === 0
+                ? $this->urlGenerator->generate('oro_product_frontend_product_index')
+                : $this->urlGenerator->generate(
+                    'oro_product_frontend_product_index',
+                    [
+                        'categoryId' => $category->getId(),
+                        'includeSubcategories' => $this->categoryProvider->getIncludeSubcategoriesChoice(true)
+                    ]
+                );
+
+            $breadcrumbs[] = [
+                'label' => (string) $this->localizationHelper->getLocalizedValue($category->getTitles()),
+                'url' => $url
+            ];
+        }
 
         return $breadcrumbs;
     }

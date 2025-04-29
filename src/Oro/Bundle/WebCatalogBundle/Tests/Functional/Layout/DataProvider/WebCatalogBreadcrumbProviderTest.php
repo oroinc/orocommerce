@@ -80,10 +80,10 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
             $breadcrumbUrls[] = $item->getAttribute('href');
         }
 
-        self::assertCount(3, $breadcrumbUrls);
-        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[0]);
-        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[1]);
-        self::assertStringContainsString($baseUrl . 'app.php/', $breadcrumbUrls[2]);
+        self::assertCount(2, $breadcrumbUrls);
+        foreach ($breadcrumbUrls as $url) {
+            self::assertStringContainsString($baseUrl . 'app.php/', $url);
+        }
     }
 
     public function getSlugs(): array
@@ -91,13 +91,20 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
         return [
             [
                 LoadContentNodesData::CATALOG_1_ROOT,
-                1,
+                0,
                 [
                     LoadContentNodesData::CATALOG_1_ROOT,
                 ]
             ],
             [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
+                1,
+                [
+                    LoadContentNodesData::CATALOG_1_ROOT,
+                ]
+            ],
+            [
+                LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
                 2,
                 [
                     LoadContentNodesData::CATALOG_1_ROOT,
@@ -105,21 +112,11 @@ class WebCatalogBreadcrumbProviderTest extends WebTestCase
                 ]
             ],
             [
-                LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
-                3,
-                [
-                    LoadContentNodesData::CATALOG_1_ROOT,
-                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
-                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1,
-                ]
-            ],
-            [
                 LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2,
-                3,
+                2,
                 [
                     LoadContentNodesData::CATALOG_1_ROOT,
                     LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1,
-                    LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2
                 ]
             ],
         ];

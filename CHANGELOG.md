@@ -266,6 +266,14 @@ Previously known as GOD Object
   * `sellerWebsiteURL`;
   * `sellerTaxID`;
 
+#### WebCatalogBundle
+* Automatically removes the last breadcrumb on all pages.
+* Removes a single breadcrumb if it is the only one in the list.
+
+#### CatalogBundle
+* Automatically removes the last breadcrumb on all pages.
+* Removes a single breadcrumb if it is the only one in the list.
+
 ### Removed
 
 #### SaleBundle

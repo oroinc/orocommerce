@@ -1,12 +1,16 @@
+@regression
+@feature-BB-25441
 @fixture-OroWebCatalogBundle:web_catalog_for_breadcrumbs.yml
+Feature: Web catalog breadcrumbs trimming
 
-Feature: Product view page breadcrumbs webcatalog
-  As a User
-  I want be sure
-  That breadcrumbs for the webcatalog are work correctly
+  Scenario: Initialize user sessions
+    Given sessions active:
+      | Admin | system_session |
+      | Guest | first_session  |
 
   Scenario: Create content nodes in web catalog and mark web catalog as default
-    Given I login as administrator
+    Given I proceed as the Admin
+    And I login as administrator
     And I set "Default Web Catalog" as default web catalog
     And I go to Marketing/ Web Catalogs
     And I click view Default Web Catalog in grid
@@ -34,18 +38,13 @@ Feature: Product view page breadcrumbs webcatalog
       | Product | 220 Lumen Rechargeable Headlamp |
     And I click "Save"
 
-  Scenario: Breadcrumbs should be built based on web catalog
-    Given I am on homepage
-    And I click on "Main Menu Button"
+  Scenario: Guest user sees that last breadcrumb is trimmed on product pages based on web catalog
+    Given I proceed as the Guest
+    And I am on the homepage
+    When I click on "Main Menu Button"
     And I click on "HeadlampsInMainMenu"
+    Then I should see that "Breadcrumbs" does not contain "HeadlampsInMainMenu"
     When I click "View Details" for "PSKU1" product
-    Then I should see "Lighting Products"
-    When I follow "Lighting Products"
-    Then I should be on homepage
-    When I click "Product page as Content Node" in hamburger menu
-    Then Page title equals to "Product page as Content Node"
-    And I should not see "220 Lumen Rechargeable Headlamp"
-    When I follow "Lighting Products"
-    And I click "Headlamps" in hamburger menu
-    And I click "View Details" for "PSKU1" product
-    Then I should see "Lighting Products"
+    Then I should see that "Breadcrumbs" does not contain "Lighting Products Headlamps 220 Lumen Rechargeable Headlamp"
+    When I click "Lighting Products"
+    Then I should see that "Breadcrumbs" does not contain "Lighting Products"

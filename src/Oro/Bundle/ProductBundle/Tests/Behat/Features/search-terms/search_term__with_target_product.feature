@@ -61,7 +61,7 @@ Feature: Search Term - with target Product
     And I type "search_term" in "search"
     And I click "Search Button"
     Then Page title equals to "Product 13"
-    And I should see "All Products Category 3 Product 13"
+    And I should see "All Products Category 3"
     And the url should match "/product/search"
 
   Scenario: Authorized user will be forwarded to the Product view page
@@ -69,7 +69,7 @@ Feature: Search Term - with target Product
     And I type "search_term" in "search"
     And I click "Search Button"
     Then Page title equals to "Product 13"
-    And I should see "All Products Category 3 Product 13"
+    And I should see "All Products Category 3"
     And the url should match "/product/search"
 
   Scenario: Update the Search Term (301 Redirect - true)
@@ -88,7 +88,7 @@ Feature: Search Term - with target Product
     And I type "search_term" in "search"
     And I click "Search Button"
     Then Page title equals to "Product 13"
-    And I should see "All Products Category 3 Product 13"
+    And I should see "All Products Category 3"
     And the url should match "/product/view/\d+"
 
   Scenario: Unauthorized user will be redirected to the Product view page
@@ -97,7 +97,7 @@ Feature: Search Term - with target Product
     And I type "search_term" in "search"
     And I click "Search Button"
     Then Page title equals to "Product 13"
-    And I should see "All Products Category 3 Product 13"
+    And I should see "All Products Category 3"
     And the url should match "/product/view/\d+"
 
 
