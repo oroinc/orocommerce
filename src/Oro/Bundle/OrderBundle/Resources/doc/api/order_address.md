@@ -22,6 +22,10 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
+**Note:**
+It is sufficient for the submitted address to have at least one of the following:
+a customer user address, or a customer address, or filled in address fields.
+
 {@request:json_api}
 Example:
 
@@ -64,6 +68,10 @@ Edit a specific order address record.
 The updated record is returned in the response.
 
 {@inheritdoc}
+
+**Note:**
+When the submitted data have a customer user address or a customer address,
+the address fields will be filled in based on the passed address.
 
 {@request:json_api}
 Example:
@@ -222,6 +230,26 @@ Either **organization** or **firstName** and **lastName** must remain defined.
 **Conditionally required field:**
 A state is required for some countries.
 
+### customerAddress
+
+#### create, update
+
+{@inheritdoc}
+
+**If specified, data from this address will be copied to the quote shipping address.**
+
+**This field can be passed only if other address fields are empty.**
+
+### customerUserAddress
+
+#### create, update
+
+{@inheritdoc}
+
+**If specified, data from this address will be copied to the quote shipping address.**
+
+**This field can be passed only if other address fields are empty.**
+
 ## SUBRESOURCES
 
 ### country
@@ -282,52 +310,18 @@ Example:
 
 #### get_subresource
 
-Retrieve a record of customer address assigned to a specific order address record.
+Retrieve a record of customer address which was used to fill in a specific order address record.
 
 #### get_relationship
 
-Retrieve the ID of customer address record assigned to a specific order address record.
-
-#### update_relationship
-
-Replace the customer address assigned to a specific order address record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "customeraddresses",
-    "id": "4"
-  }
-}
-```
-{@/request}
+Retrieve the ID of customer address record which was used to fill in a specific order address record.
 
 ### customerUserAddress
 
 #### get_subresource
 
-Retrieve a record of customer user address assigned to a specific order address record.
+Retrieve a record of customer user address which was used to fill in a specific order address record.
 
 #### get_relationship
 
-Retrieve the ID of customer user address record assigned to a specific order address record.
-
-#### update_relationship
-
-Replace the customer user address assigned to a specific order address record.
-
-{@request:json_api}
-Example:
-
-```JSON
-{
-  "data": {
-    "type": "customeruseraddresses",
-    "id": "4"
-  }
-}
-```
-{@/request}
+Retrieve the ID of customer user address record which was used to fill in a specific order address record.

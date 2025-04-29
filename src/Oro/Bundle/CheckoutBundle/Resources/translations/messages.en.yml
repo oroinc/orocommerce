@@ -160,8 +160,8 @@ oro:
                 label: 'Created from External Source'
                 description: A flag that indicates that a product information was received from the external source.
             price_type:
-                label: 'Price Type'
-                description: The identifier of the price type.
+                label: Price Type
+                description: The type of the product price.
             shipping_method:
                 label: Line item shipping method
                 description: Represents assigned shipping method.

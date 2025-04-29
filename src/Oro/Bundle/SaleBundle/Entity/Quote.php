@@ -162,7 +162,7 @@ class Quote implements
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?bool $pricesChanged = false;
 
-    #[ORM\OneToOne(targetEntity: QuoteAddress::class, cascade: ['persist'])]
+    #[ORM\OneToOne(targetEntity: QuoteAddress::class, cascade: ['persist'], orphanRemoval: true)]
     #[ORM\JoinColumn(name: 'shipping_address_id', referencedColumnName: 'id', onDelete: 'SET NULL')]
     #[ConfigField(defaultValues: ['dataaudit' => ['auditable' => true]])]
     protected ?QuoteAddress $shippingAddress = null;

@@ -17,13 +17,43 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\ReflectionUtil;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
+use PHPUnit\Framework\TestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class QuoteTest extends \PHPUnit\Framework\TestCase
+class QuoteTest extends TestCase
 {
     use EntityTestCaseTrait;
+
+    private function createQuote(
+        int $quoteProductCount,
+        int $quoteProductOfferCount,
+        bool $allowIncrements = false
+    ): Quote {
+        $quote = new Quote();
+
+        for ($i = 0; $i < $quoteProductCount; $i++) {
+            $quoteProduct = new QuoteProduct();
+            for ($j = 0; $j < $quoteProductOfferCount; $j++) {
+                $quoteProductOffer = new QuoteProductOffer();
+                $quoteProductOffer->setAllowIncrements($allowIncrements);
+
+                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
+            }
+            $quote->addQuoteProduct($quoteProduct);
+        }
+
+        return $quote;
+    }
+
+    private static function assertIsUuid(string $actual): void
+    {
+        self::assertMatchesRegularExpression(
+            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
+            $actual
+        );
+    }
 
     public function testProperties(): void
     {
@@ -56,7 +86,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         self::assertPropertyAccessors(new Quote(), $properties);
 
         $quote = new Quote();
-        self::assertIsUUID($quote->getGuestAccessId());
+        self::assertIsUuid($quote->getGuestAccessId());
 
         self::assertPropertyCollections(new Quote(), [
             ['quoteProducts', new QuoteProduct()],
@@ -70,41 +100,41 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $quote = new Quote();
         ReflectionUtil::setId($quote, 123);
 
-        $this->assertSame('123', (string)$quote);
+        self::assertSame('123', (string)$quote);
     }
 
     public function testGetEmail(): void
     {
         $quote = new Quote();
-        $this->assertEmpty($quote->getEmail());
+        self::assertEmpty($quote->getEmail());
         $customerUser = new CustomerUser();
         $customerUser->setEmail('test');
         $quote->setCustomerUser($customerUser);
-        $this->assertEquals('test', $quote->getEmail());
+        self::assertEquals('test', $quote->getEmail());
     }
 
     public function testPrePersist(): void
     {
         $quote = new Quote();
 
-        $this->assertNull($quote->getCreatedAt());
-        $this->assertNull($quote->getUpdatedAt());
+        self::assertNull($quote->getCreatedAt());
+        self::assertNull($quote->getUpdatedAt());
 
         $quote->prePersist();
 
-        $this->assertInstanceOf(\DateTime::class, $quote->getCreatedAt());
-        $this->assertInstanceOf(\DateTime::class, $quote->getUpdatedAt());
+        self::assertInstanceOf(\DateTime::class, $quote->getCreatedAt());
+        self::assertInstanceOf(\DateTime::class, $quote->getUpdatedAt());
     }
 
     public function testPreUpdate(): void
     {
         $quote = new Quote();
 
-        $this->assertNull($quote->getUpdatedAt());
+        self::assertNull($quote->getUpdatedAt());
 
         $quote->preUpdate();
 
-        $this->assertInstanceOf(\DateTime::class, $quote->getUpdatedAt());
+        self::assertInstanceOf(\DateTime::class, $quote->getUpdatedAt());
     }
 
     public function testGetEmailOwner(): void
@@ -113,7 +143,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $quote = new Quote();
         $quote->setCustomerUser($customerUser);
 
-        $this->assertEquals($customerUser, $quote->getEmailOwner());
+        self::assertEquals($customerUser, $quote->getEmailOwner());
     }
 
     public function testAddQuoteProduct(): void
@@ -121,11 +151,11 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $quote = new Quote();
         $quoteProduct = new QuoteProduct();
 
-        $this->assertNull($quoteProduct->getQuote());
+        self::assertNull($quoteProduct->getQuote());
 
         $quote->addQuoteProduct($quoteProduct);
 
-        $this->assertEquals($quote, $quoteProduct->getQuote());
+        self::assertEquals($quote, $quoteProduct->getQuote());
     }
 
     /**
@@ -133,7 +163,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
      */
     public function testHasOfferVariants(Quote $quote, bool $expected): void
     {
-        $this->assertEquals($expected, $quote->hasOfferVariants());
+        self::assertEquals($expected, $quote->hasOfferVariants());
     }
 
     public function hasOfferVariantsDataProvider(): array
@@ -159,70 +189,62 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         ?string $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
     ): void {
         $status = $internalStatus
-            ? new TestEnumValue(
-                Quote::INTERNAL_STATUS_CODE,
-                'Test',
-                $internalStatus
-            )
+            ? new TestEnumValue(Quote::INTERNAL_STATUS_CODE, 'Test', $internalStatus)
             : null;
 
         $quote = new Quote();
-        $quote->setExpired($expired)
-            ->setValidUntil($validUntil)
-            ->setInternalStatus($status);
-        $this->assertEquals($expected, $quote->isAcceptable());
+        $quote->setExpired($expired);
+        $quote->setValidUntil($validUntil);
+        $quote->setInternalStatus($status);
+
+        self::assertEquals($expected, $quote->isAcceptable());
     }
 
-    public function isAcceptableDataProvider(): \Generator
+    public function isAcceptableDataProvider(): array
     {
-        yield [
-            'expired' => false,
-            'validUntil' => null,
-            'expected' => true
-        ];
-
-        yield [
-            'expired' => false,
-            'validUntil' => new \DateTime('+1 day'),
-            'expected' => true
-        ];
-
-        yield [
-            'expired' => false,
-            'validUntil' => new \DateTime('-1 day'),
-            'expected' => false
-        ];
-
-        yield [
-            'expired' => true,
-            'validUntil' => null,
-            'expected' => false
-        ];
-
-        yield [
-            'expired' => true,
-            'validUntil' => new \DateTime('+1 day'),
-            'expected' => false
-        ];
-
-        yield [
-            'expired' => true,
-            'validUntil' => new \DateTime('-1 day'),
-            'expected' => false
-        ];
-
-        yield [
-            'expired' => false,
-            'validUntil' => new \DateTime('+1 day'),
-            'expected' => false,
-            'internalStatus' => Quote::INTERNAL_STATUS_DELETED
-        ];
-
-        yield [
-            'expired' => false,
-            'validUntil' => new \DateTime('+1 day'),
-            'expected' => false,
-            'internalStatus' => null
+        return [
+            [
+                'expired' => false,
+                'validUntil' => null,
+                'expected' => true
+            ],
+            [
+                'expired' => false,
+                'validUntil' => new \DateTime('+1 day'),
+                'expected' => true
+            ],
+            [
+                'expired' => false,
+                'validUntil' => new \DateTime('-1 day'),
+                'expected' => false
+            ],
+            [
+                'expired' => true,
+                'validUntil' => null,
+                'expected' => false
+            ],
+            [
+                'expired' => true,
+                'validUntil' => new \DateTime('+1 day'),
+                'expected' => false
+            ],
+            [
+                'expired' => true,
+                'validUntil' => new \DateTime('-1 day'),
+                'expected' => false
+            ],
+            [
+                'expired' => false,
+                'validUntil' => new \DateTime('+1 day'),
+                'expected' => false,
+                'internalStatus' => Quote::INTERNAL_STATUS_DELETED
+            ],
+            [
+                'expired' => false,
+                'validUntil' => new \DateTime('+1 day'),
+                'expected' => false,
+                'internalStatus' => null
+            ]
         ];
     }
 
@@ -234,7 +256,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         $quote = new Quote();
         $quote->setInternalStatus(new TestEnumValue(Quote::INTERNAL_STATUS_CODE, 'Test', $internalStatus));
 
-        $this->assertEquals($expected, $quote->isAvailableOnFrontend());
+        self::assertEquals($expected, $quote->isAvailableOnFrontend());
     }
 
     public function isAvailableOnFrontendProvider(): array
@@ -254,48 +276,17 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
     public function testClone(): void
     {
         $quote = new Quote();
-        $this->assertIsUUID($quote->getGuestAccessId());
+        self::assertIsUuid($quote->getGuestAccessId());
 
         $clone = clone $quote;
-        $this->assertIsUUID($clone->getGuestAccessId());
-        $this->assertNotEquals($quote->getGuestAccessId(), $clone->getGuestAccessId());
-    }
-
-    private function createQuote(
-        int $quoteProductCount,
-        int $quoteProductOfferCount,
-        bool $allowIncrements = false
-    ): Quote {
-        $quote = new Quote();
-
-        for ($i = 0; $i < $quoteProductCount; $i++) {
-            $quoteProduct = new QuoteProduct();
-
-            for ($j = 0; $j < $quoteProductOfferCount; $j++) {
-                $quoteProductOffer = new QuoteProductOffer();
-                $quoteProductOffer->setAllowIncrements($allowIncrements);
-
-                $quoteProduct->addQuoteProductOffer($quoteProductOffer);
-            }
-
-            $quote->addQuoteProduct($quoteProduct);
-        }
-
-        return $quote;
-    }
-
-    private static function assertIsUUID(string $actual): void
-    {
-        self::assertMatchesRegularExpression(
-            '/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i',
-            $actual
-        );
+        self::assertIsUuid($clone->getGuestAccessId());
+        self::assertNotEquals($quote->getGuestAccessId(), $clone->getGuestAccessId());
     }
 
     /**
      * @dataProvider shippingCostDataProvider
      */
-    public function testGetShippingCost(?int $estimated, ?int $overridden, ?int $expected)
+    public function testGetShippingCost(?int $estimated, ?int $overridden, ?int $expected): void
     {
         $currency = 'USD';
         $item = new Quote();
@@ -336,7 +327,7 @@ class QuoteTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public function testGetShippingCostNull()
+    public function testGetShippingCostNull(): void
     {
         self::assertNull((new Quote())->getShippingCost());
     }

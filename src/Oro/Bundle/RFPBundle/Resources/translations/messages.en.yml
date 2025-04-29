@@ -126,7 +126,9 @@ oro:
             product_unit:
                 label:                  'Product Unit'
                 description:            The product unit for which the suggested price in the RFQ is defined.
-            product_unit_code.label:    'Product Unit Code'
+            product_unit_code:
+                label:                  'Product Unit Code'
+                description:            The code of the product unit for which the suggested price in the RFQ is defined.
             price.label:                'Target Price'
             value:
                 label:                  'Price Value'

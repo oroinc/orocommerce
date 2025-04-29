@@ -139,12 +139,12 @@
     <td class="quote-lineitem-notes">
         {% if commentCustomer %}
             <div class="quote-lineitem-notes quote-lineitem-notes-customer">
-                {{ form_label(form.commentCustomer) }}
+                {{ form_label(form.commentCustomer, null, { showTooltip: false }) }}
                 {{ form_widget(form.commentCustomer) }}
             </div>
         {% endif %}
         <div class="quote-lineitem-notes-seller-active">
-            {{ form_label(form.comment) }}
+            {{ form_label(form.comment, null, { showTooltip: false }) }}
             <div class="quote-lineitem-notes-seller-field" data-page-component-module="oroorder/js/app/components/notes-component">
                 {{ form_widget(form.comment, {
                     'attr': {
@@ -367,7 +367,7 @@
                         {% set attrs = attrs|merge({'checked' : 'checked'}) %}
                     {% endif %}
                     {{ form_widget(form.allowIncrements, attrs) }}
-                    {{ form_label(form.allowIncrements) }}
+                    {{ form_label(form.allowIncrements, null, { showTooltip: false }) }}
                     {{ form_errors(form.allowIncrements) }}
                 </div>
                 {{ form_widget(form.priceType) }}

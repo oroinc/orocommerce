@@ -1,0 +1,27 @@
+data:
+    type: quoteproducts
+    relationships:
+        quote:
+            data:
+                type: quotes
+                id: '<toString(@sale.quote.3->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-2->id)>'
+        quoteProductOffers:
+            data:
+                -
+                    type: quoteproductoffers
+                    id: offer_1
+included:
+    -
+        type: quoteproductoffers
+        id: offer_1
+        attributes:
+            quantity: 1
+        relationships:
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'

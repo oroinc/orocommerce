@@ -127,6 +127,12 @@ Delete a collection of request product records.
 
 **The required field.**
 
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
+
 ### product
 
 #### create
@@ -135,6 +141,12 @@ Delete a collection of request product records.
 
 **The required field.**
 
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
+
 ### requestProductItems
 
 #### create
@@ -142,6 +154,12 @@ Delete a collection of request product records.
 {@inheritdoc}
 
 **The required field.**
+
+#### update
+
+{@inheritdoc}
+
+**This field must not be empty, if it is passed.**
 
 ## SUBRESOURCES
 

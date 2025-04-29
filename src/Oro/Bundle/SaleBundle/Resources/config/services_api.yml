@@ -1,0 +1,35 @@
+services:
+    oro_sale.api.set_default_website_to_quote:
+        class: Oro\Bundle\WebsiteBundle\Api\Processor\SetDefaultWebsite
+        arguments:
+            - '@oro_api.form_property_accessor'
+            - '@oro_website.manager'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, requestType: '!frontend', parentAction: create, class: Oro\Bundle\SaleBundle\Entity\Quote, priority: 20 }
+
+    oro_sale.api.update_price_by_value_and_currency:
+        class: Oro\Bundle\CurrencyBundle\Api\Processor\UpdatePriceByValueAndCurrency
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|post_validate, class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest }
+
+    oro_sale.api.set_quote_product_item_checksum:
+        class: Oro\Bundle\SaleBundle\Api\Processor\SetQuoteProductItemChecksum
+        arguments:
+            - '@oro_product.line_item_checksum_generator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create|update, class: Oro\Bundle\SaleBundle\Entity\QuoteProductOffer, priority: -100 }
+            - { name: oro.api.processor, action: customize_form_data, event: pre_validate, parentAction: create|update, class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest, priority: -100 }
+
+    oro_sale.api.validate_quote_address_owner:
+        class: Oro\Bundle\SaleBundle\Api\Processor\ValidateQuoteAddressOwner
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: post_submit, parentAction: create, class: Oro\Bundle\SaleBundle\Entity\QuoteAddress }
+
+    oro_sale.api.fill_quote_address:
+        class: Oro\Bundle\SaleBundle\Api\Processor\FillQuoteAddress
+        arguments:
+            - '@oro_sale.manager.quote_address'
+            - '@translator'
+        tags:
+            - { name: oro.api.processor, action: customize_form_data, event: pre_submit|pre_validate, class: Oro\Bundle\SaleBundle\Entity\QuoteAddress }

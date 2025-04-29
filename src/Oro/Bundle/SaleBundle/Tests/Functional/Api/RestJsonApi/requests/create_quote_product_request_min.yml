@@ -1,0 +1,11 @@
+data:
+    type: quoteproductrequests
+    relationships:
+        quoteProduct:
+            data:
+                type: quoteproducts
+                id: '<toString(@sale.quote.1.product-1->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.box->code)>'

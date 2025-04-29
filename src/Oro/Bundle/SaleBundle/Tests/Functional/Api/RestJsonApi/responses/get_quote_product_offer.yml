@@ -1,0 +1,18 @@
+data:
+    type: quoteproductoffers
+    id: '<toString(@sale.quote.1.product-1.offer.1->id)>'
+    attributes:
+        allowIncrements: true
+        quantity: 1
+        productUnitCode: liter
+        value: '1.0000'
+        currency: USD
+    relationships:
+        quoteProduct:
+            data:
+                type: quoteproducts
+                id: '<toString(@sale.quote.1.product-1->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.liter->code)>'

@@ -1,5 +1,8 @@
 oro:
     sale:
+        quoteaddress:
+            multiple: 'Only address fields, a customer user address or a customer address can be set.'
+
         quoteproduct:
             product:
                 blank: 'Product cannot be empty.'
@@ -17,6 +20,14 @@ oro:
                 quantity:
                     equal: 'Quantity should be equal to offered quantity'
                     less: 'Quantity should be greater than or equal to offered quantity'
+            quote_product:
+                unchangeable: 'The offer cannot be moved to another quote product.'
+
+        quoteproductrequest:
+            quote_product:
+                unchangeable: 'The request cannot be moved to another quote product.'
+            request_product_item:
+                invalid: 'The request can be created from the same RFQ as the quote.'
 
         quoteproductkititemlineitem:
             quote_product:

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\ActionBundle\Tests\Functional\OperationAwareTestTrait;
 use Oro\Bundle\ConfigBundle\Tests\Functional\Traits\ConfigManagerAwareTestTrait;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -11,6 +12,7 @@ use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteAddressData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
@@ -267,7 +269,6 @@ class QuoteControllerTest extends WebTestCase
 
         $accessor = PropertyAccess::createPropertyAccessor();
         foreach ($controls as $key => $control) {
-            /* @var \DOMElement $control */
             $column = $expectedData['columns'][$key];
 
             $label = $translator->trans($column['label']);
@@ -276,6 +277,16 @@ class QuoteControllerTest extends WebTestCase
                 $property = $property->format('n/j/Y');
             } elseif ($property instanceof Price) {
                 $property = round($property->getValue());
+            } elseif ($property instanceof Collection) {
+                $property = implode(
+                    ', ',
+                    $property->map(static function ($item) {
+                        if ($item instanceof AbstractUser) {
+                            return sprintf('%s %s', $item->getFirstName(), $item->getLastName());
+                        }
+                        return (string)$item;
+                    })->toArray()
+                );
             }
 
             $property = (string)$property;
@@ -321,6 +332,10 @@ class QuoteControllerTest extends WebTestCase
                             'property' => 'valid_until',
                         ],
                         [
+                            'label' => 'oro.frontend.sale.quote.assigned_customer_users.label',
+                            'property' => 'assigned_users',
+                        ],
+                        [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
                             'property' => 'shipping_cost',
                         ],
@@ -355,6 +370,10 @@ class QuoteControllerTest extends WebTestCase
                         [
                             'label' => 'oro.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.assigned_customer_users.label',
+                            'property' => 'assigned_users',
                         ],
                         [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
@@ -392,6 +411,10 @@ class QuoteControllerTest extends WebTestCase
                             'label' => 'oro.frontend.sale.quote.valid_until.label',
                             'property' => 'valid_until',
                         ],
+                        [
+                            'label' => 'oro.sale.quote.sections.shipping_address',
+                            'property' => 'shippingAddress.street',
+                        ]
                     ],
                 ],
             ],

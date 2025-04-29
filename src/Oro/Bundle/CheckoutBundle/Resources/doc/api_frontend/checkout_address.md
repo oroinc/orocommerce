@@ -170,11 +170,11 @@ A customer user phone number provided for the checkout address.
 
 ### customerUserAddress
 
-The identifier of customer user address, which was used as checkout address.
+The customer user address, which was used as checkout address.
 
 #### create, update
 
-The identifier of customer user address, which was used as checkout address.
+The customer user address, which was used as checkout address.
 
 **If specified, data from this address will be copied to the checkout address.** 
 
@@ -182,11 +182,11 @@ The identifier of customer user address, which was used as checkout address.
 
 ### customerAddress
 
-The identifier of customer address, which was used as checkout address.
+The customer address, which was used as checkout address.
 
 #### create, update
 
-The identifier of customer address, which was used as checkout address.
+The customer address, which was used as checkout address.
 
 **If specified, data from this address will be copied to the checkout address.** 
 
@@ -218,18 +218,18 @@ Retrieve IDs of region records assigned to a specific region record.
 
 #### get_subresource
 
-Retrieve a record of customer address assigned to a specific checkout address record.
+Retrieve a record of customer address which was used to fill in a specific checkout address record.
 
 #### get_relationship
 
-Retrieve the ID of customer address record assigned to a specific checkout address record.
+Retrieve the ID of customer address record which was used to fill in a specific checkout address record.
 
 ### customerUserAddress
 
 #### get_subresource
 
-Retrieve a record of customer user address assigned to a specific checkout address record.
+Retrieve a record of customer user address which was used to fill in a specific checkout address record.
 
 #### get_relationship
 
-Retrieve the ID of customer user address record assigned to a specific checkout address record.
+Retrieve the ID of customer user address record which was used to fill in a specific checkout address record.

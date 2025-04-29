@@ -5,6 +5,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
+use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
@@ -13,11 +15,15 @@ use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
+use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsite;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -56,134 +62,176 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
 
     public static array $items = [
         self::QUOTE1 => [
-            'qid'       => self::QUOTE1,
+            'qid' => self::QUOTE1,
             'internal_status' => 'draft',
             'customer_status' => 'open',
-            'products'  => [
+            'products' => [
                 self::PRODUCT1 => [
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
-                        'quantity'  => 1,
-                        'unit'      => self::UNIT1,
-                        'price'     => self::PRICE1,
-                        'currency'  => self::CURRENCY1,
+                        'quantity' => 1,
+                        'unit' => self::UNIT1,
+                        'price' => self::PRICE1,
+                        'currency' => self::CURRENCY1,
                         'allow_increments' => true
                     ],
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
-                        'quantity'  => 2,
-                        'unit'      => self::UNIT2,
-                        'price'     => self::PRICE2,
-                        'currency'  => self::CURRENCY1,
+                        'quantity' => 2,
+                        'unit' => self::UNIT2,
+                        'price' => self::PRICE2,
+                        'currency' => self::CURRENCY1,
                         'allow_increments' => false
                     ],
                 ],
                 self::PRODUCT2 => [
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
-                        'quantity'  => 3,
-                        'unit'      => self::UNIT3,
-                        'price'     => 3,
-                        'currency'  => self::CURRENCY1,
+                        'quantity' => 3,
+                        'unit' => self::UNIT3,
+                        'price' => 3,
+                        'currency' => self::CURRENCY1,
                         'allow_increments' => false
                     ]
                 ],
             ],
+            'productRequests' => [
+                self::PRODUCT1 => [
+                    [
+                        'quantity' => 1,
+                        'unit' => self::UNIT1,
+                        'price' => 1.0,
+                        'currency' => self::CURRENCY1
+                    ]
+                ],
+                self::PRODUCT2 => [
+                    [
+                        'quantity' => 3,
+                        'unit' => self::UNIT3,
+                        'price' => 2.5,
+                        'currency' => self::CURRENCY1
+                    ]
+                ],
+            ],
+            'shippingAddress' => [
+                'firstName' => 'John',
+                'lastName' => 'Doe',
+                'country' => 'US',
+                'region' => 'US-IN',
+                'city' => 'Romney',
+                'street' => '2413 Capitol Avenue',
+                'postalCode' => '47981'
+            ]
         ],
         self::QUOTE2 => [
-            'qid'           => self::QUOTE2,
+            'qid' => self::QUOTE2,
             'internal_status' => 'draft',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT1,
-            'products'      => [],
+            'customer' => LoadUserData::ACCOUNT1,
+            'products' => [],
         ],
         self::QUOTE3 => [
-            'qid'           => self::QUOTE3,
+            'qid' => self::QUOTE3,
             'internal_status' => 'sent_to_customer',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT1,
-            'customerUser'   => LoadUserData::ACCOUNT1_USER1,
-            'products'      => [
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER1,
+            'assignedCustomerUsers' => [LoadUserData::ACCOUNT1_USER1],
+            'assignedUsers' => [LoadUserData::USER1],
+            'products' => [
                 self::PRODUCT1 => [
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
-                        'quantity'  => 1,
-                        'unit'      => self::UNIT1,
-                        'price'     => self::PRICE1,
-                        'currency'  => self::CURRENCY1,
+                        'quantity' => 1,
+                        'unit' => self::UNIT1,
+                        'price' => self::PRICE1,
+                        'currency' => self::CURRENCY1,
                         'allow_increments' => true
                     ],
                 ],
             ],
-            'estimatedShippingCostAmount' => 10
+            'estimatedShippingCostAmount' => 10,
+            'shippingAddress' => [
+                'country' => 'US',
+                'region' => 'US-NY',
+                'city' => 'Rochester',
+                'street' => '1215 Caldwell Road',
+                'postalCode' => '14608'
+            ]
         ],
         self::QUOTE4 => [
-            'qid'           => self::QUOTE4,
+            'qid' => self::QUOTE4,
             'internal_status' => 'sent_to_customer',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT1,
-            'customerUser'   => LoadUserData::ACCOUNT1_USER2,
-            'products'      => [],
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER2,
+            'products' => [],
 
         ],
         self::QUOTE5 => [
-            'qid'           => self::QUOTE5,
+            'qid' => self::QUOTE5,
             'internal_status' => 'open',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT1,
-            'customerUser'   => LoadUserData::ACCOUNT1_USER3,
-            'validUntil'    => 'now',
-            'products'      => [],
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER3,
+            'validUntil' => 'now',
+            'products' => [],
+            'shippingAddress' => [
+                'customerUserAddress' => 'sale.grzegorz.brzeczyszczykiewicz@example.com.address_1'
+            ]
         ],
         self::QUOTE6 => [
-            'qid'           => self::QUOTE6,
+            'qid' => self::QUOTE6,
             'internal_status' => 'open',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT2,
-            'products'      => [],
+            'customer' => LoadUserData::ACCOUNT2,
+            'products' => [],
+            'shippingAddress' => [
+                'customerAddress' => 'sale.customer.level_1.address_2'
+            ]
         ],
         self::QUOTE7 => [
-            'qid'           => self::QUOTE7,
+            'qid' => self::QUOTE7,
             'internal_status' => 'open',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT2,
-            'customerUser'   => LoadUserData::ACCOUNT2_USER1,
-            'products'      => [],
+            'customer' => LoadUserData::ACCOUNT2,
+            'customerUser' => LoadUserData::ACCOUNT2_USER1,
+            'products' => [],
         ],
         self::QUOTE8 => [
-            'qid'           => self::QUOTE8,
+            'qid' => self::QUOTE8,
             'internal_status' => 'open',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT1,
-            'customerUser'   => LoadUserData::ACCOUNT1_USER3,
-            'expired'       => true,
-            'products'      => [],
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER3,
+            'expired' => true,
+            'products' => [],
         ],
         self::QUOTE9 => [
-            'qid'           => self::QUOTE9,
+            'qid' => self::QUOTE9,
             'internal_status' => 'sent_to_customer',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT1,
-            'customerUser'   => LoadUserData::ACCOUNT1_USER3,
-            'validUntil'    => null,
-            'products'      => [],
-            'paymentTerm'   => LoadPaymentTermData::TERM_LABEL_NET_10,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER3,
+            'validUntil' => null,
+            'products' => [],
+            'paymentTerm' => LoadPaymentTermData::TERM_LABEL_NET_10,
         ],
         self::QUOTE10 => [
-            'qid'           => self::QUOTE10,
+            'qid' => self::QUOTE10,
             'internal_status' => 'open',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::PARENT_ACCOUNT,
-            'customerUser'   => LoadUserData::PARENT_ACCOUNT_USER1,
-            'products'      => [],
+            'customer' => LoadUserData::PARENT_ACCOUNT,
+            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER1,
+            'products' => [],
         ],
         self::QUOTE11 => [
-            'qid'           => self::QUOTE11,
+            'qid' => self::QUOTE11,
             'internal_status' => 'open',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::PARENT_ACCOUNT,
-            'customerUser'   => LoadUserData::PARENT_ACCOUNT_USER2,
-            'products'      => [],
+            'customer' => LoadUserData::PARENT_ACCOUNT,
+            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER2,
+            'products' => [],
         ],
         self::QUOTE12 => [
             'qid' => self::QUOTE12,
@@ -197,29 +245,29 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
             'expired' => true
         ],
         self::QUOTE13 => [
-            'qid'           => self::QUOTE13,
+            'qid' => self::QUOTE13,
             'internal_status' => 'sent_to_customer',
             'customer_status' => 'open',
-            'customer'       => LoadUserData::ACCOUNT1,
-            'customerUser'   => LoadUserData::ACCOUNT1_USER2,
-            'products'      => [
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER2,
+            'products' => [
                 self::PRODUCT1 => [
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
-                        'quantity'  => 1,
-                        'unit'      => self::UNIT1,
-                        'price'     => self::PRICE1,
-                        'currency'  => self::CURRENCY1,
+                        'quantity' => 1,
+                        'unit' => self::UNIT1,
+                        'price' => self::PRICE1,
+                        'currency' => self::CURRENCY1,
                         'allow_increments' => false
                     ],
                 ],
                 self::PRODUCT2 => [
                     [
                         'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
-                        'quantity'  => 100,
-                        'unit'      => self::UNIT3,
-                        'price'     => 3,
-                        'currency'  => self::CURRENCY1,
+                        'quantity' => 100,
+                        'unit' => self::UNIT3,
+                        'price' => 3,
+                        'currency' => self::CURRENCY1,
                         'allow_increments' => true
                     ]
                 ],
@@ -248,7 +296,7 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
     public static function getQuotesFor(string $quoteFieldName, string $quoteFieldValue): array
     {
         return array_filter(self::$items, function ($item) use ($quoteFieldName, $quoteFieldValue) {
-            return \array_key_exists($quoteFieldName, $item) && $item[$quoteFieldName] == $quoteFieldValue;
+            return \array_key_exists($quoteFieldName, $item) && $item[$quoteFieldName] === $quoteFieldValue;
         });
     }
 
@@ -261,34 +309,36 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
             LoadCustomerAddresses::class,
             LoadProductUnitPrecisions::class,
             LoadPaymentTermData::class,
-            LoadUser::class
+            LoadUser::class,
+            LoadWebsite::class
         ];
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
     #[\Override]
     public function load(ObjectManager $manager): void
     {
         /** @var User $user */
         $user = $this->getReference(LoadUser::USER);
         /** @var Website $website */
-        $website = $manager->getRepository(Website::class)->findOneBy(['default' => true]);
+        $website = $this->getReference(LoadWebsite::WEBSITE);
 
         $paymentTermAssociationProvider = $this->container->get('oro_payment_term.provider.payment_term_association');
 
         foreach (self::$items as $item) {
-            $poNumber = 'CA' . random_int(1000, 9999) . 'USD';
-
             $quote = new Quote();
-            $quote
-                ->setQid($item['qid'])
-                ->setWebsite($website)
-                ->setOwner($user)
-                ->setOrganization($user->getOrganization())
-                ->setShipUntil(new \DateTime('+10 day'))
-                ->setPoNumber($poNumber)
-                ->setValidUntil($this->getValidUntil($item))
-                ->setExpired($item['expired'] ?? false)
-                ->setPricesChanged($item['pricesChanged'] ?? false);
+            $quote->setQid($item['qid']);
+            $quote->setWebsite($website);
+            $quote->setOwner($user);
+            $quote->setOrganization($user->getOrganization());
+            $quote->setShipUntil(new \DateTime('+10 day'));
+            $quote->setPoNumber('PO_' . strtoupper($item['qid']));
+            $quote->setValidUntil($this->getValidUntil($item));
+            $quote->setExpired($item['expired'] ?? false);
+            $quote->setPricesChanged($item['pricesChanged'] ?? false);
 
             if (!empty($item['estimatedShippingCostAmount'])) {
                 $quote->setEstimatedShippingCostAmount($item['estimatedShippingCostAmount'])->setCurrency('USD');
@@ -300,18 +350,34 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
             if (!empty($item['customerUser'])) {
                 $quote->setCustomerUser($this->getReference($item['customerUser']));
             }
+            if (!empty($item['assignedCustomerUsers'])) {
+                foreach ($item['assignedCustomerUsers'] as $customerUserRef) {
+                    $quote->addAssignedCustomerUser($this->getReference($customerUserRef));
+                }
+            }
+            if (!empty($item['assignedUsers'])) {
+                foreach ($item['assignedUsers'] as $userRef) {
+                    $quote->addAssignedUser($this->getReference($userRef));
+                }
+            }
 
             if (!empty($item['paymentTerm'])) {
                 /** @var PaymentTerm $paymentTerm */
                 $paymentTerm = $this->getReference(
-                    LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX.$item['paymentTerm']
+                    LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX . $item['paymentTerm']
                 );
 
                 $paymentTermAssociationProvider->setPaymentTerm($quote, $paymentTerm);
             }
 
             foreach ($item['products'] as $sku => $items) {
-                $this->addQuoteProduct($manager, $quote, $sku, $items);
+                $this->addQuoteProduct($manager, $quote, $sku, $items, $item['productRequests'][$sku] ?? []);
+            }
+
+            if (!empty($item['shippingAddress'])) {
+                $shippingAddress = $this->createShippingAddress($manager, $item['shippingAddress']);
+                $this->setReference($item['qid'] . '.shipping_address', $shippingAddress);
+                $quote->setShippingAddress($shippingAddress);
             }
 
             $manager->persist($quote);
@@ -333,10 +399,15 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         $manager->flush();
     }
 
-    private function addQuoteProduct(ObjectManager $manager, Quote $quote, string $sku, array $items): void
-    {
+    private function addQuoteProduct(
+        ObjectManager $manager,
+        Quote $quote,
+        string $sku,
+        array $items,
+        array $productRequests
+    ): void {
         $product = new QuoteProduct();
-
+        $productReference = $quote->getQid() . '.' . $sku;
         if ($this->hasReference($sku)) {
             $product->setProduct($this->getReference($sku));
         } else {
@@ -345,27 +416,35 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
 
         foreach ($items as $index => $item) {
             $productOffer = new QuoteProductOffer();
-            $productOffer
-                ->setAllowIncrements($item['allow_increments'])
-                ->setQuantity($item['quantity'])
-                ->setPriceType($item['priceType'])
-                ->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']));
-
+            $productOffer->setAllowIncrements($item['allow_increments']);
+            $productOffer->setQuantity($item['quantity']);
+            $productOffer->setPriceType($item['priceType']);
+            $productOffer->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']));
             if ($this->hasReference($item['unit'])) {
                 $productOffer->setProductUnit($this->getReference($item['unit']));
             } else {
                 $productOffer->setProductUnitCode($item['unit']);
             }
-
             $manager->persist($productOffer);
-
-            // e.g sale.quote.1.product-1.offer.1
-            $this->addReference($quote->getQid() . '.' . $sku . '.offer.' . ($index + 1), $productOffer);
-
+            $this->addReference($productReference . '.offer.' . ($index + 1), $productOffer);
             $product->addQuoteProductOffer($productOffer);
+        }
+        foreach ($productRequests as $index => $item) {
+            $productRequest = new QuoteProductRequest();
+            $productRequest->setQuantity($item['quantity']);
+            $productRequest->setPrice((new Price())->setValue($item['price'])->setCurrency($item['currency']));
+            if ($this->hasReference($item['unit'])) {
+                $productRequest->setProductUnit($this->getReference($item['unit']));
+            } else {
+                $productRequest->setProductUnitCode($item['unit']);
+            }
+            $manager->persist($productRequest);
+            $this->addReference($productReference . '.request.' . ($index + 1), $productRequest);
+            $product->addQuoteProductRequest($productRequest);
         }
 
         $manager->persist($product);
+        $this->addReference($productReference, $product);
 
         $quote->addQuoteProduct($product);
     }
@@ -385,5 +464,59 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         }
 
         return new \DateTime('+10 day');
+    }
+
+    /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     */
+    private function createShippingAddress(ObjectManager $manager, array $data): QuoteAddress
+    {
+        $address = new QuoteAddress();
+        if (isset($data['customerAddress'])) {
+            $customerAddress = $this->getReference($data['customerAddress']);
+            /** @var QuoteAddressManager $addressManager */
+            $addressManager = $this->container->get('oro_sale.manager.quote_address');
+            $addressManager->updateFromAbstract($customerAddress, $address);
+        } elseif (isset($data['customerUserAddress'])) {
+            $customerUserAddress = $this->getReference($data['customerUserAddress']);
+            /** @var QuoteAddressManager $addressManager */
+            $addressManager = $this->container->get('oro_sale.manager.quote_address');
+            $addressManager->updateFromAbstract($customerUserAddress, $address);
+        } else {
+            if (isset($data['firstName'])) {
+                $address->setFirstName($data['firstName']);
+            }
+            if (isset($data['lastName'])) {
+                $address->setLastName($data['lastName']);
+            }
+            $country = $manager->getReference(Country::class, $data['country']);
+            if ($country) {
+                $address->setCountry($country);
+            } else {
+                throw new \RuntimeException('Can\'t find country with ISO ' . $data['country']);
+            }
+            if (isset($data['region'])) {
+                $region = $manager->getReference(Region::class, $data['region']);
+                if ($region) {
+                    $address->setRegion($region);
+                } else {
+                    throw new \RuntimeException(sprintf('Can\'t find region with code %s', $data['region']));
+                }
+            }
+            if (isset($data['city'])) {
+                $address->setCity($data['city']);
+            }
+            if (isset($data['street'])) {
+                $address->setStreet($data['street']);
+            }
+            if (isset($data['postalCode'])) {
+                $address->setPostalCode($data['postalCode']);
+            }
+        }
+
+        $manager->persist($address);
+
+        return $address;
     }
 }

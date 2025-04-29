@@ -1,7 +1,197 @@
 api:
+    entity_aliases:
+        Oro\Bundle\SaleBundle\Entity\QuoteAddress:
+            alias: quoteshippingaddress
+            plural_alias: quoteshippingaddresses
+
     entities:
+        Oro\Bundle\SaleBundle\Entity\Quote:
+            documentation_resource: '@OroSaleBundle/Resources/doc/api/quote.md'
+            fields:
+                identifier:
+                    property_path: qid
+                    form_options:
+                        mapped: false
+                guestAccessId:
+                    form_options:
+                        mapped: false
+                customerStatus:
+                    property_path: customer_status
+                    form_options:
+                        mapped: false
+                internalStatus:
+                    property_path: internal_status
+                    form_options:
+                        mapped: false
+                paymentTerm:
+                    property_path: payment_term_7c4f1e8e
+                pricesChanged:
+                    form_options:
+                        mapped: false
+                shippingMethod:
+                    exclude: true
+                shippingMethodType:
+                    exclude: true
+                shippingMethodLocked:
+                    exclude: true
+                allowUnlistedShippingMethod:
+                    exclude: true
+                estimatedShippingCostAmount:
+                    exclude: true
+                overriddenShippingCostAmount:
+                    exclude: true
+            actions:
+                update:
+                    fields:
+                        request:
+                            form_options:
+                                mapped: false
+            subresources:
+                customerStatus:
+                    actions:
+                        update_relationship: false
+                internalStatus:
+                    actions:
+                        update_relationship: false
+                shippingAddress:
+                    actions:
+                        update_relationship: false
+                request:
+                    actions:
+                        update_relationship: false
+
         Extend\Entity\EV_Quote_Customer_Status:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote.md'
 
         Extend\Entity\EV_Quote_Internal_Status:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote.md'
+
+        Oro\Bundle\SaleBundle\Entity\QuoteAddress:
+            documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_address.md'
+            fields:
+                createdAt:
+                    property_path: created
+                updatedAt:
+                    property_path: updated
+                customRegion:
+                    exclude: false # set manually because this field is marked as excluded in entity.yml
+                    property_path: regionText
+                quote:
+                    data_type: unidirectionalAssociation:shippingAddress
+                    target_class: Oro\Bundle\SaleBundle\Entity\Quote
+            actions:
+                update:
+                    fields:
+                        quote:
+                            form_options:
+                                mapped: false
+            subresources:
+                country:
+                    actions:
+                        update_relationship: false
+                region:
+                    actions:
+                        update_relationship: false
+                quote:
+                    actions:
+                        update_relationship: false
+                customerAddress:
+                    actions:
+                        update_relationship: false
+                customerUserAddress:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+            documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product.md'
+            fields:
+                type:
+                    exclude: true
+                productReplacementSku:
+                    exclude: true
+                freeFormProductReplacement:
+                    exclude: true
+                productReplacement:
+                    exclude: true
+                customerComment:
+                    property_path: commentCustomer
+            actions:
+                update:
+                    fields:
+                        quote:
+                            form_options:
+                                mapped: false
+            subresources:
+                quote:
+                    actions:
+                        update_relationship: false
+                quoteProductOffers:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
+                quoteProductRequests:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false
+
+        Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+            documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product_offer.md'
+            fields:
+                priceType:
+                    exclude: true
+                value:
+                    form_options:
+                        mapped: false
+                currency:
+                    form_options:
+                        mapped: false
+                productUnitCode:
+                    form_options:
+                        mapped: false
+                checksum:
+                    form_options:
+                        mapped: false
+            actions:
+                update:
+                    fields:
+                        quoteProduct:
+                            form_options:
+                                mapped: false
+            subresources:
+                quoteProduct:
+                    actions:
+                        update_relationship: false
+
+        Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+            documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product_request.md'
+            fields:
+                value:
+                    form_options:
+                        mapped: false
+                currency:
+                    form_options:
+                        mapped: false
+                productUnitCode:
+                    form_options:
+                        mapped: false
+                checksum:
+                    form_options:
+                        mapped: false
+            actions:
+                update:
+                    fields:
+                        quoteProduct:
+                            form_options:
+                                mapped: false
+                        requestProductItem:
+                            form_options:
+                                mapped: false
+            subresources:
+                quoteProduct:
+                    actions:
+                        update_relationship: false
+                requestProductItem:
+                    actions:
+                        update_relationship: false

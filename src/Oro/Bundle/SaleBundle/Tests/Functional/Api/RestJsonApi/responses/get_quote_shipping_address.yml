@@ -1,0 +1,37 @@
+data:
+    type: quoteshippingaddresses
+    id: '<toString(@sale.quote.1.shipping_address->id)>'
+    attributes:
+        phone: null
+        label: null
+        street: '2413 Capitol Avenue'
+        street2: null
+        city: Romney
+        postalCode: '47981'
+        organization: null
+        customRegion: null
+        namePrefix: null
+        firstName: John
+        middleName: null
+        lastName: Doe
+        nameSuffix: null
+        createdAt: '@sale.quote.1.shipping_address->created->format("Y-m-d\TH:i:s\Z")'
+        updatedAt: '@sale.quote.1.shipping_address->updated->format("Y-m-d\TH:i:s\Z")'
+        validatedAt: null
+    relationships:
+        country:
+            data:
+                type: countries
+                id: '<toString(@country.US->iso2Code)>'
+        region:
+            data:
+                type: regions
+                id: '<toString(@region.US-IN->combinedCode)>'
+        customerAddress:
+            data: null
+        customerUserAddress:
+            data: null
+        quote:
+            data:
+                type: quotes
+                id: '<toString(@sale.quote.1->id)>'

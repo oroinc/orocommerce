@@ -8,27 +8,18 @@ use Oro\Bundle\ProductBundle\Form\Type\QuantityType;
 
 trait QuantityTypeTrait
 {
-    private ?NumberFormatter $formatterService = null;
-
-    private function getFormatterService(): NumberFormatter
-    {
-        if (!$this->formatterService) {
-            $this->formatterService = $this->createMock(NumberFormatter::class);
-            $this->formatterService->expects(self::any())
-                ->method('parseFormattedDecimal')
-                ->willReturnCallback(function ($value) {
-                    return (float)$value;
-                });
-            $this->formatterService->expects(self::any())
-                ->method('formatDecimal')
-                ->willReturnArgument(0);
-        }
-
-        return $this->formatterService;
-    }
-
     private function getQuantityType(): QuantityType
     {
-        return new QuantityType($this->getFormatterService(), Product::class);
+        $numberFormatter = $this->createMock(NumberFormatter::class);
+        $numberFormatter->expects(self::any())
+            ->method('parseFormattedDecimal')
+            ->willReturnCallback(function ($value) {
+                return (float)$value;
+            });
+        $numberFormatter->expects(self::any())
+            ->method('formatDecimal')
+            ->willReturnArgument(0);
+
+        return new QuantityType($numberFormatter, Product::class);
     }
 }

@@ -54,7 +54,7 @@ Can be set to the one of the following values: "system", "parent_localization", 
 
 {@inheritdoc}
 
-Cannot be changed once already set.
+**Cannot be changed once already set.**
 
 **The required field.**
 
@@ -70,7 +70,7 @@ Cannot be changed once already set.
 
 {@inheritdoc}
 
-Cannot be changed once already set.
+**Cannot be changed once already set.**
 
 #### update
 

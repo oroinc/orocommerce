@@ -1,0 +1,109 @@
+data:
+    -
+        type: quoteproductoffers
+        id: '<toString(@sale.quote.1.product-1.offer.1->id)>'
+        attributes:
+            allowIncrements: true
+            quantity: 1
+            productUnitCode: liter
+            value: '1.0000'
+            currency: USD
+        relationships:
+            quoteProduct:
+                data:
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.1.product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: quoteproductoffers
+        id: '<toString(@sale.quote.1.product-1.offer.2->id)>'
+        attributes:
+            allowIncrements: false
+            quantity: 2
+            productUnitCode: bottle
+            value: '2.0000'
+            currency: USD
+        relationships:
+            quoteProduct:
+                data:
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.1.product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.bottle->code)>'
+    -
+        type: quoteproductoffers
+        id: '<toString(@sale.quote.1.product-2.offer.1->id)>'
+        attributes:
+            allowIncrements: false
+            quantity: 3
+            productUnitCode: box
+            value: '3.0000'
+            currency: USD
+        relationships:
+            quoteProduct:
+                data:
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.1.product-2->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.box->code)>'
+    -
+        type: quoteproductoffers
+        id: '<toString(@sale.quote.3.product-1.offer.1->id)>'
+        attributes:
+            allowIncrements: true
+            quantity: 1
+            productUnitCode: liter
+            value: '1.0000'
+            currency: USD
+        relationships:
+            quoteProduct:
+                data:
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.3.product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: quoteproductoffers
+        id: '<toString(@sale.quote.13.product-1.offer.1->id)>'
+        attributes:
+            allowIncrements: false
+            quantity: 1
+            productUnitCode: liter
+            value: '1.0000'
+            currency: USD
+        relationships:
+            quoteProduct:
+                data:
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.13.product-1->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
+    -
+        type: quoteproductoffers
+        id: '<toString(@sale.quote.13.product-2.offer.1->id)>'
+        attributes:
+            allowIncrements: true
+            quantity: 100
+            productUnitCode: box
+            value: '3.0000'
+            currency: USD
+        relationships:
+            quoteProduct:
+                data:
+                    type: quoteproducts
+                    id: '<toString(@sale.quote.13.product-2->id)>'
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.box->code)>'

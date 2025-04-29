@@ -1,0 +1,11 @@
+data:
+    type: rfqproductitems
+    relationships:
+        requestProduct:
+            data:
+                type: rfqproducts
+                id: '<toString(@rfp.request.1.product.1->id)>'
+        productUnit:
+            data:
+                type: productunits
+                id: '<toString(@product_unit.liter->code)>'

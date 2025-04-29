@@ -219,6 +219,12 @@ api:
                 region:
                     actions:
                         update_relationship: false
+                customerAddress:
+                    actions:
+                        update_relationship: false
+                customerUserAddress:
+                    actions:
+                        update_relationship: false
 
         Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order_discount.md'

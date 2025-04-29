@@ -55,40 +55,52 @@ class RequestAdditionalNoteTest extends RestJsonApiTestCase
     {
         $response = $this->options(
             $this->getItemRouteName(),
-            ['entity' => 'rfqadditionalnotes', 'id' => 1]
+            ['entity' => 'rfqadditionalnotes', 'id' => '1']
         );
         self::assertAllowResponseHeader($response, 'OPTIONS, GET');
     }
 
-    /**
-     * @dataProvider notAllowedActionProvider
-     */
-    public function testNotAllowedActions(string $method, string $routeName, array $param = []): void
+    public function testTryToCreate(): void
     {
-        $response = $this->request(
-            $method,
-            $this->getUrl($routeName, array_merge(['entity' => 'rfqadditionalnotes'], $param))
+        $response = $this->post(
+            ['entity' => 'rfqadditionalnotes'],
+            [],
+            [],
+            false
         );
         self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 
-    public function notAllowedActionProvider(): array
+    public function testTryToUpdate(): void
     {
-        return [
-            'create action' => [
-                'method' => 'POST',
-                'routeName' => $this->getListRouteName()
-            ],
-            'update action' => [
-                'method' => 'PATCH',
-                'routeName' => $this->getItemRouteName(),
-                'param' => ['id' => 1]
-            ],
-            'delete action' => [
-                'method' => 'DELETE',
-                'routeName' => $this->getItemRouteName(),
-                'param' => ['id' => 1]
-            ]
-        ];
+        $response = $this->patch(
+            ['entity' => 'rfqadditionalnotes', 'id' => '1'],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDelete(): void
+    {
+        $response = $this->delete(
+            ['entity' => 'rfqadditionalnotes', 'id' => '1'],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
+    }
+
+    public function testTryToDeleteList(): void
+    {
+        $response = $this->cdelete(
+            ['entity' => 'rfqadditionalnotes'],
+            [],
+            [],
+            false
+        );
+        self::assertMethodNotAllowedResponse($response, 'OPTIONS, GET');
     }
 }
