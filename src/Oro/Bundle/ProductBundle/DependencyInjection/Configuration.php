@@ -84,6 +84,7 @@ class Configuration implements ConfigurationInterface
     const SCHEMA_ORG_DESCRIPTION_FIELD = 'schema_org_description_field';
     const SCHEMA_ORG_DEFAULT_DESCRIPTION = 'oro_product_full_description';
     const PRODUCT_TYPES = 'product_types';
+    public const EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW = 'breadcrumbs_exclude_current_on_product_view';
 
     /**
      * {@inheritDoc}
@@ -214,7 +215,11 @@ class Configuration implements ConfigurationInterface
                 static::SCHEMA_ORG_DESCRIPTION_FIELD => [
                     'type' => 'string',
                     'value' => static::SCHEMA_ORG_DEFAULT_DESCRIPTION
-                ]
+                ],
+                self::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW => [
+                    'value' => false,
+                    'type' => 'boolean',
+                ],
             ]
         );
 

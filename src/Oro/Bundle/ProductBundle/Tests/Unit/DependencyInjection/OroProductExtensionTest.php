@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\DependencyInjection;
 
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\DependencyInjection\OroProductExtension;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -85,6 +86,10 @@ class OroProductExtensionTest extends \PHPUnit\Framework\TestCase
                         'product_price_tiers_export_enabled' => ['value' => false, 'scope' => 'app'],
                         'microdata_without_prices_disabled' => ['value' => true, 'scope' => 'app'],
                         'schema_org_description_field' => ['value' => 'oro_product_full_description', 'scope' => 'app'],
+                        Configuration::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW => [
+                            'value' => false,
+                            'scope' => 'app'
+                        ],
                     ]
                 ]
             ],

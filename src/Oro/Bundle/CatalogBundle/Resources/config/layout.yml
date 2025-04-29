@@ -33,6 +33,8 @@ services:
             - '@oro_locale.helper.localization'
             - '@router'
             - '@request_stack'
+        calls:
+            - [ setConfigManager, [ '@oro_config.manager' ] ]
         tags:
             - { name: layout.data_provider, alias: category_breadcrumbs }
 

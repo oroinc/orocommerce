@@ -10,6 +10,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryProvider;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Symfony\Component\HttpFoundation\ParameterBag;
 use Symfony\Component\HttpFoundation\Request;
@@ -29,6 +30,9 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
     private RequestStack|\PHPUnit\Framework\MockObject\MockObject $requestStack;
 
     private CategoryBreadcrumbProvider $categoryBreadcrumbProvider;
+
+    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
+    private $configManager;
 
     protected function setUp(): void
     {
@@ -58,6 +62,9 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             $this->urlGenerator,
             $this->requestStack
         );
+
+        $this->configManager = $this->createMock(ConfigManager::class);
+        $this->categoryBreadcrumbProvider->setConfigManager($this->configManager);
     }
 
     public function testGetItemsRoot(): void
@@ -227,5 +234,100 @@ class CategoryBreadcrumbProviderTest extends \PHPUnit\Framework\TestCase
             ]
         ];
         self::assertEquals($expectedBreadcrumbs, $result);
+    }
+
+    public function testGetItemsForProductListingTrimsLastBreadcrumbWhenConfigEnabled(): void
+    {
+        $category = $this->createMock(Category::class);
+        $collection = new ArrayCollection();
+
+        $category->expects(self::any())->method('getTitles')->willReturn($collection);
+        $category->expects(self::any())->method('getId')->willReturn(42);
+
+        $this->categoryProvider->method('getCategoryPath')->willReturn([$category, $category]);
+        $this->categoryProvider->method('getIncludeSubcategoriesChoice')->willReturn(true);
+        $this->urlGenerator->method('generate')->willReturn('/');
+        $this->localizationHelper->method('getLocalizedValue')->willReturn('Test');
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_catalog.breadcrumbs_exclude_current_on_all_pages', false, false, null, true],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, false],
+            ]);
+
+        $breadcrumbs = $this->categoryBreadcrumbProvider->getItems();
+        self::assertCount(1, $breadcrumbs);
+    }
+
+    public function testGetItemsForProductTrimsLastBreadcrumbWhenConfigEnabled(): void
+    {
+        $category = $this->createMock(Category::class);
+        $collection = new ArrayCollection();
+
+        $category->expects(self::any())->method('getTitles')->willReturn($collection);
+        $category->expects(self::any())->method('getId')->willReturn(42);
+
+        $this->categoryProvider->method('getCategoryPath')->willReturn([$category, $category]);
+        $this->categoryProvider->method('getIncludeSubcategoriesChoice')->willReturn(true);
+        $this->urlGenerator->method('generate')->willReturn('/');
+        $this->localizationHelper->method('getLocalizedValue')->willReturn('Test');
+
+        $request = new Request();
+        $request->attributes = new ParameterBag();
+        $this->requestStack->method('getCurrentRequest')->willReturn($request);
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_product.breadcrumbs_exclude_current_on_product_view', false, false, null, true],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, false],
+            ]);
+
+        $breadcrumbs = $this->categoryBreadcrumbProvider->getItemsForProduct(42, 'Product');
+        self::assertCount(2, $breadcrumbs);
+    }
+
+    public function testGetItemsForProductListingRemovesSingleItemWhenConfigEnabled(): void
+    {
+        $category = $this->createMock(Category::class);
+        $collection = new ArrayCollection();
+
+        $category->expects(self::any())->method('getTitles')->willReturn($collection);
+
+        $this->categoryProvider->method('getCategoryPath')->willReturn([$category]);
+        $this->urlGenerator->method('generate')->willReturn('/');
+        $this->localizationHelper->method('getLocalizedValue')->willReturn('Test');
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_catalog.breadcrumbs_exclude_current_on_all_pages', false, false, null, false],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, true],
+            ]);
+
+        $breadcrumbs = $this->categoryBreadcrumbProvider->getItems();
+        self::assertSame([], $breadcrumbs);
+    }
+
+    public function testGetItemsForProductRemovesSingleItemWhenConfigEnabled(): void
+    {
+        $request = new Request();
+        $request->attributes = new ParameterBag();
+        $this->requestStack->method('getCurrentRequest')->willReturn($request);
+
+        $this->categoryProvider->method('getCategoryPath')->willReturn([]);
+        $this->urlGenerator->method('generate')->willReturn('/');
+        $this->localizationHelper->method('getLocalizedValue')->willReturn('Test');
+
+        $this->configManager->expects(self::any())
+            ->method('get')
+            ->willReturnMap([
+                ['oro_product.breadcrumbs_exclude_current_on_product_view', false, false, null, false],
+                ['oro_catalog.breadcrumbs_remove_single_breadcrumb', false, false, null, true],
+            ]);
+
+        $breadcrumbs = $this->categoryBreadcrumbProvider->getItemsForProduct(null, 'Title');
+        self::assertSame([], $breadcrumbs);
     }
 }

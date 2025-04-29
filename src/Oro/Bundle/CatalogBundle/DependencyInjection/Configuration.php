@@ -14,6 +14,8 @@ class Configuration implements ConfigurationInterface
     const ALL_PRODUCTS_PAGE_ENABLED = 'all_products_page_enabled';
     const CATEGORY_IMAGE_PLACEHOLDER = 'category_image_placeholder';
     const SEARCH_AUTOCOMPLETE_MAX_CATEGORIES = 'search_autocomplete_max_categories';
+    public const EXCLUDE_CURRENT_BREADCRUMB_ON_ALL_PAGES = 'breadcrumbs_exclude_current_on_all_pages';
+    public const REMOVE_SINGLE_BREADCRUMB = 'breadcrumbs_remove_single_breadcrumb';
 
     /**
      * {@inheritDoc}
@@ -31,6 +33,8 @@ class Configuration implements ConfigurationInterface
                 self::ALL_PRODUCTS_PAGE_ENABLED => ['type' => 'boolean', 'value' => false],
                 self::CATEGORY_IMAGE_PLACEHOLDER => ['value' => null],
                 static::SEARCH_AUTOCOMPLETE_MAX_CATEGORIES => ['type' => 'integer', 'value' => 2],
+                self::EXCLUDE_CURRENT_BREADCRUMB_ON_ALL_PAGES => ['value' => false, 'type' => 'boolean'],
+                self::REMOVE_SINGLE_BREADCRUMB => ['value' => false, 'type' => 'boolean'],
             ]
         );
 

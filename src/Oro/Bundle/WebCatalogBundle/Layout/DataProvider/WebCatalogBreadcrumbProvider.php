@@ -3,8 +3,11 @@
 namespace Oro\Bundle\WebCatalogBundle\Layout\DataProvider;
 
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\CatalogBundle\DependencyInjection\Configuration as CatalogConfiguration;
 use Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ProductBundle\DependencyInjection\Configuration as ProductConfiguration;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
@@ -34,6 +37,8 @@ class WebCatalogBreadcrumbProvider
     /** @var CategoryBreadcrumbProvider */
     private $categoryBreadcrumbProvider;
 
+    private ?ConfigManager $configManager = null;
+
     public function __construct(
         ManagerRegistry $doctrine,
         LocalizationHelper $localizationHelper,
@@ -48,17 +53,36 @@ class WebCatalogBreadcrumbProvider
         $this->categoryBreadcrumbProvider = $categoryBreadcrumbProvider;
     }
 
+    public function setConfigManager(ConfigManager $configManager): void
+    {
+        $this->configManager = $configManager;
+    }
+
     /**
      * @return array
      */
     public function getItems()
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (null !== $request) {
-            $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
-            if (null !== $contentVariant) {
-                return $this->getItemsByContentVariant($contentVariant, $request);
+        if (!$request) {
+            return [];
+        }
+
+        $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
+        if ($contentVariant) {
+            $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
+
+            if ($this->shouldBreadcrumbsBeEmpty($breadcrumbs)) {
+                return [];
             }
+
+            if ($this->configManager?->get(
+                CatalogConfiguration::getConfigKeyByName(CatalogConfiguration::EXCLUDE_CURRENT_BREADCRUMB_ON_ALL_PAGES)
+            )) {
+                array_pop($breadcrumbs);
+            }
+
+            return $breadcrumbs;
         }
 
         return $request->query->get('categoryId')
@@ -75,13 +99,27 @@ class WebCatalogBreadcrumbProvider
     public function getItemsForProduct($categoryId, $currentPageTitle)
     {
         $request = $this->requestStack->getCurrentRequest();
-        if (null === $request) {
+        if (!$request) {
             return [];
         }
 
         $contentVariant = $this->requestWebContentVariantProvider->getContentVariant();
-        if (null !== $contentVariant) {
-            return $this->getItems();
+        if ($contentVariant) {
+            $breadcrumbs = $this->getItemsByContentVariant($contentVariant, $request);
+
+            if ($this->shouldBreadcrumbsBeEmpty($breadcrumbs)) {
+                return [];
+            }
+
+            if ($this->configManager?->get(
+                ProductConfiguration::getConfigKeyByName(
+                    ProductConfiguration::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW
+                )
+            )) {
+                array_pop($breadcrumbs);
+            }
+
+            return $breadcrumbs;
         }
 
         $contextUrlAttributes = $request->attributes->get('_context_url_attributes');
@@ -97,7 +135,26 @@ class WebCatalogBreadcrumbProvider
         }
         $breadcrumbs[] = ['label' => $currentPageTitle, 'url' => null];
 
+        if ($this->shouldBreadcrumbsBeEmpty($breadcrumbs)) {
+            return [];
+        }
+
+        if ($this->configManager?->get(
+            ProductConfiguration::getConfigKeyByName(
+                ProductConfiguration::EXCLUDE_CURRENT_BREADCRUMB_ON_PRODUCT_VIEW
+            )
+        )) {
+            array_pop($breadcrumbs);
+        }
+
         return $breadcrumbs;
+    }
+
+    private function shouldBreadcrumbsBeEmpty(array $breadcrumbs): bool
+    {
+        return count($breadcrumbs) === 1 && $this->configManager?->get(
+            CatalogConfiguration::getConfigKeyByName(CatalogConfiguration::REMOVE_SINGLE_BREADCRUMB)
+        );
     }
 
     /**

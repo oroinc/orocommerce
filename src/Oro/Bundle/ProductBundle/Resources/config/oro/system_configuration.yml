@@ -101,6 +101,11 @@ system_configuration:
             title: oro.product.system_configuration.groups.schema_org.title
             description: oro.product.system_configuration.groups.schema_org.description
             description_style: warning
+        product_seo_settings:
+            title: oro.product.system_configuration.groups.product_seo_settings.title
+            icon: fa-search
+        product_seo_breadcrumbs_rendering:
+            title: oro.product.system_configuration.groups.product_seo_breadcrumbs_rendering.title
     fields:
         oro_product.related_products_enabled:
             data_type: boolean
@@ -674,6 +679,13 @@ system_configuration:
                     oro.product.system_configuration.fields.schema_org_description_field.choice.long.label: 'oro_product_full_description'
                     oro.product.system_configuration.fields.schema_org_description_field.choice.short.label: 'oro_product_short_description'
 
+        oro_product.breadcrumbs_exclude_current_on_product_view:
+            data_type: boolean
+            type: Oro\Bundle\ConfigBundle\Form\Type\ConfigCheckbox
+            options:
+                label: oro.product.system_configuration.fields.breadcrumbs_exclude_current_on_product_view.label
+                tooltip: oro.product.system_configuration.fields.breadcrumbs_exclude_current_on_product_view.tooltip
+
     tree:
         system_configuration:
             platform:
@@ -805,6 +817,13 @@ system_configuration:
                                             - oro_product.product_data_export_enabled
                                             - oro_product.product_prices_export_enabled
                                             - oro_product.product_price_tiers_export_enabled
+                            product_seo_settings:
+                                priority: 0
+                                children:
+                                    product_seo_breadcrumbs_rendering:
+                                        children:
+                                            - oro_product.breadcrumbs_exclude_current_on_product_view
+
                     product_inventory:
                         priority: 650
                         children:

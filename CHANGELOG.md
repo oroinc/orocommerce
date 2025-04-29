@@ -112,6 +112,22 @@ The current file describes significant changes in the code that may affect the u
 ### WebsiteSearchBundle
 * Added a new parameter `batchSize` for `Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent`.
 
+#### WebCatalogBundle
+* Dynamically removes the last breadcrumb on product view or listing pages based on configuration.
+* Removes a single breadcrumb if only one is present and the corresponding configuration is enabled.
+* Added configuration options for managing breadcrumbs visibility:
+  - `Exclude Current Page in Breadcrumbs on Product View`
+  - `Exclude Current Page in Breadcrumbs on All Pages`
+  - `Hides the breadcrumbs block entirely when it contains a single item` (it hides a single breadcrumb if it's the only one)
+
+#### CatalogBundle
+* Dynamically removes the last breadcrumb on product view or listing pages based on configuration.
+* Removes a single breadcrumb if only one is present and the corresponding configuration is enabled.
+* Added configuration options for managing breadcrumbs visibility:
+  - `Exclude Current Page in Breadcrumbs on Product View`
+  - `Exclude Current Page in Breadcrumbs on All Pages`
+  - `Hides the breadcrumbs block entirely when it contains a single item` (it hides a single breadcrumb if it's the only one)
+
 ### Changed
 
 #### UPSBundle
