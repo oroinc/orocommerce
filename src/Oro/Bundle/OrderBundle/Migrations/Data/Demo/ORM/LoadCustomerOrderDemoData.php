@@ -7,39 +7,36 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
-use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Provider\OrderStatusesProviderInterface;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
+use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
 use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loading customer order demo data.
+ * Loads demo data for customer orders.
  */
 class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
-    use OrderLineItemsDemoDataTrait;
-
-    private array $countries = [];
-    private array $regions = [];
 
     #[\Override]
     public function getDependencies(): array
@@ -49,18 +46,17 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             LoadCustomerUserDemoData::class,
             LoadPaymentTermDemoData::class,
             LoadPriceListDemoData::class,
+            LoadProductPriceDemoData::class,
             LoadShoppingListDemoData::class,
-            LoadTaxConfigurationDemoData::class,
-            LoadOrderLineItemDemoData::class,
+            LoadTaxConfigurationDemoData::class
         ];
     }
 
-    /**
-     * @param EntityManagerInterface $manager
-     */
     #[\Override]
     public function load(ObjectManager $manager): void
     {
+        /** @var EntityManagerInterface $manager */
+
         $orderMetadata = $manager->getClassMetadata(Order::class);
         $this->disablePrePersistCallback($orderMetadata);
         $this->toggleFeatures(false);
@@ -68,17 +64,9 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
 
         /** @var CustomerUser[] $customerUsers */
         $customerUsers = $manager->getRepository(CustomerUser::class)
-            ->findBy([
-                'emailLowercase' => [
-                    'amandarcole@example.org',
-                    'brandajsanborn@example.org'
-                ]
-            ]);
+            ->findBy(['emailLowercase' => ['amandarcole@example.org', 'brandajsanborn@example.org']]);
 
-        /** @var User $user */
-        $defaultUser = $manager->getRepository(User::class)->findOneBy([]);
-
-        /** @var EnumOptionInterface[] $internalStatuses */
+        /** @var EnumOption[] $internalStatuses */
         $internalStatuses = $manager->getRepository(EnumOption::class)
             ->findBy([
                 'enumCode' => Order::INTERNAL_STATUS_CODE,
@@ -89,41 +77,51 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
                 ]
             ]);
 
+        /** @var Product[] $products */
+        $products = $manager->getRepository(Product::class)->findBy(['type' => Product::TYPE_SIMPLE]);
+
+        /** @var Website $website */
+        $website = $manager->getRepository(Website::class)
+            ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);
+
+        /** @var PaymentTerm $paymentTerm */
         $paymentTerm = $manager->getRepository(PaymentTerm::class)->findOneBy([]);
+
+        /** @var TotalHelper $totalHelper */
+        $totalHelper = $this->container->get('oro_order.order.total.total_helper');
+        /** @var PaymentTermAssociationProvider $paymentTermAccessor */
         $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
-        $website = $this->getWebsite($manager);
 
         $index = 0;
         $timeZone = new \DateTimeZone('UTC');
         foreach ($customerUsers as $customerUser) {
-            /** @var User $user */
-            $user = $customerUser->getOwner() ?: $defaultUser;
-
             foreach ($internalStatuses as $internalStatus) {
-                $order = new Order();
                 $orderAddress = $this->getOrderAddressByCustomer($customerUser, $manager);
-                $randomDateTime = $this->getRandomDateTime();
+                $createdAt = $this->getRandomDateTime();
 
-                $order
-                    ->setInternalStatus($internalStatus)
-                    ->setOwner($user)
-                    ->setPoNumber(sprintf('POSD%03d%03d', $customerUser->getId(), $index))
-                    ->setIdentifier(sprintf('COI%03d%03d', $customerUser->getId(), $index))
-                    ->setCustomer($customerUser->getCustomer())
-                    ->setCustomerUser($customerUser)
-                    ->setOrganization($user->getOrganization())
-                    ->setBillingAddress($orderAddress)
-                    ->setShippingAddress($orderAddress)
-                    ->setWebsite($website)
-                    ->addLineItem($this->getOrderLineItem($manager))
-                    ->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY)
-                    ->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone))
-                    ->setCreatedAt($randomDateTime)
-                    ->setUpdatedAt($randomDateTime);
+                $order = new Order();
+                $order->setInternalStatus($internalStatus);
+                $order->setOwner($customerUser->getOwner());
+                $order->setPoNumber(sprintf('POSD%03d%03d', $customerUser->getId(), $index));
+                $order->setIdentifier(sprintf('COI%03d%03d', $customerUser->getId(), $index));
+                $order->setCustomer($customerUser->getCustomer());
+                $order->setCustomerUser($customerUser);
+                $order->setOrganization($customerUser->getOwner()->getOrganization());
+                $order->setBillingAddress($orderAddress);
+                $order->setShippingAddress($orderAddress);
+                $order->setWebsite($website);
+                $order->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY);
+                $order->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone));
+                $order->setCreatedAt($createdAt);
+                $order->setUpdatedAt(clone $createdAt);
 
                 $paymentTermAccessor->setPaymentTerm($order, $paymentTerm);
 
+                $this->addOrderLineItems($order, $products);
+
                 $manager->persist($order);
+
+                $totalHelper->fill($order);
 
                 $index++;
             }
@@ -134,74 +132,63 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $this->enablePrePersistCallback($orderMetadata);
         $this->toggleFeatures(true);
         $this->toggleListeners(true);
-
-        $this->countries = [];
-        $this->regions = [];
     }
 
     private function getOrderAddressByCustomer(
         CustomerUser $customerUser,
         EntityManagerInterface $manager
     ): OrderAddress {
-        $customerAddresses = $customerUser->getAddresses();
-        $customerAddress = $customerAddresses->first();
+        $customerAddress = $customerUser->getAddresses()->first();
 
         $orderAddress = new OrderAddress();
-
-        if (!$customerAddress) {
-            $orderAddress
-                ->setLabel(uniqid('Label ', true))
-                ->setCountry($this->getCountryByIso2Code($manager, 'US'))
-                ->setCity('Aurora')
-                ->setRegion($this->getRegionByIso2Code($manager, 'US-IL'))
-                ->setStreet('Address')
-                ->setPostalCode(sprintf('%d', random_int(60000, 65000)));
-        } else {
-            $orderAddress
-                ->setLabel($customerAddress->getLabel())
-                ->setCountry($customerAddress->getCountry())
-                ->setCity($customerAddress->getCity())
-                ->setRegion($customerAddress->getRegion())
-                ->setStreet($customerAddress->getStreet())
-                ->setPostalCode($customerAddress->getPostalCode());
-        }
-        $orderAddress->setFirstName($customerUser->getFirstName())
-            ->setLastName($customerUser->getLastName())
-            ->setPhone('1234567890');
+        $orderAddress->setLabel($customerAddress->getLabel());
+        $orderAddress->setCountry($customerAddress->getCountry());
+        $orderAddress->setCity($customerAddress->getCity());
+        $orderAddress->setRegion($customerAddress->getRegion());
+        $orderAddress->setStreet($customerAddress->getStreet());
+        $orderAddress->setPostalCode($customerAddress->getPostalCode());
+        $orderAddress->setFirstName($customerUser->getFirstName());
+        $orderAddress->setLastName($customerUser->getLastName());
+        $orderAddress->setPhone('1234567890');
 
         $manager->persist($orderAddress);
 
         return $orderAddress;
     }
 
-    private function getWebsite(
-        ObjectManager $manager,
-        string $name = LoadWebsiteData::DEFAULT_WEBSITE_NAME
-    ): Website {
-        return $manager->getRepository(Website::class)->findOneBy(['name' => $name]);
+    private function addOrderLineItems(Order $order, array $products): void
+    {
+        $numberOfLineItem = random_int(1, 5);
+        for ($i = 0; $i < $numberOfLineItem; $i++) {
+            /** @var Product $product */
+            $product = $products[array_rand($products)];
+            $units = $product->getAvailableUnits();
+            $unit = $units ? $units[array_rand($units)] : null;
+
+            $orderLineItem = new OrderLineItem();
+            $orderLineItem->setFromExternalSource((bool)random_int(0, 1));
+            $orderLineItem->setProduct($product);
+            $orderLineItem->setProductName((string)$product->getName());
+            $orderLineItem->setProductUnit($unit);
+            $orderLineItem->setQuantity(random_int(1, 13));
+            $orderLineItem->setPrice(Price::create(random_int(10, 1000), $order->getCurrency()));
+
+            $order->addLineItem($orderLineItem);
+        }
     }
 
-    private function getCountryByIso2Code(EntityManagerInterface $manager, string $iso2Code): ?Country
+    private function getRandomDateTime(): \DateTime
     {
-        if (!array_key_exists($iso2Code, $this->countries)) {
-            $this->countries[$iso2Code] = $manager->getReference(Country::class, $iso2Code);
-        }
-
-        return $this->countries[$iso2Code];
-    }
-
-    private function getRegionByIso2Code(EntityManagerInterface $manager, string $code): ?Region
-    {
-        if (!array_key_exists($code, $this->regions)) {
-            $this->regions[$code] = $manager->getReference(Region::class, $code);
-        }
-
-        return $this->regions[$code];
+        return new \DateTime(
+            \sprintf('-%sday %s:%s', random_int(0, 7), random_int(0, 23), random_int(0, 59)),
+            new \DateTimeZone('UTC')
+        );
     }
 
     private function enablePrePersistCallback(ClassMetadata $classMetadata): void
     {
         $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        array_unshift($lifecycleCallbacks['prePersist'], 'updateTotalDiscounts');
         array_unshift($lifecycleCallbacks['prePersist'], 'prePersist');
         $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
     }
@@ -211,32 +198,9 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
         $lifecycleCallbacks['prePersist'] = array_diff(
             $lifecycleCallbacks['prePersist'],
-            [
-                'prePersist',
-                'updateTotalDiscounts'
-            ]
+            ['prePersist', 'updateTotalDiscounts']
         );
-        $lifecycleCallbacks['preUpdate'] = array_diff(
-            $lifecycleCallbacks['preUpdate'],
-            [
-                'updateTotalDiscounts'
-            ]
-        );
-
         $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
-    }
-
-    private function getRandomDateTime(): \DateTime
-    {
-        return new \DateTime(
-            sprintf(
-                '-%sday %s:%s',
-                random_int(0, 7),
-                random_int(0, 23),
-                random_int(0, 59)
-            ),
-            new \DateTimeZone('UTC')
-        );
     }
 
     private function toggleFeatures(?bool $enable): void

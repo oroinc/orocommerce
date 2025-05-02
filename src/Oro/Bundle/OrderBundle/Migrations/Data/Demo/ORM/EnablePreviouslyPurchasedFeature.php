@@ -10,7 +10,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Class EnablePreviouslyPurchasedFeature just enable Previously Purchased feature on demo instance
+ * Enables "Previously Purchased" feature on demo instance.
  */
 class EnablePreviouslyPurchasedFeature extends AbstractFixture implements
     DependentFixtureInterface,
@@ -26,9 +26,8 @@ class EnablePreviouslyPurchasedFeature extends AbstractFixture implements
         ];
     }
 
-
     #[\Override]
-    public function load(ObjectManager $manager)
+    public function load(ObjectManager $manager): void
     {
         $configManager = $this->container->get('oro_config.global');
         $configManager->set(OrderConfig::getConfigKey(OrderConfig::CONFIG_KEY_ENABLE_PURCHASE_HISTORY), true);

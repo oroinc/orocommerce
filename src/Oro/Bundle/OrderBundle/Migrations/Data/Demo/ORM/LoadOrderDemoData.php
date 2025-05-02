@@ -4,25 +4,38 @@ namespace Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
+use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData;
 use Oro\Bundle\EntityExtendBundle\Entity\EnumOption;
-use Oro\Bundle\EntityExtendBundle\Entity\EnumOptionInterface;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
-use Oro\Bundle\OrderBundle\Migrations\Data\Demo\ORM\Trait\OrderLineItemsDemoDataTrait;
+use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
+use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
 use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData;
-use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
+use Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadProductPriceDemoData;
+use Oro\Bundle\PricingBundle\Model\AbstractPriceListTreeHandler;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Model\ProductPriceCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Model\ProductPriceScopeCriteriaFactoryInterface;
+use Oro\Bundle\PricingBundle\Provider\ProductPriceProviderInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData;
 use Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM\LoadTaxConfigurationDemoData;
@@ -32,18 +45,22 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loading order demo data.
+ * Loads demo data for orders.
  */
 class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
-    use OrderLineItemsDemoDataTrait;
 
     private array $countries = [];
     private array $regions = [];
+    private array $users = [];
+    private array $orderInternalStatuses = [];
+    private array $orderShippingStatuses = [];
     private array $paymentTerms = [];
     private array $websites = [];
-    private array $metadata = [];
+    private array $lineItemData = [];
+    private array $products = [];
+    private array $priceLists = [];
 
     #[\Override]
     public function getDependencies(): array
@@ -53,88 +70,76 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             LoadCustomerUserDemoData::class,
             LoadPaymentTermDemoData::class,
             LoadPriceListDemoData::class,
+            LoadProductPriceDemoData::class,
             LoadShoppingListDemoData::class,
-            LoadTaxConfigurationDemoData::class,
-            LoadProductDemoData::class,
+            LoadTaxConfigurationDemoData::class
         ];
     }
 
     #[\Override]
     public function load(ObjectManager $manager): void
     {
+        /** @var EntityManagerInterface $manager */
+
         $this->toggleFeatures(false);
         $this->toggleListeners(false);
-        $this->disableLifecycleCallbacks($manager);
+        $this->disablePrePersistCallback($manager->getClassMetadata(Order::class));
 
-        $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
+        /** @var User $user */
+        $user = $manager->getRepository(User::class)->findOneBy([]);
+
+        /** @var CustomerUser $customerUser */
+        $customerUser = $manager->getRepository(CustomerUser::class)->findOneBy(['isGuest' => false]);
+        /** @var CustomerUser $guestCustomerUser */
+        $guestCustomerUser = $manager->getRepository(CustomerUser::class)->findOneBy(['isGuest' => true]);
 
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy([]);
 
-        $handler = fopen($this->getDataFilePath(), 'r');
-        $headers = fgetcsv($handler, 1000, ',');
-
-        /** @var EntityRepository $userRepository */
-        $userRepository = $manager->getRepository(User::class);
-
-        /** @var User $user */
-        $user = $userRepository->findOneBy([]);
-
+        /** @var RateConverterInterface $rateConverter */
         $rateConverter = $this->container->get('oro_currency.converter.rate');
+        /** @var TotalHelper $totalHelper */
+        $totalHelper = $this->container->get('oro_order.order.total.total_helper');
+        /** @var PaymentTermAssociationProvider $paymentTermAccessor */
+        $paymentTermAccessor = $this->container->get('oro_payment_term.provider.payment_term_association');
 
-        $regularCustomerUser = $this->getCustomerUser($manager);
-        $guestCustomerUser = $this->getCustomerUser($manager, true);
-
+        $handler = fopen($this->getDataFilePath('@OroOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv'), 'r');
+        $headers = fgetcsv($handler, 1000, ',');
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            /** @var CustomerUser $customerUser */
-            $customerUser = $row['isGuest'] ? $guestCustomerUser : $regularCustomerUser;
+            $customerUser = $row['isGuest'] ? $guestCustomerUser : $customerUser;
+            $createdAt = $this->getRandomDateTime();
+
             $order = new Order();
-
-            $createdByUser = null;
-            if (!empty($row['createdBy'])) {
-                /** @var User $user */
-                $createdByUser = $userRepository->findOneBy(['username' => $row['createdBy']]);
-            }
-
-            $billingAddress = $this->getBillingAddressData($row, $customerUser);
-            $shippingAddress = $this->getShippingAddressData($row, $customerUser);
-
-            $total = MultiCurrency::create($row['total'], $row['currency']);
-            $baseTotal = $rateConverter->getBaseCurrencyAmount($total);
-            $total->setBaseCurrencyValue($baseTotal);
-
-            $subtotal = MultiCurrency::create($row['subtotal'], $row['currency']);
-            $baseSubtotal = $rateConverter->getBaseCurrencyAmount($subtotal);
-            $subtotal->setBaseCurrencyValue($baseSubtotal);
-
-            $randomDateTime = $this->getRandomDateTime();
-
-            $order
-                ->setOwner($user)
-                ->setCreatedBy($createdByUser)
-                ->setCustomer($customerUser->getCustomer())
-                ->setIdentifier($row['identifier'])
-                ->setCustomerUser($customerUser)
-                ->setOrganization($user->getOrganization())
-                ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
-                ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
-                ->setWebsite($this->getWebsite($manager, $row['websiteName']))
-                ->setShipUntil(new \DateTime())
-                ->setCurrency($row['currency'])
-                ->setPoNumber($row['poNumber'])
-                ->setTotalObject($total)
-                ->addLineItem($this->getOrderLineItem($manager))
-                ->setSubtotalObject($subtotal)
-                ->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager))
-                ->setShippingStatus($this->getOrderShippingStatusByName($row['shippingStatus'], $manager))
-                ->setCreatedAt($randomDateTime)
-                ->setUpdatedAt($randomDateTime);
+            $order->setOwner($user);
+            $order->setCreatedBy(!empty($row['createdBy']) ? $this->getUser($row['createdBy'], $manager) : null);
+            $order->setCustomer($customerUser->getCustomer());
+            $order->setIdentifier($row['identifier']);
+            $order->setCustomerUser($customerUser);
+            $order->setOrganization($user->getOrganization());
+            $order->setBillingAddress(
+                $this->createOrderAddress($manager, $this->getBillingAddressData($row, $customerUser))
+            );
+            $order->setShippingAddress(
+                $this->createOrderAddress($manager, $this->getShippingAddressData($row, $customerUser))
+            );
+            $order->setWebsite($this->getWebsite($manager, $row['websiteName']));
+            $order->setShipUntil(new \DateTime());
+            $order->setCurrency($row['currency']);
+            $order->setPoNumber($row['poNumber']);
+            $order->setTotalObject($this->createMultiCurrency($row['total'], $row['currency'], $rateConverter));
+            $order->setSubtotalObject($this->createMultiCurrency($row['subtotal'], $row['currency'], $rateConverter));
+            $order->setInternalStatus($this->getOrderInternalStatusByName($row['internalStatus'], $manager));
+            $order->setShippingStatus($this->getOrderShippingStatusByName($row['shippingStatus'], $manager));
+            $order->setCreatedAt($createdAt);
+            $order->setUpdatedAt(clone $createdAt);
 
             $paymentTermAccessor->setPaymentTerm($order, $this->getPaymentTerm($manager, $row['paymentTerm']));
 
-            if ($row['sourceEntityClass'] === 'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList') {
+            $this->addOrderLineItems($order, $manager);
+
+            if (ShoppingList::class === $row['sourceEntityClass']) {
                 $order->setSourceEntityClass($row['sourceEntityClass']);
                 $order->setSourceEntityId($shoppingList->getId());
             }
@@ -144,22 +149,33 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             }
 
             $manager->persist($order);
-        }
 
+            $totalHelper->fill($order);
+        }
         fclose($handler);
 
         $manager->flush();
 
-        $this->clearState();
         $this->toggleFeatures(true);
         $this->toggleListeners(true);
-        $this->enableLifecycleCallbacks($manager);
+        $this->enablePrePersistCallback($manager->getClassMetadata(Order::class));
+
+        $this->countries = [];
+        $this->regions = [];
+        $this->users = [];
+        $this->orderInternalStatuses = [];
+        $this->orderShippingStatuses = [];
+        $this->paymentTerms = [];
+        $this->websites = [];
+        $this->lineItemData = [];
+        $this->products = [];
+        $this->priceLists = [];
     }
 
-    private function getDataFilePath(): string
+    private function getDataFilePath(string $file): string
     {
         $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroOrderBundle/Migrations/Data/Demo/ORM/data/orders.csv');
+        $filePath = $locator->locate($file);
         if (\is_array($filePath)) {
             $filePath = current($filePath);
         }
@@ -177,7 +193,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             'street' => $row['billingAddressStreet'],
             'postalCode' => $row['billingAddressPostalCode'],
             'firstName' => $customerUser->getFirstName(),
-            'lastName' => $customerUser->getLastName(),
+            'lastName' => $customerUser->getLastName()
         ];
     }
 
@@ -191,51 +207,174 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
             'street' => $row['shippingAddressStreet'],
             'postalCode' => $row['shippingAddressPostalCode'],
             'firstName' => $customerUser->getFirstName(),
-            'lastName' => $customerUser->getLastName(),
+            'lastName' => $customerUser->getLastName()
         ];
     }
 
-    private function createOrderAddress(ObjectManager $manager, array $address): OrderAddress
+    private function createOrderAddress(EntityManagerInterface $manager, array $address): OrderAddress
     {
         $orderAddress = new OrderAddress();
-        $orderAddress
-            ->setLabel($address['label'])
-            ->setCountry($this->getCountryByIso2Code($manager, $address['country']))
-            ->setCity($address['city'])
-            ->setRegion($this->getRegionByIso2Code($manager, $address['region']))
-            ->setStreet($address['street'])
-            ->setPostalCode($address['postalCode'])
-            ->setFirstName($address['firstName'])
-            ->setLastName($address['lastName'])
-            ->setPhone('1234567890');
+        $orderAddress->setLabel($address['label']);
+        $orderAddress->setCountry($this->getCountryByIso2Code($manager, $address['country']));
+        $orderAddress->setCity($address['city']);
+        $orderAddress->setRegion($this->getRegionByIso2Code($manager, $address['region']));
+        $orderAddress->setStreet($address['street']);
+        $orderAddress->setPostalCode($address['postalCode']);
+        $orderAddress->setFirstName($address['firstName']);
+        $orderAddress->setLastName($address['lastName']);
+        $orderAddress->setPhone('1234567890');
 
         $manager->persist($orderAddress);
 
         return $orderAddress;
     }
 
-    private function getOrderInternalStatusByName(string $name, ObjectManager $manager): ?EnumOptionInterface
+    private function addOrderLineItems(Order $order, EntityManagerInterface $manager): void
     {
-        return $manager->getRepository(EnumOption::class)
-            ->findOneBy(['id' => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $name)]);
+        $priceTypes = [PriceTypeAwareInterface::PRICE_TYPE_UNIT, PriceTypeAwareInterface::PRICE_TYPE_BUNDLED];
+        $lineItemData = $this->getLineItemData();
+        foreach ($lineItemData as $row) {
+            if ($order->getIdentifier() !== $row['orderIdentifier']) {
+                continue;
+            }
+
+            $product = $this->getProduct($row['productSku'], $manager);
+            /** @var ProductUnit $productUnit */
+            $productUnit = $manager->getReference(ProductUnit::class, $row['productUnitCode']);
+            $quantity = empty($row['freeFormProduct']) ? mt_rand(1, 50) : 1;
+
+            $priceList = $this->getPriceList($order->getWebsite(), $order->getCustomer());
+            $price = null !== $priceList
+                ? $this->getPrice($product, $productUnit, $quantity, $order->getCurrency(), $priceList, $order)
+                : Price::create(mt_rand(10, 1000), $order->getCurrency());
+
+            $orderLineItem = new OrderLineItem();
+            $orderLineItem->setFromExternalSource(mt_rand(0, 1));
+            $orderLineItem->setProduct($product);
+            $orderLineItem->setProductName($product->getName());
+            $orderLineItem->setFreeFormProduct(null);
+            $orderLineItem->setProductUnit($productUnit);
+            $orderLineItem->setQuantity($quantity);
+            $orderLineItem->setPriceType($priceTypes[array_rand($priceTypes)]);
+            $orderLineItem->setPrice($price);
+            $orderLineItem->setShipBy(!empty($row['shipBy']) ? new \DateTime($row['shipBy']) : null);
+            $orderLineItem->setComment($row['comment']);
+
+            $order->addLineItem($orderLineItem);
+        }
     }
 
-    private function getOrderShippingStatusByName(?string $name, ObjectManager $manager): ?EnumOptionInterface
+    private function getLineItemData(): array
+    {
+        if (empty($this->lineItemData)) {
+            $handler = fopen(
+                $this->getDataFilePath('@OroOrderBundle/Migrations/Data/Demo/ORM/data/order-line-items.csv'),
+                'r'
+            );
+            $headers = fgetcsv($handler, 1000, ',');
+            while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+                $this->lineItemData[] = array_combine($headers, array_values($data));
+            }
+            fclose($handler);
+        }
+
+        return $this->lineItemData;
+    }
+
+    private function getProduct(string $sku, ObjectManager $manager): Product
+    {
+        if (!isset($this->products[$sku])) {
+            $this->products[$sku] = $manager->getRepository(Product::class)->findOneBy(['sku' => $sku]);
+        }
+
+        return $this->products[$sku];
+    }
+
+    private function getPriceList(Website $website, ?Customer $customer): ?BasePriceList
+    {
+        $key = \sprintf('%d|%d', $website->getId(), $customer?->getId());
+        if (!\array_key_exists($key, $this->priceLists)) {
+            /** @var AbstractPriceListTreeHandler $priceListTreeHandler */
+            $priceListTreeHandler = $this->container->get('oro_pricing.model.price_list_tree_handler');
+            $this->priceLists[$key] = $priceListTreeHandler->getPriceList($customer, $website);
+        }
+
+        return $this->priceLists[$key];
+    }
+
+    private function getPrice(
+        Product $product,
+        ProductUnit $productUnit,
+        int $quantity,
+        string $currency,
+        BasePriceList $priceList,
+        Order $order
+    ): Price {
+        /** @var ProductPriceCriteriaFactoryInterface $productPriceCriteriaFactory */
+        $productPriceCriteriaFactory = $this->container->get('oro_pricing.product_price_criteria_factory');
+        /** @var ProductPriceCriteria $productPriceCriteria */
+        $productPriceCriteria = $productPriceCriteriaFactory->create($product, $productUnit, $quantity, $currency);
+        $identifier = $productPriceCriteria->getIdentifier();
+
+        $priceListId = $priceList->getId();
+        if (!isset($this->prices[$priceListId][$identifier])) {
+            /** @var ProductPriceScopeCriteriaFactoryInterface $scopeCriteriaFactory */
+            $scopeCriteriaFactory = $this->container->get('oro_pricing.model.product_price_scope_criteria_factory');
+            $searchScope = $scopeCriteriaFactory->createByContext($order);
+            /** @var ProductPriceProviderInterface $productPriceProvider */
+            $productPriceProvider = $this->container->get('oro_pricing.provider.product_price');
+            $prices = $productPriceProvider->getMatchedPrices([$productPriceCriteria], $searchScope);
+            $this->prices[$priceListId][$identifier] = $prices[$identifier];
+        }
+
+        return $this->prices[$priceListId][$identifier] ?? Price::create(mt_rand(10, 1000), $currency);
+    }
+
+    private function createMultiCurrency(
+        string $value,
+        string $currency,
+        RateConverterInterface $rateConverter
+    ): MultiCurrency {
+        $result = MultiCurrency::create($value, $currency);
+        $result->setBaseCurrencyValue($rateConverter->getBaseCurrencyAmount($result));
+
+        return $result;
+    }
+
+    private function getUser(string $username, ObjectManager $manager): ?User
+    {
+        if (!\array_key_exists($username, $this->users)) {
+            $this->users[$username] = $manager->getRepository(User::class)->findOneBy(['username' => $username]);
+        }
+
+        return $this->users[$username];
+    }
+
+    private function getOrderInternalStatusByName(string $name, ObjectManager $manager): EnumOption
+    {
+        if (!isset($this->orderInternalStatuses[$name])) {
+            $this->orderInternalStatuses[$name] = $manager->getRepository(EnumOption::class)
+                ->findOneBy(['id' => ExtendHelper::buildEnumOptionId(Order::INTERNAL_STATUS_CODE, $name)]);
+        }
+
+        return $this->orderInternalStatuses[$name];
+    }
+
+    private function getOrderShippingStatusByName(?string $name, ObjectManager $manager): ?EnumOption
     {
         if (!$name) {
             return null;
         }
 
-        return $manager->getRepository(EnumOption::class)
-            ->findOneBy(['id' => ExtendHelper::buildEnumOptionId(Order::SHIPPING_STATUS_CODE, $name)]);
+        if (!isset($this->orderShippingStatuses[$name])) {
+            $this->orderShippingStatuses[$name] = $manager->getRepository(EnumOption::class)
+                ->findOneBy(['id' => ExtendHelper::buildEnumOptionId(Order::SHIPPING_STATUS_CODE, $name)]);
+        }
+
+        return $this->orderShippingStatuses[$name];
     }
 
-    private function getCustomerUser(ObjectManager $manager, bool $isGuest = false): ?CustomerUser
-    {
-        return $manager->getRepository(CustomerUser::class)->findOneBy(['isGuest' => $isGuest]);
-    }
-
-    private function getCountryByIso2Code(ObjectManager $manager, string $iso2Code): ?Country
+    private function getCountryByIso2Code(EntityManagerInterface $manager, string $iso2Code): ?Country
     {
         if (!\array_key_exists($iso2Code, $this->countries)) {
             $this->countries[$iso2Code] = $manager->getReference(Country::class, $iso2Code);
@@ -244,7 +383,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->countries[$iso2Code];
     }
 
-    private function getRegionByIso2Code(ObjectManager $manager, string $code): ?Region
+    private function getRegionByIso2Code(EntityManagerInterface $manager, string $code): ?Region
     {
         if (!\array_key_exists($code, $this->regions)) {
             $this->regions[$code] = $manager->getReference(Region::class, $code);
@@ -273,44 +412,30 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         return $this->websites[$name];
     }
 
-    private function enableLifecycleCallbacks(ObjectManager $manager): void
-    {
-        $orderMetadata = $this->getClassMetadata($manager, Order::class);
-
-        $lifecycleCallbacks = $orderMetadata->lifecycleCallbacks;
-        array_unshift($lifecycleCallbacks['prePersist'], 'prePersist');
-        $orderMetadata->setLifecycleCallbacks($lifecycleCallbacks);
-    }
-
-    private function disableLifecycleCallbacks(ObjectManager $manager): void
-    {
-        $orderMetadata = $this->getClassMetadata($manager, Order::class);
-
-        $lifecycleCallbacks = $orderMetadata->lifecycleCallbacks;
-        $lifecycleCallbacks['prePersist'] = array_diff($lifecycleCallbacks['prePersist'], ['prePersist']);
-        $orderMetadata->setLifecycleCallbacks($lifecycleCallbacks);
-    }
-
-    private function getClassMetadata(ObjectManager $manager, string $className): ClassMetadata
-    {
-        if (!isset($this->metadata[$className])) {
-            $this->metadata[$className] = $manager->getClassMetadata($className);
-        }
-
-        return $this->metadata[$className];
-    }
-
     private function getRandomDateTime(): \DateTime
     {
         return new \DateTime(
-            \sprintf(
-                '-%sday %s:%s',
-                \random_int(0, 270),
-                \random_int(0, 23),
-                \random_int(0, 59)
-            ),
+            \sprintf('-%sday %s:%s', random_int(0, 270), random_int(0, 23), random_int(0, 59)),
             new \DateTimeZone('UTC')
         );
+    }
+
+    private function enablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        array_unshift($lifecycleCallbacks['prePersist'], 'updateTotalDiscounts');
+        array_unshift($lifecycleCallbacks['prePersist'], 'prePersist');
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
+    }
+
+    private function disablePrePersistCallback(ClassMetadata $classMetadata): void
+    {
+        $lifecycleCallbacks = $classMetadata->lifecycleCallbacks;
+        $lifecycleCallbacks['prePersist'] = array_diff(
+            $lifecycleCallbacks['prePersist'],
+            ['prePersist', 'updateTotalDiscounts']
+        );
+        $classMetadata->setLifecycleCallbacks($lifecycleCallbacks);
     }
 
     private function toggleFeatures(?bool $enable): void
@@ -328,15 +453,5 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         } else {
             $listenerManager->disableListener('oro_order.order.listener.orm.order_shipping_status_listener');
         }
-    }
-
-    private function clearState(): void
-    {
-        $this->countries = [];
-        $this->regions = [];
-        $this->paymentTerms = [];
-        $this->websites = [];
-        $this->products = [];
-        $this->metadata = [];
     }
 }
