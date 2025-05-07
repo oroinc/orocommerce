@@ -7,6 +7,7 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\AttributeBlockType
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ProductCollectionCompilerPass;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\TwigSandboxConfigurationPass;
 use Oro\Component\DependencyInjection\Compiler\PriorityNamedTaggedServiceCompilerPass;
+use Oro\Component\DependencyInjection\Compiler\PriorityTaggedLocatorCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -21,6 +22,11 @@ class OroProductBundle extends Bundle
             'oro_product.component_processor.registry',
             'oro_product.quick_add_processor',
             'processor_name'
+        ));
+        $container->addCompilerPass(new PriorityTaggedLocatorCompilerPass(
+            'oro_product.data_provider.schema_org_product_description',
+            'oro_product.description_provider',
+            'key'
         ));
         $container->addCompilerPass(new TwigSandboxConfigurationPass());
         $container->addCompilerPass(new EntityFallbackFieldsStoragePass([

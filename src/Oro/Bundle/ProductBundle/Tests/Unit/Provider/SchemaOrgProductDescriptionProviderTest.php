@@ -11,6 +11,7 @@ use Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionProvider;
 use Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionProviderInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as ProductStub;
 use PHPUnit\Framework\MockObject\MockObject;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 class SchemaOrgProductDescriptionProviderTest extends \PHPUnit\Framework\TestCase
 {
@@ -22,10 +23,14 @@ class SchemaOrgProductDescriptionProviderTest extends \PHPUnit\Framework\TestCas
     #[\Override]
     protected function setUp(): void
     {
-        $configManager = $this->createMock(ConfigManager::class);
+        $productDescriptionProviders = new ServiceLocator([
+            self::CONFIGURATION_OPTION => function () {
+                return $this->getDescriptionProvider();
+            }
+        ]);
 
-        $configManager
-            ->expects(self::any())
+        $configManager = $this->createMock(ConfigManager::class);
+        $configManager->expects(self::any())
             ->method('get')
             ->with(
                 Configuration::getConfigKeyByName(Configuration::SCHEMA_ORG_DESCRIPTION_FIELD),
@@ -36,21 +41,8 @@ class SchemaOrgProductDescriptionProviderTest extends \PHPUnit\Framework\TestCas
             ->willReturn(self::CONFIGURATION_OPTION);
 
         $this->productDescriptionProvider = new SchemaOrgProductDescriptionProvider(
-            $configManager,
-            [
-                self::CONFIGURATION_OPTION => $this->getDescriptionProvider(),
-            ]
-        );
-    }
-
-    public function testGetDescription(): void
-    {
-        self::assertEquals(
-            $this->getProductDescription()->getText(),
-            $this->productDescriptionProvider->getDescription(
-                $this->getProduct(),
-                new LocalizationStub(1)
-            )
+            $productDescriptionProviders,
+            $configManager
         );
     }
 
@@ -75,13 +67,22 @@ class SchemaOrgProductDescriptionProviderTest extends \PHPUnit\Framework\TestCas
     private function getDescriptionProvider(): SchemaOrgProductDescriptionProviderInterface|MockObject
     {
         $provider = $this->createMock(SchemaOrgProductDescriptionProviderInterface::class);
-
-        $provider
-            ->expects(self::any())
+        $provider->expects(self::any())
             ->method('getDescription')
             ->with($this->getProduct(), new LocalizationStub(1))
             ->willReturn(self::PRODUCT_DESCRIPTION);
 
         return $provider;
+    }
+
+    public function testGetDescription(): void
+    {
+        self::assertEquals(
+            $this->getProductDescription()->getText(),
+            $this->productDescriptionProvider->getDescription(
+                $this->getProduct(),
+                new LocalizationStub(1)
+            )
+        );
     }
 }

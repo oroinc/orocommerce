@@ -2038,8 +2038,8 @@ services:
     oro_product.data_provider.schema_org_product_description:
         class: 'Oro\Bundle\ProductBundle\Provider\SchemaOrgProductDescriptionProvider'
         arguments:
+            - !abstract '$productDescriptionProviders defined in Oro\Bundle\ProductBundle\OroProductBundle'
             - '@oro_config.manager'
-            - !tagged_iterator { tag: oro_product.description_provider, index_by: 'key' }
 
     oro_product.event_listener.website_search_description_schema_org_index:
         class: 'Oro\Bundle\ProductBundle\EventListener\WebsiteSearchProductIndexerSchemaOrgListener'

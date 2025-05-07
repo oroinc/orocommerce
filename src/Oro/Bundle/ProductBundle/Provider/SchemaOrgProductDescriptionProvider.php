@@ -6,34 +6,17 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Psr\Container\ContainerInterface;
 
 /**
  * Provides the product description from the inner providers taking into account current system configuration.
  */
 class SchemaOrgProductDescriptionProvider implements SchemaOrgProductDescriptionProviderInterface
 {
-    private ConfigManager $configManager;
-
-    /**
-     * @var array<string, SchemaOrgProductDescriptionProviderInterface>
-     */
-    private array $productDescriptionProviders;
-
-    /**
-     * @param ConfigManager $configManager
-     * @param iterable<string, SchemaOrgProductDescriptionProviderInterface> $productDescriptionProviders
-     */
     public function __construct(
-        ConfigManager $configManager,
-        iterable $productDescriptionProviders
+        private readonly ContainerInterface $productDescriptionProviders,
+        private readonly ConfigManager $configManager
     ) {
-        $this->configManager = $configManager;
-
-        if ($productDescriptionProviders instanceof \Traversable) {
-            $productDescriptionProviders = iterator_to_array($productDescriptionProviders);
-        }
-
-        $this->productDescriptionProviders = $productDescriptionProviders;
     }
 
     #[\Override]
@@ -42,18 +25,22 @@ class SchemaOrgProductDescriptionProvider implements SchemaOrgProductDescription
         ?Localization $localization = null,
         ?object $scopeIdentifier = null
     ): string {
-        $option = $this->getSchemaOrgSettings($scopeIdentifier);
-
-        return $this->productDescriptionProviders[$option]->getDescription($product, $localization, $scopeIdentifier);
+        return $this->getProductDescriptionProviders($this->getSchemaOrgSettings($scopeIdentifier))
+            ->getDescription($product, $localization, $scopeIdentifier);
     }
 
     private function getSchemaOrgSettings(?object $scopeIdentifier): string
     {
-        return (string) $this->configManager->get(
+        return (string)$this->configManager->get(
             Configuration::getConfigKeyByName(Configuration::SCHEMA_ORG_DESCRIPTION_FIELD),
             false,
             false,
             $scopeIdentifier
         );
+    }
+
+    private function getProductDescriptionProviders(string $option): SchemaOrgProductDescriptionProviderInterface
+    {
+        return $this->productDescriptionProviders->get($option);
     }
 }

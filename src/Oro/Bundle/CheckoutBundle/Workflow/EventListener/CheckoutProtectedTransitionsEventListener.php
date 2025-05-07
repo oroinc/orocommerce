@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Workflow\EventListener;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\AddCheckoutStartToCaptchaProtected;
 use Oro\Bundle\FormBundle\Captcha\CaptchaServiceRegistry;
 use Oro\Bundle\FormBundle\Captcha\CaptchaSettingsProvider;
 use Oro\Bundle\FormBundle\Form\Type\CaptchaType;
@@ -110,7 +109,7 @@ class CheckoutProtectedTransitionsEventListener
             return false;
         }
 
-        if (!$this->captchaSettingsProvider->isFormProtected(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)) {
+        if (!$this->captchaSettingsProvider->isFormProtected('oro_workflow_checkout_start')) {
             return false;
         }
 

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Workflow\EventListener;
 
-use Oro\Bundle\CheckoutBundle\DependencyInjection\Compiler\AddCheckoutStartToCaptchaProtected;
 use Oro\Bundle\CheckoutBundle\Workflow\EventListener\CheckoutProtectedTransitionsEventListener;
 use Oro\Bundle\FormBundle\Captcha\CaptchaServiceInterface;
 use Oro\Bundle\FormBundle\Captcha\CaptchaServiceRegistry;
@@ -25,11 +24,12 @@ use Symfony\Contracts\Translation\TranslatorInterface;
  */
 class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 {
-    private CaptchaSettingsProvider|MockObject $captchaSettingsProvider;
-    private CaptchaServiceRegistry|MockObject $captchaServiceRegistry;
-    private TranslatorInterface|MockObject $translator;
+    private CaptchaSettingsProvider&MockObject $captchaSettingsProvider;
+    private CaptchaServiceRegistry&MockObject $captchaServiceRegistry;
+    private TranslatorInterface&MockObject $translator;
     private CheckoutProtectedTransitionsEventListener $listener;
 
+    #[\Override]
     protected function setUp(): void
     {
         $this->captchaSettingsProvider = $this->createMock(CaptchaSettingsProvider::class);
@@ -109,7 +109,7 @@ class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 
         $this->captchaSettingsProvider->expects($this->once())
             ->method('isFormProtected')
-            ->with(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)
+            ->with('oro_workflow_checkout_start')
             ->willReturn(false);
 
         $this->listener->onPreGuard($event);
@@ -136,7 +136,7 @@ class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 
         $this->captchaSettingsProvider->expects($this->once())
             ->method('isFormProtected')
-            ->with(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)
+            ->with('oro_workflow_checkout_start')
             ->willReturn(true);
 
         $this->listener->onPreGuard($event);
@@ -167,7 +167,7 @@ class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 
         $this->captchaSettingsProvider->expects($this->once())
             ->method('isFormProtected')
-            ->with(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)
+            ->with('oro_workflow_checkout_start')
             ->willReturn(true);
 
         $captchaService = $this->createMock(CaptchaServiceInterface::class);
@@ -208,7 +208,7 @@ class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 
         $this->captchaSettingsProvider->expects($this->once())
             ->method('isFormProtected')
-            ->with(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)
+            ->with('oro_workflow_checkout_start')
             ->willReturn(true);
 
         $captchaService = $this->createMock(CaptchaServiceInterface::class);
@@ -249,7 +249,7 @@ class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 
         $this->captchaSettingsProvider->expects($this->once())
             ->method('isFormProtected')
-            ->with(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)
+            ->with('oro_workflow_checkout_start')
             ->willReturn(false);
 
         $this->listener->onAssemble($event);
@@ -268,7 +268,7 @@ class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 
         $this->captchaSettingsProvider->expects($this->once())
             ->method('isFormProtected')
-            ->with(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)
+            ->with('oro_workflow_checkout_start')
             ->willReturn(true);
 
         $this->captchaSettingsProvider->expects($this->once())
@@ -300,7 +300,7 @@ class CheckoutProtectedTransitionsEventListenerTest extends TestCase
 
         $this->captchaSettingsProvider->expects($this->once())
             ->method('isFormProtected')
-            ->with(AddCheckoutStartToCaptchaProtected::PROTECTION_KEY)
+            ->with('oro_workflow_checkout_start')
             ->willReturn(true);
 
         $this->captchaSettingsProvider->expects($this->once())
