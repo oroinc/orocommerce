@@ -459,6 +459,16 @@ class OrderTest extends RestJsonApiTestCase
         self::assertArrayNotHasKey('included', $responseData);
     }
 
+    public function testGetIncludeOrderLineItems(): void
+    {
+        $response = $this->get(
+            ['entity' => 'orders', 'id' => '<toString(@simple_order->id)>'],
+            ['include' => 'lineItems']
+        );
+
+        $this->assertResponseContains('get_order_include_order_line_items.yml', $response);
+    }
+
     public function testGetIncludeOrderSubtotals(): void
     {
         $response = $this->get(
