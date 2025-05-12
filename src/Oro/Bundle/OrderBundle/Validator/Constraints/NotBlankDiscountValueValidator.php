@@ -45,12 +45,7 @@ class NotBlankDiscountValueValidator extends ConstraintValidator
         }
     }
 
-    /**
-     * @param mixed $value
-     *
-     * @return bool
-     */
-    private function isBlank($value): bool
+    private function isBlank(mixed $value): bool
     {
         return
             null === $value

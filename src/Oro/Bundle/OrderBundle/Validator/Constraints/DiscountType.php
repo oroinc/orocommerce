@@ -4,16 +4,10 @@ namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
+/**
+ * This constraint is used to check that the order discount type is valid.
+ */
 class DiscountType extends Constraint
 {
-    /**
-     * @var string
-     */
-    public $errorMessage = 'oro.order.discounts.type.error.label';
-
-    #[\Override]
-    public function getTargets(): string|array
-    {
-        return self::CLASS_CONSTRAINT;
-    }
+    public string $message = 'oro.order.discounts.type.error.label';
 }

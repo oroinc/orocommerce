@@ -5,40 +5,30 @@ namespace Oro\Bundle\OrderBundle\Validator\Constraints;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
+/**
+ * Validates that the order discount type is valid.
+ */
 class DiscountTypeValidator extends ConstraintValidator
 {
-    private $validTypes = [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT];
+    private const array VALID_TYPES = [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT];
 
-    /**
-     * @param OrderDiscount|object $value
-     * @param DiscountType         $constraint
-     *
-     */
     #[\Override]
-    public function validate($value, Constraint $constraint)
+    public function validate($value, Constraint $constraint): void
     {
-        if (null === $value) {
+        if (!$constraint instanceof DiscountType) {
+            throw new UnexpectedTypeException($constraint, DiscountType::class);
+        }
+
+        if (null !== $value && !\is_string($value)) {
             return;
         }
 
-        if (!$value instanceof OrderDiscount) {
-            throw new \InvalidArgumentException(
-                sprintf(
-                    'Value must be instance of "%s", "%s" given',
-                    OrderDiscount::class,
-                    is_object($value) ? get_class($value) : gettype($value)
-                )
-            );
+        if (null === $value || !\in_array($value, self::VALID_TYPES, true)) {
+            $this->context->buildViolation($constraint->message)
+                ->setParameter('%valid_types%', implode(', ', self::VALID_TYPES))
+                ->addViolation();
         }
-
-        if (in_array($value->getType(), $this->validTypes, true)) {
-            return;
-        }
-
-        $this->context->buildViolation($constraint->errorMessage)
-            ->atPath('type')
-            ->setParameter('%valid_types%', implode(',', $this->validTypes))
-            ->addViolation();
     }
 }

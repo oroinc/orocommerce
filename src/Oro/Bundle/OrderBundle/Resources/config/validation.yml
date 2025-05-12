@@ -364,8 +364,6 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     constraints:
-        -   Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
-                groups: [ Default, OrderDiscountItemType ]
         -   Oro\Bundle\OrderBundle\Validator\Constraints\NotBlankDiscountValue:
                 groups: [ Default, OrderDiscountItemType ]
     properties:
@@ -389,6 +387,8 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             -   Type:
                     groups: [ Default, OrderDiscountItemType ]
                     type: string
+            -   Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
+                    groups: [ Default, OrderDiscountItemType ]
         order:
             -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
             -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:

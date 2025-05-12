@@ -6,6 +6,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType;
 use Oro\Bundle\OrderBundle\Validator\Constraints\DiscountTypeValidator;
 use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Symfony\Component\Validator\Test\ConstraintValidatorTestCase;
 
 class DiscountTypeValidatorTest extends ConstraintValidatorTestCase
@@ -16,25 +17,17 @@ class DiscountTypeValidatorTest extends ConstraintValidatorTestCase
         return new DiscountTypeValidator();
     }
 
-    public function testGetTargets()
+    public function testUnexpectedConstraint(): void
     {
-        $constraint = new DiscountType();
-        $this->assertEquals(Constraint::CLASS_CONSTRAINT, $constraint->getTargets());
-    }
+        $this->expectException(UnexpectedTypeException::class);
 
-    public function testValidateForUnsupportedValue()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Value must be instance of "Oro\Bundle\OrderBundle\Entity\OrderDiscount"');
-
-        $constraint = new DiscountType();
-        $this->validator->validate(new \stdClass(), $constraint);
+        $this->validator->validate(OrderDiscount::TYPE_AMOUNT, $this->createMock(Constraint::class));
     }
 
     /**
      * @dataProvider validValueDataProvider
      */
-    public function testValidateForValidValue(OrderDiscount $value)
+    public function testValidateForValidValue(mixed $value): void
     {
         $constraint = new DiscountType();
         $this->validator->validate($value, $constraint);
@@ -44,32 +37,32 @@ class DiscountTypeValidatorTest extends ConstraintValidatorTestCase
     public function validValueDataProvider(): array
     {
         return [
-            [(new OrderDiscount())->setType(OrderDiscount::TYPE_AMOUNT)],
-            [(new OrderDiscount())->setType(OrderDiscount::TYPE_PERCENT)]
+            [123],
+            [OrderDiscount::TYPE_AMOUNT],
+            [OrderDiscount::TYPE_PERCENT]
         ];
     }
 
     /**
      * @dataProvider invalidValueDataProvider
      */
-    public function testValidateForInvalidValue(OrderDiscount $value)
+    public function testValidateForInvalidValue(mixed $value): void
     {
         $constraint = new DiscountType();
         $this->validator->validate($value, $constraint);
 
-        $this->buildViolation($constraint->errorMessage)
+        $this->buildViolation($constraint->message)
             ->setParameters([
-                '%valid_types%' => implode(',', [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT])
+                '%valid_types%' => implode(', ', [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT])
             ])
-            ->atPath('property.path.type')
             ->assertRaised();
     }
 
     public function invalidValueDataProvider(): array
     {
         return [
-            [new OrderDiscount()],
-            [(new OrderDiscount())->setType('someType')]
+            [null],
+            ['someType']
         ];
     }
 }
