@@ -20,7 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class WYSIWYGTypeExtension extends AbstractTypeExtension
 {
-    private const COMMERCE_GROUP = 'commerce';
+    private const string COMMERCE_GROUP = 'commerce';
 
     public function __construct(
         private ThemeManager $themeManager,
@@ -62,6 +62,7 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
             $enabledThemes
         );
     }
+
     private function buildThemeData(object $theme, string $currentThemeName): array
     {
         $themeName = $theme->getName();
@@ -71,7 +72,7 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
             'name' => $themeName,
             'label' => $theme->getLabel(),
             'stylesheet' => $styles ?: [],
-            'svgIconsSupport' => $this->svgIconsSupportProvider->isSvgIconsSupported($themeName),
+            'svgIconsSupport' => $this->themeManager->getThemeOption($themeName, 'svg_icons_support') ?? false,
             'active' => $themeName === $currentThemeName,
         ];
     }
