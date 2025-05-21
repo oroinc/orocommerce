@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@appendOption':
+            id: line_items_grid_container_datagrid
+            optionName: grid_render_parameters.themeOptions.disableStickedScrollbar
+            optionValue: true
