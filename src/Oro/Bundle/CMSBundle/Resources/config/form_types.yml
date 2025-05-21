@@ -100,7 +100,6 @@ services:
             - '@oro_website.manager'
             - '@assets.packages'
             - '@oro_theme.provider.theme_configuration'
-            - '@oro_layout.provider.svg_icons_support'
         tags:
             - { name: form.type_extension }
 

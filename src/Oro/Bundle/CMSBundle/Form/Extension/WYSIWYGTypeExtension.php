@@ -4,7 +4,6 @@ namespace Oro\Bundle\CMSBundle\Form\Extension;
 
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LayoutBundle\Provider\SvgIconsSupportProvider;
 use Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\Layout\Extension\Theme\DataProvider\ThemeProvider;
@@ -20,7 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class WYSIWYGTypeExtension extends AbstractTypeExtension
 {
-    private const COMMERCE_GROUP = 'commerce';
+    private const string COMMERCE_GROUP = 'commerce';
 
     public function __construct(
         private ThemeManager $themeManager,
@@ -28,8 +27,7 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
         private ConfigManager $configManager,
         private WebsiteManager $websiteManager,
         private Packages $packages,
-        private ThemeConfigurationProvider $themeConfigurationProvider,
-        private SvgIconsSupportProvider $svgIconsSupportProvider
+        private ThemeConfigurationProvider $themeConfigurationProvider
     ) {
     }
 
@@ -62,6 +60,7 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
             $enabledThemes
         );
     }
+
     private function buildThemeData(object $theme, string $currentThemeName): array
     {
         $themeName = $theme->getName();
@@ -71,7 +70,7 @@ class WYSIWYGTypeExtension extends AbstractTypeExtension
             'name' => $themeName,
             'label' => $theme->getLabel(),
             'stylesheet' => $styles ?: [],
-            'svgIconsSupport' => $this->svgIconsSupportProvider->isSvgIconsSupported($themeName),
+            'svgIconsSupport' => $this->themeManager->getThemeOption($themeName, 'svg_icons_support') ?? false,
             'active' => $themeName === $currentThemeName,
         ];
     }

@@ -7,7 +7,6 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Extension;
 use Oro\Bundle\CMSBundle\Form\Extension\WYSIWYGTypeExtension;
 use Oro\Bundle\CMSBundle\Form\Type\WYSIWYGType;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\LayoutBundle\Provider\SvgIconsSupportProvider;
 use Oro\Bundle\ThemeBundle\Provider\ThemeConfigurationProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
@@ -19,14 +18,13 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class WYSIWYGTypeExtensionTest extends TestCase
+final class WYSIWYGTypeExtensionTest extends TestCase
 {
-    private ThemeManager|MockObject $themeManager;
-    private ThemeProvider|MockObject $themeProvider;
-    private ConfigManager|MockObject $configManager;
-    private Packages|MockObject $packages;
-    private ThemeConfigurationProvider|MockObject $themeConfigurationProvider;
-    private SvgIconsSupportProvider|MockObject $svgIconsSupportProvider;
+    private ThemeManager&MockObject $themeManager;
+    private ThemeProvider&MockObject $themeProvider;
+    private ConfigManager&MockObject $configManager;
+    private Packages&MockObject $packages;
+    private ThemeConfigurationProvider&MockObject $themeConfigurationProvider;
     private WYSIWYGTypeExtension $extension;
     private Website $defaultWebsite;
 
@@ -39,7 +37,6 @@ class WYSIWYGTypeExtensionTest extends TestCase
         $websiteManager = $this->createMock(WebsiteManager::class);
         $this->packages = $this->createMock(Packages::class);
         $this->themeConfigurationProvider = $this->createMock(ThemeConfigurationProvider::class);
-        $this->svgIconsSupportProvider = $this->createMock(SvgIconsSupportProvider::class);
 
         $this->extension = new WYSIWYGTypeExtension(
             $this->themeManager,
@@ -47,8 +44,7 @@ class WYSIWYGTypeExtensionTest extends TestCase
             $this->configManager,
             $websiteManager,
             $this->packages,
-            $this->themeConfigurationProvider,
-            $this->svgIconsSupportProvider
+            $this->themeConfigurationProvider
         );
 
         $this->defaultWebsite = new Website();
@@ -90,9 +86,9 @@ class WYSIWYGTypeExtensionTest extends TestCase
             ->willReturnOnConsecutiveCalls($criticalCssUrl, $themeCssUrl);
 
         $isSvgIconsSupported = true;
-        $this->svgIconsSupportProvider->expects(self::once())
-            ->method('isSvgIconsSupported')
-            ->with($themeName)
+        $this->themeManager->expects(self::once())
+            ->method('getThemeOption')
+            ->with($themeName, 'svg_icons_support')
             ->willReturn($isSvgIconsSupported);
 
         $this->themeConfigurationProvider->expects(self::once())
@@ -117,6 +113,7 @@ class WYSIWYGTypeExtensionTest extends TestCase
         self::assertCount(1, $options['page-component']['options']['themes']);
         self::assertEquals($expectedThemeData, $options['page-component']['options']['themes'][0]);
     }
+
     public function testConfigureOptionsWithMultipleThemes(): void
     {
         $theme1Name = 'theme1';
@@ -178,9 +175,10 @@ class WYSIWYGTypeExtensionTest extends TestCase
 
         $theme1SvgIconsSupported = true;
         $theme2SvgIconsSupported = false;
-        $this->svgIconsSupportProvider->expects(self::exactly(2))
-            ->method('isSvgIconsSupported')
-            ->withConsecutive([$theme1Name], [$theme2Name])
+
+        $this->themeManager->expects(self::exactly(2))
+            ->method('getThemeOption')
+            ->withConsecutive([$theme1Name, 'svg_icons_support'], [$theme2Name, 'svg_icons_support'])
             ->willReturnOnConsecutiveCalls($theme1SvgIconsSupported, $theme2SvgIconsSupported);
 
         $this->themeConfigurationProvider->expects(self::once())
@@ -244,9 +242,9 @@ class WYSIWYGTypeExtensionTest extends TestCase
             ->withConsecutive([$criticalCssFilePath], [$cssFilePath])
             ->willReturnOnConsecutiveCalls($criticalCssUrl, $themeCssUrl);
 
-        $this->svgIconsSupportProvider->expects(self::once())
-            ->method('isSvgIconsSupported')
-            ->with($themeName)
+        $this->themeManager->expects(self::once())
+            ->method('getThemeOption')
+            ->with($themeName, 'svg_icons_support')
             ->willReturn(true);
 
         $this->themeConfigurationProvider->expects(self::once())
@@ -297,9 +295,9 @@ class WYSIWYGTypeExtensionTest extends TestCase
 
         $this->packages->expects(self::never())->method('getUrl');
 
-        $this->svgIconsSupportProvider->expects(self::once())
-            ->method('isSvgIconsSupported')
-            ->with($themeName)
+        $this->themeManager->expects(self::once())
+            ->method('getThemeOption')
+            ->with($themeName, 'svg_icons_support')
             ->willReturn(false);
 
         $this->themeConfigurationProvider->expects(self::once())
@@ -362,8 +360,8 @@ class WYSIWYGTypeExtensionTest extends TestCase
                 'url_to_theme2.css'
             );
 
-        $this->svgIconsSupportProvider->expects(self::exactly(2))
-            ->method('isSvgIconsSupported')
+        $this->themeManager->expects(self::exactly(2))
+            ->method('getThemeOption')
             ->withConsecutive([$theme1Name], [$theme2Name])
             ->willReturnOnConsecutiveCalls(false, true);
 
