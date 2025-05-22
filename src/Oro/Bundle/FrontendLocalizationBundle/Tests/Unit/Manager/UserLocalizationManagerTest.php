@@ -4,17 +4,20 @@ namespace Oro\Bundle\FrontendLocalizationBundle\Tests\Unit\Manager;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Persistence\ManagerRegistry;
+use Oro\Bundle\ApiBundle\Request\ApiRequestHelper;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
-use Oro\Bundle\CustomerBundle\Tests\Unit\Stub\CustomerUserStub;
 use Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Configuration;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Manager\LocalizationManager;
-use Oro\Bundle\LocaleBundle\Tests\Unit\Stub\LocalizationStub;
 use Oro\Bundle\TranslationBundle\Entity\Language;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Oro\Bundle\WebsiteBundle\Tests\Unit\Stub\WebsiteStub;
+use Oro\Component\Testing\ReflectionUtil;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -24,39 +27,23 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
+class UserLocalizationManagerTest extends TestCase
 {
     private const CUSTOMER_USER_ID = 8;
     private const NOT_EXISTENT_LOCALIZATION_ID =  9;
     private const CURRENT_LOCALIZATION_ID =  9;
     private const ENABLED_LOCALIZATION_IDS = [3, 9];
-
-    /** @var Session|\PHPUnit\Framework\MockObject\MockObject */
-    private Session $session;
-
-    /** @var RequestStack|\PHPUnit\Framework\MockObject\MockObject */
-    private RequestStack $requestStack;
-
-    /** @var TokenStorageInterface|\PHPUnit\Framework\MockObject\MockObject */
-    private TokenStorageInterface $tokenStorage;
-
-    /** @var ManagerRegistry|\PHPUnit\Framework\MockObject\MockObject */
-    private ManagerRegistry $doctrine;
-
-    /** @var WebsiteManager|\PHPUnit\Framework\MockObject\MockObject */
-    private WebsiteManager $websiteManager;
-
-    /** @var ConfigManager|\PHPUnit\Framework\MockObject\MockObject */
-    private ConfigManager $configManager;
-
-    /** @var LocalizationManager|\PHPUnit\Framework\MockObject\MockObject */
-    private LocalizationManager $localizationManager;
-
+    private Session|MockObject $session;
+    private RequestStack|MockObject $requestStack;
+    private TokenStorageInterface|MockObject $tokenStorage;
+    private ManagerRegistry|MockObject $doctrine;
+    private WebsiteManager|MockObject $websiteManager;
+    private ConfigManager|MockObject $configManager;
+    private LocalizationManager|MockObject $localizationManager;
     private UserLocalizationManager $userLocalizationManager;
+    private ApiRequestHelper|MockObject $apiRequestHelper;
 
-    /**
-     * {@inheritdoc}
-     */
+    #[\Override]
     protected function setUp(): void
     {
         $this->session = $this->createMock(Session::class);
@@ -67,7 +54,9 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->configManager = $this->createMock(ConfigManager::class);
         $this->localizationManager = $this->createMock(LocalizationManager::class);
-        $this->requestStack->expects($this->any())
+        $this->apiRequestHelper = $this->createMock(ApiRequestHelper::class);
+
+        $this->requestStack->expects(self::any())
             ->method('getSession')
             ->willReturn($this->session);
 
@@ -79,19 +68,56 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             $this->websiteManager,
             $this->localizationManager
         );
+
+        $this->userLocalizationManager->setApiRequestHelper($this->apiRequestHelper);
+    }
+
+    private function getCustomerUser(int $id): CustomerUser
+    {
+        $customerUser = new CustomerUser();
+        ReflectionUtil::setId($customerUser, $id);
+
+        return $customerUser;
+    }
+
+    private function getWebsite(int $id): Website
+    {
+        $website = new Website();
+        ReflectionUtil::setId($website, $id);
+
+        return $website;
+    }
+
+    private function getLocalization(int $id, string $langCode = 'en_US'): Localization
+    {
+        $localization = new Localization();
+        $language = new Language();
+        $language->setCode($langCode);
+        $localization->setLanguage($language);
+        ReflectionUtil::setId($localization, $id);
+
+        return $localization;
     }
 
     public function testGetCurrentLocalizationAndDefaultWebsiteLocalization(): void
     {
-        $website = new WebsiteStub(1);
-        $localization = new LocalizationStub(42);
+        $website = $this->getWebsite(1);
+        $localization = $this->getLocalization(42);
 
-        $this->websiteManager->expects(self::atMost(2))->method('getCurrentWebsite')->willReturn($website);
+        $this->mockRequest(false, false);
+
+        $this->websiteManager->expects(self::exactly(2))
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->expects(self::atMost(2))->method('getUser')->willReturn(new CustomerUser());
+        $token->expects(self::exactly(2))
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
 
-        $this->tokenStorage->expects(self::atMost(2))->method('getToken')->willReturn($token);
+        $this->tokenStorage->expects(self::exactly(2))
+            ->method('getToken')
+            ->willReturn($token);
 
         $this->configManager->expects(self::exactly(2))
             ->method('get')
@@ -124,7 +150,8 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->with([$localization->getId()])
             ->willReturn([$localization]);
 
-        $this->localizationManager->expects(self::never())->method('getDefaultLocalization');
+        $this->localizationManager->expects(self::never())
+            ->method('getDefaultLocalization');
 
         self::assertSame($localization, $this->userLocalizationManager->getCurrentLocalization());
 
@@ -134,16 +161,24 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentLocalizationAndDefaultGlobalLocalization(): void
     {
-        $website = new WebsiteStub(1);
-        $localization1 = new LocalizationStub(41);
-        $localization2 = new LocalizationStub(42);
+        $website = $this->getWebsite(1);
+        $localization1 = $this->getLocalization(41);
+        $localization2 = $this->getLocalization(42);
 
-        $this->websiteManager->expects(self::atMost(2))->method('getCurrentWebsite')->willReturn($website);
+        $this->mockRequest(false, false);
+
+        $this->websiteManager->expects(self::exactly(2))
+            ->method('getCurrentWebsite')
+            ->willReturn($website);
 
         $token = $this->createMock(TokenInterface::class);
-        $token->expects(self::atMost(2))->method('getUser')->willReturn(new CustomerUser());
+        $token->expects(self::exactly(2))
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
 
-        $this->tokenStorage->expects(self::atMost(2))->method('getToken')->willReturn($token);
+        $this->tokenStorage->expects(self::exactly(2))
+            ->method('getToken')
+            ->willReturn($token);
 
         $this->configManager->expects(self::exactly(2))
             ->method('get')
@@ -193,8 +228,10 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn(['1', '2']);
 
-        $language = (new Language())->setCode('en');
-        $localization = (new LocalizationStub(42))->setLanguage($language);
+        $language = new Language();
+        $language->setCode('en');
+        $localization = $this->getLocalization(42);
+        $localization->setLanguage($language);
 
         $this->localizationManager->expects(self::once())
             ->method('getLocalizations')
@@ -209,9 +246,10 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentLocalizationLoggedUser(): void
     {
-        $localization1 = new LocalizationStub(1);
-        $localization2 = new LocalizationStub(2);
-        $website = new WebsiteStub(1);
+        $this->mockRequest(false, false);
+        $localization1 = $this->getLocalization(1);
+        $localization2 = $this->getLocalization(2);
+        $website = $this->getWebsite(1);
 
         $userWebsiteSettings = new CustomerUserSettings($website);
         $userWebsiteSettings->setLocalization($localization1);
@@ -221,7 +259,7 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $this->websiteManager->expects(self::never())
             ->method('getCurrentWebsite');
         $token = $this->createMock(TokenInterface::class);
-        $token->expects(self::atMost(2))
+        $token->expects(self::exactly(2))
             ->method('getUser')
             ->willReturn($user);
         $user->expects(self::once())
@@ -232,7 +270,7 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn([$localization1->getId(), $localization2->getId()]);
-        $this->tokenStorage->expects(self::atMost(2))
+        $this->tokenStorage->expects(self::exactly(2))
             ->method('getToken')
             ->willReturn($token);
 
@@ -255,34 +293,23 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentLocalizationNotLoggedUserAndSessionWasStarted(): void
     {
-        $localization = new LocalizationStub(1);
-        $website = new WebsiteStub(1);
+        $localization = $this->getLocalization(1);
+        $website = $this->getWebsite(1);
         $sessionLocalizations = [$website->getId() => $localization->getId(), 3 => 4];
 
-        $this->websiteManager->expects(self::atMost(2))
+        $this->websiteManager->expects(self::exactly(2))
             ->method('getCurrentWebsite')
             ->willReturn($website);
-        $this->configManager->expects(self::once())
+        $this->configManager->expects(self::atLeastOnce())
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn([$localization->getId(), 4]);
         $this->session->expects(self::once())
-            ->method('isStarted')
-            ->willReturn(true);
-        $this->session->expects(self::once())
             ->method('get')
             ->with(UserLocalizationManager::SESSION_LOCALIZATIONS)
             ->willReturn($sessionLocalizations);
-        $requestMock = $this->createMock(Request::class);
-        $requestMock->expects(self::exactly(2))
-            ->method('getSession')
-            ->willReturn($this->session);
-        $requestMock->expects($this->exactly(2))
-            ->method('hasSession')
-            ->willReturn(true);
-        $this->requestStack->expects(self::exactly(2))
-            ->method('getCurrentRequest')
-            ->willReturn($requestMock);
+
+        $this->mockRequest(false, true);
 
         $this->localizationManager->expects(self::once())
             ->method('getLocalizations')
@@ -297,47 +324,35 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentLocalizationNotLoggedUserAndSessionWasNotStarted(): void
     {
-        $localization = new LocalizationStub(1);
-        $website = new WebsiteStub(1);
+        $localization = $this->getLocalization(1);
+        $website = $this->getWebsite(1);
 
-        $this->websiteManager->expects(self::atMost(2))
+        $this->websiteManager->expects(self::exactly(2))
             ->method('getCurrentWebsite')
             ->willReturn($website);
         $this->configManager->expects(self::exactly(2))
             ->method('get')
-            ->willReturnMap(
+            ->willReturnMap([
                 [
-                    [
-                        Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
-                        false,
-                        false,
-                        null,
-                        $localization->getId(),
-                    ],
-                    [
-                        Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
-                        false,
-                        false,
-                        null,
-                        [$localization->getId()],
-                    ],
-                ]
-            );
-        $this->session->expects(self::once())
-            ->method('isStarted')
-            ->willReturn(false);
+                    Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION),
+                    false,
+                    false,
+                    null,
+                    $localization->getId(),
+                ],
+                [
+                    Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS),
+                    false,
+                    false,
+                    null,
+                    [$localization->getId()],
+                ],
+            ]);
         $this->session->expects(self::never())
             ->method('get');
-        $requestMock = $this->createMock(Request::class);
-        $requestMock->expects(self::once())
-            ->method('getSession')
-            ->willReturn($this->session);
-        $requestMock->expects(self::once())
-            ->method('hasSession')
-            ->willReturn(true);
-        $this->requestStack->expects(self::once())
-            ->method('getCurrentRequest')
-            ->willReturn($requestMock);
+
+        $this->mockRequest(true, true);
+
         $this->localizationManager->expects(self::once())
             ->method('getLocalizations')
             ->with([$localization->getId()])
@@ -363,8 +378,8 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testSetCurrentLocalizationLoggedUser(): void
     {
-        $localization = new LocalizationStub(1);
-        $website = new WebsiteStub(1);
+        $localization = $this->getLocalization(1);
+        $website = $this->getWebsite(1);
         $user = $this->createMock(CustomerUser::class);
 
         $this->websiteManager->expects(self::never())
@@ -391,26 +406,23 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentLocalizationByCustomerUserWhenNoWebsiteGivenAndCustomerUserSettingsExist(): void
     {
-        $localization = new LocalizationStub(self::CURRENT_LOCALIZATION_ID);
-        $website = new WebsiteStub(1);
-        $customerUser = new CustomerUserStub(self::CUSTOMER_USER_ID);
+        $localization = $this->getLocalization(self::CURRENT_LOCALIZATION_ID);
+        $website = $this->getWebsite(1);
+        $customerUser = $this->getCustomerUser(self::CUSTOMER_USER_ID);
 
         $customerUser->setWebsiteSettings((new CustomerUserSettings($website))->setLocalization($localization));
 
-        $this->configManager
-            ->expects(self::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::ENABLED_LOCALIZATIONS))
             ->willReturn(self::ENABLED_LOCALIZATION_IDS);
 
-        $this->localizationManager
-            ->expects(self::once())
+        $this->localizationManager->expects(self::once())
             ->method('getLocalizations')
             ->with(self::ENABLED_LOCALIZATION_IDS)
             ->willReturn($this->getEnabledLocalizations());
 
-        $this->websiteManager
-            ->expects(self::once())
+        $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
             ->willReturn($website);
 
@@ -422,24 +434,21 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentLocalizationByCustomerUserWhenWebsiteGivenAndConfigurationLocalizationExists(): void
     {
-        $localization = new LocalizationStub(self::CURRENT_LOCALIZATION_ID);
-        $website = new WebsiteStub(1);
-        $customerUser = new CustomerUserStub(self::CUSTOMER_USER_ID);
+        $localization = $this->getLocalization(self::CURRENT_LOCALIZATION_ID);
+        $website = $this->getWebsite(1);
+        $customerUser = $this->getCustomerUser(self::CUSTOMER_USER_ID);
 
-        $this->configManager
-            ->expects(self::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION), false, false, $website)
             ->willReturn(self::CURRENT_LOCALIZATION_ID);
 
-        $this->localizationManager
-            ->expects(self::once())
+        $this->localizationManager->expects(self::once())
             ->method('getLocalization')
             ->with(self::CURRENT_LOCALIZATION_ID)
             ->willReturn($localization);
 
-        $this->websiteManager
-            ->expects(self::never())
+        $this->websiteManager->expects(self::never())
             ->method('getCurrentWebsite');
 
         self::assertSame(
@@ -450,29 +459,25 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testGetCurrentLocalizationByCustomerUserWhenWebsiteGivenAndNoConfigurationLocalizationExists(): void
     {
-        $localization = new LocalizationStub(self::CURRENT_LOCALIZATION_ID);
-        $website = new WebsiteStub(1);
-        $customerUser = new CustomerUserStub(self::CUSTOMER_USER_ID);
+        $localization = $this->getLocalization(self::CURRENT_LOCALIZATION_ID);
+        $website = $this->getWebsite(1);
+        $customerUser = $this->getCustomerUser(self::CUSTOMER_USER_ID);
 
-        $this->configManager
-            ->expects(self::once())
+        $this->configManager->expects(self::once())
             ->method('get')
             ->with(Configuration::getConfigKeyByName(Configuration::DEFAULT_LOCALIZATION), false, false, $website)
             ->willReturn(self::NOT_EXISTENT_LOCALIZATION_ID);
 
-        $this->localizationManager
-            ->expects(self::once())
+        $this->localizationManager->expects(self::once())
             ->method('getLocalization')
             ->with(self::NOT_EXISTENT_LOCALIZATION_ID)
             ->willReturn(null);
 
-        $this->localizationManager
-            ->expects(self::once())
+        $this->localizationManager->expects(self::once())
             ->method('getDefaultLocalization')
             ->willReturn($localization);
 
-        $this->websiteManager
-            ->expects(self::never())
+        $this->websiteManager->expects(self::never())
             ->method('getCurrentWebsite');
 
         self::assertSame(
@@ -483,9 +488,9 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
 
     public function testSetCurrentLocalizationNotLoggedUser(): void
     {
-        $localization = new LocalizationStub(1);
+        $localization = $this->getLocalization(1);
         $sessionLocalizations = [2 => 3];
-        $website = new WebsiteStub(4);
+        $website = $this->getWebsite(4);
 
         $this->websiteManager->expects(self::once())
             ->method('getCurrentWebsite')
@@ -515,11 +520,43 @@ class UserLocalizationManagerTest extends \PHPUnit\Framework\TestCase
         $this->userLocalizationManager->setCurrentLocalization($localization);
     }
 
+    private function mockRequest(bool $isApiRequest, bool $hasSession): void
+    {
+        $requestMock = $this->createMock(Request::class);
+        $pathInfo = $isApiRequest ? '/api' : '/test';
+
+        $this->requestStack
+            ->expects(self::atLeastOnce())
+            ->method('getCurrentRequest')
+            ->willReturn($requestMock);
+
+        $requestMock
+            ->expects(self::any())
+            ->method('getSession')
+            ->willReturn($this->session);
+
+        $requestMock
+            ->expects(self::any())
+            ->method('hasSession')
+            ->willReturn($hasSession);
+
+        $requestMock
+            ->expects(self::any())
+            ->method('getPathInfo')
+            ->willReturn($pathInfo);
+
+        $this->apiRequestHelper
+            ->expects(self::any())
+            ->method('isApiRequest')
+            ->with($pathInfo)
+            ->willReturn($isApiRequest);
+    }
+
     private function getEnabledLocalizations(): array
     {
         return [
-            self::ENABLED_LOCALIZATION_IDS[0] => new LocalizationStub(self::ENABLED_LOCALIZATION_IDS[0]),
-            self::ENABLED_LOCALIZATION_IDS[1] => new LocalizationStub(self::ENABLED_LOCALIZATION_IDS[1]),
+            self::ENABLED_LOCALIZATION_IDS[0] => $this->getLocalization(self::ENABLED_LOCALIZATION_IDS[0]),
+            self::ENABLED_LOCALIZATION_IDS[1] => $this->getLocalization(self::ENABLED_LOCALIZATION_IDS[1]),
         ];
     }
 }
