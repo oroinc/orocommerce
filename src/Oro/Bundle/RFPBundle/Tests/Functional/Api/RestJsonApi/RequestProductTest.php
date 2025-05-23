@@ -46,79 +46,90 @@ class RequestProductTest extends RestJsonApiTestCase
         self::assertResponseNotEmpty($response);
     }
 
-    public function testCreate(): int
+    public function testCreate(): void
     {
-        /** @var Product $product */
-        $product = $this->getReference(LoadProductData::PRODUCT_1);
-        /** @var Request $request */
-        $request = $this->getReference(LoadRequestData::REQUEST1);
+        $response = $this->post(
+            ['entity' => 'rfqproducts'],
+            'create_request_product.yml'
+        );
 
+        $entityId = (int)$this->getResourceId($response);
+
+        $requestProduct = $this->getEntityManager()->find(RequestProduct::class, $entityId);
+        self::assertEquals('Test', $requestProduct->getComment());
+
+        $product = $this->getEntityManager()->find(
+            Product::class,
+            $this->getReference(LoadProductData::PRODUCT_1)->getId()
+        );
+        self::assertEquals($product->getSku(), $requestProduct->getProductSku());
+    }
+
+    public function testTryToCreateWithRequestProductItemFromAnotherRequestProduct(): void
+    {
+        /** @var Request $request */
+        $request = $this->getReference(LoadRequestData::REQUEST2);
         /** @var RequestProduct $requestProduct */
         $requestProduct = $request->getRequestProducts()->first();
         /** @var RequestProductItem $requestProductItem */
         $requestProductItem = $requestProduct->getRequestProductItems()->first();
 
-        $data = [
-            'data' => [
-                'type' => 'rfqproducts',
-                'attributes' => [
-                    'comment' => 'Test'
-                ],
-                'relationships' => [
-                    'request' => [
-                        'data' => ['type' => 'rfqs', 'id' => (string)$request->getId()]
+        $response = $this->post(
+            ['entity' => 'rfqproducts'],
+            [
+                'data' => [
+                    'type' => 'rfqproducts',
+                    'attributes' => [
+                        'comment' => 'Test'
                     ],
-                    'product' => [
-                        'data' => ['type' => 'products', 'id' => (string)$product->getId()]
-                    ],
-                    'requestProductItems' => [
-                        'data' => [
-                            [
-                                'type' => 'rfqproductitems',
-                                'id' => (string)$requestProductItem->getId()
+                    'relationships' => [
+                        'request' => [
+                            'data' => ['type' => 'rfqs', 'id' => (string)$request->getId()]
+                        ],
+                        'product' => [
+                            'data' => ['type' => 'products', 'id' => '<toString(@product-1->id)>']
+                        ],
+                        'requestProductItems' => [
+                            'data' => [
+                                ['type' => 'rfqproductitems', 'id' => (string)$requestProductItem->getId()]
                             ]
                         ]
                     ]
                 ]
-            ]
-        ];
-
-        $response = $this->post(
-            ['entity' => 'rfqproducts'],
-            $data
+            ],
+            [],
+            false
         );
 
-        $result = self::jsonToArray($response->getContent());
-        $entityId = $result['data']['id'];
-        /** @var RequestProduct $requestProduct */
-        $requestProduct = $this->getEntityManager()->find(RequestProduct::class, $entityId);
-        /** @var Product $product */
-        $product = $this->getEntityManager()->find(Product::class, $product->getId());
-
-        self::assertInstanceOf(RequestProduct::class, $requestProduct);
-        self::assertEquals($product->getSku(), $requestProduct->getProductSku());
-
-        return (int)$result['data']['id'];
+        $this->assertResponseValidationError(
+            [
+                'title' => 'unchangeable field constraint',
+                'detail' => 'This field cannot be changed once set.',
+                'source' => ['pointer' => '/data/relationships/requestProductItems/data/0']
+            ],
+            $response
+        );
     }
 
-    /**
-     * @depends testCreate
-     */
-    public function testUpdate(int $entityId): void
+    public function testUpdate(): void
     {
-        $data = [
-            'data' => [
-                'id' => (string)$entityId,
-                'type' => 'rfqproducts',
-                'attributes' => [
-                    'comment' => 'Test2'
-                ]
-            ]
-        ];
+        /** @var Request $request */
+        $request = $this->getReference(LoadRequestData::REQUEST2);
+        /** @var RequestProduct $requestProduct */
+        $requestProduct = $request->getRequestProducts()->first();
+        $entityId = $requestProduct->getId();
 
         $this->patch(
             ['entity' => 'rfqproducts', 'id' => (string)$entityId],
-            $data
+            [
+                'data' => [
+                    'type' => 'rfqproducts',
+                    'id' => (string)$entityId,
+                    'attributes' => [
+                        'comment' => 'Test2'
+                    ]
+                ]
+            ]
         );
 
         /** @var RequestProduct $requestProduct */
@@ -126,11 +137,61 @@ class RequestProductTest extends RestJsonApiTestCase
         self::assertEquals('Test2', $requestProduct->getComment());
     }
 
-    /**
-     * @depends testCreate
-     */
-    public function testDelete(int $entityId): void
+    public function testTryToUseRequestProductItemFromAnotherRequestProduct(): void
     {
+        /** @var Request $request1 */
+        $request1 = $this->getReference(LoadRequestData::REQUEST1);
+        /** @var RequestProduct $requestProduct1 */
+        $requestProduct1 = $request1->getRequestProducts()->first();
+        /** @var RequestProductItem $requestProductItem1 */
+        $requestProductItem1 = $requestProduct1->getRequestProductItems()->first();
+        $entityId = $requestProduct1->getId();
+
+        /** @var Request $request2 */
+        $request2 = $this->getReference(LoadRequestData::REQUEST2);
+        /** @var RequestProduct $requestProduct2 */
+        $requestProduct2 = $request2->getRequestProducts()->first();
+        /** @var RequestProductItem $requestProductItem2 */
+        $requestProductItem2 = $requestProduct2->getRequestProductItems()->first();
+
+        $response = $this->patch(
+            ['entity' => 'rfqproducts', 'id' => (string)$entityId],
+            [
+                'data' => [
+                    'type' => 'rfqproducts',
+                    'id' => (string)$entityId,
+                    'relationships' => [
+                        'requestProductItems' => [
+                            'data' => [
+                                ['type' => 'rfqproductitems', 'id' => (string)$requestProductItem1->getId()],
+                                ['type' => 'rfqproductitems', 'id' => (string)$requestProductItem2->getId()]
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            [],
+            false
+        );
+
+        $this->assertResponseValidationError(
+            [
+                'title' => 'unchangeable field constraint',
+                'detail' => 'This field cannot be changed once set.',
+                'source' => ['pointer' => '/data/relationships/requestProductItems/data/1']
+            ],
+            $response
+        );
+    }
+
+    public function testDelete(): void
+    {
+        /** @var Request $request */
+        $request = $this->getReference(LoadRequestData::REQUEST2);
+        /** @var RequestProduct $requestProduct */
+        $requestProduct = $request->getRequestProducts()->first();
+        $entityId = $requestProduct->getId();
+
         $this->delete(
             ['entity' => 'rfqproducts', 'id' => $entityId]
         );

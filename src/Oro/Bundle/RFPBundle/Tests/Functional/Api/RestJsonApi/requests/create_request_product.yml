@@ -1,0 +1,26 @@
+data:
+    type: rfqproducts
+    attributes:
+        comment: 'Test'
+    relationships:
+        request:
+            data:
+                type: rfqs
+                id: '<toString(@rfp.request.1->id)>'
+        product:
+            data:
+                type: products
+                id: '<toString(@product-1->id)>'
+        requestProductItems:
+            data:
+                - type: rfqproductitems
+                  id: product_item_1
+included:
+    -
+        type: rfqproductitems
+        id: product_item_1
+        relationships:
+            productUnit:
+                data:
+                    type: productunits
+                    id: '<toString(@product_unit.liter->code)>'
