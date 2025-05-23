@@ -1,0 +1,40 @@
+data:
+    type: rfqs
+    attributes:
+        company: Oro
+        firstName: Ronald
+        lastName: Rivera
+        email: test@example.com
+    relationships:
+        requestProducts:
+            data:
+                - type: rfqproducts
+                  id: request_product_1
+included:
+    -
+        type: rfqproducts
+        id: request_product_1
+        attributes:
+            comment: Test
+        relationships:
+            product:
+                data:
+                    type: products
+                    id: '<toString(@product-1->id)>'
+            requestProductItems:
+                data:
+                    -
+                        type: rfqproductitems
+                        id: request_product_item_1
+    -
+        type: rfqproductitems
+        id: request_product_item_1
+        attributes:
+            quantity: 10
+            value: 100
+            currency: USD
+        relationships:
+            productUnit:
+                data:
+                    type: productunits
+                    id: '@product_unit.liter->code'
