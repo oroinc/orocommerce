@@ -68,6 +68,7 @@ api:
 
         Oro\Bundle\SaleBundle\Entity\QuoteAddress:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_address.md'
+            disable_meta_properties: ['title']
             fields:
                 createdAt:
                     property_path: created
@@ -104,6 +105,7 @@ api:
 
         Oro\Bundle\SaleBundle\Entity\QuoteProduct:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product.md'
+            disable_meta_properties: ['title']
             fields:
                 type:
                     exclude: true
@@ -138,6 +140,7 @@ api:
 
         Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product_offer.md'
+            disable_meta_properties: ['title']
             fields:
                 priceType:
                     exclude: true
@@ -166,6 +169,7 @@ api:
 
         Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
             documentation_resource: '@OroSaleBundle/Resources/doc/api/quote_product_request.md'
+            disable_meta_properties: ['title']
             fields:
                 value:
                     form_options:
