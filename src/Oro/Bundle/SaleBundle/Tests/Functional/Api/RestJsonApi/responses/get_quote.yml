@@ -1,6 +1,8 @@
 data:
     type: quotes
     id: '<toString(@sale.quote.1->id)>'
+    meta:
+        title: '<("Quote #" . @sale.quote.1->id)>'
     attributes:
         identifier: sale.quote.1
         guestAccessId: '@sale.quote.1->guestAccessId'

@@ -36,7 +36,8 @@ class QuoteTest extends RestJsonApiTestCase
     public function testGet(): void
     {
         $response = $this->get(
-            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>']
+            ['entity' => 'quotes', 'id' => '<toString(@sale.quote.1->id)>'],
+            ['meta' => 'title']
         );
 
         $this->assertResponseContains('get_quote.yml', $response);
