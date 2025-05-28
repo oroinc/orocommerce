@@ -47,7 +47,7 @@
         }
 
         ##{$clm-prefix}sel {
-            word-break: break-word;
+            overflow-wrap: break-word;
             padding: 0;
             line-height: 1.3;
         }
