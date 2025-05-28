@@ -4,10 +4,12 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\GaufretteBundle\FileManager;
+use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationAwareTokenInterface;
 use Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 /**
  * Provides functionality to move sitemap related files from a temporary private storage to a public storage.
@@ -27,6 +29,9 @@ class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
 
     /** @var ManagerRegistry */
     private $doctrine;
+
+    /** @var TokenStorageInterface */
+    private $tokenStorage;
 
     public function __construct(
         FileManager $fileManager,
@@ -48,8 +53,16 @@ class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
     public function moveSitemaps(array $websiteIds): void
     {
         try {
-            $this->fileManager->deleteAllFiles();
+            $isInOrganization = $this->isInOrganization();
+            if (!$isInOrganization) {
+                $this->fileManager->deleteAllFiles();
+            }
+
             foreach ($websiteIds as $websiteId) {
+                if ($isInOrganization) {
+                    $this->fileManager->deleteAllFiles($websiteId);
+                }
+
                 $this->moveSitemapFiles($websiteId);
                 $this->moveRobotsTxtFile($websiteId);
             }
@@ -115,5 +128,20 @@ class PublicSitemapFilesystemAdapter implements LoggerAwareInterface
                 );
             }
         }
+    }
+
+    /**
+     * sitemap:generate command should remove all sitemaps files during generation.
+     * If we changed robots.txt template e.g. in BO we should generate sitemaps only for current organization websites.
+     * In this method we determine if sitemaps generation was called from command or BO by getting organization token.
+     */
+    private function isInOrganization(): bool
+    {
+        return $this->tokenStorage->getToken() instanceof OrganizationAwareTokenInterface;
+    }
+
+    public function setTokenStorage(TokenStorageInterface $tokenStorage): void
+    {
+        $this->tokenStorage = $tokenStorage;
     }
 }
