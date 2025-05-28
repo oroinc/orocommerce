@@ -22,9 +22,6 @@ The created record is returned in the response.
 
 {@inheritdoc}
 
-**Note:**
-The fields **internalStatus** and **customerStatus** are not configurable by API, because they depend on the workflow states.
-
 {@request:json_api}
 Example:
 
@@ -132,9 +129,6 @@ The updated record is returned in the response.
 
 {@inheritdoc}
 
-**Note:**
-The fields **internalStatus** and **customerStatus** are not configurable by API, because they depend on the workflow states.
-
 {@request:json_api}
 Example:
 
@@ -203,7 +197,7 @@ Delete a collection of quote records.
 
 {@inheritdoc}
 
-**The read-only field. A passed value will be ignored.**
+**The read-only field when there is an active workflow for quotes. A passed value will be ignored.**
 
 ### pricesChanged
 
@@ -547,6 +541,26 @@ Retrieve a record of internal status assigned to a specific quote record.
 #### get_relationship
 
 Retrieve the ID of internal status record assigned to a specific quote record.
+
+#### update_relationship
+
+Change the internal status assigned to a specific quote.
+
+**Note:**
+The internal status cannot be changed when there is an active workflow for quotes.
+
+{@request:json_api}
+Example:
+
+```JSON
+{
+  "data": {
+    "type": "orderinternalstatuses",
+    "id": "draft"
+  }
+}
+```
+{@/request}
 
 ### organization
 

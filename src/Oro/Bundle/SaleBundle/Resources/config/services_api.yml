@@ -1,4 +1,11 @@
 services:
+    oro_sale.api.configure_quote_internal_status_field:
+        class: Oro\Bundle\SaleBundle\Api\Processor\ConfigureQuoteInternalStatusField
+        arguments:
+            - '@oro_workflow.registry'
+        tags:
+            - { name: oro.api.processor, action: get_config, extra: '!identifier_fields_only&!descriptions', requestType: '!frontend', class: Oro\Bundle\SaleBundle\Entity\Quote, targetAction: update|create|update_relationship, priority: -250 }
+
     oro_sale.api.set_default_website_to_quote:
         class: Oro\Bundle\WebsiteBundle\Api\Processor\SetDefaultWebsite
         arguments:
