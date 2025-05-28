@@ -21,8 +21,6 @@ api:
                         mapped: false
                 internalStatus:
                     property_path: internal_status
-                    form_options:
-                        mapped: false
                 paymentTerm:
                     property_path: payment_term_7c4f1e8e
                 pricesChanged:
@@ -48,9 +46,6 @@ api:
                                 mapped: false
             subresources:
                 customerStatus:
-                    actions:
-                        update_relationship: false
-                internalStatus:
                     actions:
                         update_relationship: false
                 shippingAddress:

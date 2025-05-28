@@ -10,6 +10,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowRegistry;
 
 /**
  * @dbIsolationPerTest
@@ -24,6 +25,11 @@ class QuoteTest extends RestJsonApiTestCase
         parent::setUp();
 
         $this->loadFixtures([LoadQuoteData::class, LoadRequestData::class]);
+    }
+
+    private function getWorkflowRegistry(): WorkflowRegistry
+    {
+        return self::getContainer()->get('oro_workflow.registry');
     }
 
     public function testGetList(): void
@@ -122,6 +128,48 @@ class QuoteTest extends RestJsonApiTestCase
 
         self::assertNotEmpty($quote->getGuestAccessId());
         self::assertEquals($defaultWebsiteId, $quote->getWebsite()->getId());
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
+    }
+
+    public function testTryToCreateWithInternalStatus(): void
+    {
+        // guard
+        self::assertTrue($this->getWorkflowRegistry()->hasActiveWorkflowsByEntityClass(Quote::class));
+
+        $response = $this->post(
+            ['entity' => 'quotes'],
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'sent_to_customer']
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $quoteId = (int)$this->getResourceId($response);
+        /** @var Quote $quote */
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertTrue(null !== $quote);
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'draft']
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
     }
 
     public function testTryToCreateWithShippingAddressFromAnotherQuote(): void
@@ -432,6 +480,48 @@ class QuoteTest extends RestJsonApiTestCase
         self::assertTrue(null === $quote->getShippingAddress());
         $address = $this->getEntityManager()->find(QuoteAddress::class, $addressId);
         self::assertTrue(null === $address);
+    }
+
+    public function testTryToUpdateInternalStatus(): void
+    {
+        // guard
+        self::assertTrue($this->getWorkflowRegistry()->hasActiveWorkflowsByEntityClass(Quote::class));
+
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->patch(
+            ['entity' => 'quotes', 'id' => (string)$quoteId],
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'id' => (string)$quoteId,
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'sent_to_customer']
+                        ]
+                    ]
+                ]
+            ]
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quotes',
+                    'id' => (string)$quoteId,
+                    'relationships' => [
+                        'internalStatus' => [
+                            'data' => ['type' => 'quoteinternalstatuses', 'id' => 'draft']
+                        ]
+                    ]
+                ]
+            ],
+            $response
+        );
+
+        /** @var Quote $quote */
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
     }
 
     public function testDelete(): void
@@ -782,5 +872,63 @@ class QuoteTest extends RestJsonApiTestCase
         /** @var Quote $quote */
         $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
         self::assertCount(2, $quote->getAssignedUsers());
+    }
+
+    public function testGetSubresourceForInternalStatus(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->getSubresource(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'internalStatus'],
+        );
+
+        $this->assertResponseContains(
+            [
+                'data' => [
+                    'type' => 'quoteinternalstatuses',
+                    'id' => 'draft',
+                    'attributes' => [
+                        'name' => 'Draft'
+                    ]
+                ]
+            ],
+            $response
+        );
+    }
+
+    public function testGetRelationshipForInternalStatus(): void
+    {
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $response = $this->getRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'internalStatus'],
+        );
+
+        $this->assertResponseContains(
+            ['data' => ['type' => 'quoteinternalstatuses', 'id' => 'draft']],
+            $response
+        );
+    }
+
+    public function testTryToUpdateInternalStatusViaRelationship(): void
+    {
+        // guard
+        self::assertTrue($this->getWorkflowRegistry()->hasActiveWorkflowsByEntityClass(Quote::class));
+
+        $quoteId = $this->getReference('sale.quote.1')->getId();
+
+        $this->patchRelationship(
+            ['entity' => 'quotes', 'id' => (string)$quoteId, 'association' => 'internalStatus'],
+            [
+                'data' => [
+                    'type' => 'quoteinternalstatuses',
+                    'id' => 'sent_to_customer'
+                ]
+            ]
+        );
+
+        /** @var Quote $quote */
+        $quote = $this->getEntityManager()->find(Quote::class, $quoteId);
+        self::assertEquals('draft', $quote->getInternalStatus()->getInternalId());
     }
 }
