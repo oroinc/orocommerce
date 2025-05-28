@@ -150,6 +150,7 @@ services:
             - '@oro_seo.file_manager.tmp_data'
             - '@oro_seo.manager.robots_txt_file_manager'
             - '@doctrine'
+            - '@security.token_storage'
         calls:
             - ['setLogger', ['@logger']]
 
