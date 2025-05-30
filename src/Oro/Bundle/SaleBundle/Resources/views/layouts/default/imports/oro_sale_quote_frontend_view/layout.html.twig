@@ -55,6 +55,22 @@
             <div class="grid-col grid-col-mobile-landscape-12">
                 <table class="customer-info-grid__list">
                     <tbody>
+                        {% if quote.request is not null and is_granted('VIEW', quote.request) and not (
+                            quote.request.internalStatus
+                            and quote.request.internalStatus.internalId is same as(constant('Oro\\Bundle\\RFPBundle\\Entity\\Request::INTERNAL_STATUS_DELETED'))
+                        ) %}
+                        <tr class="customer-info-grid__row">
+                            <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.request.label'|trans }}</td>
+                            <td class="customer-info-grid__element-content">
+                                {% import '@OroUI/macros.html.twig' as UI -%}
+                                {{ UI.entityViewLink(
+                                    quote.request,
+                                    'oro.frontend.rfp.request.title.label'|trans({'%id%': quote.request.id}),
+                                    'oro_rfp_frontend_request_view'
+                                ) }}
+                            </td>
+                        </tr>
+                        {% endif %}
                         <tr class="customer-info-grid__row">
                             <td class="customer-info-grid__element-label">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
                             <td class="customer-info-grid__element-content"><bdo dir="ltr">{{ quote.poNumber|default('N/A'|trans) }}</bdo></td>
