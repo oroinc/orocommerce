@@ -193,3 +193,19 @@ api:
                 requestProductItem:
                     actions:
                         update_relationship: false
+
+        Oro\Bundle\RFPBundle\Entity\Request:
+            documentation_resource: '@OroSaleBundle/Resources/doc/api/rfq.md'
+            fields:
+                quotes:
+                    data_type: unidirectionalAssociation:request
+                    target_class: Oro\Bundle\SaleBundle\Entity\Quote
+                    target_type: to-many
+                    form_options:
+                        mapped: false
+            subresources:
+                quotes:
+                    actions:
+                        update_relationship: false
+                        add_relationship: false
+                        delete_relationship: false

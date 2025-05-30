@@ -599,6 +599,8 @@ oro:
                 assigned_customer_users.label: 'Assigned To'
                 title.label: 'Quote #%id%'
                 shipping_address.label: 'Shipping Address'
+                request.label: 'Request'
+                request_quotes.label: 'Quotes'
                 sections:
                     general: 'Quote Information'
                     back.label: 'Back to Quote List'
