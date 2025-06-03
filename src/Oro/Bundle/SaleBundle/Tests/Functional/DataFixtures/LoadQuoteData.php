@@ -125,7 +125,7 @@ class LoadQuoteData extends AbstractFixture implements ContainerAwareInterface, 
         ],
         self::QUOTE2 => [
             'qid' => self::QUOTE2,
-            'internal_status' => 'draft',
+            'internal_status' => 'deleted',
             'customer_status' => 'open',
             'customer' => LoadUserData::ACCOUNT1,
             'products' => [],
