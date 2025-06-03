@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ApiFrontend\RestJsonApi;
 
-use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Oro\Bundle\CustomerBundle\Tests\Functional\ApiFrontend\DataFixtures\LoadAdminCustomerUserData;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendConfigDumper;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -33,11 +32,6 @@ class ProductTest extends FrontendRestJsonApiTestCase
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product.yml',
             '@OroProductBundle/Tests/Functional/ApiFrontend/DataFixtures/product_prices.yml'
         ]);
-    }
-
-    private function isPostgreSql(): bool
-    {
-        return $this->getEntityManager()->getConnection()->getDatabasePlatform() instanceof PostgreSqlPlatform;
     }
 
     public function testGetList(): void
