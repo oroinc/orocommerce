@@ -183,7 +183,8 @@ api:
                     variants: # processed by Oro\Bundle\ProductBundle\Api\Processor\HandleVariantsFilter
                         data_type: boolean
                         operators: [ '=' ]
-                        property_path: _
+                        options:
+                            field: _
             actions:
                 create: false
                 update: false
