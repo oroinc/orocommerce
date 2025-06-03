@@ -39,7 +39,7 @@ class RestrictSitemapCategoryListenerTest extends \PHPUnit\Framework\TestCase
         /** @var CategoryVisibilityQueryBuilderModifier|\PHPUnit\Framework\MockObject\MockObject $queryModifier */
         $queryModifier = $this->createMock(CategoryVisibilityQueryBuilderModifier::class);
         $queryModifier->expects($this->once())
-            ->method('restrictForAnonymous')
+            ->method('restrictForAnonymousUsingOrganization')
             ->with($queryBuilder);
         $version = 1;
         $event = new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website);

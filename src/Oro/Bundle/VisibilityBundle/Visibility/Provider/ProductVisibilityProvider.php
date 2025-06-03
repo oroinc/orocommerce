@@ -7,9 +7,11 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\ResultIterator\IdentifierHydrator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
@@ -187,16 +189,18 @@ class ProductVisibilityProvider
 
         $productConfigValue = $this->getProductConfigValue();
         $categoryConfigValue = $this->getCategoryConfigValue();
+        $website = $this->getWebsiteById($websiteId);
+        $organization = $website->getOrganization();
 
         $productVisibilityTerm = $this->buildProductVisibilityResolvedTermByWebsite(
             $qb,
-            $this->getWebsiteById($websiteId)
+            $website
         );
 
         $anonymousGroupVisibilityTerm = $this->getCustomerGroupProductVisibilityFieldNameResolvedByWebsite(
             $qb,
-            $this->getAnonymousCustomerGroup(),
-            $this->getWebsiteById($websiteId),
+            $this->getAnonymousCustomerGroup($organization),
+            $website
         );
 
         $qb
@@ -271,23 +275,21 @@ class ProductVisibilityProvider
         return $queryBuilder;
     }
 
-    /**
-     * @param int $websiteId
-     * @return Website
-     */
-    private function getWebsiteById($websiteId)
+    private function getWebsiteById(int $websiteId): Website
     {
         return $this->doctrineHelper
             ->getEntityRepository(Website::class)
             ->find($websiteId);
     }
 
-    /**
-     * @return CustomerGroup
-     */
-    private function getAnonymousCustomerGroup()
+    private function getAnonymousCustomerGroup(OrganizationInterface $organization): ?CustomerGroup
     {
-        $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_customer_group');
+        $anonymousGroupId = $this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::ANONYMOUS_CUSTOMER_GROUP),
+            false,
+            false,
+            $organization
+        );
 
         return $this->doctrineHelper
             ->getEntityRepository(CustomerGroup::class)

@@ -5,8 +5,10 @@ namespace Oro\Bundle\VisibilityBundle\Model;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
@@ -65,7 +67,7 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
             $productVisibilityTerm,
             $this->getCustomerGroupProductVisibilityResolvedTermByWebsite(
                 $queryBuilder,
-                $this->getAnonymousCustomerGroup(),
+                $this->getAnonymousCustomerGroup($website->getOrganization()),
                 $website
             )
         ]);
@@ -176,9 +178,14 @@ TERM;
     /**
      * @return CustomerGroup|null
      */
-    private function getAnonymousCustomerGroup()
+    private function getAnonymousCustomerGroup(OrganizationInterface $organization)
     {
-        $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_customer_group');
+        $anonymousGroupId = $this->configManager->get(
+            Configuration::getConfigKeyByName(Configuration::ANONYMOUS_CUSTOMER_GROUP),
+            false,
+            false,
+            $organization
+        );
 
         /** @var CustomerGroup $customerGroup */
         $customerGroup = $this->doctrineHelper

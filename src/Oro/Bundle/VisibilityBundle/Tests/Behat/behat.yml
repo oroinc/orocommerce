@@ -39,6 +39,9 @@ oro_behat_extension:
           Active Tab Visibility To All:
             locator: 'div.tab-pane.active select[name^="oro_scoped_data_type"]'
             type: css
+          Non-Authenticated Visitors Customer Group:
+            locator: '//div[@id="product-visibility-customer-group"]//td[text()="Non-Authenticated Visitors"]/following-sibling::td//select'
+            type: xpath
 
     Visibility Product To Customer First Group:
       class: Oro\Bundle\FormBundle\Tests\Behat\Element\Select
