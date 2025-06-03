@@ -1,0 +1,21 @@
+dependencies:
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadUser
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadBusinessUnit
+    - Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization
+    - Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData
+
+Oro\Bundle\NoteBundle\Entity\Note:
+    note1:
+        message: 'Note 1'
+        owner: '@user'
+        organization: '@organization'
+        quote_54e154f7: ['@sale.quote.1']
+    note2:
+        message: 'Note 2'
+        owner: '@user'
+        organization: '@organization'
+        quote_54e154f7: ['@sale.quote.1', '@sale.quote.2']
+    note3:
+        message: 'Note 3'
+        owner: '@user'
+        organization: '@organization'

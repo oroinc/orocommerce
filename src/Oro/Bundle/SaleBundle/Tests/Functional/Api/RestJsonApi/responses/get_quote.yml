@@ -58,6 +58,12 @@ data:
         attachments:
             data: []
         activityNotes:
-            data: []
+            data:
+                -
+                    type: notes
+                    id: '<toString(@note1->id)>'
+                -
+                    type: notes
+                    id: '<toString(@note2->id)>'
         activityEmails:
             data: []
