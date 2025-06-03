@@ -117,7 +117,7 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier'
         public: false
         arguments:
-            - "@oro_config.global"
+            - "@oro_config.manager"
             - "@oro_scope.scope_manager"
             - "@oro_entity.doctrine_helper"
         calls:
@@ -450,7 +450,7 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_config.global'
+            - '@oro_config.manager'
         calls:
             - [setProductVisibilitySystemConfigurationPath, ['oro_visibility.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_visibility.category_visibility']]

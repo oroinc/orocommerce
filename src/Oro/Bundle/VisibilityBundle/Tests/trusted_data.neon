@@ -29,7 +29,7 @@ trusted_data:
             getIndexIntegerQueryBuilder:
                 alias: true
         Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier:
-            restrictForAnonymous:
+            restrictForAnonymousUsingOrganization:
                 anonymousGroupVisibilityTerm: true
         Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier:
             modify:

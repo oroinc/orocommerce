@@ -4,7 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\Persistence\ManagerRegistry;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
@@ -14,6 +16,7 @@ use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * Listens changes of Price Lists assigned to Customers, Customer Groups, Websites
@@ -87,13 +90,17 @@ class ShoppingListTotalListener
                 $shoppingTotalsRepository->invalidateByCustomers($ids, $data['websiteId']);
             }
 
-            $this->handleGuestShoppingLists($shoppingTotalsRepository, $data);
+            $organization = $this->getOrganizationByWebsiteId($data['websiteId']);
+            $this->handleGuestShoppingLists($shoppingTotalsRepository, $organization, $data);
         }
     }
 
-    private function handleGuestShoppingLists(ShoppingListTotalRepository $repository, array $data)
-    {
-        $anonymousCustomerGroupId = $this->getAnonymousCustomerGroupId();
+    private function handleGuestShoppingLists(
+        ShoppingListTotalRepository $repository,
+        OrganizationInterface $organization,
+        array $data
+    ) {
+        $anonymousCustomerGroupId = $this->getAnonymousCustomerGroupId($organization);
         if (!$anonymousCustomerGroupId) {
             return;
         }
@@ -114,10 +121,15 @@ class ShoppingListTotalListener
     /**
      * @return int
      */
-    private function getAnonymousCustomerGroupId()
+    private function getAnonymousCustomerGroupId(OrganizationInterface $organization)
     {
         if ($this->anonymousCustomerGroupId === null) {
-            $this->anonymousCustomerGroupId = (int)$this->configManager->get('oro_customer.anonymous_customer_group');
+            $this->anonymousCustomerGroupId = (int)$this->configManager->get(
+                Configuration::getConfigKeyByName(Configuration::ANONYMOUS_CUSTOMER_GROUP),
+                false,
+                false,
+                $organization
+            );
         }
 
         return $this->anonymousCustomerGroupId;
@@ -179,5 +191,15 @@ class ShoppingListTotalListener
                 $shoppingTotalsRepository->invalidateByCustomers($ids, $websiteData['id']);
             }
         }
+    }
+
+    private function getOrganizationByWebsiteId(int $websiteId): OrganizationInterface
+    {
+        $website = $this->registry
+            ->getManagerForClass(Website::class)
+            ->getRepository(Website::class)
+            ->find($websiteId);
+
+        return $website->getOrganization();
     }
 }

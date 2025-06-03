@@ -855,6 +855,10 @@ oro_behat_extension:
             type: css
             locator: 'div[data-ftid="oro_web_catalog_content_node_scopes"] input[data-name="field__customer"]'
             element: Select2Entity
+          Content Node Restrictions Customer Group:
+            type: css
+            locator: 'div[data-ftid="oro_web_catalog_content_node_scopes"] input[data-name="field__customer-group"]'
+            element: Select2Entity
           Landing Page:
             type: css
             locator: 'div.content-variant-item:first-child input[data-name="field__cms-page"]'
@@ -2055,6 +2059,9 @@ oro_behat_extension:
         - Oro\Bundle\CMSBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
         - Oro\Bundle\AttachmentBundle\Tests\Behat\Context\AttachmentImageContext
+        - Oro\Bundle\NavigationBundle\Tests\Behat\Context\TabContext
+        - Oro\Bundle\CustomerBundle\Tests\Behat\Context\FrontendGridContext
+        - Oro\Bundle\FrontendBundle\Tests\Behat\Context\FrontendMenuContext
       paths:
         - '@OroProductBundle/Tests/Behat/Features/other'
 
