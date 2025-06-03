@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
@@ -298,12 +299,13 @@ class ProductVisibilityProviderTest extends WebTestCase
 
     public function testGetNewUserAndAnonymousVisibilitiesForProducts()
     {
+        $organization = $this->getReference(LoadOrganization::ORGANIZATION);
         $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->withConsecutive(
                 [self::PRODUCT_VISIBILITY_CONFIGURATION_PATH],
                 [self::CATEGORY_VISIBILITY_CONFIGURATION_PATH],
-                ['oro_customer.anonymous_customer_group']
+                ['oro_customer.anonymous_customer_group', false, false, $organization]
             )
             ->willReturnOnConsecutiveCalls(
                 VisibilityInterface::HIDDEN,

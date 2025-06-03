@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
 use Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByVisibilityListener;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
-use Oro\Component\Website\WebsiteInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class RestrictSitemapProductByVisibilityListenerTest extends \PHPUnit\Framework\TestCase
 {
@@ -20,7 +20,7 @@ class RestrictSitemapProductByVisibilityListenerTest extends \PHPUnit\Framework\
             ->method('restrictForAnonymous')
             ->with($queryBuilder);
         $version = 1;
-        $website = $this->createMock(WebsiteInterface::class);
+        $website = $this->createMock(Website::class);
         $event = new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website);
         $listener = new RestrictSitemapProductByVisibilityListener($queryModifier);
         $listener->restrictQueryBuilder($event);

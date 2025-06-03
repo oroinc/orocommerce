@@ -3,7 +3,7 @@ services:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\ShoppingListTotalListener'
         arguments:
             - '@doctrine'
-            - '@oro_config.global'
+            - '@oro_config.manager'
         tags:
             - { name: kernel.event_listener, event: oro_pricing.combined_price_list.update, method: onPriceListUpdate }
             - { name: kernel.event_listener, event: oro_pricing.customer.combined_price_list.update, method: onCustomerPriceListUpdate }

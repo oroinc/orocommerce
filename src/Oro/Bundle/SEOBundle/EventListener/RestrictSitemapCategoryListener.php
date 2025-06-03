@@ -32,6 +32,9 @@ class RestrictSitemapCategoryListener
         $qb->andWhere($qb->expr()->eq(sprintf('%s.organization', UrlItemsProvider::ENTITY_ALIAS), ':organization'));
         $qb->setParameter('organization', $website->getOrganization());
 
-        $this->categoryVisibilityQueryBuilderModifier->restrictForAnonymous($qb);
+        $this->categoryVisibilityQueryBuilderModifier->restrictForAnonymousUsingOrganization(
+            $qb,
+            $website->getOrganization()
+        );
     }
 }
