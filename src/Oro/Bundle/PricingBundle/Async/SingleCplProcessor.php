@@ -111,7 +111,9 @@ class SingleCplProcessor implements MessageProcessorInterface, TopicSubscriberIn
         $em->beginTransaction();
         $this->indexationTriggerHandler->startCollect($job->getRootJob()->getId());
         try {
-            $this->buildCombinedPriceList($cpl, $products, $assignTo);
+            if ($products || empty($messageData['collection']) || !$cpl->isPricesCalculated()) {
+                $this->buildCombinedPriceList($cpl, $products, $assignTo);
+            }
             $this->combinedPriceListsBuilderFacade->processAssignments($cpl, $assignTo, $version);
             $this->removeActivityRecords($cpl, $job->getRootJob()->getId(), empty($products));
 

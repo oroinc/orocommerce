@@ -61,11 +61,7 @@ class ProductPriceCPLEntityListener implements OptionalListenerInterface, Featur
         $productPrice = $event->getEventArgs()->getEntity();
         $this->addPriceListToProductRelation($productPrice);
 
-        if (!$event->getEventArgs()->getEntityChangeSet()
-            && $this->combinedPriceListBuildTriggerHandler->handlePriceCreation($productPrice)
-        ) {
-            return;
-        }
+        $this->combinedPriceListBuildTriggerHandler->handlePriceCreation($productPrice);
 
         $this->handleChanges($productPrice);
     }

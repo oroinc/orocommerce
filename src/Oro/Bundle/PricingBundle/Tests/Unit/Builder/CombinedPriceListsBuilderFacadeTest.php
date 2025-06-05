@@ -106,9 +106,13 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
         $this->facade->processAssignments($combinedPriceList, $assignTo, true);
     }
 
-    public function testTriggerProductIndexation()
-    {
-        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 11]);
+    /** @dataProvider productIndexationProvider */
+    public function testTriggerProductIndexation(
+        CombinedPriceList $cpl,
+        array $productIds,
+        ?Website $website,
+        array $expected
+    ) {
         $assignTo = [
             'config' => true,
             'website' => [
@@ -119,22 +123,44 @@ class CombinedPriceListsBuilderFacadeTest extends \PHPUnit\Framework\TestCase
                 ]
             ]
         ];
-        $productIds = [1, 10];
-        $website = $this->getEntity(Website::class, ['id' => 100]);
 
         $this->dispatcher->expects($this->once())
             ->method('dispatch')
             ->willReturnCallback(function (GetAssociatedWebsitesEvent $event, string $name) use ($website) {
                 $this->assertEquals($event::NAME, $name);
-                $event->addWebsiteAssociation($website);
+                if ($website) {
+                    $event->addWebsiteAssociation($website);
+                }
 
                 return $event;
             });
 
         $this->triggerHandler->expects($this->once())
             ->method('processByProduct')
-            ->with($cpl, $productIds, $website);
+            ->with(...$expected);
 
         $this->facade->triggerProductIndexation($cpl, $assignTo, $productIds);
+    }
+
+    public function productIndexationProvider(): array
+    {
+        $productIds = [1, 10];
+        $cpl = $this->getEntity(CombinedPriceList::class, ['id' => 11]);
+        $website = $this->getEntity(Website::class, ['id' => 100]);
+
+        return [
+            [
+                'cpl' => $cpl,
+                'productIds' => $productIds,
+                'website' => $website,
+                'expected' => [$cpl, $productIds, $website]
+            ],
+            [
+                'cpl' => $cpl,
+                'productIds' => $productIds,
+                'website' => null,
+                'expected' => [$cpl, $productIds]
+            ]
+        ];
     }
 }
