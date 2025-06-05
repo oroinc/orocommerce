@@ -72,6 +72,10 @@ class CombinedPriceListsBuilderFacade
     ): void {
         $event = new GetAssociatedWebsitesEvent($cpl, $assignTo);
         $this->dispatcher->dispatch($event, $event::NAME);
+        $websites = $event->getWebsites();
+        if (empty($websites)) {
+            $this->triggerHandler->processByProduct($cpl, $productIds);
+        }
         foreach ($event->getWebsites() as $website) {
             $this->triggerHandler->processByProduct($cpl, $productIds, $website);
         }

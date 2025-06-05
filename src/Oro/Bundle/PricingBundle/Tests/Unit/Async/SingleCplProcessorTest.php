@@ -25,6 +25,9 @@ use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class SingleCplProcessorTest extends TestCase
 {
     use EntityTrait;
@@ -357,6 +360,48 @@ class SingleCplProcessorTest extends TestCase
         );
     }
 
+    public function testProcessNotCalculatedCplWithEmptyProducts()
+    {
+        $cpl = $this
+            ->getEntity(CombinedPriceList::class, ['id' => 1])
+            ->setPricesCalculated(true);
+
+        $products = [];
+        $assignTo = ['config' => true];
+        $collection = [['p' => 1, 'm' => true]];
+
+        $message = $this->getMessage($products, $assignTo, $collection, $cpl);
+
+        $this->assertJobRunnerCalls();
+        $this->assertActivityRecordsRemoval($products, $cpl);
+        $this->assertTransactionCommit();
+
+        $this->statusHandler->expects($this->never())
+            ->method('isReadyForBuild')
+            ->with($cpl)
+            ->willReturn(false);
+        $this->combinedPriceListsBuilderFacade->expects($this->never())
+            ->method('rebuild');
+        $this->combinedPriceListsBuilderFacade->expects($this->never())
+            ->method('triggerProductIndexation');
+        $this->dispatcher->expects($this->never())
+            ->method('dispatch')
+            ->with(
+                new CombinedPriceListsUpdateEvent([$cpl->getId()]),
+                CombinedPriceListsUpdateEvent::NAME
+            );
+        $this->combinedPriceListsBuilderFacade->expects($this->once())
+            ->method('processAssignments')
+            ->with($cpl, $assignTo);
+
+        $this->logger->expects($this->never())
+            ->method('error');
+        $this->assertEquals(
+            $this->processor::ACK,
+            $this->processor->process($message, $this->createMock(SessionInterface::class))
+        );
+    }
+
     public function productsDataProvider(): array
     {
         return [
@@ -419,15 +464,21 @@ class SingleCplProcessorTest extends TestCase
             );
     }
 
-    private function getMessage(array $products, array $assignTo): MessageInterface
-    {
+    private function getMessage(
+        array $products,
+        array $assignTo,
+        array $collection = [],
+        ?CombinedPriceList $cpl = null
+    ): MessageInterface {
+        $cpl = $cpl ?? $this->getEntity(CombinedPriceList::class, ['id' => 1]);
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn([
-                'cpl' => $this->getEntity(CombinedPriceList::class, ['id' => 1]),
+                'cpl' => $cpl,
                 'jobId' => 100,
                 'products' => $products,
+                'collection' => $collection,
                 'assign_to' => $assignTo,
                 'version' => 1
             ]);

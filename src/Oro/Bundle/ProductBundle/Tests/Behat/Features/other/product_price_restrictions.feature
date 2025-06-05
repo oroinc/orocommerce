@@ -120,7 +120,6 @@ Feature: Product price restrictions
 
   Scenario: Check product price, should be visible PL1 price
     Given I proceed as the Buyer
-    And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
     When I type "PSKU1" in "search"
     Then I should see an "Search Autocomplete" element
@@ -136,7 +135,6 @@ Feature: Product price restrictions
 
   Scenario: Check product price, should be visible PL2 price
     Given I proceed as the Buyer
-    And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
     When I type "PSKU1" in "search"
     Then I should see an "Search Autocomplete" element
@@ -157,7 +155,6 @@ Feature: Product price restrictions
 
   Scenario: Check product price, should be visible PL1 price
     Given I proceed as the Buyer
-    And I signed in as AmandaRCole@example.org on the store frontend
     And I am on the homepage
     When I type "PSKU1" in "search"
     Then I should see an "Search Autocomplete" element
