@@ -59,6 +59,7 @@ datagrids:
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
                     - order1.totalDiscountsAmount
+                    - order1.external
                     - SUM(appliedDiscount.amount) as promotionalDiscountsAmount
                     - CASE WHEN IDENTITY(order1.parent) IS NULL THEN 1 ELSE 2 END as orderType
                     - CONCAT(created_by.firstName, ' ', created_by.lastName) as createdBy
@@ -163,6 +164,10 @@ datagrids:
                 type:          twig
                 frontend_type: html
                 template:      '@OroOrder/Order/Datagrid/sourceDocument.html.twig'
+                renderable:    false
+            external:
+                label:         oro.order.external.label
+                frontend_type: boolean
                 renderable:    false
         sorters:
             columns:
@@ -273,6 +278,9 @@ datagrids:
                     type:      date
                     data_name: order1.shipUntil
                     renderable: false
+                external:
+                    type: boolean
+                    data_name: order1.external
         properties:
             id: ~
             view_link:
