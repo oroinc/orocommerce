@@ -1469,8 +1469,11 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_datagrid.provider.selected_fields'
+        calls:
+            - [ setConfigManager, ['@oro_entity_config.config_manager']]
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.products-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.products-grid, method: onBuildAfter }
 
     oro_product.datagrid.event_listener.product_grid_attribute_family:
         class: 'Oro\Bundle\ProductBundle\DataGrid\EventListener\AttributeFamilyColumnOnProductsListener'
