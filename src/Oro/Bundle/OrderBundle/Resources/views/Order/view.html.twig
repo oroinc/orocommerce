@@ -40,6 +40,11 @@
         {%- endif %}
         {{ UI.badge(entity.internalStatus.name, internalStatusBadgeClass) }}
     </span>
+    {% if entity.external %}
+        <span class="page-title__status">
+            {{ UI.badge('oro.order.external.badge'|trans, 'disabled') }}
+        </span>
+    {% endif %}
     {% if oro_config_value('oro_order.order_enable_external_status_management') and entity.status %}
         <span class="page-title__status">
             {{ UI.badge(entity.status.id|trans_enum, 'info') }}
