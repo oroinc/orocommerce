@@ -30,17 +30,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
     #[\Override]
     public function load(ObjectManager $manager): void
     {
-        $priceLists = [
-            'Default Price List' => [
-                'discount' => 0,
-            ],
-            'Wholesale Price List' => [
-                'discount' => 0.1,
-            ],
-            'Partner C Custom Price List' => [
-                'discount' => 0.2,
-            ],
-        ];
+        $priceLists = $this->getPriceListsData();
 
         $priceManager = $this->container->get('oro_pricing.manager.price_manager');
         foreach ($this->getProducts() as $row) {
@@ -115,5 +105,20 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
         }
 
         return $this->priceLists[$name];
+    }
+
+    protected function getPriceListsData(): array
+    {
+        return [
+            'Default Price List' => [
+                'discount' => 0,
+            ],
+            'Wholesale Price List' => [
+                'discount' => 0.1,
+            ],
+            'Partner C Custom Price List' => [
+                'discount' => 0.2,
+            ],
+        ];
     }
 }

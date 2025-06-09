@@ -9,7 +9,7 @@ use Oro\Bundle\CMSBundle\Migrations\Data\AbstractLoadPageData;
  */
 class LoadHomePageDemoData extends AbstractLoadPageData
 {
-    protected array $imagesMap = [
+    public const array IMAGE_MAP = [
         'homepage' => [
             '@OroCMSBundle/Migrations/Data/ORM/data/home-page/illustration-carts-order-history.webp' =>
                 '/bundles/orocms/images/home-page/illustration-carts-order-history.webp',
@@ -71,6 +71,8 @@ class LoadHomePageDemoData extends AbstractLoadPageData
                 '/bundles/orocms/images/home-page/featured-categories-grid-img-8-1280.webp',
         ]
     ];
+
+    protected array $imagesMap = self::IMAGE_MAP;
 
     #[\Override]
     public function getDependencies(): array

@@ -119,7 +119,7 @@ class LoadProductDemoData extends AbstractFixture implements
                 ->setNewArrival($row['new_arrival']);
 
             if ($row['brand_id']) {
-                $brand = $manager->getRepository(Brand::class)->find($row['brand_id']);
+                $brand = $this->findBrand($row['brand_id'], $manager);
 
                 if ($brand) {
                     $product->setBrand($brand);
@@ -160,10 +160,17 @@ class LoadProductDemoData extends AbstractFixture implements
         unset($this->productUnits);
     }
 
+    /**
+     * @param int|string $brandId
+     */
+    protected function findBrand($brandId, ObjectManager $manager): ?Brand
+    {
+        return $brandId ? $manager->getRepository(Brand::class)->find($brandId) : null;
+    }
+
     protected function getProducts(): \Iterator
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv');
+        $filePath = $this->getProductsDataPath();
 
         if (is_array($filePath)) {
             $filePath = current($filePath);
@@ -177,6 +184,13 @@ class LoadProductDemoData extends AbstractFixture implements
         }
 
         fclose($handler);
+    }
+
+    protected function getProductsDataPath(): string
+    {
+        $locator = $this->container->get('file_locator');
+
+        return $locator->locate($locator->locate('@OroProductBundle/Migrations/Data/Demo/ORM/data/products.csv'));
     }
 
     /**
@@ -213,6 +227,13 @@ class LoadProductDemoData extends AbstractFixture implements
         ]);
     }
 
+    protected function getProductImagePath(string $fileName, FileLocator $locator): string
+    {
+        return $locator->locate(
+            sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $fileName)
+        );
+    }
+
     protected function getProductImageForProductSku(
         ObjectManager $manager,
         FileLocator $locator,
@@ -226,9 +247,7 @@ class LoadProductDemoData extends AbstractFixture implements
 
         try {
             $fileName = $this->getImageFileName($sku, $name);
-            $imagePath = $locator->locate(
-                sprintf('@OroProductBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $fileName)
-            );
+            $imagePath = $this->getProductImagePath($fileName, $locator);
 
             if (is_array($imagePath)) {
                 $imagePath = current($imagePath);
@@ -253,6 +272,7 @@ class LoadProductDemoData extends AbstractFixture implements
             $image = new AttachmentFile();
             $image->setDigitalAsset($digitalAsset);
             $manager->persist($image);
+            $manager->flush();
 
             $productImage = new ProductImage();
             $productImage->setImage($image);
@@ -282,11 +302,14 @@ class LoadProductDemoData extends AbstractFixture implements
         return $this->productUnits[$code];
     }
 
-    private function getDefaultAttributeFamily(ObjectManager $manager): ?AttributeFamily
+    protected function getDefaultAttributeFamily(ObjectManager $manager): ?AttributeFamily
     {
         $familyRepository = $manager->getRepository(AttributeFamily::class);
 
-        return $familyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+        return $familyRepository->findOneBy([
+            'code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE,
+            'owner' => $this->getFirstUser($manager)->getOrganization()
+        ]);
     }
 
     private function addImageToProduct(

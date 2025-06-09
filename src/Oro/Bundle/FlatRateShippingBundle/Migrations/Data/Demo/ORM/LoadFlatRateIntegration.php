@@ -70,7 +70,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
 
         $channel = new Channel();
         $channel->setType(FlatRateChannelType::TYPE)
-            ->setName('Flat Rate')
+            ->setName(sprintf('%s %s', $label->getString(), $this->getDefaultCurrency()))
             ->setEnabled(true)
             ->setOrganization($this->getOrganization($manager))
             ->setDefaultUserOwner($this->getFirstUser($manager))
@@ -116,7 +116,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
         $manager->flush();
     }
 
-    private function getOrganization(ObjectManager $manager): Organization
+    protected function getOrganization(ObjectManager $manager): Organization
     {
         if ($this->hasReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION)) {
             return $this->getReference(LoadOrganizationAndBusinessUnitData::REFERENCE_DEFAULT_ORGANIZATION);
@@ -131,7 +131,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
             ->generateIdentifier($channel);
     }
 
-    private function getDefaultCurrency(): string
+    protected function getDefaultCurrency(): string
     {
         /** @var ConfigManager $configManager * */
         $configManager = $this->container->get('oro_config.global');
