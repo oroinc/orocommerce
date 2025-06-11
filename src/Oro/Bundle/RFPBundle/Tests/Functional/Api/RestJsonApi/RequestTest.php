@@ -7,6 +7,9 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class RequestTest extends RestJsonApiTestCase
 {
     #[\Override]
@@ -21,6 +24,40 @@ class RequestTest extends RestJsonApiTestCase
         $response = $this->cget(
             ['entity' => 'rfqs'],
             ['page' => ['size' => 100]]
+        );
+
+        self::assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
+    }
+
+    public function testGetListFilteredAndSortedByCreatedAt(): void
+    {
+        /** @var \DateTime $startDate */
+        $startDate = $this->getReference(LoadRequestData::REQUEST1)->getCreatedAt();
+
+        $response = $this->cget(
+            ['entity' => 'rfqs'],
+            [
+                'page[size]' => 100,
+                'filter[createdAt][gte]' => $startDate->format('Y-m-d\TH:i:s\Z'),
+                'sort' => 'createdAt'
+            ]
+        );
+
+        self::assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
+    }
+
+    public function testGetListFilteredAndSortedByUpdatedAt(): void
+    {
+        /** @var \DateTime $startDate */
+        $startDate = $this->getReference(LoadRequestData::REQUEST1)->getUpdatedAt();
+
+        $response = $this->cget(
+            ['entity' => 'rfqs'],
+            [
+                'page[size]' => 100,
+                'filter[updatedAt][gte]' => $startDate->format('Y-m-d\TH:i:s\Z'),
+                'sort' => 'updatedAt'
+            ]
         );
 
         self::assertResponseCount(LoadRequestData::NUM_REQUESTS, $response);
