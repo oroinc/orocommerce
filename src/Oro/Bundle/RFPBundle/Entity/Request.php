@@ -41,6 +41,8 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
  */
 #[ORM\Entity(repositoryClass: RequestRepository::class)]
 #[ORM\Table('oro_rfp_request')]
+#[ORM\Index(columns: ['created_at'], name: 'idx_oro_rfq_request_created_at')]
+#[ORM\Index(columns: ['updated_at'], name: 'idx_oro_rfq_request_updated_at')]
 #[ORM\HasLifecycleCallbacks]
 #[Config(
     routeName: 'oro_rfp_request_index',

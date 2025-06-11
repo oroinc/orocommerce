@@ -37,7 +37,7 @@ class OroRFPBundleInstaller implements
      */
     public function getMigrationVersion(): string
     {
-        return 'v1_14';
+        return 'v1_15';
     }
 
     /**
@@ -115,6 +115,8 @@ class OroRFPBundleInstaller implements
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
+        $table->addIndex(['created_at'], 'idx_oro_rfq_request_created_at');
+        $table->addIndex(['updated_at'], 'idx_oro_rfq_request_updated_at');
         $table->addIndex(['website_id'], 'idx_de1d53c18f45c82');
 
         $this->addOroRfpRequestEnumField($schema);
