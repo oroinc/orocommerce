@@ -9,6 +9,7 @@ class OrderStub extends Order
 {
     private ?AbstractEnumValue $internalStatus = null;
     private ?AbstractEnumValue $status = null;
+    private array $serializedData = [];
 
     public function getInternalStatus(): ?AbstractEnumValue
     {
@@ -37,5 +38,17 @@ class OrderStub extends Order
     public function unsetWebsite()
     {
         $this->website = null;
+    }
+
+    public function getSerializedData(): array
+    {
+        return $this->serializedData;
+    }
+
+    public function setSerializedData(array $serializedData): self
+    {
+        $this->serializedData = $serializedData;
+
+        return $this;
     }
 }

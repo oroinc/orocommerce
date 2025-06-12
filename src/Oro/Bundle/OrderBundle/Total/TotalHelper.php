@@ -75,11 +75,18 @@ class TotalHelper
 
     public function fillTotal(Order $order): void
     {
+        $totalObject = $this->calculateTotal($order);
+        $order->setTotalObject($totalObject);
+    }
+
+    public function calculateTotal(Order $order): MultiCurrency
+    {
         $total = $this->totalProvider->enableRecalculation()->getTotal($order);
         $totalObject = MultiCurrency::create($total->getAmount(), $total->getCurrency());
         $baseTotal = $this->rateConverter->getBaseCurrencyAmount($totalObject);
         $totalObject->setBaseCurrencyValue($baseTotal);
-        $order->setTotalObject($totalObject);
+
+        return $totalObject;
     }
 
     private function calculatePercent(Subtotal $subtotal, OrderDiscount $discount): float

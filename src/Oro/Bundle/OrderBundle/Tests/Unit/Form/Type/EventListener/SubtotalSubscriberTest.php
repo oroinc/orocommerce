@@ -3,12 +3,12 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Form\Type\EventListener;
 
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Oro\Bundle\OrderBundle\Handler\OrderLineItemCurrencyHandler;
 use Oro\Bundle\OrderBundle\Pricing\PriceMatcher;
 use Oro\Bundle\OrderBundle\Provider\DiscountSubtotalProvider;
+use Oro\Bundle\OrderBundle\Tests\Unit\EventListener\ORM\Stub\OrderStub as Order;
 use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
@@ -117,6 +117,27 @@ class SubtotalSubscriberTest extends \PHPUnit\Framework\TestCase
 
         $this->subscriber->onSubmitEventListener($event);
         $this->assertEquals(90, $order->getTotal());
+        $this->assertEquals(42, $order->getSubtotal());
+        $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
+        $discounts = $order->getDiscounts();
+        $this->assertEquals(10.00, $discounts[0]->getPercent());
+    }
+
+    public function testOnSubmitEventListenerOnIncorrectOrderTotal(): void
+    {
+        $order = $this->prepareOrder();
+        $order->getTotalObject()->setValue(89.00);
+        $order->setSerializedData([
+            'totals' => [
+                'total' => 90.00,
+                'not_relevant_price' => true
+            ]
+        ]);
+        $event = $this->prepareEvent($order);
+        $this->prepareProviders();
+
+        $this->subscriber->onSubmitEventListener($event);
+        $this->assertEquals(89, $order->getTotal());
         $this->assertEquals(42, $order->getSubtotal());
         $this->assertEquals(2, $order->getTotalDiscounts()->getValue());
         $discounts = $order->getDiscounts();
