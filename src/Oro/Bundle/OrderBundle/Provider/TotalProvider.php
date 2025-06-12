@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Provider;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Converter\RateConverterInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Provider\DefaultCurrencyProviderInterface;
@@ -35,31 +36,22 @@ class TotalProvider
      */
     public function getTotalWithSubtotalsWithBaseCurrencyValues(Order $order, bool $isStatic = true): array
     {
-        $defaultCurrency = $this->defaultCurrencyProvider->getDefaultCurrency();
         $subtotals = $this->pricingTotal->getSubtotals($order);
         $total = $this->pricingTotal->getTotalForSubtotals($order, $subtotals);
-        if ($total->getCurrency() !== $defaultCurrency) {
-            $baseAmount = $isStatic ? $order->getBaseTotalValue() : null;
-            $this->addSubtotalBaseCurrencyConversion($total, $defaultCurrency, $baseAmount);
-        }
 
-        foreach ($subtotals as $item) {
-            if ($item->getType() === LineItemSubtotalProvider::TYPE
-                && $item->getCurrency() !== $defaultCurrency
-            ) {
-                $baseAmount = $isStatic ? $order->getBaseSubtotalValue() : null;
-                $this->addSubtotalBaseCurrencyConversion($item, $defaultCurrency, $baseAmount);
-            }
-        }
+        return $this->prepareTotals($order, $subtotals, $total, $isStatic);
+    }
 
-        return [
-            TotalProcessorProvider::TYPE => $total->toArray(),
-            TotalProcessorProvider::SUBTOTALS => $subtotals
-                ->map(function (Subtotal $subtotal) {
-                    return $subtotal->toArray();
-                })
-                ->toArray()
-        ];
+    /**
+     * Get total from order and returns a total with subtotals
+     * and with values in base currency converted to an array.
+     */
+    public function getTotalFromOrderWithSubtotalsWithBaseCurrencyValues(Order $order, bool $isStatic = true): array
+    {
+        $subtotals = $this->pricingTotal->getSubtotals($order);
+        $total = $this->pricingTotal->getTotalFromOrder($order);
+
+        return $this->prepareTotals($order, $subtotals, $total, $isStatic);
     }
 
     private function addSubtotalBaseCurrencyConversion(
@@ -81,5 +73,34 @@ class TotalProvider
             'baseCurrency' => $defaultCurrency
         ]);
         $total->setData($totalData);
+    }
+
+    private function prepareTotals(
+        Order $order,
+        ?ArrayCollection $subtotals,
+        Subtotal $total,
+        bool $isStatic = true
+    ): array {
+        $defaultCurrency = $this->defaultCurrencyProvider->getDefaultCurrency();
+        if ($total->getCurrency() !== $defaultCurrency) {
+            $baseAmount = $isStatic ? $order->getBaseTotalValue() : null;
+            $this->addSubtotalBaseCurrencyConversion($total, $defaultCurrency, $baseAmount);
+        }
+
+        foreach ($subtotals as $item) {
+            if ($item->getType() === LineItemSubtotalProvider::TYPE
+                && $item->getCurrency() !== $defaultCurrency
+            ) {
+                $baseAmount = $isStatic ? $order->getBaseSubtotalValue() : null;
+                $this->addSubtotalBaseCurrencyConversion($item, $defaultCurrency, $baseAmount);
+            }
+        }
+
+        return [
+            TotalProcessorProvider::TYPE => $total->toArray(),
+            TotalProcessorProvider::SUBTOTALS => $subtotals
+                ->map(fn (Subtotal $subtotal): array => $subtotal->toArray())
+                ->toArray()
+        ];
     }
 }

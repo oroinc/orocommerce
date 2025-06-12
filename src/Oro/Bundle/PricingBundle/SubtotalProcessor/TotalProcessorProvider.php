@@ -99,6 +99,18 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
         return $this->createTotal($entity, $subtotals);
     }
 
+    public function getTotalFromOrder(Order $order): Subtotal
+    {
+        $total = new Subtotal();
+        $total->setType(self::TYPE);
+        $translation = sprintf('oro.pricing.subtotals.%s.label', $total->getType());
+        $total->setLabel($this->translator->trans($translation));
+        $total->setCurrency($this->getBaseCurrency($order));
+        $total->setAmount($order->getTotal());
+
+        return $total;
+    }
+
     /**
      * Collects all entity subtotals.
      *

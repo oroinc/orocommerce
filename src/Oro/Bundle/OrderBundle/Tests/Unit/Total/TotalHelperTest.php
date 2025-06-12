@@ -155,6 +155,33 @@ class TotalHelperTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($totalAmount, $order->getTotal());
     }
 
+    public function testCalculateTotal(): void
+    {
+        $order = new Order();
+
+        $total = new Subtotal();
+        $totalAmount = 100.00;
+        $total->setType(TotalProcessorProvider::TYPE);
+        $total->setAmount($totalAmount);
+
+        $this->totalProvider->expects($this->any())
+            ->method('enableRecalculation')
+            ->willReturnSelf();
+
+        $this->totalProvider->expects($this->any())
+            ->method('getTotal')
+            ->with($order)
+            ->willReturn($total);
+
+        $this->rateConverter->expects($this->once())
+            ->method('getBaseCurrencyAmount')
+            ->willReturnCallback(function (MultiCurrency $multiCurrency) {
+                return $multiCurrency->getValue();
+            });
+
+        $this->assertEquals($totalAmount, $this->helper->calculateTotal($order)->getValue());
+    }
+
     public function testFillTotalForOrderWithSuborders(): void
     {
         $order = new Order();

@@ -51,7 +51,7 @@ class OrderController extends AbstractController
         return [
             'entity' => $order,
             'totals' => $this->container->get(TotalProvider::class)
-                ->getTotalWithSubtotalsWithBaseCurrencyValues($order),
+                ->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order),
         ];
     }
 
@@ -67,7 +67,7 @@ class OrderController extends AbstractController
         return [
             'entity' => $order,
             'totals' => $this->container->get(TotalProvider::class)
-                ->getTotalWithSubtotalsWithBaseCurrencyValues($order),
+                ->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order),
         ];
     }
 
