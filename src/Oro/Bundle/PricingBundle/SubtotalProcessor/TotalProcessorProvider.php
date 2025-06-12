@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\SubtotalProcessor;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\CacheAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -96,6 +97,18 @@ class TotalProcessorProvider extends AbstractSubtotalProvider
     public function getTotalForSubtotals(object $entity, ArrayCollection $subtotals): Subtotal
     {
         return $this->createTotal($entity, $subtotals);
+    }
+
+    public function getTotalFromOrder(Order $order): Subtotal
+    {
+        $total = new Subtotal();
+        $total->setType(self::TYPE);
+        $translation = sprintf('oro.pricing.subtotals.%s.label', $total->getType());
+        $total->setLabel($this->translator->trans($translation));
+        $total->setCurrency($this->getBaseCurrency($order));
+        $total->setAmount($order->getTotal());
+
+        return $total;
     }
 
     /**

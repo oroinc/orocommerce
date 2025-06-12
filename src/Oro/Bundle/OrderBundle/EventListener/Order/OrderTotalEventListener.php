@@ -5,6 +5,9 @@ namespace Oro\Bundle\OrderBundle\EventListener\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Provider\TotalProvider;
 
+/**
+ * The class set order totals to form
+ */
 class OrderTotalEventListener
 {
     const TOTALS_KEY = 'totals';
@@ -21,7 +24,7 @@ class OrderTotalEventListener
     {
         $order = $event->getOrder();
 
-        $totals = $this->provider->getTotalWithSubtotalsWithBaseCurrencyValues($order, false);
+        $totals = $this->provider->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order, false);
 
         $event->getData()->offsetSet(self::TOTALS_KEY, $totals);
     }

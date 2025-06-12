@@ -49,7 +49,7 @@ class OrderController extends AbstractController
     {
         return [
             'entity' => $order,
-            'totals' => $this->get(TotalProvider::class)->getTotalWithSubtotalsWithBaseCurrencyValues($order),
+            'totals' => $this->get(TotalProvider::class)->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order),
         ];
     }
 

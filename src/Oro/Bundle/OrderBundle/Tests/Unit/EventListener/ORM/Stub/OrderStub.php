@@ -10,6 +10,9 @@ class OrderStub extends Order
     /** @var AbstractEnumValue */
     protected $internalStatus;
 
+    /** @var array */
+    protected $serializedData = [];
+
     /**
      * @return AbstractEnumValue
      */
@@ -33,5 +36,17 @@ class OrderStub extends Order
     public function unsetWebsite()
     {
         $this->website = null;
+    }
+
+    public function getSerializedData(): array
+    {
+        return $this->serializedData;
+    }
+
+    public function setSerializedData(array $serializedData): self
+    {
+        $this->serializedData = $serializedData;
+
+        return $this;
     }
 }

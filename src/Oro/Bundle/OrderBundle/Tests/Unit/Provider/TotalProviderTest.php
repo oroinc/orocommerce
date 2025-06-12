@@ -43,29 +43,9 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
      */
     public function testGetTotalWithSubtotalsWithBaseCurrencyValues(array $original, array $expectedResult)
     {
-        $order = $this->createMock(Order::class);
-        $order->expects($this->any())
-            ->method('getBaseTotalValue')
-            ->willReturn($original[TotalProcessorProvider::TYPE]['base_amount']);
-        $order->expects($this->any())
-            ->method('getBaseSubtotalValue')
-            ->willReturn($original[TotalProcessorProvider::SUBTOTALS]['base_amount']);
-
-        $total = new Subtotal();
-        $total->setType(TotalProcessorProvider::TYPE)
-            ->setAmount($original[TotalProcessorProvider::TYPE]['amount'])
-            ->setCurrency($original[TotalProcessorProvider::TYPE]['currency'])
-            ->setOperation(Subtotal::OPERATION_ADD)
-            ->setLabel('Total');
-
-        $subtotal = new Subtotal();
-        $subtotal->setType(LineItemSubtotalProvider::TYPE)
-            ->setAmount($original[TotalProcessorProvider::SUBTOTALS]['amount'])
-            ->setCurrency($original[TotalProcessorProvider::SUBTOTALS]['currency'])
-            ->setOperation(Subtotal::OPERATION_ADD)
-            ->setLabel('Subtotal');
-
-        $subtotals = new ArrayCollection([$subtotal]);
+        $order = $this->prepareOrder($original);
+        $total = $this->getTotal($original);
+        $subtotals = $this->getSubTotalCollection($original);
 
         $this->processorProvider->expects($this->once())
             ->method('getTotalForSubtotals')
@@ -86,6 +66,41 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
         );
         $this->assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
         $this->assertEquals(
+            $totals[TotalProcessorProvider::SUBTOTALS],
+            $expectedResult[TotalProcessorProvider::SUBTOTALS]
+        );
+    }
+
+    /**
+     * @dataProvider subtotalsProvider
+     */
+    public function testGetTotalFromOrderWithSubtotalsWithBaseCurrencyValues(
+        array $original,
+        array $expectedResult
+    ): void {
+        $order = $this->prepareOrder($original);
+        $total = $this->getTotal($original);
+        $subtotals = $this->getSubTotalCollection($original);
+
+        $this->processorProvider->expects(self::once())
+            ->method('getTotalFromOrder')
+            ->with($order)
+            ->willReturn($total);
+
+        $this->processorProvider->expects(self::once())
+            ->method('getSubtotals')
+            ->with($order)
+            ->willReturn($subtotals);
+
+        $totals = $this->provider->getTotalFromOrderWithSubtotalsWithBaseCurrencyValues($order);
+        self::assertIsArray($totals);
+        self::assertArrayHasKey(TotalProcessorProvider::TYPE, $totals);
+        self::assertEquals(
+            $totals[TotalProcessorProvider::TYPE],
+            $expectedResult[TotalProcessorProvider::TYPE]
+        );
+        self::assertArrayHasKey(TotalProcessorProvider::SUBTOTALS, $totals);
+        self::assertEquals(
             $totals[TotalProcessorProvider::SUBTOTALS],
             $expectedResult[TotalProcessorProvider::SUBTOTALS]
         );
@@ -173,5 +188,42 @@ class TotalProviderTest extends AbstractSubtotalProviderTest
                 ]
             ]
         ];
+    }
+
+    private function getTotal(array $original): Subtotal
+    {
+        $total = new Subtotal();
+        $total->setType(TotalProcessorProvider::TYPE);
+        $total->setAmount($original[TotalProcessorProvider::TYPE]['amount']);
+        $total->setCurrency($original[TotalProcessorProvider::TYPE]['currency']);
+        $total->setOperation(Subtotal::OPERATION_ADD);
+        $total->setLabel('Total');
+
+        return $total;
+    }
+
+    private function getSubTotalCollection(array $original): ArrayCollection
+    {
+        $subtotal = new Subtotal();
+        $subtotal->setType(LineItemSubtotalProvider::TYPE);
+        $subtotal->setAmount($original[TotalProcessorProvider::SUBTOTALS]['amount']);
+        $subtotal->setCurrency($original[TotalProcessorProvider::SUBTOTALS]['currency']);
+        $subtotal->setOperation(Subtotal::OPERATION_ADD);
+        $subtotal->setLabel('Subtotal');
+
+        return new ArrayCollection([$subtotal]);
+    }
+
+    private function prepareOrder(array $original): Order
+    {
+        $order = $this->createMock(Order::class);
+        $order->expects(self::any())
+            ->method('getBaseTotalValue')
+            ->willReturn($original[TotalProcessorProvider::TYPE]['base_amount']);
+        $order->expects(self::any())
+            ->method('getBaseSubtotalValue')
+            ->willReturn($original[TotalProcessorProvider::SUBTOTALS]['base_amount']);
+
+        return $order;
     }
 }

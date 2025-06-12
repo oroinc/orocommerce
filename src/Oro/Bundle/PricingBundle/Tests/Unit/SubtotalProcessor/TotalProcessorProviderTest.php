@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemNotPricedSubtotalProvider;
@@ -94,6 +95,26 @@ class TotalProcessorProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals(182.0, $total->getAmount());
     }
 
+    public function testGetTotalFromOrder(): void
+    {
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with(sprintf('oro.pricing.subtotals.%s.label', TotalProcessorProvider::TYPE))
+            ->willReturn(ucfirst(TotalProcessorProvider::TYPE));
+
+        /** @var Order $entity */
+        $entity = new Order();
+        $entity->setTotal(182.5);
+        $entity->setCurrency('USD');
+
+        $total = $this->provider->getTotalFromOrder($entity);
+
+        self::assertInstanceOf(Subtotal::class, $total);
+        self::assertEquals(TotalProcessorProvider::TYPE, $total->getType());
+        self::assertEquals(ucfirst(TotalProcessorProvider::TYPE), $total->getLabel());
+        self::assertEquals($entity->getCurrency(), $total->getCurrency());
+        self::assertSame(182.5, $total->getAmount());
+    }
     public function testRecalculationIsEnabledAndProviderIsCacheAware()
     {
         $subtotalProvider = $this->createMock(CacheAwareSubtotalProviderStub::class);

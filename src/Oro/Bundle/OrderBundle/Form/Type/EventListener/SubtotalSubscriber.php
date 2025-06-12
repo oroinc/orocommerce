@@ -52,10 +52,20 @@ class SubtotalSubscriber implements EventSubscriberInterface
         $form = $event->getForm();
         $data = $event->getData();
         if ($data instanceof Order) {
+            $serializedData = $data->getSerializedData();
             // As the order currency may change, need to reset all prices and recalculate it.
             $this->resetLineItems($form, $data);
             $this->priceMatcher->addMatchingPrices($data);
+            $originalTotal = $data->getTotalObject();
+
             $this->totalHelper->fill($data);
+
+            if (!empty($serializedData['totals']) && $serializedData['totals']['not_relevant_price'] === true &&
+                $data->getTotalObject()->getValue() === (float)$serializedData['totals']['total']
+            ) {
+                $data->setTotalObject($originalTotal);
+            }
+
             $event->setData($data);
 
             if ($form->has('discountsSum')) {
