@@ -606,5 +606,6 @@ oro_behat_extension:
         - Oro\Bundle\FilterBundle\Tests\Behat\Context\FilterContext
         - Oro\Bundle\DashboardBundle\Tests\Behat\Context\FeatureContext
         - Oro\Bundle\ProductBundle\Tests\Behat\Context\FrontendProductGridContext
+        - Oro\Bundle\ImportExportBundle\Tests\Behat\Context\ImportExportContext
       paths:
         - '@OroOrderBundle/Tests/Behat/Features'

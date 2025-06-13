@@ -100,6 +100,7 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false,
                 ],
+                'enable_external_order_import' => [ 'type' => 'boolean', 'value' => false]
             ]
         );
 

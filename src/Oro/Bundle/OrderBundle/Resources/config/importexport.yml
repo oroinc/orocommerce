@@ -1,0 +1,139 @@
+services:
+    oro_order.importexport.configuration_provider.external_order:
+        class: Oro\Bundle\OrderBundle\ImportExport\Configuration\ExternalOrderImportConfigurationProvider
+        arguments:
+            - '@translator'
+        tags:
+            - { name: oro_importexport.configuration, alias: oro_order }
+
+    oro_order.importexport.processor.external_order_import:
+        class: Oro\Bundle\ImportExportBundle\Processor\ComplexData\ComplexDataToJsonApiImportProcessor
+        arguments:
+            - '@oro_order.importexport.converter.external_order_import_converter'
+        tags:
+            - { name: oro_importexport.processor, type: import, entity: Oro\Bundle\OrderBundle\Entity\Order, alias: external_order_import.add }
+            - { name: oro_importexport.processor, type: import_validation, entity: Oro\Bundle\OrderBundle\Entity\Order, alias: external_order_import.add }
+
+    oro_order.importexport.writer.external_order_import:
+        parent: oro_importexport.writer.json_api_batch_api_import_writer
+        arguments:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+            - 'external_order_import'
+
+    oro_order.importexport.writer.external_order_import.validation:
+        parent: oro_importexport.writer.json_api_batch_api_import_writer
+        arguments:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+            - 'external_order_import_validation'
+
+    oro_order.importexport.writer.api.skip_flush_data:
+        class: Oro\Bundle\ApiBundle\Batch\Processor\Update\SkipFlushData
+        tags:
+            - { name: oro.api.processor, action: batch_update, group: save_data, requestType: external_order_import_validation, priority: 250 }
+
+    oro_order.importexport.writer.api.set_entity_validation_groups:
+        class: Oro\Bundle\OrderBundle\ImportExport\Writer\Api\Processor\SetEntityValidationGroups
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, requestType: external_order_import, priority: 110 }
+            - { name: oro.api.processor, action: create, group: transform_data, requestType: external_order_import_validation, priority: 110 }
+
+    oro_order.importexport.converter.external_order_import_converter:
+        class: Oro\Bundle\ImportExportBundle\Converter\ComplexData\JsonApiImportConverter
+        arguments:
+            - '@oro_order.importexport.converter.external_order_import_mapping_provider'
+            - '@property_accessor'
+            - '@oro_order.importexport.converter.data_accessor'
+            - 'order'
+        calls:
+            - [setConverterRegistry, ['@oro_order.importexport.converter.additional_converter_registry']]
+
+    oro_order.importexport.converter.data_accessor:
+        class: Oro\Bundle\ImportExportBundle\Converter\ComplexData\DataAccessor\ComplexDataConvertationDataAccessor
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@property_accessor'
+            - '@oro_importexport.complex_data_entity_loader'
+            - '@oro_entity_extend.enum_options_provider'
+
+    oro_order.importexport.converter.additional_converter_registry:
+        class: Oro\Bundle\ImportExportBundle\Converter\ComplexData\ComplexDataConverterRegistry
+        arguments:
+            - !abstract '$converters defined in Oro\Bundle\OrderBundle\OroOrderBundle'
+            - !abstract '$container defined in Oro\Bundle\OrderBundle\OroOrderBundle'
+
+    oro_order.importexport.converter.additional_converter.customer:
+        class: Oro\Bundle\OrderBundle\ImportExport\Converter\CustomerConverter
+        arguments:
+            - '@oro_order.importexport.converter.data_accessor'
+        tags:
+            - { name: oro_order.external_order_import.additional_converter, entity: order }
+
+    oro_order.importexport.converter.additional_converter.order_shipping_method:
+        class: Oro\Bundle\OrderBundle\ImportExport\Converter\OrderShippingMethodConverter
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+            - '@oro_shipping.translator.shipping_method_label'
+        tags:
+            - { name: oro_order.external_order_import.additional_converter, entity: order }
+            - { name: oro_order.external_order_import.additional_converter, entity: order_line_item }
+
+    oro_order.importexport.converter.additional_converter.free_form_product:
+        class: Oro\Bundle\OrderBundle\ImportExport\Converter\FreeFormProductConverter
+        tags:
+            - { name: oro_order.external_order_import.additional_converter, entity: order_line_item }
+
+    oro_order.importexport.converter.additional_converter.order_discount_type:
+        class: Oro\Bundle\OrderBundle\ImportExport\Converter\OrderDiscountTypeConverter
+        tags:
+            - { name: oro_order.external_order_import.additional_converter, entity: order_discount }
+
+    oro_order.importexport.converter.external_order_import_error_converter:
+        class: Oro\Bundle\ImportExportBundle\Converter\ComplexData\JsonApiBatchApiToImportErrorConverter
+        arguments:
+            - '@oro_order.importexport.converter.external_order_import_mapping_provider'
+            - '@translator'
+            - 'order'
+        calls:
+            - [setConverterRegistry, ['@oro_order.importexport.converter.additional_converter_registry']]
+
+    oro_order.importexport.converter.external_order_import_mapping_provider:
+        class: Oro\Bundle\ImportExportBundle\Converter\ComplexData\Mapping\ComplexDataMappingProvider
+        arguments:
+            - !tagged_iterator oro_order.importexport.external_order_import_provider
+
+    oro_order.importexport.converter.external_order_import_mapping_provider.from_config_files:
+        class: Oro\Bundle\ImportExportBundle\Converter\ComplexData\Mapping\ComplexDataStaticMappingProvider
+        parent: oro.static_config_provider.abstract
+        arguments:
+            - 'external_order_import_mapping'
+            - 'Resources/config/oro/external_order_import.yml'
+            - '%kernel.cache_dir%/oro/external_order_import.php'
+            - '%kernel.debug%'
+        tags:
+            - { name: oro_order.importexport.external_order_import_provider, priority: 10 }
+
+    oro_order.importexport.converter.external_order_import_mapping_provider.order_status:
+        class: Oro\Bundle\OrderBundle\ImportExport\Converter\OrderStatusMappingProvider
+        arguments:
+            - '@oro_order.provider.configuration'
+        tags:
+            - { name: oro_order.importexport.external_order_import_provider }
+
+    oro_order.importexport.processor.export_template.external_order_import:
+        class: Oro\Bundle\ImportExportBundle\Processor\ComplexData\ComplexDataExportProcessor
+        arguments:
+            - '@oro_order.importexport.converter.external_order_import_mapping_provider'
+            - '@oro_order.importexport.converter.data_accessor'
+            - '@oro_importexport.complex_data_value_transformer.json_api'
+            - 'order'
+        calls:
+            - [setConverterRegistry, ['@oro_order.importexport.converter.additional_converter_registry']]
+        tags:
+            - { name: oro_importexport.processor, type: export_template, entity: Oro\Bundle\OrderBundle\Entity\Order, alias: external_order_import }
+
+    oro_order.importexport.template_fixture.order:
+        class: Oro\Bundle\OrderBundle\ImportExport\TemplateFixture\OrderFixture
+        arguments:
+            - '@oro_shipping.shipping_method_provider'
+        tags:
+            - { name: oro_importexport.template_fixture }

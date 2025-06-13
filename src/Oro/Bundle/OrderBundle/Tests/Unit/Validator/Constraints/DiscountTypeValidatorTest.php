@@ -59,7 +59,7 @@ class DiscountTypeValidatorTest extends ConstraintValidatorTestCase
 
         $this->buildViolation($constraint->errorMessage)
             ->setParameters([
-                '%valid_types%' => implode(',', [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT])
+                '%valid_types%' => implode(', ', [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT])
             ])
             ->atPath('property.path.type')
             ->assertRaised();

@@ -6,6 +6,9 @@ use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
+/**
+ * Validates that the order discount type is valid.
+ */
 class DiscountTypeValidator extends ConstraintValidator
 {
     private $validTypes = [OrderDiscount::TYPE_AMOUNT, OrderDiscount::TYPE_PERCENT];
@@ -38,7 +41,7 @@ class DiscountTypeValidator extends ConstraintValidator
 
         $this->context->buildViolation($constraint->errorMessage)
             ->atPath('type')
-            ->setParameter('%valid_types%', implode(',', $this->validTypes))
+            ->setParameter('%valid_types%', implode(', ', $this->validTypes))
             ->addViolation();
     }
 }

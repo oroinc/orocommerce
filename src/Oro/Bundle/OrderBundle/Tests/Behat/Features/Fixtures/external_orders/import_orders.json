@@ -1,0 +1,56 @@
+[
+  {
+    "createdAt": "2023-01-14",
+    "currency": "USD",
+    "customerNotes": "Some note",
+    "identifier": "1000ORD1005",
+    "poNumber": "P10O001005",
+    "shipUntil": "2023-01-15",
+    "customerUser": "AmandaRCole@example.org",
+    "shippingStatus": "Shipped",
+    "status": "Open",
+    "billingAddress":
+    {
+      "firstName": "John",
+      "lastName": "Doe",
+      "city": "NYC",
+      "postalCode": "10001",
+      "street": "5th Avenue",
+      "country": "US",
+      "region": "US-NY"
+    },
+    "shippingAddress":
+    {
+      "firstName": "Jane",
+      "lastName": "Smith",
+      "city": "LA",
+      "postalCode": "90001",
+      "street": "Sunset Blvd",
+      "country": "US",
+      "region": "US-NY"
+    },
+    "lineItems": [
+      {
+        "comment": "Urgent",
+        "currency": "USD",
+        "freeFormProduct": "Custom",
+        "priceType": 1,
+        "productName": "Product X",
+        "productSku": "TAG1",
+        "quantity": 2,
+        "shipBy": "2023-01-10",
+        "value": 50,
+        "shippingEstimateAmount": 5,
+        "shippingMethod": "flat_rate",
+        "shippingMethodType": "primary",
+        "productUnit": "item"
+      }],
+    "paymentterms": "Net 30",
+    "shippingTrackings": [
+      {
+        "method": "UPS",
+        "number": "1Z123"
+      }],
+    "owner": "megan"
+  }
+]

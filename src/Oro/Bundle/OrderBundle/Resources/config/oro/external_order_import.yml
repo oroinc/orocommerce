@@ -1,0 +1,191 @@
+order:
+    target_type: orders
+    fields:
+        identifier:
+            target_path: attributes.identifier
+        poNumber:
+            target_path: attributes.poNumber
+        createdAt:
+            target_path: attributes.createdAt
+        currency:
+            target_path: attributes.currency
+        customerNotes:
+            target_path: attributes.customerNotes
+        customerUser:
+            target_path: relationships.customerUser.data
+            ref: customer_user
+        lineItems:
+            target_path: relationships.lineItems.data
+            ref: order_line_item
+        shippingMethod: ~
+        shipUntil:
+            target_path: attributes.shipUntil
+            entity_data_type: date
+        shippingStatus:
+            target_path: relationships.shippingStatus.data
+            ref: order_shipping_status
+        estimatedShippingCostAmount:
+            target_path: attributes.estimatedShippingCostAmount
+        shippingAddress:
+            target_path: relationships.shippingAddress.data
+            ref: order_address
+        billingAddress:
+            target_path: relationships.billingAddress.data
+            ref: order_address
+        paymentTerm:
+            target_path: relationships.paymentTerm.data
+            entity_path: payment_term_7c4f1e8e.label
+            ref: payment_term
+        discounts:
+            target_path: relationships.discounts.data
+            ref: order_discount
+        shippingTrackings:
+            target_path: relationships.shippingTrackings.data
+            ref: order_shipping_tracking
+        external:
+            target_path: attributes.external
+            value: true
+        owner:
+            target_path: relationships.owner.data
+            ref: user
+        organization:
+            target_path: relationships.organization.data
+            ref: organization
+
+customer_user:
+    target_type: customerusers
+    entity: Oro\Bundle\CustomerBundle\Entity\CustomerUser
+    lookup_field: email
+
+user:
+    target_type: users
+    entity: Oro\Bundle\UserBundle\Entity\User
+    lookup_field: username
+
+organization:
+    target_type: organizations
+    entity: Oro\Bundle\OrganizationBundle\Entity\Organization
+    lookup_field: name
+
+payment_term:
+    target_type: paymentterms
+    entity: Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm
+    lookup_field: label
+    ignore_not_found: true
+
+order_line_item:
+    target_type: orderlineitems
+    collection: true
+    fields:
+        quantity:
+            target_path: attributes.quantity
+        currency:
+            target_path: attributes.currency
+        value:
+            target_path: attributes.value
+        comment:
+            target_path: attributes.comment
+        shipBy:
+            target_path: attributes.shipBy
+            entity_data_type: date
+        shippingEstimateAmount:
+            target_path: attributes.shippingEstimateAmount
+        shippingMethod: ~
+        productSku:
+            target_path: attributes.productSku
+        productName:
+            target_path: attributes.productName
+        product:
+            target_path: relationships.product.data
+            ref: product
+            source: productSku
+        productUnit:
+            target_path: relationships.productUnit.data
+            entity_path: productUnit.code
+            ref: product_unit
+        fromExternalSource:
+            target_path: attributes.fromExternalSource
+            value: true
+
+product:
+    target_type: products
+    entity: Oro\Bundle\ProductBundle\Entity\Product
+    lookup_field: sku
+
+product_unit:
+    target_type: productunits
+
+order_address:
+    target_type: orderaddresses
+    fields:
+        label:
+            target_path: attributes.label
+        firstName:
+            target_path: attributes.firstName
+        middleName:
+            target_path: attributes.middleName
+        lastName:
+            target_path: attributes.lastName
+        namePrefix:
+            target_path: attributes.namePrefix
+        nameSuffix:
+            target_path: attributes.nameSuffix
+        organization:
+            target_path: attributes.organization
+        phone:
+            target_path: attributes.phone
+        city:
+            target_path: attributes.city
+        street:
+            target_path: attributes.street
+        street2:
+            target_path: attributes.street2
+        postalCode:
+            target_path: attributes.postalCode
+        country:
+            target_path: relationships.country.data
+            entity_path: country.iso2Code
+            ref: country
+        region:
+            target_path: relationships.region.data
+            entity_path: region.combinedCode
+            ref: region
+        customRegion:
+            target_path: attributes.customRegion
+        fromExternalSource:
+            target_path: attributes.fromExternalSource
+            value: true
+
+country:
+    target_type: countries
+
+region:
+    target_type: regions
+
+order_shipping_status:
+    target_type: ordershippingstatuses
+    entity: Extend\Entity\EV_Order_Shipping_Status
+    lookup_field: name
+    ignore_not_found: true
+
+order_discount:
+    target_type: orderdiscounts
+    collection: true
+    fields:
+        type:
+            target_path: attributes.orderDiscountType
+        description:
+            target_path: attributes.description
+        amount:
+            target_path: attributes.amount
+        percent:
+            target_path: attributes.percent
+
+order_shipping_tracking:
+    target_type: ordershippingtrackings
+    collection: true
+    fields:
+        method:
+            target_path: attributes.method
+        number:
+            target_path: attributes.number

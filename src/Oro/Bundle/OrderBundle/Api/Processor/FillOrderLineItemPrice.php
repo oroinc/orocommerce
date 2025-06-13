@@ -56,7 +56,6 @@ class FillOrderLineItemPrice implements ProcessorInterface
                 $this->translator->trans('oro.order.orderlineitem.product_price.blank', [], 'validators')
             );
         } elseif ($this->validateSubmittedPrice($productPrice, $lineItem, $context)) {
-            $lineItem->setCurrency($productPrice->getCurrency());
             $lineItem->setValue($productPrice->getValue());
         }
     }

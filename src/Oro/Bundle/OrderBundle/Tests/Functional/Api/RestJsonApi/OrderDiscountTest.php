@@ -333,7 +333,7 @@ class OrderDiscountTest extends RestJsonApiTestCase
             [
                 'title'  => 'discount type constraint',
                 'detail' => 'The discount type is invalid.'
-                    . ' Valid types are: oro_order_discount_item_type_amount,oro_order_discount_item_type_percent',
+                    . ' Valid types are: oro_order_discount_item_type_amount, oro_order_discount_item_type_percent.',
                 'source' => ['pointer' => '/data/attributes/orderDiscountType']
             ],
             $response
@@ -363,7 +363,7 @@ class OrderDiscountTest extends RestJsonApiTestCase
             [
                 'title'  => 'discount type constraint',
                 'detail' => 'The discount type is invalid.'
-                    . ' Valid types are: oro_order_discount_item_type_amount,oro_order_discount_item_type_percent',
+                    . ' Valid types are: oro_order_discount_item_type_amount, oro_order_discount_item_type_percent.',
                 'source' => ['pointer' => '/data/attributes/orderDiscountType']
             ],
             $response
