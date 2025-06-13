@@ -16,7 +16,7 @@ oro:
                 single_discount.label: 'The sum of all discounts cannot exceed the order grand total amount. Please review discount amount.'
                 label: 'The sum of all discounts cannot exceed the order grand total amount. Please review some discounts above and make necessary adjustments.'
             item.error.label: 'The discount amount cannot exceed the order grand total amount.'
-            type.error.label: 'The discount type is invalid. Valid types are: %valid_types%'
+            type.error.label: 'The discount type is invalid. Valid types are: %valid_types%.'
             range:
                 not_in_range_message: 'The discount amount should be between {{ min }} and {{ max }}'
             order:

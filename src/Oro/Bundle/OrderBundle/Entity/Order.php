@@ -514,7 +514,9 @@ class Order implements
     #[ORM\PrePersist]
     public function prePersist()
     {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        if (null === $this->createdAt) {
+            $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        }
         $this->updatedAt = clone $this->createdAt;
     }
 

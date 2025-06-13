@@ -32,9 +32,9 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 /**
- * Loads demo data for customer orders.
+ * Loads demo data for external orders.
  */
-class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class LoadExternalOrderDemoData extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
 {
     use ContainerAwareTrait;
 
@@ -57,8 +57,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
     {
         /** @var EntityManagerInterface $manager */
 
-        $orderMetadata = $manager->getClassMetadata(Order::class);
-        $this->disablePrePersistCallback($orderMetadata);
+        $this->disablePrePersistCallback($manager->getClassMetadata(Order::class));
         $this->toggleFeatures(false);
         $this->toggleListeners(false);
 
@@ -102,8 +101,8 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
                 $order = new Order();
                 $order->setInternalStatus($internalStatus);
                 $order->setOwner($customerUser->getOwner());
-                $order->setPoNumber(sprintf('POSD%03d%03d', $customerUser->getId(), $index));
-                $order->setIdentifier(sprintf('COI%03d%03d', $customerUser->getId(), $index));
+                $order->setPoNumber(\sprintf('POEXT%03d%03d', $customerUser->getId(), $index));
+                $order->setIdentifier(\sprintf('EXT%03d%03d', $customerUser->getId(), $index));
                 $order->setCustomer($customerUser->getCustomer());
                 $order->setCustomerUser($customerUser);
                 $order->setOrganization($customerUser->getOwner()->getOrganization());
@@ -111,9 +110,11 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
                 $order->setShippingAddress($orderAddress);
                 $order->setWebsite($website);
                 $order->setCurrency(CurrencyConfiguration::DEFAULT_CURRENCY);
-                $order->setShipUntil(new \DateTime(sprintf('+%d hours', random_int(0, 100)), $timeZone));
+                $order->setShipUntil(new \DateTime(\sprintf('+%d hours', random_int(0, 100)), $timeZone));
                 $order->setCreatedAt($createdAt);
                 $order->setUpdatedAt(clone $createdAt);
+                $order->setExternal(true);
+                $order->setCustomerNotes('This order has been imported from the ERP.');
 
                 $paymentTermAccessor->setPaymentTerm($order, $paymentTerm);
 
@@ -129,7 +130,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
 
         $manager->flush();
 
-        $this->enablePrePersistCallback($orderMetadata);
+        $this->enablePrePersistCallback($manager->getClassMetadata(Order::class));
         $this->toggleFeatures(true);
         $this->toggleListeners(true);
     }
@@ -141,6 +142,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
         $customerAddress = $customerUser->getAddresses()->first();
 
         $orderAddress = new OrderAddress();
+        $orderAddress->setFromExternalSource(true);
         $orderAddress->setLabel($customerAddress->getLabel());
         $orderAddress->setCountry($customerAddress->getCountry());
         $orderAddress->setCity($customerAddress->getCity());
@@ -166,6 +168,7 @@ class LoadCustomerOrderDemoData extends AbstractFixture implements ContainerAwar
             $unit = $units ? $units[array_rand($units)] : null;
 
             $orderLineItem = new OrderLineItem();
+            $orderLineItem->setFromExternalSource(true);
             $orderLineItem->setProduct($product);
             $orderLineItem->setProductName((string)$product->getName());
             $orderLineItem->setProductUnit($unit);

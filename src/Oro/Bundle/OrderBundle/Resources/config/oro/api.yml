@@ -18,6 +18,9 @@ api:
             documentation_resource: '@OroOrderBundle/Resources/doc/api/order.md'
             enable_validation: true
             fields:
+                createdAt:
+                    form_options:
+                        mapped: true
                 paymentTerm:
                     property_path: payment_term_7c4f1e8e
                 source:

@@ -249,7 +249,6 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
                 : Price::create(mt_rand(10, 1000), $order->getCurrency());
 
             $orderLineItem = new OrderLineItem();
-            $orderLineItem->setFromExternalSource(mt_rand(0, 1));
             $orderLineItem->setProduct($product);
             $orderLineItem->setProductName($product->getName());
             $orderLineItem->setFreeFormProduct(null);

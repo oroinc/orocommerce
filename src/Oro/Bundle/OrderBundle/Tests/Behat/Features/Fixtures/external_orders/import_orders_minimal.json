@@ -1,0 +1,15 @@
+[
+  {
+    "currency": "USD",
+    "identifier": "1000ORD1006",
+    "customerUser": "AmandaRCole@example.org",
+    "lineItems": [
+      {
+        "currency": "USD",
+        "productSku": "PSKU1",
+        "quantity": 2,
+        "value": 10,
+        "productUnit": "item"
+      }]
+  }
+]

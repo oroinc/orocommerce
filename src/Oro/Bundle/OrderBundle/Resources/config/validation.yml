@@ -1,6 +1,10 @@
 Oro\Bundle\OrderBundle\Entity\Order:
     constraints:
-        -   Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
+        -   Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+                fields: [identifier]
+                groups:
+                    - Default
+                    - external_order_import
         -   Oro\Bundle\OrderBundle\Validator\Constraints\CustomerOrUserAddressGranted:
                 addressType: billing
                 groups:
@@ -22,6 +26,9 @@ Oro\Bundle\OrderBundle\Entity\Order:
         poNumber:
             -   Length:
                     max: 255
+                    groups:
+                        - Default
+                        - external_order_import
         shipUntil:
             -   Type:
                     type: DateTimeInterface
@@ -29,31 +36,67 @@ Oro\Bundle\OrderBundle\Entity\Order:
                     payload:
                         jsValidation:
                             type: Date
+                    groups:
+                        - Default
+                        - external_order_import
         currency:
-            -   NotBlank: ~
-            -   Currency: ~
+            -   NotBlank:
+                    groups:
+                        - Default
+                        - external_order_import
+            -   Currency:
+                    groups:
+                        - Default
+                        - external_order_import
         totalValue:
             -   Type:
                     type: numeric
+                    groups:
+                        - Default
+                        - external_order_import
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                     notInRangeMessage: 'oro.order.total.range.not_in_range_message'
+                    groups:
+                        - Default
+                        - external_order_import
         subtotalValue:
             -   Type:
                     type: numeric
+                    groups:
+                        - Default
+                        - external_order_import
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
                     notInRangeMessage: 'oro.order.subtotal.range.not_in_range_message'
+                    groups:
+                        - Default
+                        - external_order_import
         customer:
-            -   NotBlank: ~
+            -   NotBlank:
+                    groups:
+                        - Default
+                        - external_order_import
         shippingMethod:
             -   NotBlank:
                     allowNull: true
+                    groups:
+                        - Default
+                        - external_order_import
             -   Length:
                     max: 255
+                    groups:
+                        - Default
+                        - external_order_import
         shippingMethodType:
             -   NotBlank:
                     allowNull: true
+                    groups:
+                        - Default
+                        - external_order_import
             -   Length:
                     max: 255
+                    groups:
+                        - Default
+                        - external_order_import
         lineItems:
             -   Count:
                     min: 1
@@ -111,7 +154,10 @@ Oro\Bundle\OrderBundle\Entity\Order:
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:
-        -   Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct: ~
+        -   Oro\Bundle\OrderBundle\Validator\Constraints\LineItemProduct:
+                groups:
+                    - Default
+                    - external_order_import
         -   Oro\Bundle\ProductBundle\Validator\Constraints\ProductUnitExists:
                 path: productUnit
                 sell: true
@@ -128,47 +174,91 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
                     - api_frontend_order_line_item_create
     properties:
         orders:
-            -   NotBlank: ~
+            -   Count:
+                    min: 1
+                    groups:
+                        - Default
+                        - external_order_import
             -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
                     message: oro.order.orderlineitem.order.changed
-                    groups: [ api ]
+                    groups:
+                        - api
         productSku:
-            -   NotBlank:
-                    groups: [ Import ]
             -   Length:
                     max: 255
-                    groups: [ Import ]
+                    groups:
+                        - Default
+                        - external_order_import
         quantity:
-            -   NotBlank: ~
-            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
-            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
+            -   NotBlank:
+                    groups:
+                        - Default
+                        - external_order_import
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    groups:
+                        - Default
+                        - external_order_import
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
+                    groups:
+                        - Default
+                        - external_order_import
         priceType:
             -   NotBlank: ~
         productUnit:
             -   NotBlank:
                     message: 'oro.product.productunit.invalid'
-        productUnitCode:
+                    groups:
+                        - Default
+                        - external_order_import
+        currency:
             -   NotBlank:
-                    groups: [ Import ]
+                    groups:
+                        - Default
+                        - external_order_import
+            -   Currency:
+                    groups:
+                        - Default
+                        - external_order_import
         price:
             -   NotBlank:
                     message: 'oro.order.orderlineitem.product_price.blank'
+                    groups:
+                        - Default
+                        - external_order_import
             -   Valid: ~
         freeFormProduct:
             -   Length:
                     max: 255
+                    groups:
+                        - Default
+                        - external_order_import
         shippingMethod:
             -   NotBlank:
                     allowNull: true
+                    groups:
+                        - Default
+                        - external_order_import
             -   Length:
                     max: 255
+                    groups:
+                        - Default
+                        - external_order_import
         shippingMethodType:
             -   NotBlank:
                     allowNull: true
+                    groups:
+                        - Default
+                        - external_order_import
             -   Length:
                     max: 255
+                    groups:
+                        - Default
+                        - external_order_import
         shippingEstimateAmount:
-            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            -   Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal:
+                    groups:
+                        - Default
+                        - external_order_import
         kitItemLineItems:
             -   Valid: ~
             -   Oro\Bundle\FormBundle\Validator\Constraints\AdaptivelyValidCollection:
@@ -345,7 +435,10 @@ Oro\Bundle\OrderBundle\Entity\OrderProductKitItemLineItem:
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     constraints:
-        -   Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion: ~
+        -   Oro\Bundle\AddressBundle\Validator\Constraints\ValidRegion:
+                groups:
+                    - Default
+                    - external_order_import
         -   Oro\Bundle\AddressBundle\Validator\Constraints\RegionText: ~
         -   Oro\Bundle\AddressBundle\Validator\Constraints\RequiredRegion: ~
         -   Oro\Bundle\AddressBundle\Validator\Constraints\NameOrOrganization: ~
@@ -361,49 +454,81 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
         phone:
             -   Length:
                     max: 255
+                    groups:
+                        - Default
+                        - external_order_import
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
     constraints:
         -   Oro\Bundle\OrderBundle\Validator\Constraints\NotBlankDiscountValue:
-                groups: [ Default, OrderDiscountItemType ]
+                groups:
+                    - Default
+                    - OrderDiscountItemType
+                    - external_order_import
     properties:
         percent:
             -   Type:
-                    groups: [ Default, OrderDiscountItemType ]
                     type: numeric
+                    groups:
+                        - Default
+                        - OrderDiscountItemType
+                        - external_order_import
             -   Oro\Bundle\FormBundle\Validator\Constraints\PercentRange:
-                    groups: [ Default, OrderDiscountItemType ]
                     min: -100
                     max: 100
                     type: fractional_100
+                    groups:
+                        - Default
+                        - OrderDiscountItemType
+                        - external_order_import
         amount:
             -   Type:
-                    groups: [ Default, OrderDiscountItemType ]
                     type: numeric
+                    groups:
+                        - Default
+                        - OrderDiscountItemType
+                        - external_order_import
             -   Oro\Bundle\ValidationBundle\Validator\Constraints\NumericRange:
-                    groups: [ Default, OrderDiscountItemType ]
                     notInRangeMessage: 'oro.order.discounts.range.not_in_range_message'
+                    groups:
+                        - Default
+                        - OrderDiscountItemType
+                        - external_order_import
         type:
             -   Type:
-                    groups: [ Default, OrderDiscountItemType ]
                     type: string
+                    groups:
+                        - Default
+                        - OrderDiscountItemType
+                        - external_order_import
             -   Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType:
-                    groups: [ Default, OrderDiscountItemType ]
+                    groups:
+                        - Default
+                        - OrderDiscountItemType
+                        - external_order_import
         order:
             -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
             -   Oro\Bundle\OrderBundle\Validator\Constraints\Discounts:
                     errorMessage: 'oro.order.discounts.sum.error.single_discount.label'
-                    groups: [ OrderDiscountItemType ]
+                    groups:
+                        - OrderDiscountItemType
             -   Oro\Bundle\FormBundle\Validator\Constraints\UnchangeableField:
                     message: oro.order.discounts.order.changed
-                    groups: [ api ]
+                    groups:
+                        - api
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:
         method:
-            -   NotBlank: ~
+            -   NotBlank:
+                    groups:
+                        - Default
+                        - external_order_import
         number:
-            -   NotBlank: ~
+            -   NotBlank:
+                    groups:
+                        - Default
+                        - external_order_import
 
 Oro\Bundle\ProductBundle\Entity\ProductKitItemProduct:
     properties:

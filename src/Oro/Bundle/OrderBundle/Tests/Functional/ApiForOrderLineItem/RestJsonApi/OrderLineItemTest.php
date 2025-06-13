@@ -687,6 +687,11 @@ class OrderLineItemTest extends RestJsonApiTestCase
         $this->assertResponseValidationErrors(
             [
                 [
+                    'title'  => 'count constraint',
+                    'detail' => 'This collection should contain 1 element or more.',
+                    'source' => ['pointer' => '/data/relationships/orders/data']
+                ],
+                [
                     'title'  => 'unchangeable field constraint',
                     'detail' => 'Line Item order cannot be changed once set.',
                     'source' => ['pointer' => '/data/relationships/orders/data']
