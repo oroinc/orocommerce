@@ -3,11 +3,16 @@
 namespace Oro\Bundle\PromotionBundle\DependencyInjection;
 
 use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\ConfigBundle\Utils\TreeUtils;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
+/**
+ * Provides configuration settings for the oro_promotion bundle.
+ */
 class Configuration implements ConfigurationInterface
 {
+    public const ROOT_NODE = 'oro_promotion';
     public const FEATURE_ENABLED = 'feature_enabled';
     public const DISCOUNT_STRATEGY = 'discount_strategy';
     public const CASE_INSENSITIVE_COUPON_SEARCH = 'case_insensitive_coupon_search';
@@ -15,7 +20,7 @@ class Configuration implements ConfigurationInterface
     #[\Override]
     public function getConfigTreeBuilder(): TreeBuilder
     {
-        $treeBuilder = new TreeBuilder('oro_promotion');
+        $treeBuilder = new TreeBuilder(self::ROOT_NODE);
 
         $rootNode = $treeBuilder->getRootNode();
 
@@ -29,5 +34,10 @@ class Configuration implements ConfigurationInterface
         );
 
         return $treeBuilder;
+    }
+
+    public static function getConfigKey(string $name): string
+    {
+        return TreeUtils::getConfigKey(static::ROOT_NODE, $name);
     }
 }
