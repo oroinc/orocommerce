@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+
 class LoadCouponPromotionDiscountData extends AbstractLoadCouponData
 {
     const COUPON_ORDER = 'coupon_order';
@@ -14,7 +16,8 @@ class LoadCouponPromotionDiscountData extends AbstractLoadCouponData
     public function getDependencies()
     {
         return [
-            LoadPromotionDiscountData::class
+            LoadPromotionDiscountData::class,
+            LoadOrganization::class,
         ];
     }
 

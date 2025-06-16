@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PromotionBundle\Tests\Functional\DataFixtures;
 
+use Oro\Bundle\TestFrameworkBundle\Tests\Functional\DataFixtures\LoadOrganization;
+
 class LoadCouponData extends AbstractLoadCouponData
 {
     const COUPON_WITHOUT_PROMO_AND_VALID_UNTIL = 'coupon_without_promo_and_valid_until';
@@ -19,6 +21,7 @@ class LoadCouponData extends AbstractLoadCouponData
     {
         return [
             LoadPromotionData::class,
+            LoadOrganization::class,
         ];
     }
 
