@@ -27,6 +27,7 @@ Oro\Bundle\PromotionBundle\Entity\Coupon:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
             fields: [code]
+        - Oro\Bundle\PromotionBundle\Validator\Constraints\UniqueCaseInsensitiveCouponCode: ~
         - Oro\Bundle\ValidationBundle\Validator\Constraints\DatesChain:
             chain:
                 validFrom: 'Valid From'

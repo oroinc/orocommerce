@@ -2,14 +2,22 @@
 
 namespace Oro\Bundle\PromotionBundle\Entity\Repository;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Oro\Bundle\PromotionBundle\Entity\Coupon;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 /**
  * Doctrine repository for Coupon entity.
  */
-class CouponRepository extends EntityRepository
+class CouponRepository extends ServiceEntityRepository
 {
+    private ?AclHelper $aclHelper = null;
+
+    public function setAclHelper(AclHelper $aclHelper): void
+    {
+        $this->aclHelper = $aclHelper;
+    }
+
     /**
      * @param int[] $ids
      *
@@ -63,14 +71,30 @@ class CouponRepository extends EntityRepository
         return array_column($rows, 'id');
     }
 
-    public function getSingleCouponByCode(string $couponCode, bool $caseInsensitive = false): ?Coupon
+    public function hasDuplicatesInCaseInsensitiveMode(): bool
+    {
+        $qb = $this->createQueryBuilder('coupon')
+            ->select('1')
+            ->groupBy('coupon.codeUppercase')
+            ->having('COUNT(coupon.id) > 1')
+            ->setMaxResults(1);
+
+        return (bool) $this->aclHelper->apply($qb)->getOneOrNullResult();
+    }
+
+    public function getCouponByCode(string $couponCode, bool $caseInsensitive = false): array
     {
         /** @var Coupon[] $coupons */
-        $coupons = $this->createQueryBuilder('coupon')
+        $qb = $this->createQueryBuilder('coupon')
             ->where(sprintf('coupon.%s = :code', $caseInsensitive ? 'codeUppercase' : 'code'))
-            ->setParameter('code', $caseInsensitive ? strtoupper($couponCode) : $couponCode)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('code', $caseInsensitive ? strtoupper($couponCode) : $couponCode);
+
+        return $this->aclHelper->apply($qb)->getResult();
+    }
+
+    public function getSingleCouponByCode(string $couponCode, bool $caseInsensitive = false): ?Coupon
+    {
+        $coupons = $this->getCouponByCode($couponCode, $caseInsensitive);
 
         return \count($coupons) === 1
             ? reset($coupons)

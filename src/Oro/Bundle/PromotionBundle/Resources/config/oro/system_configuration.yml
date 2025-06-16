@@ -28,6 +28,9 @@ system_configuration:
             options:
                 label: oro.promotion.system_configuration.fields.case_insensitive_coupon_search.label
                 tooltip: oro.promotion.system_configuration.fields.case_insensitive_coupon_search.tooltip
+                resettable: false
+                constraints:
+                    - Oro\Bundle\PromotionBundle\Validator\Constraints\ConfigCouponCaseInsensitiveOption: ~
 
     tree:
         system_configuration:
