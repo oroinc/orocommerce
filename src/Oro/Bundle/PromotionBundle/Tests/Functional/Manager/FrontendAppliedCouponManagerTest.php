@@ -399,7 +399,7 @@ class FrontendAppliedCouponManagerTest extends WebTestCase
 
     public function testRemoveAppliedCouponByCodeCaseInsensitive(): void
     {
-        $configManager = self::getConfigManager();
+        $configManager = self::getConfigManager(null);
         self::assertFalse($configManager->get('oro_promotion.case_insensitive_coupon_search'));
         $configManager->set('oro_promotion.case_insensitive_coupon_search', true);
         $configManager->flush();
