@@ -158,8 +158,11 @@ class FrontendCouponHandlerTest extends AbstractCouponHandlerTestCase
 
     public function testHandleCaseInsensitive()
     {
-        $configManager = self::getConfigManager('global');
+        $configManager = self::getConfigManager(null);
         $savedState = $configManager->get('oro_promotion.case_insensitive_coupon_search');
+
+        self::assertFalse($configManager->get('oro_promotion.case_insensitive_coupon_search'));
+
         $configManager->set('oro_promotion.case_insensitive_coupon_search', true);
         $configManager->flush();
 

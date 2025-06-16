@@ -17,8 +17,9 @@ Feature: Enter coupon code case insensitive on Front Store
     And I proceed as the Admin
     And I login as administrator
     And I disable inventory management
+    And I go to System/ User Management/ Organizations
+    And I click Configuration ORO in grid
     When follow "Commerce/Sales/Promotions" on configuration sidebar
-    And uncheck "Use default" for "Case-Insensitive Coupon Codes" field
     And I check "Case-Insensitive Coupon Codes"
     And I click "Save settings"
     Then I should see "Configuration saved" flash message
