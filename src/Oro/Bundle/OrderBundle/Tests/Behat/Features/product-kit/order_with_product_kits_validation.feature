@@ -19,7 +19,8 @@ Feature: Order with Product Kits Validation
       | ProductKitItem2Product  | simple-product-01 - Simple Product 01 |
       | ProductKitItem2Quantity | 11                                    |
     And the "Price" field should be readonly in form "Order Form"
-    And click "Calculate Shipping Button"
+    And I click on empty space
+    And click on "Calculate Shipping Button"
     And I save form
     Then I should see "Order Form" validation errors:
       | ProductKitItem1Quantity | The quantity should be between 2 and 5  |

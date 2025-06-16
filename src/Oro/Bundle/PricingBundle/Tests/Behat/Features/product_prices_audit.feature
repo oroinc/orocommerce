@@ -70,7 +70,8 @@ Feature: Product prices audit
   Scenario: Check removed product price from the product edit page
     Given I switch to the "PriceList" session
     When click "Change History"
-    Then should see following "Audit History Grid" grid:
+    Then I should see "removed: Currency: EUR Price List: Price List" and continue checking the condition is met for maximum 10 seconds
+    And should see following "Audit History Grid" grid:
       | Old Values                                                                                                                                                    | New Values                                                                                                                                                       |
       | Prices: Product Price "PSKU1 \| 2 item \| 10.4500 EUR" removed: Currency: EUR Price List: Price List "1" Quantity: 2 Unit: Product Unit "item" Value: 10.4500 | Prices:                                                                                                                                                          |
       | Prices: Product Price "PSKU1 \| 2 item \| 10.4500 EUR" changed: Currency: USD  Quantity: 1  Unit: Product Unit "each"  Value: 7.45                            | Prices:  Product Price "PSKU1 \| 2 item \| 10.4500 EUR" changed: Currency: EUR Quantity: 2 Unit: Product Unit "item" Value: 10.45                                |
