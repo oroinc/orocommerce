@@ -26,6 +26,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\RedirectBundle\Cache\FlushableCacheInterface;
+use Oro\Bundle\ThemeBundle\Fallback\Provider\ThemeConfigurationFallbackProvider;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -310,12 +311,15 @@ class LoadProductDemoData extends AbstractFixture implements
      */
     private function setPageTemplate(Product $product, array $row)
     {
-        if (!empty($row['page_template'])) {
-            $entityFallbackValue = new EntityFieldFallbackValue();
-            $entityFallbackValue->setArrayValue([ProductType::PAGE_TEMPLATE_ROUTE_NAME => $row['page_template']]);
+        $entityFallbackValue = new EntityFieldFallbackValue();
 
-            $product->setPageTemplate($entityFallbackValue);
+        if (!empty($row['page_template'])) {
+            $entityFallbackValue->setArrayValue([ProductType::PAGE_TEMPLATE_ROUTE_NAME => $row['page_template']]);
+        } else {
+            $entityFallbackValue->setFallback(ThemeConfigurationFallbackProvider::FALLBACK_ID);
         }
+
+        $product->setPageTemplate($entityFallbackValue);
 
         return $this;
     }
