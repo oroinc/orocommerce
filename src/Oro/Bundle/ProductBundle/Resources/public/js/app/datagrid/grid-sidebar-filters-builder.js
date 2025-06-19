@@ -1,6 +1,7 @@
 import mediator from 'oroui/js/mediator';
 import FiltersManager from 'orofilter/js/filters-manager';
 import SidebarToggleFiltersAction from 'oroproduct/js/app/datagrid/actions/sidebar-toggle-filters-action';
+import SidebarFilterManagerMenuView from 'oroproduct/js/app/views/sidebar-filters/sidebar-filter-manager-menu-view';
 import filtersContainerTemplate from 'tpl-loader!oroproduct/templates/sidebar-filters/filters-container.html';
 import filtersContainerFullscreenTemplate from 'tpl-loader!orofilter/templates/filters-container.html';
 
@@ -22,11 +23,20 @@ export default {
             renderMode: 'toggle-mode',
             autoClose: false,
             enableMultiselectWidget: true,
-            closeFilterManagerOnOutClick: false,
             template: filtersContainerTemplate,
             fullscreenTemplate: filtersContainerFullscreenTemplate,
             defaultFiltersViewMode: FiltersManager.MANAGE_VIEW_MODE,
-            enableScrollContainerShadow: true
+            enableScrollContainerShadow: true,
+            FilterManagerMenu: SidebarFilterManagerMenuView,
+            filterManagerMenuParams: {
+                cssConfig: {
+                    dropdown: 'sidebar-filter-manager-menu',
+                    dropdownMenu:
+                        `default dropdown-menu
+                        multiselect__dropdown-menu datagrid-manager__menu
+                        sidebar-filter-manager-menu__dropdown-menu`
+                }
+            }
         });
         options.metadata.filters.forEach(filter => {
             filter.initiallyOpened = false;

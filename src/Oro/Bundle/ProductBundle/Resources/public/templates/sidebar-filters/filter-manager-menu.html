@@ -1,0 +1,43 @@
+<% let oroui = _.macros('oroui') %>
+<% var dropdownId = _.uniqueId('multiselect-dropdown-'); %>
+<div class="<%- cssConfig.dropdown %>" data-origin-container>
+    <button class="<%- cssConfig.dropdownToggleBtn %>"
+        id="<%- dropdownId %>"
+        type="button"
+        data-toggle="dropdown"
+        data-prevent-close-on-menu-click="true"
+        aria-expanded="false"
+        data-popper="false"
+        data-placement="<%- dropdownPlacement %>"
+        <% if (tooltipTitle) { %>title="<%- tooltipTitle %>"<% } else if (dropdownMenuLabel) { %>title="<%- dropdownMenuLabel %>"<% } %>
+        <% if (dropdownAriaLabel) { %>aria-label="<%- dropdownAriaLabel %>" <% } %>
+    >
+        <% if (dropdownToggleIcon) { %>
+            <%= oroui.renderIcon({
+                name: dropdownToggleIcon
+            }) %>
+        <% } %>
+        <%- dropdownToggleLabel %>
+    </button>
+
+    <div class="<%- cssConfig.dropdownMenu %>"
+        aria-labelledby="<%- dropdownId %>"
+        data-role="content"
+    >
+        <div class="<%- cssConfig.dropdownMenuHeader %>">
+            <button class="btn btn--icon btn--plain" data-role="close">
+                <%= oroui.renderIcon({
+                    name: 'arrow-left'
+                }) %>
+            </button>
+            <% if (dropdownMenuLabel) { %>
+                <h3 class="<%- cssConfig.dropdownMenuLabel %>"><%- dropdownMenuLabel %></h3>
+            <% } %>
+            <button class="btn btn--icon btn--plain" data-role="close">
+                <%= oroui.renderIcon({
+                    name: 'close'
+                }) %>
+            </button>
+        </div>
+    </div>
+</div>
